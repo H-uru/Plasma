@@ -47,7 +47,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 SegmentMap *GetWaveSegmentMap(const MCHAR* file, plErrorMsg *pErrMsg)
 {
     CWaveFile waveFile;
-    waveFile.Open(M2ST(file), nullptr, WAVEFILE_READ);
+    const plFileName fileName = M2ST(file);
+    plFileInfo fileInfo(fileName);
+    if (!fileInfo.Exists())
+        return nullptr;
+
+    waveFile.Open(fileName, nullptr, WAVEFILE_READ);
     int numMarkers = waveFile.GetNumMarkers();
     if (numMarkers == 0)
         return nullptr;
@@ -62,3 +67,17 @@ SegmentMap *GetWaveSegmentMap(const MCHAR* file, plErrorMsg *pErrMsg)
 
     return segMap;
 }
+
+uint16_t GetWaveNumChannels(const MCHAR* file)
+{
+    CWaveFile waveFile;
+    const plFileName fileName = M2ST(file);
+    plFileInfo fileInfo(fileName);
+    if (!fileInfo.Exists())
+        return 0;
+
+    waveFile.Open(fileName, nullptr, WAVEFILE_READ);
+
+    return waveFile.GetHeader().fNumChannels;
+}
+

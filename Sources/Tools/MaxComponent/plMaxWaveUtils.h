@@ -47,5 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/MaxCompat.h"
 
 SegmentMap *GetWaveSegmentMap(const MCHAR* file, plErrorMsg *pErrMsg);
+uint16_t GetWaveNumChannels(const MCHAR* file);
 
 #endif

@@ -355,7 +355,12 @@ HRESULT CWaveFile::ReadMMIO()
         }
     }
 
-
+    fHeader.fAvgBytesPerSec = m_pwfx->nAvgBytesPerSec;
+    fHeader.fBlockAlign = m_pwfx->nBlockAlign;
+    fHeader.fNumChannels = m_pwfx->nChannels;
+    fHeader.fNumSamplesPerSec = m_pwfx->nSamplesPerSec;
+    fHeader.fBitsPerSample = m_pwfx->wBitsPerSample;
+    fHeader.fFormatTag = m_pwfx->wFormatTag;
 
     fSecsPerSample = 1.0/ (double)(pcmWaveFormat.wf.nSamplesPerSec) ; // * (((double)pcmWaveFormat.wBitsPerSample)/8.0);
 

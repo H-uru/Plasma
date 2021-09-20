@@ -60,6 +60,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef MAXASS_AVAILABLE
 #   include "../../AssetMan/PublicInterface/AssManBaseTypes.h"
+#   define plAudioId jvUniqueId
+#else
+    struct plAudioId {
+        uint32_t id;
+
+        plAudioId() : id() { }
+    };
 #endif
 
 class plComponentBase;
@@ -96,10 +103,8 @@ class plBaseSoundEmitterComponent : public plComponent
             kCoverSound
         };
 
-#ifdef MAXASS_AVAILABLE
-        virtual void    SetSoundAssetId( WhichSound which, jvUniqueId assetId, const MCHAR *fileName );
-        virtual jvUniqueId GetSoundAssetID( WhichSound which );
-#endif
+        virtual void    SetSoundAssetId( WhichSound which, plAudioId assetId, const MCHAR *fileName );
+        virtual plAudioId GetSoundAssetID( WhichSound which );
         virtual const MCHAR* GetSoundFileName( WhichSound which );
 
         // Internal setup and write-only set properties on the MaxNode. No reading
@@ -142,10 +147,8 @@ class plBaseSoundEmitterComponent : public plComponent
         virtual float    GetSoundVolume() const;
 
     protected:
-#ifdef MAXASS_AVAILABLE
-        jvUniqueId  fSoundAssetId; // used for the AssMan
-        jvUniqueId  fCoverSoundAssetID;
-#endif
+        plAudioId   fSoundAssetId; // used for the AssMan
+        plAudioId   fCoverSoundAssetID;
         bool        fAssetsUpdated;
 
         friend class plAudioBaseComponentProc;

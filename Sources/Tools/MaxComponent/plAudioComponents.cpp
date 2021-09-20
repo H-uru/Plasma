@@ -260,10 +260,8 @@ RefTargetHandle plBaseSoundEmitterComponent::Clone( RemapDir &remap )
     // Do the base clone
     plBaseSoundEmitterComponent *obj = (plBaseSoundEmitterComponent *)plComponentBase::Clone( remap );
 
-#ifdef MAXASS_AVAILABLE
     obj->fSoundAssetId = fSoundAssetId;
     obj->fCoverSoundAssetID = fCoverSoundAssetID;
-#endif
 
     return obj;
 }
@@ -360,8 +358,7 @@ IOResult plBaseSoundEmitterComponent::Load(ILoad *iload)
     return IO_OK;
 }
 
-#ifdef MAXASS_AVAILABLE
-void plBaseSoundEmitterComponent::SetSoundAssetId( plBaseSoundEmitterComponent::WhichSound which, jvUniqueId assetId, const TCHAR *fileName )
+void plBaseSoundEmitterComponent::SetSoundAssetId( plBaseSoundEmitterComponent::WhichSound which, plAudioId assetId, const TCHAR *fileName )
 {
     if( which == kBaseSound )
     {
@@ -377,7 +374,7 @@ void plBaseSoundEmitterComponent::SetSoundAssetId( plBaseSoundEmitterComponent::
     }
 }
 
-jvUniqueId plBaseSoundEmitterComponent::GetSoundAssetID( plBaseSoundEmitterComponent::WhichSound which )
+plAudioId plBaseSoundEmitterComponent::GetSoundAssetID( plBaseSoundEmitterComponent::WhichSound which )
 {
     if( which == kCoverSound )
         return fCoverSoundAssetID;
@@ -387,14 +384,13 @@ jvUniqueId plBaseSoundEmitterComponent::GetSoundAssetID( plBaseSoundEmitterCompo
     hsAssert( false, "Getting a sound that isn't supported on this component" );
     return fSoundAssetId;
 }
-#endif
 
 void    plBaseSoundEmitterComponent::IUpdateAssets()
 {
-#ifdef MAXASS_AVAILABLE
     if( fAssetsUpdated )
         return;
 
+#ifdef MAXASS_AVAILABLE
     if( !fSoundAssetId.IsEmpty() || !fCoverSoundAssetID.IsEmpty() )
     {
         MaxAssInterface *maxAssInterface = GetMaxAssInterface();
@@ -412,8 +408,8 @@ void    plBaseSoundEmitterComponent::IUpdateAssets()
         fAssetsUpdated = true;
     }
     else
-        fAssetsUpdated = true;
 #endif
+        fAssetsUpdated = true;
 }
 
 const MCHAR* plBaseSoundEmitterComponent::GetSoundFileName( plBaseSoundEmitterComponent::WhichSound which )
@@ -738,9 +734,6 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IProcessSourceBuffer( plMaxNode *m
 
 void    plBaseSoundEmitterComponent::UpdateSoundFileSelection()
 {
-    plSoundBuffer   *baseBuffer = nullptr;
-
-
     // Attempt to load the sound in
     if (GetSoundFileName(kBaseSound) == nullptr)
     {
@@ -756,27 +749,18 @@ void    plBaseSoundEmitterComponent::UpdateSoundFileSelection()
         }
         else
         {
-            baseBuffer = new plSoundBuffer(M2ST(GetSoundFileName(kBaseSound)));
-            if (baseBuffer != nullptr && baseBuffer->IsValid())
+            uint16_t numChannels = GetWaveNumChannels(GetSoundFileName(kBaseSound));
+            // Update our stereo channel selection if necessary
+            if( numChannels <= 1 )
             {
-                // Update our stereo channel selection if necessary
-                if( baseBuffer->GetHeader().fNumChannels == 1 )
-                {
-                    fCompPB->SetValue( (ParamID)kSndAllowChannelSelect, 0, 0 );
-                }
-                else
-                {
-                    fCompPB->SetValue( (ParamID)kSndAllowChannelSelect, 0, 1 );
-                }
+                fCompPB->SetValue( (ParamID)kSndAllowChannelSelect, 0, 0 );
             }
             else
-                // Disable this feature by default
-                fCompPB->SetValue( (ParamID)kSndAllowChannelSelect, 0, 0 );
+            {
+                fCompPB->SetValue( (ParamID)kSndAllowChannelSelect, 0, 1 );
+            }
         }
     }
-
-    if (baseBuffer != nullptr)
-        delete baseBuffer;
 }
 
 float    plBaseSoundEmitterComponent::GetSoundVolume() const
@@ -1041,13 +1025,11 @@ protected:
         ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST;
         ofn.lpstrDefExt = _T("wav");
 
-#ifdef MAXASS_AVAILABLE
         if( GetOpenFileName( &ofn ) )
         {
-            jvUniqueId emptyId;
+            plAudioId emptyId;
             soundComponent->SetSoundAssetId( which, emptyId, fileName );
         }
-#endif
     }
 
     void    IUpdateSoundButton( plBaseSoundEmitterComponent *soundComponent, HWND hDlg, int dlgBtnItemToSet, plBaseSoundEmitterComponent::WhichSound which )
@@ -1094,12 +1076,10 @@ protected:
             }
         }
         else
+#endif
         {
             IGetNewLocalFileName( soundComponent, which );
         }
-#else
-        IGetNewLocalFileName( soundComponent, which );
-#endif
 
         // Update the button now
         if (hDlg != nullptr)
@@ -1874,6 +1854,7 @@ public:
                 hsAssert(soundComp != nullptr, "Problem trying to select a sound file");
                 
                 ISelectSoundFile( soundComp, hWnd, IDC_COMP_SOUND3D_FILENAME_BTN, plBaseSoundEmitterComponent::kBaseSound );
+                ILoadLoops(GetDlgItem(hWnd, IDC_LOOP_COMBO), map->GetParamBlock());
             }
             else if( fHandleCategory && LOWORD( wParam ) == fCategoryCtrlID )
             {
