@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMaxWaveUtils.h"
 #include "plAudioCore/plWavFile.h"
+#include "plAudioCore/plSoundBuffer.h"
 #include "plFileSystem.h"
 
 SegmentMap *GetWaveSegmentMap(const MCHAR* file, plErrorMsg *pErrMsg)
@@ -49,7 +50,7 @@ SegmentMap *GetWaveSegmentMap(const MCHAR* file, plErrorMsg *pErrMsg)
     CWaveFile waveFile;
     const plFileName fileName = M2ST(file);
     plFileInfo fileInfo(fileName);
-    if (!fileInfo.Exists())
+    if (!fileInfo.Exists() || fileName.GetFileExt().compare_ni("wav", 3) != 0)
         return nullptr;
 
     waveFile.Open(fileName, nullptr, WAVEFILE_READ);
@@ -70,14 +71,21 @@ SegmentMap *GetWaveSegmentMap(const MCHAR* file, plErrorMsg *pErrMsg)
 
 uint16_t GetWaveNumChannels(const MCHAR* file)
 {
-    CWaveFile waveFile;
     const plFileName fileName = M2ST(file);
     plFileInfo fileInfo(fileName);
     if (!fileInfo.Exists())
         return 0;
 
-    waveFile.Open(fileName, nullptr, WAVEFILE_READ);
+    if (fileName.GetFileExt().compare_ni("wav", 3) == 0) {
+        CWaveFile waveFile;
+        waveFile.Open(fileName, nullptr, WAVEFILE_READ);
 
-    return waveFile.GetHeader().fNumChannels;
+        return waveFile.GetHeader().fNumChannels;
+    } else {
+        plSoundBuffer* buf = new plSoundBuffer(fileName);
+        if (buf != nullptr && buf->IsValid())
+            return buf->GetHeader().fNumChannels;
+        return 0;
+    }
 }
 
