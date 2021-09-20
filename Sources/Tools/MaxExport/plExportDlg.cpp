@@ -89,7 +89,6 @@ protected:
 
 public:
     plExportDlgImp();
-    ~plExportDlgImp();
 
     void Show() override;
 
@@ -126,16 +125,6 @@ BOOL WritePrivateProfileIntW(LPCWSTR lpAppName, LPCWSTR lpKeyName, int val, LPCW
     swprintf(buf, 12, L"%d", val);
 
     return WritePrivateProfileStringW(lpAppName, lpKeyName, buf, lpFileName);
-}
-
-plExportDlgImp::~plExportDlgImp()
-{
-    plFileName path = plMaxConfig::GetPluginIni();
-    WritePrivateProfileIntW(L"Export", L"X", fXPos, path.WideString().data());
-    WritePrivateProfileIntW(L"Export", L"Y", fYPos, path.WideString().data());
-
-    WritePrivateProfileStringW(L"Export", L"Dir", fExportSourceDir.WideString().data(),
-                               path.WideString().data());
 }
 
 plExportDlg& plExportDlg::Instance()
@@ -374,6 +363,11 @@ void plExportDlgImp::IDestroy()
 
         DestroyWindow(fDlg);
         fDlg = nullptr;
+
+        plFileName path = plMaxConfig::GetPluginIni();
+        WritePrivateProfileIntW(L"Export", L"X", fXPos, path.WideString().data());
+        WritePrivateProfileIntW(L"Export", L"Y", fYPos, path.WideString().data());
+        WritePrivateProfileStringW(L"Export", L"Dir", fExportSourceDir.WideString().data(), path.WideString().data());
     }
 }
 
