@@ -510,6 +510,11 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
         return;
     }
 
+    if (group == plClothingMgr::kClothingBaseNoOptions) {
+        // We don't need a clothing outfit for avatars with no clothing options
+        return;
+    }
+
     plClothingBase *base = new plClothingBase();
     if (node->GetUserPropString(_M("layout"), sdata))
     {
