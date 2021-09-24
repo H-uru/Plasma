@@ -1746,47 +1746,11 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
 
     fBodyType = stream->ReadLE32();
 
-    if( stream->ReadBool() )
-    {
-        plKey effectMgrKey = mgr->ReadKey(stream);
-        mgr->AddViaNotify(effectMgrKey, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // plArmatureEffects       
-
-        // Attach the Footstep emitter scene object
-        hsResMgr *mgr = hsgResMgr::ResMgr();
-        const plLocation &gLoc = plKeyFinder::Instance().FindLocation(fBodyAgeName, fBodyFootstepSoundPage);
-        
-        if (gLoc.IsValid())
-        {
-            const plUoid &myUoid = GetKey()->GetUoid();
-            plUoid SOUoid(gLoc, plSceneObject::Index(), "FootstepSoundObject");
-            fFootSoundSOKey = mgr->FindKey(SOUoid);
-            if (fFootSoundSOKey)
-            {
-                // So it exists... but FindKey won't properly create our clone. So we do.
-                SOUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                fFootSoundSOKey = mgr->ReRegister(ST::string(), SOUoid);
-            }
-
-            // Add the effect to our effects manager
-            plUoid effectUoid(gLoc, plArmatureEffectFootSound::Index(), "FootstepSounds");
-            plKey effectKey = mgr->FindKey(effectUoid);
-            if (effectKey)
-            {
-                effectUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                effectKey = mgr->ReRegister(ST::string(), effectUoid);
-            }
-            if (effectKey != nullptr)
-                mgr->AddViaNotify(effectKey, new plGenRefMsg(effectMgrKey, plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
-
-            // Get the linking sound
-            plUoid LinkUoid(gLoc, plSceneObject::Index(), "LinkSoundSource");
-            fLinkSoundSOKey = mgr->FindKey(LinkUoid);
-            if (fLinkSoundSOKey)
-            {
-                LinkUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                fLinkSoundSOKey = mgr->ReRegister(ST::string(), LinkUoid);
-            }
-        }
+    bool hasEffects = stream->ReadBool();
+    plKey effectMgrKey;
+    if (hasEffects) {
+        effectMgrKey = mgr->ReadKey(stream);
+        mgr->AddViaNotify(effectMgrKey, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // plArmatureEffects
     }
     else
         fEffects = nullptr;
@@ -1798,7 +1762,49 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     fBodyAgeName = stream->ReadSafeString();
     fBodyFootstepSoundPage = stream->ReadSafeString();
 
+    if (hasEffects) {
+        ISetupFootstepSounds(effectMgrKey, mgr);
+    }
+
     plgDispatch::Dispatch()->RegisterForExactType(plAvatarStealthModeMsg::Index(), GetKey());
+}
+
+// Attach the Footstep emitter scene object
+void plArmatureMod::ISetupFootstepSounds(const plKey& effectMgrKey, hsResMgr* mgr)
+{
+    const plLocation& custLoc = plKeyFinder::Instance().FindLocation(fBodyAgeName, fBodyFootstepSoundPage);
+    const plLocation& globLoc = plKeyFinder::Instance().FindLocation("GlobalAvatars"_st, "Audio"_st);
+
+    const plLocation& loc = custLoc.IsValid() ? custLoc : globLoc;
+    if (!loc.IsValid())
+        return;
+
+    const plUoid& myUoid = GetKey()->GetUoid();
+    plUoid SOUoid(loc, plSceneObject::Index(), "FootstepSoundObject"_st);
+    fFootSoundSOKey = mgr->FindKey(SOUoid);
+    if (fFootSoundSOKey) {
+        // So it exists... but FindKey won't properly create our clone. So we do.
+        SOUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
+        fFootSoundSOKey = mgr->ReRegister(ST::string(), SOUoid);
+    }
+
+    // Add the effect to our effects manager
+    plUoid effectUoid(loc, plArmatureEffectFootSound::Index(), "FootstepSounds"_st);
+    plKey effectKey = mgr->FindKey(effectUoid);
+    if (effectKey) {
+        effectUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
+        effectKey = mgr->ReRegister(ST::string(), effectUoid);
+    }
+    if (effectKey != nullptr)
+        mgr->AddViaNotify(effectKey, new plGenRefMsg(effectMgrKey, plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
+
+    // Get the linking sound
+    plUoid LinkUoid(loc, plSceneObject::Index(), "LinkSoundSource"_st);
+    fLinkSoundSOKey = mgr->FindKey(LinkUoid);
+    if (fLinkSoundSOKey) {
+        LinkUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
+        fLinkSoundSOKey = mgr->ReRegister(ST::string(), LinkUoid);
+    }
 }
 
 bool plArmatureMod::DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags)

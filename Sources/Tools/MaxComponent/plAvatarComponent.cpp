@@ -248,11 +248,14 @@ bool plArmatureComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
     IAttachModifiers(node, pErrMsg);
     ISetupClothes(node, fArmMod, pErrMsg);
 
-    // ArmatureEffects
-    plArmatureEffectsMgr *effects = new plArmatureEffectsMgr();
-    hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), effects, node->GetLocation());
-    plGenRefMsg *msg = new plGenRefMsg(fArmMod->GetKey(), plRefMsg::kOnCreate, -1, -1);
-    hsgResMgr::ResMgr()->AddViaNotify(effects->GetKey(), msg, plRefFlags::kActiveRef); // Attach effects
+    // Attach footstep sounds if we didn't leave the field blank
+    if (!fArmMod->GetBodyFootstepSoundPage().empty()) {
+        // ArmatureEffects
+        plArmatureEffectsMgr* effects = new plArmatureEffectsMgr();
+        hsgResMgr::ResMgr()->NewKey(IGetUniqueName(node), effects, node->GetLocation());
+        plGenRefMsg* msg = new plGenRefMsg(fArmMod->GetKey(), plRefMsg::kOnCreate, -1, -1);
+        hsgResMgr::ResMgr()->AddViaNotify(effects->GetKey(), msg, plRefFlags::kActiveRef); // Attach effects
+    }
 
     plSceneObject *obj = node->GetSceneObject();
     node->MakeCharacterHierarchy(pErrMsg);
@@ -475,8 +478,13 @@ void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
     else
         avMod->PushBrain(new plAvBrainHuman(skeletonType == plArmatureMod::kBoneBaseActor));
 
-    avMod->SetBodyAgeName(node->GetAgeName());
-    avMod->SetBodyFootstepSoundPage(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
+    ST::string footstepPage = M2ST(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
+    if (!footstepPage.empty() && footstepPage.compare_ni("Audio", 5) != 0)
+        avMod->SetBodyAgeName(node->GetAgeName()); // Custom footstep sounds
+    else
+        avMod->SetBodyAgeName("GlobalAvatars"); // Fallback to the Global ones
+
+    avMod->SetBodyFootstepSoundPage(footstepPage);
     avMod->SetAnimationPrefix(M2ST(fCompPB->GetStr(ParamID(kAnimationPrefix))));
 
     //AddLinkSound(node, node->GetSceneObject()->GetKey(), pErrMsg );
