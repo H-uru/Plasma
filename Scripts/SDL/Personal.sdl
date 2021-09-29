@@ -2437,6 +2437,29 @@ STATEDESC Personal
     VAR BYTE        YeeshaPage25[1]             DEFAULT=0 # Bahro poles
     VAR BYTE        YeeshaPage26[1]             DEFAULT=0 # VeeTsah Sky
     VAR BYTE        YeeshaPage27[1]             DEFAULT=0 # Oceans
+    VAR BYTE        YeeshaPage28[1]             DEFAULT=0 # Blue Flowers
+    VAR BYTE        YeeshaPage29[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage30[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage31[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage32[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage33[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage34[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage35[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage36[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage37[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage38[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage39[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage40[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage41[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage42[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage43[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage44[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage45[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage46[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage47[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage48[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage49[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage50[1]             DEFAULT=0
 
     VAR INT         YP10LastTreeGrowth[1]       DEFAULT=0
 
