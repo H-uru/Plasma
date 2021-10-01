@@ -1,5 +1,6 @@
 set(VCPKG_TARGET_ARCHITECTURE x86)
 set(VCPKG_CRT_LINKAGE dynamic)
+set(VCPKG_DISABLE_COMPILER_TRACKING TRUE)
 
 # Unfortunately, we cannot include() anything from here because CMAKE_CURRENT_LIST_DIR is "wrong."
 # If you update this list, remember to synchronize x64-windows-plasma.cmake.
