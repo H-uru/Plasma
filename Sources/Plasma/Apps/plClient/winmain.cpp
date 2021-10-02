@@ -104,6 +104,7 @@ enum
     kArgPlayerId,
     kArgStartUpAgeName,
     kArgPvdFile,
+    kArgSkipIntroMovies,
 };
 
 static const plCmdArgDef s_cmdLineArgs[] = {
@@ -114,6 +115,7 @@ static const plCmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeInt,        "PlayerId",        kArgPlayerId },
     { kCmdArgFlagged  | kCmdTypeString,     "Age",             kArgStartUpAgeName },
     { kCmdArgFlagged  | kCmdTypeString,     "PvdFile",         kArgPvdFile },
+    { kCmdArgFlagged  | kCmdTypeBool,       "SkipIntroMovies", kArgSkipIntroMovies },
 };
 
 /// Made globals now, so we can set them to zero if we take the border and 
@@ -1211,6 +1213,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     // Main loop
     if (gClient && !gClient->GetDone()) {
+        // Must be done here due to the plClient* dereference.
+        if (cmdParser.IsSpecified(kArgSkipIntroMovies))
+            gClient->SetFlag(plClient::kFlagSkipIntroMovies);
+
         if (gPendingActivate)
             gClient->WindowActivate(gPendingActivateFlag);
         gClient->SetMessagePumpProc(PumpMessageQueueProc);
