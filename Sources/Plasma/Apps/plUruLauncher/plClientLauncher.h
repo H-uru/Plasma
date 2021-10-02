@@ -66,6 +66,7 @@ private:
         kGameDataOnly = 1<<2,
         kPatchOnly = 1<<3,
         kSkipLoginDialog = 1<<4,
+        kSkipIntroMovies = 1<<5,
 
         kRepairGame = kHaveSelfPatched | kClientImage | kGameDataOnly,
     };

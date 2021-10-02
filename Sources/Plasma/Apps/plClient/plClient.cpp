@@ -1819,6 +1819,9 @@ void plClient::IKillMovies()
 
 bool plClient::IPlayIntroMovie(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume /* = 1.0 */)
 {
+    if (HasFlag(kFlagSkipIntroMovies))
+        return true;
+
     SetQuitIntro(false);
     plMoviePlayer player;
     player.SetPosition(posX, posY);

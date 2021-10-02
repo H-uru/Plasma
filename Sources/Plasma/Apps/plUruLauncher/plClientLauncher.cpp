@@ -234,6 +234,8 @@ ST::string plClientLauncher::GetAppArgs() const
         ss << " -PatchOnly";
     if (hsCheckBits(fFlags, kSkipLoginDialog))
         ss << " -SkipLoginDialog";
+    if (hsCheckBits(fFlags, kSkipIntroMovies))
+        ss << " -SkipIntroMovies";
 
     return ss.to_string();
 }
@@ -448,14 +450,15 @@ void plClientLauncher::ParseArguments()
         fFlags |= flag;
 
     enum { kArgServerIni, kArgNoSelfPatch, kArgImage, kArgRepairGame, kArgPatchOnly,
-           kArgSkipLoginDialog };
+           kArgSkipLoginDialog, kArgSkipIntroMovies };
     const plCmdArgDef cmdLineArgs[] = {
         { kCmdArgFlagged | kCmdTypeString, "ServerIni", kArgServerIni },
         { kCmdArgFlagged | kCmdTypeBool, "NoSelfPatch", kArgNoSelfPatch },
         { kCmdArgFlagged | kCmdTypeBool, "Image", kArgImage },
         { kCmdArgFlagged | kCmdTypeBool, "Repair", kArgRepairGame },
         { kCmdArgFlagged | kCmdTypeBool, "PatchOnly", kArgPatchOnly },
-        { kCmdArgFlagged | kCmdTypeBool, "SkipLoginDialog", kArgSkipLoginDialog }
+        { kCmdArgFlagged | kCmdTypeBool, "SkipLoginDialog", kArgSkipLoginDialog },
+        { kCmdArgFlagged | kCmdTypeBool, "SkipIntroMovies", kArgSkipIntroMovies }
     };
 
     std::vector<ST::string> args;
@@ -475,6 +478,7 @@ void plClientLauncher::ParseArguments()
     APPLY_FLAG(kArgRepairGame, kRepairGame);
     APPLY_FLAG(kArgPatchOnly, kPatchOnly);
     APPLY_FLAG(kArgSkipLoginDialog, kSkipLoginDialog);
+    APPLY_FLAG(kArgSkipIntroMovies, kSkipIntroMovies);
 
     // last chance setup
     if (hsCheckBits(fFlags, kPatchOnly))

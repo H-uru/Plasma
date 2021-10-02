@@ -251,6 +251,7 @@ public:
         kFlagDBGDisableRRequests,
         kFlagAsyncInitComplete,
         kFlagGlobalDataLoaded,
+        kFlagSkipIntroMovies,
     };
 
     bool HasFlag(int f) const { return fFlags.IsBitSet(f); }
