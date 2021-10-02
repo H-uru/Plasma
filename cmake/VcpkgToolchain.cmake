@@ -5,7 +5,7 @@
 set(_NUGET_SOURCE "https://nuget.pkg.github.com/H-uru/index.json")
 set(_NUGET_OWNER "H-uruMachineUser")
 # Python: print(*(ord(i) for i in token), sep=";")
-set(_NUGET_TOKEN_ASCII 99;48;53;54;49;55;52;54;102;48;52;101;101;50;55;102;56;52;57;102;100;97;52;100;100;100;54;50;55;102;101;50;100;101;102;57;100;57;97;57)
+set(_NUGET_TOKEN_ASCII 103;104;112;95;100;111;87;99;122;56;49;97;76;101;110;122;82;116;119;112;80;49;97;87;72;107;71;57;103;51;110;100;100;112;52;69;57;88;73;48)
 string(ASCII ${_NUGET_TOKEN_ASCII} _NUGET_TOKEN)
 
 # You're not crazy. This is so we can read from the main package source and write to another one.
