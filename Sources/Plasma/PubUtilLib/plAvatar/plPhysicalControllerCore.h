@@ -344,7 +344,7 @@ protected:
 
     float GetFallStopThreshold() const { return std::cos(hsDegreesToRadians(40.f)); }
 
-    float GetFallStartThreshold() const { return std::cos(hsDegreesToRadians(57.f)); }
+    float GetFallStartThreshold() const { return std::cos(hsDegreesToRadians(60.f)); }
 
 public:
     plWalkingStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller);
