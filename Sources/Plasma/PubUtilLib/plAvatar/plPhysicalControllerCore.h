@@ -101,6 +101,12 @@ public:
          * The character's brain is seeking or otherwise moving on autopilot to a specific point.
          */
         kSeeking = (1<<1),
+
+        /**
+         * Disables collision on contacts >= 90 degrees.
+         * This is used to help the controller get out of sticky situations where it might become stuck.
+         */
+        kDisableNearPerpendicularContacts = (1<<2),
     };
 
 public:
@@ -233,6 +239,9 @@ public:
     // When seeking no longer want to interact with exclude regions
     void SetSeek(bool seek) { hsChangeBits(fFlags, kSeeking, seek); }
     bool IsSeeking() const { return fFlags & kSeeking; }
+
+    void DisableNearPerpendicularContacts(bool disable) { hsChangeBits(fFlags, kDisableNearPerpendicularContacts, disable); }
+    bool AreNearPerpendicularContactsDisabled() const { return fFlags & kDisableNearPerpendicularContacts; }
 
     // Pushing physical
     plPhysical* GetPushingPhysical() const { return fPushingPhysical; }

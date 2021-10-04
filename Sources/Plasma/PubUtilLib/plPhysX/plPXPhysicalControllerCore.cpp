@@ -598,6 +598,24 @@ void plPXPhysicalControllerCore::AddContact(plPXPhysical* phys, const hsPoint3& 
     }
 }
 
+void plPXPhysicalControllerCore::ModifyContacts(plPXPhysical* phys, physx::PxContactSet& contacts) const
+{
+    // Special cases for walls (aka near perpendicular collisions):
+    // When we hit a wall, we want to slide against it - it should not kill
+    // our sliding normal hack in plWalkingStrategy. Also, we need to debounce
+    // getting stuck falling in place between two objects.
+    for (physx::PxU32 i = 0; i < contacts.size(); ++i) {
+        if (contacts.getNormal(i).z >= 0.02f)
+            continue;
+        if (AreNearPerpendicularContactsDisabled()) {
+            contacts.ignore(i);
+        } else {
+            contacts.setDynamicFriction(i, 0.f);
+            contacts.setStaticFriction(i, 0.f);
+        }
+    }
+}
+
 #ifndef PLASMA_EXTERNAL_RELEASE
 #include "pnNetCommon/plNetApp.h"
 #include "plPipeline/plDebugText.h"
@@ -619,11 +637,11 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
     const auto& controller = gControllers[controllerIdx];
     ST::string playerName = plNetClientApp::GetInstance()->GetPlayerName(controller->fOwner);
 
-    debugString = ST::format("Controller #{} [Name: {}] [Subworld: {}] [Enabled: {}]",
+    debugString = ST::format("Controller #{} [Name: {}] [Subworld: {}] [Enabled: {}] [Walls Disabled: {}]",
                              controllerIdx + 1,
                              playerName.empty() ? controller->fOwner->GetName() : playerName,
                              controller->fWorldKey ? controller->fWorldKey->GetName() : "(main world)",
-                             IsEnabled());
+                             IsEnabled(), AreNearPerpendicularContactsDisabled());
     debugTxt.DrawString(x, y, debugString);
     y += lineHeight;
 

@@ -578,6 +578,12 @@ void plWalkingStrategy::Update(float delSecs)
         fTimeInAir += delSecs;
     }
 
+    // If we're falling but going nowhere, kill perpendicular collisions to prevent
+    // getting stuck falling in place between two or more objects.
+    if ((fFlags & kFallingNormal) && fTimeInAir > 0.f && fController->GetAchievedLinearVelocity().MagnitudeSquared() < 0.01f) {
+        fController->DisableNearPerpendicularContacts(true);
+    }
+
     hsVector3 zeroVelocity;
     fController->SetLinearVelocity(zeroVelocity);
 
@@ -588,6 +594,7 @@ void plWalkingStrategy::Update(float delSecs)
 
     if (IsOnGround()) {
         fFlags |= kClearImpact;
+        fController->DisableNearPerpendicularContacts(false);
     } else {
         fImpactTime = fTimeInAir;
         fImpactVelocity = fController->GetAchievedLinearVelocity();

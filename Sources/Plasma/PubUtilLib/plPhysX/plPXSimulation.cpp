@@ -73,8 +73,10 @@ constexpr float kToleranceScaleSpeed = 32.f;
 
 plProfile_CreateTimer(  "Apply Controller Animations", "Simulation", ApplyController);
 plProfile_CreateTimer(  "PhysX Simulation", "Simulation", Step);
+plProfile_CreateTimer(  "  Contact Modify Callback", "Simulation", ContactModifyCallback);
 plProfile_CreateTimer(  "  Contact Callback", "Simulation", ContactCallback);
 plProfile_CreateTimer(  "  Trigger Callback", "Simulation", TriggerCallback);
+plProfile_CreateCounter("  Contacts for Modification", "Simulation", ContactModifyCount);
 plProfile_CreateCounter("  Active Bodies", "Simulation", ActiveBodies);
 plProfile_CreateCounter("    Active Dynamics", "Simulation", ActiveDynamics);
 plProfile_CreateCounter("    Active Kinematics", "Simulation", ActiveKinematics);
@@ -238,6 +240,37 @@ public:
 
 // ==========================================================================
 
+class plPXContactModifyHandler : public physx::PxContactModifyCallback
+{
+    void IHandleContact(physx::PxContactModifyPair& pair)
+    {
+        plProfile_IncCount(ContactModifyCount, pair.contacts.size());
+
+        auto a1 = static_cast<plPXActorData*>(pair.actor[0]->userData);
+        auto a2 = static_cast<plPXActorData*>(pair.actor[1]->userData);
+        if (!a1 || !a2)
+            return;
+
+        // For now, only character on collider contacts should be handled here, so
+        // there's no need for any other logic.
+        auto controller = a1->GetController() ? a1->GetController() : a2->GetController();
+        auto phys = a1->GetPhysical() ? a1->GetPhysical() : a2->GetPhysical();
+        if (controller && phys)
+            controller->ModifyContacts(phys, pair.contacts);
+    }
+
+public:
+    void onContactModify(physx::PxContactModifyPair* const pairs, physx::PxU32 nbPairs) override
+    {
+        plProfile_BeginTiming(ContactModifyCallback);
+        for (physx::PxU32 i = 0; i < nbPairs; ++i)
+            IHandleContact(pairs[i]);
+        plProfile_EndTiming(ContactModifyCallback);
+    }
+} s_PxContactModify;
+
+// ==========================================================================
+
 static inline plPXFilterData& IConvertFilterData(physx::PxFilterData& pxFilterData)
 {
     return *((plPXFilterData*)&pxFilterData);
@@ -291,11 +324,13 @@ static physx::PxFilterFlags ISimulationFilterShader(physx::PxFilterObjectAttribu
         return physx::PxFilterFlag::eSUPPRESS;
     }
 
-    const physx::PxPairFlags::InternalType defFlags = physx::PxPairFlag::eCONTACT_DEFAULT |
-                                                     // for physics sounds
-                                                     physx::PxPairFlag::eNOTIFY_TOUCH_FOUND |
-                                                     physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS |
-                                                     physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
+    const physx::PxPairFlags defFlags = physx::PxPairFlag::eCONTACT_DEFAULT |
+                                        // for physics sounds
+                                        physx::PxPairFlag::eNOTIFY_TOUCH_FOUND |
+                                        physx::PxPairFlag::eNOTIFY_TOUCH_PERSISTS |
+                                        physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
+    const physx::PxPairFlags modFlags = defFlags |
+                                        physx::PxPairFlag::eMODIFY_CONTACTS;
     const physx::PxFilterFlags defResult = physx::PxFilterFlag::eDEFAULT;
     const physx::PxFilterFlags cbResult = physx::PxFilterFlag::eCALLBACK;
 
@@ -316,8 +351,8 @@ static physx::PxFilterFlags ISimulationFilterShader(physx::PxFilterObjectAttribu
              (filterHelper1.TestGroup(plSimDefs::kGroupAvatar) && filterHelper1.TestFlag(plPhysicalControllerCore::kDisableCollision)))
              return physx::PxFilterFlag::eSUPPRESS;
 
-        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatarBlocker, defFlags, defResult);
-        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupStatic, defFlags, defResult);
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatarBlocker, modFlags, defResult);
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupStatic, modFlags, defResult);
         FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupDynamic, defFlags, defResult);
         FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupExcludeRegion, defFlags, defResult);
     }
@@ -588,6 +623,7 @@ physx::PxScene* plPXSimulation::InitSubworld(const plKey& world)
     physx::PxSceneDesc desc(scale);
     desc.gravity = gravity;
     desc.simulationEventCallback = &s_PxSimulationEvent;
+    desc.contactModifyCallback = &s_PxContactModify;
     desc.filterShader = ISimulationFilterShader;
     desc.frictionType = physx::PxFrictionType::eTWO_DIRECTIONAL;
     desc.solverType = physx::PxSolverType::eTGS;
