@@ -147,12 +147,14 @@ public:
      * \param[in] startPos: Position from which the capsule sweep should begin.
      * \param[in] endPos: Position from which the capsule sweep should end.
      * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \param[in] mtd Return the minimum translation depth required to de-penetrate the objects.
      * \returns All hits along the path of the sweep.
      */
     [[nodiscard]]
     virtual std::vector<plControllerHitRecord> SweepMulti(const hsPoint3& startPos,
                                                           const hsPoint3& endPos,
-                                                          plSimDefs::Group simGroups) const = 0;
+                                                          plSimDefs::Group simGroups,
+                                                          bool mtd = false) const = 0;
 
     /**
      * Sweeps the character's capsule from startPos through endPos and reports all hits
@@ -161,13 +163,15 @@ public:
      * \param[in] dir Unit vector defining the direction of the capsule sweep.
      * \param[in] distance Distance over which the capsule should be swept.
      * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \param[in] mtd Return the minimum translation depth required to de-penetrate the objects.
      * \returns All hits along the path of the sweep.
      */
     [[nodiscard]]
     virtual std::vector<plControllerHitRecord> SweepMulti(const hsPoint3& origin,
                                                           const hsVector3& dir,
                                                           float distance,
-                                                          plSimDefs::Group simGroups) const = 0;
+                                                          plSimDefs::Group simGroups,
+                                                          bool mtd = false) const = 0;
 
     /**
      * Sweeps the character's capsule from startPos through endPos and reports the first blocking
@@ -175,12 +179,14 @@ public:
      * \param[in] startPos: Position from which the capsule sweep should begin.
      * \param[in] endPos: Position from which the capsule sweep should end.
      * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \param[in] mtd Return the minimum translation depth required to de-penetrate the objects.
      * \returns The first hit along the path of the sweep.
      */
     [[nodiscard]]
     virtual std::optional<plControllerHitRecord> SweepSingle(const hsPoint3& startPos,
                                                              const hsPoint3& endPos,
-                                                             plSimDefs::Group simGroups) const = 0;
+                                                             plSimDefs::Group simGroups,
+                                                             bool mtd = false) const = 0;
 
     /**
      * Sweeps the character's capsule from startPos through endPos and reports the first blocking
@@ -189,13 +195,15 @@ public:
      * \param[in] dir Unit vector defining the direction of the capsule sweep.
      * \param[in] distance Distance over which the capsule should be swept.
      * \param[in] simGroups A bit mask of groups the swept shape should hit.
+     * \param[in] mtd Return the minimum translation depth required to de-penetrate the objects.
      * \returns The first hit along the path of the sweep.
      */
     [[nodiscard]]
     virtual std::optional<plControllerHitRecord> SweepSingle(const hsPoint3& origin,
                                                              const hsVector3& dir,
                                                              float distance,
-                                                             plSimDefs::Group simGroups) const = 0;
+                                                             plSimDefs::Group simGroups,
+                                                             bool mtd = false) const = 0;
 
     // any clean up for the controller should go here
     virtual void LeaveAge() = 0;

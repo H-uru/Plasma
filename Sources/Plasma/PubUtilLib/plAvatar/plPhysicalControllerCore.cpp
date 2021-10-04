@@ -486,14 +486,24 @@ void plWalkingStrategy::Apply(float delSecs)
     fContacts.clear();
 
     // If we are jumping against an object, our z-displacement may be killed by PhysX, so we must
-    // force the displacement. Sigh. The good news, however, is that the old "shoved sideays by
-    // a head-hit" thing is no longer needed, so yay.
-    if (IsControlledFlight() && velocity.fZ > 0.f) {
-        hsPoint3 pos;
-        fController->GetPositionSim(pos);
-        pos.fZ += velocity.fZ * delSecs;
+    // force the displacement. But, also, we need to make sure we don't get wedged into a stuck
+    // position or thrown back due to depenetrations.
+    if (IsControlledFlight()) {
+        hsPoint3 startPos;
+        fController->GetPositionSim(startPos);
+        hsPoint3 endPos = startPos;
+        endPos.fZ += velocity.fZ * delSecs;
         velocity.fZ = 0.f;
-        fController->SetPositionSim(pos);
+
+        const plSimDefs::Group simGroups = (plSimDefs::Group)((1 << plSimDefs::kGroupStatic) |
+                                                              (1 << plSimDefs::kGroupAvatarBlocker));
+        auto sweep = fController->SweepMulti(startPos, endPos, simGroups, true);
+        for (const auto& hit : sweep) {
+            // Hopefully prevent forced penetrations.
+            if (hit.Displacement < 0.f)
+                endPos += hit.Normal * hit.Displacement * -1.f;
+        }
+        fController->SetPositionSim(endPos);
     }
 
     fController->SetLinearVelocitySim(velocity);

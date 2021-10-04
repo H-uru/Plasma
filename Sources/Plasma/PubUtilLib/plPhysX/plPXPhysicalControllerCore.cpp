@@ -274,7 +274,8 @@ void plPXPhysicalControllerCore::SetLinearVelocitySim(const hsVector3& velocity)
 std::vector<plControllerHitRecord> plPXPhysicalControllerCore::ISweepMulti(const hsPoint3& origin,
                                                                            const hsVector3& dir,
                                                                            float distance,
-                                                                           plSimDefs::Group simGroups) const
+                                                                           plSimDefs::Group simGroups,
+                                                                           bool mtd) const
 {
     physx::PxShape* shape;
     fActor->getShapes(&shape, 1);
@@ -316,19 +317,23 @@ std::vector<plControllerHitRecord> plPXPhysicalControllerCore::ISweepMulti(const
         }
     } hitCallback(results);
 
+    physx::PxHitFlags hitFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
+    if (mtd)
+        hitFlags |= physx::PxHitFlag::eMTD;
+    else
+        hitFlags |= physx::PxHitFlag::eASSUME_NO_INITIAL_OVERLAP;
+
     plPXControllerFilterCallback filterCallback;
     fActor->getScene()->sweep(capsule, pose, plPXConvert::Vector(dir), distance, hitCallback,
-                              (physx::PxHitFlag::ePOSITION |
-                               physx::PxHitFlag::eNORMAL |
-                               physx::PxHitFlag::eASSUME_NO_INITIAL_OVERLAP),
-                              queryFilter, &filterCallback);
+                              hitFlags, queryFilter, &filterCallback);
     return results;
 }
 
 std::optional<plControllerHitRecord> plPXPhysicalControllerCore::ISweepSingle(const hsPoint3& origin,
                                                                               const hsVector3& dir,
                                                                               float distance,
-                                                                              plSimDefs::Group simGroups) const
+                                                                              plSimDefs::Group simGroups,
+                                                                              bool mtd) const
 {
     physx::PxShape* shape;
     fActor->getShapes(&shape, 1);
@@ -343,13 +348,16 @@ std::optional<plControllerHitRecord> plPXPhysicalControllerCore::ISweepSingle(co
                                                      physx::PxQueryFlag::eDYNAMIC |
                                                      physx::PxQueryFlag::ePREFILTER);
 
+    physx::PxHitFlags hitFlags = physx::PxHitFlag::ePOSITION | physx::PxHitFlag::eNORMAL;
+    if (mtd)
+        hitFlags |= physx::PxHitFlag::eMTD;
+    else
+        hitFlags |= physx::PxHitFlag::eASSUME_NO_INITIAL_OVERLAP;
+
     physx::PxSweepBuffer buf(nullptr, 0);
     plPXControllerFilterCallback filterCallback;
     fActor->getScene()->sweep(capsule, pose, plPXConvert::Vector(dir), distance, buf,
-                              (physx::PxHitFlag::ePOSITION |
-                               physx::PxHitFlag::eNORMAL |
-                               physx::PxHitFlag::eASSUME_NO_INITIAL_OVERLAP),
-                              queryFilter, &filterCallback);
+                              hitFlags, queryFilter, &filterCallback);
 
     std::optional<plControllerHitRecord> retval;
     if (buf.hasBlock) {
@@ -363,22 +371,24 @@ std::optional<plControllerHitRecord> plPXPhysicalControllerCore::ISweepSingle(co
 
 std::vector<plControllerHitRecord> plPXPhysicalControllerCore::SweepMulti(const hsPoint3& startPos,
                                                                           const hsPoint3& endPos,
-                                                                          plSimDefs::Group simGroups) const
+                                                                          plSimDefs::Group simGroups,
+                                                                          bool mtd) const
 {
     hsVector3 displacement = (hsVector3)(endPos - startPos);
     float magnitude = displacement.Magnitude();
     displacement.Normalize();
-    return ISweepMulti(startPos, displacement, magnitude, simGroups);
+    return ISweepMulti(startPos, displacement, magnitude, simGroups, mtd);
 }
 
 std::optional<plControllerHitRecord> plPXPhysicalControllerCore::SweepSingle(const hsPoint3& startPos,
                                                                              const hsPoint3& endPos,
-                                                                             plSimDefs::Group simGroups) const
+                                                                             plSimDefs::Group simGroups,
+                                                                             bool mtd) const
 {
     hsVector3 displacement = (hsVector3)(endPos - startPos);
     float magnitude = displacement.Magnitude();
     displacement.Normalize();
-    return ISweepSingle(startPos, displacement, magnitude, simGroups);
+    return ISweepSingle(startPos, displacement, magnitude, simGroups, mtd);
 }
 
 
