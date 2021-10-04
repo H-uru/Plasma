@@ -419,12 +419,13 @@ void plWalkingStrategy::Apply(float delSecs)
         if (std::fabs(velocity.fZ) < 0.001f) {
             velocity.fZ = std::min(0.f, achievedVelocity.fZ) + (kGravity * delSecs);
             hsVector3 velNorm = velocity;
-            if (velNorm.MagnitudeSquared() > 0.0f)
-                velNorm.Normalize();
-
             hsVector3 offset;
             for (const auto& collision : fContacts) {
+                if (collision.Normal.fZ >= GetFallStopThreshold())
+                    continue;
                 offset += collision.Normal;
+                if (velNorm.MagnitudeSquared() > 0.0f)
+                    velNorm.Normalize();
                 if (velNorm * collision.Normal < 0.f) {
                     hsVector3 proj = (velNorm % collision.Normal) % collision.Normal;
                     if (velNorm * proj < 0.0f)
