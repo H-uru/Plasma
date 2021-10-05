@@ -637,11 +637,14 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
     const auto& controller = gControllers[controllerIdx];
     ST::string playerName = plNetClientApp::GetInstance()->GetPlayerName(controller->fOwner);
 
-    debugString = ST::format("Controller #{} [Name: {}] [Subworld: {}] [Enabled: {}] [Walls Disabled: {}]",
+    debugString = ST::format("Controller #{} [Name: {}] [Subworld: {}] [Enabled: {}] [Walls Disabled: {}] "
+                             "[AV: ({.2f}, {.2f}, {.2f}) -> {.2f}]",
                              controllerIdx + 1,
                              playerName.empty() ? controller->fOwner->GetName() : playerName,
                              controller->fWorldKey ? controller->fWorldKey->GetName() : "(main world)",
-                             IsEnabled(), AreNearPerpendicularContactsDisabled());
+                             IsEnabled(), AreNearPerpendicularContactsDisabled(),
+                             controller->GetAchievedLinearVelocity().fX, controller->GetAchievedLinearVelocity().fY,
+                             controller->GetAchievedLinearVelocity().fZ, controller->GetAchievedLinearVelocity().MagnitudeSquared());
     debugTxt.DrawString(x, y, debugString);
     y += lineHeight;
 
