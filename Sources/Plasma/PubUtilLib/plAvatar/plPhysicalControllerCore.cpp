@@ -524,7 +524,7 @@ void plWalkingStrategy::ICheckGroundSteepness(const plControllerHitRecord& groun
 void plWalkingStrategy::IStepUp(const plControllerHitRecord& ground, float delSecs)
 {
     // No, I'm, not going to help you glitch up cliffs.
-    if (ground.Normal.fZ < GetFallStopThreshold())
+    if (ground.Normal.fZ < GetFallStartThreshold())
         return;
 
     // We are on the ground - good. However, there is a problem. Some ground colliders are
@@ -535,7 +535,7 @@ void plWalkingStrategy::IStepUp(const plControllerHitRecord& ground, float delSe
     // step up and move that far.
     const hsVector3& animVelocity = fController->GetLinearVelocity();
     const hsVector3& simVelocity = fController->GetAchievedLinearVelocity();
-    if (animVelocity.MagnitudeSquared() < 0.0001f || simVelocity.MagnitudeSquared() >= 0.0001f)
+    if (animVelocity.MagnitudeSquared() < 0.01f || simVelocity.MagnitudeSquared() >= 0.01f)
         return;
 
     hsPoint3 startPos;
