@@ -80,7 +80,7 @@ class GardenBugs(ptResponder):
         self.version = 2
         self.bugCount = 0
     
-    def ISaveBugCount(self, count):
+    def ISaveBugCount(self, count: int):
         vault = ptVault()
         entry = vault.findChronicleEntry(chronicleEntryName)
         if entry is None:
@@ -186,7 +186,7 @@ class GardenBugs(ptResponder):
                     PtDebugPrint("GardenBugs.OnTimer():\tRunning, kill more bugs")
                     PtKillParticles(3.0,0.1,avatar.getKey())
                     PtAtTimeCallback(self.key, 0.4, PtBehaviorTypes.kBehaviorTypeRun)
-                    self.bugCount = self.bugCount * 0.1
+                    self.bugCount = self.bugCount // 10
                     self.ISaveBugCount(self.bugCount)
 
         elif (self.bugCount == 0):            
@@ -329,7 +329,7 @@ class GardenBugs(ptResponder):
                         self.bugCount = 0
                     else:
                         PtKillParticles(3.0,0.5,avatar.getKey())
-                        self.bugCount = self.bugCount / 2
+                        self.bugCount = self.bugCount // 2
                     self.ISaveBugCount(self.bugCount)
                 else:
                     PtKillParticles(3.0,1,avatar.getKey())
@@ -353,7 +353,7 @@ class GardenBugs(ptResponder):
                 PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
                 PtKillParticles(3.0,0.1,avatar.getKey())
                 PtAtTimeCallback(self.key, 0.4, PtBehaviorTypes.kBehaviorTypeRun)
-                self.bugCount = self.bugCount * 0.1
+                self.bugCount = self.bugCount // 10
                 self.ISaveBugCount(self.bugCount)
                 return
 

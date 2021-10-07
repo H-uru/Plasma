@@ -86,7 +86,7 @@ class GiraBugs(ptResponder):
         self.version = 2
         self.bugCount = 0
     
-    def ISaveBugCount(self, count):
+    def ISaveBugCount(self, count: int):
         vault = ptVault()
         entry = vault.findChronicleEntry(chronicleEntryName)
         if entry is None:
@@ -241,7 +241,7 @@ class GiraBugs(ptResponder):
                         self.bugCount = 0
                     else:
                         PtKillParticles(3.0,0.5,avatar.getKey())
-                        self.bugCount = self.bugCount / 2;
+                        self.bugCount = self.bugCount // 2
                     self.ISaveBugCount(self.bugCount)
                     
                 else:
@@ -266,7 +266,7 @@ class GiraBugs(ptResponder):
                 PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
                 PtKillParticles(3.0,0.1,avatar.getKey())
                 PtAtTimeCallback(self.key, 0.25, PtBehaviorTypes.kBehaviorTypeRun)
-                self.bugCount = self.bugCount * 0.1
+                self.bugCount = self.bugCount // 10
                 self.ISaveBugCount(self.bugCount)
                 return
 
