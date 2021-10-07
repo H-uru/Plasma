@@ -600,18 +600,22 @@ void plPXPhysicalControllerCore::AddContact(plPXPhysical* phys, const hsPoint3& 
 
 void plPXPhysicalControllerCore::ModifyContacts(plPXPhysical* phys, physx::PxContactSet& contacts) const
 {
-    // Special cases for walls (aka near perpendicular collisions):
-    // When we hit a wall, we want to slide against it - it should not kill
-    // our sliding normal hack in plWalkingStrategy. Also, we need to debounce
-    // getting stuck falling in place between two objects.
-    for (physx::PxU32 i = 0; i < contacts.size(); ++i) {
-        if (contacts.getNormal(i).z >= 0.02f)
-            continue;
-        if (AreNearPerpendicularContactsDisabled()) {
-            contacts.ignore(i);
-        } else {
+    if (IsFrictionDisabled()) {
+        // https://www.youtube.com/watch?v=yP4qdefD2To
+        for (physx::PxU32 i = 0; i < contacts.size(); ++i) {
             contacts.setDynamicFriction(i, 0.f);
             contacts.setStaticFriction(i, 0.f);
+        }
+    } else {
+        const float frictionLimit = plWalkingStrategy::GetFallStartThreshold();
+        for (physx::PxU32 i = 0; i < contacts.size(); ++i) {
+            // You want to slide freely against walls and be able to jump up onto platforms.
+            // However, you don't want to slide down gently inclined ramps and hills. The
+            // latter is taken care of by default; this fixes the former.
+            if (0.02f < contacts.getNormal(i).z && contacts.getNormal(i).z < frictionLimit) {
+                contacts.setDynamicFriction(i, 0.f);
+                contacts.setStaticFriction(i, 0.f);
+            }
         }
     }
 }
@@ -637,12 +641,12 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
     const auto& controller = gControllers[controllerIdx];
     ST::string playerName = plNetClientApp::GetInstance()->GetPlayerName(controller->fOwner);
 
-    debugString = ST::format("Controller #{} [Name: {}] [Subworld: {}] [Enabled: {}] [Walls Disabled: {}] "
+    debugString = ST::format("Controller #{} [Name: {}] [Subworld: {}] [Enabled: {}] [Friction: {}] "
                              "[AV: ({.2f}, {.2f}, {.2f}) -> {.2f}]",
                              controllerIdx + 1,
                              playerName.empty() ? controller->fOwner->GetName() : playerName,
                              controller->fWorldKey ? controller->fWorldKey->GetName() : "(main world)",
-                             IsEnabled(), AreNearPerpendicularContactsDisabled(),
+                             IsEnabled(), !IsFrictionDisabled(),
                              controller->GetAchievedLinearVelocity().fX, controller->GetAchievedLinearVelocity().fY,
                              controller->GetAchievedLinearVelocity().fZ, controller->GetAchievedLinearVelocity().MagnitudeSquared());
     debugTxt.DrawString(x, y, debugString);

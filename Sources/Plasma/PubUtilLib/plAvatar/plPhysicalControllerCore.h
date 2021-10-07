@@ -103,10 +103,12 @@ public:
         kSeeking = (1<<1),
 
         /**
-         * Disables collision on contacts >= 90 degrees.
-         * This is used to help the controller get out of sticky situations where it might become stuck.
+         * Disables friction forces against all collision points.
+         * \remarks By default, the force of static friction is infinite. For some reason, PhysX seems
+         * to use static friction at inappropriate times, killing the player's Z velocity. So, this
+         * will allow you to kill static friction.
          */
-        kDisableNearPerpendicularContacts = (1<<2),
+        kDisableFriction = (1<<2),
     };
 
 public:
@@ -240,8 +242,8 @@ public:
     void SetSeek(bool seek) { hsChangeBits(fFlags, kSeeking, seek); }
     bool IsSeeking() const { return fFlags & kSeeking; }
 
-    void DisableNearPerpendicularContacts(bool disable) { hsChangeBits(fFlags, kDisableNearPerpendicularContacts, disable); }
-    bool AreNearPerpendicularContactsDisabled() const { return fFlags & kDisableNearPerpendicularContacts; }
+    void DisableFriction(bool disable) { hsChangeBits(fFlags, kDisableFriction, disable); }
+    bool IsFrictionDisabled() const { return fFlags & kDisableFriction; }
 
     // Pushing physical
     plPhysical* GetPushingPhysical() const { return fPushingPhysical; }
@@ -342,10 +344,6 @@ protected:
      */
     void IStepUp(const plControllerHitRecord& ground, float delSecs);
 
-    float GetFallStopThreshold() const { return std::cos(hsDegreesToRadians(40.f)); }
-
-    float GetFallStartThreshold() const { return std::cos(hsDegreesToRadians(60.f)); }
-
 public:
     plWalkingStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller);
 
@@ -380,6 +378,10 @@ public:
 
     plPhysical* GetPushingPhysical() const;
     bool GetFacingPushingPhysical() const;
+
+    static float GetFallStopThreshold() noexcept { return std::cos(hsDegreesToRadians(40.f)); }
+
+    static float GetFallStartThreshold() noexcept { return std::cos(hsDegreesToRadians(60.f)); }
 
 protected:
     enum

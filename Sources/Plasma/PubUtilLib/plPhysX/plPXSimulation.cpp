@@ -575,7 +575,7 @@ physx::PxRigidActor* plPXSimulation::CreateRigidActor(const physx::PxGeometry& g
     case plPXActorType::kDynamicActor:
         {
             physx::PxRigidDynamic* dynamic = fPxPhysics->createRigidDynamic(globalPose);
-            dynamic->setMaxDepenetrationVelocity(10.f);
+            dynamic->setMaxDepenetrationVelocity(kToleranceScaleSpeed);
             actor = dynamic;
             break;
         }

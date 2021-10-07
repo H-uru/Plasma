@@ -485,27 +485,7 @@ void plWalkingStrategy::Apply(float delSecs)
     fController->SetFacingPushingPhysical(false);
     fContacts.clear();
 
-    // If we are jumping against an object, our z-displacement may be killed by PhysX, so we must
-    // force the displacement. But, also, we need to make sure we don't get wedged into a stuck
-    // position or thrown back due to depenetrations.
-    if (IsControlledFlight()) {
-        hsPoint3 startPos;
-        fController->GetPositionSim(startPos);
-        hsPoint3 endPos = startPos;
-        endPos.fZ += velocity.fZ * delSecs;
-        velocity.fZ = 0.f;
-
-        const plSimDefs::Group simGroups = (plSimDefs::Group)((1 << plSimDefs::kGroupStatic) |
-                                                              (1 << plSimDefs::kGroupAvatarBlocker));
-        auto sweep = fController->SweepMulti(startPos, endPos, simGroups, true);
-        for (const auto& hit : sweep) {
-            // Hopefully prevent forced penetrations.
-            if (hit.Displacement < 0.f)
-                endPos += hit.Normal * hit.Displacement * -1.f;
-        }
-        fController->SetPositionSim(endPos);
-    }
-
+    fController->DisableFriction(!IsOnGround() || IsControlledFlight());
     fController->SetLinearVelocitySim(velocity);
 }
 
@@ -578,12 +558,6 @@ void plWalkingStrategy::Update(float delSecs)
         fTimeInAir += delSecs;
     }
 
-    // If we're falling but going nowhere, kill perpendicular collisions to prevent
-    // getting stuck falling in place between two or more objects.
-    if ((fFlags & kFallingNormal) && fTimeInAir > 0.f && fController->GetAchievedLinearVelocity().MagnitudeSquared() < 0.01f) {
-        fController->DisableNearPerpendicularContacts(true);
-    }
-
     hsVector3 zeroVelocity;
     fController->SetLinearVelocity(zeroVelocity);
 
@@ -594,7 +568,6 @@ void plWalkingStrategy::Update(float delSecs)
 
     if (IsOnGround()) {
         fFlags |= kClearImpact;
-        fController->DisableNearPerpendicularContacts(false);
     } else {
         fImpactTime = fTimeInAir;
         fImpactVelocity = fController->GetAchievedLinearVelocity();
