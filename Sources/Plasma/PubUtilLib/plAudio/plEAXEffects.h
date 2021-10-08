@@ -100,8 +100,8 @@ class hsStream;
 class plEAXSourceSoftSettings
 {
 public:
-        int16_t  fOcclusion;
-        float    fOcclusionLFRatio, fOcclusionRoomRatio, fOcclusionDirectRatio;
+        int16_t  fOcclusion, fExclusion;
+        float    fOcclusionLFRatio, fOcclusionRoomRatio, fOcclusionDirectRatio, fExclusionLFRatio;
 
         void     Read( hsStream *s );
         void     Write( hsStream *s );

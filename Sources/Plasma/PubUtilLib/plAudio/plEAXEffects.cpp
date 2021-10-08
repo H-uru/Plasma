@@ -65,6 +65,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define DebugLog   if (myLog) myLog->AddLineF
 
+
+
+ALboolean SetEFXEAXReverbProperties(EFXEAXREVERBPROPERTIES * pEFXEAXReverb, ALuint uiEffect)
+{
+    ALboolean bReturn = AL_FALSE;
+
+    if (pEFXEAXReverb)
+    {
+        // Clear AL Error code
+        alGetError();
+
+        alEffectf(uiEffect,  AL_EAXREVERB_DENSITY, pEFXEAXReverb->flDensity);
+        alEffectf(uiEffect,  AL_EAXREVERB_DIFFUSION, pEFXEAXReverb->flDiffusion);
+        alEffectf(uiEffect,  AL_EAXREVERB_GAIN, pEFXEAXReverb->flGain);
+        alEffectf(uiEffect,  AL_EAXREVERB_GAINHF, pEFXEAXReverb->flGainHF);
+        alEffectf(uiEffect,  AL_EAXREVERB_GAINLF, pEFXEAXReverb->flGainLF);
+        alEffectf(uiEffect,  AL_EAXREVERB_DECAY_TIME, pEFXEAXReverb->flDecayTime);
+        alEffectf(uiEffect,  AL_EAXREVERB_DECAY_HFRATIO, pEFXEAXReverb->flDecayHFRatio);
+        alEffectf(uiEffect,  AL_EAXREVERB_DECAY_LFRATIO, pEFXEAXReverb->flDecayLFRatio);
+        alEffectf(uiEffect,  AL_EAXREVERB_REFLECTIONS_GAIN, pEFXEAXReverb->flReflectionsGain);
+        alEffectf(uiEffect,  AL_EAXREVERB_REFLECTIONS_DELAY, pEFXEAXReverb->flReflectionsDelay);
+        alEffectfv(uiEffect, AL_EAXREVERB_REFLECTIONS_PAN, pEFXEAXReverb->flReflectionsPan);
+        alEffectf(uiEffect,  AL_EAXREVERB_LATE_REVERB_GAIN, pEFXEAXReverb->flLateReverbGain);
+        alEffectf(uiEffect,  AL_EAXREVERB_LATE_REVERB_DELAY, pEFXEAXReverb->flLateReverbDelay);
+        alEffectfv(uiEffect, AL_EAXREVERB_LATE_REVERB_PAN, pEFXEAXReverb->flLateReverbPan);
+        alEffectf(uiEffect,  AL_EAXREVERB_ECHO_TIME, pEFXEAXReverb->flEchoTime);
+        alEffectf(uiEffect,  AL_EAXREVERB_ECHO_DEPTH, pEFXEAXReverb->flEchoDepth);
+        alEffectf(uiEffect,  AL_EAXREVERB_MODULATION_TIME, pEFXEAXReverb->flModulationTime);
+        alEffectf(uiEffect,  AL_EAXREVERB_MODULATION_DEPTH, pEFXEAXReverb->flModulationDepth);
+        alEffectf(uiEffect,  AL_EAXREVERB_AIR_ABSORPTION_GAINHF, pEFXEAXReverb->flAirAbsorptionGainHF);
+        alEffectf(uiEffect,  AL_EAXREVERB_HFREFERENCE, pEFXEAXReverb->flHFReference);
+        alEffectf(uiEffect,  AL_EAXREVERB_LFREFERENCE, pEFXEAXReverb->flLFReference);
+        alEffectf(uiEffect,  AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, pEFXEAXReverb->flRoomRolloffFactor);
+        alEffecti(uiEffect,  AL_EAXREVERB_DECAY_HFLIMIT, pEFXEAXReverb->iDecayHFLimit);
+
+        if (alGetError() == AL_NO_ERROR)
+            bReturn = AL_TRUE;
+    }
+
+    return bReturn;
+}
+
 //// GetInstance /////////////////////////////////////////////////////////////
 
 plEAXListener &plEAXListener::GetInstance()
@@ -80,17 +122,10 @@ bool plEAXListener::Init(ALCdevice *alDevice)
     if(fInited)
         return true;
 
-    if(!alIsExtensionPresent((ALchar *)"EAX4.0"))       // is eax 4 supported
+    if(!alcIsExtensionPresent(alDevice, (ALchar *)"ALC_EXT_EFX"))
     {
-        if(!alIsExtensionPresent((ALchar *) "EAX4.0Emulated"))      // is an earlier version of eax supported
-        {
-            plStatusLog::AddLineS("audio.log", "EAX not supported");
-            return false;
-        }
-        else
-        {
-            plStatusLog::AddLineS("audio.log", "EAX 4 Emulated supported");
-        }
+        plStatusLog::AddLineS("audio.log", "EFX not supported");
+        return false;
     } else {
         ALCint iVerMajor, iVerMinor;
         alcGetIntegerv(alDevice, ALC_EFX_MAJOR_VERSION, 1, &iVerMajor);
@@ -98,31 +133,10 @@ bool plEAXListener::Init(ALCdevice *alDevice)
 
         plStatusLog::AddLineSF("audio.log", "EFX v{}.{} available.", iVerMajor, iVerMinor);
     }
-
-    // EAX is supported 
-    fInited = true;
-
-    try
-    {
-        // Make an EAX call here to prevent problems on WDM driver
-        unsigned int lRoom = -10000;
-
-        //SetGlobalEAXProperty(DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_ROOM, &lRoom, sizeof( unsigned int ));
-    }
-    catch (std::exception &e)
-    {
-        plStatusLog::AddLineSF("audio.log", "Unable to set EAX Property Set ({}), disabling EAX...", e.what());
-        plgAudioSys::EnableEAX(false);
-        return false;
-    }
-    catch (...)
-    {
-        plStatusLog::AddLineS("audio.log", "Unable to set EAX Property Set, disabling EAX...");
-        plgAudioSys::EnableEAX(false);
-        return false;
-    }
-
     ClearProcessCache();
+
+    // EFX is supported 
+    fInited = true;
 
     return true;
 }
@@ -136,37 +150,6 @@ void plEAXListener::Shutdown()
 
     IRelease();
 }
-/*
-bool plEAXListener::SetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize )
-{
-    if(fInited)
-    {
-        return s_EAXSet(&guid, ulProperty, 0, pData, ulDataSize) == AL_NO_ERROR;
-    }
-    return false;
-}
-
-bool plEAXListener::GetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize)
-{
-    if(fInited)
-    {
-        return s_EAXGet(&guid, ulProperty, 0, pData, ulDataSize) == AL_NO_ERROR;
-    }
-    return false;
-}
-
-bool plEAXSource::SetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize)
-{
-    return s_EAXSet(&guid, ulProperty, source, pData, ulDataSize) == AL_NO_ERROR;
-    return false;
-}
-
-bool plEAXSource::GetSourceEAXProperty(unsigned source, GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize)
-{
-    return s_EAXGet(&guid, ulProperty, source, pData, ulDataSize) == AL_NO_ERROR;
-    return false;
-}*/
-
 
 //// IRelease ////////////////////////////////////////////////////////////////
 
@@ -180,7 +163,7 @@ void plEAXListener::IRelease()
 void plEAXListener::IFail(bool fatal)
 {
     plStatusLog::AddLineS("audio.log", plStatusLog::kRed,
-                          "ERROR in plEAXListener: Could not set global eax params");
+                          "ERROR in plEAXListener: Could not set global EAX params");
 
     if(fatal)
         IRelease();
@@ -312,7 +295,6 @@ void plEAXListener::ProcessMods(const std::set<plEAXListenerMod*>& modArray)
             if( fLastWasEmpty )
                 return;
 
-            //memcpy( &finalProps, &EAX30_ORIGINAL_PRESETS[ ORIGINAL_GENERIC ], sizeof( EAXLISTENERPROPERTIES ) );
             finalProps = EFX_REVERB_PRESET_GENERIC;
             finalProps.flGain = AL_EAXREVERB_MIN_GAIN;
             finalProps.flGainLF = AL_EAXREVERB_MIN_GAINLF;
@@ -368,11 +350,9 @@ void plEAXListener::ProcessMods(const std::set<plEAXListenerMod*>& modArray)
     }
     finalProps.flAirAbsorptionGainHF *= 0.3048f; // Convert to feet
 
-
-    //if(!SetGlobalEAXProperty(DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_ALLPARAMETERS, &finalProps, sizeof( finalProps )))
-    //{
-        IFail(  false );
-    //}
+    if (SetEFXEAXReverbProperties(&finalProps, 0) == AL_FALSE) {
+        IFail(false);
+    }
 }
 
 
@@ -524,6 +504,9 @@ void    plEAXSourceSoftSettings::Reset()
     fOcclusionLFRatio = 0.25f;
     fOcclusionRoomRatio = 1.5f;
     fOcclusionDirectRatio = 1.f;
+
+    fExclusion = 0;
+    fExclusionLFRatio = 1.0f;
 }
 
 void    plEAXSourceSoftSettings::Read( hsStream *s )
@@ -549,7 +532,6 @@ void    plEAXSourceSoftSettings::SetOcclusion( int16_t occ, float lfRatio, float
     fOcclusionRoomRatio = roomRatio;
     fOcclusionDirectRatio = directRatio;
 }
-
 
 
 //// Init/Release ////////////////////////////////////////////////////////////
@@ -607,6 +589,19 @@ void plEAXSource::SetFrom(plEAXSourceSettings *settings, unsigned source, bool f
     if(dirtyParams & plEAXSourceSettings::kOcclusion)
     {
         // EFX doesn't support the high-level EAX Occlusion properties, so we'll have to calculate it ourselves.
+        float dryoccl = std::max(settings->GetCurrSofts().fOcclusionLFRatio + settings->GetCurrSofts().fOcclusionDirectRatio - 1.0f,
+                                 settings->GetCurrSofts().fOcclusionLFRatio * settings->GetCurrSofts().fOcclusionDirectRatio) *
+                        settings->GetCurrSofts().fOcclusion;
+
+        float dryocclhf = settings->GetCurrSofts().fOcclusion * settings->GetCurrSofts().fOcclusionDirectRatio;
+
+        float room_mb = settings->fRoom + settings->GetCurrSofts().fExclusion * settings->GetCurrSofts().fExclusionLFRatio +
+                        std::max(settings->GetCurrSofts().fOcclusionLFRatio + settings->GetCurrSofts().fOcclusionRoomRatio - 1.0f,
+                        settings->GetCurrSofts().fOcclusionLFRatio * settings->GetCurrSofts().fOcclusionRoomRatio) * settings->GetCurrSofts().fOcclusion;
+        float room_mbhf = settings->fRoomHF + settings->GetCurrSofts().fExclusion +
+            settings->GetCurrSofts().fOcclusion * settings->GetCurrSofts().fOcclusionRoomRatio;
+
+        //alFilterf();
         //alSourcef(source, , settings->);
         //SetSourceEAXProperty(source, DSPROPSETID_EAX_BufferProperties, DSPROPERTY_EAXBUFFER_OCCLUSION, &settings->GetCurrSofts().fOcclusion, sizeof(settings->GetCurrSofts().fOcclusion));
         //SetSourceEAXProperty(source, DSPROPSETID_EAX_BufferProperties, DSPROPERTY_EAXBUFFER_OCCLUSIONLFRATIO, &settings->GetCurrSofts().fOcclusionLFRatio, sizeof(settings->GetCurrSofts().fOcclusionLFRatio));
