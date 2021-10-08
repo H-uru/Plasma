@@ -5194,31 +5194,43 @@ PF_CONSOLE_GROUP( Age )
 
 plPythonSDLModifier* ExternFindAgePySDL();
 
-PF_CONSOLE_CMD(Age, ShowSDL, "", "Prints the age SDL values")
+template<typename _PrintStringT>
+void IShowSDL(const plStateDataRecord* rec, _PrintStringT&& PrintString)
 {
-    plStateDataRecord * rec = new plStateDataRecord;
-    if (!VaultAgeGetAgeSDL(rec)) {
-        PrintString("Age SDL not found");
-        delete rec;
-        return;
-    }
-    
     plStatusLog::AddLineS("ShowSDL.log", "-----------------------------------");
     for (unsigned i = 0; i < rec->GetNumVars(); ++i) {
-        plStateVariable * var = rec->GetVar(i);
-        if (plSimpleStateVariable * simple = var->GetAsSimpleStateVar()) {
-            ST::string line = var->GetName();
-            line += "=";
+        plStateVariable* var = rec->GetVar(i);
+        if (plSimpleStateVariable* simple = var->GetAsSimpleStateVar()) {
+            ST::string_stream ss;
+            ss << var->GetName() << '=';
             for (unsigned j = 0; j < simple->GetCount(); ++j) {
-                line += simple->GetAsString(j);
-                line += ",";
+                ss << simple->GetAsString(j);
+                ss << ',';
             }
+            ST::string line = ss.to_string();
             PrintString(line.c_str());
             plStatusLog::AddLineS("ShowSDL.log", line);
         }
-    }   
-    
-    delete rec;
+    }
+}
+
+PF_CONSOLE_CMD(Age, ShowPythonSDL, "", "Prints the Python AgeSDL values")
+{
+    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    if (sdlMod && sdlMod->GetStateCache() != nullptr) {
+        IShowSDL(sdlMod->GetStateCache(), PrintString);
+    } else {
+        PrintString("Python Age SDL not found");
+    }
+}
+
+PF_CONSOLE_CMD(Age, ShowVaultSDL, "", "Prints the age vault SDL values")
+{
+    auto rec = std::make_unique<plStateDataRecord>();
+    if (VaultAgeGetAgeSDL(rec.get()))
+        IShowSDL(rec.get(), PrintString);
+    else
+        PrintString("Age Vault SDL not found");
 }
 
 PF_CONSOLE_CMD( Age, GetElapsedDays, "string agedefnfile", "Gets the elapsed days and fractions" )
