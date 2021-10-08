@@ -128,6 +128,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plModifier/plSDLModifier.h"
 #include "plModifier/plSimpleModifier.h"
 #include "plNetClient/plNetClientMgr.h"
+#include "plNetMessage/plNetMessage.h"
 #include "plParticleSystem/plConvexVolume.h"
 #include "plParticleSystem/plParticleEffect.h"
 #include "plParticleSystem/plParticleGenerator.h"
@@ -5231,6 +5232,41 @@ PF_CONSOLE_CMD(Age, ShowVaultSDL, "", "Prints the age vault SDL values")
         IShowSDL(rec.get(), PrintString);
     else
         PrintString("Age Vault SDL not found");
+}
+
+PF_CONSOLE_CMD(Age, ResetPythonSDL, "", "Resets the Python Age SDL")
+{
+    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    if (sdlMod == nullptr) {
+        PrintString("Python Age SDL not found");
+        return;
+    }
+
+    auto rec = std::make_unique<plStateDataRecord>(sdlMod->GetSDLName());
+    for (size_t i = 0; i < rec->GetNumVars(); ++i) {
+        rec->GetVar(i)->Reset();
+        rec->GetVar(i)->SetFromDefaults(true);
+    }
+    rec->FlagDifferentState(*sdlMod->GetStateCache());
+
+    if (rec->IsDirty()) {
+        PrintString("Sending reset message to server...");
+
+        constexpr uint32_t writeOptions = plSDL::kDirtyOnly | plSDL::kBroadcast | plSDL::kTimeStampOnRead;
+        plNetMsgSDLState* netMsg = rec->PrepNetMsg(0.f, writeOptions);
+        netMsg->SetNetProtocol(kNetProtocolCli2Game);
+        netMsg->ObjectInfo()->SetUoid(sdlMod->GetStateOwnerKey()->GetUoid());
+        netMsg->SetPlayerID(plNetClientApp::GetInstance()->GetPlayerID());
+        plNetClientApp::GetInstance()->SendMsg(netMsg);
+        netMsg->UnRef();
+
+        // Ideally, we'd echo back from the server, but who knows if the diaspora
+        // will handle that correctly. So, just deliver the new state locally.
+        plStateChangeNotifier::SetCurrentPlayerID(0);
+        sdlMod->ReceiveState(rec.get());
+    } else {
+        PrintString("Nothing to reset!");
+    }
 }
 
 PF_CONSOLE_CMD( Age, GetElapsedDays, "string agedefnfile", "Gets the elapsed days and fractions" )
