@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyPythonInterface.h"
 
 #include "plPythonFileMod.h"
+#include "pyObjectRef.h"
 #include "cyMisc.h"
 
 #include "pnSceneObject/plSceneObject.h"
@@ -155,19 +156,22 @@ void plPythonSDLModifier::SetItem(const ST::string& key, PyObject* value)
 template<>
 void plPythonSDLModifier::SetItem(const ST::string& key, int index, bool value)
 {
-    SetItemIdx(key, index, PyLong_FromLong(value ? 1 : 0), true);
+    pyObjectRef pyValue = PyLong_FromLong(value ? 1 : 0);
+    SetItemIdx(key, index, pyValue.Get(), true);
 }
 
 template<>
 void plPythonSDLModifier::SetItem(const ST::string& key, int index, float value)
 {
-    SetItemIdx(key, index, PyFloat_FromDouble(value), true);
+    pyObjectRef pyValue = PyFloat_FromDouble(value);
+    SetItemIdx(key, index, pyValue.Get(), true);
 }
 
 template<>
 void plPythonSDLModifier::SetItem(const ST::string& key, int index, int value)
 {
-    SetItemIdx(key, index, PyLong_FromLong(value), true);
+    pyObjectRef pyValue = PyLong_FromLong(value);
+    SetItemIdx(key, index, pyValue.Get(), true);
 }
 
 void plPythonSDLModifier::SetDefault(const ST::string& key, PyObject* value)
