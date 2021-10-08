@@ -155,7 +155,7 @@ void plPythonSDLModifier::SetItem(const ST::string& key, PyObject* value)
 template<>
 void plPythonSDLModifier::SetItem(const ST::string& key, int index, bool value)
 {
-    SetItemIdx(key, index, PyBool_FromLong(value), true);
+    SetItemIdx(key, index, PyLong_FromLong(value ? 1 : 0), true);
 }
 
 template<>
@@ -448,7 +448,7 @@ PyObject* plPythonSDLModifier::ISDLVarIdxToPython(plSimpleStateVariable* var, in
         {
             bool v;
             var->Get(&v, idx);
-            return PyBool_FromLong(v ? 1: 0);
+            return PyLong_FromLong(v ? 1: 0);
         }
 
     case plVarDescriptor::kString32:
