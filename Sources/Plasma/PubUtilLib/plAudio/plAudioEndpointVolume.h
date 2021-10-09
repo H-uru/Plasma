@@ -61,6 +61,8 @@ enum class plAudioEndpointType
 class plAudioEndpointVolume
 {
 public:
+    virtual ~plAudioEndpointVolume() = default;
+
     /**
      * Gets the volume of this audio endpoint.
      * This gets the volume of the given audio endpoint as a percentage from 0.0 to 1.0, inclusive.
