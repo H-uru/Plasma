@@ -190,29 +190,6 @@ STATEDESC GoMePubNew
     VAR BOOL    islmGZBeamVis[1]                 DEFAULT=0    DEFAULTOPTION=VAULT
     VAR BOOL    SinkStat[1]                      DEFAULT=0
     VAR BOOL    ChisoBookVis[1]                  DEFAULT=0    DEFAULTOPTION=VAULT
-# Christmas/Hanukkah Decor
-    VAR BOOL    XMasVis[1]                       DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated
-    VAR BOOL    gmpnMenorahFlame01[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated (see gmpnMenFlameStat below)
-    VAR BOOL    gmpnMenorahFlame02[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated (see gmpnMenFlameStat below)
-    VAR BOOL    gmpnMenorahFlame03[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated (see gmpnMenFlameStat below)
-    VAR BOOL    gmpnMenorahFlame04[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated (see gmpnMenFlameStat below)
-    VAR BOOL    gmpnMenorahFlame05[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated (see gmpnMenFlameStat below)
-    VAR BOOL    gmpnMenorahFlame06[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated (see gmpnMenFlameStat below)
-    VAR BOOL    gmpnMenorahFlame07[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated (see gmpnMenFlameStat below)
-    VAR BOOL    gmpnMenorahFlame08[1]            DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated (see gmpnMenFlameStat below)
-    VAR BOOL    gmpnMenorahFlameShammash[1]      DEFAULT=0    DEFAULTOPTION=VAULT # Depreciated (see gmpnMenFlameStat below)
-# Pride Decor
-    VAR BOOL    gmpnPrideDecoVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
-# Halloween Deco (depreciated)
-    VAR BOOL    gmpnHalloweenVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
-# Fall/Thanksgiving (depreciated)
-    VAR BOOL    gmpnFallThanksVis[1]             DEFAULT=0    DEFAULTOPTION=VAULT
-# New Year Deco (depreciated)
-    VAR BOOL    gmpnNewYearVis[1]                DEFAULT=0    DEFAULTOPTION=VAULT
-# St Patricks Day Deco (depreciated)
-    VAR BOOL    gmpnStPatsDayVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
-# Tiki Deco for GreyDragon (depreciated)
-    VAR BOOL    gmpnTikiDecoVis[1]               DEFAULT=0    DEFAULTOPTION=VAULT
 # New Holiday Deco SDL (USE THIS FOR ALL HOLIDAY DECO!)
     VAR BYTE    gmpnHolidayVis[1]                   DEFAULT=0    DEFAULTOPTION=VAULT
 #       List of Integers/holidays:
