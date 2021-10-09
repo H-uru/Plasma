@@ -83,16 +83,16 @@ behSpeaker04            = ptAttribResponder(25, "Beh: Speaker04")
 behSpotlight01          = ptAttribResponder(26, "Beh: Spotlight01")
 behSpotlight02          = ptAttribResponder(27, "Beh: Spotlight02")
 behSpotlight03          = ptAttribResponder(28, "Beh: Spotlight03")
-behPodLights            = ptAttribResponder(29, "Beh: Pod Lights", ["1", "0"])
+behPodLights            = ptAttribResponder(29, "Beh: Pod Lights", ["on", "off"])
 
-respSpeaker01           = ptAttribResponder(30, "Resp: Speaker01", ["1", "0"], netForce=1)
-respSpeaker02           = ptAttribResponder(31, "Resp: Speaker02", ["1", "0"], netForce=1)
-respSpeaker03           = ptAttribResponder(32, "Resp: Speaker03", ["1", "0"], netForce=1)
-respSpeaker04           = ptAttribResponder(33, "Resp: Speaker04", ["1", "0"], netForce=1)
-#respSpotlight01         = ptAttribNamedResponder(34, "Resp: Spotlight01", ["1", "0"])
-#respSpotlight02         = ptAttribNamedResponder(35, "Resp: Spotlight02", ["1", "0"])
-#respSpotlight03         = ptAttribNamedResponder(36, "Resp: Spotlight03", ["1", "0"])
-respPodLights           = ptAttribResponder(37, "Resp: Pod Lights", ["1", "0"], netForce=1)
+respSpeaker01           = ptAttribResponder(30, "Resp: Speaker01", ["on", "off"], netForce=1)
+respSpeaker02           = ptAttribResponder(31, "Resp: Speaker02", ["on", "off"], netForce=1)
+respSpeaker03           = ptAttribResponder(32, "Resp: Speaker03", ["on", "off"], netForce=1)
+respSpeaker04           = ptAttribResponder(33, "Resp: Speaker04", ["on", "off"], netForce=1)
+#respSpotlight01         = ptAttribNamedResponder(34, "Resp: Spotlight01", ["on", "off"])
+#respSpotlight02         = ptAttribNamedResponder(35, "Resp: Spotlight02", ["on", "off"])
+#respSpotlight03         = ptAttribNamedResponder(36, "Resp: Spotlight03", ["on", "off"])
+respPodLights           = ptAttribResponder(37, "Resp: Pod Lights", ["on", "off"], netForce=1)
 
 boolEmergencyPower      = ptAttribBoolean(38, "Emergency Power Only")
 
@@ -182,27 +182,27 @@ class xPodBattery(ptResponder):
         BatteryLastUpdated = ageSDL[SDLBatteryLastUpdated.value][0]
 
         if ageSDL[SDLPodLights.value][0]:
-            respPodLights.run(self.key, state="1", fastforward=1)
-            behPodLights.run(self.key, state="1", fastforward=1)
+            respPodLights.run(self.key, state="on", fastforward=True)
+            behPodLights.run(self.key, state="on", fastforward=True)
         if ageSDL[SDLSpeaker01.value][0]:
-            respSpeaker01.run(self.key, state="1", fastforward=1)
+            respSpeaker01.run(self.key, state="on", fastforward=True)
         if ageSDL[SDLSpeaker02.value][0]:
-            respSpeaker02.run(self.key, state="1", fastforward=1)
+            respSpeaker02.run(self.key, state="on", fastforward=True)
         if ageSDL[SDLSpeaker03.value][0]:
-            respSpeaker03.run(self.key, state="1", fastforward=1)
+            respSpeaker03.run(self.key, state="on", fastforward=True)
         if ageSDL[SDLSpeaker04.value][0]:
-            respSpeaker04.run(self.key, state="1", fastforward=1)
+            respSpeaker04.run(self.key, state="on", fastforward=True)
         #if ageSDL[SDLSpotlight01.value][0]:
-        #    respSpotlight01.run(self.key, state="1", fastforward=1)
+        #    respSpotlight01.run(self.key, state="on", fastforward=True)
         #if ageSDL[SDLSpotlight02.value][0]:
-        #    respSpotlight02.run(self.key, state="1", fastforward=1)
+        #    respSpotlight02.run(self.key, state="on", fastforward=True)
         #if ageSDL[SDLSpotlight03.value][0]:
-        #    respSpotlight03.run(self.key, state="1", fastforward=1)
+        #    respSpotlight03.run(self.key, state="on", fastforward=True)
 
         PtDebugPrint("xPodBattery: The Pod Battery has %s of a possible %s units." % (BatteryCharge, BatteryCapacity))
         CurrentTime = PtGetDniTime()
         
-        if len(PtGetPlayerList()) == 0:
+        if not PtGetPlayerList():
             if BatteryLastUpdated == 0:
                 ageSDL[SDLBatteryLastUpdated.value] = (CurrentTime,)
                 PtDebugPrint("xPodBattery: This is your first time here. The Battery has never been updated.")
@@ -376,8 +376,8 @@ class xPodBattery(ptResponder):
         
         if id == actPodLights.id and state:
             Avvie = PtFindAvatar(events)
-            newVal = int(not ageSDL[SDLPodLights.value][0])
-            behPodLights.run(self.key, state=str(newVal), avatar=Avvie)
+            newVal = not ageSDL[SDLPodLights.value][0]
+            behPodLights.run(self.key, state="on" if newVal else "off", avatar=Avvie)
         
         elif id == actSpeaker01.id and state:
             Avvie = PtFindAvatar(events)
@@ -409,35 +409,35 @@ class xPodBattery(ptResponder):
 
         elif self.sceneobject.isLocallyOwned():
             if id == behPodLights.id:
-                newVal = int(not ageSDL[SDLPodLights.value][0])
+                newVal = not ageSDL[SDLPodLights.value][0]
                 ageSDL[SDLPodLights.value] = (newVal,)
             elif id == behSpeaker01.id:
                 if ageSDL[SDLPodLights.value][0]:
-                    newVal = int(not ageSDL[SDLSpeaker01.value][0])
+                    newVal = not ageSDL[SDLSpeaker01.value][0]
                     ageSDL[SDLSpeaker01.value] = (newVal,)
             elif id == behSpeaker02.id:
                 if ageSDL[SDLPodLights.value][0]:
-                    newVal = int(not ageSDL[SDLSpeaker02.value][0])
+                    newVal = not ageSDL[SDLSpeaker02.value][0]
                     ageSDL[SDLSpeaker02.value] = (newVal,)
             elif id == behSpeaker03.id:
                 if ageSDL[SDLPodLights.value][0]:
-                    newVal = int(not ageSDL[SDLSpeaker03.value][0])
+                    newVal = not ageSDL[SDLSpeaker03.value][0]
                     ageSDL[SDLSpeaker03.value] = (newVal,)
             elif id == behSpeaker04.id:
                 if ageSDL[SDLPodLights.value][0]:
-                    newVal = int(not ageSDL[SDLSpeaker04.value][0])
+                    newVal = not ageSDL[SDLSpeaker04.value][0]
                     ageSDL[SDLSpeaker04.value] = (newVal,)
             elif id == behSpotlight01.id:
                 if ageSDL[SDLPodLights.value][0]:
-                    newVal = int(not ageSDL[SDLSpotlight01.value][0])
+                    newVal = not ageSDL[SDLSpotlight01.value][0]
                     ageSDL[SDLSpotlight01.value] = (newVal,)
             elif id == behSpotlight02.id:
                 if ageSDL[SDLPodLights.value][0]:
-                    newVal = int(not ageSDL[SDLSpotlight02.value][0])
+                    newVal = not ageSDL[SDLSpotlight02.value][0]
                     ageSDL[SDLSpotlight02.value] = (newVal,)
             elif id == behSpotlight03.id:
                 if ageSDL[SDLPodLights.value][0]:
-                    newVal = int(not ageSDL[SDLSpotlight03.value][0])
+                    newVal = not ageSDL[SDLSpotlight03.value][0]
                     ageSDL[SDLSpotlight03.value] = (newVal,)
         
     ###########################
@@ -447,7 +447,7 @@ class xPodBattery(ptResponder):
 
         if self.sceneobject.isLocallyOwned():
             if VARname == SDLPodLights.value:
-                respPodLights.run(self.key, state=str(ageSDL[SDLPodLights.value][0]))
+                respPodLights.run(self.key, state="on" if ageSDL[SDLPodLights.value][0] else "off")
                 if not ageSDL[SDLPodLights.value][0]:
                     PtDebugPrint("xPodBattery.OnSDLNotify(): Tripping all SDLs to negative")
                     respPodLightsTripped.run(self.key)
@@ -460,13 +460,13 @@ class xPodBattery(ptResponder):
                     ageSDL[SDLSpotlight03.value] = (0,)
 
             elif VARname == SDLSpeaker01.value:
-                respSpeaker01.run(self.key, state=str(ageSDL[SDLSpeaker01.value][0]))
+                respSpeaker01.run(self.key, state="on" if ageSDL[SDLSpeaker01.value][0] else "off")
 
             elif VARname == SDLSpeaker02.value:
-                respSpeaker02.run(self.key, state=str(ageSDL[SDLSpeaker02.value][0]))
+                respSpeaker02.run(self.key, state="on" if ageSDL[SDLSpeaker02.value][0] else "off")
 
             elif VARname == SDLSpeaker03.value:
-                respSpeaker03.run(self.key, state=str(ageSDL[SDLSpeaker03.value][0]))
+                respSpeaker03.run(self.key, state="on" if ageSDL[SDLSpeaker03.value][0] else "off")
 
             elif VARname == SDLSpeaker04.value:
-                respSpeaker04.run(self.key, state=str(ageSDL[SDLSpeaker04.value][0]))
+                respSpeaker04.run(self.key, state="on" if ageSDL[SDLSpeaker04.value][0] else "off")
