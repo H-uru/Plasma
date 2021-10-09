@@ -362,6 +362,13 @@ class pfJournalDlgProc : public pfGUIDialogProc
                                 fBook->fLeftPageMap->SetCustomCursor( plInputInterface::kCursorUp );
                         }
                     }
+                    else if (event == pfGUIClickMapCtrl::kMouseDragged)
+                    {
+                        if (fBook->fCurrBook->IFindCurrVisibleLink(false, true) != -1)
+                            fBook->fLeftPageMap->SetCustomCursor(plInputInterface::kCursorClicked);
+                        else
+                            fBook->fLeftPageMap->SetCustomCursor(plInputInterface::kCursorUp);
+                    }
                 }
                 else if( ctrl == fBook->fRightPageMap )
                 {
@@ -379,6 +386,13 @@ class pfJournalDlgProc : public pfGUIDialogProc
                             else
                                 fBook->fRightPageMap->SetCustomCursor( plInputInterface::kCursorUp );
                         }
+                    }
+                    else if (event == pfGUIClickMapCtrl::kMouseDragged)
+                    {
+                        if (fBook->fCurrBook->IFindCurrVisibleLink(true, true) != -1)
+                            fBook->fRightPageMap->SetCustomCursor(plInputInterface::kCursorClicked);
+                        else
+                            fBook->fRightPageMap->SetCustomCursor(plInputInterface::kCursorUp);
                     }
                 }
             }
@@ -543,7 +557,9 @@ void pfBookData::IInitTemplate(pfGUIDialogMod *templateDlg)
     if ((lay != nullptr) && (lay->GetTexture() != nullptr))
         hsgResMgr::ResMgr()->AddViaNotify(lay->GetTexture()->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, kRefDefaultCover), plRefFlags::kPassiveRef);  
 
+    fLeftPageMap->SetFlag(pfGUIClickMapCtrl::kReportDragging);
     fLeftPageMap->SetFlag(pfGUIClickMapCtrl::kReportHovering);
+    fRightPageMap->SetFlag(pfGUIClickMapCtrl::kReportDragging);
     fRightPageMap->SetFlag(pfGUIClickMapCtrl::kReportHovering);
 
     fLeftEditCtrl = pfGUIMultiLineEditCtrl::ConvertNoRef(templateDlg->GetControlFromTag(pfJournalDlgProc::kTagLeftEditCtrl));
