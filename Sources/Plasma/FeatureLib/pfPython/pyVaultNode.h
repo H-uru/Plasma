@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
+#include "pyObjectRef.h"
 #include "hsRefCnt.h"
 
 struct RelVaultNode;
@@ -82,13 +83,23 @@ class pyVaultNode
 public:
     struct pyVaultNodeOperationCallback
     {
-        PyObject *          fCbObject;
+        pyObjectRef         fCbObject;
         hsRef<RelVaultNode> fNode;
-        PyObject *          fPyNodeRef;
+        pyObjectRef         fPyNodeRef;
         uint32_t            fContext;
 
-        pyVaultNodeOperationCallback(PyObject * cbObject);
-        ~pyVaultNodeOperationCallback();
+        pyVaultNodeOperationCallback()
+            : fContext()
+        { }
+
+        /** Constructs a new operation callback from a borrowed reference */
+        explicit pyVaultNodeOperationCallback(PyObject* cbObject) noexcept
+            : fCbObject(cbObject, pyObjectNewRef), fContext()
+        { }
+
+        explicit pyVaultNodeOperationCallback(pyObjectRef cbObject) noexcept
+            : fCbObject(std::move(cbObject)), fContext()
+        { }
 
         void VaultOperationStarted(uint32_t context);
         void VaultOperationComplete(uint32_t context, int resultCode);

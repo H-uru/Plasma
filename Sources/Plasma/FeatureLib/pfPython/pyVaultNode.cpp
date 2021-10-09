@@ -59,6 +59,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyImage.h"
 #include "pyDniCoordinates.h"
+#include "pyObjectRef.h"
+#include "plPythonCallable.h"
 #include "pyVaultNodeRef.h"
 #include "pyVaultFolderNode.h"
 #include "pyVaultPlayerInfoListNode.h"
@@ -80,38 +82,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////////////
 
-pyVaultNode::pyVaultNodeOperationCallback::pyVaultNodeOperationCallback(PyObject * cbObject)
-: fCbObject( cbObject )
-, fPyNodeRef()
-, fContext()
-{
-    Py_XINCREF( fCbObject );
-}
-
-pyVaultNode::pyVaultNodeOperationCallback::~pyVaultNodeOperationCallback()
-{
-    Py_XDECREF( fCbObject );
-}
-
 void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( uint32_t context )
 {
     fContext = context;
-    if ( fCbObject )
-    {
+    if (fCbObject) {
         // Call the callback.
-        if (PyObject_HasAttrString( fCbObject, "vaultOperationStarted" ))
-        {
-            PyObject* func = nullptr;
-            func = PyObject_GetAttrString( fCbObject, "vaultOperationStarted" );
-            if ( func )
-            {
-                if ( PyCallable_Check(func)>0 )
-                {
-                    PyObject* retVal = PyObject_CallMethod(fCbObject,
-                                            _pycs("vaultOperationStarted"), _pycs("l"), context);
-                    Py_XDECREF(retVal);
-                }
-            }
+        if (PyObject_HasAttrString(fCbObject.Get(), "vaultOperationStarted")) {
+            pyObjectRef func = PyObject_GetAttrString(fCbObject.Get(), "vaultOperationStarted");
+            if (func && PyCallable_Check(func.Get()))
+                plPythonCallable::CallObject(func, context);
         }
     }
 }
@@ -119,27 +98,15 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( uint32_t 
 
 void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete( uint32_t context, int resultCode )
 {
-    if ( fCbObject )
-    {
+    if (fCbObject) {
         // Call the callback.
-        if (PyObject_HasAttrString( fCbObject, "vaultOperationComplete" ))
-        {
-            PyObject* func = nullptr;
-            func = PyObject_GetAttrString( fCbObject, "vaultOperationComplete" );
-            if ( func )
-            {
-                if ( PyCallable_Check(func)>0 )
-                {
-                    PyObject * pyNode = pyVaultNode::New(fNode);
-                    PyObject* t = PyTuple_New(2);
-                    PyTuple_SetItem(t, 0, pyNode);
-                    PyTuple_SetItem(t, 1, fPyNodeRef);
-                    PyObject* retVal = PyObject_CallMethod(fCbObject,
-                                            _pycs("vaultOperationComplete"), _pycs("lOi"),
-                                            context, t, resultCode);
-                    Py_XDECREF(retVal);
-                    Py_DECREF(t);
-                }
+        if (PyObject_HasAttrString(fCbObject.Get(), "vaultOperationComplete")) {
+            pyObjectRef func = PyObject_GetAttrString(fCbObject.Get(), "vaultOperationComplete");
+            if (func && PyCallable_Check(func.Get())) {
+                pyObjectRef tup = PyTuple_New(2);
+                PyTuple_SET_ITEM(tup.Get(), 0, pyVaultNode::New(fNode));
+                PyTuple_SET_ITEM(tup.Get(), 1, fPyNodeRef.Release());
+                plPythonCallable::CallObject(func, context, tup, resultCode);
             }
         }
     }
@@ -375,8 +342,8 @@ PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, uint32_t
                 pynode->fNode = newNode;
         }
 
-        PyObject* nodeRef = cb->fPyNodeRef = pyVaultNodeRef::New(fNode, pynode->fNode);
-        Py_INCREF(nodeRef); // The callback steals the ref, according to Eric...
+        pyObjectRef nodeRef = pyVaultNodeRef::New(fNode, pynode->fNode);
+        cb->fPyNodeRef = nodeRef;
         cb->SetNode(pynode->fNode);
 
         VaultAddChildNode(fNode->GetNodeId(),
@@ -386,9 +353,9 @@ PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, uint32_t
                           cb
         );
 
-        // Evil undocumented functionality that some fool
-        // decided to use in xKI.py. Really???
-        return nodeRef;
+        // This return value is undocumented, but we maintain it for backwards compatibility.
+        // Be sure to NOT decrement the reference count.
+        return nodeRef.Release();
     }
     else
     {
