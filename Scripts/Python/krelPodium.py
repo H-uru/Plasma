@@ -61,7 +61,7 @@ class krelPodium(ptResponder):
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
         if not PtGetPlayerList():
-            ageSDL["nb01CmnRmSpeech"] = (0, )
+            ageSDL["nb01CmnRmSpeech"] = (0,)
         ageSDL.setNotify(self.key, "nb01CmnRmSpeech", 0.0)
         ageSDL.sendToClients("nb01CmnRmSpeech")
         ageSDL.setFlags("nb01CmnRmSpeech", 1, 1)
@@ -81,9 +81,9 @@ class krelPodium(ptResponder):
             nb01CmnRmSpeech -= 1
             if nb01CmnRmSpeech < 0:
                 nb01CmnRmSpeech = len(respList.byObject) - 1
-            respName = (stringFormat.value % (nb01CmnRmSpeech))
+            respName = (stringFormat.value % nb01CmnRmSpeech)
             if respName in respList.byObject:
-                ageSDL["nb01CmnRmSpeech"] = (nb01CmnRmSpeech, )
+                ageSDL["nb01CmnRmSpeech"] = (nb01CmnRmSpeech,)
             else:
                 PtDebugPrint(f"ERROR: krelPodium Invalid speech {nb01CmnRmSpeech} selected!")
                 ageSDL["nb01CmnRmSpeech"] = (0,)
