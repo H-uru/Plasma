@@ -115,19 +115,19 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
 
     serial = serial % 999;
 
-    ST::string newName = ST::format("{}{}{3}\x000", host->GetName(), guest->GetName(), serial++);
+    ST::string newName = ST::format("{}{}{3}\x000", fHostKey->GetName(), fGuestKey->GetName(), serial++);
     
-    plKey newKey = hsgResMgr::ResMgr()->NewKey(newName, this, host->GetUoid().GetLocation());
+    plKey newKey = hsgResMgr::ResMgr()->NewKey(newName, this, fHostKey->GetUoid().GetLocation());
 
     plKey avMgrKey = plAvatarMgr::GetInstance()->GetKey();
 
-    guestBrain->SetRecipient(avMgrKey);
-    hostBrain->SetRecipient(avMgrKey);
+    fGuestBrain->SetRecipient(avMgrKey);
+    fHostBrain->SetRecipient(avMgrKey);
     // disable our clickability here if we are the guest
-    if (plNetClientApp::GetInstance()->GetLocalPlayerKey() == guest)
+    if (plNetClientApp::GetInstance()->GetLocalPlayerKey() == fGuestKey)
     {
         plInputIfaceMgrMsg* pMsg = new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kGUIDisableAvatarClickable);
-        pMsg->SetAvKey(guest);
+        pMsg->SetAvKey(fGuestKey);
         pMsg->SetBCastFlag(plMessage::kNetPropagate);
         pMsg->SetBCastFlag(plMessage::kNetForce);
         pMsg->Send();
