@@ -64,7 +64,7 @@ public:
     pyObjectRef(PyObject* object, pyObjectNewRef_Type)
         : fPyObject(object)
     {
-        Py_INCREF(object);
+        Py_XINCREF(object);
     }
 
     pyObjectRef(std::nullptr_t, pyObjectNewRef_Type) = delete;
