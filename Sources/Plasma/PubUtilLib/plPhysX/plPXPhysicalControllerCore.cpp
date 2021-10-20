@@ -542,7 +542,7 @@ void plPXPhysicalControllerCore::ICreateController(hsPoint3 pos)
     physx::PxTransform globalPose(plPXConvert::Point(IGetCapsulePos(pos)));
 
     fActor = (physx::PxRigidDynamic*)sim->CreateRigidActor(capsule, globalPose, localPose,
-                                                           1.f, 0.f, 0.f,
+                                                           .5f, 0.f, 0.f,
                                                            plPXActorType::kDynamicActor);
     fActor->userData = new plPXActorData(this);
     plPXFilterData::Initialize(fActor, plSimDefs::kGroupAvatar, 0, fLOSDB);
