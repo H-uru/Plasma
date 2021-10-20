@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include <string_theory/format>
 
+#include "HeadSpin.h"
 #include "plProfile.h"
 
 #include "cyPythonInterface.h"
@@ -195,6 +196,15 @@ namespace plPythonCallable
         std::variant_alternative_t<_AlternativeN, std::decay_t<decltype(cb)>> cbFunc;
         BuildCallback(std::move(parentCall), callable, cbFunc);
         cb = std::move(cbFunc);
+    }
+
+    template<typename... Args>
+    inline pyObjectRef CallObject(const pyObjectRef& callable, Args&&... args)
+    {
+        hsAssert(PyCallable_Check(callable.Get()), "Trying to call a non-callable, eh?");
+        pyObjectRef tup = PyTuple_New(sizeof...(args));
+        BuildTupleArgs<sizeof...(args)>(tup.Get(), std::forward<Args>(args)...);
+        return PyObject_CallObject(callable.Get(), tup.Get());
     }
 };
 
