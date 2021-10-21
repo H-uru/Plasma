@@ -55,9 +55,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAnimation/plMatrixChannel.h"
 
-// Gravity constants
-#define kGravity -32.174f
-#define kTerminalVelocity kGravity
+// Gravity constant
+constexpr float kGravity = -32.174f;
+
+// Don't continue to accelerate ad infinitum.
+constexpr float kTerminalVelocity = kGravity * 2.f;
+
+// A little bit of extra oomph to keep us sticking to the ground.
+constexpr float kGravityOnGround = kGravity * 1.5f;
 
 static inline hsVector3 GetYAxis(hsMatrix44 &mat) { return hsVector3(mat.fMap[1][0], mat.fMap[1][1], mat.fMap[1][2]); }
 static float AngleRad2d(float x1, float y1, float x3, float y3);
@@ -410,6 +415,7 @@ void plWalkingStrategy::Apply(float delSecs)
 {
     hsVector3 velocity = fController->GetLinearVelocity();
     hsVector3 achievedVelocity = fController->GetAchievedLinearVelocity();
+    float gravity = IsOnGround() ? kGravityOnGround : kGravity;
 
     if (!(fFlags & kGroundContact)) {
         // Maintain momentum from the previous frame
@@ -418,10 +424,10 @@ void plWalkingStrategy::Apply(float delSecs)
         if (std::abs(velocity.fY) < 0.001f)
             velocity.fY = achievedVelocity.fY;
         if (std::fabs(velocity.fZ) < 0.001f)
-            velocity.fZ = achievedVelocity.fZ + (kGravity * delSecs);
+            velocity.fZ = achievedVelocity.fZ + (gravity * delSecs);
     } else if (fFlags & kFallingNormal) {
         if (std::fabs(velocity.fZ) < 0.001f) {
-            velocity.fZ = std::min(0.f, achievedVelocity.fZ) + (kGravity * delSecs);
+            velocity.fZ = std::min(0.f, achievedVelocity.fZ) + (gravity * delSecs);
             hsVector3 velNorm = velocity;
             hsVector3 offset;
             for (const auto& collision : fContacts) {
@@ -453,7 +459,7 @@ void plWalkingStrategy::Apply(float delSecs)
         if (!ground || !ground->GetPhysical()) {
             // This will happen if the ground got paged out from under us.
             // Yes, I am looking at you, Minkata.
-            velocity.fZ = achievedVelocity.fZ + (kGravity * delSecs);
+            velocity.fZ = achievedVelocity.fZ + (gravity * delSecs);
         } else if (ground->GetPhysical()->GetLinearVelocitySim(groundVel)) {
             // Don't want to inherit the velocity of a kickable -- that results in near infinite
             // acceleration, which sucks.
@@ -463,15 +469,13 @@ void plWalkingStrategy::Apply(float delSecs)
             }
             if (std::fabs(velocity.fZ) < 0.001f) {
                 if (std::fabs(groundVel.fZ) < 0.001f) {
-                    float zcomp = 1.f - std::max(0.f, ground->Normal.fZ);
-                    velocity.fZ = achievedVelocity.fZ + (kGravity * zcomp * delSecs);
+                    velocity.fZ = achievedVelocity.fZ + (gravity * delSecs);
                 } else {
                     velocity.fZ = groundVel.fZ;
                 }
             }
         } else if (std::fabs(velocity.fZ) < 0.001f) {
-            float zcomp = 1.f - std::max(0.f, ground->Normal.fZ);
-            velocity.fZ = achievedVelocity.fZ + (kGravity * zcomp * delSecs);
+            velocity.fZ = achievedVelocity.fZ + (gravity * delSecs);
         }
 
         // Kill upward velocity if we're just running along the ground.
@@ -482,7 +486,7 @@ void plWalkingStrategy::Apply(float delSecs)
     // Limit final requested downward velocity to the magnitude of the acceleration of gravity.
     // It's not the way R/L works, but it yields a better visual result.
     if (!(fFlags & kGroundContact))
-        velocity.fZ = std::max(velocity.fZ, kGravity);
+        velocity.fZ = std::max(velocity.fZ, kTerminalVelocity);
 
     // Reset vars and move the controller
     fController->SetPushingPhysical(nullptr);
