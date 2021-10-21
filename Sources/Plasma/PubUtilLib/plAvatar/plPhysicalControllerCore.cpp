@@ -485,7 +485,6 @@ void plWalkingStrategy::Apply(float delSecs)
     fController->SetFacingPushingPhysical(false);
     fContacts.clear();
 
-    fController->DisableFriction(!IsOnGround() || IsControlledFlight());
     fController->SetLinearVelocitySim(velocity);
 }
 

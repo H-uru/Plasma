@@ -266,6 +266,8 @@ void plPXPhysicalControllerCore::SetPositionSim(const hsPoint3& pos)
 
 void plPXPhysicalControllerCore::SetLinearVelocitySim(const hsVector3& velocity)
 {
+    // Walking backwards on the flat ground is 20 ft/s^2.
+    DisableFriction(velocity.MagnitudeSquared() > 1.f);
     fActor->setLinearVelocity(plPXConvert::Vector(velocity));
 }
 
@@ -542,7 +544,7 @@ void plPXPhysicalControllerCore::ICreateController(hsPoint3 pos)
     physx::PxTransform globalPose(plPXConvert::Point(IGetCapsulePos(pos)));
 
     fActor = (physx::PxRigidDynamic*)sim->CreateRigidActor(capsule, globalPose, localPose,
-                                                           .5f, 0.f, 0.f,
+                                                           1.f, 0.f, 0.f,
                                                            plPXActorType::kDynamicActor);
     fActor->userData = new plPXActorData(this);
     plPXFilterData::Initialize(fActor, plSimDefs::kGroupAvatar, 0, fLOSDB);
@@ -605,17 +607,6 @@ void plPXPhysicalControllerCore::ModifyContacts(plPXPhysical* phys, physx::PxCon
         for (physx::PxU32 i = 0; i < contacts.size(); ++i) {
             contacts.setDynamicFriction(i, 0.f);
             contacts.setStaticFriction(i, 0.f);
-        }
-    } else {
-        const float frictionLimit = plWalkingStrategy::GetFallStartThreshold();
-        for (physx::PxU32 i = 0; i < contacts.size(); ++i) {
-            // You want to slide freely against walls and be able to jump up onto platforms.
-            // However, you don't want to slide down gently inclined ramps and hills. The
-            // latter is taken care of by default; this fixes the former.
-            if (0.02f < contacts.getNormal(i).z && contacts.getNormal(i).z < frictionLimit) {
-                contacts.setDynamicFriction(i, 0.f);
-                contacts.setStaticFriction(i, 0.f);
-            }
         }
     }
 }
