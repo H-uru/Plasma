@@ -493,6 +493,14 @@ void plWalkingStrategy::Apply(float delSecs)
     fController->SetFacingPushingPhysical(false);
     fContacts.clear();
 
+    // If the player is on the ground and requesting movement himself, then we'll turn off
+    // friction to allow this movement. Otherwise, we want infinite friction to stick us
+    // in place.
+    if (fFlags & kGroundContact)
+        fController->DisableFriction(fController->GetLinearVelocity().MagnitudeSquared() > 1.f);
+    else
+        fController->DisableFriction(true);
+
     fController->SetLinearVelocitySim(velocity);
 }
 
@@ -646,6 +654,7 @@ plSwimStrategy::plSwimStrategy(plAGApplicator* rootApp, plPhysicalControllerCore
     fCurrentRegion(),
     fHadContacts()
 {
+    fController->DisableFriction(true);
 }
 
 void plSwimStrategy::Apply(float delSecs)

@@ -266,8 +266,6 @@ void plPXPhysicalControllerCore::SetPositionSim(const hsPoint3& pos)
 
 void plPXPhysicalControllerCore::SetLinearVelocitySim(const hsVector3& velocity)
 {
-    // Walking backwards on the flat ground is 20 ft/s^2.
-    DisableFriction(velocity.MagnitudeSquared() > 1.f);
     fActor->setLinearVelocity(plPXConvert::Vector(velocity));
 }
 
