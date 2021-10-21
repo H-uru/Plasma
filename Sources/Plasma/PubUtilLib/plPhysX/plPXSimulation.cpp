@@ -353,8 +353,8 @@ static physx::PxFilterFlags ISimulationFilterShader(physx::PxFilterObjectAttribu
 
         FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatarBlocker, modFlags, defResult);
         FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupStatic, modFlags, defResult);
-        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupDynamic, defFlags, defResult);
-        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupExcludeRegion, defFlags, defResult);
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupDynamic, modFlags, defResult);
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupExcludeRegion, modFlags, defResult);
     }
 
 #undef FILTER
