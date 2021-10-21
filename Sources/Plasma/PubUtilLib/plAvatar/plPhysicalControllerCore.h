@@ -235,6 +235,12 @@ public:
     /** Resets the controller's simulated linear velocity. */
     void ResetAchievedLinearVelocity() { fAchievedLinearVelocity.Set(0.f, 0.f, 0.f); }
 
+    /** Gets the controller's position in the previous frame. */
+    hsPoint3 GetPreviousPosition() const { return fLastLocalPosition; }
+
+    /** Overrides the current frame's position. */
+    void OverrideCurrentPosition(const hsPoint3& pos) { fLocalPosition = pos; }
+
     // SceneObject
     plKey GetOwner() { return fOwner; }
 

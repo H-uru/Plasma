@@ -153,6 +153,11 @@ void plPhysicalControllerCore::IUpdate(int numSubSteps, float alpha)
 
         displacement /= (float)numSubSteps;
         fLastLocalPosition = fLocalPosition - displacement;
+
+        // Fire off the movement strategy update here so that it can override
+        // the achieved position.
+        fMovementStrategy->Update(fSimLength);
+
         hsPoint3 interpLocalPos = fLastLocalPosition + (displacement * alpha);
 
         // Update global location
@@ -166,7 +171,6 @@ void plPhysicalControllerCore::IUpdate(int numSubSteps, float alpha)
             fPrevSubworldW2L = subworldCI->GetWorldToLocal();
         }
 
-        fMovementStrategy->Update(fSimLength);
         ISendCorrectionMessages(true);
     }
     else
@@ -534,9 +538,9 @@ void plWalkingStrategy::IStepUp(const plControllerHitRecord& ground, float delSe
     if (newGround && newGround->Displacement >= 0.001f &&
         newGround->Normal.fZ >= GetFallStartThreshold() &&
         newGround->Normal.fZ > 0.2f) {
-        hsVector3 displacement = dir * newGround->Displacement;
-        fController->SetPositionSim(startPos + displacement);
-        fController->OverrideAchievedLinearVelocity(displacement / delSecs);
+        fController->OverrideCurrentPosition(newGround->Point);
+        hsVector3 vel = (hsVector3)(newGround->Point - fController->GetPreviousPosition()) / delSecs;
+        fController->OverrideAchievedLinearVelocity(vel);
     }
 }
 
