@@ -551,6 +551,9 @@ void plPXPhysicalControllerCore::ICreateController(hsPoint3 pos)
     // be applied by the simulation.
     fActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
 
+    // Enable CCD
+    fActor->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, true);
+
     // Initialize avatar mass such that the center of mass is at the capsule's foot and lock
     // the rotation to prevent tipping over during simulation.
     physx::PxVec3 cmass = plPXConvert::Point(IGetCapsuleFoot(pos));

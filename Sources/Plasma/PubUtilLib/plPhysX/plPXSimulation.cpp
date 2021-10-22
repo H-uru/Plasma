@@ -331,6 +331,8 @@ static physx::PxFilterFlags ISimulationFilterShader(physx::PxFilterObjectAttribu
                                         physx::PxPairFlag::eNOTIFY_CONTACT_POINTS;
     const physx::PxPairFlags modFlags = defFlags |
                                         physx::PxPairFlag::eMODIFY_CONTACTS;
+    const physx::PxPairFlags avCcdFlags = modFlags |
+                                          physx::PxPairFlag::eDETECT_CCD_CONTACT;
     const physx::PxFilterFlags defResult = physx::PxFilterFlag::eDEFAULT;
     const physx::PxFilterFlags cbResult = physx::PxFilterFlag::eCALLBACK;
 
@@ -351,10 +353,10 @@ static physx::PxFilterFlags ISimulationFilterShader(physx::PxFilterObjectAttribu
              (filterHelper1.TestGroup(plSimDefs::kGroupAvatar) && filterHelper1.TestFlag(plPhysicalControllerCore::kDisableCollision)))
              return physx::PxFilterFlag::eSUPPRESS;
 
-        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatarBlocker, modFlags, defResult);
-        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupStatic, modFlags, defResult);
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatarBlocker, avCcdFlags, defResult);
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupStatic, avCcdFlags, defResult);
         FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupDynamic, modFlags, defResult);
-        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupExcludeRegion, modFlags, defResult);
+        FILTER(plSimDefs::kGroupAvatar, plSimDefs::kGroupExcludeRegion, avCcdFlags, defResult);
     }
 
 #undef FILTER
@@ -627,7 +629,8 @@ physx::PxScene* plPXSimulation::InitSubworld(const plKey& world)
     desc.filterShader = ISimulationFilterShader;
     desc.frictionType = physx::PxFrictionType::eTWO_DIRECTIONAL;
     desc.solverType = physx::PxSolverType::eTGS;
-    desc.flags = physx::PxSceneFlag::eENABLE_PCM |
+    desc.flags = physx::PxSceneFlag::eENABLE_CCD |
+                 physx::PxSceneFlag::eENABLE_PCM |
                  physx::PxSceneFlag::eENABLE_AVERAGE_POINT;
     desc.cpuDispatcher = fPxCpuDispatcher;
     desc.userData = world ? world->ObjectIsLoaded() : nullptr;
