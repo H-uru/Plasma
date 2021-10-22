@@ -585,8 +585,16 @@ void plPXPhysicalControllerCore::IDeleteController()
 // ==========================================================================
 
 void plPXPhysicalControllerCore::AddContact(plPXPhysical* phys, const hsPoint3& pos,
-                                            const hsVector3& normal)
+                                            hsVector3 normal)
 {
+    // Make sure that collision normals are between 0-90 degrees - the movement
+    // handler won't be too chuffed by anything >90. This tends to happen when
+    // colliding against certain kickables.
+    if (normal.fZ < 0.f) {
+        normal.fZ += 1.f;
+        normal.Normalize();
+    }
+
     fMovementStrategy->AddContact(phys, pos, normal);
 
 #ifndef PLASMA_EXTERNAL_RELEASE
