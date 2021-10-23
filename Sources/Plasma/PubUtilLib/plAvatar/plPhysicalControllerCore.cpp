@@ -62,7 +62,7 @@ constexpr float kGravity = -32.174f;
 constexpr float kTerminalVelocity = kGravity * 2.f;
 
 // A little bit of extra oomph to keep us sticking to the ground.
-constexpr float kGravityOnGround = kGravity * 1.5f;
+constexpr float kGravityOnGround = kGravity * 2.f;
 
 static inline hsVector3 GetYAxis(hsMatrix44 &mat) { return hsVector3(mat.fMap[1][0], mat.fMap[1][1], mat.fMap[1][2]); }
 static float AngleRad2d(float x1, float y1, float x3, float y3);
@@ -465,13 +465,15 @@ void plWalkingStrategy::Apply(float delSecs)
             }
             if (std::fabs(velocity.fZ) < 0.001f) {
                 if (std::fabs(groundVel.fZ) < 0.001f) {
-                    velocity.fZ = achievedVelocity.fZ + (gravity * delSecs);
+                    float zcomp = 1.f - std::max(0.f, ground->Normal.fZ);
+                    velocity.fZ = achievedVelocity.fZ + (gravity * zcomp * delSecs);
                 } else {
                     velocity.fZ = groundVel.fZ;
                 }
             }
         } else if (std::fabs(velocity.fZ) < 0.001f) {
-            velocity.fZ = achievedVelocity.fZ + (gravity * delSecs);
+            float zcomp = 1.f - std::max(0.f, ground->Normal.fZ);
+            velocity.fZ = achievedVelocity.fZ + (gravity * zcomp * delSecs);
         }
 
         // Kill upward velocity if we're just running along the ground.
