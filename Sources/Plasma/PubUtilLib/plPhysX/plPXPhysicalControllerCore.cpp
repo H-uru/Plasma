@@ -103,7 +103,7 @@ public:
 
 plPhysicalControllerCore* plPhysicalControllerCore::Create(plKey ownerSO, float height, float width)
 {
-    float radius = width / 2.0f - .2f;
+    float radius = width / 2.0f - .1f;
     float realHeight = height - width;
     return new plPXPhysicalControllerCore(std::move(ownerSO), realHeight, radius);
 }
