@@ -53,7 +53,7 @@ xTextObjects = {\
     "nb01GrsnBook":     ( "Sharper",    22, (0,0,0,1),  (0,0,0,0), 5,  "Neighborhood.TextObjects.GahreesenBook",    PtJustify.kCenter ),
     "grsnRetrieveKI":   ( "Sharper",    24, (0,0,0,1),  (0,0,0,0), 10, "Gahreesen.TextObjects.RetrieveKI",          PtJustify.kCenter ),
     "nb01EaselWelcome": ( "Sharper",    28, (0,0,0,1),  (0,0,0,0), 5,  "Neighborhood.TextObjects.EaselWelcome",     PtJustify.kCenter ),
-    "bcoWrinkledNote":  ( "Michelle",   10, (0,0,0,1),  (0,0,0,0), 5,  "BaronCityOffice.TextObjects.WrinkledNote",  PtJustify.kLeftJustify ),
+    "bcoWrinkledNote":  ( "Michelle",   24, (0,0,0,1),  (0,0,0,0), 10, "BaronCityOffice.TextObjects.WrinkledNote",  PtJustify.kLeftJustify ),
     "WatsonLetter":     ( "Courier",    10, (0,0,0,1),  (0,0,0,0), 0,  "City.TextObjects.WatsonLetter",             PtJustify.kLeftJustify ),
     "JCNote":           ( "Nick",       16, (0,0,0,1),  (0,0,0,0), 5,  "City.TextObjects.JCNote",                   PtJustify.kLeftJustify ),
     "clftAtrusNote":    ( "Atrus",      16, (0,0,0,1),  (0,0,0,0), 0,  "Cleft.TextObjects.AtrusNote",               PtJustify.kLeftJustify ),
