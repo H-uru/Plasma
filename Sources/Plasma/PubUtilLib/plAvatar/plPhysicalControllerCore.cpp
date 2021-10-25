@@ -494,11 +494,9 @@ void plWalkingStrategy::Apply(float delSecs)
     // If the player is on the ground and requesting movement himself, then we'll turn off
     // friction to allow this movement. Otherwise, we want infinite friction to stick us
     // in place.
-    if (fFlags & kGroundContact)
-        fController->DisableFriction(fController->GetLinearVelocity().MagnitudeSquared() > 1.f);
-    else
-        fController->DisableFriction(true);
-
+    fController->DisableFriction(IsControlledFlight() ||
+                                 (IsOnGround() &&
+                                  fController->GetLinearVelocity().MagnitudeSquared() > 1.f));
     fController->SetLinearVelocitySim(velocity);
 }
 
