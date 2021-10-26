@@ -149,6 +149,13 @@ class Personal(ptResponder):
 
 
     def OnServerInitComplete(self):
+        def HasClothing(item):
+            avatar = PtGetLocalAvatar()
+            for i in avatar.avatar.getWardrobeClothingList():
+                if i[0] == item:
+                    return True
+            return False
+        
         ageSDL = PtGetAgeSDL()
         PtDebugPrint("Personal.OnServerInitComplete(): Grabbing first week clothing item boolean")
         try:
@@ -164,8 +171,7 @@ class Personal(ptResponder):
                 clothingName = "FReward_Beta"
             else:
                 clothingName = "MReward_Beta"
-            clothingList = avatar.avatar.getWardrobeClothingList()
-            if clothingName not in clothingList:
+            if not HasClothing(clothingName):
                 PtDebugPrint("Adding "+clothingName+" clothing item to your closet! Aren't you lucky?")
                 avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().white())
             else:
@@ -198,8 +204,7 @@ class Personal(ptResponder):
             else:
                 genderPrefix = "MReward_"
             clothingName = genderPrefix + suffix
-            clothingList = avatar.avatar.getWardrobeClothingList()
-            if clothingName not in clothingList:
+            if not HasClothing(clothingName):
                 PtDebugPrint("Adding "+clothingName+" to your closet")
                 avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().white())
             else:
@@ -208,6 +213,58 @@ class Personal(ptResponder):
             ageSDL["RewardClothing"] = ("",)
         else:
             PtDebugPrint("Reward clothing list empty, not adding any clothing")
+
+        if ageSDL["psnlBahroWedge05"][0] and ageSDL["psnlBahroWedge06"][0]:
+            if currentgender == kFemaleClothingGroup:
+                clothingName = "FReward_FleeceSpiral"
+            else:
+                clothingName = "MReward_FleeceSpiral"
+            if not HasClothing(clothingName):
+                PtDebugPrint("Adding "+clothingName+" clothing item to your closet! Aren't you lucky?")
+                avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().white())
+            else:
+                PtDebugPrint("You already have " + clothingName + " so I'm not going to add it again.")
+        else:
+            PtDebugPrint("You haven't finished the Pod Ages, no Sweatshirt for you")
+ 
+        if ageSDL["psnlBahroWedge07"][0] and ageSDL["psnlBahroWedge08"][0] and ageSDL["psnlBahroWedge09"][0] and ageSDL["psnlBahroWedge10"][0]:
+            if currentgender == kFemaleClothingGroup:
+                clothingName = "FReward_SweatshirtPod"
+            else:
+                clothingName = "MReward_SweatshirtPod"
+            if not HasClothing(clothingName):
+                PtDebugPrint("Adding "+clothingName+" clothing item to your closet! Aren't you lucky?")
+                avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().white())
+            else:
+                PtDebugPrint("You already have " + clothingName + " so I'm not going to add it again.")
+        else:
+            PtDebugPrint("You haven't finished the Pod Ages, no Sweatshirt for you")
+            
+        if ageSDL["psnlBahroWedge11"][0]:
+            if currentgender == kFemaleClothingGroup:
+                clothingName = "FReward_LJacketMinkata"
+            else:
+                clothingName = "MReward_LJacketMinkata"
+            if not HasClothing(clothingName):
+                PtDebugPrint("Adding "+clothingName+" clothing item to your closet! Aren't you lucky?")
+                avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().white())
+            else:
+                PtDebugPrint("You already have " + clothingName + " so I'm not going to add it again.")
+        else:
+            PtDebugPrint("You haven't finished Minkata, no Leather Jacket for you")
+            
+        if ageSDL["psnlBahroWedge12"][0] and ageSDL["psnlBahroWedge13"][0]:
+            if currentgender == kFemaleClothingGroup:
+                clothingName = "FReward_VestShell"
+            else:
+                clothingName = "MReward_VestShell"
+            if not HasClothing(clothingName):
+                PtDebugPrint("Adding "+clothingName+" clothing item to your closet! Aren't you lucky?")
+                avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().white())
+            else:
+                PtDebugPrint("You already have " + clothingName + " so I'm not going to add it again.")
+        else:
+            PtDebugPrint("You haven't finished the Path of the Shell, no Vest for you")
 
 
     def Load(self):

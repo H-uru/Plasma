@@ -273,7 +273,13 @@ DefaultAgeMorph = None
 # list of head accessory items that we can't tint (like the D'ni goggles)
 untintableHeadAcc = [ "03_FAccGoggles", "03_MAccGoggles" ]
 
+clothingSets = []
+clothingSetContents = { }
+clothingGroups = []
+clothingGroupContents = { }
+clothingGroupIcons = { }
 AvatarChange = 0
+groupsAllowingAccessories = ['Catherine','Atrus']
 
 
 def SetDefaultSettings():
@@ -517,6 +523,11 @@ def GetAllWithSameGroup(name):
                 break
         if groupFound:
             break
+    if targetGroup in clothingGroupContents:
+        #PtDebugPrint('GetAllWithSameGroup(): Using pre-cached group for ' + targetGroup)
+        return clothingGroupContents[targetGroup]
+    
+    #PtDebugPrint('GetAllWithSameGroup(): Manually calculating group for ' + targetGroup)
     for item in clothinglist:
         ctype,saturation,inCloset,inClosClr1,inClosClr2 = FindSaturationAndCloset(item[0],item[1])
         newitem = ClothingItem(item,ctype,saturation,inCloset,inClosClr1,inClosClr2)
@@ -536,7 +547,7 @@ def UsesSameGroup(name1, name2):
     "check to see if the two clothing items share the same group"
     group = GetAllWithSameGroup(name1)
     for item in group:
-        if item[0] == name2:
+        if item.name == name2:
             return 1
     return 0
 
@@ -709,6 +720,14 @@ class xAvatarCustomization(ptModifier):
                             # tell our listbox class to select it so we can get the clothing item the user wants
                             listboxDict[tagID].SelectItem(itemselect)
                             newitem = listboxDict[tagID].GetSelectedItem()
+                            wornset = self.IIsWearingSetPiece(clothing_group.clothingType)
+                            newset = newitem.clothingSet
+                            if wornset != newset and wornset != '':
+                                self.IRemoveWornSet()
+                            
+                            if newitem.isClothingSet:
+                                self.IWearClothingSet(newitem.clothingSet)
+                                return None
                             # get the current worn item to see what color it was
                             lastitem = FindWornItem(clothing_group.clothingType)
                             avatar = PtGetLocalAvatar()
@@ -770,6 +789,14 @@ class xAvatarCustomization(ptModifier):
                                     # set up the listbox so we can grab the selected item
                                     listboxDict[tagID].SelectItem(itemselect)
                                     newitem = listboxDict[tagID].GetSelectedItem()
+                                    wornset = self.IIsWearingSetPiece(clothing_group.clothingType)
+                                    newset = newitem.clothingSet
+                                    if wornset != newset and wornset != '':
+                                        self.IRemoveWornSet()
+                                    
+                                    if newitem.isClothingSet:
+                                        self.IWearClothingSet(newitem.clothingSet)
+                                        return None
                                     avatar = PtGetLocalAvatar()
                                     # get the current worn item to see what color it was
                                     lastitem = FindWornItem(clothing_group.clothingType)
@@ -812,6 +839,14 @@ class xAvatarCustomization(ptModifier):
                                 # grab the actual selection from our listbox class
                                 listboxDict[tagID].SelectItem(itemselect)
                                 newitem = listboxDict[tagID].GetSelectedItem()
+                                wornset = self.IIsWearingSetPiece(clothing_group.clothingType)
+                                newset = newitem.clothingSet
+                                if wornset != newset and wornset != '':
+                                    self.IRemoveWornSet()
+                                
+                                if newitem.isClothingSet:
+                                    self.IWearClothingSet(newitem.clothingSet)
+                                    return None
                                 avatar = PtGetLocalAvatar()
                                 lastitem = ""
                                 # remove all currently worn accessories
@@ -1182,6 +1217,119 @@ class xAvatarCustomization(ptModifier):
         except IOError:
             pass
     
+    def IIsWearingSetPiece(self, type):
+        item = FindWornItem(type)
+        return item.clothingSet
+
+    
+    def IWearClothingSet(self, setName):
+        
+        try:
+            theSet = clothingSetContents[setName]
+        except:
+            PtDebugPrint('Non-existant set ' + setName + ' requested, not wearing')
+            return None
+
+        PtDebugPrint('Wearing clothing set ' + setName)
+        avatar = PtGetLocalAvatar()
+        if not (setName in groupsAllowingAccessories):
+            PtDebugPrint('Set ' + setName + " doesn't allow accessories, removing them")
+            for item in WornList:
+                if item.accessoryType >= 0:
+                    avatar.avatar.removeClothingItem(item.name)
+                
+            
+        
+        for newitem in theSet:
+            if newitem.accessoryType == -1:
+                lastitem = FindWornItem(newitem.type)
+                if type(lastitem) != type(None):
+                    lastcolor1 = avatar.avatar.getTintClothingItem(lastitem.name, 1)
+                    lastcolor2 = avatar.avatar.getTintClothingItem(lastitem.name, 2)
+                else:
+                    lastcolor1 = ptColor().white()
+                    lastcolor2 = ptColor().white()
+            else:
+                lastcolor1 = ptColor().white()
+                lastcolor2 = ptColor().white()
+            avatar.avatar.wearClothingItem(newitem.name, 0)
+            avatar.avatar.tintClothingItem(newitem.name, lastcolor1, 0)
+            avatar.avatar.tintClothingItemLayer(newitem.name, lastcolor2, 2)
+            self.IMorphOneItem(kWeightKnob, newitem.name)
+            matchingItem = avatar.avatar.getMatchingClothingItem(newitem.name)
+            if type(matchingItem) == type([]):
+                avatar.avatar.wearClothingItem(matchingItem[0], 0)
+                avatar.avatar.tintClothingItem(matchingItem[0], lastcolor1, 0)
+                avatar.avatar.tintClothingItemLayer(matchingItem[0], lastcolor2, 2, 0)
+            
+        
+        PtAtTimeCallback(self.key, 1, kTimerUpdateControls)
+
+    
+    def IRemoveWornSet(self):
+        setToRemove = ''
+        for item in WornList:
+            if item.isClothingSet:
+                setToRemove = item.clothingSet
+            
+        
+        if setToRemove == '':
+            return None
+        
+        
+        try:
+            theSet = clothingSetContents[setToRemove]
+        except:
+            None
+            None
+            None
+            PtDebugPrint('Non-existant set ' + setToRemove + ' requested, not removing')
+            return None
+
+        PtDebugPrint('Removing clothing set ' + setToRemove)
+        avatar = PtGetLocalAvatar()
+        typesToReplace = []
+        for olditem in theSet:
+            if not (olditem.accessoryType == -1):
+                avatar.avatar.removeClothingItem(olditem.name)
+            else:
+                typesToReplace.append(olditem.type)
+                if olditem.type == kRightHandClothingItem:
+                    typesToReplace.append(kLeftHandClothingItem)
+                elif olditem.type == kRightFootClothingItem:
+                    typesToReplace.append(kLeftFootClothingItem)
+                
+        
+        typesNeedingDefault = []
+        for clothingType in typesToReplace:
+            for i in range(len(DefaultClothing)):
+                if DefaultClothing[i].type == clothingType:
+                    if DefaultClothing[i].isClothingSet:
+                        typesNeedingDefault.append(clothingType)
+                    else:
+                        item = DefaultClothing[i]
+                        color1 = DefaultColor1[i]
+                        color2 = DefaultColor2[i]
+                        avatar.avatar.wearClothingItem(item.name, 0)
+                        avatar.avatar.tintClothingItem(item.name, color1, 0)
+                        avatar.avatar.tintClothingItemLayer(item.name, color2, 2)
+                        matchingItem = avatar.avatar.getMatchingClothingItem(item.name)
+                        if type(matchingItem) == type([]):
+                            avatar.avatar.wearClothingItem(matchingItem[0], 0)
+                            avatar.avatar.tintClothingItem(matchingItem[0], color1, 0)
+                            avatar.avatar.tintClothingItemLayer(matchingItem[0], color2, 2, 0)
+                        
+                
+            
+        
+        if len(typesNeedingDefault) > 0:
+            for clothingType in typesNeedingDefault:
+                PtWearDefaultClothingType(avatar.getKey(), clothingType)
+            
+        
+        PtAtTimeCallback(self.key, 1, kTimerUpdateControls)
+        
+        
     def ISaveSeasonalToCloset(self):
         for item in WornList:
             if item.seasonal and not ItemInWardrobe(item):
@@ -1210,6 +1358,14 @@ class xAvatarCustomization(ptModifier):
     def IInitFirst(self):
         "Initialization stuff, after the dialog has been loaded"
         global InAvatarCloset
+        
+        def HasClothing(item):
+            avatar = PtGetLocalAvatar()
+            for i in avatar.avatar.getWardrobeClothingList():
+                if i[0] == item:
+                    return True
+            return False
+            
         # determine if this the first time here or not
         vault = ptVault()
         entry = vault.findChronicleEntry(kAvaCustaIsDone)
@@ -1228,8 +1384,7 @@ class xAvatarCustomization(ptModifier):
                 clothingName = "02_FTorso11_01"
             else:
                 clothingName = "02_MTorso09_01"
-            clothingList = avatar.avatar.getWardrobeClothingList()
-            if clothingName not in clothingList:
+            if not HasClothing(clothingName):
                 PtDebugPrint("adding Yeesha reward clothing %s to wardrobe" % (clothingName))
                 avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().black())
             else:
@@ -1815,6 +1970,8 @@ class ClothingItem:
         # seasonTime is a nested tuple. The date: 12/30/03-12/31/03,1/1/04-1/2/04 will be listed as [ [[12,12],[30,31],[03,03]], [[1,1],[1,2],[04,04]] ]
         self.seasonTime = []    # the date that it will show up on (0 for any of these means any, i.e. 0/1/03 means the first day of every month in 2003
                                 # while 1/1/0 or 1/1 means January 1st every year
+        self.isClothingSet = 0
+        self.clothingSet = ''
         self.free = 0   # Visitors (free players) are allowed limited clothing.  This is set in the max files by specifying "free" in 
                         # the text option for the Plasma clothing material rollout.
                         
@@ -1929,6 +2086,9 @@ class ClothingItem:
                         self.logofor = rs
                     elif ls == "groupname":
                         self.groupName = rs
+                        if not (self.groupName in clothingGroups):
+                            PtDebugPrint('AvaCusta: Found clothing group ' + self.groupName + ' adding it to our list of groups')
+                            clothingGroups.append(self.groupName)
                     elif ls == "singleplayer":
                         self.singlePlayer = 1
                     elif ls == "needssort":
@@ -2034,6 +2194,12 @@ class ClothingItem:
                         except:
                             PtDebugPrint("AvaCusta: Malformed date string "+rs+" on clothing "+self.name)
                             self.seasonal = 0
+                    elif ls == 'clothingset':
+                        self.isClothingSet = 1
+                        self.clothingSet = rs
+                        if not (self.clothingSet in clothingSets):
+                            PtDebugPrint('AvaCusta: Found clothing set ' + self.clothingSet + ' adding it to our list of sets')
+                            clothingSets.append(self.clothingSet)
                     else:
                         if ls != "":
                             PtDebugPrint("AvaCusta: Unknown keyword type (%s) on clothing %s" % (ls,self.name))
@@ -2049,11 +2215,48 @@ class TextureGroup:
             self.listboxID = kLwrBodyAccLB
         clothinglist = GetAllWithSameGroup(meshName)
         self.clothingItems = []
-        for item in clothinglist:
-            ctype,saturation,inCloset,inClosClr1,inClosClr2 = FindSaturationAndCloset(item[0],item[1])
-            newitem = ClothingItem(item,ctype,saturation,inCloset,inClosClr1,inClosClr2)
+        for newitem in clothinglist:
+            if newitem.isClothingSet:
+                if newitem.clothingSet in clothingSetContents:
+                    hasItem = 0
+                    for tempItem in clothingSetContents[newitem.clothingSet]:
+                        if tempItem.name == newitem.name:
+                            hasItem = 1
+                        
+                    
+                    if not hasItem:
+                        PtDebugPrint('AvaCusta: item ' + newitem.name + ' added to clothing set ' + newitem.clothingSet)
+                        clothingSetContents[newitem.clothingSet].append(newitem)
+                    
+                else:
+                    PtDebugPrint('AvaCusta: adding clothing set ' + newitem.clothingSet + ' and added item ' + newitem.name + ' to it')
+                    clothingSetContents[newitem.clothingSet] = [
+                        newitem]
+            
             # make sure we're not supposed to hide the item
             if CanShowClothingItem(newitem):
+                if newitem.meshicon:
+                    if newitem.groupName in clothingGroupIcons:
+                        PtDebugPrint('AvaCusta: icon ' + newitem.name + ' replaced existing icon ' + clothingGroupIcons[newitem.groupName].name + ' for group ' + newitem.groupName)
+                    else:
+                        PtDebugPrint('AvaCusta: icon ' + newitem.name + ' set for group ' + newitem.groupName)
+                    clothingGroupIcons[newitem.groupName] = newitem
+                elif newitem.groupName in clothingGroupContents:
+                    hasItem = 0
+                    for tempItem in clothingGroupContents[newitem.groupName]:
+                        if tempItem.name == newitem.name:
+                            hasItem = 1
+                            break
+                        
+                    
+                    if not hasItem:
+                        PtDebugPrint('AvaCusta: item ' + newitem.name + ' added to clothing group ' + newitem.groupName)
+                        clothingGroupContents[newitem.groupName].append(newitem)
+                    
+                else:
+                    PtDebugPrint('AvaCusta: adding clothing group ' + newitem.groupName + ' and added item ' + newitem.name + ' to it')
+                    clothingGroupContents[newitem.groupName] = [
+                        newitem]
                 if not newitem.meshicon:
                     self.clothingItems.append(newitem)
         # now sort the list so that logos appear directly after the clothing they are logos for
@@ -2110,7 +2313,46 @@ class ClothingGroup:
             ctype,saturation,inCloset,inClosClr1,inClosClr2 = FindSaturationAndCloset(item[0],item[1])
             newitem = ClothingItem(item,ctype,saturation,inCloset,inClosClr1,inClosClr2)
             # make sure we're not supposed to hide the item
+            if newitem.isClothingSet:
+                if newitem.clothingSet in clothingSetContents:
+                    hasItem = 0
+                    for tempItem in clothingSetContents[newitem.clothingSet]:
+                        if tempItem.name == newitem.name:
+                            hasItem = 1
+                            break
+                        
+                    
+                    if not hasItem:
+                        PtDebugPrint('AvaCusta: item ' + newitem.name + ' added to clothing set ' + newitem.clothingSet)
+                        clothingSetContents[newitem.clothingSet].append(newitem)
+                    
+                else:
+                    PtDebugPrint('AvaCusta: adding clothing set ' + newitem.clothingSet + ' and added item ' + newitem.name + ' to it')
+                    clothingSetContents[newitem.clothingSet] = [
+                        newitem]
             if CanShowClothingItem(newitem):
+                if newitem.meshicon:
+                    if newitem.groupName in clothingGroupIcons:
+                        PtDebugPrint('AvaCusta: icon ' + newitem.name + ' replaced existing icon ' + clothingGroupIcons[newitem.groupName].name + ' for group ' + newitem.groupName)
+                    else:
+                        PtDebugPrint('AvaCusta: icon ' + newitem.name + ' set for group ' + newitem.groupName)
+                    clothingGroupIcons[newitem.groupName] = newitem
+                elif newitem.groupName in clothingGroupContents:
+                    hasItem = 0
+                    for tempItem in clothingGroupContents[newitem.groupName]:
+                        if tempItem.name == newitem.name:
+                            hasItem = 1
+                            break
+                        
+                    
+                    if not hasItem:
+                        PtDebugPrint('AvaCusta: item ' + newitem.name + ' added to clothing group ' + newitem.groupName)
+                        clothingGroupContents[newitem.groupName].append(newitem)
+                    
+                else:
+                    PtDebugPrint('AvaCusta: adding clothing group ' + newitem.groupName + ' and added item ' + newitem.name + ' to it')
+                    clothingGroupContents[newitem.groupName] = [
+                        newitem]
                 if (listboxID == kUpperBodyOptionsLB or listboxID == kLwrBodyOptionsLB) and newitem.meshicon and GroupHasClothing(newitem):
                     self.clothingItems.append(newitem)
                 elif not (listboxID == kUpperBodyOptionsLB or listboxID == kLwrBodyOptionsLB):
@@ -2135,6 +2377,8 @@ class ClothingCloset:
         global CLxref
         # clothing Groups mapped by listbox ID number
         self.clothingGroups = {}
+        self.textureGroups = { }
+        self.nameToGroup = { }
         for xref in CLxref:
             self.clothingGroups[xref[1]] = ClothingGroup(xref[0],xref[1],xref[4])
         # get the accessories
@@ -2142,6 +2386,22 @@ class ClothingCloset:
         acclist = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
         for accitem in acclist:
             accCI = ClothingItem(accitem,0,0.0,1,0,0) # default is inCloset
+            if accCI.isClothingSet:
+                if accCI.clothingSet in clothingSetContents:
+                    hasItem = 0
+                    for tempItem in clothingSetContents[accCI.clothingSet]:
+                        if tempItem.name == accCI.name:
+                            hasItem = 1
+                        
+                    
+                    if not hasItem:
+                        PtDebugPrint('AvaCusta: item ' + accCI.name + ' added to clothing set ' + accCI.clothingSet)
+                        clothingSetContents[accCI.clothingSet].append(accCI)
+                    
+                else:
+                    PtDebugPrint('AvaCusta: adding clothing set ' + accCI.clothingSet + ' and added item ' + accCI.name + ' to it')
+                    clothingSetContents[accCI.clothingSet] = [
+                        accCI]
             if CanShowClothingItem(accCI):
                 group = self.findGroup(accCI.groupwith)
                 if group is not None:
@@ -2153,6 +2413,13 @@ class ClothingCloset:
                         group.accessories.insert(0,accCI)
                 else:
                     PtDebugPrint("AvaCusta: no group set for accessory %s" % (accCI.name))
+        for group in self.clothingGroups.values():
+            for clothingItem in group:
+                if clothingItem.meshicon:
+                    self.textureGroups[clothingItem.groupName] = TextureGroup(clothingItem.type, clothingItem.name)
+                    self.nameToGroup[clothingItem.name] = clothingItem.groupName
+                    for texItem in self.textureGroups[clothingItem.groupName]:
+                        self.nameToGroup[texItem.name] = clothingItem.groupName
 
     def __getitem__(self,key):
         try:

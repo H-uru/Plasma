@@ -112,6 +112,14 @@ class UCMarkerGame(object):
         return self._node.getGameName()
 
     def _GiveReward(self):
+    
+        def HasClothing(item):
+            avatar = PtGetLocalAvatar()
+            for i in avatar.avatar.getWardrobeClothingList():
+                if i[0] == item:
+                    return True
+            return False
+    
         for reward in self._node.getReward().split(';'):
             things = reward.split(':')
             if things[0] == "chron":
@@ -123,7 +131,7 @@ class UCMarkerGame(object):
                 av = PtGetLocalAvatar().avatar
                 gender = "F" if av.getAvatarClothingGroup() else "M"
                 clothing = "{}{}".format(gender, things[1])
-                if clothing in av.getWardrobeClothingList():
+                if HasClothing(clothing):
                     PtDebugPrint("UCMarkerGame._GiveReward():\tAlready have clothing item '{}'".format(clothing), level=kWarningLevel)
                 else:
                     PtDebugPrint("UCMarkerGame._GiveReward():\tGiving clothing item '{}'".format(clothing), level=kWarningLevel)

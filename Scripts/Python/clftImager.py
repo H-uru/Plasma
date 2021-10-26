@@ -356,6 +356,13 @@ class clftImager(ptResponder):
         global PuzzleView
         global PlayScene
         global PlayTPOT
+        
+        def HasClothing(item):
+            avatar = PtGetLocalAvatar()
+            for i in avatar.avatar.getWardrobeClothingList():
+                if i[0] == item:
+                    return True
+            return False
 
         self.ageSDL = PtGetAgeSDL()
         
@@ -500,8 +507,7 @@ class clftImager(ptResponder):
                 clothingName = "02_FTorso11_01"
             else:
                 clothingName = "02_MTorso09_01"
-            clothingList = avatar.avatar.getWardrobeClothingList()
-            if clothingName not in clothingList:
+            if not HasClothing(clothingName):
                 PtDebugPrint("adding Yeesha reward clothing %s to wardrobe" % (clothingName))
                 avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().black())
             else:
