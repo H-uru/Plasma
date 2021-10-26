@@ -46,9 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "hsExceptions.h"
 
-hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const char *name)
+hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const ST::string& name)
 {
-    fSemaH = ::CreateSemaphore(nullptr, initialValue, kPosInfinity32, name);
+    fSemaH = ::CreateSemaphoreW(nullptr, initialValue, kPosInfinity32, name.to_wchar().data());
     if (fSemaH == nullptr)
         throw hsOSException(-1);
 }

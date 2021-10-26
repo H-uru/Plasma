@@ -72,14 +72,14 @@ int clock_gettime(int clocktype, struct timespec* ts)
 
 /////////////////////////////////////////////////////////////////////////////
 
-hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const char* name)
+hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const ST::string& name)
 {
 #ifdef USE_SEMA
     fPSema = nullptr;
-    fNamed = (name != nullptr);
+    fNamed = !name.empty();
     if (fNamed) {
         /* Named semaphore shared between processes */
-        fPSema = sem_open(name, O_CREAT, 0666, initialValue);
+        fPSema = sem_open(name.c_str(), O_CREAT, 0666, initialValue);
         if (fPSema == SEM_FAILED)
         {
             hsAssert(0, "hsOSException");
