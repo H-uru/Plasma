@@ -59,7 +59,7 @@ class plCrashSrv : public plCrashBase
     void IHandleCrash();
 
 public:
-    plCrashSrv(const char* file);
+    plCrashSrv(const ST::string& file);
     ~plCrashSrv();
 
     void HandleCrash();

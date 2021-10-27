@@ -51,7 +51,7 @@ plCrashBase::~plCrashBase()
     delete fHandled;
 }
 
-void plCrashBase::IInit(const char* file)
+void plCrashBase::IInit(const ST::string& file)
 {
     fCrashed = new hsGlobalSemaphore(0, ST::format("{}-{}", file, CRASH_NOTIFY_SUFFIX));
     fHandled = new hsGlobalSemaphore(0, ST::format("{}-{}", file, CRASH_HANDLE_SUFFIX));

@@ -50,14 +50,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <dbghelp.h>
 #include <shlobj.h>
 
-plCrashSrv::plCrashSrv(const char* file)
+plCrashSrv::plCrashSrv(const ST::string& file)
     : fLink(), fLinkH()
 {
     // Init semas
     IInit(file);
 
     // Open the linked memory
-    fLinkH = OpenFileMappingA(FILE_MAP_ALL_ACCESS, FALSE, file);
+    fLinkH = OpenFileMappingW(FILE_MAP_ALL_ACCESS, FALSE, file.to_wchar().data());
     hsAssert(fLinkH, "Failed to open plCrashHandler mapping");
     if (!fLinkH)
         return;
@@ -87,7 +87,7 @@ void plCrashSrv::IHandleCrash()
                               nullptr
     );
 
-    MINIDUMP_EXCEPTION_INFORMATION e;
+    MINIDUMP_EXCEPTION_INFORMATION e{};
     e.ClientPointers = TRUE;
     e.ExceptionPointers = fLink->fExceptionPtrs;
     e.ThreadId = fLink->fClientThreadID;

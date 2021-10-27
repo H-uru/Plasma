@@ -46,14 +46,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsWindows.h"
 
-#define CRASH_NOTIFY_SUFFIX "CrashNotify"
-#define CRASH_HANDLE_SUFFIX "CrashHandled"
+#include <string_view>
+
+constexpr std::string_view CRASH_NOTIFY_SUFFIX = "CrashNotify";
+constexpr std::string_view CRASH_HANDLE_SUFFIX = "CrashHandled";
 
 #ifdef HS_BUILD_FOR_WIN32
 #   ifdef PLASMA_EXTERNAL_RELEASE
-#       define CRASH_HANDLER_EXE "UruCrashHandler.exe"
+        constexpr std::wstring_view CRASH_HANDLER_EXE = L"UruCrashHandler.exe";
 #   else
-#       define CRASH_HANDLER_EXE "plCrashHandler.exe"
+        constexpr std::wstring_view CRASH_HANDLER_EXE = L"plCrashHandler.exe";
 #   endif // PLASMA_EXTERNAL_RELEASE
 #endif // HS_BUILD_FOR_WIN32
 
