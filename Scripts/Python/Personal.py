@@ -178,6 +178,10 @@ class Personal(ptResponder):
                 avatar.avatar.addWardrobeClothingItem(desiredName, ptColor().white(), ptColor().white())
 
     def OnServerInitComplete(self):
+        if not ptVault().amOwnerOfCurrentAge():
+            PtDebugPrint("Personal.OnServerInitComplete(): This isn't my Relto, so no reward clothing grants.", level=kWarningLevel)
+            return
+
         ageSDL = PtGetAgeSDL()
         try:
             localRewardClothing = ageSDL["RewardClothing"][0]
