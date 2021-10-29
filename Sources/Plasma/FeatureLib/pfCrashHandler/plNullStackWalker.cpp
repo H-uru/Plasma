@@ -40,40 +40,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef _pfCrash_Private_h_
-#define _pfCrash_Private_h_
+#include "plStackWalker.h"
 
-#include "HeadSpin.h"
-#include "hsWindows.h"
+// ===================================================
 
-#include <string_view>
-
-constexpr std::string_view CRASH_NOTIFY_SUFFIX = "CrashNotify";
-constexpr std::string_view CRASH_HANDLE_SUFFIX = "CrashHandled";
-
-#ifdef HS_BUILD_FOR_WIN32
-#   ifdef PLASMA_EXTERNAL_RELEASE
-        constexpr std::wstring_view CRASH_HANDLER_EXE = L"UruCrashHandler.exe";
-#   else
-        constexpr std::wstring_view CRASH_HANDLER_EXE = L"plCrashHandler.exe";
-#   endif // PLASMA_EXTERNAL_RELEASE
-#endif // HS_BUILD_FOR_WIN32
-
-// Bump the version whenever you change the memory link structure below
-constexpr uint32_t CRASH_LINK_VERSION = 1;
-
-struct plCrashMemLink
+plStackWalker::plStackWalker(plStackWalker::Process process, plStackWalker::Thread thread, void* context, size_t levels)
+    : fProcess(process), fThread(thread), fContext(context), fNumLevels(levels)
 {
-    uint32_t fVersion;
-    bool     fCrashed;
-    bool     fSrvReady;
-#ifdef HS_BUILD_FOR_WIN32
-    HANDLE   fClientProcess;
-    uint32_t fClientProcessID;
-    HANDLE   fClientThread;
-    uint32_t fClientThreadID;
-    PEXCEPTION_POINTERS fExceptionPtrs;
-#endif
-};
+}
 
-#endif // _pfCrash_Private_h_
+plStackWalker::~plStackWalker()
+{
+}
+
+// ===================================================
+
+plStackWalker::iterator plStackWalker::cbegin() const
+{
+    return cend();
+}
+
+bool plStackWalker::iterator::next()
+{
+    return false;
+}
+
+plStackEntry plStackWalker::iterator::get() const
+{
+    return {};
+}
