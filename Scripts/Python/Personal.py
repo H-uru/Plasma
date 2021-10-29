@@ -151,7 +151,7 @@ class Personal(ptResponder):
         ageSDL = PtGetAgeSDL()
         for i in sdls:
             if not ageSDL[i][0]:
-                PtDebugPrint("Personal._AddClothingFromAgeSDL(): You don't have the SDL '%s' so no '%s' for you" % (i, clothingList), level=kWarningLevel)
+                PtDebugPrint(f"Personal._AddClothingFromAgeSDL(): You don't have the SDL '{i}' so no '{clothingList}' for you", level=kWarningLevel)
                 return
 
         if isinstance(clothingList, str):
@@ -167,15 +167,14 @@ class Personal(ptResponder):
         for i in filter(None, clothingList):
             desiredName = "_".join((clothingPrefix, i))
             if desiredName not in entireClothingList:
-                PtDebugPrint("ERROR: Personal._AddClothingFromAgeSDL(): Invalid clothing item '%s' requested!" % desiredName)
+                PtDebugPrint(f"ERROR: Personal._AddClothingFromAgeSDL(): Invalid clothing item '{desiredName}' requested!")
                 continue
-            for j in avatar.avatar.getWardrobeClothingList():
-                if j[0] == desiredName:
-                    PtDebugPrint("Personal._AddClothingFromAgeSDL(): You already have %s so I'm not going to add it again." % desiredName, level=kDebugDumpLevel)
-                    break
-            else:
-                PtDebugPrint("Personal._AddClothingFromAgeSDL(): Adding '%s' clothing item to your closet! Aren't you lucky?" % desiredName, level=kWarningLevel)
+            if not any((j[0] == desiredName for j in avatar.avatar.getWardrobeClothingList())):
+                PtDebugPrint(f"Personal._AddClothingFromAgeSDL(): Adding '{desiredName}' clothing item to your closet! Aren't you lucky?", level=kWarningLevel)
                 avatar.avatar.addWardrobeClothingItem(desiredName, ptColor().white(), ptColor().white())
+            else:
+                PtDebugPrint(f"Personal._AddClothingFromAgeSDL(): You already have {desiredName} so I'm not going to add it again.", level=kDebugDumpLevel)
+
 
     def OnServerInitComplete(self):
         if not ptVault().amOwnerOfCurrentAge():
