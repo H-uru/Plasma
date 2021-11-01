@@ -86,6 +86,7 @@ enum plFixedKeyId
     kAgeLoader_KEY,
     kBuiltIn3rdPersonCamera_KEY,
     kConfirmationMgr_KEY,
+    kRemoteConsoleObject_KEY,
 
     kLast_Fixed_KEY
 };

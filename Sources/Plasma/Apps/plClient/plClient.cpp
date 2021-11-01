@@ -138,6 +138,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfCharacter/pfConfirmationMgr.h"
 #include "pfCharacter/pfMarkerMgr.h"
 #include "pfConsole/pfConsole.h"
+#include "pfConsole/pfRemoteConsole.h"
 #include "pfConsole/pfConsoleDirSrc.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
 #if defined(PLASMA_PIPELINE_DX)
@@ -1388,6 +1389,12 @@ bool plClient::StartInit()
     pfConsole::SetPipeline( fPipeline );
     fConsole->RegisterAs( kConsoleObject_KEY );     // fixedKey from plFixedKey.h
     fConsole->Init( fConsoleEngine );
+
+#ifndef PLASMA_EXTERNAL_RELEASE
+    fRemoteConsole = new pfRemoteConsole();
+    fRemoteConsole->RegisterAs( kRemoteConsoleObject_KEY );
+    fRemoteConsole->Init();
+#endif
 
     /// Init the font cache
     fFontCache = new plFontCache();

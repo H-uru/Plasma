@@ -114,6 +114,7 @@ static constexpr plKeySeed SeedList[] = {
     { kAgeLoader_KEY,                   CLASS_INDEX_SCOPED( plAgeLoader),               "kAgeLoader_KEY",               },
     { kBuiltIn3rdPersonCamera_KEY,      CLASS_INDEX_SCOPED( plCameraModifier1 ),        "kBuiltIn3rdPersonCamera_KEY",  },
     { kConfirmationMgr_KEY,             CLASS_INDEX_SCOPED( pfConfirmationMgr ),        "kConfirmationMgr_KEY",         },
+    { kRemoteConsoleObject_KEY,         CLASS_INDEX_SCOPED( pfRemoteConsole ),          "kRemoteConsoleObject_KEY",     },
 
     { kLast_Fixed_KEY,                  CLASS_INDEX_SCOPED( plSceneObject ),            "kLast_Fixed_KEY",              }
 };

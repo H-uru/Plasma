@@ -40,15 +40,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef pfConsoleCreatable_inc
-#define pfConsoleCreatable_inc
+#ifndef pfRemoteConsole_inc
+#define pfRemoteConsole_inc
 
-#include "pnFactory/plCreator.h"
+#include <thread>
 
-#include "pfConsole.h"
-REGISTER_CREATABLE(pfConsole);
+#include "HeadSpin.h"
 
-#include "pfRemoteConsole.h"
-REGISTER_CREATABLE(pfRemoteConsole);
+#include "pnKeyedObject/hsKeyedObject.h"
 
-#endif // pfConsoleCreatable_inc
+class pfRemoteConsole : public hsKeyedObject
+{
+public:
+    pfRemoteConsole() {}
+    ~pfRemoteConsole();
+
+    CLASSNAME_REGISTER(pfRemoteConsole);
+    GETINTERFACE_ANY(pfRemoteConsole, plReceiver);
+
+    bool    MsgReceive(plMessage* msg) override;
+
+    void Init();
+
+private:
+    std::thread fThread;
+
+    std::string fOutput;
+};
+
+#endif // pfRemoteConsole_inc

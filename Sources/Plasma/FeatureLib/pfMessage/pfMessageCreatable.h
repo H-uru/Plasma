@@ -94,4 +94,7 @@ REGISTER_CREATABLE(pfMarkerMsg);
 #include "pfMovieEventMsg.h"
 REGISTER_CREATABLE(pfMovieEventMsg);
 
+#include "pfRemoteConsoleMsg.h"
+REGISTER_NONCREATABLE(pfRemoteConsoleMsg);
+
 #endif //pfMessageCreatable_inc

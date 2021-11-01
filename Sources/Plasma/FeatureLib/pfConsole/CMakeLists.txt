@@ -7,6 +7,7 @@ set(pfConsole_SOURCES
     pfConsoleDirSrc.cpp
     pfDispatchLog.cpp
     pfGameConsoleCommands.cpp
+    pfRemoteConsole.cpp
 )
 
 set(pfConsole_HEADERS
@@ -14,6 +15,7 @@ set(pfConsole_HEADERS
     pfConsoleCreatable.h
     pfConsoleDirSrc.h
     pfDispatchLog.h
+    pfRemoteConsole.h
 )
 
 plasma_library(pfConsole

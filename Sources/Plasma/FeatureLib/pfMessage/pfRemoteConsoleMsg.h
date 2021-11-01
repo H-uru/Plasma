@@ -40,15 +40,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef pfConsoleCreatable_inc
-#define pfConsoleCreatable_inc
+#ifndef _pfRemoteConsoleMsg_h
+#define _pfRemoteConsoleMsg_h
 
-#include "pnFactory/plCreator.h"
+#include <string_theory/string>
+#include "pnMessage/plMessage.h"
+#include <memory>
+#include <condition_variable>
 
-#include "pfConsole.h"
-REGISTER_CREATABLE(pfConsole);
+class pfRemoteConsoleMsgOutput {
+public:
+    ST::string fOutputData;
+    // Ideally we'd use a binary semaphore, but that requires c++20...
+    std::condition_variable fCondvar;
 
-#include "pfRemoteConsole.h"
-REGISTER_CREATABLE(pfRemoteConsole);
+    std::mutex fOutputDataSetLock;
+    bool fOutputDataSet;
+};
 
-#endif // pfConsoleCreatable_inc
+class pfRemoteConsoleMsg : public plMessage
+{
+protected:
+    ST::string fCmd;
+    std::shared_ptr<pfRemoteConsoleMsgOutput> fOutput;
+
+public:
+    pfRemoteConsoleMsg() : fCmd(), fOutput() {}
+    pfRemoteConsoleMsg(const ST::string& cmd) : fCmd(cmd), fOutput(new pfRemoteConsoleMsgOutput()) {
+        SetBCastFlag(plMessage::kBCastByExactType);
+    }
+
+    CLASSNAME_REGISTER(pfRemoteConsoleMsg);
+    GETINTERFACE_ANY(pfRemoteConsoleMsg, plMessage);
+
+    void Read(hsStream* stream, hsResMgr* mgr) override {
+        FATAL("wtf are you doing???");
+    }
+    void Write(hsStream* stream, hsResMgr* mgr) override {
+        FATAL("wtf are you doing???");
+    }
+
+    ST::string GetCommand() const {
+        return this->fCmd;
+    }
+
+    std::shared_ptr<pfRemoteConsoleMsgOutput> GetOutput() const {
+        return this->fOutput;
+    }
+};
+
+#endif // _pfRemoteConsoleMsg_h
