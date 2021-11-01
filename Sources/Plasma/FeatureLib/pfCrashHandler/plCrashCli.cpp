@@ -163,9 +163,10 @@ void plCrashCli::ReportCrash(PEXCEPTION_POINTERS e)
 #   error "Implement plCrashCli for this platform"
 #endif
 
-void plCrashCli::WaitForHandle()
+bool plCrashCli::WaitForHandle(uint32_t timeoutMs)
 {
     // Don't deadlock... Only wait if the CrashSrv is attached
     if (fLink && fLink->fSrvReady)
-        fHandled->Wait();
+        return fHandled->Wait(timeoutMs);
+    return false;
 }
