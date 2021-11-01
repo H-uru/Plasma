@@ -66,11 +66,14 @@ class islmLakeLightMeter(ptResponder):
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
         SDLvalue = 0
-        if stringSDLVarName:
-            ageSDL.setNotify(self.key, stringSDLVarName.value, 0.0)
-            ageSDL.setNotify(self.key, LightMeterVis.value, 0.0)
-            SDLvalue = ageSDL[stringSDLVarName.value][0]
-            MeterVis = ageSDL[LightMeterVis.value][0]
+        if not stringSDLVarName:
+            PtDebugPrint(f"islmLakeLightMeter - No SDL variables found")
+            return
+
+        ageSDL.setNotify(self.key, stringSDLVarName.value, 0.0)
+        ageSDL.setNotify(self.key, LightMeterVis.value, 0.0)
+        SDLvalue = ageSDL[stringSDLVarName.value][0]
+        MeterVis = ageSDL[LightMeterVis.value][0]
 
         for i in LakeLightMeter:
             i.sceneobject.draw.disable()
@@ -82,7 +85,7 @@ class islmLakeLightMeter(ptResponder):
 
 
     def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
-        if (VARname != stringSDLVarName.value and VARname != LightMeterVis.value):
+        if VARname not in {stringSDLVarName.value, LightMeterVis.value}:
             return
 
         ageSDL = PtGetAgeSDL()

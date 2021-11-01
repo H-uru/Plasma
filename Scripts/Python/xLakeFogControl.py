@@ -70,7 +70,7 @@ class xLakeFogControl(ptResponder):
         fogColor.setGreen(Green.value * Multiplier)
         fogColor.setBlue(Blue.value * Multiplier)
         PtFogSetDefColor(fogColor)
-        PtAtTimeCallback(self.key,60,1)
+        PtAtTimeCallback(self.key, 60, 1)
 
     def OnTimer(self,id):
         if id == 1:
@@ -85,4 +85,4 @@ class xLakeFogControl(ptResponder):
             fogColor.setGreen(Green.value * Multiplier)
             fogColor.setBlue(Blue.value * Multiplier)
             PtFogSetDefColor(fogColor)
-            PtAtTimeCallback(self.key,60,1)
+            PtAtTimeCallback(self.key, 60, 1)
