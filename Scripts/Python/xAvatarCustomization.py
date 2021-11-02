@@ -1524,25 +1524,27 @@ class xAvatarCustomization(ptModifier):
         "Gets whats being worn and sets the dialogs to show what we are wearing"
         # assumes that WornList is already filled out
         global listboxDict
-        for id in TheCloset.keys():
+        for id, group in TheCloset.items():
+            listbox = listboxDict[id]
+            acessoryListbox = listboxDict[id + kAccessoryLBOffset]
+
             # tell the listboxes to update themselves
-            listboxDict[id].SetWhatWearing()
-            listboxDict[id].UpdateScrollArrows()
-            listboxDict[id].UpdateListbox()
+            listbox.SetWhatWearing()
+            listbox.UpdateScrollArrows()
+            listbox.UpdateListbox()
             if id == kUpperBodyOptionsLB or id == kLwrBodyOptionsLB:
                 # this is a texture listbox, so update our list of clothing items, and pick the currently worn one
-                targetMesh = listboxDict[id].GetSelectedItem()
-                group = TheCloset[id]
+                targetMesh = listbox.GetSelectedItem()
                 texGroup = TextureGroup(group.clothingType,targetMesh.name)
-                listboxDict[id + kAccessoryLBOffset].SetClothingList(texGroup.clothingItems)
-                listboxDict[id + kAccessoryLBOffset].SetWhatWearing()
-                listboxDict[id + kAccessoryLBOffset].UpdateScrollArrows()
-                listboxDict[id + kAccessoryLBOffset].UpdateListbox()
+                acessoryListbox.SetClothingList(texGroup.clothingItems)
+                acessoryListbox.SetWhatWearing()
+                acessoryListbox.UpdateScrollArrows()
+                acessoryListbox.UpdateListbox()
             else:
                 # standard accessory panel
-                listboxDict[id + kAccessoryLBOffset].SetWhatWearing()
-                listboxDict[id + kAccessoryLBOffset].UpdateScrollArrows()
-                listboxDict[id + kAccessoryLBOffset].UpdateListbox()
+                acessoryListbox.SetWhatWearing()
+                acessoryListbox.UpdateScrollArrows()
+                acessoryListbox.UpdateListbox()
 
     def IColorShowingItem(self,controlID):
         "Color whatever clothing type is selected with color1 slider"
@@ -2392,14 +2394,14 @@ class ClothingCloset:
                     for texItem in self.textureGroups[clothingItem.groupName]:
                         self.nameToGroup[texItem.name] = clothingItem.groupName
 
-    def __getitem__(self,key):
-        try:
-            return self.clothingGroups[key]
-        except LookupError:
-            return None
+    def __getitem__(self, key):
+        return self.clothingGroups.get(key, None)
 
     def __len__(self):
         return len(self.clothingGroups)
+
+    def items(self):
+        return self.clothingGroups.items()
 
     def keys(self):
         return self.clothingGroups.keys()
@@ -2502,16 +2504,16 @@ class ScrollingListBox:
         global TheCloset
         for wornitem in WornList:
             # are we a mesh listbox?
-            if self.listboxID == kUpperBodyOptionsLB or self.listboxID == kLwrBodyOptionsLB:
+            if self.listboxID in (kUpperBodyOptionsLB, kLwrBodyOptionsLB):
                 # we are going to need to match up the selection with it's mesh representation
-                for idx in range(len(self.clothingList)):
-                    if UsesSameGroup(self.clothingList[idx].name, wornitem.name):
+                for idx, clothing in enumerate(self.clothingList):
+                    if UsesSameGroup(clothing.name, wornitem.name):
                         self.selection = idx
                         return
                 self.selection = -1 # can't find it, so don't select anything
             else:
-                for idx in range(len(self.clothingList)):
-                    if self.clothingList[idx].name == wornitem.name:
+                for idx, clothing in enumerate(self.clothingList):
+                    if clothing.name == wornitem.name:
                         self.selection = idx
                         return
                 self.selection = -1 # can't find it, so don't select anything
