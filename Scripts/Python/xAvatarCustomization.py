@@ -511,13 +511,13 @@ def GetAllWithSameGroup(name):
     targetGroup = ""
     clothinglist = []
     groupFound = 0
-    for idx in range(len(CLxref)):
-        clothingType = CLxref[idx][0]
-        clothinglist = avatar.avatar.getClosetClothingList(clothingType)
+    for CLx in CLxref:
+        clothinglist = avatar.avatar.getClosetClothingList(CLx[0])
         for item in clothinglist:
-            ctype,saturation,inCloset,inClosClr1,inClosClr2 = FindSaturationAndCloset(item[0],item[1])
-            newitem = ClothingItem(item,ctype,saturation,inCloset,inClosClr1,inClosClr2)
-            if newitem.name == name:
+            if name == item[0]:
+                ctype,saturation,inCloset,inClosClr1,inClosClr2 = FindSaturationAndCloset(item[0],item[1])
+                # Performance turdette ahoy: the ClothingItem ctor sucks.
+                newitem = ClothingItem(item,ctype,saturation,inCloset,inClosClr1,inClosClr2)
                 targetGroup = newitem.groupName
                 groupFound = 1
                 break
@@ -530,6 +530,7 @@ def GetAllWithSameGroup(name):
     #PtDebugPrint('GetAllWithSameGroup(): Manually calculating group for ' + targetGroup)
     for item in clothinglist:
         ctype,saturation,inCloset,inClosClr1,inClosClr2 = FindSaturationAndCloset(item[0],item[1])
+        # Performance turd: the ClothingItem ctor sucks
         newitem = ClothingItem(item,ctype,saturation,inCloset,inClosClr1,inClosClr2)
         if newitem.groupName == targetGroup and not newitem.meshicon:
             if CanShowClothingItem(newitem):
