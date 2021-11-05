@@ -15,6 +15,7 @@ set(CoreLib_SOURCES
     hsSTLStream.cpp
     hsStream.cpp
     hsStringTokenizer.cpp
+    hsSystemInfo.cpp
     hsThread.cpp
     hsWide.cpp
     pcSmallRect.cpp
@@ -58,6 +59,7 @@ set(CoreLib_HEADERS
     hsSTLStream.h
     hsStream.h
     hsStringTokenizer.h
+    hsSystemInfo.h
     hsThread.h
     hsWide.h
     hsWindows.h

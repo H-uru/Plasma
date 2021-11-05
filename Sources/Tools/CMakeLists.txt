@@ -5,6 +5,7 @@ include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
 if(PLASMA_BUILD_TOOLS)
     add_subdirectory(SoundDecompress)
+    add_subdirectory(plSystemInfo)
 
     if(Qt_FOUND)
         add_subdirectory(plLocalizationEditor)

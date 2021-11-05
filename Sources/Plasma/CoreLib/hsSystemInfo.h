@@ -40,29 +40,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef HeadSpinConfigHDefined
-#define HeadSpinConfigHDefined
+#ifndef hsSystemInfo_Defined
+#define hsSystemInfo_Defined
 
-/* Compiler settings */
-#cmakedefine HAVE_CPUID
-#cmakedefine HAVE_AVX2
-#cmakedefine HAVE_AVX
-#cmakedefine HAVE_SSE42
-#cmakedefine HAVE_SSSE3
-#cmakedefine HAVE_SSE41
-#cmakedefine HAVE_SSE4
-#cmakedefine HAVE_SSE3
-#cmakedefine HAVE_SSE2
-#cmakedefine HAVE_SSE1
+#include <cstdint>
 
-/* External library usage */
-#cmakedefine USE_SPEEX
-#cmakedefine USE_OPUS
-#cmakedefine USE_VPX
-#cmakedefine USE_WEBM
+namespace ST { class string; }
 
-#cmakedefine HAVE_PTHREAD_TIMEDJOIN_NP
-#cmakedefine HAVE_SYSCTL
-#cmakedefine HAVE_SYSINFO
+namespace hsSystemInfo
+{
+    /**
+     * Returns all of the system information as a string.
+     */
+    ST::string AsString();
+
+    /**
+     * Gets the name of the CPU the current thread is executing on.
+     * \remarks Example: "Intel(R) Core(TM) i7-4770K CPU @ 3.50GHz"
+     */
+    ST::string GetCPUBrand();
+
+    /**
+     * Gets the name of the current operating system.
+     * \note If Plasma was built for Windows but is being emulated by WINE, we will
+     * detect that and return all of: the windows version, kernel name and version, and
+     * the WINE version.
+     */
+    ST::string GetOperatingSystem();
+
+    /**
+     * Gets the total system memory in MiB.
+     * \note On some platforms, the operating system may subtract an amount of memory that
+     * is in use by the kernel from this total.
+     */
+    uint64_t GetRAM();
+}
 
 #endif
