@@ -47,9 +47,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 
 #include <algorithm>
+#include <string_view>
+#include <type_traits>
+
 #include <CommCtrl.h>
 #include <shellapi.h>
-#include <string_view>
+#include <Vsstyle.h>
+#include <vssym32.h>
+#include <Uxtheme.h>
 
 #include "resource.h"
 
@@ -88,6 +93,123 @@ static inline ST::string IBuildCrashString()
     return ss.to_string();
 }
 
+// ===================================================
+
+enum class RenderMode { kColor, kMonochrome };
+
+template<RenderMode _RenderMode>
+HBITMAP IRenderSymbol(HWND hwnd, HDC hDC, HFONT font, COLORREF color, wchar_t symbol)
+{
+    HDC buffDC = CreateCompatibleDC(hDC);
+    HBITMAP buffBitmap;
+    if constexpr (_RenderMode == RenderMode::kColor)
+        buffBitmap = CreateCompatibleBitmap(hDC, 32, 32);
+    else
+        buffBitmap = CreateCompatibleBitmap(buffDC, 32, 32);
+    SelectObject(buffDC, buffBitmap);
+    SelectObject(buffDC, font);
+    SetBkMode(buffDC, OPAQUE);
+    SetBkColor(buffDC, RGB(255, 255, 255));
+    FloodFill(buffDC, 0, 0, RGB(255, 255, 255));
+    SetTextColor(buffDC, color);
+    TextOutW(buffDC, 0, 0, &symbol, 1);
+
+    DeleteObject(buffDC);
+    return buffBitmap;
+}
+
+static inline void ISetCommandLinkSymbols(HWND hwnd, HDC hDC, HFONT font, HTHEME theme, std::tuple<int, wchar_t>&& def)
+{
+    HBITMAP mask = IRenderSymbol<RenderMode::kMonochrome>(hwnd, hDC, font, RGB(0, 0, 0), std::get<1>(def));
+
+    BUTTON_IMAGELIST imgList{};
+    imgList.margin = { 0, 0, 32, 32 };
+    Button_GetImageList(GetDlgItem(hwnd, std::get<0>(def)), &imgList);
+    if (imgList.himl == nullptr)
+        imgList.himl = ImageList_Create(32, 32, ILC_COLOR24 | ILC_MASK, 0, 0);
+
+    if (theme) {
+        // Matches the offsets of PUSHBUTTONSTATES-1, so we can just insert directly into the himl.
+        constexpr int images[] {
+            CMDLS_NORMAL,
+            CMDLS_HOT,
+            CMDLS_PRESSED,
+            CMDLS_DISABLED,
+            CMDLS_DEFAULTED,
+        };
+
+        ImageList_SetImageCount(imgList.himl, std::size(images));
+
+        // Render one icon for each button state
+        for (size_t i = 0; i < std::size(images); ++i) {
+            COLORREF color;
+            if (FAILED(GetThemeColor(theme, BP_COMMANDLINK, images[i], TMT_TEXTCOLOR, &color)))
+                color = RGB(0, 0, 0);
+            HBITMAP icon = IRenderSymbol<RenderMode::kColor>(hwnd, hDC, font, color, std::get<1>(def));
+            ImageList_Replace(imgList.himl, i, icon, mask);
+            DeleteObject(icon);
+        }
+    } else {
+        COLORREF color = GetSysColor(COLOR_HIGHLIGHT);
+        HBITMAP icon = IRenderSymbol<RenderMode::kColor>(hwnd, hDC, font, color, std::get<1>(def));
+        ImageList_SetImageCount(imgList.himl, 1);
+        ImageList_Replace(imgList.himl, 0, icon, mask);
+        DeleteObject(icon);
+    }
+
+    Button_SetImageList(GetDlgItem(hwnd, std::get<0>(def)), &imgList);
+    DeleteObject(mask);
+}
+
+template<typename _ArgT, typename... _ArgsT>
+inline void ISetCommandLinkSymbols(HWND hwnd, HDC hDC, HTHEME theme, HFONT font, _ArgT&& arg, _ArgsT&&... args)
+{
+    static_assert(std::is_same_v<std::tuple<int, wchar_t>, std::decay_t<_ArgT>>, "ISetCommandLinkSymbols expects std::tuple<int, wchar_t>");
+    ISetCommandLinkSymbols(hwnd, hDC, font, theme, std::forward<_ArgT>(arg));
+    if constexpr (sizeof...(args) > 0)
+        ISetCommandLinkSymbols(hwnd, hDC, font, theme, std::forward<_ArgsT>(args)...);
+}
+
+template<typename... _ArgsT>
+void ISetCommandLinkSymbols(HWND hwnd, _ArgsT&&... args)
+{
+    // While the Segoe UI Symbol font does, in fact, exist on Windows 7, it lacks
+    // the actually useful symbols from Windows 8 that we need. So just bail.
+    const RTL_OSVERSIONINFOEXW& winver = hsGetWindowsVersion();
+    if (winver.dwMajorVersion < 6 || (winver.dwMajorVersion == 6 && winver.dwMinorVersion < 3))
+        return;
+
+    HDC hDC = GetDC(hwnd);
+    HFONT font = CreateFontW(
+        -MulDiv(18, GetDeviceCaps(hDC, LOGPIXELSY), 72), // cHeight
+        0,                                               // cWidth
+        0,                                               // cEscapement
+        0,                                               // cOrientation
+        FW_NORMAL,                                       // cWeight
+        FALSE,                                           // bItalic
+        FALSE,                                           // bUnderline
+        FALSE,                                           // bStrikeOut
+        DEFAULT_CHARSET,                                 // iCharSet
+        OUT_DEFAULT_PRECIS,                              // iOutPrecision
+        CLIP_DEFAULT_PRECIS,                             // iClipPrecision
+        CLEARTYPE_QUALITY,                               // iQuality
+        DEFAULT_PITCH,                                   // iPitchAndFamily
+        L"Segoe UI Symbol"                               // pszFaceName
+    );
+
+    if (font) {
+        HTHEME theme = OpenThemeData(hwnd, L"BUTTON");
+        ISetCommandLinkSymbols(hwnd, hDC, theme, font, std::forward<_ArgsT>(args)...);
+        if (theme)
+            CloseThemeData(theme);
+        DeleteObject(font);
+    }
+
+    ReleaseDC(hwnd, hDC);
+}
+
+// ===================================================
+
 static inline void IAddColumn(HWND hwnd, int idx, std::wstring_view name, int size)
 {
     LVCOLUMNW column{};
@@ -115,6 +237,8 @@ static inline void ISetItem(HWND hwnd, int idx, int col, const ST::string& value
     else
         ListView_SetItem(hwnd, &item);
 }
+
+// ===================================================
 
 static inline void ILayoutStackTrace(HWND hwnd)
 {
@@ -163,12 +287,22 @@ static inline void ILayoutStackTrace(HWND hwnd)
     }
 }
 
+static inline void IDrawCommandLinkIcons(HWND hwnd)
+{
+    ISetCommandLinkSymbols(
+        hwnd,
+        std::make_tuple(IDC_COPYBUTTON, L'\uE16F'),
+        std::make_tuple(IDC_QUITBUTTON, L'\uE126')
+    );
+}
+
 static void ILayoutDialog(HWND dialog)
 {
     SetDlgItemTextW(dialog, IDC_PRODUCTSTRING, plProduct::ProductString().to_wchar().data());
     ILayoutStackTrace(dialog);
     Button_SetNote(GetDlgItem(dialog, IDC_COPYBUTTON), L"Copy the crash information to the clipboard for pasting elsewhere.");
     Button_SetNote(GetDlgItem(dialog, IDC_QUITBUTTON), L"Close this window and continue on with life.");
+    IDrawCommandLinkIcons(dialog);
 }
 
 INT_PTR CALLBACK CrashDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -195,6 +329,10 @@ INT_PTR CALLBACK CrashDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     case WM_NCHITTEST:
         SetWindowLongPtrW(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)HTCAPTION);
         return TRUE;
+    case WM_THEMECHANGED:
+        // re-render the button icons for great justice
+        IDrawCommandLinkIcons(hwndDlg);
+        break;
     }
 
     return DefWindowProcW(hwndDlg, uMsg, wParam, lParam);

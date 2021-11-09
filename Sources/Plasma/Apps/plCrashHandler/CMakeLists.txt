@@ -14,6 +14,9 @@ target_link_libraries(
         CoreLib
         plClipboard
         pfCrashHandler
+
+        $<$<PLATFORM_ID:Windows>:Comctl32>
+        $<$<PLATFORM_ID:Windows>:UxTheme>
 )
 target_compile_definitions(
     plCrashHandler
