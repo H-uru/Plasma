@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <netdb.h>
-# include <cstring>  // for memcpy
 #elif !defined(HS_BUILD_FOR_WIN32)
 #error "Not implemented for this platform"
 #endif
@@ -60,7 +59,7 @@ namespace pnNetCommon
 ST::string GetTextAddr(uint32_t binAddr)
 {
     in_addr in;
-    memcpy(&in, &binAddr, sizeof(binAddr));
+    in.s_addr = binAddr;
 
     char text_addr[INET_ADDRSTRLEN];
     return ST::string::from_utf8(inet_ntop(AF_INET, &in, text_addr, sizeof(text_addr)));
@@ -77,11 +76,10 @@ uint32_t GetBinAddr(const ST::string& textAddr)
     int result = inet_pton(AF_INET, textAddr.c_str(), &in);
     hsAssert(result >= 0, "inet_pton failed");
     if (result) {
-        memcpy(&addr, &in, sizeof(addr));
+        addr = in.s_addr;
     } else {
         struct addrinfo* ai = nullptr;
-        struct addrinfo hints;
-        memset(&hints, 0, sizeof(struct addrinfo));
+        struct addrinfo hints = {};
         hints.ai_family = PF_INET;
         hints.ai_flags  = AI_CANONNAME;
         if (getaddrinfo(textAddr.c_str(), nullptr, &hints, &ai) != 0)
@@ -90,7 +88,7 @@ uint32_t GetBinAddr(const ST::string& textAddr)
             return addr;
         }
 
-        memcpy(&addr, (void*)(&(((sockaddr_in*)(ai->ai_addr))->sin_addr)), sizeof(addr));
+        addr = reinterpret_cast<sockaddr_in *>(ai->ai_addr)->sin_addr.s_addr;
         freeaddrinfo(ai);
     }
 
