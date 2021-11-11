@@ -82,6 +82,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////////////
 
+pyVaultNode::pyVaultNodeOperationCallback::pyVaultNodeOperationCallback()
+    : fContext()
+{ }
+
+/** Constructs a new operation callback from a borrowed reference */
+pyVaultNode::pyVaultNodeOperationCallback::pyVaultNodeOperationCallback(PyObject* cbObject) noexcept
+    : fCbObject(cbObject, pyObjectNewRef), fContext()
+{ }
+
+pyVaultNode::pyVaultNodeOperationCallback::pyVaultNodeOperationCallback(pyObjectRef cbObject) noexcept
+    : fCbObject(std::move(cbObject)), fContext()
+{ }
+
 void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( uint32_t context )
 {
     fContext = context;
