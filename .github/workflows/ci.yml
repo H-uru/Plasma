@@ -11,9 +11,9 @@ jobs:
           - { generator: Visual Studio 16 2019, max-version: 7, arch: Win32, qt-arch: win32_msvc2019, qt-version: 5.15.2,  str: windows-x86 }
           - { generator: Visual Studio 16 2019, max-version: 2022, arch: x64, qt-arch: win64_msvc2019_64, qt-version: 5.15.2,  str: windows-x64 }
         cfg:
-          - { external: OFF, type: RelWithDebInfo, str: internal-release }
+          - { external: OFF, type: RelWithPDB, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
-          - { external: ON, type: RelWithDebInfo, str: external-release }
+          - { external: ON, type: RelWithPDB, str: external-release }
 
     steps:
       - name: Checkout Plasma
