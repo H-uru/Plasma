@@ -461,11 +461,12 @@ static void GetFileNameSection(const wchar_t* configFile, const wchar_t* keyName
     GetPrivateProfileStringW(L"Settings", keyName, L"", source, std::size(source), configFile);
 
     wchar_t* seps = L",";
-    wchar_t* token = wcstok(source, seps);
+    wchar_t* state = nullptr;
+    wchar_t* token = wcstok(source, seps, &state);
     while (token != nullptr)
     {
         strings.emplace_back(ST::string::from_wchar(token));
-        token = wcstok(nullptr, seps);
+        token = wcstok(nullptr, seps, &state);
     }
 }
 
