@@ -61,7 +61,9 @@ ST::string GetTextAddr(uint32_t binAddr)
 {
     in_addr in;
     memcpy(&in, &binAddr, sizeof(binAddr));
-    return ST::string::from_utf8(inet_ntoa(in));
+
+    char text_addr[INET_ADDRSTRLEN];
+    return ST::string::from_utf8(inet_ntop(AF_INET, &in, text_addr, sizeof(text_addr)));
 }
 
 // NOTE: On Win32, WSAStartup() must be called before GetBinAddr() will work.
@@ -71,9 +73,12 @@ uint32_t GetBinAddr(const ST::string& textAddr)
     if (textAddr.empty())
         return addr;
 
-    addr = inet_addr(textAddr.c_str());
-    if(addr == INADDR_NONE)
-    {
+    in_addr in;
+    int result = inet_pton(AF_INET, textAddr.c_str(), &in);
+    hsAssert(result >= 0, "inet_pton failed");
+    if (result) {
+        memcpy(&addr, &in, sizeof(addr));
+    } else {
         struct addrinfo* ai = nullptr;
         struct addrinfo hints;
         memset(&hints, 0, sizeof(struct addrinfo));
