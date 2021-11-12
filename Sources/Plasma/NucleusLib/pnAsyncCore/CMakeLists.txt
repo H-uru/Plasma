@@ -23,7 +23,7 @@ target_link_libraries(
         pnNetCommon
         pnUUID
     PRIVATE
-        $<$<PLATFORM_ID:Windows>:pnAsyncCoreExe> # Implementation (Windows only) is here.
+        pnAsyncCoreExe # Implementation is here
         pnNetBase
         pnUtils
         plStatusLog # :(
