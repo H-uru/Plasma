@@ -43,11 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsThread_Defined
 
 #include "HeadSpin.h"
-#include <atomic>
-#include <mutex>
-#include <condition_variable>
-#include <thread>
 #include "hsLockGuard.h"
+
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
+
+#include <string_theory/string>
 
 typedef uint32_t hsMilliseconds;
 
@@ -153,7 +156,7 @@ class hsGlobalSemaphore {
 #endif
 #endif
 public:
-    hsGlobalSemaphore(int initialValue = 0, const char* name = nullptr);
+    hsGlobalSemaphore(int initialValue = 0, const ST::string& name = {});
     ~hsGlobalSemaphore();
 
 #ifdef HS_BUILD_FOR_WIN32

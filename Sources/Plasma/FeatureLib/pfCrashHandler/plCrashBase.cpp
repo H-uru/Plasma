@@ -43,18 +43,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCrashBase.h"
 #include "plCrash_Private.h"
 
+#include <string_theory/format>
+
 plCrashBase::~plCrashBase()
 {
     delete fCrashed;
     delete fHandled;
 }
 
-void plCrashBase::IInit(const char* file)
+void plCrashBase::IInit(const ST::string& file)
 {
-    char sema[128];
-    snprintf(sema, std::size(sema), "%s-%s", file, CRASH_NOTIFY_SUFFIX);
-    fCrashed = new hsGlobalSemaphore(0, sema);
-
-    snprintf(sema, std::size(sema), "%s-%s", file, CRASH_HANDLE_SUFFIX);
-    fHandled = new hsGlobalSemaphore(0, sema);
+    fCrashed = new hsGlobalSemaphore(0, ST::format("{}-{}", file, CRASH_NOTIFY_SUFFIX));
+    fHandled = new hsGlobalSemaphore(0, ST::format("{}-{}", file, CRASH_HANDLE_SUFFIX));
 }
