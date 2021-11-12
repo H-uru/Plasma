@@ -52,12 +52,14 @@ namespace hsSystemInfo
     /**
      * Returns all of the system information as a string.
      */
+    [[nodiscard]]
     ST::string AsString();
 
     /**
      * Gets the name of the CPU the current thread is executing on.
      * \remarks Example: "Intel(R) Core(TM) i7-4770K CPU @ 3.50GHz"
      */
+    [[nodiscard]]
     ST::string GetCPUBrand();
 
     /**
@@ -66,6 +68,7 @@ namespace hsSystemInfo
      * detect that and return all of: the windows version, kernel name and version, and
      * the WINE version.
      */
+    [[nodiscard]]
     ST::string GetOperatingSystem();
 
     /**
@@ -73,6 +76,7 @@ namespace hsSystemInfo
      * \note On some platforms, the operating system may subtract an amount of memory that
      * is in use by the kernel from this total.
      */
+    [[nodiscard]]
     uint64_t GetRAM();
 }
 
