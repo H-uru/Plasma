@@ -47,7 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 
-#if defined(HS_BUILD_FOR_LINUX)
+#if defined(HAVE_PTHREAD_TIMEDJOIN_NP)
+#include <pthread.h>
 #include <time.h>
 #endif
 
@@ -74,7 +75,7 @@ void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
     if (rc == WAIT_TIMEOUT)
         LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
     thread.detach();
-#elif defined(HS_BUILD_FOR_LINUX)
+#elif defined(HAVE_PTHREAD_TIMEDJOIN_NP)
     struct timespec deadline;
     if (clock_gettime(CLOCK_REALTIME, &deadline) < 0)
         hsAssert(false, "Could not get the realtime clock");

@@ -23,6 +23,10 @@ if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
     endif()
 endif()
 
+try_compile(HAVE_PTHREAD_TIMEDJOIN_NP ${PROJECT_BINARY_DIR}
+            ${PROJECT_SOURCE_DIR}/cmake/check_pthread_timedjoin_np.cpp
+            LINK_LIBRARIES Threads::Threads)
+
 # Check for CPUID headers
 try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
             ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp)
