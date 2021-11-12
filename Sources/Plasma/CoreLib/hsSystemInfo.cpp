@@ -321,7 +321,7 @@ uint64_t hsSystemInfo::GetRAM()
     int mib[2]{ CTL_HW, HW_MEMSIZE };
     uint64_t memory = 0;
     size_t length = sizeof(memory);
-    if (sysctl(mib, sizeof(mib), &memory, &length, nullptr, 0) != 0)
+    if (sysctl(mib, std::size(mib), &memory, &length, nullptr, 0) != 0)
         hsAssert(0, "shit");
     // This will probably subtract some amount of kernel memory, so don't assert on
     // offset amounts of memory.
