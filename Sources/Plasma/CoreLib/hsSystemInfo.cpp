@@ -67,6 +67,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #    include <sys/utsname.h>
 #endif
 
+#ifdef HS_BUILD_FOR_APPLE
+#    include <CoreFoundation/CoreFoundation.h>
+
+    extern "C" {
+        CF_EXPORT const CFStringRef _kCFSystemVersionProductNameKey;
+        CF_EXPORT const CFStringRef _kCFSystemVersionProductVersionKey;
+
+        CF_EXPORT CFDictionaryRef _CFCopyServerVersionDictionary();
+        CF_EXPORT CFDictionaryRef _CFCopySystemVersionDictionary();
+    }
+#endif
+
 #ifdef HAVE_CPUID
 #    if defined(_MSC_VER) || ((defined(_WIN32) || defined(_WIN64)) && defined(__INTEL_COMPILER))
 #        include <intrin.h>
@@ -220,8 +232,9 @@ static inline ST::string IGetLinuxVersion(const plFileName& osVersionPath)
 
 ST::string hsSystemInfo::GetOperatingSystem()
 {
-#ifdef HS_BUILD_FOR_WIN32
     ST::string system;
+
+#if defined(HS_BUILD_FOR_WIN32)
     const RTL_OSVERSIONINFOEXW& info = hsGetWindowsVersion();
 
     typedef const char* (CDECL * wine_get_version)();
@@ -250,23 +263,43 @@ ST::string hsSystemInfo::GetOperatingSystem()
     }
     if (system.empty())
         system = IGetWindowsVersion(info);
+#elif defined(HS_BUILD_FOR_APPLE)
+    CFDictionaryRef dict = _CFCopyServerVersionDictionary();
+    if (dict == nullptr)
+        dict = _CFCopySystemVersionDictionary();
 
-    return system;
-#else
-    ST::string system;
+    if (dict != nullptr) {
+        CFStringRef name = (CFStringRef)CFDictionaryGetValue(dict, _kCFSystemVersionProductNameKey);
+        CFStringRef version = (CFStringRef)CFDictionaryGetValue(dict, _kCFSystemVersionProductVersionKey);
+        CFStringRef info = CFStringCreateWithFormat(nullptr, nullptr, CFSTR("%@ %@"), name, version);
 
-    // Try linux first so we can get the distro name.
+        CFIndex infoLen = CFStringGetLength(info);
+        CFIndex infoBufSz = 0;
+        CFStringGetBytes(info, CFRangeMake(0, infoLen), kCFStringEncodingUTF8, 0, false, nullptr, 0, &infoBufSz);
+        ST::char_buffer systemBuf;
+        systemBuf.allocate(infoBufSz);
+        CFStringGetBytes(info, CFRangeMake(0, infoLen), kCFStringEncodingUTF8, 0, false, (UInt8*)systemBuf.data(), infoLen, nullptr);
+        system = ST::string(systemBuf);
+
+        CFRelease(info);
+        CFRelease(version);
+        CFRelease(name);
+        CFRelease(dict);
+    }
+#elif defined(HS_BUILD_FOR_LINUX)
     system = IGetLinuxVersion("/etc/os-release");
-    if (!system.empty())
-        return system;
+#endif
 
+#ifdef HS_BUILD_FOR_UNIX
     // Should work for everything else.
-    utsname sysinfo;
-    uname(&sysinfo);
-    system = ST::format("{} {} ({})", sysinfo.sysname, sysinfo.release, sysinfo.machine);
+    if (system.empty()) {
+        utsname sysinfo;
+        uname(&sysinfo);
+        system = ST::format("{} {} ({})", sysinfo.sysname, sysinfo.release, sysinfo.machine);
+    }
+#endif
 
     return system;
-#endif
 }
 
 uint64_t hsSystemInfo::GetRAM()

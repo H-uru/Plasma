@@ -86,6 +86,8 @@ target_link_libraries(
         string_theory
         Threads::Threads
         $<$<AND:$<CONFIG:Debug>,$<BOOL:${USE_VLD}>>:VLD::VLD>
+    PRIVATE
+        "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
 )
 target_include_directories(
     CoreLib
