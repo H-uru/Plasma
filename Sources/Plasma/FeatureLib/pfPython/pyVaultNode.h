@@ -88,18 +88,12 @@ public:
         pyObjectRef         fPyNodeRef;
         uint32_t            fContext;
 
-        pyVaultNodeOperationCallback()
-            : fContext()
-        { }
+        pyVaultNodeOperationCallback();
 
         /** Constructs a new operation callback from a borrowed reference */
-        explicit pyVaultNodeOperationCallback(PyObject* cbObject) noexcept
-            : fCbObject(cbObject, pyObjectNewRef), fContext()
-        { }
+        explicit pyVaultNodeOperationCallback(PyObject* cbObject) noexcept;
 
-        explicit pyVaultNodeOperationCallback(pyObjectRef cbObject) noexcept
-            : fCbObject(std::move(cbObject)), fContext()
-        { }
+        explicit pyVaultNodeOperationCallback(pyObjectRef cbObject) noexcept;
 
         void VaultOperationStarted(uint32_t context);
         void VaultOperationComplete(uint32_t context, int resultCode);
