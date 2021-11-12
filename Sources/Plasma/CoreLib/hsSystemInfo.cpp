@@ -135,8 +135,65 @@ ST::string hsSystemInfo::GetCPUBrand()
     return result;
 }
 
+#ifdef HS_BUILD_FOR_APPLE
+static inline bool IGetAppleVersion(ST::string& system)
+{
+    CFDictionaryRef dict = _CFCopyServerVersionDictionary();
+    if (dict == nullptr)
+        dict = _CFCopySystemVersionDictionary();
+
+    if (dict != nullptr) {
+        CFStringRef name = (CFStringRef)CFDictionaryGetValue(dict, _kCFSystemVersionProductNameKey);
+        CFStringRef version = (CFStringRef)CFDictionaryGetValue(dict, _kCFSystemVersionProductVersionKey);
+        CFStringRef info = CFStringCreateWithFormat(nullptr, nullptr, CFSTR("%@ %@"), name, version);
+
+        CFIndex infoLen = CFStringGetLength(info);
+        CFIndex infoBufSz = 0;
+        CFStringGetBytes(info, CFRangeMake(0, infoLen), kCFStringEncodingUTF8, 0, false, nullptr, 0, &infoBufSz);
+        ST::char_buffer systemBuf;
+        systemBuf.allocate(infoBufSz);
+        CFStringGetBytes(info, CFRangeMake(0, infoLen), kCFStringEncodingUTF8, 0, false, (UInt8*)systemBuf.data(), infoLen, nullptr);
+        system = ST::string(systemBuf);
+
+        CFRelease(info);
+        CFRelease(version);
+        CFRelease(name);
+        CFRelease(dict);
+
+        return true;
+    }
+
+    return false;
+}
+#endif
+
+static inline bool IGetLinuxVersion(const plFileName& osVersionPath, ST::string& system)
+{
+    plFileInfo info(osVersionPath);
+    if (info.Exists() && info.IsFile()) {
+        hsUNIXStream s;
+        if (s.Open(osVersionPath, "r")) {
+            char token[128];
+            while (s.GetToken(token, sizeof(token))) {
+                if (strcmp(token, "PRETTY_NAME") == 0) {
+                    if (s.ReadLn(token, sizeof(token))) {
+                        system = ST::string::from_utf8(token);
+                        // chop off the quotes
+                        system = system.substr(1, system.size() - 2);
+                        s.Close();
+                        return true;
+                    }
+                }
+            }
+            s.Close();
+        }
+    }
+
+    return false;
+}
+
 #ifdef HS_BUILD_FOR_WIN32
-static inline ST::string IGetWindowsVersion(const RTL_OSVERSIONINFOEXW& info, std::optional<bool> server = std::nullopt)
+static inline bool IGetWindowsVersion(const RTL_OSVERSIONINFOEXW& info, ST::string& system, std::optional<bool> server = std::nullopt)
 {
     if (!server.has_value())
         server = info.wProductType == VER_NT_SERVER;
@@ -200,45 +257,16 @@ static inline ST::string IGetWindowsVersion(const RTL_OSVERSIONINFOEXW& info, st
         ss << info.szCSDVersion << ' ';
 
     ss << "(Build " << info.dwBuildNumber << ')';
-    return ss.to_string();
+    system = ss.to_string();
+    return true;
 }
 #endif
 
-static inline ST::string IGetLinuxVersion(const plFileName& osVersionPath)
+#ifdef HS_BUILD_FOR_WIN32
+static inline bool IGetWINEVersion(const RTL_OSVERSIONINFOEXW& info, ST::string& system)
 {
-    ST::string system;
-    plFileInfo info(osVersionPath);
-    if (info.Exists() && info.IsFile()) {
-        hsUNIXStream s;
-        if (s.Open(osVersionPath, "r")) {
-            char token[128];
-            while (s.GetToken(token, sizeof(token))) {
-                if (strcmp(token, "PRETTY_NAME") == 0) {
-                    if (s.ReadLn(token, sizeof(token))) {
-                        system = ST::string::from_utf8(token);
-                        // chop off the quotes
-                        system = system.substr(1, system.size() - 2);
-                        s.Close();
-                        return system;
-                    }
-                }
-            }
-            s.Close();
-        }
-    }
-
-    return system;
-}
-
-ST::string hsSystemInfo::GetOperatingSystem()
-{
-    ST::string system;
-
-#if defined(HS_BUILD_FOR_WIN32)
-    const RTL_OSVERSIONINFOEXW& info = hsGetWindowsVersion();
-
-    typedef const char* (CDECL * wine_get_version)();
-    typedef void (CDECL * wine_get_host_version)(const char** sysname, const char** release);
+    typedef const char* (CDECL* wine_get_version)();
+    typedef void (CDECL* wine_get_host_version)(const char** sysname, const char** release);
 
     HMODULE ntdll = GetModuleHandleW(L"ntdll");
     if (ntdll) {
@@ -248,7 +276,8 @@ ST::string hsSystemInfo::GetOperatingSystem()
             // WINE for some reason likes to pretend to be Windows Server. Debunk that crap
             // because we really only want to get "Windows Server 2008 R2" if they are really
             // on that OS, not because WINE is saying it's a Windows 7 server. Ugh.
-            ST::string windowsVersion = IGetWindowsVersion(info, false);
+            ST::string windowsVersion;
+            IGetWindowsVersion(info, windowsVersion, false);
 
             // Ideally, we would try to parse Z:\etc\os-release to get the Linux distro name,
             // but that seems to crash WINE, unfortunately. So, we'll just naively use whatever
@@ -259,44 +288,37 @@ ST::string hsSystemInfo::GetOperatingSystem()
             const char* wineVersion = wine_target_version();
 
             system = ST::format("{} [Emulated on {} ({}) by WINE {}]", windowsVersion, sysname, release, wineVersion);
+            return true;
         }
     }
-    if (system.empty())
-        system = IGetWindowsVersion(info);
+
+    return false;
+}
+#endif
+
+ST::string hsSystemInfo::GetOperatingSystem()
+{
+    ST::string system = ST_LITERAL("Unknown");
+
+#if defined(HS_BUILD_FOR_WIN32)
+    const RTL_OSVERSIONINFOEXW& info = hsGetWindowsVersion();
+    if (IGetWINEVersion(info, system))
+        return system;
+    if (IGetWindowsVersion(info, system))
+        return system;
 #elif defined(HS_BUILD_FOR_APPLE)
-    CFDictionaryRef dict = _CFCopyServerVersionDictionary();
-    if (dict == nullptr)
-        dict = _CFCopySystemVersionDictionary();
-
-    if (dict != nullptr) {
-        CFStringRef name = (CFStringRef)CFDictionaryGetValue(dict, _kCFSystemVersionProductNameKey);
-        CFStringRef version = (CFStringRef)CFDictionaryGetValue(dict, _kCFSystemVersionProductVersionKey);
-        CFStringRef info = CFStringCreateWithFormat(nullptr, nullptr, CFSTR("%@ %@"), name, version);
-
-        CFIndex infoLen = CFStringGetLength(info);
-        CFIndex infoBufSz = 0;
-        CFStringGetBytes(info, CFRangeMake(0, infoLen), kCFStringEncodingUTF8, 0, false, nullptr, 0, &infoBufSz);
-        ST::char_buffer systemBuf;
-        systemBuf.allocate(infoBufSz);
-        CFStringGetBytes(info, CFRangeMake(0, infoLen), kCFStringEncodingUTF8, 0, false, (UInt8*)systemBuf.data(), infoLen, nullptr);
-        system = ST::string(systemBuf);
-
-        CFRelease(info);
-        CFRelease(version);
-        CFRelease(name);
-        CFRelease(dict);
-    }
+    if (IGetAppleVersion(system))
+        return system;
 #elif defined(HS_BUILD_FOR_LINUX)
-    system = IGetLinuxVersion("/etc/os-release");
+    if (IGetLinuxVersion("/etc/os-release", system))
+        return system;
 #endif
 
 #ifdef HS_BUILD_FOR_UNIX
     // Should work for everything else.
-    if (system.empty()) {
-        utsname sysinfo;
-        uname(&sysinfo);
-        system = ST::format("{} {} ({})", sysinfo.sysname, sysinfo.release, sysinfo.machine);
-    }
+    utsname sysinfo;
+    uname(&sysinfo);
+    system = ST::format("{} {} ({})", sysinfo.sysname, sysinfo.release, sysinfo.machine);
 #endif
 
     return system;
