@@ -47,6 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 
+#if defined(HS_BUILD_FOR_LINUX)
+#include <time.h>
+#endif
 
 /*****************************************************************************
 *
@@ -60,4 +63,33 @@ void ThreadDestroy (unsigned exitThreadWaitMs) {
     unsigned bailAt = TimeGetMs() + exitThreadWaitMs;
     while (AsyncPerfGetCounter(kAsyncPerfThreadsCurr) && signed(bailAt - TimeGetMs()) > 0)
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+}
+
+//============================================================================
+void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
+{
+    // HACK: No cross-platform way to perform a timed join :(
+#if defined(HS_BUILD_FOR_WIN32)
+    DWORD rc = WaitForSingleObject(thread.native_handle(), timeoutMs);
+    if (rc == WAIT_TIMEOUT)
+        LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
+    thread.detach();
+#elif defined(HS_BUILD_FOR_LINUX)
+    struct timespec deadline;
+    if (clock_gettime(CLOCK_REALTIME, &deadline) < 0)
+        hsAssert(false, "Could not get the realtime clock");
+    deadline.tv_sec += timeoutMs / 1000;
+    deadline.tv_nsec += (timeoutMs % 1000) * 1'000'000;
+    if (deadline.tv_nsec > 1'000'000'000) {
+        deadline.tv_nsec -= 1'000'000'000;
+        deadline.tv_sec += 1;
+    }
+    if (pthread_timedjoin_np(thread.native_handle(), nullptr, &deadline) != 0)
+        LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
+    thread.detach();
+#else
+    LogMsg(kLogDebug, "No timed thread join support for this system... "
+                      "Performing a blocking join instead.");
+    thread.join();
+#endif
 }

@@ -19,10 +19,6 @@ set(pnAsyncCoreExe_PRIVATE_NT
     Private/Nt/pnAceNtSocket.cpp
 )
 
-set(pnAsyncCoreExe_PRIVATE_WIN32
-    Private/Win32/pnAceW32Thread.cpp
-)
-
 plasma_library(pnAsyncCoreExe
     SOURCES ${pnAsyncCoreExe_SOURCES} ${pnAsyncCoreExe_HEADERS} ${pnAsyncCoreExe_PRIVATE}
 )
@@ -30,7 +26,6 @@ plasma_library(pnAsyncCoreExe
 if(WIN32)
     target_sources(pnAsyncCoreExe PRIVATE
         ${pnAsyncCoreExe_PRIVATE_NT}
-        ${pnAsyncCoreExe_PRIVATE_WIN32}
     )
 endif()
 
@@ -51,4 +46,3 @@ source_group("Source Files" FILES ${pnAsyncCoreExe_SOURCES})
 source_group("Header Files" FILES ${pnAsyncCoreExe_HEADERS})
 source_group("Private" FILES ${pnAsyncCoreExe_PRIVATE})
 source_group("Private\\Nt" FILES ${pnAysncCoreExe_PRIVATE_NT})
-source_group("Private\\Win32" FILES ${pnAsyncCoreExe_PRIVATE_WIN32})
