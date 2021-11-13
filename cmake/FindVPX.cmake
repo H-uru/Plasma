@@ -2,8 +2,11 @@ if(NOT TARGET VPX::VPX)
     find_package(unofficial-libvpx CONFIG QUIET)
     if(TARGET unofficial::libvpx::libvpx)
         # vcpkg has erased the debug library suffix, so CMake can only detect the release library.
-        # So, we make an alias to vcpkg's exported target that has both imported libraries.
-        add_library(VPX::VPX ALIAS unofficial::libvpx::libvpx)
+        # So, we make an interface target to vcpkg's exported target that has both imported libraries.
+        add_library(VPX::VPX INTERFACE IMPORTED)
+        set_target_properties(VPX::VPX PROPERTIES
+            INTERFACE_LINK_LIBRARIES unofficial::libvpx::libvpx
+        )
         set(VPX_FOUND TRUE)
     else()
         include(FindPackageHandleStandardArgs)
