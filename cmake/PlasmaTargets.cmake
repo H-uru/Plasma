@@ -19,7 +19,7 @@ cmake_dependent_option(
 
 function(plasma_executable TARGET)
     cmake_parse_arguments(PARSE_ARGV 1 _pex
-        "WIN32;CLIENT;TOOL;QT_GUI;EXCLUDE_FROM_ALL;NO_SANITIZE"
+        "WIN32;CLIENT;TOOL;QT_GUI;EXCLUDE_FROM_ALL;NO_SANITIZE;INSTALL_PDB"
         ""
         "SOURCES"
     )
@@ -36,10 +36,10 @@ function(plasma_executable TARGET)
     add_executable(${TARGET} ${addexe_args} ${_pex_SOURCES})
 
     if(_pex_CLIENT)
-        install(TARGETS ${TARGET} DESTINATION client)
+        set(install_destination client)
     elseif(_pex_TOOL)
         add_dependencies(tools ${TARGET})
-        install(TARGETS ${TARGET} DESTINATION tools)
+        set(install_destination tools)
     endif()
 
     if(_pex_QT_GUI)
@@ -62,6 +62,27 @@ function(plasma_executable TARGET)
 
     if(NOT _pex_NO_SANITIZE)
         plasma_sanitize_target(${TARGET})
+    endif()
+
+    if(DEFINED install_destination)
+        install(TARGETS ${TARGET} DESTINATION ${install_destination})
+        if(_pex_INSTALL_PDB)
+            if(MSVC)
+                set(stripped_pdb_path "$<TARGET_PDB_FILE_DIR:${TARGET}>/${TARGET}.stripped.pdb")
+                target_link_options(${TARGET} PRIVATE "/PDBSTRIPPED:${stripped_pdb_path}")
+                set_property(TARGET ${TARGET} APPEND PROPERTY ADDITIONAL_CLEAN_FILES ${stripped_pdb_path})
+                install(FILES
+                    ${stripped_pdb_path}
+                    DESTINATION ${install_destination}
+                    OPTIONAL
+                )
+            endif()
+            install(FILES
+                $<TARGET_PDB_FILE:${TARGET}>
+                DESTINATION ${install_destination}
+                OPTIONAL
+            )
+        endif()
     endif()
 endfunction()
 
