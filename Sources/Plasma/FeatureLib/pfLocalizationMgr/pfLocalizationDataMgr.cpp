@@ -135,24 +135,6 @@ public:
     void AddError(const ST::string & errorText);
 };
 
-// A few small helper structs
-// I am setting these up so the header file can use this data without having to put
-// the LocalizationXMLFile class into the header file
-struct LocElementInfo
-{
-    LocalizationXMLFile::element fElement;
-};
-
-struct LocSetInfo
-{
-    LocalizationXMLFile::set fSet;
-};
-
-struct LocAgeInfo
-{
-    LocalizationXMLFile::age fAge;
-};
-
 //////////////////////////////////////////////////////////////////////
 // Memory functions
 //////////////////////////////////////////////////////////////////////
@@ -867,12 +849,12 @@ std::vector<ST::string> pfLocalizationDataMgr::IGetAllLanguageNames()
 
 //// IConvertSubtitle ////////////////////////////////////////////////
 
-void pfLocalizationDataMgr::IConvertElement(LocElementInfo *elementInfo, const ST::string & curPath)
+void pfLocalizationDataMgr::IConvertElement(const pfLocalizationDataMgr::element& elementInfo, const ST::string & curPath)
 {
     pfLocalizationDataMgr::localizedElement newElement;
     int16_t numArgs = -1;
 
-    for (const auto& curTranslation : elementInfo->fElement)
+    for (const auto& curTranslation : elementInfo)
     {
         newElement[curTranslation.first].FromXML(curTranslation.second);
         uint16_t argCount = newElement[curTranslation.first].GetArgumentCount();
@@ -887,26 +869,18 @@ void pfLocalizationDataMgr::IConvertElement(LocElementInfo *elementInfo, const S
 
 //// IConvertSet /////////////////////////////////////////////////////
 
-void pfLocalizationDataMgr::IConvertSet(LocSetInfo *setInfo, const ST::string & curPath)
+void pfLocalizationDataMgr::IConvertSet(const pfLocalizationDataMgr::set& setInfo, const ST::string & curPath)
 {
-    for (const auto& curElement : setInfo->fSet)
-    {
-        LocElementInfo elementInfo{ curElement.second };
-
-        IConvertElement(&elementInfo, ST::format("{}.{}", curPath, curElement.first));
-    }
+    for (const auto& curElement : setInfo)
+        IConvertElement(curElement.second, ST::format("{}.{}", curPath, curElement.first));
 }
 
 //// IConvertAge /////////////////////////////////////////////////////
 
-void pfLocalizationDataMgr::IConvertAge(LocAgeInfo *ageInfo, const ST::string & curPath)
+void pfLocalizationDataMgr::IConvertAge(const LocalizationXMLFile::age& ageInfo, const ST::string & curPath)
 {
-    for (const auto& curSet : ageInfo->fAge)
-    {
-        LocSetInfo setInfo{ curSet.second };
-
-        IConvertSet(&setInfo, ST::format("{}.{}", curPath, curSet.first));
-    }
+    for (const auto& curSet : ageInfo)
+        IConvertSet(curSet.second, ST::format("{}.{}", curPath, curSet.first));
 }
 
 //// IWriteText //////////////////////////////////////////////////////
@@ -1012,12 +986,7 @@ void pfLocalizationDataMgr::SetupData()
 
     // transfer localization data
     for (const auto& curAge : fDatabase->GetData())
-    {
-        LocAgeInfo ageInfo;
-        ageInfo.fAge = curAge.second;
-
-        IConvertAge(&ageInfo, curAge.first);
-    }
+        IConvertAge(curAge.second, curAge.first);
 
     OutputTreeToLog();
 }

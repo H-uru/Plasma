@@ -72,6 +72,11 @@ private:
     static pfLocalizationDataMgr*   fInstance;
     static plStatusLog*             fLog;
 
+    // These need to match the typedefs in LocalizedXMLFile
+    using element = std::map<ST::string, ST::string>;
+    using set = std::map<ST::string, element>;
+    using age = std::map<ST::string, set>;
+
 protected:
     // This is a special case map class that will deconstruct the "Age.Set.Name" key into component parts
     // and store them so that a list of each part given it's parent part is easy to grab. I.e. I can grab
@@ -113,9 +118,9 @@ protected:
     ST::string IGetCurrentLanguageName(); // get the name of the current language
     std::vector<ST::string> IGetAllLanguageNames();
 
-    void IConvertElement(LocElementInfo *elementInfo, const ST::string & curPath);
-    void IConvertSet(LocSetInfo *setInfo, const ST::string & curPath);
-    void IConvertAge(LocAgeInfo *ageInfo, const ST::string & curPath);
+    void IConvertElement(const element& elementInfo, const ST::string & curPath);
+    void IConvertSet(const set& setInfo, const ST::string & curPath);
+    void IConvertAge(const age& ageInfo, const ST::string & curPath);
 
     void IWriteText(const plFileName & filename, const ST::string & ageName, const ST::string & languageName); // Write localization text to the specified file
 
