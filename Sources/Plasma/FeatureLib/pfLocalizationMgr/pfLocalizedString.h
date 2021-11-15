@@ -85,7 +85,6 @@ protected:
 public:
     pfLocalizedString() : fNumArguments(0) {}
     pfLocalizedString(const ST::string & plainText);
-    virtual ~pfLocalizedString() {}
 
     // To translate to and from xml format (where <, > and other signs can't be used)
     void FromXML(const ST::string & xml);
