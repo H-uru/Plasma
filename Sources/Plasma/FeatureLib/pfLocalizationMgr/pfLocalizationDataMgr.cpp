@@ -631,7 +631,7 @@ void LocalizationDatabase::Parse(const plFileName & directory)
 //// ISplitString() //////////////////////////////////////////////////
 
 template<class mapT>
-void pfLocalizationDataMgr::pf3PartMap<mapT>::ISplitString(const ST::string& key, ST::string &age, ST::string &set, ST::string &name)
+void pfLocalizationDataMgr::pf3PartMap<mapT>::ISplitString(const ST::string& key, ST::string &age, ST::string &set, ST::string &name) const
 {
     std::vector<ST::string> tokens = key.tokenize(".");
     if (tokens.size() >= 1)
@@ -645,7 +645,7 @@ void pfLocalizationDataMgr::pf3PartMap<mapT>::ISplitString(const ST::string& key
 //// exists() ////////////////////////////////////////////////////////
 
 template<class mapT>
-bool pfLocalizationDataMgr::pf3PartMap<mapT>::exists(const ST::string & key)
+bool pfLocalizationDataMgr::pf3PartMap<mapT>::exists(const ST::string & key) const
 {
     ST::string age, set, name;
     ISplitString(key, age, set, name);
@@ -670,7 +670,7 @@ bool pfLocalizationDataMgr::pf3PartMap<mapT>::exists(const ST::string & key)
 //// setExists() /////////////////////////////////////////////////////
 
 template<class mapT>
-bool pfLocalizationDataMgr::pf3PartMap<mapT>::setExists(const ST::string & key)
+bool pfLocalizationDataMgr::pf3PartMap<mapT>::setExists(const ST::string & key) const
 {
     ST::string age, set, name;
     ISplitString(key, age, set, name);
@@ -721,6 +721,14 @@ void pfLocalizationDataMgr::pf3PartMap<mapT>::erase(const ST::string & key)
 //// operator[]() ////////////////////////////////////////////////////
 
 template<class mapT>
+const mapT& pfLocalizationDataMgr::pf3PartMap<mapT>::operator[](const ST::string& key) const
+{
+    ST::string age, set, name;
+    ISplitString(key, age, set, name);
+    return fData.at(age).at(set).at(name);
+}
+
+template<class mapT>
 mapT &pfLocalizationDataMgr::pf3PartMap<mapT>::operator[](const ST::string &key)
 {
     ST::string age, set, name;
@@ -731,7 +739,7 @@ mapT &pfLocalizationDataMgr::pf3PartMap<mapT>::operator[](const ST::string &key)
 //// getAgeList() ////////////////////////////////////////////////////
 
 template<class mapT>
-std::vector<ST::string> pfLocalizationDataMgr::pf3PartMap<mapT>::getAgeList()
+std::vector<ST::string> pfLocalizationDataMgr::pf3PartMap<mapT>::getAgeList() const
 {
     std::vector<ST::string> retVal;
 
@@ -744,7 +752,7 @@ std::vector<ST::string> pfLocalizationDataMgr::pf3PartMap<mapT>::getAgeList()
 //// getSetList() ////////////////////////////////////////////////////
 
 template<class mapT>
-std::vector<ST::string> pfLocalizationDataMgr::pf3PartMap<mapT>::getSetList(const ST::string & age)
+std::vector<ST::string> pfLocalizationDataMgr::pf3PartMap<mapT>::getSetList(const ST::string & age) const
 {
     std::vector<ST::string> retVal;
 
@@ -761,7 +769,7 @@ std::vector<ST::string> pfLocalizationDataMgr::pf3PartMap<mapT>::getSetList(cons
 //// getNameList() ///////////////////////////////////////////////////
 
 template<class mapT>
-std::vector<ST::string> pfLocalizationDataMgr::pf3PartMap<mapT>::getNameList(const ST::string & age, const ST::string & set)
+std::vector<ST::string> pfLocalizationDataMgr::pf3PartMap<mapT>::getNameList(const ST::string & age, const ST::string & set) const
 {
     std::vector<ST::string> retVal;
 
@@ -826,14 +834,14 @@ pfLocalizationDataMgr::localizedElement pfLocalizationDataMgr::ICreateLocalizedE
 
 //// IGetCurrentLanguageName /////////////////////////////////////////
 
-ST::string pfLocalizationDataMgr::IGetCurrentLanguageName()
+ST::string pfLocalizationDataMgr::IGetCurrentLanguageName() const
 {
     return plLocalization::GetLanguageName(plLocalization::GetLanguage());
 }
 
 //// IGetAllLanguageNames ////////////////////////////////////////////
 
-std::vector<ST::string> pfLocalizationDataMgr::IGetAllLanguageNames()
+std::vector<ST::string> pfLocalizationDataMgr::IGetAllLanguageNames() const
 {
     int numLocales = plLocalization::GetNumLocales();
     std::vector<ST::string> retVal;
@@ -885,7 +893,7 @@ void pfLocalizationDataMgr::IConvertAge(const LocalizationXMLFile::age& ageInfo,
 
 //// IWriteText //////////////////////////////////////////////////////
 
-void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const ST::string & ageName, const ST::string & languageName)
+void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const ST::string & ageName, const ST::string & languageName) const
 {
     bool weWroteData = false; // did we actually write any data of consequence?
     bool setEmpty = true;
@@ -909,12 +917,13 @@ void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const ST::st
             setCode << "\t\t\t<element name=\"" << elementName << "\">\n";
             ST::string key = ST::format("{}.{}.{}", ageName, setName, elementName);
 
-            if (fLocalizedElements[key].find(languageName) != fLocalizedElements[key].end())
+            auto findIt = fLocalizedElements[key].find(languageName);
+            if (findIt != fLocalizedElements[key].end())
             {
                 weWroteData = true;
                 setEmpty = false;
                 setCode << "\t\t\t\t<translation language=\"" << languageName << "\">";
-                setCode << fLocalizedElements[key][languageName].ToXML();
+                setCode << findIt->second.ToXML();
                 setCode << "</translation>\n";
             }
 
@@ -993,43 +1002,49 @@ void pfLocalizationDataMgr::SetupData()
 
 //// GetElement //////////////////////////////////////////////////////
 
-pfLocalizedString pfLocalizationDataMgr::GetElement(const ST::string & name)
+pfLocalizedString pfLocalizationDataMgr::GetElement(const ST::string & name) const
 {
     pfLocalizedString retVal; // if this returns before we initialize it, it will be empty, indicating failure
 
     if (!fLocalizedElements.exists(name)) // does the requested element exist?
         return retVal; // nope, so return failure
 
-    ST::string languageName = IGetCurrentLanguageName();
-    if (fLocalizedElements[name].find(languageName) == fLocalizedElements[name].end()) // current language isn't specified
-    {
-        languageName = "English"; // force to english
-        if (fLocalizedElements[name].find(languageName) == fLocalizedElements[name].end()) // make sure english exists
-            return retVal; // language doesn't exist
+    auto currLangIt = fLocalizedElements[name].find(IGetCurrentLanguageName());
+    if (currLangIt != fLocalizedElements[name].cend()) {
+        retVal = currLangIt->second;
+        return retVal;
     }
-    retVal = fLocalizedElements[name][languageName];
+
+    // Force to English
+    auto englishIt = fLocalizedElements[name].find("English");
+    if (englishIt != fLocalizedElements[name].cend()) {
+        retVal = currLangIt->second;
+        return retVal;
+    }
+
     return retVal;
 }
 
 //// GetSpecificElement //////////////////////////////////////////////
 
-pfLocalizedString pfLocalizationDataMgr::GetSpecificElement(const ST::string & name, const ST::string & language)
+pfLocalizedString pfLocalizationDataMgr::GetSpecificElement(const ST::string & name, const ST::string & language) const
 {
     pfLocalizedString retVal; // if this returns before we initialize it, it will have an ID of 0, indicating failure
 
     if (!fLocalizedElements.exists(name)) // does the requested subtitle exist?
         return retVal; // nope, so return failure
 
-    if (fLocalizedElements[name].find(language) == fLocalizedElements[name].end())
+    auto findIt = fLocalizedElements[name].find(language);
+    if (findIt == fLocalizedElements[name].cend())
         return retVal; // language doesn't exist
 
-    retVal = fLocalizedElements[name][language];
+    retVal = findIt->second;
     return retVal;
 }
 
 //// GetLanguages ////////////////////////////////////////////////////
 
-std::vector<ST::string> pfLocalizationDataMgr::GetLanguages(const ST::string & ageName, const ST::string & setName, const ST::string & elementName)
+std::vector<ST::string> pfLocalizationDataMgr::GetLanguages(const ST::string & ageName, const ST::string & setName, const ST::string & elementName) const
 {
     std::vector<ST::string> retVal;
     ST::string key = ST::format("{}.{}.{}", ageName, setName, elementName);
@@ -1048,19 +1063,25 @@ std::vector<ST::string> pfLocalizationDataMgr::GetLanguages(const ST::string & a
 
 //// GetElementXMLData ///////////////////////////////////////////////
 
-ST::string pfLocalizationDataMgr::GetElementXMLData(const ST::string & name, const ST::string & languageName)
+ST::string pfLocalizationDataMgr::GetElementXMLData(const ST::string & name, const ST::string & languageName) const
 {
-    if (fLocalizedElements.exists(name) && (fLocalizedElements[name].find(languageName) != fLocalizedElements[name].end()))
-        return fLocalizedElements[name][languageName].ToXML();
+    if (fLocalizedElements.exists(name)) {
+        auto findIt = fLocalizedElements[name].find(languageName);
+        if (findIt != fLocalizedElements[name].cend())
+            return findIt->second.ToXML();
+    }
     return "";
 }
 
 //// GetElementPlainTextData /////////////////////////////////////////
 
-ST::string pfLocalizationDataMgr::GetElementPlainTextData(const ST::string & name, const ST::string & languageName)
+ST::string pfLocalizationDataMgr::GetElementPlainTextData(const ST::string & name, const ST::string & languageName) const
 {
-    if (fLocalizedElements.exists(name) && (fLocalizedElements[name].find(languageName) != fLocalizedElements[name].end()))
-        return fLocalizedElements[name][languageName];
+    if (fLocalizedElements.exists(name)) {
+        auto findIt = fLocalizedElements[name].find(languageName);
+        if (findIt != fLocalizedElements[name].cend())
+            return findIt->second;
+    }
     return "";
 }
 
@@ -1138,7 +1159,7 @@ bool pfLocalizationDataMgr::DeleteElement(const ST::string & name)
 
 //// WriteDatabaseToDisk /////////////////////////////////////////////
 
-void pfLocalizationDataMgr::WriteDatabaseToDisk(const plFileName & path)
+void pfLocalizationDataMgr::WriteDatabaseToDisk(const plFileName & path) const
 {
     std::vector<ST::string> ageNames = GetAgeList();
     std::vector<ST::string> languageNames = IGetAllLanguageNames();
@@ -1155,7 +1176,7 @@ void pfLocalizationDataMgr::WriteDatabaseToDisk(const plFileName & path)
 
 //// OutputTreeToLog /////////////////////////////////////////////////
 
-void pfLocalizationDataMgr::OutputTreeToLog()
+void pfLocalizationDataMgr::OutputTreeToLog() const
 {
     std::vector<ST::string> ages = GetAgeList();
 

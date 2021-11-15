@@ -246,32 +246,32 @@ void pfLocalizedString::FromXML(const ST::string & xml)
 
 //// Operators ///////////////////////////////////////////////////////
 
-bool pfLocalizedString::operator<(pfLocalizedString &obj)
+bool pfLocalizedString::operator<(pfLocalizedString &obj) const
 {
     return (fPlainTextRep.compare(obj.fPlainTextRep) < 0);
 }
 
-bool pfLocalizedString::operator>(pfLocalizedString &obj)
+bool pfLocalizedString::operator>(pfLocalizedString &obj) const
 {
     return (fPlainTextRep.compare(obj.fPlainTextRep) > 0);
 }
 
-bool pfLocalizedString::operator==(pfLocalizedString &obj)
+bool pfLocalizedString::operator==(pfLocalizedString &obj) const
 {
     return (fPlainTextRep.compare(obj.fPlainTextRep) == 0);
 }
 
-bool pfLocalizedString::operator<=(pfLocalizedString &obj)
+bool pfLocalizedString::operator<=(pfLocalizedString &obj) const
 {
     return (fPlainTextRep.compare(obj.fPlainTextRep) <= 0);
 }
 
-bool pfLocalizedString::operator>=(pfLocalizedString &obj)
+bool pfLocalizedString::operator>=(pfLocalizedString &obj) const
 {
     return (fPlainTextRep.compare(obj.fPlainTextRep) >= 0);
 }
 
-bool pfLocalizedString::operator!=(pfLocalizedString &obj)
+bool pfLocalizedString::operator!=(pfLocalizedString &obj) const
 {
     return (fPlainTextRep.compare(obj.fPlainTextRep) != 0);
 }
@@ -296,7 +296,7 @@ pfLocalizedString &pfLocalizedString::operator=(const ST::string & plainText)
     return *this;
 }
 
-ST::string pfLocalizedString::operator%(const std::vector<ST::string> & arguments)
+ST::string pfLocalizedString::operator%(const std::vector<ST::string> & arguments) const
 {
     ST::string_stream ss;
     for (std::vector<ST::string>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
