@@ -76,7 +76,6 @@ AgeStartedIn = None
 hairColor = ptColor().white()
 
 kEnableClothingTimer = 99
-kDisableClothingTimer = 100
 kGetHairColorTimer = 101
 kRollDiceTimer = 102
 
@@ -141,15 +140,11 @@ class xTakableClothing(ptModifier):
                     if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
                         PtAtTimeCallback(self.key, 1, kEnableClothingTimer) # we will handle the clickables in a second, since handling them now doesn't work
                         self.shown = True
-                    else:
-                        PtAtTimeCallback(self.key, 1, kDisableClothingTimer)
                 except:
-                    PtDebugPrint("ERROR: xTakableClothing.OnServerInitComplete():\tERROR accessing ageSDL on %s so we're disabling" % self.sceneobject.getName())
-                    PtAtTimeCallback(self.key, 1, kDisableClothingTimer)
+                    PtDebugPrint("ERROR: xTakableClothing.OnServerInitComplete():\tERROR accessing ageSDL on %s" % self.sceneobject.getName())
                     pass
             else:
-                PtDebugPrint("ERROR: xTakableClothing.OnServerInitComplete():\tERROR: missing SDL var name on %s so we're disabling" % self.sceneobject.getName())
-                PtAtTimeCallback(self.key, 1, kDisableClothingTimer)
+                PtDebugPrint("ERROR: xTakableClothing.OnServerInitComplete():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
                 pass
             
             if self.useChance and not self.shown: # only attempt to show if it's currently hidden
@@ -168,11 +163,9 @@ class xTakableClothing(ptModifier):
     
     def OnTimer(self, id):
         global hairColor
-        # are we trying to enable or disable the item?
+        # are we trying to enable item?
         if id == kEnableClothingTimer:
             self.IEnableClothing()
-        elif id == kDisableClothingTimer:
-            self.IDisableClothing()
         # we need to grab the hair color
         elif id == kGetHairColorTimer:
             hairColor = self.IGetHairColor()
@@ -195,11 +188,8 @@ class xTakableClothing(ptModifier):
         try:
             if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
                 self.IEnableClothing()
-            else:
-                self.IDisableClothing()
         except:
-            PtDebugPrint("ERROR: xTakableClothing.OnSDLNotify():\tERROR reading age SDL on %s so we're disabling" % self.sceneobject.getName())
-            self.IDisableClothing()
+            PtDebugPrint("ERROR: xTakableClothing.OnSDLNotify():\tERROR reading age SDL on %s" % self.sceneobject.getName())
             pass
     
     def IItemInCloset(self):
@@ -403,18 +393,8 @@ class xTakableClothing(ptModifier):
                 PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  You already have "+base+" so I'm not going to give it to you again")
 
     def IEnableClothing(self):
-        if self.IItemInCloset():
-            # no need to disable a clickable if it's a guild shirt, and it'd be a pain to reenable later...
-            if not "Guild" in stringFClothingName.value:
-                PtDebugPrint("DEBUG: xTakableClothing.IEnableClothing():  Disabling clickable on %s because we already have it..." % self.sceneobject.getName())
-                actClickable.disable() # don't let them take it again if they already have it
-        else:
-            PtDebugPrint("DEBUG: xTakableClothing.IEnableClothing():  Enabling clickable on %s..." % self.sceneobject.getName())
-            actClickable.enable()
-
-    def IDisableClothing(self):
-        PtDebugPrint("DEBUG: xTakableClothing.IDisableClothing():  Disabling clickable on %s..." % self.sceneobject.getName())
-        actClickable.disable()
+        PtDebugPrint("DEBUG: xTakableClothing.IEnableClothing():  Enabling clickable on %s..." % self.sceneobject.getName())
+        actClickable.enable()
 
 class ClothingItem:
     def __init__(self,clothing):
