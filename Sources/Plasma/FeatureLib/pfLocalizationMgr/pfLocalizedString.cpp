@@ -228,7 +228,7 @@ void pfLocalizedString::IUpdateXML()
             // Encode XML entities.
             ss << curTextBlock.fText.replace("%", "\\%").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
         } else {
-            ss << curTextBlock.fText;
+            ss << curTextBlock.fText.replace("%", "\\%");
         }
     }
 
