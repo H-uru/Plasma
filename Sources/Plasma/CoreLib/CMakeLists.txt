@@ -15,6 +15,7 @@ set(CoreLib_SOURCES
     hsSTLStream.cpp
     hsStream.cpp
     hsStringTokenizer.cpp
+    hsSystemInfo.cpp
     hsThread.cpp
     hsWide.cpp
     pcSmallRect.cpp
@@ -58,6 +59,7 @@ set(CoreLib_HEADERS
     hsSTLStream.h
     hsStream.h
     hsStringTokenizer.h
+    hsSystemInfo.h
     hsThread.h
     hsWide.h
     hsWindows.h
@@ -84,6 +86,8 @@ target_link_libraries(
         string_theory
         Threads::Threads
         $<$<AND:$<CONFIG:Debug>,$<BOOL:${USE_VLD}>>:VLD::VLD>
+    PRIVATE
+        "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
 )
 target_include_directories(
     CoreLib

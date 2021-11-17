@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plPhysical.h"
 #include "plProduct.h"
+#include "hsSystemInfo.h"
 #include "hsTimer.h"
 
 #include "pnMessage/plClientMsg.h"
@@ -276,14 +277,11 @@ bool plNetClientMgr::Log(const ST::string& str) const
 //
 // Display OS version info for log
 //
-extern std::vector<ST::string> DisplaySystemVersion();
 
 void plNetClientMgr::IDumpOSVersionInfo() const
 {
     DebugMsg("*** OS Info");
-    std::vector<ST::string> versionStrs = DisplaySystemVersion();
-    for (auto version = versionStrs.begin(); version != versionStrs.end(); ++version)
-        DebugMsg(*version);
+    DebugMsg(hsSystemInfo::GetOperatingSystem());
 }
 
 //

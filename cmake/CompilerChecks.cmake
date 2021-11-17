@@ -27,6 +27,14 @@ try_compile(HAVE_PTHREAD_TIMEDJOIN_NP ${PROJECT_BINARY_DIR}
             ${PROJECT_SOURCE_DIR}/cmake/check_pthread_timedjoin_np.cpp
             LINK_LIBRARIES Threads::Threads)
 
+# Check for Linux sysinfo.
+include(CheckCXXSymbolExists)
+check_cxx_symbol_exists("sysinfo" "sys/sysinfo.h" HAVE_SYSINFO)
+
+# Check for BSD style sysctl.
+try_compile(HAVE_SYSCTL ${PROJECT_BINARY_DIR}
+            ${PROJECT_SOURCE_DIR}/cmake/check_sysctl.cpp)
+
 # Check for CPUID headers
 try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
             ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp)
