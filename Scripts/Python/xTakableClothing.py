@@ -341,56 +341,57 @@ class xTakableClothing(ptModifier):
             else:
                 clothingNames = allMClothing
                 base = baseMClothing
+                
+            color1 = self.IGetTint(1)
+            color2 = self.IGetTint(2)
+            if boolHasHairColor.value:
+                PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  Using existing hair color since this is a hair item")
+                color1 = hairColor
+            if not boolStayVisible.value:
+                ageSDL = PtGetAgeSDL()
+                ageSDL[stringVarName.value] = (not (boolShowOnTrue.value), )
+            self.IRemoveWornSet(self.IConflictsWithSet(base))
+            if base.find('Torso_GuildBlue') != -1 or base.find('Torso_GuildGreen') != -1 or base.find('Torso_GuildRed') != -1 or base.find('Torso_GuildYellow') != -1 or base.find('Torso_GuildWhite') !=  -1:
+                self.IRemoveOtherGuildShirt()
+                psnlSDL = xPsnlVaultSDL()
+                psnlSDL["guildAlliance"] = (guildSDLValues[base],)
+                PtDebugPrint("xTakableClothing: Guild set to:", guildSDLValues[base])
             if not self.IItemInCloset():
-                color1 = self.IGetTint(1)
-                color2 = self.IGetTint(2)
-                if boolHasHairColor.value:
-                    PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  Using existing hair color since this is a hair item")
-                    color1 = hairColor
-                if not boolStayVisible.value:
-                    ageSDL = PtGetAgeSDL()
-                    ageSDL[stringVarName.value] = (not (boolShowOnTrue.value), )
-                self.IRemoveWornSet(self.IConflictsWithSet(base))
-                if base.find('Torso_GuildBlue') != -1 or base.find('Torso_GuildGreen') != -1 or base.find('Torso_GuildRed') != -1 or base.find('Torso_GuildYellow') != -1 or base.find('Torso_GuildWhite') !=  -1:
-                    self.IRemoveOtherGuildShirt()
-                    psnlSDL = xPsnlVaultSDL()
-                    psnlSDL["guildAlliance"] = (guildSDLValues[base],)
-                    PtDebugPrint("xTakableClothing: Guild set to:", guildSDLValues[base])
                 avatar.avatar.addWardrobeClothingItem(base,ptColor().white(),ptColor().white())
-                acclist = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
-                accnamelist = []
-                for accessory in acclist:
-                    if accessory[0][4:14] == "AccGlasses" or accessory[0][1:] == "Reward_Goggles":
-                    	accnamelist.append(accessory[0])
-                worn = avatar.avatar.getAvatarClothingList()
-                wornnamelist = []
-                for wornitem in worn:
-                	wornnamelist.append(wornitem[0])
-                for name in clothingNames:
-                    self.IRemoveWornSet(self.IConflictsWithSet(name))
-                    if name in accnamelist:
-                        for aitem in accnamelist:
-                            if aitem in wornnamelist and aitem != name:
-                                avatar.avatar.removeClothingItem(aitem)
-                    PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  Wearing "+name)
-                    avatar.avatar.netForce(1)
-                    avatar.avatar.wearClothingItem(name,0)
-                    avatar.avatar.tintClothingItem(name,color1,0)
-                    avatar.avatar.tintClothingItemLayer(name,color2,2,1)
-                    matchingItem = avatar.avatar.getMatchingClothingItem(name)
-                    if isinstance(matchingItem, list):
-                        avatar.avatar.wearClothingItem(matchingItem[0],0)
-                        avatar.avatar.tintClothingItem(matchingItem[0],color1,0)
-
-                        #START-->Hard Hat color fix
-                        if (matchingItem[0] == 'MReward_HardHat') or (matchingItem[0] == 'FRewardHardHat'):
-                            avatar.avatar.tintClothingItem(matchingItem[0],ptColor().orange(), 2, 1)
-                        else:                                      
-                            avatar.avatar.tintClothingItemLayer(matchingItem[0],color2,2,1)
-                        #END-->Hard Hat color fix
-                    avatar.avatar.saveClothing()
             else:
                 PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  You already have "+base+" so I'm not going to give it to you again")
+            acclist = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
+            accnamelist = []
+            for accessory in acclist:
+                if accessory[0][4:14] == "AccGlasses" or accessory[0][1:] == "Reward_Goggles":
+                    accnamelist.append(accessory[0])
+            worn = avatar.avatar.getAvatarClothingList()
+            wornnamelist = []
+            for wornitem in worn:
+                wornnamelist.append(wornitem[0])
+            for name in clothingNames:
+                self.IRemoveWornSet(self.IConflictsWithSet(name))
+                if name in accnamelist:
+                    for aitem in accnamelist:
+                        if aitem in wornnamelist and aitem != name:
+                            avatar.avatar.removeClothingItem(aitem)
+                PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  Wearing "+name)
+                avatar.avatar.netForce(1)
+                avatar.avatar.wearClothingItem(name,0)
+                avatar.avatar.tintClothingItem(name,color1,0)
+                avatar.avatar.tintClothingItemLayer(name,color2,2,1)
+                matchingItem = avatar.avatar.getMatchingClothingItem(name)
+                if isinstance(matchingItem, list):
+                    avatar.avatar.wearClothingItem(matchingItem[0],0)
+                    avatar.avatar.tintClothingItem(matchingItem[0],color1,0)
+
+                    #START-->Hard Hat color fix
+                    if (matchingItem[0] == 'MReward_HardHat') or (matchingItem[0] == 'FRewardHardHat'):
+                        avatar.avatar.tintClothingItem(matchingItem[0],ptColor().orange(), 2, 1)
+                    else:                                      
+                        avatar.avatar.tintClothingItemLayer(matchingItem[0],color2,2,1)
+                    #END-->Hard Hat color fix
+                avatar.avatar.saveClothing()
 
     def IEnableClothing(self):
         PtDebugPrint("DEBUG: xTakableClothing.IEnableClothing():  Enabling clickable on %s..." % self.sceneobject.getName())
