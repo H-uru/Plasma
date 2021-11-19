@@ -51,6 +51,7 @@ also wears the piece of clothing you just picked up
 
 from Plasma import *
 from PlasmaTypes import *
+from PlasmaKITypes import *
 from PlasmaVaultConstants import *
 from xPsnlVaultSDL import *
 import xACAItems
@@ -347,7 +348,7 @@ class xTakableClothing(ptModifier):
             if boolHasHairColor.value:
                 PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  Using existing hair color since this is a hair item")
                 color1 = hairColor
-            if not boolStayVisible.value:
+            if not boolStayVisible.value and ptVault().amOwnerOfCurrentAge():
                 ageSDL = PtGetAgeSDL()
                 ageSDL[stringVarName.value] = (not (boolShowOnTrue.value), )
             self.IRemoveWornSet(self.IConflictsWithSet(base))
@@ -358,6 +359,7 @@ class xTakableClothing(ptModifier):
                 PtDebugPrint("xTakableClothing: Guild set to:", guildSDLValues[base])
             if not self.IItemInCloset():
                 avatar.avatar.addWardrobeClothingItem(base,ptColor().white(),ptColor().white())
+                PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NewClothing", [self.IGetItem(base).description]))
             else:
                 PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  You already have "+base+" so I'm not going to give it to you again")
             acclist = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
