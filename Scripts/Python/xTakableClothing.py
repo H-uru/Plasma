@@ -359,7 +359,8 @@ class xTakableClothing(ptModifier):
                 PtDebugPrint("xTakableClothing: Guild set to:", guildSDLValues[base])
             if not self.IItemInCloset():
                 avatar.avatar.addWardrobeClothingItem(base,ptColor().white(),ptColor().white())
-                PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NewClothing", [self.IGetItem(base).description]))
+                if hasattr(self.IGetItem(base), "description"):
+                    PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NewClothing", [self.IGetItem(base).description]))
             else:
                 PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  You already have "+base+" so I'm not going to give it to you again")
             acclist = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
