@@ -6,6 +6,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING "")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+# CMake 3.22 changes cmake_dependent_option from doing `if(${CONDITION})` to actually evaulating
+# The cmake code `if(<condition>)` using cmake_language(EVAL). That's a breaking change that warns
+# if we don't explicitly set the policy. We prefer the OLD policy to avoid surprises. The NEW policy
+# would let us use parens, eg `[[FOO AND (BAR OR MEOW)]]`.
+if(POLICY CMP0127)
+    cmake_policy(SET CMP0127 OLD)
+endif()
+
 include(CMakeDependentOption)
 include(FeatureSummary)
 include(Dependencies)
