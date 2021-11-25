@@ -95,7 +95,7 @@ def CreateInvitation(params=None):
         if invites is not None:
             if invites.getChildNodeCount() <= gMaxInviteCount:
                 # create the note
-                note = ptVaultTextNoteNode(PtVaultNodePermissionFlags.kDefaultPermissions)
+                note = ptVaultTextNoteNode()
                 note.noteSetTitle(passkey)
                 invites.addNode(note)
                 return PtGetLocalizedString("KI.Invitation.InviteKeyAdded", [str(passkey)])
@@ -172,7 +172,7 @@ def DeleteInvitation(params=None):
     return PtGetLocalizedString("KI.Invitation.DeletedInvitation") + str(passkey)
 
 def MeChat(params=None):
-    if (params == None):
+    if (params == None or params == "" or params.isspace()):
         PtDebugPrint('xChatExtend:MeCmd: If you have nothing to say, why say anything at all?')
         return 
     PtSendKIMessage(kKIChatStatusMsg, ('%s %s' % (PtGetLocalPlayer().getPlayerName(), params)))

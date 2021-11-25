@@ -678,6 +678,7 @@ def ImportMarkers(args):
                     if jnode.folderGetName() == mg[1]:
                         # yes, add the markers to this game
                         for marker in mg[0][4]:
+                            # TODO: PlasmaVaultConstants.PtVaultNodePermissionFlags does not exist
                             nMarker = Plasma.ptVaultMarkerNode(PlasmaVaultConstants.PtVaultNodePermissionFlags.kDefaultPermissions)
                             nMarker.markerSetText(marker[0])
                             pos = Plasma.ptPoint3(marker[1],marker[2],marker[3])

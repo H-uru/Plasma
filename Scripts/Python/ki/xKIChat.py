@@ -866,27 +866,38 @@ class CommandsProcessor:
                 else:
                     statusMsg = PtGetLocalizedString(emote[1], [PtGetLocalPlayer().getPlayerName()])
                 self.chatMgr.DisplayStatusMessage(statusMsg, 1)
+
+                # Get remaining message string after emote command
                 message = message[len(words[0]):]
-                if message == "":
+                if message == "" or message.isspace():
                     return None
                 return message[1:]
             except LookupError:
                 try:
                     command = xKIExtChatCommands.xChatExtendedChat[str(words[0][1:].casefold())]
                     if isinstance(command, str):
+                        # Retrieved command is just a plain string
                         args = message[len(words[0]):]
                         PtConsole(command + args)
                     else:
+                        # Retrieved command is not a string (it's a function)
                         try:
+                            # Get remaining message string after chat command
                             args = message[len(words[0]) + 1:]
                             if args:
                                 try:
                                     retDisp = command(args)
                                 except TypeError:
                                     retDisp = command()
+
+                                    # Command took no args, so return args as new message
+                                    if args == "" or args.isspace():
+                                        return None
                                     return args
                             else:
                                 retDisp = command()
+
+                            # Check type of return value from command and display appropriately
                             if isinstance(retDisp, str):
                                 self.chatMgr.DisplayStatusMessage(retDisp)
                             elif isinstance(retDisp, tuple):
@@ -898,11 +909,19 @@ class CommandsProcessor:
                             PtDebugPrint("xKIChat.commandsProcessor(): Chat command function did not run.", command, level=kErrorLevel)
                 except LookupError:
                     if str(words[0].casefold()) in xKIExtChatCommands.xChatSpecialHandledCommands:
+                        # Get remaining message string after special chat command
+                        remainingMsg = message[len(words[0]):]
+                        if remainingMsg == "" or remainingMsg.isspace():
+                            return None
+                        # Return full message with special command still prefixed
                         return message
                     else:
                         self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.CommandError", [message]), kChat.SystemMessage)
                 return None
 
+        # Prevent sending blank/whitespace message
+        if message == "" or message.isspace():
+            return None
         return message
 
     ## Extract the player ID from a chat's params.
