@@ -341,7 +341,7 @@ class xDialogStartUp(ptResponder):
                     if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6FemaleID)).isChecked():
                         playerGender = "female"
 
-                    if playerName == "" or playerName == "":
+                    if playerName == "" or playerName.isspace():
                         errorString = "Error, you must enter a Name."
                         ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                         PtShowDialog("GUIDialog04d")
@@ -353,7 +353,7 @@ class xDialogStartUp(ptResponder):
                         self.ToggleColor(GUIDiag4b, k4bPlayer03)
                     else:
                         fixedPlayerName = playerName.strip()
-                        (fixedPlayerName, whitespacefixedcount) = re.subn("\s{2,}|[\t\n\r\f\v]", " ", fixedPlayerName)
+                        (fixedPlayerName, whitespacefixedcount) = re.subn("\\s{2,}|[\t\n\r\f\v]", " ", fixedPlayerName)
                         
                         (fixedPlayerName, RogueCount,) = re.subn('[\x00-\x1f]', '', fixedPlayerName)
                         if RogueCount > 0 or whitespacefixedcount > 0:
