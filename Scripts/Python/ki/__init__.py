@@ -2481,6 +2481,11 @@ class xKI(ptModifier):
 
         if not self.chatMgr.fadeEnableFlag:
             return
+
+        # never start the fade timer if the user is currently is in chat edit mode
+        if self.chatMgr.isChatting:
+           return
+
         if not BigKI.dialog.isEnabled():
             if self.chatMgr.fadeMode in (kChat.FadeNotActive, kChat.FadeDone):
                 PtAtTimeCallback(self.key, kChat.FullTickTime, kTimers.Fade)
