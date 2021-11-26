@@ -402,7 +402,7 @@ class xKIChat(object):
     ## Adds a line to the RT chat.
     def AddChatLine(self, player, message, cFlags, forceKI=True):
 
-        playernameMentionRegex = re.compile(fr"({re.escape(PtGetClientName())})", re.IGNORECASE)
+        playernameMentionRegex = re.compile(fr"(?=^|\W)({re.escape(PtGetClientName())})(?=$|\W)", re.IGNORECASE)
 
         try:
             PtDebugPrint("xKIChat.AddChatLine(): Message = \"{}\".".format(message), player, cFlags, level=kDebugDumpLevel)
