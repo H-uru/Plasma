@@ -62,8 +62,8 @@ class AutocompleteState:
         self.prefix = ""
         self.candidates = list()
         self.lastCandidateId = None
-        self.space_match = re.compile("\\s+", re.UNICODE)
-        self.word_match = re.compile("\\S+", re.UNICODE)
+        self.space_match = re.compile(r"\s+", re.UNICODE)
+        self.word_match = re.compile(r"\S+", re.UNICODE)
 
     def pickFirst(self, text, nameList):
 

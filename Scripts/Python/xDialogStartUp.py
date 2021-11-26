@@ -353,7 +353,7 @@ class xDialogStartUp(ptResponder):
                         self.ToggleColor(GUIDiag4b, k4bPlayer03)
                     else:
                         fixedPlayerName = playerName.strip()
-                        (fixedPlayerName, whitespacefixedcount) = re.subn("\\s{2,}|[\t\n\r\f\v]", " ", fixedPlayerName)
+                        (fixedPlayerName, whitespacefixedcount) = re.subn(r"\s{2,}|[\t\n\r\f\v]", " ", fixedPlayerName)
                         
                         (fixedPlayerName, RogueCount,) = re.subn('[\x00-\x1f]', '', fixedPlayerName)
                         if RogueCount > 0 or whitespacefixedcount > 0:
