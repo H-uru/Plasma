@@ -408,13 +408,13 @@ class xKIChat(object):
         playerNameMentionRegex = None
 
         # Compose the regex differently depending on if player name starts and ends with a word or with special characters
-        if _STARTS_WITH_WORD_REGEX.search(playerName) != None:
-            if _ENDS_WITH_WORD_REGEX.search(playerName) != None:
+        if _STARTS_WITH_WORD_REGEX.search(playerName) is not None:
+            if _ENDS_WITH_WORD_REGEX.search(playerName) is not None:
                 playerNameMentionRegex = re.compile(fr"\b({re.escape(playerName)})\b", re.IGNORECASE)
             else:
                 playerNameMentionRegex = re.compile(fr"\b({re.escape(playerName)})(?=$|\W)", re.IGNORECASE)
         else:
-            if _ENDS_WITH_WORD_REGEX.search(playerName) != None:
+            if _ENDS_WITH_WORD_REGEX.search(playerName) is not None:
                 playerNameMentionRegex = re.compile(fr"(?=^|\W)({re.escape(playerName)})\b", re.IGNORECASE)
             else:
                 playerNameMentionRegex = re.compile(fr"(?=^|\W)({re.escape(playerName)})(?=$|\W)", re.IGNORECASE)
@@ -491,7 +491,7 @@ class xKIChat(object):
                         self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 1)
                         PtFlashWindow()
                     # Are we mentioned in the message?
-                    elif playerNameMentionRegex.search(message) != None:
+                    elif playerNameMentionRegex.search(message) is not None:
                         specialColor = kColors.ChatMessageMention
                         specialMatchPattern = playerNameMentionRegex
                         PtFlashWindow()
@@ -535,7 +535,7 @@ class xKIChat(object):
                     self.AddPlayerToRecents(player.getPlayerID())
 
                     # Are we mentioned in the message?
-                    if playerNameMentionRegex.search(message) != None:
+                    if playerNameMentionRegex.search(message) is not None:
                         specialColor = kColors.ChatMessageMention
                         specialMatchPattern = playerNameMentionRegex
                         forceKI = True
@@ -594,7 +594,7 @@ class xKIChat(object):
                 chatArea.insertColor(bodyColor)
 
                 # We have some special processing to do to change text colors mid-message
-                if specialMatchPattern != None and specialColor != None:
+                if specialMatchPattern is not None and specialColor is not None:
                     lastInsert = 0
                     urlMatches = list((match.span() for match in _URL_REGEX.finditer(chatMessageFormatted)))
                     specialMatches = ((match.span(1), match.groups(1)[0]) for match in specialMatchPattern.finditer(chatMessageFormatted))
