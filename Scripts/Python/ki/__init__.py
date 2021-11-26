@@ -2482,7 +2482,7 @@ class xKI(ptModifier):
         if not self.chatMgr.fadeEnableFlag:
             return
 
-        # never start the fade timer if the user is currently is in chat edit mode
+        # Never start the fade timer if the user is currently in chat edit mode
         if self.chatMgr.isChatting:
            return
 
