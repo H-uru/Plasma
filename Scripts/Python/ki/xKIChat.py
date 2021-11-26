@@ -62,6 +62,8 @@ from .xKIConstants import *
 from .xKIHelpers import *
 
 _URL_REGEX = re.compile(r"https?:\/\/[\S]+", re.IGNORECASE)
+_STARTS_WITH_WORD_REGEX = re.compile(r"^\w")
+_ENDS_WITH_WORD_REGEX = re.compile(r"\w$")
 
 ## A class to process all the RT Chat functions of the KI.
 class xKIChat(object):
@@ -402,7 +404,20 @@ class xKIChat(object):
     ## Adds a line to the RT chat.
     def AddChatLine(self, player, message, cFlags, forceKI=True):
 
-        playernameMentionRegex = re.compile(fr"({re.escape(PtGetClientName())})", re.IGNORECASE)
+        playerName = PtGetClientName()
+        playerNameMentionRegex = None
+
+        # Compose the regex differently depending on if player name starts and ends with a word or with special characters
+        if _STARTS_WITH_WORD_REGEX.search(playerName) != None:
+            if _ENDS_WITH_WORD_REGEX.search(playerName) != None:
+                playerNameMentionRegex = re.compile(fr"\b({re.escape(playerName)})\b", re.IGNORECASE)
+            else:
+                playerNameMentionRegex = re.compile(fr"\b({re.escape(playerName)})(?=$|\W)", re.IGNORECASE)
+        else:
+            if _ENDS_WITH_WORD_REGEX.search(playerName) != None:
+                playerNameMentionRegex = re.compile(fr"(?=^|\W)({re.escape(playerName)})\b", re.IGNORECASE)
+            else:
+                playerNameMentionRegex = re.compile(fr"(?=^|\W)({re.escape(playerName)})(?=$|\W)", re.IGNORECASE)
 
         try:
             PtDebugPrint("xKIChat.AddChatLine(): Message = \"{}\".".format(message), player, cFlags, level=kDebugDumpLevel)
@@ -476,9 +491,9 @@ class xKIChat(object):
                         self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 1)
                         PtFlashWindow()
                     # Are we mentioned in the message?
-                    elif playernameMentionRegex.search(message) != None:
+                    elif playerNameMentionRegex.search(message) != None:
                         specialColor = kColors.ChatMessageMention
-                        specialMatchPattern = playernameMentionRegex
+                        specialMatchPattern = playerNameMentionRegex
                         PtFlashWindow()
 
             # Is it a ccr broadcast?
@@ -520,9 +535,9 @@ class xKIChat(object):
                     self.AddPlayerToRecents(player.getPlayerID())
 
                     # Are we mentioned in the message?
-                    if playernameMentionRegex.search(message) != None:
+                    if playerNameMentionRegex.search(message) != None:
                         specialColor = kColors.ChatMessageMention
-                        specialMatchPattern = playernameMentionRegex
+                        specialMatchPattern = playerNameMentionRegex
                         forceKI = True
                         PtFlashWindow()
 
