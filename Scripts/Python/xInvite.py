@@ -172,7 +172,7 @@ def DeleteInvitation(params=None):
     return PtGetLocalizedString("KI.Invitation.DeletedInvitation") + str(passkey)
 
 def MeChat(params=None):
-    if (params == None or params == "" or params.isspace()):
+    if (not params or params.isspace()):
         PtDebugPrint('xChatExtend:MeCmd: If you have nothing to say, why say anything at all?')
         return 
     PtSendKIMessage(kKIChatStatusMsg, ('%s %s' % (PtGetLocalPlayer().getPlayerName(), params)))
