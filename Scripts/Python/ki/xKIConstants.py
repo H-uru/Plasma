@@ -208,6 +208,7 @@ class kColors:
     DniYellowLt = ptColor(1.0, 1.0, 0.6, 1.0)
     DniCyan     = ptColor(0.576, 0.867, 0.851, 1.0)
     DniBlue     = ptColor(0.780, 0.706, 0.870, 1.0)
+    DniBlueDk   = ptColor(0.388, 0.577, 0.676, 1.0)
     DniRed      = ptColor(1.0, 0.216, 0.380, 1.0)
     DniGreen    = ptColor(0.698, 0.878, 0.761, 1.0)
     DniGreenDk  = ptColor(0.0, 0.596, 0.211, 1.0)
