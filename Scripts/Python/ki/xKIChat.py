@@ -583,6 +583,10 @@ class xKIChat(object):
             else:
                 chatMessageFormatted = " {}".format(message)
 
+        chatMentions = []
+        if hasMention:
+            chatMentions = list(((i.start("mention"), i.end("mention"), i.group("mention")) for i in self._chatMentionRegex.finditer(chatMessageFormatted)))
+
         for chatArea in (self.miniChatArea, self.microChatArea):
             with PtBeginGUIUpdate(chatArea):
                 savedPosition = chatArea.getScrollPosition()
@@ -594,27 +598,23 @@ class xKIChat(object):
                 chatArea.insertStringW("\n{}".format(chatHeaderFormatted))
                 chatArea.insertColor(bodyColor)
 
-                if hasMention:
-                    chatMentions = ((i.start("mention"), i.end("mention"), i.group("mention")) for i in self._chatMentionRegex.finditer(chatMessageFormatted))
-                    lastInsert = 0
+                lastInsert = 0
 
-                    # We have player name mention processing to do to change text colors mid-message
-                    for start, end, mention in chatMentions:
-                        if start > lastInsert:
-                            # Insert normal text up to the current name mention position
-                            chatArea.insertStringW(chatMessageFormatted[lastInsert:start], censorLevel=censorLevel)
+                # If we have player name mentions, we change text colors mid-message
+                for start, end, mention in chatMentions:
+                    if start > lastInsert:
+                        # Insert normal text up to the current name mention position
+                        chatArea.insertStringW(chatMessageFormatted[lastInsert:start], censorLevel=censorLevel)
 
-                        lastInsert = end
-                        chatArea.insertColor(mentionColor)
-                        chatArea.insertStringW(mention, censorLevel=censorLevel, urlDetection=False)
-                        chatArea.insertColor(bodyColor)
+                    lastInsert = end
+                    chatArea.insertColor(mentionColor)
+                    chatArea.insertStringW(mention, censorLevel=censorLevel, urlDetection=False)
+                    chatArea.insertColor(bodyColor)
 
-                    # If there is remaining text to display after the last match, write it
-                    if lastInsert != len(chatMessageFormatted):
-                        chatArea.insertStringW(chatMessageFormatted[lastInsert:], censorLevel=censorLevel)
-                else:
-                    # Just a plain message that does not mention current player's name
-                    chatArea.insertStringW(chatMessageFormatted, censorLevel = censorLevel)
+                # If there is remaining text to display after last mention, write it
+                # Or if it was just a plain message with no mention of player's name
+                if lastInsert != len(chatMessageFormatted):
+                    chatArea.insertStringW(chatMessageFormatted[lastInsert:], censorLevel=censorLevel)
 
                 chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
 
