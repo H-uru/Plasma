@@ -102,7 +102,6 @@ class xKIChat(object):
 
         # Set a fake player name to avoid errors.
         self.playerName = None
-        self._chatMentionRegex = None
 
         # Message History
         self.MessageHistoryIs = -1 # Current position in message history (up/down key)
@@ -144,11 +143,16 @@ class xKIChat(object):
 
     # Update the current player name.
     def _setPlayerName(self, value):
-        if value:
-            value = re.escape(value)
-            regex = rf"(?:^|[\s\W](?<!\/\/|\w\.))(?P<mention>({value}\s?)+)(?=$|[\s\W])"
-            PtDebugPrint(f"xKIChat: The chat mention regex is now `{regex}`", level=kWarningLevel)
-            self._chatMentionRegex = re.compile(regex, re.IGNORECASE)
+        value = re.escape(value if value else "Anonymous Coward")
+
+        # (?:^|[\s\W](?<!\/\/|\w\.)) - non-capturing group: line start or whitespace or non-word character
+        #                              with lookbehind that excludes matches preceded by // or word character and .
+        #                              trying to prevent mentions that are part of a URL
+        # (?P<mention>({value}\s?)+) - named capture group: one or more occurrence of name, optionally split by a space
+        # (?=$|[\s\W])               - lookahead ensures match is followed by line end or whitespace or non-word character
+        regex = rf"(?:^|[\s\W](?<!\/\/|\w\.))(?P<mention>({value}\s?)+)(?=$|[\s\W])"
+        PtDebugPrint(f"xKIChat: The chat mention regex is now `{regex}`", level = kWarningLevel)
+        self._chatMentionRegex = re.compile(regex, re.IGNORECASE)
     playerName = property(None, _setPlayerName)
 
     ## Make the player enter or exit chat mode.
@@ -488,7 +492,7 @@ class xKIChat(object):
                         self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 1)
                         PtFlashWindow()
                     # Are we mentioned in the message?
-                    elif self._chatMentionRegex is not None and self._chatMentionRegex.search(message) is not None:
+                    elif self._chatMentionRegex.search(message) is not None:
                         hasMention = True
                         PtFlashWindow()
 
@@ -525,19 +529,13 @@ class xKIChat(object):
                 if cFlags.toSelf:
                     headerColor = kColors.ChatHeaderBroadcast
                     pretext = PtGetLocalizedString("KI.Chat.BroadcastSendTo")
-
-                    # Are we mentioned in the message?
-                    if self._chatMentionRegex is not None and self._chatMentionRegex.search(message) is not None:
-                        hasMention = True
-                        forceKI = True
-                        PtFlashWindow()
                 else:
                     headerColor = kColors.ChatHeaderBroadcast
                     pretext = PtGetLocalizedString("KI.Chat.BroadcastMsgRecvd")
                     self.AddPlayerToRecents(player.getPlayerID())
 
                     # Are we mentioned in the message?
-                    if self._chatMentionRegex is not None and self._chatMentionRegex.search(message) is not None:
+                    if self._chatMentionRegex.search(message) is not None:
                         hasMention = True
                         forceKI = True
                         PtFlashWindow()
@@ -583,9 +581,10 @@ class xKIChat(object):
             else:
                 chatMessageFormatted = " {}".format(message)
 
-        chatMentions = []
         if hasMention:
-            chatMentions = list(((i.start("mention"), i.end("mention"), i.group("mention")) for i in self._chatMentionRegex.finditer(chatMessageFormatted)))
+            chatMentions = [(i.start("mention"), i.end("mention"), i.group("mention")) for i in self._chatMentionRegex.finditer(chatMessageFormatted)]
+        else:
+            chatMentions = []
 
         for chatArea in (self.miniChatArea, self.microChatArea):
             with PtBeginGUIUpdate(chatArea):
