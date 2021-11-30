@@ -1004,42 +1004,33 @@ void pfLocalizationDataMgr::SetupData()
 
 pfLocalizedString pfLocalizationDataMgr::GetElement(const ST::string & name) const
 {
-    pfLocalizedString retVal; // if this returns before we initialize it, it will be empty, indicating failure
-
     if (!fLocalizedElements.exists(name)) // does the requested element exist?
-        return retVal; // nope, so return failure
+        return {}; // nope, so return failure
 
     auto currLangIt = fLocalizedElements[name].find(IGetCurrentLanguageName());
-    if (currLangIt != fLocalizedElements[name].cend()) {
-        retVal = currLangIt->second;
-        return retVal;
-    }
+    if (currLangIt != fLocalizedElements[name].cend())
+        return currLangIt->second;
 
     // Force to English
     auto englishIt = fLocalizedElements[name].find("English");
-    if (englishIt != fLocalizedElements[name].cend()) {
-        retVal = currLangIt->second;
-        return retVal;
-    }
+    if (englishIt != fLocalizedElements[name].cend())
+        return currLangIt->second;
 
-    return retVal;
+    return {};
 }
 
 //// GetSpecificElement //////////////////////////////////////////////
 
 pfLocalizedString pfLocalizationDataMgr::GetSpecificElement(const ST::string & name, const ST::string & language) const
 {
-    pfLocalizedString retVal; // if this returns before we initialize it, it will have an ID of 0, indicating failure
-
     if (!fLocalizedElements.exists(name)) // does the requested subtitle exist?
-        return retVal; // nope, so return failure
+        return {}; // nope, so return failure
 
     auto findIt = fLocalizedElements[name].find(language);
     if (findIt == fLocalizedElements[name].cend())
-        return retVal; // language doesn't exist
+        return {}; // language doesn't exist
 
-    retVal = findIt->second;
-    return retVal;
+    return findIt->second;
 }
 
 //// GetLanguages ////////////////////////////////////////////////////
