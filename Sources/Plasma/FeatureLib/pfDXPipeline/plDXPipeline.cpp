@@ -7962,20 +7962,6 @@ void    plDXPipeline::IFormatTextureData( uint32_t formatType, uint32_t numPix, 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//// View Stuff ///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-//// IIsViewLeftHanded ////////////////////////////////////////////////////////
-//  Returns true if the combination of the local2world and world2camera
-//  matrices is left-handed.
-
-bool  plDXPipeline::IIsViewLeftHanded()
-{
-    return fView.GetViewTransform().GetOrthogonal() ^ ( fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded ) ? true : false;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
 //// Transforms ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -8020,7 +8006,7 @@ void    plDXPipeline::ISetCullMode(bool flip)
     D3DCULL newCull = D3DCULL_NONE;
 
     if( !(fLayerState[0].fMiscFlags & hsGMatState::kMiscTwoSided) )
-        newCull = !IIsViewLeftHanded() ^ !flip ? D3DCULL_CW : D3DCULL_CCW;
+        newCull = !fView.IsViewLeftHanded() ^ !flip ? D3DCULL_CW : D3DCULL_CCW;
 
     if( newCull != fDevice.fCurrCullMode )
     {
