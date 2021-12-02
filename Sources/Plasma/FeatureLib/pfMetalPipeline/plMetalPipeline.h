@@ -178,7 +178,6 @@ private:
     void IReleaseDynamicBuffers();
     void IReleaseDeviceObjects();
 
-    bool IIsViewLeftHanded();
     void ISetCullMode(bool flip = false);
 
     plLayerInterface* IPushOverBaseLayer(plLayerInterface* li);

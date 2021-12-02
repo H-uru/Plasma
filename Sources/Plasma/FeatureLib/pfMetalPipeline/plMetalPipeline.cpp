@@ -3888,26 +3888,13 @@ void plMetalPipeline::ISetupShadowSlaveTextures(plShadowSlave* slave)
     fCurrentRenderPassUniforms->uvTransforms[1].transform = hsMatrix2SIMD(cameraToLut);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//// View Stuff ///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-//// IIsViewLeftHanded ////////////////////////////////////////////////////////
-//  Returns true if the combination of the local2world and world2camera
-//  matrices is left-handed.
-
-bool plMetalPipeline::IIsViewLeftHanded()
-{
-    return fView.GetViewTransform().GetOrthogonal() ^ (fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded) ? true : false;
-}
-
 //// ISetCullMode /////////////////////////////////////////////////////////////
 // Tests and sets the current winding order cull mode (CW, CCW, or none).
 // Will reverse the cull mode as necessary for left handed camera or local to world
 // transforms.
 void plMetalPipeline::ISetCullMode(bool flip)
 {
-    MTL::CullMode newCullMode = !IIsViewLeftHanded() ^ !flip ? MTL::CullModeFront : MTL::CullModeBack;
+    MTL::CullMode newCullMode = !fView.IsViewLeftHanded() ^ !flip ? MTL::CullModeFront : MTL::CullModeBack;
     if (fState.fCurrentCullMode != newCullMode) {
         fDevice.CurrentRenderCommandEncoder()->setCullMode(newCullMode);
         fState.fCurrentCullMode = newCullMode;

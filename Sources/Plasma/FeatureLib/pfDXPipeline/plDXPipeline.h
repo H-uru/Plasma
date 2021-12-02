@@ -438,7 +438,6 @@ protected:
     // Transforms
     D3DMATRIX&     IMatrix44ToD3DMatrix( D3DMATRIX& dst, const hsMatrix44& src );
     void            ISetCullMode(bool flip=false);
-    bool inline   IIsViewLeftHanded();
     bool            IGetClearViewPort(D3DRECT& r);
     void            ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W);
 

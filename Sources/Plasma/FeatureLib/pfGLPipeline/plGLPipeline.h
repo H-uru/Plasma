@@ -129,6 +129,14 @@ protected:
 
     void IHandleZMode(hsGMatState flags);
     void IHandleBlendMode(hsGMatState flags);
+
+    /**
+     * Tests and sets the current winding order cull mode (CW, CCW, or none).
+     * Will reverse the cull mode as necessary for left handed camera or local
+     * to world transforms.
+     */
+    void ISetCullMode();
+
     void ICalcLighting(plGLMaterialShaderRef* mRef, const plLayerInterface* currLayer, const plSpan* currSpan);
     void ISelectLights(const plSpan* span, plGLMaterialShaderRef* mRef, bool proj = false);
     void IEnableLight(plGLMaterialShaderRef* mRef, size_t i, plLightInfo* light);

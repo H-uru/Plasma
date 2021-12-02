@@ -803,6 +803,7 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
             glDisable(GL_CULL_FACE);
         } else {
             glEnable(GL_CULL_FACE);
+            ISetCullMode();
         }
 
         // TEMP
@@ -991,6 +992,15 @@ void plGLPipeline::IHandleBlendMode(hsGMatState flags)
                 break;
         }
     }
+}
+
+
+void plGLPipeline::ISetCullMode()
+{
+    if (fView.IsViewLeftHanded())
+        glCullFace(GL_BACK);
+    else
+        glCullFace(GL_FRONT);
 }
 
 
