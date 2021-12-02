@@ -618,6 +618,8 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
 
     plProfile_BeginTiming(RenderPrim);
 
+    ISetCullMode();
+
     // TEMP
     render.RenderPrims();
 
@@ -626,6 +628,14 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
     if (plGLVersion() >= 30) {
         glBindVertexArray(0);
     }
+}
+
+void plGLPipeline::ISetCullMode()
+{
+    if (fView.IsViewLeftHanded())
+        glCullFace(GL_BACK);
+    else
+        glCullFace(GL_FRONT);
 }
 
 bool plGLPipeline::ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* group, const plSpan* spanBase)

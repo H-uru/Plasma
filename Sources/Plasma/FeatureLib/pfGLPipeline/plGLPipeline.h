@@ -112,6 +112,13 @@ protected:
     void IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb, hsGDeviceRef* ib, hsGMaterial* material, uint32_t vStart, uint32_t vLength, uint32_t iStart, uint32_t iLength);
 
     /**
+     * Tests and sets the current winding order cull mode (CW, CCW, or none).
+     * Will reverse the cull mode as necessary for left handed camera or local
+     * to world transforms.
+     */
+    void ISetCullMode();
+
+    /**
      * Only software skinned objects, dynamic decals, and particle systems
      * currently use the dynamic vertex buffer.
      */
