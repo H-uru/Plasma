@@ -72,6 +72,11 @@ private:
     static pfLocalizationDataMgr*   fInstance;
     static plStatusLog*             fLog;
 
+    // These need to match the typedefs in LocalizedXMLFile
+    using element = std::map<ST::string, ST::string>;
+    using set = std::map<ST::string, element>;
+    using age = std::map<ST::string, set>;
+
 protected:
     // This is a special case map class that will deconstruct the "Age.Set.Name" key into component parts
     // and store them so that a list of each part given it's parent part is easy to grab. I.e. I can grab
@@ -85,18 +90,19 @@ protected:
         typedef std::map<ST::string, std::map<ST::string, std::map<ST::string, mapT> > > ThreePartMap;
         ThreePartMap fData;
 
-        void ISplitString(const ST::string& key, ST::string &age, ST::string &set, ST::string &name);
+        void ISplitString(const ST::string& key, ST::string &age, ST::string &set, ST::string &name) const;
     public:
         // We will just have very basic functionality
-        bool exists(const ST::string & key); // returns true if the key exists
-        bool setExists(const ST::string & key); // returns true if the age.set exists (ignores name if passed in)
+        bool exists(const ST::string & key) const; // returns true if the key exists
+        bool setExists(const ST::string & key) const; // returns true if the age.set exists (ignores name if passed in)
         void erase(const ST::string & key); // erases the key from the map
 
-        mapT &operator[](const ST::string &key); // returns the item referenced by the key (and creates if necessary)
+        const mapT& operator[](const ST::string& key) const; // returns the item referenced by the key
+        mapT& operator[](const ST::string& key); // returns the item referenced by the key (and creates if necessary)
 
-        std::vector<ST::string> getAgeList(); // returns a list of all ages in this map
-        std::vector<ST::string> getSetList(const ST::string & age); // returns a list of all sets in the specified age
-        std::vector<ST::string> getNameList(const ST::string & age, const ST::string & set);
+        std::vector<ST::string> getAgeList() const; // returns a list of all ages in this map
+        std::vector<ST::string> getSetList(const ST::string & age) const; // returns a list of all sets in the specified age
+        std::vector<ST::string> getNameList(const ST::string & age, const ST::string & set) const;
     };
 
     LocalizationDatabase *fDatabase;
@@ -110,14 +116,14 @@ protected:
 
     localizedElement ICreateLocalizedElement(); // ease of use function that creates a basic localized element object
 
-    ST::string IGetCurrentLanguageName(); // get the name of the current language
-    std::vector<ST::string> IGetAllLanguageNames();
+    ST::string IGetCurrentLanguageName() const; // get the name of the current language
+    std::vector<ST::string> IGetAllLanguageNames() const;
 
-    void IConvertElement(LocElementInfo *elementInfo, const ST::string & curPath);
-    void IConvertSet(LocSetInfo *setInfo, const ST::string & curPath);
-    void IConvertAge(LocAgeInfo *ageInfo, const ST::string & curPath);
+    void IConvertElement(const element& elementInfo, const ST::string & curPath);
+    void IConvertSet(const set& setInfo, const ST::string & curPath);
+    void IConvertAge(const age& ageInfo, const ST::string & curPath);
 
-    void IWriteText(const plFileName & filename, const ST::string & ageName, const ST::string & languageName); // Write localization text to the specified file
+    void IWriteText(const plFileName & filename, const ST::string & ageName, const ST::string & languageName) const; // Write localization text to the specified file
 
     pfLocalizationDataMgr(const plFileName & path);
 public:
@@ -131,25 +137,25 @@ public:
 
     void SetupData();
 
-    pfLocalizedString GetElement(const ST::string & name);
-    pfLocalizedString GetSpecificElement(const ST::string & name, const ST::string & languageName);
+    pfLocalizedString GetElement(const ST::string & name) const;
+    pfLocalizedString GetSpecificElement(const ST::string & name, const ST::string & languageName) const;
 
-    std::vector<ST::string> GetAgeList()
+    std::vector<ST::string> GetAgeList() const
     {
         return fLocalizedElements.getAgeList();
     }
-    std::vector<ST::string> GetSetList(const ST::string & ageName)
+    std::vector<ST::string> GetSetList(const ST::string & ageName) const
     {
         return fLocalizedElements.getSetList(ageName);
     }
-    std::vector<ST::string> GetElementList(const ST::string & ageName, const ST::string & setName)
+    std::vector<ST::string> GetElementList(const ST::string & ageName, const ST::string & setName) const
     {
         return fLocalizedElements.getNameList(ageName, setName);
     }
-    std::vector<ST::string> GetLanguages(const ST::string & ageName, const ST::string & setName, const ST::string & elementName);
+    std::vector<ST::string> GetLanguages(const ST::string & ageName, const ST::string & setName, const ST::string & elementName) const;
 
-    ST::string GetElementXMLData(const ST::string & name, const ST::string & languageName);
-    ST::string GetElementPlainTextData(const ST::string & name, const ST::string & languageName);
+    ST::string GetElementXMLData(const ST::string & name, const ST::string & languageName) const;
+    ST::string GetElementPlainTextData(const ST::string & name, const ST::string & languageName) const;
 
     // These convert the XML data to the actual subtitle and return true if successful (editor only)
     bool SetElementXMLData(const ST::string & name, const ST::string & languageName, const ST::string & xmlData);
@@ -162,9 +168,9 @@ public:
     bool DeleteElement(const ST::string & name);
 
     // Writes the current database to the disk (editor only). It will create all the files and put them into path
-    void WriteDatabaseToDisk(const plFileName & path);
+    void WriteDatabaseToDisk(const plFileName & path) const;
 
-    void OutputTreeToLog(); // prints the localization tree to the log file
+    void OutputTreeToLog() const; // prints the localization tree to the log file
 };
 
 #endif

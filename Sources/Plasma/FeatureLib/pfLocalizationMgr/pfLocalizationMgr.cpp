@@ -95,12 +95,12 @@ void pfLocalizationMgr::Shutdown()
 
 //// GetString ///////////////////////////////////////////////////////
 
-ST::string pfLocalizationMgr::GetString(const ST::string & path, const std::vector<ST::string> & args)
+ST::string pfLocalizationMgr::GetString(const ST::string & path, const std::vector<ST::string> & args) const
 {
     return pfLocalizationDataMgr::Instance().GetElement(path) % args;
 }
 
-ST::string pfLocalizationMgr::GetString(const ST::string & path)
+ST::string pfLocalizationMgr::GetString(const ST::string & path) const
 {
     std::vector<ST::string> args; // blank args so that % signs are still handled correctly
     return pfLocalizationDataMgr::Instance().GetElement(path) % args;

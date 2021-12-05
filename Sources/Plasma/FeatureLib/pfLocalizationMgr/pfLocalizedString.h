@@ -85,31 +85,31 @@ protected:
 public:
     pfLocalizedString() : fNumArguments(0) {}
     pfLocalizedString(const ST::string & plainText);
-    virtual ~pfLocalizedString() {}
 
     // To translate to and from xml format (where <, > and other signs can't be used)
     void FromXML(const ST::string & xml);
-    ST::string ToXML() {return fXMLRep;}
+    ST::string ToXML() const { return fXMLRep; }
 
-    uint16_t GetArgumentCount() {return fNumArguments;}
+    uint16_t GetArgumentCount() const { return fNumArguments; }
 
     // Various operators, they all work pretty much the same as the standard string or wstring operators
     // but note that the all work on the plain text representation (not the XML representation)
-    bool operator<(pfLocalizedString &obj);
-    bool operator>(pfLocalizedString &obj);
-    bool operator==(pfLocalizedString &obj);
-    bool operator<=(pfLocalizedString &obj);
-    bool operator>=(pfLocalizedString &obj);
-    bool operator!=(pfLocalizedString &obj);
+    bool operator<(pfLocalizedString &obj) const;
+    bool operator>(pfLocalizedString &obj) const;
+    bool operator==(pfLocalizedString &obj) const;
+    bool operator<=(pfLocalizedString &obj) const;
+    bool operator>=(pfLocalizedString &obj) const;
+    bool operator!=(pfLocalizedString &obj) const;
 
-    operator ST::string() {return fPlainTextRep;}
+    operator ST::string() const { return fPlainTextRep; }
+    operator bool() const { return !fPlainTextRep.empty(); }
 
     pfLocalizedString operator+(pfLocalizedString &obj);
     pfLocalizedString &operator+=(pfLocalizedString &obj);
     pfLocalizedString &operator=(const ST::string & plainText);
 
     // Specialized operator for replacing text with arguments
-    ST::string operator%(const std::vector<ST::string> & arguments);
+    ST::string operator%(const std::vector<ST::string> & arguments) const;
 };
 
 #endif
