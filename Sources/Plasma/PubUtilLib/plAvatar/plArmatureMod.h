@@ -369,6 +369,7 @@ public:
     void SetBodyFootstepSoundPage(const ST::string& pageName) { fBodyFootstepSoundPage = pageName; }
     void SetAnimationPrefix(const ST::string& prefix) { fAnimationPrefix = prefix; }
 
+    const ST::string& GetBodyFootstepSoundPage() const { return fBodyFootstepSoundPage; }
     ST::string GetUserStr() const { return fUserStr; }
 
 protected:
@@ -382,6 +383,7 @@ protected:
     void    IHandleInputStateMsg(plAvatarInputStateMsg *msg);
     void    ILinkToPersonalAge();
     int     IFindSpawnOverride();
+    void    ISetupFootstepSounds(const plKey& effectMgrKey, hsResMgr* mgr);
     void    ISetTransparentDrawOrder(bool val);
     plLayerLinkAnimation *IFindLayerLinkAnim();
 
