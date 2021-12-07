@@ -1342,6 +1342,9 @@ class xKI(ptModifier):
             chatArea.moveCursor(PtGUIMultiLineDirection.kBufferStart)
             chatArea.getOwnerDialog().refreshAllControls()
 
+        # Setup the chat mention regex.
+        self.chatMgr.playerName = PtGetClientName()
+
         # Remove unneeded kFontShadowed flags (as long as we can't do that directly in the PRPs)
         for dialogAttr in (BigKI, KIListModeDialog, KIJournalExpanded, KIPictureExpanded, KIPlayerExpanded, KIAgeOwnerExpanded, KISettings, KIMarkerFolderExpanded, KICreateMarkerGameGUI):
             for i in range(dialogAttr.dialog.getNumControls()):
@@ -2484,7 +2487,7 @@ class xKI(ptModifier):
 
         # Never start the fade timer if the user is currently in chat edit mode
         if self.chatMgr.isChatting:
-           return
+            return
 
         if not BigKI.dialog.isEnabled():
             if self.chatMgr.fadeMode in (kChat.FadeNotActive, kChat.FadeDone):

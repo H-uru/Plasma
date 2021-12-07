@@ -100,6 +100,9 @@ class xKIChat(object):
         # Add the commands processor.
         self.commandsProcessor = CommandsProcessor(self)
 
+        # Set a fake player name to avoid errors.
+        self.playerName = None
+
         # Message History
         self.MessageHistoryIs = -1 # Current position in message history (up/down key)
         self.MessageHistoryList = [] # Contains our message history
@@ -137,6 +140,20 @@ class xKIChat(object):
     ############
     # Chatting #
     ############
+
+    # Update the current player name.
+    def _setPlayerName(self, value):
+        value = re.escape(value if value else "Anonymous Coward")
+
+        # (?:^|[\s\W](?<!\/\/|\w\.)) - non-capturing group: line start or whitespace or non-word character
+        #                              with lookbehind that excludes matches preceded by // or word character and .
+        #                              trying to prevent mentions that are part of a URL
+        # (?P<mention>({value}\s?)+) - named capture group: one or more occurrence of name, optionally split by a space
+        # (?=$|[\s\W])               - lookahead ensures match is followed by line end or whitespace or non-word character
+        regex = rf"(?:^|[\s\W](?<!\/\/|\w\.))(?P<mention>({value}\s?)+)(?=$|[\s\W])"
+        PtDebugPrint(f"xKIChat: The chat mention regex is now `{regex}`", level = kWarningLevel)
+        self._chatMentionRegex = re.compile(regex, re.IGNORECASE)
+    playerName = property(None, _setPlayerName)
 
     ## Make the player enter or exit chat mode.
     # Chat mode means the player's keyboard input is being sent to the chat.
@@ -416,6 +433,9 @@ class xKIChat(object):
         pretext = ""
         headerColor = kColors.ChatHeaderBroadcast
         bodyColor = kColors.ChatMessage
+        mentionColor = kColors.ChatMessageMention
+        censorLevel = self.GetCensorLevel()
+        hasMention = False
 
         # Is it an object to represent the flags?
         if isinstance(cFlags, ChatFlags):
@@ -438,6 +458,7 @@ class xKIChat(object):
                         headerColor = kColors.ChatHeaderNeighbors
                     else:
                         headerColor = kColors.ChatHeaderBuddies
+
                 if cFlags.toSelf:
                     pretext = PtGetLocalizedString("KI.Chat.InterAgeSendTo")
                     if message[:2] == "<<":
@@ -471,8 +492,8 @@ class xKIChat(object):
                         self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 1)
                         PtFlashWindow()
                     # Are we mentioned in the message?
-                    elif message.casefold().find(PtGetLocalPlayer().getPlayerName().casefold()) >= 0:
-                        bodyColor = kColors.ChatMessageMention
+                    elif self._chatMentionRegex.search(message) is not None:
+                        hasMention = True
                         PtFlashWindow()
 
             # Is it a ccr broadcast?
@@ -514,8 +535,8 @@ class xKIChat(object):
                     self.AddPlayerToRecents(player.getPlayerID())
 
                     # Are we mentioned in the message?
-                    if message.casefold().find(PtGetClientName().casefold()) >= 0:
-                        bodyColor = kColors.ChatMessageMention
+                    if self._chatMentionRegex.search(message) is not None:
+                        hasMention = True
                         forceKI = True
                         PtFlashWindow()
 
@@ -560,6 +581,11 @@ class xKIChat(object):
             else:
                 chatMessageFormatted = " {}".format(message)
 
+        if hasMention:
+            chatMentions = [(i.start("mention"), i.end("mention"), i.group("mention")) for i in self._chatMentionRegex.finditer(chatMessageFormatted)]
+        else:
+            chatMentions = []
+
         for chatArea in (self.miniChatArea, self.microChatArea):
             with PtBeginGUIUpdate(chatArea):
                 savedPosition = chatArea.getScrollPosition()
@@ -570,7 +596,25 @@ class xKIChat(object):
                 # Added unicode support here.
                 chatArea.insertStringW("\n{}".format(chatHeaderFormatted))
                 chatArea.insertColor(bodyColor)
-                chatArea.insertStringW(chatMessageFormatted, censorLevel=self.GetCensorLevel())
+
+                lastInsert = 0
+
+                # If we have player name mentions, we change text colors mid-message
+                for start, end, mention in chatMentions:
+                    if start > lastInsert:
+                        # Insert normal text up to the current name mention position
+                        chatArea.insertStringW(chatMessageFormatted[lastInsert:start], censorLevel=censorLevel)
+
+                    lastInsert = end
+                    chatArea.insertColor(mentionColor)
+                    chatArea.insertStringW(mention, censorLevel=censorLevel, urlDetection=False)
+                    chatArea.insertColor(bodyColor)
+
+                # If there is remaining text to display after last mention, write it
+                # Or if it was just a plain message with no mention of player's name
+                if lastInsert != len(chatMessageFormatted):
+                    chatArea.insertStringW(chatMessageFormatted[lastInsert:], censorLevel=censorLevel)
+
                 chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
 
                 # Write to the log file.
