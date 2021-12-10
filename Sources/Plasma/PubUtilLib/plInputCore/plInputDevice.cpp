@@ -267,7 +267,7 @@ void    plMouseDevice::CreateCursor( const char* cursor )
     fCursor->SetPosition( 0, 0, 0 );
     IUpdateCursorSize();
 
-    fCursor->SetVisible( true );
+    fCursor->SetVisible(!bCursorHidden);
     fCursor->SetOpacity( fOpacity );
 }
 
@@ -371,9 +371,6 @@ void plMouseDevice::NewCursor(const char* cursor)
     fInstance->CreateCursor(cursor);
     fInstance->SetCursorX(fInstance->GetCursorX());
     fInstance->SetCursorY(fInstance->GetCursorY());
-    
-    if (!plMouseDevice::bCursorHidden)
-        fInstance->fCursor->SetVisible( true );
 }
 
 void    plMouseDevice::SetCursorOpacity( float opacity )

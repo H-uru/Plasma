@@ -247,15 +247,12 @@ void    plInputInterfaceMgr::IUpdateCursor( int32_t newCursor )
     const char*     mouseCursorResID;
 
 
-    fCurrentCursor = newCursor;
-    if( fCurrentCursor == plInputInterface::kCursorHidden )
+    if (newCursor == plInputInterface::kCursorHidden) {
         plMouseDevice::HideCursor();
-    else
-    {
-        plMouseDevice::ShowCursor();
-            
-        switch( fCurrentCursor )
-        {
+    } else {
+        if (fCurrentCursor == plInputInterface::kCursorHidden)
+            plMouseDevice::ShowCursor();
+        switch (newCursor) {
             case plInputInterface::kCursorUp:                   mouseCursorResID = CURSOR_UP;                   break;
             case plInputInterface::kCursorLeft:                 mouseCursorResID = CURSOR_LEFT;                 break;
             case plInputInterface::kCursorRight:                mouseCursorResID = CURSOR_RIGHT;                break;
@@ -279,12 +276,12 @@ void    plInputInterfaceMgr::IUpdateCursor( int32_t newCursor )
             case plInputInterface::kCursorHand:                 mouseCursorResID = CURSOR_HAND;                 break;
             case plInputInterface::kCursorUpward:               mouseCursorResID = CURSOR_UPWARD;               break;
             default:                                            mouseCursorResID = CURSOR_OPEN;                 break;
-                
         }
 
-        
-        plMouseDevice::NewCursor( mouseCursorResID );
+        plMouseDevice::NewCursor(mouseCursorResID);
     }
+
+    fCurrentCursor = newCursor;
 }
 
 //// IEval ///////////////////////////////////////////////////////////////////
