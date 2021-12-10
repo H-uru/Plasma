@@ -27,6 +27,10 @@ if(WIN32)
     target_sources(pnAsyncCoreExe PRIVATE
         ${pnAsyncCoreExe_PRIVATE_NT}
     )
+else()
+    target_sources(pnAsyncCoreExe PRIVATE
+        Private/Stub/pnAceStubSocket.cpp
+    )
 endif()
 
 # Yeah, this looks strange, but this library has no public headers. It's

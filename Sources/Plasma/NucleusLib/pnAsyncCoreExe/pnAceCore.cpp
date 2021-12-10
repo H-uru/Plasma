@@ -112,8 +112,6 @@ void AsyncCoreInitialize()
     s_initialized = true;
 #ifdef HS_BUILD_FOR_WIN32
     Nt::NtInitialize();
-#else
-    ErrorAssert(__LINE__, __FILE__, "Async API not yet supported for this platform");
 #endif
 }
 
@@ -122,8 +120,6 @@ void AsyncCoreDestroy(unsigned waitMs)
 {
 #ifdef HS_BUILD_FOR_WIN32
     Nt::NtDestroy(waitMs);
-#else
-    ErrorAssert(__LINE__, __FILE__, "Async API not yet supported for this platform");
 #endif
 
     DnsDestroy(waitMs);
