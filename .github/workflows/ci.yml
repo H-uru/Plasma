@@ -61,7 +61,7 @@ jobs:
           cmake --build build --target INSTALL --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v2.2.4
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
@@ -138,7 +138,7 @@ jobs:
           cmake --build build --target INSTALL --config Release -j 2
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v2.2.4
         with:
           name: max-${{ matrix.cfg.str }}
           path: build/install
