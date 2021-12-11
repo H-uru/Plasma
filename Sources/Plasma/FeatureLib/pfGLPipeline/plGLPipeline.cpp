@@ -770,6 +770,14 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
 
         plLayerInterface* lay = material->GetLayer(mRef->GetPassIndex(pass));
 
+        // If the layer opacity is 0, don't draw it. This prevents it from
+        // contributing to the Z buffer. This can happen with some models like
+        // the fire marbles in the neighborhood that have some models for
+        // physics only, and then can block other rendering in the Z buffer. DX
+        // pipeline does this in ILoopOverLayers.
+        if (lay->GetOpacity() <= 0)
+            continue;
+
         ICalcLighting(mRef, lay, &span);
 
         hsGMatState s;
