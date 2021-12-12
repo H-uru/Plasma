@@ -309,6 +309,7 @@ class xTakableClothing(ptModifier):
         PtDebugPrint("xTakableClothing: Removing worn set "+setName)
         removedSets.append(setName) # add this set to our list of removed sets
         avatar = PtGetLocalAvatar()
+        avatar.avatar.netForce(1)
         worn = avatar.avatar.getAvatarClothingList()
         # replace all set pieces with the default ones
         typesToReplace = []
@@ -335,6 +336,7 @@ class xTakableClothing(ptModifier):
 
         if id==actClickable.id:
             avatar = PtGetLocalAvatar()
+            avatar.avatar.netForce(1)
             currentgender = avatar.avatar.getAvatarClothingGroup()
             if currentgender == kFemaleClothingGroup:
                 clothingNames = allFClothing
@@ -380,7 +382,6 @@ class xTakableClothing(ptModifier):
                         if aitem in wornnamelist and aitem != name:
                             avatar.avatar.removeClothingItem(aitem)
                 PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  Wearing "+name)
-                avatar.avatar.netForce(1)
                 avatar.avatar.wearClothingItem(name,0)
                 avatar.avatar.tintClothingItem(name,color1,0)
                 avatar.avatar.tintClothingItemLayer(name,color2,2,1)
