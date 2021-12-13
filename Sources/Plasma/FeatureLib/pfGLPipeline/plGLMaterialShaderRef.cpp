@@ -677,7 +677,7 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
     // Handle High Alpha Threshold
     std::shared_ptr<plUniformNode> alphaThreshold = IFindVariable<plUniformNode>("uAlphaThreshold", "float");
 
-    std::shared_ptr<plConditionNode> alphaTest = COND(IS_LEQ(sb.fCurrAlpha, alphaThreshold));
+    std::shared_ptr<plConditionNode> alphaTest = COND(IS_LESS(sb.fCurrAlpha, alphaThreshold));
     alphaTest->PushOp(CONSTANT("discard"));
 
     // if (final.a < alphaThreshold) { discard; }
