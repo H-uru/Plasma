@@ -802,7 +802,7 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
             if (s.fBlendFlags & hsGMatState::kBlendAlphaTestHigh)
                 glUniform1f(mRef->uAlphaThreshold, 64.f/255.f);
             else
-                glUniform1f(mRef->uAlphaThreshold, 0.f);
+                glUniform1f(mRef->uAlphaThreshold, 0.00000000001f);
         } else {
             glUniform1f(mRef->uAlphaThreshold, 0.f);
         }
