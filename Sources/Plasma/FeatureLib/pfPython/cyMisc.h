@@ -879,8 +879,8 @@ public:
     //
     static void WearMaintainerSuit(pyKey& key, bool wear);
     
-    static void WearDefaultClothing(pyKey& key);
-    static void WearDefaultClothingType(pyKey& key, uint32_t type);
+    static void WearDefaultClothing(pyKey& key, bool broadcast = false);
+    static void WearDefaultClothingType(pyKey& key, uint32_t type, bool broadcast = false);
 
     //////////////////////////////////////////////////////////////////////////////
     //

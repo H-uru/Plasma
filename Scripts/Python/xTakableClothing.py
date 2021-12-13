@@ -323,7 +323,7 @@ class xTakableClothing(ptModifier):
         
         if len(typesToReplace) > 0:
             for clothingType in typesToReplace:
-                PtWearDefaultClothingType(avatar.getKey(),clothingType)
+                PtWearDefaultClothingType(avatar.getKey(), clothingType, broadcast=True)
     
     def OnNotify(self,state,id,events):
         # in no other cases do we want to take action on state = 0 events

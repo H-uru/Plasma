@@ -958,7 +958,7 @@ void plClothingOutfit::IUpdate()
     }
 }
 
-void plClothingOutfit::WearDefaultClothing()
+void plClothingOutfit::WearDefaultClothing(bool broadcast)
 {
     StripAccessories();
     
@@ -995,9 +995,14 @@ void plClothingOutfit::WearDefaultClothing()
             }
         }
     }
+
+    if (broadcast) {
+        fSynchClients = true;
+        ForceUpdate(true);
+    }
 }
 
-void plClothingOutfit::WearDefaultClothingType(uint32_t clothingType)
+void plClothingOutfit::WearDefaultClothingType(uint32_t clothingType, bool broadcast)
 {
     plClothingMgr *cMgr = plClothingMgr::GetClothingMgr();
     std::vector<plClothingItem *> items;
@@ -1024,6 +1029,11 @@ void plClothingOutfit::WearDefaultClothingType(uint32_t clothingType)
                      item->fDefaultTint2[2] / 255.f, false, false, false, true, plClothingElement::kLayerTint2);
             break;
         }
+    }
+
+    if (broadcast) {
+        fSynchClients = true;
+        ForceUpdate(true);
     }
 }
 

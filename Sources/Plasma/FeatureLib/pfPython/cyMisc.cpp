@@ -2636,7 +2636,7 @@ void cyMisc::WearMaintainerSuit(pyKey& key, bool wear)
 
 }
 
-void cyMisc::WearDefaultClothing(pyKey& key)
+void cyMisc::WearDefaultClothing(pyKey& key, bool broadcast)
 {
     if (key.getKey() != plNetClientMgr::GetInstance()->GetLocalPlayerKey())
         return;
@@ -2645,11 +2645,11 @@ void cyMisc::WearDefaultClothing(pyKey& key)
     
     if (avMod)
     {
-        avMod->GetClothingOutfit()->WearDefaultClothing();
+        avMod->GetClothingOutfit()->WearDefaultClothing(broadcast);
     }
 }
 
-void cyMisc::WearDefaultClothingType(pyKey& key, uint32_t type)
+void cyMisc::WearDefaultClothingType(pyKey& key, uint32_t type, bool broadcast)
 {
     if (key.getKey() != plNetClientMgr::GetInstance()->GetLocalPlayerKey())
         return;
@@ -2658,7 +2658,7 @@ void cyMisc::WearDefaultClothingType(pyKey& key, uint32_t type)
 
     if (avMod)
     {
-        avMod->GetClothingOutfit()->WearDefaultClothingType(type);
+        avMod->GetClothingOutfit()->WearDefaultClothingType(type, broadcast);
     }
 }
 

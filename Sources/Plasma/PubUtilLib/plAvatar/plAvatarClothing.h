@@ -204,8 +204,8 @@ public:
     bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags) override;
 
     void StripAccessories();
-    void WearDefaultClothing();
-    void WearDefaultClothingType(uint32_t clothingType);
+    void WearDefaultClothing(bool broadcast = false);
+    void WearDefaultClothingType(uint32_t clothingType, bool broadcast = false);
     void WearMaintainerOutfit();
     void WearRandomOutfit();
     void RemoveMaintainerOutfit();

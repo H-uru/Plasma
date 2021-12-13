@@ -866,11 +866,11 @@ def PtWasLocallyNotified(selfKey):
     """Returns 1 if the last notify was local or 0 if the notify originated on the network"""
     pass
 
-def PtWearDefaultClothing(key):
+def PtWearDefaultClothing(key, broadcast=False):
     """Forces the avatar to wear the default clothing set"""
     pass
 
-def PtWearDefaultClothingType(key,type):
+def PtWearDefaultClothingType(key, type, broadcast=False):
     """Forces the avatar to wear the default clothing of the specified type"""
     pass
 
