@@ -100,13 +100,13 @@ class psnlYeeshaPageVisController(ptMultiModifier):
         try:
             self.enabledStateList = [int(i.strip()) for i in stringShowStates.value.split(",")]
         except:
-            PtDebugPrint("xAgeSDLIntActEnabler.OnFirstUpdate():\tERROR: couldn't process start state list")
+            PtDebugPrint("psnlYeeshaPageVisController.OnFirstUpdate():\tERROR: couldn't process start state list")
 
     def OnServerInitComplete(self):
         if AgeVault := ptAgeVault():
             if ageSDL := AgeVault.getAgeSDL():
                 try:
-                    SDLVar = ageSDL.findVar("YeeshaPage" + str(PageNumber.value))
+                    SDLVar = ageSDL.findVar(f"YeeshaPage{PageNumber.value}")
                     CurrentValue = SDLVar.getInt()
                     PtDebugPrint(f"psnlYeeshaPageVisController.OnServerInitComplete:\tYeeshaPage{PageNumber.value} = {SDLVar.getInt()}", level=kDebugDumpLevel)
                 except:

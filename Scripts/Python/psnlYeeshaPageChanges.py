@@ -63,7 +63,8 @@ respEnable = ptAttribResponder(5, "Enabled resp (if necessary)")
 respDisable = ptAttribResponder(6, "Disabled resp (if necessary)")
 
 #globals
-TotalPossibleYeeshaPages = 26
+import xLinkingBookDefs
+TotalPossibleYeeshaPages = len(xLinkingBookDefs.xYeeshaPages)
 HideCleftPole = 0
 
 
@@ -118,7 +119,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
         try:
             self.enabledStateList = [int(i.strip()) for i in stringShowStates.value.split(",")]
         except:
-            PtDebugPrint("xAgeSDLIntActEnabler.OnFirstUpdate():\tERROR: couldn't process start state list")
+            PtDebugPrint("psnlYeeshaPageChanges.OnFirstUpdate():\tERROR: couldn't process start state list")
 
 
     def OnServerInitComplete(self):
@@ -199,13 +200,13 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                 if PageNumber.value == 5 and stringShowStates.value == "0":
                     PtDebugPrint("psnlYeeshaPageChanges: You've found the following Yeesha Pages:")
                     for thispage in range(1,TotalPossibleYeeshaPages+1):
-                        FoundValue = ageSDL.findVar("YeeshaPage" + str(thispage))
+                        FoundValue = ageSDL.findVar(f"YeeshaPage{thispage}")
                         PtDebugPrint ("\t The previous value of the SDL variable %s is %s" % ("YeeshaPage" + str(thispage), FoundValue.getInt()))
                         if FoundValue is not None and FoundValue.getInt() != 0: 
                             PtDebugPrint ("psnlYeeshaPageChanges: You have found Yeesha Page # %s." % (thispage))
                             
             else:
-                PtDebugPrint("psnlYeeshaPageChanges: Error trying to access the ageSDL. ageSDL = %s" % ( ageSDL))
+                PtDebugPrint(f"psnlYeeshaPageChanges: Error trying to access the ageSDL. ageSDL = {ageSDL}")
         else:
             PtDebugPrint("psnlYeeshaPageChanges: Error trying to access the Vault.")
 
