@@ -142,10 +142,10 @@ class xTakableClothing(ptModifier):
                         PtAtTimeCallback(self.key, 1, kEnableClothingTimer) # we will handle the clickables in a second, since handling them now doesn't work
                         self.shown = True
                 except:
-                    PtDebugPrint("ERROR: xTakableClothing.OnServerInitComplete():\tERROR accessing ageSDL on %s" % self.sceneobject.getName())
+                    PtDebugPrint(f"ERROR: xTakableClothing.OnServerInitComplete():\tERROR accessing ageSDL on {self.sceneobject.getName()}")
                     pass
             else:
-                PtDebugPrint("ERROR: xTakableClothing.OnServerInitComplete():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
+                PtDebugPrint(f"ERROR: xTakableClothing.OnServerInitComplete():\tERROR: missing SDL var name on {self.sceneobject.getName()}")
                 pass
             
             if self.useChance and not self.shown: # only attempt to show if it's currently hidden
@@ -190,7 +190,7 @@ class xTakableClothing(ptModifier):
             if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
                 self.IEnableClothing()
         except:
-            PtDebugPrint("ERROR: xTakableClothing.OnSDLNotify():\tERROR reading age SDL on %s" % self.sceneobject.getName())
+            PtDebugPrint(f"ERROR: xTakableClothing.OnSDLNotify():\tERROR reading age SDL on {self.sceneobject.getName()}")
             pass
     
     def IItemInCloset(self):
@@ -309,7 +309,7 @@ class xTakableClothing(ptModifier):
         PtDebugPrint("xTakableClothing: Removing worn set "+setName)
         removedSets.append(setName) # add this set to our list of removed sets
         avatar = PtGetLocalAvatar()
-        avatar.avatar.netForce(1)
+        avatar.avatar.netForce(True)
         worn = avatar.avatar.getAvatarClothingList()
         # replace all set pieces with the default ones
         typesToReplace = []
@@ -336,7 +336,7 @@ class xTakableClothing(ptModifier):
 
         if id==actClickable.id:
             avatar = PtGetLocalAvatar()
-            avatar.avatar.netForce(1)
+            avatar.avatar.netForce(True)
             currentgender = avatar.avatar.getAvatarClothingGroup()
             if currentgender == kFemaleClothingGroup:
                 clothingNames = allFClothing
@@ -358,43 +358,38 @@ class xTakableClothing(ptModifier):
                 self.IRemoveOtherGuildShirt()
                 psnlSDL = xPsnlVaultSDL()
                 psnlSDL["guildAlliance"] = (guildSDLValues[base],)
-                PtDebugPrint("xTakableClothing: Guild set to:", guildSDLValues[base])
+                PtDebugPrint(f"xTakableClothing: Guild set to: {guildSDLValues[base]}", level=kWarningLevel)
             if not self.IItemInCloset():
                 avatar.avatar.addWardrobeClothingItem(base,ptColor().white(),ptColor().white())
                 item = self.IGetItem(base)
                 if hasattr(item, "description"):
-                    PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NewClothing", [item.description]))
+                    PtSendKIMessage(kKILocalChatStatusMsg, PtGetLocalizedString("KI.Messages.NewClothing", [item.description]))
             else:
                 PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  You already have "+base+" so I'm not going to give it to you again")
             acclist = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
-            accnamelist = []
-            for accessory in acclist:
-                if accessory[0][4:14] == "AccGlasses" or accessory[0][1:] == "Reward_Goggles":
-                    accnamelist.append(accessory[0])
+            accnamelist = [i[0] for i in acclist if i[0][4:14] == "AccGlasses" or i[0][1:] == "Reward_Goggles"]
             worn = avatar.avatar.getAvatarClothingList()
-            wornnamelist = []
-            for wornitem in worn:
-                wornnamelist.append(wornitem[0])
+            wornnamelist = [worn[0] for i in worn]
             for name in clothingNames:
                 self.IRemoveWornSet(self.IConflictsWithSet(name))
                 if name in accnamelist:
                     for aitem in accnamelist:
                         if aitem in wornnamelist and aitem != name:
                             avatar.avatar.removeClothingItem(aitem)
-                PtDebugPrint("DEBUG: xTakableClothing.OnNotify():  Wearing "+name)
-                avatar.avatar.wearClothingItem(name,0)
-                avatar.avatar.tintClothingItem(name,color1,0)
-                avatar.avatar.tintClothingItemLayer(name,color2,2,1)
+                PtDebugPrint(f"DEBUG: xTakableClothing.OnNotify():  Wearing {name}", level=kWarningLevel)
+                avatar.avatar.wearClothingItem(name ,0)
+                avatar.avatar.tintClothingItem(name, color1, 0)
+                avatar.avatar.tintClothingItemLayer(name, color2, 2, 1)
                 matchingItem = avatar.avatar.getMatchingClothingItem(name)
                 if isinstance(matchingItem, list):
-                    avatar.avatar.wearClothingItem(matchingItem[0],0)
-                    avatar.avatar.tintClothingItem(matchingItem[0],color1,0)
+                    avatar.avatar.wearClothingItem(matchingItem[0], 0)
+                    avatar.avatar.tintClothingItem(matchingItem[0], color1, 0)
 
                     #START-->Hard Hat color fix
                     if (matchingItem[0] == 'MReward_HardHat') or (matchingItem[0] == 'FRewardHardHat'):
-                        avatar.avatar.tintClothingItem(matchingItem[0],ptColor().orange(), 2, 1)
+                        avatar.avatar.tintClothingItem(matchingItem[0], ptColor().orange(), 2, 1)
                     else:                                      
-                        avatar.avatar.tintClothingItemLayer(matchingItem[0],color2,2,1)
+                        avatar.avatar.tintClothingItemLayer(matchingItem[0], color2, 2, 1)
                     #END-->Hard Hat color fix
                 avatar.avatar.saveClothing()
 

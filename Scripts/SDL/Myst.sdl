@@ -112,8 +112,6 @@ STATEDESC Myst
 ## Reward Clothing
     VAR BOOL    mystCatherineVis[1]                 DEFAULT=1 DEFAULTOPTION=VAULT
     VAR BOOL    mystCatherineShoeVis[1]             DEFAULT=1 DEFAULTOPTION=VAULT
-
-
 }
 
 
