@@ -2386,3 +2386,158 @@ STATEDESC Personal
 ## Guild Alliance SDL
     VAR INT     guildAlliance[1] DEFAULT=0
 }
+
+STATEDESC Personal
+{
+    VERSION 40
+
+## Age Mechanics
+
+    VAR BOOL        psnlLibraryDoorClosed[1]    DEFAULT=1
+    VAR BOOL        ShelfABoolOperated[1]       DEFAULT=0
+    VAR INT         ShelfAUserID[1]             DEFAULT=0
+    VAR BOOL        psnlBlindsClosed[1]         DEFAULT=1
+    VAR BOOL        psnlClosetClosed[1]         DEFAULT=1
+    VAR BOOL        CleftVisited[1]             DEFAULT=0
+    VAR BOOL        psnlCleftTotemOpen[1]       DEFAULT=0
+    VAR BOOL        psnlCleftSolved[1]          DEFAULT=0
+    VAR BOOL        psnlGotCityBook[1]          DEFAULT=0
+    VAR STRING32    psnlMusicBoxCurrentSong[1]  DEFAULT=""
+
+
+## Yeesha Pages
+    VAR BYTE        YeeshaPage1[1]              DEFAULT=0 # sun and moon
+    VAR BYTE        YeeshaPage2[1]              DEFAULT=0 # waterfall
+    VAR BYTE        YeeshaPage3[1]              DEFAULT=0 # hut decal / interior rug
+    VAR BYTE        YeeshaPage4[1]              DEFAULT=0 # hut roof (swap)
+    VAR BYTE        YeeshaPage5[1]              DEFAULT=0 # jumping pinnacles
+    VAR BYTE        YeeshaPage6[1]              DEFAULT=0 # dock
+    VAR BYTE        YeeshaPage7[1]              DEFAULT=0 # kickable physicals
+    VAR BYTE        YeeshaPage8[1]              DEFAULT=0 # Rain
+    VAR BYTE        YeeshaPage9[1]              DEFAULT=0 # music player
+    VAR BYTE        YeeshaPage10[1]             DEFAULT=0 # the tree
+
+    VAR BYTE        YeeshaPage11[1]             DEFAULT=0 # second bookcase
+    VAR BYTE        YeeshaPage12[1]             DEFAULT=0 # imager addition
+    
+#   VAR BYTE        YeeshaPage20[1]             DEFAULT=0 # Zandi's junk
+
+    VAR BYTE        YeeshaPage13[1]             DEFAULT=0 # butterflies
+    VAR BYTE        YeeshaPage14[1]             DEFAULT=0 # fireplace
+    VAR BYTE        YeeshaPage15[1]             DEFAULT=0 # bench
+    VAR BYTE        YeeshaPage16[1]             DEFAULT=0 # firemarbles
+    VAR BYTE        YeeshaPage17[1]             DEFAULT=0 # lush
+    VAR BYTE        YeeshaPage18[1]             DEFAULT=0 # clock
+    VAR BYTE        YeeshaPage19[1]             DEFAULT=0 # birds
+    VAR BYTE        YeeshaPage20[1]             DEFAULT=0 # calendar/bridge
+    VAR BYTE        YeeshaPage21[1]             DEFAULT=0 # maple trees
+    VAR BYTE        YeeshaPage22[1]             DEFAULT=0 # grass
+    VAR BYTE        YeeshaPage23[1]             DEFAULT=0 # ercana plants
+    VAR BYTE        YeeshaPage24[1]             DEFAULT=0 # thunderstorm
+    VAR BYTE        YeeshaPage25[1]             DEFAULT=0 # Bahro poles
+    VAR BYTE        YeeshaPage26[1]             DEFAULT=0 # VeeTsah Sky
+    VAR BYTE        YeeshaPage27[1]             DEFAULT=0 # Oceans
+    VAR BYTE        YeeshaPage28[1]             DEFAULT=0 # Blue Flowers
+    VAR BYTE        YeeshaPage29[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage30[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage31[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage32[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage33[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage34[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage35[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage36[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage37[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage38[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage39[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage40[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage41[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage42[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage43[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage44[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage45[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage46[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage47[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage48[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage49[1]             DEFAULT=0
+    VAR BYTE        YeeshaPage50[1]             DEFAULT=0
+
+    VAR INT         YP10LastTreeGrowth[1]       DEFAULT=0
+
+## This tuple stores the last open page for each of the 36 books
+    VAR BYTE        CurrentPage[36]             DEFAULT=1 # Moose's cool code makes this the default value for each of the 36 items in this tuple
+
+
+## Bahro Pole/Cave related age mechanics
+
+# The states used by the following variables:
+#   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
+#      Anim sheath down
+#   1: No pole, hydrant up, sheath down, clicking hand causes full glow
+#   2: After book has been used, No pole, hydrant up, sheath up, clicking hand causes progress glow
+#   3: Animate the hydrant down and proceed to state 4
+#   4: All cloths have been found and pole was sent to psnl age, pole is there, hydrant down, clicking hand does nothing
+#   5: Anim all hydrants up and proceed to state 6
+#   6: All poles in psnl age, pole is there, hydrant up, clicking hand plays full glow
+#   7: Pole returned, no pole, hydrant up, clicking hand plays full glow
+#   8: Selfish person unreturned pole, no pole, hydrant up, clicking hand plays full glow
+
+    VAR BYTE        TeledahnPoleState[1]        DEFAULT=0
+    VAR BYTE        KadishPoleState[1]          DEFAULT=0
+    VAR BYTE        GardenPoleState[1]          DEFAULT=0
+    VAR BYTE        GarrisonPoleState[1]        DEFAULT=0
+
+    VAR BOOL        TeledahnEnabled[1]          DEFAULT=1       DEFAULTOPTION=VAULT
+    VAR BOOL        GarrisonEnabled[1]          DEFAULT=1       DEFAULTOPTION=VAULT
+    VAR BOOL        GardenEnabled[1]            DEFAULT=1       DEFAULTOPTION=VAULT
+    VAR BOOL        KadishEnabled[1]            DEFAULT=1       DEFAULTOPTION=VAULT
+
+# Reward clothing related variables
+# If FirstWeekClothing is true, then the first week clothing is added to the player's closet on entry to the personal age
+   VAR BOOL         FirstWeekClothing[1]        DEFAULT=0       DEFAULTOPTION=VAULT
+# RewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to everyone)
+    VAR STRING32    RewardClothing[1]                           DEFAULTOPTION=VAULT
+
+# Other Stuff
+    VAR BOOL        psnlBugsVis[1]              DEFAULT=0       DEFAULTOPTION=VAULT
+
+# GlobalRewardClothing is a list of names of reward clothing to add to the player's closet, separated by semicolins
+# (do NOT use this for clothing items to be given to a select group of people)
+    VAR STRING32    GlobalRewardClothing[1]                     DEFAULTOPTION=VAULT
+
+# Enables the GreatZero GPS coords in the KI (must also have their KI calibrated)
+    VAR BOOL        GPSEnabled[1]               DEFAULT=0       DEFAULTOPTION=VAULT
+
+
+## Bahro Rings/Wedges
+    VAR BOOL        psnlBahroWedge01[1]         DEFAULT=0   # Garrison
+    VAR BOOL        psnlBahroWedge02[1]         DEFAULT=0   # Gira/Kemo
+    VAR BOOL        psnlBahroWedge03[1]         DEFAULT=0   # Kadish
+    VAR BOOL        psnlBahroWedge04[1]         DEFAULT=0   # Teledahn
+    VAR BOOL        psnlBahroWedge05[1]         DEFAULT=0   # Delin
+    VAR BOOL        psnlBahroWedge06[1]         DEFAULT=0   # Tsogal
+    VAR BOOL        psnlBahroWedge07[1]         DEFAULT=0   # Negilahn
+    VAR BOOL        psnlBahroWedge08[1]         DEFAULT=0   # Dereno
+    VAR BOOL        psnlBahroWedge09[1]         DEFAULT=0   # Payiferen
+    VAR BOOL        psnlBahroWedge10[1]         DEFAULT=0   # Tetsonot
+    VAR BOOL        psnlBahroWedge11[1]         DEFAULT=0   # Minkata
+    VAR BOOL        psnlBahroWedge12[1]         DEFAULT=0   # Ercana
+    VAR BOOL        psnlBahroWedge13[1]         DEFAULT=0   # Ahnonay
+
+
+## Calendar Pinnacle stuff
+    VAR BOOL        psnlCalendarStone01[1]      DEFAULT=0   # January   - Garrison (TrainingCenterHallway)
+    VAR BOOL        psnlCalendarStone02[1]      DEFAULT=0   # February  - Kadish (PillarRoom)
+    VAR BOOL        psnlCalendarStone03[1]      DEFAULT=0   # March     - Gira (Canyon)
+    VAR BOOL        psnlCalendarStone04[1]      DEFAULT=0   # April     - Garrison (Prison)
+    VAR BOOL        psnlCalendarStone05[1]      DEFAULT=0   # May       - Ercana (?)
+    VAR BOOL        psnlCalendarStone06[1]      DEFAULT=0   # June      - Descent (TreasureBookShaft)
+    VAR BOOL        psnlCalendarStone07[1]      DEFAULT=0   # July      - ?
+    VAR BOOL        psnlCalendarStone08[1]      DEFAULT=0   # August    - ?
+    VAR BOOL        psnlCalendarStone09[1]      DEFAULT=0   # September - ?
+    VAR BOOL        psnlCalendarStone10[1]      DEFAULT=0   # October   - ?
+    VAR BOOL        psnlCalendarStone11[1]      DEFAULT=0   # November  - ?
+    VAR BOOL        psnlCalendarStone12[1]      DEFAULT=0   # December  - ?
+## Guild Alliance SDL
+    VAR INT         guildAlliance[1]            DEFAULT=0
+}
