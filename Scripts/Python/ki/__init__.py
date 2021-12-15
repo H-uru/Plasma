@@ -5599,14 +5599,14 @@ class xKI(ptModifier):
                         if plyrInfo is not None:
                             sendToField.setString(plyrInfo.playerGetName())
                             # Set private caret.
-                            caret.setStringW(PtGetLocalizedString("KI.Chat.TOPrompt") + str(plyrInfo.playerGetName()) + " >")
+                            caret.setStringW(PtGetLocalizedString("KI.Chat.TOPrompt") + plyrInfo.playerGetName() + " >")
                             privateChbox.setChecked(1)
                         else:
                             self.BKPlayerSelected = None
                     # Is it a specific player?
                     elif isinstance(self.BKPlayerSelected, ptPlayer):
                         sendToField.setString(self.BKPlayerSelected.getPlayerName())
-                        caret.setStringW(PtGetLocalizedString("KI.Chat.TOPrompt") + str(self.BKPlayerSelected.getPlayerName()) + " >")
+                        caret.setStringW(PtGetLocalizedString("KI.Chat.TOPrompt") + self.BKPlayerSelected.getPlayerName() + " >")
                         privateChbox.setChecked(1)
                     # Is it a list of players?
                     elif isinstance(self.BKPlayerSelected, ptVaultPlayerInfoListNode):

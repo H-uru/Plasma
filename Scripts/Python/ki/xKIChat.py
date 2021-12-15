@@ -952,11 +952,45 @@ class CommandsProcessor:
                         except:
                             PtDebugPrint("xKIChat.commandsProcessor(): Chat command function did not run.", command, level=kErrorLevel)
                 except LookupError:
-                    if str(words[0].casefold()) in xKIExtChatCommands.xChatSpecialHandledCommands:
+                    firstWordLower = str(words[0].casefold())
+                    if firstWordLower in xKIExtChatCommands.xChatSpecialHandledCommands:
                         # Get remaining message string after special chat command
                         remainingMsg = message[len(words[0]):]
+
+                        # If remaining message is empty, try to do mousefree KI folder selection instead
                         if remainingMsg == "" or remainingMsg.isspace():
+                            userListBox = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kGUI.PlayerList))
+                            caret = ptGUIControlTextBox(KIMini.dialog.getControlFromTag(kGUI.ChatCaretID))
+                            privateChbox = ptGUIControlCheckBox(KIMini.dialog.getControlFromTag(kGUI.miniPrivateToggle))
+
+                            # Handling for selecting Age Players, Buddies, or Neighbors
+                            if firstWordLower == PtGetLocalizedString("KI.Commands.ChatAge"):
+                                folderName = xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kAgeMembersFolder)
+                                caretValue = ">"
+                            elif firstWordLower == PtGetLocalizedString("KI.Commands.ChatBuddies"):
+                                folderName = xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kBuddyListFolder)
+                                caretValue = PtGetLocalizedString("KI.Chat.TOPrompt") + folderName + " >"
+                            elif firstWordLower == PtGetLocalizedString("KI.Commands.ChatNeighbors"):
+                                folderName = xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kHoodMembersFolder)
+                                caretValue = PtGetLocalizedString("KI.Chat.TOPrompt") + folderName + " >"
+
+                            # Only try to find in list if it was one of the 3 expected folders, not a reply command
+                            if folderName is not None:
+                                numElements = userListBox.getNumElements()
+                                folderIdx = 0
+                                while folderIdx < numElements:
+                                    if userListBox.getElement(folderIdx).casefold() == folderName.casefold():
+                                        break;
+                                    folderIdx += 1
+
+                                if folderIdx < numElements:
+                                    userListBox.setSelection(folderIdx)
+                                    caret.setStringW(caretValue)
+                                    privateChbox.setChecked(0)
+                                
+                            # Don't send an actual message because it was just a command with nothing after it
                             return None
+
                         # Return full message with special command still prefixed
                         return message
                     else:
