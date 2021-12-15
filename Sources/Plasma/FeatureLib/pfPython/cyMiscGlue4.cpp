@@ -558,12 +558,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtWearDefaultClothing, args, kw, "Params: k
     bool broadcast = false;
     if (!PyArg_ParseTupleAndKeywords(args, kw, "O|b", kwlist, &keyObj, &broadcast))
     {
-        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothing expects a ptKey");
+        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothing expects a ptKey and an optional bool");
         PYTHON_RETURN_ERROR;
     }
     if (!pyKey::Check(keyObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothing expects a ptKey");
+        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothing expects a ptKey and an optional bool");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);

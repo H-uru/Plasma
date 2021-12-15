@@ -622,12 +622,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtWearDefaultClothingType, args, kw, "Param
     bool broadcast = false;
     if (!PyArg_ParseTupleAndKeywords(args, kw, "Ol|b", kwlist, &keyObj, &type, &broadcast))
     {
-        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey, an unsigned long, and an optional bool");
         PYTHON_RETURN_ERROR;
     }
     if (!pyKey::Check(keyObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey, an unsigned long, and an optional bool");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
