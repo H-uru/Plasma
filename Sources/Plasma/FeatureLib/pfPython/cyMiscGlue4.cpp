@@ -551,21 +551,23 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtWearMaintainerSuit, args, "Params: key,wearOrN
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtWearDefaultClothing, args, "Params: key\nForces the avatar to wear the default clothing set")
+PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtWearDefaultClothing, args, kw, "Params: key, broadcast=False\nForces the avatar to wear the default clothing set")
 {
+    char* kwlist[] = { "key", "broadcast", nullptr };
     PyObject* keyObj = nullptr;
-    if (!PyArg_ParseTuple(args, "O", &keyObj))
+    bool broadcast = false;
+    if (!PyArg_ParseTupleAndKeywords(args, kw, "O|b", kwlist, &keyObj, &broadcast))
     {
-        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothing expects a ptKey");
+        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothing expects a ptKey and an optional bool");
         PYTHON_RETURN_ERROR;
     }
     if (!pyKey::Check(keyObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothing expects a ptKey");
+        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothing expects a ptKey and an optional bool");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    cyMisc::WearDefaultClothing(*key);
+    cyMisc::WearDefaultClothing(*key, broadcast);
     PYTHON_RETURN_NONE;
 }
 

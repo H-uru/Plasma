@@ -51,7 +51,7 @@
 
 STATEDESC Myst
 {
-	VERSION 1
+    VERSION 1
 
 # Boolean variables
     VAR BOOL    KveerBookVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
@@ -67,16 +67,16 @@ VAR BOOL    mystCatherineVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
 
 STATEDESC Myst
 {
-	VERSION 2
+    VERSION 2
 
 # Boolean variables
-    VAR BOOL    KveerBookVis[1]   	DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL    YeeshaPageVis[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL    ByronsEggsVis[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    KveerBookVis[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    YeeshaPageVis[1]        DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ByronsEggsVis[1]        DEFAULT=0 DEFAULTOPTION=VAULT
     VAR BOOL    mystCalendarSpark12[1]  DEFAULT=0 DEFAULTOPTION=VAULT
 
 ## Reward Clothing
-VAR BOOL    mystCatherineVis[1]    	DEFAULT=1 DEFAULTOPTION=VAULT
+VAR BOOL    mystCatherineVis[1]     DEFAULT=1 DEFAULTOPTION=VAULT
 
 
 
@@ -84,19 +84,34 @@ VAR BOOL    mystCatherineVis[1]    	DEFAULT=1 DEFAULTOPTION=VAULT
 
 STATEDESC Myst
 {
-	VERSION 3
+    VERSION 3
 
 # Boolean variables
-    VAR BOOL    KveerBookVis[1]   			DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL    mystYeeshaPageFireplaceVis[1]    	DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL    ByronsEggsVis[1]    			DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL    mystCalendarSpark12[1]  		DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    KveerBookVis[1]             DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    mystYeeshaPageFireplaceVis[1]       DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ByronsEggsVis[1]                DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    mystCalendarSpark12[1]          DEFAULT=0 DEFAULTOPTION=VAULT
 
 ## Reward Clothing
-VAR BOOL    mystCatherineVis[1]    	DEFAULT=1 DEFAULTOPTION=VAULT
+VAR BOOL    mystCatherineVis[1]     DEFAULT=1 DEFAULTOPTION=VAULT
 
 
 
+}
+
+STATEDESC Myst
+{
+    VERSION 4
+
+# Boolean variables
+    VAR BOOL    KveerBookVis[1]                     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    mystYeeshaPageFireplaceVis[1]       DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    ByronsEggsVis[1]                    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    mystCalendarSpark12[1]              DEFAULT=0 DEFAULTOPTION=VAULT
+
+## Reward Clothing
+    VAR BOOL    mystCatherineVis[1]                 DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    mystCatherineShoeVis[1]             DEFAULT=1 DEFAULTOPTION=VAULT
 }
 
 

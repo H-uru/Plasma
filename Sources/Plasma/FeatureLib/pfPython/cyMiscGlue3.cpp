@@ -614,22 +614,24 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFakeLinkAvatarToObject, args, "Params: avatar,
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtWearDefaultClothingType, args, "Params: key,type\nForces the avatar to wear the default clothing of the specified type")
+PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtWearDefaultClothingType, args, kw, "Params: key, type, broadcast=False\nForces the avatar to wear the default clothing of the specified type")
 {
+    char* kwlist[] = { "key", "type", "broadcast", nullptr };
     PyObject* keyObj = nullptr;
     unsigned long type;
-    if (!PyArg_ParseTuple(args, "Ol", &keyObj, &type))
+    bool broadcast = false;
+    if (!PyArg_ParseTupleAndKeywords(args, kw, "Ol|b", kwlist, &keyObj, &type, &broadcast))
     {
-        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey, an unsigned long, and an optional bool");
         PYTHON_RETURN_ERROR;
     }
     if (!pyKey::Check(keyObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey, an unsigned long, and an optional bool");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    cyMisc::WearDefaultClothingType(*key, type);
+    cyMisc::WearDefaultClothingType(*key, type, broadcast);
     PYTHON_RETURN_NONE;
 }
 

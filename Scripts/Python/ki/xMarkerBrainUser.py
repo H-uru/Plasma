@@ -123,7 +123,7 @@ class UCMarkerGame(object):
                 av = PtGetLocalAvatar().avatar
                 gender = "F" if av.getAvatarClothingGroup() else "M"
                 clothing = "{}{}".format(gender, things[1])
-                if clothing in av.getWardrobeClothingList():
+                if any((i[0] == clothing for i in av.getWardrobeClothingList())):
                     PtDebugPrint("UCMarkerGame._GiveReward():\tAlready have clothing item '{}'".format(clothing), level=kWarningLevel)
                 else:
                     PtDebugPrint("UCMarkerGame._GiveReward():\tGiving clothing item '{}'".format(clothing), level=kWarningLevel)

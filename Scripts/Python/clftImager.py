@@ -500,8 +500,7 @@ class clftImager(ptResponder):
                 clothingName = "02_FTorso11_01"
             else:
                 clothingName = "02_MTorso09_01"
-            clothingList = avatar.avatar.getWardrobeClothingList()
-            if clothingName not in clothingList:
+            if not any((i[0] == clothingName for i in avatar.avatar.getWardrobeClothingList())):
                 PtDebugPrint("adding Yeesha reward clothing %s to wardrobe" % (clothingName))
                 avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().black())
             else:

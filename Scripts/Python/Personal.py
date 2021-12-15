@@ -147,67 +147,61 @@ class Personal(ptResponder):
             #~ PtDebugPrint("%s:\tERROR trying to access vault -- can't update %s variable in chronicle." % (kModuleName,kChronicleVarName))
         pass
 
-
-    def OnServerInitComplete(self):
+    def _AddClothingFromAgeSDL(self, clothingList, *sdls):
         ageSDL = PtGetAgeSDL()
-        PtDebugPrint("Personal.OnServerInitComplete(): Grabbing first week clothing item boolean")
-        try:
-            firstWeekClothing = ageSDL["FirstWeekClothing"][0]
-        except:
-            PtDebugPrint("Unable to get the first week clothing item bool, not going to add it just to be safe")
-            firstWeekClothing = 0
+        for i in sdls:
+            if not ageSDL[i][0]:
+                PtDebugPrint(f"Personal._AddClothingFromAgeSDL(): You don't have the SDL '{i}' so no '{clothingList}' for you", level=kWarningLevel)
+                return
+
+        if isinstance(clothingList, str):
+            clothingList = [clothingList]
 
         avatar = PtGetLocalAvatar()
-        currentgender = avatar.avatar.getAvatarClothingGroup()
-        if firstWeekClothing:
-            if currentgender == kFemaleClothingGroup:
-                clothingName = "FReward_Beta"
-            else:
-                clothingName = "MReward_Beta"
-            clothingList = avatar.avatar.getWardrobeClothingList()
-            if clothingName not in clothingList:
-                PtDebugPrint("Adding "+clothingName+" clothing item to your closet! Aren't you lucky?")
-                avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().white())
-            else:
-                PtDebugPrint("You already have " + clothingName + " so I'm not going to add it again.")
+        if avatar.avatar.getAvatarClothingGroup() == kFemaleClothingGroup:
+            clothingPrefix = "FReward"
         else:
-            PtDebugPrint("I guess you're too late, you don't get the first week clothing item")
-        
-        PtDebugPrint("Personal.OnServerInitComplete(): Checking to see if we need to add reward clothing to your closet")
-        try:
-            rewardList = ageSDL["RewardClothing"][0]
-        except:
-            PtDebugPrint("Unable to grab the reward clothing list from SDL, not going to add anything")
-            rewardList = ""
-        PtDebugPrint("Personal.OnServerInitComplete(): Checking to see if we need to add global reward clothing to your closet")
-        try:
-            globalRewardList = ageSDL["GlobalRewardClothing"][0]
-        except:
-            PtDebugPrint("Unable to grab the global reward clothing list from SDL, not going to add anything")
-            globalRewardList = ""
+            clothingPrefix = "MReward"
 
-        nameSuffixList = []
-        if rewardList != "":
-            nameSuffixList += rewardList.split(";") # get all the suffixes
-        if globalRewardList != "":
-            nameSuffixList += globalRewardList.split(";") # add the global items
-        for suffix in nameSuffixList:
-            suffix = suffix.strip() # get rid of all the whitespace
-            if currentgender == kFemaleClothingGroup:
-                genderPrefix = "FReward_"
+        entireClothingList = avatar.avatar.getEntireClothingList(0)
+        for i in filter(None, clothingList):
+            desiredName = "_".join((clothingPrefix, i))
+            if desiredName not in entireClothingList:
+                PtDebugPrint(f"ERROR: Personal._AddClothingFromAgeSDL(): Invalid clothing item '{desiredName}' requested!")
+                continue
+            if not any((j[0] == desiredName for j in avatar.avatar.getWardrobeClothingList())):
+                PtDebugPrint(f"Personal._AddClothingFromAgeSDL(): Adding '{desiredName}' clothing item to your closet! Aren't you lucky?", level=kWarningLevel)
+                avatar.avatar.addWardrobeClothingItem(desiredName, ptColor().white(), ptColor().white())
             else:
-                genderPrefix = "MReward_"
-            clothingName = genderPrefix + suffix
-            clothingList = avatar.avatar.getWardrobeClothingList()
-            if clothingName not in clothingList:
-                PtDebugPrint("Adding "+clothingName+" to your closet")
-                avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().white())
-            else:
-                PtDebugPrint("You already have " + clothingName + " so I'm not going to add it again.")
-        if rewardList != "":
-            ageSDL["RewardClothing"] = ("",)
-        else:
-            PtDebugPrint("Reward clothing list empty, not adding any clothing")
+                PtDebugPrint(f"Personal._AddClothingFromAgeSDL(): You already have {desiredName} so I'm not going to add it again.", level=kDebugDumpLevel)
+
+
+    def OnServerInitComplete(self):
+        if not ptVault().amOwnerOfCurrentAge():
+            PtDebugPrint("Personal.OnServerInitComplete(): This isn't my Relto, so no reward clothing grants.", level=kWarningLevel)
+            return
+
+        ageSDL = PtGetAgeSDL()
+        try:
+            localRewardClothing = ageSDL["RewardClothing"][0]
+        except:
+            PtDebugPrint("Personal.OnServerInitComplete(): Unable to grab the local reward clothing list from SDL, not going to add anything")
+            localRewardClothing = ""
+            pass
+        try:
+            globalRewardClothing = ageSDL["GlobalRewardClothing"][0]
+        except:
+            PtDebugPrint("Personal.OnServerInitComplete(): Unable to grab the global reward clothing list from SDL, not going to add anything")
+            globalRewardClothing = ""
+
+        # Add clothing items based on SDL variables: (clothing suffix, all required sdls...)
+        self._AddClothingFromAgeSDL("Beta", "FirstWeekClothing")
+        self._AddClothingFromAgeSDL(localRewardClothing.split(";"))
+        self._AddClothingFromAgeSDL(globalRewardClothing.split(";"))
+        self._AddClothingFromAgeSDL("FleeceSpiral", "psnlBahroWedge05", "psnlBahroWedge06")
+        self._AddClothingFromAgeSDL("SweatshirtPod", "psnlBahroWedge07", "psnlBahroWedge08", "psnlBahroWedge09", "psnlBahroWedge10")
+        self._AddClothingFromAgeSDL("LJacketMinkata", "psnlBahroWedge11")
+        self._AddClothingFromAgeSDL("VestShell", "psnlBahroWedge12", "psnlBahroWedge13")
 
 
     def Load(self):
