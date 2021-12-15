@@ -40,72 +40,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-"""Module: krelPodium.py
-Age: Kirel Neighborhood
-Author: Doug McBride
-Date: January 2004
-"""
 
 from Plasma import *
 from PlasmaTypes import *
 
-# define the attributes that will be entered in 3dsMAX
 actSwitch01 = ptAttribActivator(1, "act: Podium Button")
-respButtonOneshot = ptAttribResponder(2,"resp: Push Podium oneshot")
-
-respSpeech01 = ptAttribResponder(3, "resp: Speech #1")
-
-#~ respSpeech02 = ptAttribResponder(4, "resp: Speech #2")
-#~ respSpeech03 = ptAttribResponder(5, "resp: Speech #3")
-
-respSilence = ptAttribResponder(4, "resp: Shut all speeches off")
-
-#~ respSpeech04 = ptAttribResponder(6, "Speech #4 Responder")
-#~ respSpeech05 = ptAttribResponder(7, "Speech #5 Responder")
-
-
-
-#globals
-ElapsedTime = 0
-SecondsToCharge = 60
-baton = 0
-ElevatorDelay = 5
-Resetting = 0
-
+respButtonOneshot = ptAttribResponder(2, "resp: Push Podium oneshot")
+respList = ptAttribResponderList(3, "ResponderList", byObject=1)
+stringFormat = ptAttribString(4, "Responder name format string")
 
 class krelPodium(ptResponder):
 
     def __init__(self):
-        # run parent class init
         ptResponder.__init__(self)
         self.id = 5245
-
         version = 2
         self.version = version
-        PtDebugPrint("__init__krelPodium v.", version,".0")
-    
+        PtDebugPrint("__init__krelPodium v.", version, ".0")
+
     def OnServerInitComplete(self):
-        try:
-            ageSDL = PtGetAgeSDL()
-        except:
-            PtDebugPrint("krelPodium:\tERROR---Cannot find the Kirel Age SDL")
-            ageSDL["nb01CmnRmSpeech"] = (0, ) 
-
-        ageSDL.setNotify(self.key,"nb01CmnRmSpeech",0.0)        
-
+        ageSDL = PtGetAgeSDL()
+        if not PtGetPlayerList():
+            ageSDL["nb01CmnRmSpeech"] = (0,)
+        ageSDL.setNotify(self.key, "nb01CmnRmSpeech", 0.0)
         ageSDL.sendToClients("nb01CmnRmSpeech")
-        
-        ageSDL.setFlags("nb01CmnRmSpeech",1,1)  
+        ageSDL.setFlags("nb01CmnRmSpeech", 1, 1)
 
-
+    def OnNotify(self, state, id, events):
+        ageSDL = PtGetAgeSDL()
         nb01CmnRmSpeech = ageSDL["nb01CmnRmSpeech"][0]
-        
-        ageSDL["nb01CmnRmSpeech"] = (0, ) 
-        
-    def OnNotify(self,state,id,events):
-        ageSDL = PtGetAgeSDL()     
-        
-        PtDebugPrint("krelPodium.OnNotify:  state=%f id=%d events=" % (state,id),events)
 
         if not state:
             return
@@ -113,23 +76,26 @@ class krelPodium(ptResponder):
         if id == actSwitch01.id:
             respButtonOneshot.run(self.key, events=events)
             return
-            
-        elif id == respButtonOneshot.id and self.sceneobject.isLocallyOwned():
-            PtDebugPrint("##")
-            nb01CmnRmSpeech = ageSDL["nb01CmnRmSpeech"][0] 
-            
-            if nb01CmnRmSpeech == 0: # No speech was playing
-                PtDebugPrint("krelPodium: No speech was previously playing. Playing speech #1.")
-                respSpeech01.run(self.key)
-                ageSDL["nb01CmnRmSpeech"] = (1,)
 
-            else: 
-                PtDebugPrint("krelPodium: Speech #1 was stopped manually by the avatar.")
-                respSilence.run(self.key)
+        elif id == respButtonOneshot.id and self.sceneobject.isLocallyOwned():
+            nb01CmnRmSpeech -= 1
+            if nb01CmnRmSpeech < 0:
+                nb01CmnRmSpeech = len(respList.byObject) - 1
+            respName = (stringFormat.value % nb01CmnRmSpeech)
+            if respName in respList.byObject:
+                ageSDL["nb01CmnRmSpeech"] = (nb01CmnRmSpeech,)
+            else:
+                PtDebugPrint(f"ERROR: krelPodium Invalid speech {nb01CmnRmSpeech} selected!")
                 ageSDL["nb01CmnRmSpeech"] = (0,)
-                
-                
-        elif id == respSpeech01.id:
-            PtDebugPrint("krelPodium: Speech #1 was stopped automatically after it finished playing.")
-            respSilence.run(self.key)
-            ageSDL["nb01CmnRmSpeech"] = (0,)
+
+    def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
+        if VARname != "nb01CmnRmSpeech":
+            return
+
+        ageSDL = PtGetAgeSDL()
+        nb01CmnRmSpeech = ageSDL["nb01CmnRmSpeech"][0]
+        respName = (stringFormat.value % nb01CmnRmSpeech)
+
+        if nb01CmnRmSpeech >= 0 and respName in respList.byObject:
+            PtDebugPrint("krelPodium: Playing speech", respName)
+            respList.run(self.key, objectName=respName)
