@@ -63,8 +63,7 @@ STATEDESC VeeTsah
     
     VAR BOOL    ChisoBookVis[1]                  DEFAULT=1 DEFAULTOPTION=VAULT
     VAR BOOL    VeeTsahCannenVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
-
-    ## Yeesha Page 26
+## Yeesha Page 26
     VAR BOOL    VeeTsahYeeshaPage26Vis[1]        DEFAULT=0 DEFAULTOPTION=VAULT
 
 }
