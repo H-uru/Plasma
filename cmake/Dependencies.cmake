@@ -21,7 +21,7 @@ set_package_properties(
 set_package_properties(
     DirectX PROPERTIES
     DESCRIPTION "Framework for hardware-accelerated 3D graphics on Microsoft platforms"
-    TYPE REQUIRED
+    TYPE RECOMMENDED
 )
 set_package_properties(
     expat PROPERTIES

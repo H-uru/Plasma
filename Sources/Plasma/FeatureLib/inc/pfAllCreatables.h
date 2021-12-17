@@ -51,13 +51,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConditional/plConditionalObjectCreatable.h"
 #include "pfConsole/pfConsoleCreatable.h"
 
-#if defined(PLASMA_PIPELINE_DX)
+#ifdef PLASMA_PIPELINE_DX
     #include "pfDXPipeline/pfDXPipelineCreatable.h"
 #endif
 
 #include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
 
-#if defined(PLASMA_PIPELINE_GL)
+#ifdef PLASMA_PIPELINE_GL
     #include "pfGLPipeline/pfGLPipelineCreatable.h"
 #endif
 

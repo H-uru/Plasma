@@ -145,8 +145,8 @@ target_link_libraries(
         pfPasswordStore
         pfPatcher
         pfPython
-        $<$<STREQUAL:${PLASMA_PIPELINE},DirectX>:pfDXPipeline>
-        $<$<STREQUAL:${PLASMA_PIPELINE},OpenGL>:pfGLPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_DX}>:pfDXPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_GL}>:pfGLPipeline>
         CURL::libcurl
 )
 

@@ -85,12 +85,14 @@ endif()
 # Find all 3rd-party libraries that are required
 find_package(ASIO 1.14 REQUIRED)
 find_package(CURL REQUIRED)
+find_package(DirectX)
 find_package(expat REQUIRED)
 find_package(freetype)
 find_package(JPEG REQUIRED)
 find_package(libwebm)
 find_package(Ogg REQUIRED)
 find_package(OpenAL REQUIRED)
+find_package(OpenGL)
 find_package(OpenSSL REQUIRED)
 find_package(Opus)
 find_package(PhysX REQUIRED)
@@ -125,25 +127,17 @@ if(PLASMA_EXTERNAL_RELEASE)
     add_definitions(-DPLASMA_EXTERNAL_RELEASE)
 endif(PLASMA_EXTERNAL_RELEASE)
 
-if(WIN32)
-    set(PLASMA_PIPELINE "DirectX"
-                        CACHE STRING "Which graphics backend to use")
-else(WIN32)
-    set(PLASMA_PIPELINE "OpenGL"
-                        CACHE STRING "Which graphics backend to use")
-endif(WIN32)
-set_property(CACHE PLASMA_PIPELINE PROPERTY STRINGS "DirectX" "OpenGL")
+# Pipeline Renderers
+cmake_dependent_option(PLASMA_PIPELINE_DX "Enable DirectX rendering pipeline?" ON "DirectX_FOUND" OFF)
+cmake_dependent_option(PLASMA_PIPELINE_GL "Enable OpenGL rendering pipeline?" OFF "TARGET OpenGL::GL OR TARGET OpenGL::OpenGL AND TARGET OpenGL::EGL" OFF)
 
-if(PLASMA_PIPELINE STREQUAL "DirectX")
-    find_package(DirectX REQUIRED)
-
+if(PLASMA_PIPELINE_DX)
     add_definitions(-DPLASMA_PIPELINE_DX)
-endif(PLASMA_PIPELINE STREQUAL "DirectX")
+endif(PLASMA_PIPELINE_DX)
 
-if(PLASMA_PIPELINE STREQUAL "OpenGL")
-    find_package(OpenGL REQUIRED)
+if(PLASMA_PIPELINE_GL)
     add_definitions(-DPLASMA_PIPELINE_GL)
-endif(PLASMA_PIPELINE STREQUAL "OpenGL")
+endif(PLASMA_PIPELINE_GL)
 
 # Allow us to disable certain parts of the build
 option(PLASMA_BUILD_CLIENT "Do we want to build plClient?" ON)
