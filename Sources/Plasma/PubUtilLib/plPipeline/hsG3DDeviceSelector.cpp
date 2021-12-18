@@ -344,7 +344,7 @@ uint32_t  hsG3DDeviceSelector::IAdjustDirectXMemory( uint32_t cardMem )
 #endif
 }
 
-void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
+void hsG3DDeviceSelector::Enumerate(hsWindowHndl winRef)
 {
     IClear();
 
@@ -368,8 +368,13 @@ void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
 #endif
 }
 
-bool hsG3DDeviceSelector::GetDefault (hsG3DDeviceModeRecord *dmr)
+bool hsG3DDeviceSelector::GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devType)
 {
+    bool force = false;
+#ifndef PLASMA_EXTERNAL_RELEASE
+    force = plPipeline::fInitialPipeParams.ForceSecondMonitor;
+#endif // PLASMA_EXTERNAL_RELEASE
+
     hsG3DDeviceRecord* iTnL = nullptr;
     hsG3DDeviceRecord* iD3D = nullptr;
     hsG3DDeviceRecord* iOpenGL = nullptr;
@@ -378,42 +383,27 @@ bool hsG3DDeviceSelector::GetDefault (hsG3DDeviceModeRecord *dmr)
     // Get an index for any 3D devices
     for (hsG3DDeviceRecord& record : fRecords)
     {
+        if (devType != kDevTypeUnknown && record.GetG3DDeviceType() != devType)
+            continue;
+
         switch (record.GetG3DDeviceType())
         {
         case kDevTypeDirect3D:
             if (record.GetG3DHALorHEL() == kHHD3DTnLHalDev)
             {
-                if (iTnL == nullptr
-#ifndef PLASMA_EXTERNAL_RELEASE
-                    || plPipeline::fInitialPipeParams.ForceSecondMonitor
-#endif // PLASMA_EXTERNAL_RELEASE
-                    )
-                {
+                if (iTnL == nullptr || force)
                     iTnL = &record;
-                }
             }
             else if (record.GetG3DHALorHEL() == kHHD3DHALDev)
             {
-                if (iD3D == nullptr
-#ifndef PLASMA_EXTERNAL_RELEASE
-                    || plPipeline::fInitialPipeParams.ForceSecondMonitor
-#endif // PLASMA_EXTERNAL_RELEASE
-                    )
-                {
+                if (iD3D == nullptr || force)
                     iD3D = &record;
-                }
             }
             break;
 
         case kDevTypeOpenGL:
-            if (iOpenGL == nullptr
-#ifndef PLASMA_EXTERNAL_RELEASE
-                || plPipeline::fInitialPipeParams.ForceSecondMonitor
-#endif // PLASMA_EXTERNAL_RELEASE
-                )
-            {
+            if (iOpenGL == nullptr || force)
                 iOpenGL = &record;
-            }
             break;
         }
     }

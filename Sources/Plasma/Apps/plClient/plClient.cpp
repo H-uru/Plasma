@@ -114,7 +114,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plCaptureRender.h"
 #include "plPipeline/plDTProgressMgr.h"
 #include "plPipeline/plDynamicEnvMap.h"
-#include "plPipeline/hsG3DDeviceSelector.h"
 #include "plPipeline/plNullPipeline.h"
 #include "plPipeline/plTransitionMgr.h"
 #include "plPhysX/plSimulationMgr.h"
@@ -436,7 +435,7 @@ plPipeline* plClient::ICreatePipeline(hsWindowHndl disp, hsWindowHndl hWnd, cons
     return new plNullPipeline(disp, hWnd, devMode);
 }
 
-bool plClient::InitPipeline(hsWindowHndl display)
+bool plClient::InitPipeline(hsWindowHndl display, uint32_t devType)
 {
     hsStatusMessage("InitPipeline client\n");
 
@@ -445,7 +444,7 @@ bool plClient::InitPipeline(hsWindowHndl display)
     devSel.Enumerate(fWindowHndl);
     devSel.RemoveUnusableDevModes(true);
 
-    if (!devSel.GetDefault(&dmr))
+    if (!devSel.GetRequested(&dmr, devType))
     {
         hsMessageBox("No suitable rendering devices found.","Plasma", hsMessageBoxNormal, hsMessageBoxIconError);
         return true;
