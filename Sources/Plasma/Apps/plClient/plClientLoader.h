@@ -49,6 +49,7 @@ class plClientLoader : private hsThread
     class plClient* fClient;
     hsWindowHndl fWindow;
     hsWindowHndl fDisplay;
+    uint32_t fDevType;
 
     void OnQuit() override
     {
@@ -59,7 +60,7 @@ class plClientLoader : private hsThread
     void Run() override;
 
 public:
-    plClientLoader() : fClient(), fWindow(), fDisplay() { }
+    plClientLoader() : fClient(), fWindow(), fDisplay(), fDevType() { }
 
     /**
      * Initializes the client asyncrhonouslynn including: loading the localization, 
@@ -85,6 +86,11 @@ public:
      * Sets the client display handle.
      */
     void SetClientDisplay(hsWindowHndl hDC) { fDisplay = hDC; }
+
+    /**
+     * Sets the preferred rendering backend for the client pipeline.
+     */
+    void SetRequestedRenderingBackend(uint32_t devType) { fDevType = devType; }
 
     /**
      * Initial shutdown request received from Windows (or something)... start tear down

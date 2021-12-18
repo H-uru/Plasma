@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Shlobj.h>
 #include <algorithm>
 #include <regex>
+#include <unordered_set>
 
 #include <curl/curl.h>
 
@@ -67,6 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plPhysX/plPXSimulation.h"
+#include "plPipeline/hsG3DDeviceSelector.h"
 #include "plResMgr/plLocalization.h"
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plVersion.h"
@@ -105,6 +107,7 @@ enum
     kArgStartUpAgeName,
     kArgPvdFile,
     kArgSkipIntroMovies,
+    kArgRenderer
 };
 
 static const plCmdArgDef s_cmdLineArgs[] = {
@@ -116,6 +119,7 @@ static const plCmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeString,     "Age",             kArgStartUpAgeName },
     { kCmdArgFlagged  | kCmdTypeString,     "PvdFile",         kArgPvdFile },
     { kCmdArgFlagged  | kCmdTypeBool,       "SkipIntroMovies", kArgSkipIntroMovies },
+    { kCmdArgFlagged  | kCmdTypeString,     "Renderer",        kArgRenderer },
 };
 
 /// Made globals now, so we can set them to zero if we take the border and 
@@ -972,6 +976,27 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
 #endif // HS_DEBUGGING
 }
 
+uint32_t ParseRendererArgument(const ST::string& requested)
+{
+    using namespace ST::literals;
+
+    static std::unordered_set<ST::string, ST::hash_i, ST::equal_i> dx_args {
+        "directx"_st, "direct3d"_st, "dx"_st, "d3d"_st
+    };
+
+    static std::unordered_set<ST::string, ST::hash_i, ST::equal_i> gl_args {
+        "opengl"_st, "gl"_st
+    };
+
+    if (dx_args.find(requested) != dx_args.end())
+        return hsG3DDeviceSelector::kDevTypeDirect3D;
+
+    if (gl_args.find(requested) != gl_args.end())
+        return hsG3DDeviceSelector::kDevTypeOpenGL;
+
+    return hsG3DDeviceSelector::kDevTypeUnknown;
+}
+
 PF_CONSOLE_LINK_ALL()
 
 bool WinInit(HINSTANCE hInst)
@@ -1044,6 +1069,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         NetCommSetIniStartUpAge(cmdParser.GetString(kArgStartUpAgeName));
     if (cmdParser.IsSpecified(kArgPvdFile))
         plPXSimulation::SetDefaultDebuggerEndpoint(cmdParser.GetString(kArgPvdFile));
+    if (cmdParser.IsSpecified(kArgRenderer))
+        gClient.SetRequestedRenderingBackend(ParseRendererArgument(cmdParser.GetString(kArgRenderer)));
 #endif
 
     plFileName serverIni = "server.ini";
