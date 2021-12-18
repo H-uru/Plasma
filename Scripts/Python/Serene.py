@@ -49,16 +49,3 @@ class Serene(ptResponder):
         ptResponder.__init__(self)
         self.id = 1022601
         self.version = 1
-
-    def OnServerInitComplete(self):
-        if not PtGetPlayerList():
-            return
-        
-        dnitime = PtGetDniTime()
-        month = time.strftime('%m', time.gmtime(dnitime))
-        day = time.strftime('%d', time.gmtime(dnitime))
-        ageSDL = PtGetAgeSDL()
-        if int(month) == 12 and int(day) > 13:
-            ageSDL['sereneChristmasVis'] = (1,)
-        else:
-            ageSDL['sereneChristmasVis'] = (0,)
