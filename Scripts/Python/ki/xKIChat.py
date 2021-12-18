@@ -952,7 +952,7 @@ class CommandsProcessor:
                         except:
                             PtDebugPrint("xKIChat.commandsProcessor(): Chat command function did not run.", command, level=kErrorLevel)
                 except LookupError:
-                    firstWordLower = str(words[0].casefold())
+                    firstWordLower = words[0].casefold()
                     if firstWordLower in xKIExtChatCommands.xChatSpecialHandledCommands:
                         # Get remaining message string after special chat command
                         remainingMsg = message[len(words[0]):]
