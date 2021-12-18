@@ -986,7 +986,7 @@ class CommandsProcessor:
                                 if folderIdx < numElements:
                                     userListBox.setSelection(folderIdx)
                                     caret.setStringW(caretValue)
-                                    privateChbox.setChecked(0)
+                                    privateChbox.setChecked(False)
                                 
                             # Don't send an actual message because it was just a command with nothing after it
                             return None
