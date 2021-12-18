@@ -8,44 +8,72 @@ else()
 endif()
 
 set(_PHYSX_COMMON_LIBRARY_NAMES
+    PhysXCommon
+    PhysXCommon_static
     PhysXCommon_${_PHYSX_LIBRARY_SUFFIX}
     PhysXCommon_static_${_PHYSX_LIBRARY_SUFFIX}
+    libPhysXCommon
+    libPhysXCommon_static
     libPhysXCommon_${_PHYSX_LIBRARY_SUFFIX}
     libPhysXCommon_static_${_PHYSX_LIBRARY_SUFFIX}
 )
 set(_PHYSX_PHYSICS_LIBRARY_NAMES
+    PhysX
+    PhysX_static
     PhysX_${_PHYSX_LIBRARY_SUFFIX}
     PhysX_static_${_PHYSX_LIBRARY_SUFFIX}
+    libPhysX
+    libPhysX_static
     libPhysX_${_PHYSX_LIBRARY_SUFFIX}
     libPhysX_static_${_PHYSX_LIBRARY_SUFFIX}
 )
 set(_PHYSX_FOUNDATION_LIBRARY_NAMES
+    PhysXFoundation
+    PhysXFoundation_static
     PhysXFoundation_${_PHYSX_LIBRARY_SUFFIX}
     PhysXFoundation_static_${_PHYSX_LIBRARY_SUFFIX}
+    libPhysXFoundation
+    libPhysXFoundation_static
     libPhysXFoundation_${_PHYSX_LIBRARY_SUFFIX}
     libPhysXFoundation_static_${_PHYSX_LIBRARY_SUFFIX}
 )
 set(_PHYSX_COOKING_LIBRARY_NAMES
+    PhysXCooking
+    PhysXCooking_static
     PhysXCooking_${_PHYSX_LIBRARY_SUFFIX}
     PhysXCooking_static_${_PHYSX_LIBRARY_SUFFIX}
+    libPhysXCooking
+    libPhysXCooking_static
     libPhysXCooking_${_PHYSX_LIBRARY_SUFFIX}
     libPhysXCooking_static_${_PHYSX_LIBRARY_SUFFIX}
 )
 set(_PHYSX_EXTENSIONS_LIBRARY_NAMES
+    PhysXExtensions
+    PhysXExtensions_static
     PhysXExtensions_${_PHYSX_LIBRARY_SUFFIX}
     PhysXExtensions_static_${_PHYSX_LIBRARY_SUFFIX}
+    libPhysXExtensions
+    libPhysXExtensions_static
     libPhysXExtensions_${_PHYSX_LIBRARY_SUFFIX}
     libPhysXExtensions_static_${_PHYSX_LIBRARY_SUFFIX}
 )
 set(_PHYSX_CHARACTER_LIBRARY_NAMES
+    PhysXCharacterKinematic
+    PhysXCharacterKinematic_static
     PhysXCharacterKinematic_${_PHYSX_LIBRARY_SUFFIX}
     PhysXCharacterKinematic_static_${_PHYSX_LIBRARY_SUFFIX}
+    libPhysXCharacterKinematic
+    libPhysXCharacterKinematic_static
     libPhysXCharacterKinematic_${_PHYSX_LIBRARY_SUFFIX}
     libPhysXCharacterKinematic_static_${_PHYSX_LIBRARY_SUFFIX}
 )
 set(_PHYSX_PVD_LIBRARY_NAMES
+    PhysXPvdSDK
+    PhysXPvdSDK_static
     PhysXPvdSDK_${_PHYSX_LIBRARY_SUFFIX}
     PhysXPvdSDK_static_${_PHYSX_LIBRARY_SUFFIX}
+    libPhysXPvdSDK
+    libPhysXPvdSDK_static
     libPhysXPvdSDK_${_PHYSX_LIBRARY_SUFFIX}
     libPhysXPvdSDK_static_${_PHYSX_LIBRARY_SUFFIX}
 )
