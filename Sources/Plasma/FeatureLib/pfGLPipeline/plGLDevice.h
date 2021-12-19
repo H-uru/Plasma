@@ -50,9 +50,12 @@ class plRenderTarget;
 class plGLDevice
 {
 protected:
+    const char*         fErrorMsg;
     plGLPipeline*       fPipeline;
 
 public:
+    plGLDevice();
+
     /**
      * Set rendering to the specified render target.
      *
@@ -73,7 +76,7 @@ public:
     struct IndexBufferRef;
     struct TextureRef;
 
-    const char* GetErrorString();
+    const char* GetErrorString() const { return fErrorMsg; }
 };
 
 #endif

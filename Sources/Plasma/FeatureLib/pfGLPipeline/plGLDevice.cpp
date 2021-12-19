@@ -42,3 +42,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plGLDevice.h"
 
+plGLDevice::plGLDevice()
+    : fErrorMsg()
+{
+}
+
+void plGLDevice::SetRenderTarget(plRenderTarget* target)
+{
+}
+
+void plGLDevice::SetViewport()
+{
+}
+
+void plGLDevice::SetProjectionMatrix(const hsMatrix44& src)
+{
+}
+
+void plGLDevice::SetWorldToCameraMatrix(const hsMatrix44& src)
+{
+}
+
+void plGLDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
+{
+}

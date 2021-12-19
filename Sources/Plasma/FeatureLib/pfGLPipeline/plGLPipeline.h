@@ -50,7 +50,7 @@ class plGLPipeline : public pl3DPipeline<plGLDevice>
 {
 public:
     plGLPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode);
-    virtual ~plGLPipeline();
+    virtual ~plGLPipeline() = default;
 
     CLASSNAME_REGISTER(plGLPipeline);
     GETINTERFACE_ANY(plGLPipeline, plPipeline);
@@ -61,44 +61,44 @@ public:
      */
 
     /*** VIRTUAL METHODS ***/
-    //virtual bool PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
-    //virtual bool PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
-    //virtual void Render(plDrawable* d, const std::vector<int16_t>& visList) = 0;
-    //virtual plTextFont* MakeTextFont(char* face, uint16_t size) = 0;
-    //virtual void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
-    //virtual void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
-    //virtual bool OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) = 0;
-    //virtual bool CloseAccess(plAccessSpan& acc) = 0;
-    //virtual void CheckTextureRef(plLayerInterface* lay) = 0;
-    //virtual void PushRenderRequest(plRenderRequest* req) = 0;
-    //virtual void PopRenderRequest(plRenderRequest* req) = 0;
-    //virtual void ClearRenderTarget(plDrawable* d) = 0;
-    //virtual void ClearRenderTarget(const hsColorRGBA* col = nullptr, const float* depth = nullptr) = 0;
-    //virtual hsGDeviceRef* MakeRenderTargetRef(plRenderTarget* owner) = 0;
-    //virtual void PushRenderTarget(plRenderTarget* target) = 0;
-    //virtual plRenderTarget* PopRenderTarget() = 0;
-    //virtual bool BeginRender() = 0;
-    //virtual bool EndRender() = 0;
-    //virtual void RenderScreenElements() = 0;
-    //virtual bool IsFullScreen() const = 0;
-    //virtual uint32_t ColorDepth() const = 0;
-    //virtual void Resize(uint32_t width, uint32_t height) = 0;
-    //virtual bool CheckResources() = 0;
-    //virtual void LoadResources() = 0;
-    //virtual void SetZBiasScale(float scale) = 0;
-    //virtual float GetZBiasScale() const = 0;
-    //virtual void SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w) = 0;
-    //virtual void RefreshScreenMatrices() = 0;
-    //virtual void SubmitClothingOutfit(plClothingOutfit* co) = 0;
-    //virtual bool SetGamma(float eR, float eG, float eB) = 0;
-    //virtual bool SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) = 0;
-    //virtual bool CaptureScreen(plMipmap* dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0) = 0;
-    //virtual plMipmap* ExtractMipMap(plRenderTarget* targ) = 0;
-    //virtual const char* GetErrorString() = 0;
-    //virtual void GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32 ) = 0;
-    //virtual int GetMaxAnisotropicSamples() = 0;
-    //virtual int GetMaxAntiAlias(int Width, int Height, int ColorDepth) = 0;
-    //virtual void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync = false  ) = 0;
+    bool PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
+    bool PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
+    void Render(plDrawable* d, const std::vector<int16_t>& visList) override;
+    plTextFont* MakeTextFont(char* face, uint16_t size) override;
+    void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
+    void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
+    bool OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) override;
+    bool CloseAccess(plAccessSpan& acc) override;
+    void CheckTextureRef(plLayerInterface* lay) override;
+    void PushRenderRequest(plRenderRequest* req) override;
+    void PopRenderRequest(plRenderRequest* req) override;
+    void ClearRenderTarget(plDrawable* d) override;
+    void ClearRenderTarget(const hsColorRGBA* col = nullptr, const float* depth = nullptr) override;
+    hsGDeviceRef* MakeRenderTargetRef(plRenderTarget* owner) override;
+    void PushRenderTarget(plRenderTarget* target) override;
+    plRenderTarget* PopRenderTarget() override;
+    bool BeginRender() override;
+    bool EndRender() override;
+    void RenderScreenElements() override;
+    bool IsFullScreen() const override;
+    uint32_t ColorDepth() const override;
+    void Resize(uint32_t width, uint32_t height) override;
+    bool CheckResources() override;
+    void LoadResources() override;
+    void SetZBiasScale(float scale) override;
+    float GetZBiasScale() const override;
+    void SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w) override;
+    void RefreshScreenMatrices() override;
+    void SubmitClothingOutfit(plClothingOutfit* co) override;
+    bool SetGamma(float eR, float eG, float eB) override;
+    bool SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) override;
+    bool CaptureScreen(plMipmap* dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0) override;
+    plMipmap* ExtractMipMap(plRenderTarget* targ) override;
+    void GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32 ) override;
+    int GetMaxAnisotropicSamples() override;
+    int GetMaxAntiAlias(int Width, int Height, int ColorDepth) override;
+    void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync = false  ) override;
+    void RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList) override;
 };
 
 #endif // _plGLPipeline_inc_

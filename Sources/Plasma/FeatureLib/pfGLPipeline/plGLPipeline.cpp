@@ -42,12 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //
 //  plGLPipeline Class Functions                                             //
-//  plPipeline derivative for OpenGL ES                                      //
+//  plPipeline derivative for OpenGL                                         //
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
+#include "plProfile.h"
 #include "hsWindows.h"
+
 #include "plPipeline/hsWinRef.h"
 
 #include "plGLPipeline.h"
@@ -55,3 +57,162 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef HS_SIMD_INCLUDE
 #  include HS_SIMD_INCLUDE
 #endif
+
+plProfile_CreateCounter("Polys", "General", DrawTriangles);
+plProfile_CreateCounter("Material Change", "Draw", MatChange);
+
+plGLPipeline::plGLPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode)
+    : pl3DPipeline(devMode)
+{}
+
+bool plGLPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
+{
+    return false;
+}
+
+bool plGLPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
+{
+    return false;
+}
+
+void plGLPipeline::Render(plDrawable* d, const std::vector<int16_t>& visList)
+{}
+
+plTextFont* plGLPipeline::MakeTextFont(char* face, uint16_t size)
+{
+    return nullptr;
+}
+
+void plGLPipeline::CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx)
+{}
+
+void plGLPipeline::CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx)
+{}
+
+bool plGLPipeline::OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly)
+{
+    return false;
+}
+
+bool plGLPipeline::CloseAccess(plAccessSpan& acc)
+{
+    return false;
+}
+
+void plGLPipeline::CheckTextureRef(plLayerInterface* lay)
+{}
+
+void plGLPipeline::PushRenderRequest(plRenderRequest* req)
+{}
+
+void plGLPipeline::PopRenderRequest(plRenderRequest* req)
+{}
+
+void plGLPipeline::ClearRenderTarget(plDrawable* d)
+{}
+
+void plGLPipeline::ClearRenderTarget(const hsColorRGBA* col, const float* depth)
+{}
+
+hsGDeviceRef* plGLPipeline::MakeRenderTargetRef(plRenderTarget* owner)
+{
+    return nullptr;
+}
+
+void plGLPipeline::PushRenderTarget(plRenderTarget* target)
+{}
+
+plRenderTarget* plGLPipeline::PopRenderTarget()
+{
+    return nullptr;
+}
+
+bool plGLPipeline::BeginRender()
+{
+    return false;
+}
+
+bool plGLPipeline::EndRender()
+{
+    return false;
+}
+
+void plGLPipeline::RenderScreenElements()
+{}
+
+bool plGLPipeline::IsFullScreen() const
+{
+    return false;
+}
+
+uint32_t plGLPipeline::ColorDepth() const
+{
+    return 0;
+}
+
+void plGLPipeline::Resize(uint32_t width, uint32_t height)
+{}
+
+bool plGLPipeline::CheckResources()
+{
+    return false;
+}
+
+void plGLPipeline::LoadResources()
+{}
+
+void plGLPipeline::SetZBiasScale(float scale)
+{}
+
+float plGLPipeline::GetZBiasScale() const
+{
+    return 0.0f;
+}
+
+void plGLPipeline::SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w)
+{}
+
+void plGLPipeline::RefreshScreenMatrices()
+{}
+
+void plGLPipeline::SubmitClothingOutfit(plClothingOutfit* co)
+{}
+
+bool plGLPipeline::SetGamma(float eR, float eG, float eB)
+{
+    return false;
+}
+
+bool plGLPipeline::SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB)
+{
+    return false;
+}
+
+bool plGLPipeline::CaptureScreen(plMipmap* dest, bool flipVertical, uint16_t desiredWidth, uint16_t desiredHeight)
+{
+    return false;
+}
+
+plMipmap* plGLPipeline::ExtractMipMap(plRenderTarget* targ)
+{
+    return nullptr;
+}
+
+void plGLPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth)
+{}
+
+int plGLPipeline::GetMaxAnisotropicSamples()
+{
+    return 0;
+}
+
+int plGLPipeline::GetMaxAntiAlias(int Width, int Height, int ColorDepth)
+{
+    return 0;
+}
+
+void plGLPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync)
+{}
+
+void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList)
+{}
