@@ -345,8 +345,9 @@ public:
 
     void RemoveUnusableDevModes(bool bTough); // Removes modes and devices not allowed supported in release
 
-    void Enumerate(hsWinRef winRef);
+    void Enumerate(hsWindowHndl winRef);
 
-    bool GetDefault(hsG3DDeviceModeRecord *dmr);
+    bool GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devType);
+    bool GetDefault(hsG3DDeviceModeRecord *dmr) { return GetRequested(dmr, kDevTypeUnknown); }
 };
 #endif // hsG3DDeviceSelector_inc

@@ -55,11 +55,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plUoid.h"
 
+#include "plPipeline/hsG3DDeviceSelector.h"
 #include "plScene/plRenderRequest.h"
 
 class plSceneNode;
 class plPipeline;
-class hsG3DDeviceModeRecord;
 class plInputManager;
 class plInputController;
 class plSceneObject;
@@ -225,7 +225,7 @@ public:
     
     bool MsgReceive(plMessage* msg) override;
     
-    bool        InitPipeline(hsWindowHndl display);
+    bool        InitPipeline(hsWindowHndl display, uint32_t devType = hsG3DDeviceSelector::kDevTypeUnknown);
 
     void        InitInputs();
 

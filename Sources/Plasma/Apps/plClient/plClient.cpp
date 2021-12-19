@@ -114,7 +114,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plCaptureRender.h"
 #include "plPipeline/plDTProgressMgr.h"
 #include "plPipeline/plDynamicEnvMap.h"
-#include "plPipeline/hsG3DDeviceSelector.h"
 #include "plPipeline/plNullPipeline.h"
 #include "plPipeline/plTransitionMgr.h"
 #include "plPhysX/plSimulationMgr.h"
@@ -140,12 +139,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsole/pfConsole.h"
 #include "pfConsole/pfConsoleDirSrc.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
-#if defined(PLASMA_PIPELINE_DX)
+#ifdef PLASMA_PIPELINE_DX
     #include "pfDXPipeline/plDXPipeline.h"
 #endif
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
 #include "pfGameGUIMgr/pfGUICtrlGenerator.h"
-#if defined(PLASMA_PIPELINE_GL)
+#ifdef PLASMA_PIPELINE_GL
     #include "pfGLPipeline/plGLPipeline.h"
 #endif
 #include "pfJournalBook/pfJournalBook.h"
@@ -421,16 +420,22 @@ void plClient::ISetGraphicsDefaults()
 
 plPipeline* plClient::ICreatePipeline(hsWindowHndl disp, hsWindowHndl hWnd, const hsG3DDeviceModeRecord* devMode)
 {
-#if defined(PLASMA_PIPELINE_DX)
-    return new plDXPipeline(hWnd, devMode);
-#elif defined(PLASMA_PIPELINE_GL)
-    return new plGLPipeline(disp, hWnd, devMode);
-#else
-    return new plNullPipeline(disp, hWnd, devMode);
+    uint32_t renderer = devMode->GetDevice()->GetG3DDeviceType();
+
+#ifdef PLASMA_PIPELINE_DX
+    if (renderer == hsG3DDeviceSelector::kDevTypeDirect3D)
+        return new plDXPipeline(hWnd, devMode);
 #endif
+
+#ifdef PLASMA_PIPELINE_GL
+    if (renderer == hsG3DDeviceSelector::kDevTypeOpenGL)
+        return new plGLPipeline(disp, hWnd, devMode);
+#endif
+
+    return new plNullPipeline(disp, hWnd, devMode);
 }
 
-bool plClient::InitPipeline(hsWindowHndl display)
+bool plClient::InitPipeline(hsWindowHndl display, uint32_t devType)
 {
     hsStatusMessage("InitPipeline client\n");
 
@@ -439,7 +444,7 @@ bool plClient::InitPipeline(hsWindowHndl display)
     devSel.Enumerate(fWindowHndl);
     devSel.RemoveUnusableDevModes(true);
 
-    if (!devSel.GetDefault(&dmr))
+    if (!devSel.GetRequested(&dmr, devType))
     {
         hsMessageBox("No suitable rendering devices found.","Plasma", hsMessageBoxNormal, hsMessageBoxIconError);
         return true;
