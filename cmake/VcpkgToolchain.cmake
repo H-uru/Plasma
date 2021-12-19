@@ -93,6 +93,13 @@ if(_HOST_IS_WINDOWS AND NOT DEFINED VCPKG_TARGET_TRIPLET)
     endif()
 endif()
 
+# Default to using the same triplet for the host and target to prevent unnesecary
+# dependencies on cross-compilers when we're just building a Win32 static engine
+# on a Win64 machine.
+if(_HOST_IS_WINDOWS AND NOT DEFINED VCPKG_HOST_TRIPLET)
+    set(VCPKG_HOST_TRIPLET ${VCPKG_TARGET_TRIPLET} CACHE STRING "")
+endif()
+
 # Workaround: The cairocffi Python module does not ship with libcairo-2.dll as expected. So,
 # we're going to opt-into a special manifest feature to install the vcpkg cairo.dll into
 # the python3 port. BUT only if PLASMA_BUILD_RESOURCE_DAT has not been explicitly turned OFF

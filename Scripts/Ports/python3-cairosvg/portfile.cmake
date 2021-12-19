@@ -11,7 +11,7 @@ set(INSTALLED_PYTHON_PREFIX "${CURRENT_INSTALLED_DIR}/tools/python3")
 # We are running in script mode, so no toolchains are available. Sad.
 find_program(
     PYTHON_EXECUTABLE
-    NAMES python python3 python3.9
+    NAMES python python3 python3.10
     PATHS "${INSTALLED_PYTHON_PREFIX}"
     NO_DEFAULT_PATH
 )
@@ -28,7 +28,7 @@ vcpkg_execute_in_download_mode(
     OUTPUT_VARIABLE INSTALLED_PYTHON_PREFIX
 )
 vcpkg_execute_in_download_mode(
-    COMMAND "${PYTHON_EXECUTABLE}" -c "import sys,distutils.sysconfig;sys.stdout.write(distutils.sysconfig.get_python_lib(plat_specific=False,standard_lib=False))"
+    COMMAND "${PYTHON_EXECUTABLE}" -c [[import sys,sysconfig;sys.stdout.write(sysconfig.get_path("purelib"))]]
     WORKING_DIRECTORY "${INSTALLED_PYTHON_PREFIX}"
     OUTPUT_VARIABLE INSTALLED_SITE_PACKAGES_DIR
 )

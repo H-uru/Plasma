@@ -16,3 +16,8 @@ if(PORT IN_LIST _PLASMA_DYNAMIC_LIBRARIES)
 else()
     set(VCPKG_LIBRARY_LINKAGE static)
 endif()
+
+# This is a terrible hack because meson seems to suck.
+if(PORT STREQUAL cairo)
+    set(VCPKG_BUILD_TYPE release)
+endif()
