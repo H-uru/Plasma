@@ -171,7 +171,7 @@ bool plClient::fDelayMS = false;
 
 plClient* plClient::fInstance = nullptr;
 
-static std::vector<HMODULE> fLoadedDLLs;
+static std::vector<hsWindowInst> fLoadedDLLs;
 
 plClient::plClient()
     : fPipeline(), fDone(), fQuitIntro(), fWindowHndl(),
@@ -433,11 +433,10 @@ plPipeline* plClient::ICreatePipeline(hsWindowHndl disp, hsWindowHndl hWnd, cons
 bool plClient::InitPipeline(hsWindowHndl display)
 {
     hsStatusMessage("InitPipeline client\n");
-    HWND hWnd = fWindowHndl;
-    
+
     hsG3DDeviceModeRecord dmr;
     hsG3DDeviceSelector devSel;
-    devSel.Enumerate(hWnd);
+    devSel.Enumerate(fWindowHndl);
     devSel.RemoveUnusableDevModes(true);
 
     if (!devSel.GetDefault(&dmr))
@@ -485,7 +484,7 @@ bool plClient::InitPipeline(hsWindowHndl display)
         plBitmap::SetGlobalLevelChopCount(2 - plPipeline::fInitialPipeParams.TextureQuality);
     }
 
-    plPipeline *pipe = ICreatePipeline(display, hWnd, &dmr);
+    plPipeline *pipe = ICreatePipeline(display, fWindowHndl, &dmr);
     if (pipe->GetErrorString() != nullptr)
     {
         ISetGraphicsDefaults();
@@ -496,7 +495,7 @@ bool plClient::InitPipeline(hsWindowHndl display)
 #endif
         delete pipe;
         devSel.GetDefault(&dmr);
-        pipe = ICreatePipeline(display, hWnd, &dmr);
+        pipe = ICreatePipeline(display, fWindowHndl, &dmr);
         if (pipe->GetErrorString() != nullptr)
         {
             // not much else we can do
@@ -1483,6 +1482,7 @@ void plClient::InitDLLs()
     std::vector<plFileName> dlls = plFileSystem::ListDir("ModDLL", "*.dll");
     for (auto iter = dlls.begin(); iter != dlls.end(); ++iter)
     {
+#ifdef HS_BUILD_FOR_WIN32
         HMODULE hMod = LoadLibraryW(iter->WideString().data());
         if (hMod)
         {
@@ -1491,17 +1491,20 @@ void plClient::InitDLLs()
                 hsTimer::GetTheTimer(), plNetClientApp::GetInstance());
             fLoadedDLLs.emplace_back(hMod);
         }
+#endif
     }
 }
 
 void plClient::ShutdownDLLs()
 {
+#ifdef HS_BUILD_FOR_WIN32
     for (HMODULE dll : fLoadedDLLs)
     {
         BOOL ret = FreeLibrary(dll);
         if( !ret )
             hsStatusMessage("Failed to free lib\n");
     }
+#endif
     fLoadedDLLs.clear();
 }
 
@@ -1531,18 +1534,18 @@ bool plClient::MainLoop()
     }
 #endif
 
-    if(plClient::fDelayMS)
-        Sleep(5);
-    
+    if (plClient::fDelayMS)
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+
     // Reset our stats
     plProfileManager::Instance().BeginFrame();
 
     if (IUpdate())
         return true;
-        
+
     if (IDraw())
         return true;
-    
+
     plProfileManagerFull::Instance().EndFrame();
     plProfileManager::Instance().EndFrame();
 
@@ -1628,7 +1631,7 @@ bool plClient::IUpdate()
     plgDispatch::MsgSend(eval);
     plProfile_EndTiming(EvalMsg);
 
-    char *xFormLap1 = "Main";
+    const char *xFormLap1 = "Main";
     plProfile_BeginLap(TransformMsg, xFormLap1);
     plTransformMsg* xform = new plTransformMsg(nullptr, nullptr, nullptr, nullptr);
     plgDispatch::MsgSend(xform);
@@ -1646,7 +1649,7 @@ bool plClient::IUpdate()
     // At this point, we just register for a plDelayedTransformMsg when dirtied.
     if (!plCoordinateInterface::GetDelayedTransformsEnabled())
     {
-        char *xFormLap2 = "Simulation";
+        const char *xFormLap2 = "Simulation";
         plProfile_BeginLap(TransformMsg, xFormLap2);
         xform = new plTransformMsg(nullptr, nullptr, nullptr, nullptr);
         plgDispatch::MsgSend(xform);
@@ -1654,7 +1657,7 @@ bool plClient::IUpdate()
     }
     else
     {
-        char *xFormLap3 = "Delayed";
+        const char *xFormLap3 = "Delayed";
         plProfile_BeginLap(TransformMsg, xFormLap3);
         xform = new plDelayedTransformMsg(nullptr, nullptr, nullptr, nullptr);
         plgDispatch::MsgSend(xform);
@@ -1959,6 +1962,7 @@ void plClient::ResizeDisplayDevice(int Width, int Height, bool Windowed)
     if (!Windowed)
         IChangeResolution(Width, Height);
 
+#ifdef HS_BUILD_FOR_WIN32
     uint32_t winStyle, winExStyle;
     if( Windowed )
     {
@@ -1986,10 +1990,12 @@ void plClient::ResizeDisplayDevice(int Width, int Height, bool Windowed)
         OutsideHeight = Height;
     }
     SetWindowPos( fWindowHndl, HWND_NOTOPMOST, 0, 0, OutsideWidth, OutsideHeight, flags );
+#endif
 }
 
 void plClient::IChangeResolution(int width, int height)
 {
+#ifdef HS_BUILD_FOR_WIN32
     // First, we need to be mindful that we may not be operating on the primary display device
     // I unfortunately cannot test this works as expected, but it will likely save us some cursing
     HMONITOR monitor = MonitorFromWindow(fWindowHndl, MONITOR_DEFAULTTONULL);
@@ -2012,16 +2018,17 @@ void plClient::IChangeResolution(int width, int height)
         devmode.dmPelsHeight = height;
     }
     ChangeDisplaySettingsExW(moninfo.szDevice, &devmode, nullptr, CDS_FULLSCREEN, nullptr);
+#endif
 }
 
-void WriteBool(hsStream *stream, char *name, bool on )
+void WriteBool(hsStream *stream, const char *name, bool on )
 {
     char command[256];
     sprintf(command, "%s %s\r\n", name, on ? "true" : "false");
     stream->WriteString(command);
 }
 
-void WriteInt(hsStream *stream, char *name, int val )
+void WriteInt(hsStream *stream, const char *name, int val )
 {
     char command[256];
     sprintf(command, "%s %d\r\n", name, val);
@@ -2060,12 +2067,14 @@ void plClient::IDetectAudioVideoSettings()
 #endif
 
     // Use current desktop resolution for fullscreen mode
+#ifdef HS_BUILD_FOR_WIN32
     if(!plPipeline::fDefaultPipeParams.Windowed)
     {
         plPipeline::fDefaultPipeParams.Width = GetSystemMetrics(SM_CXSCREEN);
         plPipeline::fDefaultPipeParams.Height = GetSystemMetrics(SM_CYSCREEN);
     }
     else
+#endif
     {
         plPipeline::fDefaultPipeParams.Width = hsG3DDeviceSelector::kDefaultWidth;
         plPipeline::fDefaultPipeParams.Height = hsG3DDeviceSelector::kDefaultHeight;
