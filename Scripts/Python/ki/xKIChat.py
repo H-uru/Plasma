@@ -976,14 +976,13 @@ class CommandsProcessor:
 
                             # Only try to find in list if it was one of the 3 expected folders, not a reply command
                             if folderName is not None:
-                                numElements = userListBox.getNumElements()
-                                folderIdx = 0
-                                while folderIdx < numElements:
-                                    if userListBox.getElement(folderIdx).casefold() == folderName.casefold():
-                                        break;
-                                    folderIdx += 1
-
-                                if folderIdx < numElements:
+                                try:
+                                    folderIdx = next((i for i in range(userListBox.getNumElements()) if userListBox.getElement(i).casefold() == folderName.casefold()))
+                                except StopIteration:
+                                    # Indicate an error to the user here because the KI folder was not found for some reason.
+                                    self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.CommandError", [message]), kChat.SystemMessage)
+                                    pass
+                                else:
                                     userListBox.setSelection(folderIdx)
                                     caret.setStringW(caretValue)
                                     privateChbox.setChecked(False)
