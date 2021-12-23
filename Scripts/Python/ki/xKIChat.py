@@ -61,6 +61,7 @@ from . import xKIExtChatCommands
 from .xKIConstants import *
 from .xKIHelpers import *
 
+SUBTITLE_REGEX = re.compile(r"^((?P<speaker>([\w.]+(\s\w+)?):) )?(?P<subtitle>.*)")
 
 ## A class to process all the RT Chat functions of the KI.
 class xKIChat(object):
@@ -439,9 +440,20 @@ class xKIChat(object):
 
         # Is it an object to represent the flags?
         if isinstance(cFlags, ChatFlags):
+            PtDebugPrint("Chat Flags are {}".format(cFlags))
+            # Is it subtitles for current audio?
+            if cFlags.subtitle:
+                headerColor = kColors.AudioSubtitleHeader
+                player = None
+
+                PtDebugPrint("xKIChat.AddChatLine(): Adding subtitle {}.".format(message))
+                messageMatches = SUBTITLE_REGEX.match(message)
+                if messageMatches is not None:
+                    pretext = messageMatches.group("speaker")
+                    message = messageMatches.group("subtitle")
 
             # Is it a status message?
-            if cFlags.status:
+            elif cFlags.status:
                 bodyColor = kColors.ChatHeaderStatus
                 player = None
 
@@ -569,12 +581,13 @@ class xKIChat(object):
         if forceKI:
             if not self.KIDisabled and not mKIdialog.isEnabled():
                 mKIdialog.show()
+
         if player is not None:
             separator = "" if pretext.endswith(" ") else " "
             chatHeaderFormatted = "{}{}{}:".format(pretext, separator, player.getPlayerNameW())
             chatMessageFormatted = " {}".format(message)
         else:
-            # It must be a status or error message.
+            # It must be a subtitle, status or error message.
             chatHeaderFormatted = pretext
             if not pretext:
                 chatMessageFormatted = "{}".format(message)
@@ -757,6 +770,11 @@ class ChatFlags:
         else:
             self.__dict__["neighbors"] = False
 
+        if flags & kRTChatAudioSubtitleMsg:
+            self.__dict__["subtitle"] = True
+        else:
+            self.__dict__["subtitle"] = False
+
         self.__dict__["channel"] = (kRTChatChannelMask & flags) / 256
 
     def __setattr__(self, name, value):
@@ -799,6 +817,11 @@ class ChatFlags:
             if value:
                 self.__dict__["flags"] |= kRTChatNeighborsMsg
 
+        elif name == "subtitle":
+            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatAudioSubtitleMsg
+            if value:
+                self.__dict__["flags"] |= kRTChatAudioSubtitleMsg
+
         elif name == "channel":
             flagsNoChannel = self.__dict__["flags"] & kRTChatNoChannel
             self.__dict__["flags"] = flagsNoChannel + (value * 256)
@@ -822,6 +845,8 @@ class ChatFlags:
             string += "status "
         if self.neighbors:
             string += "neighbors "
+        if self.subtitle:
+            string += "subtitle "
         if self.ccrBcast:
             string += "ccrBcast "
         string += "channel = {} ".format(self.channel)
@@ -877,6 +902,13 @@ class CommandsProcessor:
             if message[-1:] == "s":
                 v = "are"
             self.chatMgr.AddChatLine(None, "The %s %s too heavy to lift. Maybe you should stick to feathers." % (message[len("/get "):], v), 0)
+            return None
+        elif PtIsInternalRelease() and msg.startswith("/sub"):
+            # test sending an audio subtitle to the chat manager
+            send = message[len("/sub "):]
+            cFlags = ChatFlags(0)
+            cFlags.subtitle = 1
+            self.chatMgr.AddChatLine(None, send, cFlags)
             return None
         elif PtIsInternalRelease() and msg.startswith("/system "):
             send = message[len("/system "):]

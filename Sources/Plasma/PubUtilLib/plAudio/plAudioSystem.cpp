@@ -946,6 +946,7 @@ plAudioSystem*  plgAudioSys::fSys = nullptr;
 bool            plgAudioSys::fInit = false;
 bool            plgAudioSys::fActive = false;
 bool            plgAudioSys::fMuted = true;
+bool            plgAudioSys::fEnableSubtitles = false;
 bool            plgAudioSys::fDelayedActivate = false;
 bool            plgAudioSys::fEnableEAX = false;
 float           plgAudioSys::fChannelVolumes[kNumChannels] = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
@@ -990,6 +991,11 @@ void plgAudioSys::SetMuted( bool b )
         SetGlobalFadeVolume(0.0f);
     else
         SetGlobalFadeVolume(1.0);
+}
+
+void plgAudioSys::SetEnableSubtitles(bool b)
+{
+    fEnableSubtitles = b;
 }
 
 void plgAudioSys::EnableEAX( bool b )

@@ -246,6 +246,22 @@ bool pyAudioControl::IsMuted() const
     return plgAudioSys::IsMuted();
 }
 
+// Enable or disable displaying speech subtitles
+void pyAudioControl::EnableSubtitles()
+{
+    plgAudioSys::SetEnableSubtitles(true);
+}
+
+void pyAudioControl::DisableSubtitles()
+{
+    plgAudioSys::SetEnableSubtitles(false);
+}
+
+bool pyAudioControl::IsEnabledSubtitles() const
+{
+    return plgAudioSys::IsEnabledSubtitles();
+}
+
 
 //------------------------
 // Voice Settings

@@ -264,6 +264,8 @@ class kColors:
 
     TextNoteURL = DniLilac
 
+    AudioSubtitleHeader = DniBlueDk
+
     # Chat colors (messages and headers).
     ChatMessage             = DniWhite
     ChatMessageMention      = DniYellowLt

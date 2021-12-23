@@ -60,13 +60,13 @@ public:
     CLASSNAME_REGISTER( plWin32StreamingSound );
     GETINTERFACE_ANY( plWin32StreamingSound, plWin32Sound );
 
-    void        DeActivate() override;
-    bool        LoadSound(bool is3D) override;
-    float       GetActualTimeSec() override;
-    unsigned    GetByteOffset() override;
-    StreamType  GetStreamType() const override { return fStreamType; }
+    void                DeActivate() override;
+    bool                LoadSound(bool is3D) override;
+    float               GetActualTimeSec() override;
+    unsigned            GetByteOffset() override;
+    StreamType          GetStreamType() const override { return fStreamType; }
     virtual void        SetFilename(const char *filename, bool isCompressed);
-    void        Update() override;   // temp
+    void                Update() override;   // temp
     void                StreamUpdate();
     bool                MsgReceive(plMessage *pMsg) override;
     

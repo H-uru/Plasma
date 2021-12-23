@@ -57,6 +57,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plStatusLog/plStatusLog.h"
 
+#include <fstream>
+
 #if HS_BUILD_FOR_WIN32
 #    include <direct.h>
 #else
@@ -172,10 +174,60 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
             /// Open da file
             plFileName strPath = plFileSystem::GetCWD();
 
+            if (plgAudioSys::IsEnabledSubtitles()) 
+            {
+                plFileName audioSrtPath = plFileName::Join(strPath, "dat", plFileName::Join(fSrcFilename.StripFileExt(), ".srt"));
+
+                if (audioSrtPath.IsValid())
+                {
+                    // read sets of SRT data until end of file
+                    // TODO: this should be in a different class like plSrtFileReader or something
+                    std::ifstream srtFile;
+                    srtFile.open(audioSrtPath.AbsolutePath().AsString().c_str(), std::ifstream::in);
+
+                    // if file exists and was opened successfully
+                    if (srtFile)
+                    {
+                        int subtitleNumber = 0;
+                        std::string subtitleTimings = "";
+                        std::string subtitleText = "";
+
+                        for (std::string line; std::getline(srtFile, line); )
+                        {
+                            plStatusLog::AddLineSF("audio.log", "Read subtitle file line {}", line);
+
+                            if (subtitleNumber == 0)
+                            {
+                                subtitleNumber = std::stoi(line);
+                                break;
+                            }
+                            else if (subtitleTimings.compare("") != 0)
+                            {
+                                subtitleTimings = line;
+                                break;
+                            }
+                            else if (subtitleText.compare("") != 0)
+                            {
+                                subtitleText = line;
+                                break;
+                            }
+                            else
+                            {
+                                subtitleNumber = 0;
+                                subtitleTimings = "";
+                                subtitleText = "";
+                            }
+                        }
+                    }
+                }
+            }
+
             if (sfxPath)
+            {
                 strPath = plFileName::Join(strPath, "sfx");
+            }
             strPath = plFileName::Join(strPath, fSrcFilename);
-            fDataStream = plAudioFileReader::CreateReader(strPath, select,type);
+            fDataStream = plAudioFileReader::CreateReader(strPath, select, type);
         }
 
         if (fDataStream == nullptr || !fDataStream->IsValid())

@@ -58,6 +58,7 @@ kMicLevel = "Audio.SetMicVolume"
 kSoundPri = "Audio.SetPriorityCutoff"
 kMute = "Audio.MuteAll"
 kVoiceRec = "Audio.EnableVoiceChat"
+kSubtitle = "Audio.EnableSubtitles"
 
 # the diffent channel tags
 kSoundFX = "SoundFX"
@@ -336,3 +337,21 @@ def SetAudioMode(init, device, eax):
             entryEAX.setValue(0, val)
         else:
             gIniFile.addEntry("Audio.UseEAX " + val)
+
+def SetSubtitle(subtitle):
+    if gIniFile:
+        entry,idx = gIniFile.findByCommand(kSubtitle)
+        mutestr = "%d" % subtitle
+        if entry:
+            entry.setValue(0,mutestr)
+        else:
+            gIniFile.addEntry("%s %d" % (kSubtitle,subtitle))
+
+def GetSubtitle():
+    if gIniFile:
+        entry,idx = gIniFile.findByCommand(kSubtitle)
+        if entry:
+            value = entry.getValue(0)
+            if value:
+                return int(value)
+        return 0
