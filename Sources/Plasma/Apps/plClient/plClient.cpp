@@ -54,10 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plTweak.h"
 #include "hsWindows.h"
 
-#ifdef HS_BUILD_FOR_WIN32
-#   include <Shlobj.h>
-#endif
-
 #include "plClient.h"
 
 #include "pnDispatch/plDispatch.h"
@@ -162,15 +158,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static plDispatchBase* gDisp = nullptr;
 static plTimerCallbackManager* gTimerMgr = nullptr;
 
-#ifdef HS_BUILD_FOR_WIN32
-extern ITaskbarList3* gTaskbarList;
-#endif
-
 bool plClient::fDelayMS = false;
 
 plClient* plClient::fInstance = nullptr;
 
-static std::vector<hsWindowInst> fLoadedDLLs;
 
 plClient::plClient()
     : fPipeline(), fDone(), fQuitIntro(), fWindowHndl(),
@@ -1221,33 +1212,7 @@ void plClient::IProgressMgrCallbackProc(plOperationProgress * progress)
     if(!fInstance)
         return;
 
-    // Increments the taskbar progress [Windows 7+]
-#ifdef HS_BUILD_FOR_WIN32
-    if (gTaskbarList && fInstance->GetWindowHandle())
-    {
-        static TBPFLAG lastState = TBPF_NOPROGRESS;
-        TBPFLAG myState;
-
-        // So, calling making these kernel calls is kind of SLOW. So, let's
-        // hide that behind a userland check--this helps linking go faster!
-        if (progress->IsAborting())
-            myState = TBPF_ERROR;
-        else if (progress->IsLastUpdate())
-            myState = TBPF_NOPROGRESS;
-        else if (progress->GetMax() == 0.f)
-            myState = TBPF_INDETERMINATE;
-        else
-            myState = TBPF_NORMAL;
-
-        if (myState == TBPF_NORMAL)
-            // This sets us to TBPF_NORMAL
-            gTaskbarList->SetProgressValue(fInstance->GetWindowHandle(), (ULONGLONG)progress->GetProgress(), (ULONGLONG)progress->GetMax());
-        else if (myState != lastState)
-            gTaskbarList->SetProgressState(fInstance->GetWindowHandle(), myState);
-        lastState = myState;
-    }
-#endif
-
+    fInstance->IUpdateProgressIndicator(progress);
     fInstance->fMessagePumpProc();
 
     // HACK HACK HACK HACK!
@@ -1476,41 +1441,6 @@ void    plClient::IPatchGlobalAgeFiles()
 
     plResPatcher* patcher = plResPatcher::GetInstance();
     patcher->Update(plManifest::EssentialGameManifests());
-}
-
-void plClient::InitDLLs()
-{
-    hsStatusMessage("Init dlls client\n");
-    typedef void (*PInitGlobalsFunc) (hsResMgr *, plFactory *, plTimerCallbackManager *, plTimerShare*,
-        plNetClientApp*);
-
-    std::vector<plFileName> dlls = plFileSystem::ListDir("ModDLL", "*.dll");
-    for (auto iter = dlls.begin(); iter != dlls.end(); ++iter)
-    {
-#ifdef HS_BUILD_FOR_WIN32
-        HMODULE hMod = LoadLibraryW(iter->WideString().data());
-        if (hMod)
-        {
-            PInitGlobalsFunc initGlobals = (PInitGlobalsFunc)GetProcAddress(hMod, "InitGlobals");
-            (*initGlobals)(hsgResMgr::ResMgr(), plFactory::GetTheFactory(), plgTimerCallbackMgr::Mgr(),
-                hsTimer::GetTheTimer(), plNetClientApp::GetInstance());
-            fLoadedDLLs.emplace_back(hMod);
-        }
-#endif
-    }
-}
-
-void plClient::ShutdownDLLs()
-{
-#ifdef HS_BUILD_FOR_WIN32
-    for (HMODULE dll : fLoadedDLLs)
-    {
-        BOOL ret = FreeLibrary(dll);
-        if( !ret )
-            hsStatusMessage("Failed to free lib\n");
-    }
-#endif
-    fLoadedDLLs.clear();
 }
 
 bool plClient::MainLoop()
@@ -1967,63 +1897,7 @@ void plClient::ResizeDisplayDevice(int Width, int Height, bool Windowed)
     if (!Windowed)
         IChangeResolution(Width, Height);
 
-#ifdef HS_BUILD_FOR_WIN32
-    uint32_t winStyle, winExStyle;
-    if( Windowed )
-    {
-        // WS_VISIBLE appears necessary to avoid leaving behind framebuffer junk when going from windowed to a smaller window
-        winStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE;
-        winExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-    } else {
-        winStyle = WS_VISIBLE;
-        winExStyle = WS_EX_APPWINDOW;
-    }
-    SetWindowLong(fWindowHndl, GWL_STYLE, winStyle);
-    SetWindowLong(fWindowHndl, GWL_EXSTYLE, winExStyle);
-
-
-    uint32_t flags = SWP_NOCOPYBITS | SWP_SHOWWINDOW | SWP_FRAMECHANGED;
-    uint32_t OutsideWidth, OutsideHeight;
-    if( Windowed )
-    {
-        RECT winRect = { 0, 0, Width, Height };
-        AdjustWindowRectEx(&winRect, winStyle, false, winExStyle);
-        OutsideWidth = winRect.right - winRect.left;
-        OutsideHeight = winRect.bottom - winRect.top;
-    } else {
-        OutsideWidth = Width;
-        OutsideHeight = Height;
-    }
-    SetWindowPos( fWindowHndl, HWND_NOTOPMOST, 0, 0, OutsideWidth, OutsideHeight, flags );
-#endif
-}
-
-void plClient::IChangeResolution(int width, int height)
-{
-#ifdef HS_BUILD_FOR_WIN32
-    // First, we need to be mindful that we may not be operating on the primary display device
-    // I unfortunately cannot test this works as expected, but it will likely save us some cursing
-    HMONITOR monitor = MonitorFromWindow(fWindowHndl, MONITOR_DEFAULTTONULL);
-    if (!monitor)
-        return;
-    MONITORINFOEXW moninfo;
-    memset(&moninfo, 0, sizeof(moninfo));
-    moninfo.cbSize = sizeof(moninfo);
-    GetMonitorInfoW(monitor, &moninfo);
-
-    // Fetch a base display settings
-    DEVMODEW devmode;
-    memset(&devmode, 0, sizeof(devmode));
-    devmode.dmSize = sizeof(devmode);
-    EnumDisplaySettingsW(moninfo.szDevice, ENUM_REGISTRY_SETTINGS, &devmode);
-
-    // Actually update the resolution
-    if (width != 0 && height != 0) {
-        devmode.dmPelsWidth = width;
-        devmode.dmPelsHeight = height;
-    }
-    ChangeDisplaySettingsExW(moninfo.szDevice, &devmode, nullptr, CDS_FULLSCREEN, nullptr);
-#endif
+    IResizeNativeDisplayDevice(Width, Height, Windowed);
 }
 
 void WriteBool(hsStream *stream, const char *name, bool on )
@@ -2114,28 +1988,33 @@ void plClient::IDetectAudioVideoSettings()
 #endif
 
     //check to see if audio.ini exists
-    if (s.Open(audioIniFile)) {
+    if (s.Open(audioIniFile))
         s.Close();
-    } else {
-        stream = plEncryptedStream::OpenEncryptedFileWrite(audioIniFile);
-        WriteBool(stream, "Audio.Initialize",  true);
-        WriteBool(stream, "Audio.UseEAX", false);
-        WriteInt(stream, "Audio.SetPriorityCutoff", 6);
-        WriteInt(stream, "Audio.MuteAll", false);
-        WriteInt(stream, "Audio.SetChannelVolume SoundFX", 1);
-        WriteInt(stream, "Audio.SetChannelVolume BgndMusic", 1);
-        WriteInt(stream, "Audio.SetChannelVolume Ambience", 1);
-        WriteInt(stream, "Audio.SetChannelVolume NPCVoice", 1);
-        WriteInt(stream, "Audio.EnableVoiceRecording", 1);
-        stream->Close();
-        delete stream;
-    }
+    else
+        IWriteDefaultAudioSettings(audioIniFile);
 
     // check to see if graphics.ini exists
     if (s.Open(graphicsIniFile))
         s.Close();
     else
         IWriteDefaultGraphicsSettings(graphicsIniFile);
+}
+
+void plClient::IWriteDefaultAudioSettings(const plFileName& destFile)
+{
+    hsStream *stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
+    WriteBool(stream, "Audio.Initialize",  true);
+    WriteBool(stream, "Audio.UseEAX", false);
+    WriteInt(stream, "Audio.SetPriorityCutoff", 6);
+    WriteInt(stream, "Audio.MuteAll", false);
+    WriteInt(stream, "Audio.SetChannelVolume SoundFX", 1);
+    WriteInt(stream, "Audio.SetChannelVolume BgndMusic", 1);
+    WriteInt(stream, "Audio.SetChannelVolume Ambience", 1);
+    WriteInt(stream, "Audio.SetChannelVolume NPCVoice", 1);
+    WriteInt(stream, "Audio.EnableVoiceRecording", 1);
+    stream->Close();
+    delete stream;
+    stream = nullptr;
 }
 
 void plClient::IWriteDefaultGraphicsSettings(const plFileName& destFile)
@@ -2175,18 +2054,6 @@ void plClient::WindowActivate(bool active)
             IChangeResolution(active ? fPipeline->Width() : 0, active ? fPipeline->Height() : 0);
     }
     fWindowActive = active;
-}
-
-void plClient::FlashWindow()
-{
-#ifdef HS_BUILD_FOR_WIN32
-    FLASHWINFO info;
-    info.cbSize = sizeof(info);
-    info.dwFlags = FLASHW_TIMERNOFG | FLASHW_ALL;
-    info.hwnd = fWindowHndl;
-    info.uCount = -1;
-    FlashWindowEx(&info);
-#endif
 }
 
 //============================================================================

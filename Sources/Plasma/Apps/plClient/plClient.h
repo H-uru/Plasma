@@ -58,38 +58,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plScene/plRenderRequest.h"
 
-class plSceneNode;
-class plPipeline;
-class plInputManager;
-class plInputController;
-class plSceneObject;
-class pfConsoleEngine;
-class pfConsole;
-class plAudioSystem;
-class plVirtualCam1;
-class plKey;
-class plPageTreeMgr;
-class plTransitionMgr;
-class plLinkEffectsMgr;
-class plOperationProgress;
-class pfGameGUIMgr;
-class pfKI;
+class plAgeLoaded2Msg;
 struct plAnimDebugList;
-class plFontCache;
+class plAudioSystem;
 class plClientMsg;
+class pfConsole;
+class pfConsoleEngine;
+class plFactory;
+class plFontCache;
+class pfGameGUIMgr;
+class plInputController;
+class plInputManager;
+class plKey;
+class pfKI;
+class plLinkEffectsMgr;
 class plLocation;
 class plMovieMsg;
 class plMoviePlayer;
-class plPreloaderMsg;
+class plNetClientApp;
 class plNetCommAuthMsg;
-class plAgeLoaded2Msg;
+class plOperationProgress;
+class plPageTreeMgr;
+class plPipeline;
+class plPreloaderMsg;
+class hsResMgr;
 class plResPatcherMsg;
+class plSceneNode;
+class plSceneObject;
+class plTimerCallbackManager;
+class plTimerShare;
+class plTransitionMgr;
+class plVirtualCam1;
 
 typedef void (*plMessagePumpProc)();
 
 class plClient : public hsKeyedObject
 {
 protected:
+    typedef void (*pInitGlobalsFunc)(hsResMgr*, plFactory*, plTimerCallbackManager*, plTimerShare*, plNetClientApp*);
 
     class plRoomRec
     {
@@ -209,8 +215,14 @@ protected:
     void IRoomLoaded(plSceneNode* node, bool hold);
     void IRoomUnloaded(plSceneNode* node);
     void ISetGraphicsDefaults();
+    void IDetectAudioVideoSettings();
+    void IWriteDefaultAudioSettings(const plFileName& destFile);
+    void IWriteDefaultGraphicsSettings(const plFileName& destFile);
 
+    // These have platform-dependent implementations
+    void IResizeNativeDisplayDevice(int width, int height, bool windowed);
     void IChangeResolution(int width, int height);
+    void IUpdateProgressIndicator(plOperationProgress* progress);
 
 public:
 
@@ -291,12 +303,13 @@ public:
 
     bool BeginGame();
 
+    // These have platform-dependent implementations
+    void ShowClientWindow();
     void FlashWindow();
-    void    SetMessagePumpProc( plMessagePumpProc proc ) { fMessagePumpProc = proc; }
+
+    void SetMessagePumpProc(plMessagePumpProc proc) { fMessagePumpProc = proc; }
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool VSync = false);
     void ResizeDisplayDevice(int Width, int Height, bool Windowed);
-    void IDetectAudioVideoSettings();
-    void IWriteDefaultGraphicsSettings(const plFileName& destFile);
 
     plAnimDebugList *fAnimDebugList;
 };
