@@ -219,27 +219,22 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install \
-              autoconf \
-              automake \
-              cairo \
-              libtool \
-              nasm \
-              qt5
+          brew bundle
 
       - name: Configure
         run: |
           cmake \
-            -DUSE_VCPKG=ON \
             -DCMAKE_BUILD_TYPE=${{ matrix.cfg.type }} \
+            -DCMAKE_FIND_FRAMEWORK=LAST \
             -DPLASMA_BUILD_TESTS=ON \
             -DPLASMA_BUILD_TOOLS=ON \
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
-            -DPLASMA_VCPKG_NUGET_SOURCE="https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
-            -DPLASMA_VCPKG_NUGET_OWNER="${{ github.repository_owner }}" \
-            -DPLASMA_VCPKG_NUGET_TOKEN="${{ secrets.GITHUB_TOKEN }}" \
-            -DPLASMA_VCPKG_NUGET_RW=TRUE \
             -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5 \
+            -DCURL_ROOT=$(brew --prefix curl) \
+            -Dexpat_ROOT=$(brew --prefix expat) \
+            -DOpenSSL_ROOT=$(brew --prefix openssl) \
+            -DOpenAL_ROOT=$(brew --prefix openal-soft) \
+            -DZLIB_ROOT=$(brew --prefix zlib) \
             -S . -B build
 
       - name: Build
