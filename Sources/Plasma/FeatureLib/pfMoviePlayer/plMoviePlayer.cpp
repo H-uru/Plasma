@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMoviePlayer.h"
 
 #ifdef USE_WEBM
-#   include <libwebm/mkvreader.hpp>
-#   include <libwebm/mkvparser.hpp>
+#   include <mkvreader.hpp>
+#   include <mkvparser.hpp>
 
 #   define VPX_CODEC_DISABLE_COMPAT 1
 #   include <vpx/vpx_decoder.h>
