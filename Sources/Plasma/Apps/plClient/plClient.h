@@ -65,6 +65,7 @@ class plInputController;
 class plSceneObject;
 class pfConsoleEngine;
 class pfConsole;
+class pfRemoteConsole;
 class plAudioSystem;
 class plVirtualCam1;
 class plKey;
@@ -122,6 +123,7 @@ protected:
 
     pfConsoleEngine*        fConsoleEngine;
     pfConsole*              fConsole;
+    pfRemoteConsole*        fRemoteConsole;
 
     bool                    fDone;
     bool                    fWindowActive;

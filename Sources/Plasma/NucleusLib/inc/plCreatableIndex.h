@@ -369,6 +369,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plVolumeSensorConditionalObjectNoArbitration),
     CLASS_INDEX(plPXSubWorld),
     CLASS_INDEX(pfConfirmationMgr),
+    CLASS_INDEX(pfRemoteConsole),
 //---------------------------------------------------------
 // Keyed objects above this line, unkeyed (such as messages) below..
 //---------------------------------------------------------
@@ -959,6 +960,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plSDLModifierStateMsg),
     CLASS_INDEX(plConfirmationMsg),
     CLASS_INDEX(plLocalizedConfirmationMsg),
+    CLASS_INDEX(pfRemoteConsoleMsg),
 CLASS_INDEX_LIST_END
 
 #endif // plCreatableIndex_inc

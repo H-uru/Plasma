@@ -19,6 +19,7 @@ set(pfMessage_HEADERS
     pfMarkerMsg.h
     pfMessageCreatable.h
     pfMovieEventMsg.h
+    pfRemoteConsoleMsg.h
     plArmatureEffectMsg.h
     plClothingMsg.h
 )
