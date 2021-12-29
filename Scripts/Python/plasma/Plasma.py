@@ -1283,8 +1283,16 @@ class ptAudioControl:
         """Disabled audio"""
         pass
 
+    def disableSubtitles(self):
+        """Disables subtitles for audio."""
+        pass
+
     def enable(self):
         """Enables audio"""
+        pass
+
+    def enableSubtitles(self):
+        """Enables subtitles for audio."""
         pass
 
     def enableVoiceChat(self,state):
@@ -1365,6 +1373,10 @@ class ptAudioControl:
 
     def isEnabled(self):
         """Is the audio enabled? Returns 1 if true otherwise returns 0."""
+        pass
+
+    def isEnabledSubtitles(self):
+        """Are subtitles for the audio enabled? Returns 1 if true otherwise returns 0."""
         pass
 
     def isMuted(self):

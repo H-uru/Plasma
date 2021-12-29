@@ -87,6 +87,8 @@ protected:
     bool                fPlayWhenStopped;
     unsigned            fStartPos;
 
+    char               *fSubtitleData;
+
     float               IGetTimeAtBufferStart() { return fTimeAtBufferStart; }
     void                SetStartPos(unsigned bytes) override;
 

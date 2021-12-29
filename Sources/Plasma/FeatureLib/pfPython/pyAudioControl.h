@@ -108,11 +108,6 @@ public:
     void UnmuteAll();
     bool IsMuted() const;
 
-    // Mute or unmute all sounds
-    void MuteAll();
-    void UnmuteAll();
-    bool IsMuted() const;
-
     // Enable or disable displaying speech subtitles
     void EnableSubtitles();
     void DisableSubtitles();
