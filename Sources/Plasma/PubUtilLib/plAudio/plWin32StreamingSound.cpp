@@ -185,7 +185,7 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
 
         if (plgAudioSys::IsEnabledSubtitles())
         {
-            plFileName audioSrtPath = plFileName::Join(plFileSystem::GetCWD(), "dat", fSrcFilename.StripFileExt() + ".srt"));
+            plFileName audioSrtPath = plFileName::Join(plFileSystem::GetCWD(), "dat", fSrcFilename.StripFileExt() + ".srt");
 
             if (audioSrtPath.IsValid())
             {
