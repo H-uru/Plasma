@@ -135,7 +135,7 @@ void main() {
 
         if (uLampSources[i].position.w == 0.0) {
             // Directional Light with no attenuation
-            direction = normalize(uLampSources[i].direction);
+            direction = -uLampSources[i].direction;
             attenuation = 1.0;
         } else {
             // Omni Light in all directions
