@@ -60,7 +60,7 @@ public:
     enum eventType
     {
         kCollision=1,
-        kPicked =2,
+        kPicked=2,
         kControlKey=3,
         kVariable=4,
         kFacing=5,
@@ -75,6 +75,7 @@ public:
         kOfferLinkingBook=14,
         kBook=15,
         kClimbingBlockerHit=16,
+        kAudioSubtitle=17,
         kNone
     };
 
@@ -207,6 +208,17 @@ protected:
 
     virtual void IReadNumber(hsStream * stream);
     virtual void IWriteNumber(hsStream * stream);
+};
+
+proEventType(AudioSubtitle)
+    ST::string  fText;          // line of subtitle text
+
+protected:
+    void IRead(hsStream* stream, hsResMgr* mgr) override;
+    void IWrite(hsStream* stream, hsResMgr* mgr) override;
+
+    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(Facing)
@@ -400,6 +412,7 @@ public:
     void AddOfferBookEvent(const plKey& offerer, int targetAge, int offeree);
     void AddBookEvent( uint32_t event, uint32_t linkID = 0 );
     void AddHitClimbingBlockerEvent(const plKey &blocker);
+    void AddAudioSubtitleEvent(const ST::string& subtitleText);
     proEventData* FindEventRecord( int32_t eventtype );
     size_t GetEventCount() { return fEvents.size(); }
     proEventData* GetEventRecord(size_t i) { return fEvents[i]; }

@@ -755,6 +755,20 @@ void plNotifyMsg::AddHitClimbingBlockerEvent(const plKey &blocker)
     fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : AddAudioSubtitleEvent
+//  PARAMETERS : fSubtitleText - the text that should be displayed
+//
+//  PURPOSE    : this is to notify python to display a line of audio subtitle text 
+//
+void plNotifyMsg::AddAudioSubtitleEvent(const ST::string& subtitleText)
+{
+    // create the audio subtitle event record
+    proAudioSubtitleEventData* pED = new proAudioSubtitleEventData;
+    pED->fText = subtitleText;
+    fEvents.emplace_back(pED);    // then add it to the list of event records
+}
 
 
 /////////////////////////////////////////////////////////////////////////////

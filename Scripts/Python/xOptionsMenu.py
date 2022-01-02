@@ -1671,6 +1671,7 @@ class xOptionsMenu(ptModifier):
         xIniAudio.SetAmbienceVolume( audio.getAmbienceVolume() )
         xIniAudio.SetNPCVoiceVolume( audio.getNPCVoiceVolume() )
         xIniAudio.SetMute( audio.isMuted() )
+        xIniAudio.SetSubtitle( audio.isEnabledSubtitles() )
 
         EAXcheckbox = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeCBID03))
 
@@ -1679,8 +1680,6 @@ class xOptionsMenu(ptModifier):
         #xIniAudio.SetAudioMode( audio.isEnabled(), audio.getDeviceName(), audio.isUsingEAXAcceleration() )
         #xIniAudio.SetMicLevel( audio.getMicLevel() )
         xIniAudio.SetVoiceRecording( audio.isVoiceRecordingEnabled() )
-
-        xIniAudio.SetSubtitle( audio.isEnabledSubtitles() )
         
         xIniAudio.WriteIni()
 

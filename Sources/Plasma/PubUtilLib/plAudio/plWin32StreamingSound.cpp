@@ -194,33 +194,33 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
                 std::ifstream srtFile;
                 srtFile.open(audioSrtPath.AbsolutePath().AsString().c_str(), std::ifstream::in);
 
-                plStatusLog::AddLineSF("audio.log", "Trying to open subtitle file {}", audioSrtPath);
-
                 // if file exists and was opened successfully
                 if (srtFile)
                 {
+                    plStatusLog::AddLineSF("audio.log", "Successfully opened subtitle file {}", audioSrtPath.AbsolutePath().AsString().c_str());
+
                     int subtitleNumber = 0;
                     std::string subtitleTimings = "";
                     std::string subtitleText = "";
 
                     for (std::string line; std::getline(srtFile, line); )
                     {
-                        plStatusLog::AddLineSF("audio.log", "Read subtitle file line {}", line);
+                        plStatusLog::AddLineSF("audio.log", "   Read subtitle file line {}", line);
 
                         if (subtitleNumber == 0)
                         {
                             subtitleNumber = std::stoi(line);
-                            break;
+                            continue;
                         }
                         else if (subtitleTimings.compare("") != 0)
                         {
                             subtitleTimings = line;
-                            break;
+                            continue;
                         }
                         else if (subtitleText.compare("") != 0)
                         {
                             subtitleText = line;
-                            break;
+                            continue;
                         }
                         else
                         {
