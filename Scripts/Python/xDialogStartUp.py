@@ -311,6 +311,17 @@ class xDialogStartUp(ptResponder):
                     self.PlayerListNotify(GUIDiag4b, gExp_HotSpot, 1)
 
         #################################
+        ##    Display Error Message    ##
+        #################################
+        elif id == GUIDiag4d.id:
+            if event == kAction or event == kValueChanged:
+                if tagID == k4dYesID: ## OK/Continue from Error ##
+                    self.ToggleColor(GUIDiag4b, k4bPlayer03)
+                    self.PlayerListNotify(GUIDiag4b, gExp_HotSpot, 1)
+                    PtHideDialog("GUIDialog04d")
+                    ptGUIControlButton(GUIDiag6.dialog.getControlFromTag(k6PlayID)).enable()
+
+        #################################
         ##        Create Player        ##
         #################################
         elif id == GUIDiag6.id:
