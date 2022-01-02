@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "plProfile.h"
 #include "hsWindows.h"
 
 #include "plPipeline/hsWinRef.h"
@@ -57,9 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef HS_SIMD_INCLUDE
 #  include HS_SIMD_INCLUDE
 #endif
-
-plProfile_CreateCounter("Polys", "General", DrawTriangles);
-plProfile_CreateCounter("Material Change", "Draw", MatChange);
 
 plGLPipeline::plGLPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode)
     : pl3DPipeline(devMode)

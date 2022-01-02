@@ -63,6 +63,9 @@ plProfile_CreateCounter("LightActive",          "PipeC", LightActive);
 plProfile_CreateCounter("Lights Found",         "PipeC", FindLightsFound);
 plProfile_CreateCounter("Perms Found",          "PipeC", FindLightsPerm);
 
+plProfile_CreateCounter("Polys",                "General",  DrawTriangles);
+plProfile_CreateCounter("Material Change",      "Draw",     MatChange);
+
 
 PipelineParams plPipeline::fDefaultPipeParams;
 PipelineParams plPipeline::fInitialPipeParams;
