@@ -19,6 +19,7 @@ set(pfGLPipeline_HEADERS
 )
 
 plasma_library(pfGLPipeline SOURCES ${pfGLPipeline_SOURCES} ${pfGLPipeline_HEADERS})
+plasma_target_simd_sources(pfGLPipeline SSE3 SSE41 plGLPipeline.cpp)
 target_link_libraries(pfGLPipeline
     PUBLIC
         CoreLib
