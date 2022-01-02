@@ -200,12 +200,6 @@ private:
     void ISetPipeConsts(plShader* shader);
     bool ISetShaders(const plMetalVertexBufferRef* vRef, const hsGMatState blendMode, plShader* vShader, plShader* pShader);
 
-    bool ISoftwareVertexBlend(plDrawableSpans* drawable, const std::vector<int16_t>& visList);
-    void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMatrices,
-                          const uint8_t* src, uint8_t format, uint32_t srcStride,
-                          uint8_t* dest, uint32_t destStride, uint32_t count,
-                          uint16_t localUVWChans);
-
     plMetalVertexShader*   fVShaderRefList;
     plMetalFragmentShader* fPShaderRefList;
     bool                   IPrepShadowCaster(const plShadowCaster* caster);

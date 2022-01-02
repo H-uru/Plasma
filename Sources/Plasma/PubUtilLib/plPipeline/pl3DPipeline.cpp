@@ -48,6 +48,8 @@ plProfile_CreateTimer("VisSelect",              "PipeT", VisSelect);
 plProfile_CreateTimer("PrepShadows",            "PipeT", PrepShadows);
 plProfile_CreateTimer("PrepDrawable",           "PipeT", PrepDrawable);
 plProfile_CreateTimer("  Skin",                 "PipeT", Skin);
+plProfile_CreateTimer("  AvSort",               "PipeT", AvatarSort);
+plProfile_CreateTimer("     ClearLights",       "PipeT", ClearLights);
 
 plProfile_CreateTimer("RenderSpan",             "PipeT", RenderSpan);
 plProfile_CreateTimer("  MergeCheck",           "PipeT", MergeCheck);
@@ -85,6 +87,7 @@ plProfile_CreateCounter("Lights Found",         "PipeC", FindLightsFound);
 plProfile_CreateCounter("Perms Found",          "PipeC", FindLightsPerm);
 plProfile_CreateCounter("Merge",                "PipeC", SpanMerge);
 plProfile_CreateCounter("EmptyList",            "PipeC", EmptyList);
+plProfile_CreateCounter("AvatarFaces",          "PipeC", AvatarFaces);
 plProfile_CreateCounter("AvRTPoolUsed",         "PipeC", AvRTPoolUsed);
 plProfile_CreateCounter("AvRTPoolCount",        "PipeC", AvRTPoolCount);
 plProfile_CreateCounter("AvRTPoolRes",          "PipeC", AvRTPoolRes);

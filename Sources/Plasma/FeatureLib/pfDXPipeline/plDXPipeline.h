@@ -392,15 +392,6 @@ protected:
     // Visualization of active occluders
     void            IMakeOcclusionSnap();
 
-    bool            IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList);
-    void            IBlendVertsIntoBuffer( plSpan* span, 
-                                            hsMatrix44* matrixPalette, int numMatrices,
-                                            const uint8_t *src, uint8_t format, uint32_t srcStride, 
-                                            uint8_t *dest, uint32_t destStride, uint32_t count, uint16_t localUVWChans )
-                                                { blend_vert_buffer.call(span, matrixPalette, numMatrices, src, format, srcStride, dest, destStride, count, localUVWChans); };
-    bool            ISoftwareVertexBlend(plDrawableSpans* drawable, const std::vector<int16_t>& visList);
-
-
     void            ILinkDevRef( plDXDeviceRef *ref, plDXDeviceRef **refList );
     void            IUnlinkDevRef( plDXDeviceRef *ref );
 
@@ -525,7 +516,6 @@ public:
 
     // Typical 3D device
     bool                        PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
-    bool                        PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
 
     void                        PushRenderRequest(plRenderRequest* req) override;
     void                        PopRenderRequest(plRenderRequest* req) override;
@@ -595,13 +585,6 @@ public:
     int             GetMaxAntiAlias(int Width, int Height, int ColorDepth) override;
 
     void RenderSpans(plDrawableSpans *ice, const std::vector<int16_t>& visList) override;
-
-    //  CPU-optimized functions
-protected:
-    typedef void(*blend_vert_buffer_ptr)(plSpan*, hsMatrix44*, int, const uint8_t *,
-                                         uint8_t , uint32_t, uint8_t *, uint32_t,
-                                         uint32_t, uint16_t);
-    static hsCpuFunctionDispatcher<blend_vert_buffer_ptr> blend_vert_buffer;
 
 private:
     static plDXEnumerate enumerator;

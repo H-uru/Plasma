@@ -55,10 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGLPipeline.h"
 #include "plGLPlateManager.h"
 
-#include "plPipeline/hsWinRef.h"
 #include "plStatusLog/plStatusLog.h"
-
-plGLEnumerate plGLPipeline::enumerator;
 
 typedef plGLDevice DeviceType;
 
@@ -68,7 +65,6 @@ plProfile_Extern(TotalTexSize);
 plProfile_Extern(LayChange);
 plProfile_Extern(DrawTriangles);
 plProfile_Extern(MatChange);
-plProfile_Extern(PrepDrawable);
 plProfile_Extern(RenderSpan);
 plProfile_Extern(MergeCheck);
 plProfile_Extern(MergeSpan);
@@ -106,6 +102,8 @@ public:
     }
 };
 
+plGLEnumerate plGLPipeline::enumerator;
+
 plGLPipeline::plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode)
     : pl3DPipeline(devMode)
 {
@@ -140,31 +138,6 @@ bool plGLPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visList
     // TODO: Implement bounds debugging stuff here
 
     return !visList.empty();
-}
-
-bool plGLPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
-{
-    plProfile_TimingGuard(PrepDrawable);
-
-    plDrawableSpans* ice = plDrawableSpans::ConvertNoRef(drawable);
-    if (!ice)
-        return false;
-
-    // Find our lights
-    ICheckLighting(ice, visList, visMgr);
-
-    // Sort our faces
-    if (ice->GetNativeProperty(plDrawable::kPropSortFaces))
-        ice->SortVisibleSpans(visList, this);
-
-    // Prep for render. This is gives the drawable a chance to
-    // do any last minute updates for its buffers, including
-    // generating particle tri lists.
-    ice->PrepForRender(this);
-
-    // Other stuff that we're ignoring for now...
-
-    return true;
 }
 
 plTextFont* plGLPipeline::MakeTextFont(ST::string face, uint16_t size)

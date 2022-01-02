@@ -87,7 +87,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plPipeline/plFogEnvironment.h"
 #include "plPipeline/plRenderTarget.h"
-#include "plPipeline/plSoftwareMeshSkinner.h"
 #include "plPipeline/plStatusLogDrawer.h"
 #include "plPipeline/hsWinRef.h"
 
@@ -163,7 +162,6 @@ void plReleaseObject(IUnknown* x)
 
 //// Local Static Stuff ///////////////////////////////////////////////////////
 
-/// Macros for getting/setting data in a D3D vertex buffer
 template<typename T>
 static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
 {
@@ -256,9 +254,8 @@ plProfile_Extern(RenderPrim);
 plProfile_Extern(PlateMgr);
 plProfile_Extern(DebugText);
 plProfile_Extern(Reset);
-
-plProfile_CreateTimer("  AvSort", "PipeT", AvatarSort);
-plProfile_CreateTimer("     ClearLights", "PipeT", ClearLights);
+plProfile_Extern(AvatarSort);
+plProfile_Extern(ClearLights);
 
 plProfile_CreateMemCounter("DefMem", "PipeC", DefaultMem);
 plProfile_CreateMemCounter("ManMem", "PipeC", ManagedMem);
@@ -271,7 +268,7 @@ plProfile_CreateMemCounterReset("fVtxManaged", "PipeC", fVtxManaged);
 plProfile_Extern(SpanMerge);
 plProfile_CreateCounter("TexNum", "PipeC", NumTex);
 plProfile_CreateCounter("LiState", "PipeC", MatLightState);
-plProfile_CreateCounter("AvatarFaces", "PipeC", AvatarFaces);
+plProfile_Extern(AvatarFaces);
 plProfile_CreateCounter("VertexChange", "PipeC", VertexChange);
 plProfile_CreateCounter("IndexChange", "PipeC", IndexChange);
 plProfile_CreateCounter("DynVBuffs", "PipeC", DynVBuffs);
@@ -2287,195 +2284,6 @@ bool  plDXPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visLis
 
 
     return !visList.empty();
-}
-
-struct plSortFace
-{
-    uint16_t      fIdx[3];
-    float    fDist;
-};
-
-struct plCompSortFace
-{
-    bool operator()( const plSortFace& lhs, const plSortFace& rhs) const
-    {
-        return lhs.fDist > rhs.fDist;
-    }
-};
-
-// IAvatarSort /////////////////////////////////////////////////////////////////////////
-// We handle avatar sort differently from the rest of the face sort. The reason is that
-// within the single avatar index buffer, we want to only sort the faces of spans requesting
-// a sort, and sort them in place.
-// Contrast that with the normal scene translucency sort. There, we sort all the spans in a drawble,
-// then we sort all the faces in that drawable, then for each span in the sorted span list, we extract
-// the faces for that span appending onto the index buffer. This gives great efficiency because
-// only the visible faces are sorted and they wind up packed into the front of the index buffer, which
-// permits more batching. See plDrawableSpans::SortVisibleSpans.
-// For the avatar, it's generally the case that all the avatar is visible or not, and there is only
-// one material, so neither of those efficiencies is helpful. Moreover, for the avatar the faces we
-// want sorted are a tiny subset of the avatar's faces. Moreover, and most importantly, for the avatar, we
-// want to preserve the order that spans are drawn, so, for example, the opaque base head will always be
-// drawn before the translucent hair fringe, which will always be drawn before the pink clear plastic baseball cap.
-bool plDXPipeline::IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList)
-{
-    plProfile_BeginTiming(AvatarSort);
-    for (int16_t visIdx : visList)
-    {
-        hsAssert(d->GetSpan(visIdx)->fTypeMask & plSpan::kIcicleSpan, "Unknown type for sorting faces");
-
-        plIcicle* span = (plIcicle*)d->GetSpan(visIdx);
-
-        if( span->fProps & plSpan::kPartialSort )
-        {
-            hsAssert(d->GetBufferGroup(span->fGroupIdx)->AreIdxVolatile(), "Badly setup buffer group - set PartialSort too late?");
-
-            const hsPoint3 viewPos = GetViewPositionWorld();
-
-            plGBufferGroup* group = d->GetBufferGroup(span->fGroupIdx);
-
-            plDXVertexBufferRef* vRef = (plDXVertexBufferRef*)group->GetVertexBufferRef(span->fVBufferIdx); 
-
-            const uint8_t* vdata = vRef->fData;
-            const uint32_t stride = vRef->fVertexSize;
-
-            const int numTris = span->fILength/3;
-            
-            static std::vector<plSortFace> sortScratch;
-            sortScratch.resize(numTris);
-
-            plProfile_IncCount(AvatarFaces, numTris);
-
-            // 
-            // Have three very similar sorts here, differing only on where the "position" of
-            // each triangle is defined, either as the center of the triangle, the nearest
-            // point on the triangle, or the farthest point on the triangle.
-            // Having tried all three on the avatar (the only thing this sort is used on),
-            // the best results surprisingly came from using the center of the triangle.
-            uint16_t* indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
-            int j;
-            for( j = 0; j < numTris; j++ )
-            {
-#if 1 // TRICENTER
-                uint16_t idx = *indices++;
-                sortScratch[j].fIdx[0] = idx;
-                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
-
-                idx = *indices++;
-                sortScratch[j].fIdx[1] = idx;
-                pos += *(hsPoint3*)(vdata + idx * stride);
-
-                idx = *indices++;
-                sortScratch[j].fIdx[2] = idx;
-                pos += *(hsPoint3*)(vdata + idx * stride);
-
-                pos *= 0.3333f;
-
-                sortScratch[j].fDist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-#elif 0 // NEAREST
-                uint16_t idx = *indices++;
-                sortScratch[j].fIdx[0] = idx;
-                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
-                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                float minDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[1] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist < minDist )
-                    minDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[2] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist < minDist )
-                    minDist = dist;
-
-                sortScratch[j].fDist = minDist;
-#elif 1 // FURTHEST
-                uint16_t idx = *indices++;
-                sortScratch[j].fIdx[0] = idx;
-                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
-                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                float maxDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[1] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist > maxDist )
-                    maxDist = dist;
-
-                idx = *indices++;
-                sortScratch[j].fIdx[2] = idx;
-                pos = *(hsPoint3*)(vdata + idx * stride);
-                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
-                if( dist > maxDist )
-                    maxDist = dist;
-
-                sortScratch[j].fDist = maxDist;
-#endif // SORTTYPES
-            }
-
-            std::sort(sortScratch.begin(), sortScratch.end(), plCompSortFace());
-
-            indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
-            for (const plSortFace& iter : sortScratch)
-            {
-                *indices++ = iter.fIdx[0];
-                *indices++ = iter.fIdx[1];
-                *indices++ = iter.fIdx[2];
-            }
-
-            group->DirtyIndexBuffer(span->fIBufferIdx);
-        }
-    }
-    plProfile_EndTiming(AvatarSort);
-    return true;
-}
-
-// PrepForRender //////////////////////////////////////////////////////////////////
-// Make sure the given drawable and each of the spans to be drawn (as noted in the
-// indices in visList) is ready to be rendered.
-// This means:
-// a) select which lights will be used for each span
-// b) do any necessary sorting (if required, spans are already in sorted order in visList,
-//      so this only means face sorting).
-// c) do any necessary software skinning.
-// This is called once per render, and before any rendering actually starts. See plPageTreeMgr.cpp.
-// So any preperation needs to last until rendering actually begins. So cached information, like
-// which lights a span will use, needs to be stored on the span.
-bool plDXPipeline::PrepForRender(plDrawable* d, std::vector<int16_t>& visList, plVisMgr* visMgr)
-{
-    plProfile_TimingGuard(PrepDrawable);
-
-    plDrawableSpans *drawable = plDrawableSpans::ConvertNoRef(d);
-    if (!drawable)
-        return false;
-
-    // Find our lights
-    ICheckLighting(drawable, visList, visMgr);
-
-    // Sort our faces
-    if (drawable->GetNativeProperty(plDrawable::kPropSortFaces))
-        drawable->SortVisibleSpans(visList, this);
-
-    // Prep for render. This is gives the drawable a chance to
-    // do any last minute updates for its buffers, including
-    // generating particle tri lists.
-    drawable->PrepForRender(this);
-
-    // Any skinning necessary
-    if (!ISoftwareVertexBlend(drawable, visList))
-        return false;
-
-    // Avatar face sorting happens after the software skin.
-    if (drawable->GetNativeProperty(plDrawable::kPropPartialSort))
-        IAvatarSort(drawable, visList);
-
-    return true;
 }
 
 // ISetupTransforms //////////////////////////////////////////////////////////////////////////////////
@@ -8425,113 +8233,6 @@ void plDXPipeline::ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plD
     iRef->UnRef();
 
     iRef->SetVolatile(owner->AreIdxVolatile());
-}
-
-//// ISoftwareVertexBlend ///////////////////////////////////////////////////////
-// Emulate matrix palette operations in software. The big difference between the hardware
-// and software versions is we only want to lock the vertex buffer once and blend all the
-// verts we're going to in software, so the vertex blend happens once for an entire drawable.
-// In hardware, we want the opposite, to break it into managable chunks, manageable meaning
-// few enough matrices to fit into hardware registers. So for hardware version, we set up
-// our palette, draw a span or few, setup our matrix palette with new matrices, draw, repeat.
-bool      plDXPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const std::vector<int16_t>& visList)
-{
-    if (IsDebugFlagSet(plPipeDbg::kFlagNoSkinning))
-        return true;
-
-    if( drawable->GetSkinTime() == fRenderCnt )
-        return true;
-
-    const hsBitVector   &blendBits = drawable->GetBlendingSpanVector();
-
-    if( drawable->GetBlendingSpanVector().Empty() )
-    {
-        // This sucker doesn't have any skinning spans anyway. Just return
-        drawable->SetSkinTime( fRenderCnt );
-        return true;
-    }
-
-    plProfile_BeginTiming(Skin);
-
-    // lock the data buffer
-
-    // First, figure out which buffers we need to blend.
-    constexpr size_t kMaxBufferGroups = 20;
-    constexpr size_t kMaxVertexBuffers = 20;
-    static char blendBuffers[kMaxBufferGroups][kMaxVertexBuffers];
-    memset(blendBuffers, 0, kMaxBufferGroups * kMaxVertexBuffers * sizeof(**blendBuffers));
-
-    hsAssert(kMaxBufferGroups >= drawable->GetNumBufferGroups(), "Bigger than we counted on num groups skin.");
-
-    const std::vector<plSpan *>& spans = drawable->GetSpanArray();
-    for (int16_t idx : visList)
-    {
-        if (blendBits.IsBitSet(idx))
-        {
-            const plVertexSpan &vSpan = *(plVertexSpan *)spans[idx];
-            hsAssert(kMaxVertexBuffers > vSpan.fVBufferIdx, "Bigger than we counted on num buffers skin.");
-
-            blendBuffers[vSpan.fGroupIdx][vSpan.fVBufferIdx] = 1;
-            drawable->SetBlendingSpanVectorBit(idx, false);
-        }
-    }
-
-    // Now go through each of the group/buffer (= a real vertex buffer) pairs we found,
-    // and blend into it. We'll lock the buffer once, and then for each span that
-    // uses it, set the matrix palette and and then do the blend for that span.
-    // When we've done all the spans for a group/buffer, we unlock it and move on.
-    for (size_t i = 0; i < kMaxBufferGroups; i++)
-    {
-        for (size_t j = 0; j < kMaxVertexBuffers; j++)
-        {
-            if( blendBuffers[i][j] )
-            {
-                // Found one. Do the lock.
-                plDXVertexBufferRef* vRef = (plDXVertexBufferRef*)drawable->GetVertexRef(i, j);
-
-                hsAssert(vRef->fData, "Going into skinning with no place to put results!");
-
-                uint8_t*  destPtr = vRef->fData;
-
-                for (int16_t idx : visList)
-                {
-                    const plIcicle& span = *(plIcicle*)spans[idx];
-                    if( (span.fGroupIdx == i)&&(span.fVBufferIdx == j) )
-                    {
-                        plProfile_Inc(NumSkin);
-
-                        hsMatrix44* matrixPalette = drawable->GetMatrixPalette(span.fBaseMatrix);
-                        matrixPalette[0] = span.fLocalToWorld;
-
-                        uint8_t* ptr = vRef->fOwner->GetVertBufferData(vRef->fIndex);
-                        ptr += span.fVStartIdx * vRef->fOwner->GetVertexSize();
-                        plSoftwareMeshSkinner::BlendVertBuffer(&span,
-                                                matrixPalette, span.fNumMatrices,
-                                                ptr,
-                                                vRef->fOwner->GetVertexFormat(), 
-                                                vRef->fOwner->GetVertexSize(), 
-                                                destPtr + span.fVStartIdx * vRef->fVertexSize, 
-                                                vRef->fVertexSize, 
-                                                span.fVLength,
-                                                span.fLocalUVWChans );
-                        vRef->SetDirty(true);
-                    }
-                }
-                // Unlock and move on.
-            }
-        }
-    }
-
-    plProfile_EndTiming(Skin);
-
-    if( drawable->GetBlendingSpanVector().Empty() )
-    {
-        // Only do this if we've blended ALL of the spans. Thus, this becomes a trivial 
-        // rejection for all the skinning flags being cleared
-        drawable->SetSkinTime(fRenderCnt);
-    }
-
-    return true;
 }
 
 // IBeginAllocUnmanaged ///////////////////////////////////////////////////////////////////
