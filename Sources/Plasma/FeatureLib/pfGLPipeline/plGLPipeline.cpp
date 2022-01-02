@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/string>
 
 #include "HeadSpin.h"
+#include "hsSIMD.h"
 #include "hsWindows.h"
 #include "plQuality.h"
 
@@ -70,10 +71,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "plSurface/plLayer.h"
 
-#ifdef HS_SIMD_INCLUDE
-#  include HS_SIMD_INCLUDE
-#endif
-
 typedef plGLDevice DeviceType;
 
 plProfile_Extern(DrawFeedTriangles);
@@ -82,6 +79,8 @@ plProfile_Extern(TotalTexSize);
 plProfile_Extern(LayChange);
 plProfile_Extern(DrawTriangles);
 plProfile_Extern(MatChange);
+plProfile_Extern(PrepDrawable);
+plProfile_Extern(Skin);
 plProfile_Extern(RenderSpan);
 plProfile_Extern(MergeCheck);
 plProfile_Extern(MergeSpan);
@@ -96,6 +95,7 @@ plProfile_Extern(RenderPrim);
 plProfile_Extern(PlateMgr);
 plProfile_Extern(DebugText);
 plProfile_Extern(Reset);
+plProfile_Extern(NumSkin);
 
 // Adding a nil RenderPrim for turning off drawing
 static plRenderNilFunc sRenderNil;
@@ -116,6 +116,63 @@ public:
         return true; // TODO: Check for GL Error
     }
 };
+
+
+template<typename T>
+static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
+{
+    T* src_ptr = reinterpret_cast<T*>(src);
+    T* dst_ptr = reinterpret_cast<T*>(dst);
+    *dst_ptr = *src_ptr;
+    src += sizeof(T);
+    dst += sizeof(T);
+}
+
+template<typename T>
+static inline const uint8_t* inlExtract(const uint8_t* src, T* val)
+{
+    const T* ptr = reinterpret_cast<const T*>(src);
+    *val = *ptr++;
+    return reinterpret_cast<const uint8_t*>(ptr);
+}
+
+template<>
+inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
+{
+    const float* src_ptr = reinterpret_cast<const float*>(src);
+    float* dst_ptr = reinterpret_cast<float*>(val);
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr = 1.f;
+    return reinterpret_cast<const uint8_t*>(src_ptr);
+}
+
+template<>
+inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
+{
+    const float* src_ptr = reinterpret_cast<const float*>(src);
+    float* dst_ptr = reinterpret_cast<float*>(val);
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr = 0.f;
+    return reinterpret_cast<const uint8_t*>(src_ptr);
+}
+
+template<typename T, size_t N>
+static inline void inlSkip(uint8_t*& src)
+{
+    src += sizeof(T) * N;
+}
+
+template<typename T>
+static inline uint8_t* inlStuff(uint8_t* dst, const T* val)
+{
+    T* ptr = reinterpret_cast<T*>(dst);
+    *ptr++ = *val;
+    return reinterpret_cast<uint8_t*>(ptr);
+}
 
 
 plGLEnumerate plGLPipeline::enumerator;
@@ -159,9 +216,13 @@ bool plGLPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visList
 
 bool plGLPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
+    plProfile_BeginTiming(PrepDrawable);
+
     plDrawableSpans* ice = plDrawableSpans::ConvertNoRef(drawable);
-    if (!ice)
+    if (!ice) {
+        plProfile_EndTiming(PrepDrawable);
         return false;
+    }
 
     // Find our lights
     ICheckLighting(ice, visList, visMgr);
@@ -175,7 +236,15 @@ bool plGLPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>& vis
     // generating particle tri lists.
     ice->PrepForRender(this);
 
+    // Any skinning necessary
+    if (!ISoftwareVertexBlend(ice, visList)) {
+        plProfile_EndTiming(PrepDrawable);
+        return false;
+    }
+
     // Other stuff that we're ignoring for now...
+
+    plProfile_EndTiming(PrepDrawable);
 
     return true;
 }
@@ -1380,3 +1449,272 @@ void plGLPipeline::IDrawPlate(plPlate* plate)
 
     glDrawElements(GL_TRIANGLE_STRIP, 6, GL_UNSIGNED_SHORT, (GLvoid*)(sizeof(uint16_t) * 0));
 }
+
+
+bool plGLPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const std::vector<int16_t>& visList)
+{
+    if (IsDebugFlagSet(plPipeDbg::kFlagNoSkinning))
+        return true;
+
+    if (drawable->GetSkinTime() == fRenderCnt)
+        return true;
+
+    const hsBitVector& blendBits = drawable->GetBlendingSpanVector();
+
+    if (drawable->GetBlendingSpanVector().Empty()) {
+        // This sucker doesn't have any skinning spans anyway. Just return
+        drawable->SetSkinTime(fRenderCnt);
+        return true;
+    }
+
+    plProfile_BeginTiming(Skin);
+
+    // lock the data buffer
+
+    // First, figure out which buffers we need to blend.
+    constexpr size_t kMaxBufferGroups = 20;
+    constexpr size_t kMaxVertexBuffers = 20;
+    static char blendBuffers[kMaxBufferGroups][kMaxVertexBuffers];
+    memset(blendBuffers, 0, kMaxBufferGroups * kMaxVertexBuffers * sizeof(**blendBuffers));
+
+    hsAssert(kMaxBufferGroups >= drawable->GetNumBufferGroups(), "Bigger than we counted on num groups skin.");
+
+    const std::vector<plSpan *>& spans = drawable->GetSpanArray();
+    for (int16_t idx : visList) {
+        if (blendBits.IsBitSet(idx)) {
+            const plVertexSpan &vSpan = *(plVertexSpan *)spans[idx];
+            hsAssert(kMaxVertexBuffers > vSpan.fVBufferIdx, "Bigger than we counted on num buffers skin.");
+
+            blendBuffers[vSpan.fGroupIdx][vSpan.fVBufferIdx] = 1;
+            drawable->SetBlendingSpanVectorBit(idx, false);
+        }
+    }
+
+    // Now go through each of the group/buffer (= a real vertex buffer) pairs we found,
+    // and blend into it. We'll lock the buffer once, and then for each span that
+    // uses it, set the matrix palette and and then do the blend for that span.
+    // When we've done all the spans for a group/buffer, we unlock it and move on.
+    for (size_t i = 0; i < kMaxBufferGroups; i++) {
+        for (size_t j = 0; j < kMaxVertexBuffers; j++) {
+            if (blendBuffers[i][j]) {
+                // Found one. Do the lock.
+                plGLVertexBufferRef* vRef = static_cast<plGLVertexBufferRef*>(drawable->GetVertexRef(i, j));
+
+                hsAssert(vRef->fData, "Going into skinning with no place to put results!");
+
+                uint8_t* destPtr = vRef->fData;
+
+                for (int16_t idx : visList) {
+                    const plIcicle& span = *(plIcicle*)spans[idx];
+                    if ((span.fGroupIdx == i) && (span.fVBufferIdx == j)) {
+                        plProfile_Inc(NumSkin);
+
+                        hsMatrix44* matrixPalette = drawable->GetMatrixPalette(span.fBaseMatrix);
+                        matrixPalette[0] = span.fLocalToWorld;
+
+                        uint8_t* ptr = vRef->fOwner->GetVertBufferData(vRef->fIndex);
+                        ptr += span.fVStartIdx * vRef->fOwner->GetVertexSize();
+                        IBlendVertsIntoBuffer((plSpan*)&span,
+                                matrixPalette, span.fNumMatrices,
+                                ptr,
+                                vRef->fOwner->GetVertexFormat(),
+                                vRef->fOwner->GetVertexSize(),
+                                destPtr + span.fVStartIdx * vRef->fVertexSize,
+                                vRef->fVertexSize,
+                                span.fVLength,
+                                span.fLocalUVWChans);
+                        vRef->SetDirty(true);
+                    }
+                }
+                // Unlock and move on.
+            }
+        }
+    }
+
+    plProfile_EndTiming(Skin);
+
+    if (drawable->GetBlendingSpanVector().Empty()) {
+        // Only do this if we've blended ALL of the spans. Thus, this becomes a trivial 
+        // rejection for all the skinning flags being cleared
+        drawable->SetSkinTime(fRenderCnt);
+    }
+
+    return true;
+}
+
+static inline void ISkinVertexFPU(const hsMatrix44& xfm, float wgt,
+                                  const float* pt_src, float* pt_dst,
+                                  const float* vec_src, float* vec_dst)
+{
+    const float& m00 = xfm.fMap[0][0];
+    const float& m01 = xfm.fMap[0][1];
+    const float& m02 = xfm.fMap[0][2];
+    const float& m03 = xfm.fMap[0][3];
+    const float& m10 = xfm.fMap[1][0];
+    const float& m11 = xfm.fMap[1][1];
+    const float& m12 = xfm.fMap[1][2];
+    const float& m13 = xfm.fMap[1][3];
+    const float& m20 = xfm.fMap[2][0];
+    const float& m21 = xfm.fMap[2][1];
+    const float& m22 = xfm.fMap[2][2];
+    const float& m23 = xfm.fMap[2][3];
+
+    // position
+    {
+        const float& srcX = pt_src[0];
+        const float& srcY = pt_src[1];
+        const float& srcZ = pt_src[2];
+
+        pt_dst[0] += (srcX * m00 + srcY * m01 + srcZ * m02 + m03) * wgt;
+        pt_dst[1] += (srcX * m10 + srcY * m11 + srcZ * m12 + m13) * wgt;
+        pt_dst[2] += (srcX * m20 + srcY * m21 + srcZ * m22 + m23) * wgt;
+    }
+
+    // normal
+    {
+        const float& srcX = vec_src[0];
+        const float& srcY = vec_src[1];
+        const float& srcZ = vec_src[2];
+
+        vec_dst[0] += (srcX * m00 + srcY * m01 + srcZ * m02) * wgt;
+        vec_dst[1] += (srcX * m10 + srcY * m11 + srcZ * m12) * wgt;
+        vec_dst[2] += (srcX * m20 + srcY * m21 + srcZ * m22) * wgt;
+    }
+}
+
+#ifdef HAVE_SSE3
+static inline void ISkinDpSSE3(const float* src, float* dst, const __m128& mc0,
+                               const __m128& mc1, const __m128& mc2, const __m128& mwt)
+{
+    __m128 msr = _mm_load_ps(src);
+    __m128 _x  = _mm_mul_ps(_mm_mul_ps(mc0, msr), mwt);
+    __m128 _y  = _mm_mul_ps(_mm_mul_ps(mc1, msr), mwt);
+    __m128 _z  = _mm_mul_ps(_mm_mul_ps(mc2, msr), mwt);
+
+    __m128 hbuf1 = _mm_hadd_ps(_x, _y);
+    __m128 hbuf2 = _mm_hadd_ps(_z, _z);
+    hbuf1 = _mm_hadd_ps(hbuf1, hbuf2);
+    __m128 _dst = _mm_load_ps(dst);
+    _dst = _mm_add_ps(_dst, hbuf1);
+    _mm_store_ps(dst, _dst);
+}
+#endif // HAVE_SSE3
+
+static inline void ISkinVertexSSE3(const hsMatrix44& xfm, float wgt,
+                                   const float* pt_src, float* pt_dst,
+                                   const float* vec_src, float* vec_dst)
+{
+#ifdef HAVE_SSE3
+    __m128 mc0 = _mm_load_ps(xfm.fMap[0]);
+    __m128 mc1 = _mm_load_ps(xfm.fMap[1]);
+    __m128 mc2 = _mm_load_ps(xfm.fMap[2]);
+    __m128 mwt = _mm_set_ps1(wgt);
+
+    ISkinDpSSE3(pt_src, pt_dst, mc0, mc1, mc2, mwt);
+    ISkinDpSSE3(vec_src, vec_dst, mc0, mc1, mc2, mwt);
+#endif // HAVE_SSE3
+}
+
+#ifdef HAVE_SSE41
+static inline void ISkinDpSSE41(const float* src, float* dst, const __m128& mc0,
+                                const __m128& mc1, const __m128& mc2, const __m128& mwt)
+{
+    enum { DP_F4_X = 0xF1, DP_F4_Y = 0xF2, DP_F4_Z = 0xF4 };
+
+    __m128 msr = _mm_load_ps(src);
+    __m128 _r =        _mm_dp_ps(msr, mc0, DP_F4_X);
+    _r = _mm_or_ps(_r, _mm_dp_ps(msr, mc1, DP_F4_Y));
+    _r = _mm_or_ps(_r, _mm_dp_ps(msr, mc2, DP_F4_Z));
+
+    __m128 _dst = _mm_load_ps(dst);
+    _dst = _mm_add_ps(_dst, _mm_mul_ps(_r, mwt));
+    _mm_store_ps(dst, _dst);
+}
+#endif // HAVE_SSE41
+
+static inline void ISkinVertexSSE41(const hsMatrix44& xfm, float wgt,
+                                    const float* pt_src, float* pt_dst,
+                                    const float* vec_src, float* vec_dst)
+{
+#ifdef HAVE_SSE41
+    __m128 mc0 = _mm_load_ps(xfm.fMap[0]);
+    __m128 mc1 = _mm_load_ps(xfm.fMap[1]);
+    __m128 mc2 = _mm_load_ps(xfm.fMap[2]);
+    __m128 mwt = _mm_set_ps1(wgt);
+
+    ISkinDpSSE41(pt_src, pt_dst, mc0, mc1, mc2, mwt);
+    ISkinDpSSE41(vec_src, vec_dst, mc0, mc1, mc2, mwt);
+#endif // HAVE_SSE41
+}
+
+typedef void(*skin_vert_ptr)(const hsMatrix44&, float, const float*, float*, const float*, float*);
+
+template<skin_vert_ptr T>
+static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMatrices,
+                             const uint8_t* src, uint8_t format, uint32_t srcStride,
+                             uint8_t* dest, uint32_t destStride, uint32_t count,
+                             uint16_t localUVWChans)
+{
+    alignas(16) float pt_buf[] = { 0.f, 0.f, 0.f, 1.f };
+    alignas(16) float vec_buf[] = { 0.f, 0.f, 0.f, 0.f };
+    hsPoint3*       pt = reinterpret_cast<hsPoint3*>(pt_buf);
+    hsVector3*      vec = reinterpret_cast<hsVector3*>(vec_buf);
+
+    uint32_t        indices;
+    float           weights[4];
+
+    // Dropped support for localUVWChans at templatization of code
+    hsAssert(localUVWChans == 0, "support for skinned UVWs dropped. reimplement me?");
+    const size_t uvChanSize = plGBufferGroup::CalcNumUVs(format) * sizeof(float) * 3;
+    uint8_t numWeights = (format & plGBufferGroup::kSkinWeightMask) >> 4;
+
+    for (uint32_t i = 0; i < count; ++i) {
+        // Extract data
+        src = inlExtract<hsPoint3>(src, pt);
+
+        float weightSum = 0.f;
+        for (uint8_t j = 0; j < numWeights; ++j) {
+            src = inlExtract<float>(src, &weights[j]);
+            weightSum += weights[j];
+        }
+        weights[numWeights] = 1.f - weightSum;
+
+        if (format & plGBufferGroup::kSkinIndices)
+            src = inlExtract<uint32_t>(src, &indices);
+        else
+            indices = 1 << 8;
+        src = inlExtract<hsVector3>(src, vec);
+
+        // Destination buffers (float4 for SSE alignment)
+        alignas(16) float destNorm_buf[] = { 0.f, 0.f, 0.f, 0.f };
+        alignas(16) float destPt_buf[] = { 0.f, 0.f, 0.f, 1.f };
+
+        // Blend
+        for (uint32_t j = 0; j < numWeights + 1; ++j) {
+            if (weights[j])
+                T(matrixPalette[indices & 0xFF], weights[j], pt_buf, destPt_buf, vec_buf, destNorm_buf);
+            indices >>= 8;
+        }
+        // Probably don't really need to renormalize this. There errors are
+        // going to be subtle and "smooth".
+        /* hsFastMath::NormalizeAppr(destNorm); */
+
+        // Slam data into position now
+        dest = inlStuff<hsPoint3>(dest, reinterpret_cast<hsPoint3*>(destPt_buf));
+        dest = inlStuff<hsVector3>(dest, reinterpret_cast<hsVector3*>(destNorm_buf));
+
+        // Jump past colors and UVws
+        dest += sizeof(uint32_t) * 2 + uvChanSize;
+        src  += sizeof(uint32_t) * 2 + uvChanSize;
+    }
+}
+
+// CPU-optimized functions requiring dispatch
+hsCpuFunctionDispatcher<plGLPipeline::blend_vert_buffer_ptr> plGLPipeline::blend_vert_buffer {
+    &IBlendVertBuffer<ISkinVertexFPU>,
+    nullptr,                                // SSE1
+    nullptr,                                // SSE2
+    &IBlendVertBuffer<ISkinVertexSSE3>,
+    nullptr,                                // SSSE3
+    &IBlendVertBuffer<ISkinVertexSSE41>
+};

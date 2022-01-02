@@ -92,10 +92,11 @@ plProfile_Extern(TotalTexSize);
 plProfile_Extern(LayChange);
 plProfile_Extern(DrawTriangles);
 plProfile_Extern(MatChange);
+plProfile_Extern(NumSkin);
 
-plProfile_CreateTimer("PrepShadows", "PipeT", PrepShadows);
-plProfile_CreateTimer("PrepDrawable", "PipeT", PrepDrawable);
-plProfile_CreateTimer("  Skin", "PipeT", Skin);
+plProfile_Extern(PrepShadows);
+plProfile_Extern(PrepDrawable);
+plProfile_Extern(Skin);
 plProfile_Extern(RenderSpan);
 plProfile_Extern(MergeCheck);
 plProfile_Extern(MergeSpan);
@@ -116,7 +117,6 @@ plProfile_CreateCounter("AvRTPoolUsed", "PipeC", AvRTPoolUsed);
 plProfile_CreateCounter("AvRTPoolCount", "PipeC", AvRTPoolCount);
 plProfile_CreateCounter("AvRTPoolRes", "PipeC", AvRTPoolRes);
 plProfile_CreateCounter("AvRTShrinkTime", "PipeC", AvRTShrinkTime);
-plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
 
 plMetalEnumerate plMetalPipeline::enumerator;
 
