@@ -284,14 +284,15 @@ plProfile_Extern(TotalTexSize);
 plProfile_Extern(LayChange);
 plProfile_Extern(DrawTriangles);
 plProfile_Extern(MatChange);
+plProfile_Extern(NumSkin);
 
 plProfile_CreateCounterNoReset("Reload", "PipeC", PipeReload);
 
-plProfile_CreateTimer("PrepShadows", "PipeT", PrepShadows);
-plProfile_CreateTimer("PrepDrawable", "PipeT", PrepDrawable);
-plProfile_CreateTimer("  Skin", "PipeT", Skin);
-plProfile_CreateTimer("  AvSort", "PipeT", AvatarSort);
-plProfile_CreateTimer("     ClearLights", "PipeT", ClearLights);
+plProfile_Extern(PrepShadows);
+plProfile_Extern(PrepDrawable);
+plProfile_Extern(Skin);
+plProfile_Extern(AvatarSort);
+plProfile_Extern(ClearLights);
 plProfile_Extern(RenderSpan);
 plProfile_Extern(MergeCheck);
 plProfile_Extern(MergeSpan);
@@ -318,7 +319,6 @@ plProfile_CreateMemCounterReset("fVtxManaged", "PipeC", fVtxManaged);
 plProfile_CreateCounter("Merge", "PipeC", SpanMerge);
 plProfile_CreateCounter("TexNum", "PipeC", NumTex);
 plProfile_CreateCounter("LiState", "PipeC", MatLightState);
-plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
 plProfile_CreateCounter("AvatarFaces", "PipeC", AvatarFaces);
 plProfile_CreateCounter("VertexChange", "PipeC", VertexChange);
 plProfile_CreateCounter("IndexChange", "PipeC", IndexChange);

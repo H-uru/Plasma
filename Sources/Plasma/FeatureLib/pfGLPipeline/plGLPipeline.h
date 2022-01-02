@@ -68,6 +68,9 @@ class plGLPipeline : public pl3DPipeline<plGLDevice>
     friend class plGLDevice;
 
 protected:
+    typedef void(*blend_vert_buffer_ptr)(plSpan*, hsMatrix44*, int, const uint8_t*, uint8_t , uint32_t, uint8_t*, uint32_t, uint32_t, uint16_t);
+    static hsCpuFunctionDispatcher<blend_vert_buffer_ptr> blend_vert_buffer;
+
     plGLMaterialShaderRef*  fMatRefList;
     plGLRenderTargetRef*    fRenderTargetRefList;
 
@@ -143,6 +146,28 @@ protected:
     void IDisableLight(plGLMaterialShaderRef* mRef, size_t i);
     void IScaleLight(plGLMaterialShaderRef* mRef, size_t i, float scale);
     void IDrawPlate(plPlate* plate);
+
+    /**
+     * Emulate matrix palette operations in software.
+     *
+     * The big difference between the hardware and software versions is we only
+     * want to lock the vertex buffer once and blend all the verts we're going
+     * to in software, so the vertex blend happens once for an entire drawable.
+     * In hardware, we want the opposite, to break it into managable chunks,
+     * manageable meaning few enough matrices to fit into hardware registers.
+     * So for hardware version, we set up our palette, draw a span or few,
+     * setup our matrix palette with new matrices, draw, repeat.
+     */
+    bool ISoftwareVertexBlend(plDrawableSpans* drawable, const std::vector<int16_t>& visList);
+
+    /**
+     * Given a pointer into a buffer of verts that have blending data in the
+     * plVertCoder format, blends them into the destination buffer given
+     * without the blending info.
+     */
+    void IBlendVertsIntoBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMatrices, const uint8_t* src, uint8_t format, uint32_t srcStride, uint8_t* dest, uint32_t destStride, uint32_t count, uint16_t localUVWChans) {
+        blend_vert_buffer.call(span, matrixPalette, numMatrices, src, format, srcStride, dest, destStride, count, localUVWChans);
+    };
 
 private:
     static plGLEnumerate enumerator;

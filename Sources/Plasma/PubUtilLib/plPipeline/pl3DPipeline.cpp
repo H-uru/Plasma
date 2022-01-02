@@ -48,6 +48,11 @@ plProfile_CreateTimer("VisSelect",              "PipeT", VisSelect);
 plProfile_CreateTimer("PlateMgr",               "PipeT", PlateMgr);
 plProfile_CreateTimer("DebugText",              "PipeT", DebugText);
 plProfile_CreateTimer("Reset",                  "PipeT", Reset);
+plProfile_CreateTimer("PrepShadows",            "PipeT", PrepShadows);
+plProfile_CreateTimer("PrepDrawable",           "PipeT", PrepDrawable);
+plProfile_CreateTimer("  Skin",                 "PipeT", Skin);
+plProfile_CreateTimer("  AvSort",               "PipeT", AvatarSort);
+plProfile_CreateTimer("     ClearLights",       "PipeT", ClearLights);
 
 plProfile_CreateTimer("RenderSpan",             "PipeT", RenderSpan);
 plProfile_CreateTimer("  MergeCheck",           "PipeT", MergeCheck);
@@ -77,6 +82,7 @@ plProfile_CreateCounter("LightChar",            "PipeC", LightChar);
 plProfile_CreateCounter("LightActive",          "PipeC", LightActive);
 plProfile_CreateCounter("Lights Found",         "PipeC", FindLightsFound);
 plProfile_CreateCounter("Perms Found",          "PipeC", FindLightsPerm);
+plProfile_CreateCounter("NumSkin",              "PipeC", NumSkin);
 
 plProfile_CreateCounter("Polys",                "General",  DrawTriangles);
 plProfile_CreateCounter("Material Change",      "Draw",     MatChange);

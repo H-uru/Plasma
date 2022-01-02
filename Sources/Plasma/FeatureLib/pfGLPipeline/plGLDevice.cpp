@@ -489,11 +489,38 @@ bool plGLDevice::EndRender()
     return false;
 }
 
+static uint32_t  IGetBufferFormatSize(uint8_t format)
+{
+    uint32_t  size = sizeof( float ) * 6 + sizeof( uint32_t ) * 2; // Position and normal, and two packed colors
+
+    switch (format & plGBufferGroup::kSkinWeightMask)
+    {
+        case plGBufferGroup::kSkinNoWeights:
+            break;
+        case plGBufferGroup::kSkin1Weight:
+            size += sizeof(float);
+            break;
+        default:
+            hsAssert( false, "Invalid skin weight value in IGetBufferFormatSize()" );
+    }
+
+    size += sizeof( float ) * 3 * plGBufferGroup::CalcNumUVs(format);
+
+    return size;
+}
+
 void plGLDevice::SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, VertexBufferRef* vRef)
 {
     uint8_t format = owner->GetVertexFormat();
 
-    uint32_t vertSize = owner->GetVertexSize(); //IGetBufferFormatSize(format); // vertex stride
+    if (format & plGBufferGroup::kSkinIndices) {
+        format &= ~(plGBufferGroup::kSkinWeightMask | plGBufferGroup::kSkinIndices);
+        format |= plGBufferGroup::kSkinNoWeights;       // Should do nothing, but just in case...
+        vRef->SetSkinned(true);
+        vRef->SetVolatile(true);
+    }
+
+    uint32_t vertSize = IGetBufferFormatSize(format); // vertex stride
     uint32_t numVerts = owner->GetVertBufferCount(idx);
 
     vRef->fOwner = owner;
@@ -505,9 +532,6 @@ void plGLDevice::SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, Verte
     vRef->SetDirty(true);
     vRef->SetRebuiltSinceUsed(true);
     vRef->fData = nullptr;
-
-    if (format & plGBufferGroup::kSkinIndices)
-        vRef->SetSkinned(true);
 
     vRef->SetVolatile(vRef->Volatile() || owner->AreVertsVolatile());
 
