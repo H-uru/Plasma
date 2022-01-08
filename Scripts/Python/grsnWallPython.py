@@ -187,6 +187,52 @@ sitPanelLights = [sitPanelLightsNorth, sitPanelLightsSouth]
 confirmPanelLights = [confirmPanelLightsNorth, confirmPanelLightsSouth]
 
 ##############################################################
+# grsnWallPython - Valid Blocker Configuration Helper
+##############################################################
+# Numbered Nodes:
+# 01 = starting platform
+# 84 = ending panels at the top center of the wall
+# 76|77|78|79|--|--|80|81|82|83
+# 66|67|68|69|70|71|72|73|74|75
+# 56|57|58|59|60|61|62|63|64|65
+# 46|47|48|49|50|51|52|53|54|55
+# -\|38|39|40|41|42|43|44|45|/-
+# --|30|31|32|33|34|35|36|37|--
+# --|22|23|24|25|26|27|28|29|--
+# --|14|15|16|17|18|19|20|21|--
+# -/|06|07|08|09|10|11|12|13|\-
+# --|--|--|02|03|04|05|--|--|--
+
+WALL_START_NODE = 1
+WALL_END_NODE = 84
+
+# Edges are numbered Node-to-Node based on map above
+edgeList = [(1,3),(1,4),(2,3),(2,8),(3,4),(3,9),(4,5),(4,10),(5,11),(6,7),(6,14),(7,8),(7,15),(8,9),(8,16),(9,10),(9,17),(10,11),(10,18),(11,12),(11,19),(12,13),(12,20),(13,21),(14,15),(14,22),(15,16),(15,23),(16,17),(16,24),(17,18),(17,25),(18,19),(18,26),(19,20),(19,27),(20,21),(20,28),(21,29),(22,23),(22,30),(23,24),(23,31),(24,25),(24,32),(25,26),(25,33),(26,27),(26,34),(27,28),(27,35),(28,29),(28,36),(29,37),(30,31),(30,38),(31,32),(31,39),(32,33),(32,40),(33,34),(33,41),(34,35),(34,42),(35,36),(35,43),(36,37),(36,44),(37,45),(38,39),(38,47),(39,40),(39,48),(40,41),(40,49),(41,42),(41,50),(42,43),(42,51),(43,44),(43,52),(44,45),(44,53),(45,54),(46,47),(46,56),(47,48),(47,57),(48,49),(48,58),(49,50),(49,59),(50,51),(50,60),(51,52),(51,61),(52,53),(52,62),(53,54),(53,63),(54,55),(54,64),(55,65),(56,57),(56,66),(57,58),(57,67),(58,59),(58,68),(59,60),(59,69),(60,61),(60,70),(61,62),(61,71),(62,63),(62,72),(63,64),(63,73),(64,65),(64,74),(65,75),(66,67),(66,76),(67,68),(67,77),(68,69),(68,78),(69,70),(69,79),(70,71),(70,84),(71,72),(71,84),(72,73),(72,80),(73,74),(73,81),(74,75),(74,82),(75,83),(76,77),(77,78),(78,79),(79,84),(80,81),(80,84),(81,82),(82,83)]
+
+# Blockers are numbered top-down with horizontal blockers first then vertical blockers
+blockerToEdgeDict = {0:None,1:None,2:None,3:None,4:None,5:None,6:None,7:None,8:(76,77),9:(77,78),10:(78,79),11:(79,84),12:(80,84),13:(80,81),14:(81,82),15:(82,83),16:(66,76),17:(67,77),18:(68,78),19:(69,79),20:(70,84),21:(71,84),22:(72,80),23:(73,81),24:(74,82),25:(75,83),26:(66,67),27:(67,68),28:(68,69),29:(69,70),30:(70,71),31:(71,72),32:(72,73),33:(73,74),34:(74,75),35:(56,66),36:(57,67),37:(58,68),38:(59,69),39:(60,70),40:(61,71),41:(62,72),42:(63,73),43:(64,74),44:(65,75),45:(56,57),46:(57,58),47:(58,59),48:(59,60),49:(60,61),50:(61,62),51:(62,63),52:(63,64),53:(64,65),54:(46,56),55:(47,57),56:(48,58),57:(49,59),58:(50,60),59:(51,61),60:(52,62),61:(53,63),62:(54,64),63:(55,65),64:(46,47),65:(47,48),66:(48,49),67:(49,50),68:(50,51),69:(51,52),70:(52,53),71:(53,54),72:(54,55),73:None,74:(38,47),75:(39,48),76:(40,49),77:(41,50),78:(42,51),79:(43,52),80:(44,53),81:(45,54),82:None,83:None,84:(38,39),85:(39,40),86:(40,41),87:(41,42),88:(42,43),89:(43,44),90:(44,45),91:None,92:(30,38),93:(31,39),94:(32,40),95:(33,41),96:(34,42),97:(35,43),98:(36,44),99:(37,45),100:None,101:(30,31),102:(31,32),103:(32,33),104:(33,34),105:(34,35),106:(35,36),107:(36,37),108:None,109:(22,30),110:(23,31),111:(24,32),112:(25,33),113:(26,34),114:(27,35),115:(28,36),116:(29,37),117:None,118:(22,23),119:(23,24),120:(24,25),121:(25,26),122:(26,27),123:(27,28),124:(28,29),125:None,126:(14,22),127:(15,23),128:(16,24),129:(17,25),130:(18,26),131:(19,27),132:(20,28),133:(21,29),134:None,135:(14,15),136:(15,16),137:(16,17),138:(17,18),139:(18,19),140:(19,20),141:(20,21),142:None,143:(6,14),144:(7,15),145:(8,16),146:(9,17),147:(10,18),148:(11,19),149:(12,20),150:(13,21),151:None,152:(6,7),153:(7,8),154:(8,9),155:(9,10),156:(10,11),157:(11,12),158:(12,13),159:None,160:None,161:(2,8),162:(3,9),163:(4,10),164:(5,11),165:None,166:None,167:(2,3),168:(3,4),169:(4,5),170:None}
+
+# find if there is a path from start node to end node
+def DepthFirstSearch(adjacencyList, startNode, endNode, visitedNodes=None): 
+    # initialize for root
+    if visitedNodes is None:
+        visitedNodes = []
+
+    visitedNodes.append(startNode)
+
+    if startNode == endNode:
+        return True
+
+    if startNode in adjacencyList:
+        for adjNode in adjacencyList[startNode]:
+            if adjNode not in visitedNodes:
+                val = DepthFirstSearch(adjacencyList, adjNode, endNode, visitedNodes)
+                if val:
+                    return True
+
+    return False
+
+##############################################################
 # grsnWallPython
 ##############################################################
 
@@ -903,8 +949,13 @@ class grsnWallPython(ptResponder):
             else:
                 if(self.IAmMaster()):
                     ageSDL.setIndex(sdl,idx,id)
-                PanelSound[team].run(self.key, state='blockerOn')
-                self.SetPanelBlocker(team, id, True, onlyLight=True)
+
+                if self.CheckBlockersValid(sdl):
+                    PanelSound[team].run(self.key, state='blockerOn')
+                    self.SetPanelBlocker(team, id, True, onlyLight=True)
+                else:
+                    PanelSound[team].run(self.key, state='denied')
+                    ageSDL.setIndex(sdl,idx,-1)
         else:
             wall = list(ageSDL[sdl])
             idx = 0
@@ -986,3 +1037,29 @@ class grsnWallPython(ptResponder):
         elif target == "wallstart":
             ageSDL["nState"] = (kSetBlocker,)
             ageSDL["sState"] = (kSetBlocker,)
+
+    def CheckBlockersValid(self,team):
+        ageSDL = PtGetAgeSDL()
+
+        # create shallow copy of full edge array
+        myEdges = list(edgeList)
+
+        for i in range(0,20):
+            blockerId = ageSDL[team][i]
+            if blockerId == -1:
+                # reached the end of set blocker list
+                break
+            elif blockerToEdgeDict[blockerId] is not None:
+                myEdges.remove(blockerToEdgeDict[blockerId])
+            else:
+                # this blocker has no effect on edges, it's a throwaway
+                pass
+
+        adjacencyList = dict()
+        for nodeA, nodeB in myEdges:
+            adjacencyList.setdefault(nodeA,[])
+            adjacencyList.setdefault(nodeB,[])
+            adjacencyList[nodeA].append(nodeB)
+            adjacencyList[nodeB].append(nodeA)
+
+        return DepthFirstSearch(adjacencyList, WALL_START_NODE, WALL_END_NODE)
