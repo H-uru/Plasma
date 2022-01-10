@@ -929,82 +929,86 @@ class xAvatarCustomization(ptModifier):
                         if InAvatarCloset:
                             vault = ptVault()
                             entry = vault.findChronicleEntry(kCleftSolved)
+                            start = vault.findChronicleEntry("StartPathChosen")
                             linkmgr = ptNetLinkingMgr()
 
-                            #Just link back to the closet
-                            self.ILinkToCloset()
-
-                            #Disable other logic... no more going to the cleft from the AVC
-                            #~if entry is not None:
-                                # player has solved the cleft
-                                # just go back to your personal age
-                            #~        self.ILinkToCloset()
-                            #~else:
-                                # player has not solved the cleft, link them to it
-                            #~    ageLink = ptAgeLinkStruct()
-                            #~    ageInfo = ageLink.getAgeInfo()
-                            #~    temp = ptAgeInfoStruct()
-                            #~    temp.copyFrom(ageInfo)
-                            #~    ageInfo = temp
-                            #~    if PtIsDemoMode():
-                            #~        ageInfo.setAgeFilename("Demo")
-                            #~    else:
-                            #~        ageInfo.setAgeFilename("Cleft")
-                            #~    ageInfo.setAgeInstanceName("D'ni-Riltagamin")
-                            #~    ageLink.setAgeInfo(ageInfo)
-                            #~    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
-                            #~    linkmgr.linkToAge(ageLink)
+                            if start.chronicleGetValue() == "relto":
+                                #Just link back to the closet
+                                self.ILinkToCloset()
+                            elif start.chronicleGetValue() == "cleft":
+                                #Disable other logic... no more going to the cleft from the AVC
+                                if entry is not None:
+                                    # player has solved the cleft
+                                    # just go back to your personal age
+                                        self.ILinkToCloset()
+                                else:
+                                    # player has not solved the cleft, link them to it
+                                    ageLink = ptAgeLinkStruct()
+                                    ageInfo = ageLink.getAgeInfo()
+                                    temp = ptAgeInfoStruct()
+                                    temp.copyFrom(ageInfo)
+                                    ageInfo = temp
+                                    if PtIsDemoMode():
+                                        ageInfo.setAgeFilename("Demo")
+                                    else:
+                                        ageInfo.setAgeFilename("Cleft")
+                                    ageInfo.setAgeInstanceName("D'ni-Riltagamin")
+                                    ageLink.setAgeInfo(ageInfo)
+                                    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
+                                    linkmgr.linkToAge(ageLink)
 
                         else:
                             # mark the chonicle that we've been here
                             vault = ptVault()
                             vault.addChronicleEntry(kAvaCustaIsDone,kAvaCustaIsDoneType,"1")
                             entry = vault.findChronicleEntry(kCleftSolved)
+                            start = vault.findChronicleEntry("StartPathChosen")
 
-                            #Link straight to personal, no more going to cleft from the AVC!
-                            linkmgr = ptNetLinkingMgr()
-                            ageLink = ptAgeLinkStruct()
-                            ageInfo = ageLink.getAgeInfo()
-                            temp = ptAgeInfoStruct()
-                            temp.copyFrom(ageInfo)
-                            ageInfo = temp
-                            ageInfo.setAgeFilename("Personal")
-                            ageLink.setAgeInfo(ageInfo)
-                            ageLink.setLinkingRules(PtLinkingRules.kOwnedBook)
-                            linkmgr.linkToAge(ageLink)
-
+                            if start.chronicleGetValue() == "relto":
+                                #Link straight to personal, no more going to cleft from the AVC!
+                                linkmgr = ptNetLinkingMgr()
+                                ageLink = ptAgeLinkStruct()
+                                ageInfo = ageLink.getAgeInfo()
+                                temp = ptAgeInfoStruct()
+                                temp.copyFrom(ageInfo)
+                                ageInfo = temp
+                                ageInfo.setAgeFilename("Personal")
+                                ageLink.setAgeInfo(ageInfo)
+                                ageLink.setLinkingRules(PtLinkingRules.kOwnedBook)
+                                linkmgr.linkToAge(ageLink)
+                            elif start.chronicleGetValue() == "cleft":
                             #Disable other logic... no more going to cleft from the AVC!
-                            #~if entry is not None:
-                                # player has solved the cleft
-                                # just go back to your personal age
-                            #~    linkmgr = ptNetLinkingMgr()
-                            #~    ageLink = ptAgeLinkStruct()
+                                if entry is not None:
+                                    # player has solved the cleft
+                                    # just go back to your personal age
+                                    linkmgr = ptNetLinkingMgr()
+                                    ageLink = ptAgeLinkStruct()
 
-                            #~    ageInfo = ageLink.getAgeInfo()
-                            #~    temp = ptAgeInfoStruct()
-                            #~    temp.copyFrom(ageInfo)
-                            #~    ageInfo = temp
-                            #~    ageInfo.setAgeFilename("Personal")
-                            #~    ageLink.setAgeInfo(ageInfo)
-                            #~    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
-                            #~    linkmgr.linkToAge(ageLink)
+                                    ageInfo = ageLink.getAgeInfo()
+                                    temp = ptAgeInfoStruct()
+                                    temp.copyFrom(ageInfo)
+                                    ageInfo = temp
+                                    ageInfo.setAgeFilename("Personal")
+                                    ageLink.setAgeInfo(ageInfo)
+                                    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
+                                    linkmgr.linkToAge(ageLink)
 
-                            #~else:
-                                # this was their first time... go to the cleft
-                            #~    ageLink = ptAgeLinkStruct()
-                            #~    ageInfo = ageLink.getAgeInfo()
-                            #~    temp = ptAgeInfoStruct()
-                            #~    temp.copyFrom(ageInfo)
-                            #~    ageInfo = temp
-                            #~    if PtIsDemoMode():
-                            #~        ageInfo.setAgeFilename("Demo")
-                            #~    else:
-                            #~        ageInfo.setAgeFilename("Cleft")
-                            #~    ageInfo.setAgeInstanceName("D'ni-Riltagamin")
-                            #~    ageLink.setAgeInfo(ageInfo)
-                            #~    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
-                            #~    linkmgr = ptNetLinkingMgr()
-                            #~    linkmgr.linkToAge(ageLink)
+                                else:
+                                    # this was their first time... go to the cleft
+                                    ageLink = ptAgeLinkStruct()
+                                    ageInfo = ageLink.getAgeInfo()
+                                    temp = ptAgeInfoStruct()
+                                    temp.copyFrom(ageInfo)
+                                    ageInfo = temp
+                                    if PtIsDemoMode():
+                                        ageInfo.setAgeFilename("Demo")
+                                    else:
+                                        ageInfo.setAgeFilename("Cleft")
+                                    ageInfo.setAgeInstanceName("D'ni-Riltagamin")
+                                    ageLink.setAgeInfo(ageInfo)
+                                    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
+                                    linkmgr = ptNetLinkingMgr()
+                                    linkmgr.linkToAge(ageLink)
 
                     elif btnID == kQuitBtnID:
                         avatar = PtGetLocalAvatar()

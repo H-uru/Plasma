@@ -139,6 +139,10 @@ SDLVarSceneYeesha = "clftSceneYeeshaUnseen"
 SDLVarTomahnaActive = "clftTomahnaActive"
 PlayTPOT = 0
 
+vault = ptVault()
+start = vault.findChronicleEntry("StartPathChosen")
+entryCleft = vault.findChronicleEntry("CleftSolved")
+
 
 class clftImager(ptResponder):
 
@@ -318,6 +322,8 @@ class clftImager(ptResponder):
 
     def IQuitImager(self):
         global PuzzleView
+        global start
+        global entryCleft
         PtDebugPrint("disengage and exit the imager puzzle")
         avatar = PtGetLocalAvatar()
         imagerCam.value.popCutsceneCamera(avatar.getKey())
@@ -336,7 +342,10 @@ class clftImager(ptResponder):
         #PtGetControlEvents(False,self.key)
         PtDisableControlKeyEvents(self.key)
         PtEnableForwardMovement()
-        PtSendKIMessage(kEnableEntireYeeshaBook,0)
+        if start.chronicleGetValue() == "cleft" and entryCleft is None:
+            pass
+        else:
+            PtSendKIMessage(kEnableEntireYeeshaBook,0)
         PuzzleView = 0
         PtAtTimeCallback(self.key,1,imagerBtn.id)
 
@@ -356,6 +365,8 @@ class clftImager(ptResponder):
         global PuzzleView
         global PlayScene
         global PlayTPOT
+        global start
+        global entryCleft
 
         self.ageSDL = PtGetAgeSDL()
         
@@ -439,7 +450,7 @@ class clftImager(ptResponder):
                 PlayFull = 1
                 PlayFinal = 0
                 PtDebugPrint("play full opening speech")
-            elif (self.TPOTSolved()):
+            elif (entryCleft is not None and self.TPOTSolved()):
                 PlayFull = 0
                 PlayFinal = 0
                 PlayTPOT = 1
@@ -460,7 +471,10 @@ class clftImager(ptResponder):
             PtDebugPrint("avatar oneshot callback")
             PuzzleView = 0
             PtEnableForwardMovement()
-            PtSendKIMessage(kEnableEntireYeeshaBook,0)
+            if start.chronicleGetValue() == "cleft" and entryCleft is None:
+                pass
+            else:
+                PtSendKIMessage(kEnableEntireYeeshaBook,0)
             windmillRunning = self.ageSDL[stringSDLVarRunning.value][0]
             if windmillRunning == 1 and imagerBusted == 0:
                 PtDebugPrint("clftImager.OnNotify: SDL says windmill is running, so button will do SOMETHING after oneshot...")
@@ -725,6 +739,8 @@ class clftImager(ptResponder):
         global kFinished
         global kLostPower
         global speechKilled
+        global start
+        global entryCleft
         
         if visionplaying == 1 and id == kVision: 
             PtDebugPrint("\nclftImager.Ontimer:Got kVision timer callback. Automatically stopping vision.")
@@ -764,7 +780,10 @@ class clftImager(ptResponder):
             imagerBtn.enableActivator()
             ImagerBtnVisible.run(self.key)
             PtEnableForwardMovement()
-            PtSendKIMessage(kEnableEntireYeeshaBook,0)
+            if start.chronicleGetValue() == "cleft" and entryCleft is None:
+                pass
+            else:
+                PtSendKIMessage(kEnableEntireYeeshaBook,0)
         elif id == kLostPowerID:
             speechKilled = 1
             self.StopVision()

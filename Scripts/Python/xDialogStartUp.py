@@ -155,6 +155,8 @@ k6InviteID          = 605
 k6MaleID            = 606
 k6FemaleID          = 607
 k6PlayTxtID         = 608
+k6CleftID           = 609
+k6ReltoID           = 610
 
 #====================================
 # Globals
@@ -171,6 +173,7 @@ gExp_HiLite         = [resp4bPlayer01,resp4bPlayer02,resp4bPlayer03,resp4bPlayer
 gVis_HiLite         = [resp4aPlayer01,resp4aPlayer02,resp4aPlayer03,resp4aPlayer04,resp4aPlayer05,resp4aPlayer06]
 gMinusExplorer      = 203
 gMinusVisitor       = 103
+gPlayerStart        = "relto"
 
 WebLaunchCmd = None
 
@@ -224,6 +227,7 @@ class xDialogStartUp(ptResponder):
         global gMinusExplorer
         global gMinusVisitor
         global gClickedWrongSlot
+        global gPlayerStart
 
         #PtDebugPrint("xDialogStartUp: GUI Notify id=%d, event=%d control=" % (id,event),control)
         if control:
@@ -340,25 +344,35 @@ class xDialogStartUp(ptResponder):
                     try:
                         playerName == playerNameW
                     except:
-                        errorString = "Error, invalid Name. Please enter another."
+                        errorString = "Error: invalid Name. Please enter another."
                         ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                         PtShowDialog("GUIDialog04d")
                         self.ToggleColor(GUIDiag4b, k4bPlayer03)
                         return
 
                     playerGender = ""
+                    playerStart = ""
                     if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6MaleID)).isChecked():
                         playerGender = "male"
                     if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6FemaleID)).isChecked():
                         playerGender = "female"
+                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6CleftID)).isChecked():
+                        playerStart = "cleft"
+                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6ReltoID)).isChecked():
+                        playerStart = "relto"
 
                     if playerName == "" or playerName.isspace():
-                        errorString = "Error, you must enter a Name."
+                        errorString = "Error: you must enter a Name."
                         ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                         PtShowDialog("GUIDialog04d")
                         self.ToggleColor(GUIDiag4b, k4bPlayer03)
                     elif playerGender == "":
-                        errorString = "Error, you must select a gender."
+                        errorString = "Error: you must select a gender."
+                        ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                        PtShowDialog("GUIDialog04d")
+                        self.ToggleColor(GUIDiag4b, k4bPlayer03)
+                    elif playerStart == "":
+                        errorString = "Error: you must choose a Path."
                         ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                         PtShowDialog("GUIDialog04d")
                         self.ToggleColor(GUIDiag4b, k4bPlayer03)
@@ -369,9 +383,9 @@ class xDialogStartUp(ptResponder):
                         (fixedPlayerName, RogueCount,) = re.subn('[\x00-\x1f]', '', fixedPlayerName)
                         if RogueCount > 0 or whitespacefixedcount > 0:
                             if RogueCount > 0:
-                                errorString = "Warning, you entered invalid characters in your player name.  The invalid characters have been removed, please make sure your player name is still what you want."
+                                errorString = "Warning: you entered invalid characters in your player name.  The invalid characters have been removed, please make sure your player name is still what you want."
                             else:
-                                errorString = "Warning, your player name has some incorrect formatting.  The formatting has been corrected, please make sure your player name is still what you want."
+                                errorString = "Warning: your player name has some incorrect formatting.  The formatting has been corrected, please make sure your player name is still what you want."
                             ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                             PtShowDialog("GUIDialog04d")
                             self.ToggleColor(GUIDiag4b, k4bPlayer03)
@@ -381,6 +395,7 @@ class xDialogStartUp(ptResponder):
                             PtDebugPrint("Creating Player")
                             PtShowDialog("GUIDialog06a")
                             ptGUIControlButton(GUIDiag6.dialog.getControlFromTag(k6PlayID)).disable()
+                            gPlayerStart = playerStart
                             PtCreatePlayer(fixedPlayerName, playerGender, "")  #                                                  <---
 
                 elif  tagID == k6MaleID: ## Gender Male ##
@@ -390,6 +405,14 @@ class xDialogStartUp(ptResponder):
                 elif  tagID == k6FemaleID: ## Gender Female ##
                     if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6MaleID)).isChecked():
                         ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6MaleID)).setChecked(0)
+                        
+                elif  tagID == k6CleftID: ## Start Cleft ##
+                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6ReltoID)).isChecked():
+                        ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6ReltoID)).setChecked(0)
+
+                elif  tagID == k6ReltoID: ## Start Relto ##
+                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6CleftID)).isChecked():
+                        ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6CleftID)).setChecked(0)
 
     ###########################
     def OnAccountUpdate(self, opType, result, playerInt):
@@ -398,6 +421,7 @@ class xDialogStartUp(ptResponder):
         global gVis_TxtBox
         global gExp_HiLite
         global gPlayerList
+        global gPlayerStart
 
         if result != 0:
             PtDebugPrint("OnAccountUpdate type %u failed: %u" % (opType, result))
@@ -405,7 +429,7 @@ class xDialogStartUp(ptResponder):
             self.ToggleColor(GUIDiag4b, k4bPlayer03)
 
             if result == 12:
-                errorString = "Error, this player name already exists."
+                errorString = "Error: this player name already exists."
                 ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                 PtShowDialog("GUIDialog04d")
             elif result == 28:
@@ -439,8 +463,21 @@ class xDialogStartUp(ptResponder):
 
             vault = ptVault()
             entry = vault.findChronicleEntry("InitialAvCustomizationsDone")
+            start = vault.findChronicleEntry("StartPathChosen")
+            if start is not None:
+                gPlayerStart = start.chronicleGetValue()
+            else:
+                vault.addChronicleEntry("StartPathChosen",1,gPlayerStart)
             if entry is not None:
-                ageInfo.setAgeFilename("Personal")
+                if gPlayerStart == "cleft":
+                    entryCleft = vault.findChronicleEntry("CleftSolved")
+                    ageInfo.setAgeFilename("Cleft")
+                    if entryCleft is not None:
+                        entryCleftValue = entryCleft.chronicleGetValue()
+                        if entryCleftValue == "yes":
+                            ageInfo.setAgeFilename("Personal")
+                else:
+                    ageInfo.setAgeFilename("Personal")
             else:
                 ageInfo.setAgeFilename("AvatarCustomization")
             self.ageLink.setAgeInfo(ageInfo)

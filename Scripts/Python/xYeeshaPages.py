@@ -171,6 +171,10 @@ class xYeeshaPages(ptModifier):
                     return
                     
                 else:
+                    start = vault.findChronicleEntry("StartPathChosen")
+                    entryCleft = vault.findChronicleEntry("CleftSolved")
+                    if start.chronicleGetValue() == "cleft" and entryCleft is None:
+                        return
                     PtDebugPrint ("xYeeshaPages.py: Yeesha Page #%s is new to you." % (PageNumber.value))
                     
                     PtDebugPrint ("xYeeshaPages.py: Trying to update the value of the SDL variable %s to 1" % ("YeeshaPage" + str(PageNumber.value)))

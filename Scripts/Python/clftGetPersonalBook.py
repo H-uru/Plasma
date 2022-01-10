@@ -203,6 +203,12 @@ class clftGetPersonalBook(ptResponder):
             vault = ptVault()
             vault.addChronicleEntry("CleftSolved",1,"yes")
             PtDebugPrint("Chronicle updated with variable 'CleftSolved'.",level=kDebugDumpLevel)
+            PtSendKIMessage(kEnableEntireYeeshaBook,0)
+            psnlSDL = vault.getPsnlAgeSDL()
+            if psnlSDL:
+                YeeshaPageVar = psnlSDL.findVar("YeeshaPage25")
+                YeeshaPageVar.setInt(4)
+                vault.updatePsnlAgeSDL (psnlSDL)
 
     def OnTimer(self,id):
         global gDemoMovie
