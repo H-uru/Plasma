@@ -553,10 +553,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtWearMaintainerSuit, args, "Params: key,wearOrN
 
 PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtWearDefaultClothing, args, kw, "Params: key, broadcast=False\nForces the avatar to wear the default clothing set")
 {
-    char* kwlist[] = { "key", "broadcast", nullptr };
+    const char* kwlist[] = { "key", "broadcast", nullptr };
     PyObject* keyObj = nullptr;
     bool broadcast = false;
-    if (!PyArg_ParseTupleAndKeywords(args, kw, "O|b", kwlist, &keyObj, &broadcast))
+    if (!PyArg_ParseTupleAndKeywords(args, kw, "O|b", const_cast<char**>(kwlist), &keyObj, &broadcast))
     {
         PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothing expects a ptKey and an optional bool");
         PYTHON_RETURN_ERROR;

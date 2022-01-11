@@ -616,11 +616,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFakeLinkAvatarToObject, args, "Params: avatar,
 
 PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtWearDefaultClothingType, args, kw, "Params: key, type, broadcast=False\nForces the avatar to wear the default clothing of the specified type")
 {
-    char* kwlist[] = { "key", "type", "broadcast", nullptr };
+    const char* kwlist[] = { "key", "type", "broadcast", nullptr };
     PyObject* keyObj = nullptr;
     unsigned long type;
     bool broadcast = false;
-    if (!PyArg_ParseTupleAndKeywords(args, kw, "Ol|b", kwlist, &keyObj, &type, &broadcast))
+    if (!PyArg_ParseTupleAndKeywords(args, kw, "Ol|b", const_cast<char**>(kwlist), &keyObj, &type, &broadcast))
     {
         PyErr_SetString(PyExc_TypeError, "PtWearDefaultClothingType expects a ptKey, an unsigned long, and an optional bool");
         PYTHON_RETURN_ERROR;
