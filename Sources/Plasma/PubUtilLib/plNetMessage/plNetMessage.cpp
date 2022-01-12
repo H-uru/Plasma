@@ -887,7 +887,7 @@ void plNetMsgRoomsList::AddRoomLocation(const plLocation& loc, const ST::string&
 int plNetMsgRoomsList::FindRoomLocation(const plLocation& loc)
 {
     std::vector<plLocation>::iterator result = std::find(fRooms.begin(), fRooms.end(), loc);
-    return result==fRooms.end() ? -1 : result-fRooms.begin();   
+    return result==fRooms.end() ? -1 : (int)(result-fRooms.begin());
 }
 
 ////////////////////////////////////////////////////////

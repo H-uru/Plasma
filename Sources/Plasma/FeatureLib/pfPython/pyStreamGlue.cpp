@@ -93,8 +93,8 @@ PYTHON_METHOD_DEFINITION(ptStream, writelines, args)
         PYTHON_RETURN_ERROR;
     }
     std::vector<std::string> strings;
-    int len = PyList_Size(stringList);
-    for (int i = 0; i < len; i++)
+    Py_ssize_t len = PyList_Size(stringList);
+    for (Py_ssize_t i = 0; i < len; i++)
     {
         PyObject* element = PyList_GetItem(stringList, i);
         if (!PyUnicode_Check(element))

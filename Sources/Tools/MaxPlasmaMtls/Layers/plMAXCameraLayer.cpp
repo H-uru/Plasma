@@ -97,7 +97,6 @@ public:
         switch (msg)
         {
         case WM_INITDIALOG:
-            int i;
             for (const TCHAR* uvString : kUVStrings)
             {
                 cbox = GetDlgItem(hWnd, IDC_CAM_LAYER_UV_SRC);

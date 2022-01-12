@@ -162,7 +162,7 @@ unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** 
     if (end)
         *end = buffer;
 
-    return buffer - start;
+    return (unsigned)(buffer - start);
 }
 
 //============================================================================
@@ -214,7 +214,7 @@ unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** e
     if (end)
         *end = buffer;
 
-    return buffer - start;
+    return (unsigned)(buffer - start);
 }
 
 //============================================================================

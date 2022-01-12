@@ -297,8 +297,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
     }
     else if (PyList_Check(nodeNameObj))
     {
-        int num = PyList_Size(nodeNameObj);
-        for (int i = 0; i < num; i++)
+        Py_ssize_t num = PyList_Size(nodeNameObj);
+        for (Py_ssize_t i = 0; i < num; i++)
         {
             PyObject* listItem = PyList_GetItem(nodeNameObj, i);
             if (!PyUnicode_Check(listItem))
@@ -513,8 +513,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendPrivateChatList, args, "Params: chatList\n
     std::vector<pyPlayer*> chatList;
     if (PyList_Check(chatListObj))
     {
-        int listSize = PyList_Size(chatListObj);
-        for (int i = 0; i < listSize; i++)
+        Py_ssize_t listSize = PyList_Size(chatListObj);
+        for (Py_ssize_t i = 0; i < listSize; i++)
         {
             PyObject* listItem = PyList_GetItem(chatListObj, i);
             if (!pyPlayer::Check(listItem))

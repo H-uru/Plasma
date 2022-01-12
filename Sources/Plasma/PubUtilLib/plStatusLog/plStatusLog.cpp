@@ -505,7 +505,7 @@ bool plStatusLog::AddLine(uint32_t color, const char *line)
     for (str = (char *)line; (c = strchr(str, '\n')) != nullptr; str = c + 1)
     {
         // So if we got here, c points to a carriage return...
-        ret = IAddLine( str, (uintptr_t)c - (uintptr_t)str, color );
+        ret = IAddLine(str, (int)((intptr_t)c - (intptr_t)str), color);
     }
 
     /// We might have some left over

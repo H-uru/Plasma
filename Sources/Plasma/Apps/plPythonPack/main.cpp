@@ -191,7 +191,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
         ST::printf(out, "\n");
 
         s->WriteLE32((int32_t)size);
-        s->Write(size, pycode);
+        s->Write((uint32_t)size, pycode);
         delete[] pycode;
     }
     else

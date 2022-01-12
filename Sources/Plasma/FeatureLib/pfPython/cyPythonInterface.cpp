@@ -1537,7 +1537,7 @@ bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
     if (s != nullptr)
     {
         // yes, then get the size and the string address
-        *size = PyBytes_Size(s);
+        *size = (int32_t)PyBytes_Size(s);
         *pickle = PyBytes_AsString(s);
         return true;
     }

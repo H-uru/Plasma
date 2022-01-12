@@ -360,7 +360,7 @@ void    plPassMtlBase::NoteTrackRemoved()
 
         auto iter = std::find(fNotetracks.cbegin(), fNotetracks.cend(), track);
         if (iter != fNotetracks.cend())
-            stillThere.Set(iter - fNotetracks.cbegin());
+            stillThere.Set((int)(iter - fNotetracks.cbegin()));
     }
 
     for (size_t i = 0; i < fNotetracks.size(); i++)

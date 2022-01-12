@@ -98,16 +98,15 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
 {
     fputs("\n\n\n", fp);
 
-    int byteLen = shader->GetBufferSize();
-    int quadLen = byteLen >> 2;
+    hsSsize_t byteLen = shader->GetBufferSize();
+    hsSsize_t quadLen = byteLen >> 2;
 
     unsigned char* codes = (unsigned char*)shader->GetBufferPointer();
 
     ST::printf(fp, "static const uint32_t {}byteLen = {};\n\n", varName, byteLen);
     ST::printf(fp, "static const uint8_t {}Codes[] = {{\n", varName);
 
-    int i;
-    for( i = 0; i < quadLen-1; i++ )
+    for (hsSsize_t i = 0; i < quadLen-1; i++)
     {
         ST::printf(fp, "\t0x{x},", *codes++);
         ST::printf(fp, "\t0x{x},", *codes++);

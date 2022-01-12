@@ -380,26 +380,26 @@ void UserPropMgr::ClearUserProp(INode *node, const MCHAR *name, const int32_t hF
                                 tok2 = toker.next();
                                 if (tok2)
                                 {
-                                    buf.remove(tok-toker.fString,tok2-tok);
+                                    buf.remove((int)(tok-toker.fString), (int)(tok2-tok));
                                 }
                                 else
                                 {
-                                    buf.remove(tok-toker.fString);
+                                    buf.remove((int)(tok-toker.fString));
                                 }
                             }
                             else
                             {
-                                buf.remove(tok-toker.fString);
+                                buf.remove((int)(tok-toker.fString));
                             }
                         }
                         else 
                         {
-                            buf.remove(tok-toker.fString,tok2-tok);
+                            buf.remove((int)(tok-toker.fString), (int)(tok2-tok));
                         }
                     } 
                     else
                     {
-                        buf.remove(tok-toker.fString);
+                        buf.remove((int)(tok-toker.fString));
                     }
                     break;
                 }
@@ -514,26 +514,26 @@ void UserPropMgr::SetUserProp(INode *node, const MCHAR *name, const MCHAR *value
                                 tok2 = toker.next();
                                 if (tok2)
                                 {
-                                    buf.remove(tok-toker.fString,tok2-tok);
+                                    buf.remove((int)(tok-toker.fString), (int)(tok2-tok));
                                 } 
                                 else
                                 {
-                                    buf.remove(tok-toker.fString);
+                                    buf.remove((int)(tok-toker.fString));
                                 }
                             } 
                             else
                             {
-                                buf.remove(tok-toker.fString);
+                                buf.remove((int)(tok-toker.fString));
                             }
                         } 
                         else
                         {
-                            buf.remove(tok-toker.fString,tok2-tok);
+                            buf.remove((int)(tok-toker.fString), (int)(tok2-tok));
                         }
                     } 
                     else
                     {
-                        buf.remove(tok-toker.fString);
+                        buf.remove((int)(tok-toker.fString));
                     }
                     break;
                 }

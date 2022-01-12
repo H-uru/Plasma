@@ -149,7 +149,7 @@ uint32_t plProxyGen::IGetProxyIndex() const
     if (firstNil >= fProxyDrawables.size())
         fProxyDrawables.resize(firstNil + 1);
 
-    return firstNil;
+    return (uint32_t)firstNil;
 }
 
 hsGMaterial* plProxyGen::IMakeProxyMaterial() const

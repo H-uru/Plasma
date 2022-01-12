@@ -68,7 +68,7 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
 
     plKey key;
     ST::string name;
-    uint32_t pid = -1;
+    Py_ssize_t pid = -1;
     float distSeq = -1;
 
     if (pyKey::Check(firstObj))
@@ -97,7 +97,7 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
         PYTHON_RETURN_INIT_ERROR;
     }
 
-    self->fThis->Init(key, name.c_str(), pid, distSeq);
+    self->fThis->Init(key, name.c_str(), (uint32_t)pid, distSeq);
     PYTHON_RETURN_INIT_OK;
 }
 

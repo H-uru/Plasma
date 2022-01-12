@@ -86,9 +86,9 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDistortion, args)
         PYTHON_RETURN_ERROR;
     }
 
-    int len = PyTuple_Size(tupleObject);
+    Py_ssize_t len = PyTuple_Size(tupleObject);
     std::vector<float> vecArgs;
-    for (int curArg = 0; curArg < len; curArg++)
+    for (Py_ssize_t curArg = 0; curArg < len; curArg++)
     {
         PyObject *arg = PyTuple_GetItem(tupleObject, curArg);
         if (!PyFloat_Check(arg))
@@ -118,9 +118,9 @@ PYTHON_METHOD_DEFINITION(ptGrassShader, setWaveDirection, args)
         PYTHON_RETURN_ERROR;
     }
 
-    int len = PyTuple_Size(tupleObject);
+    Py_ssize_t len = PyTuple_Size(tupleObject);
     std::vector<float> vecArgs;
-    for (int curArg = 0; curArg < len; curArg++)
+    for (Py_ssize_t curArg = 0; curArg < len; curArg++)
     {
         PyObject *arg = PyTuple_GetItem(tupleObject, curArg);
         if (!PyFloat_Check(arg))

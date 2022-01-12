@@ -216,7 +216,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 
 //============================================================================
 static void FlushSendBuffer (NetCli * cli) {
-    const unsigned bytes = cli->sendCurr - cli->sendBuffer;
+    const unsigned bytes = (unsigned)(cli->sendCurr - cli->sendBuffer);
     ASSERT(bytes <= std::size(cli->sendBuffer));
     PutBufferOnWire(cli, cli->sendBuffer, bytes);
     cli->sendCurr = cli->sendBuffer;
@@ -242,7 +242,7 @@ static void AddToSendBuffer (
         for (;;) {
             // calculate the space left in the output buffer and use it
             // to determine the maximum number of bytes that will fit
-            unsigned const left = &cli->sendBuffer[std::size(cli->sendBuffer)] - cli->sendCurr;
+            unsigned const left = (unsigned)(&cli->sendBuffer[std::size(cli->sendBuffer)] - cli->sendCurr);
             unsigned const copy = std::min(bytes, left);
 
             // copy the data into the buffer
