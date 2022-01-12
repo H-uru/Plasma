@@ -69,17 +69,9 @@ respLinkOutNew = ptAttribResponder(7, "resp:  new linkout")
 # global variables
 LocalAvatar = None
 YeeshaBook = None
-gDemoMovie = None
-kDemoMovieName = "avi/UruPreview.webm"
-gWasMuted = 0
 gAreWeLinkingOut = 0
 
 kLinkRespID = 7
-kTrailerFadeInID = 5
-kTrailerInSeconds = 1.0
-kTrailerFadeOutID = 3
-kTrailerFadeOutSeconds = 1.0
-kTrailerDoneID = 9
 
 
 class clftGetPersonalBook(ptResponder):
@@ -88,7 +80,7 @@ class clftGetPersonalBook(ptResponder):
         ptResponder.__init__(self)
         self.id = 5219
         self.version = 10
-        PtDebugPrint("__init__clftGetPersonalBook v%d.%d" % (self.version,2),level=kWarningLevel)
+        PtDebugPrint("__init__clftGetPersonalBook v%d.%d" % (self.version, 2), level=kWarningLevel)
 
     def OnFirstUpdate(self):
         pass
@@ -103,18 +95,18 @@ class clftGetPersonalBook(ptResponder):
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
-        ageSDL.setNotify(self.key,"clftIsCleftDone",0.0)
+        ageSDL.setNotify(self.key, "clftIsCleftDone", 0.0)
 
     
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         if VARname == "clftIsCleftDone":
             ageSDL = PtGetAgeSDL()
             boolCleftDone = ageSDL["clftIsCleftDone"][0]
             if boolCleftDone:
-                respLinkOutNew.run(self.key,avatar=PtGetLocalAvatar())
+                respLinkOutNew.run(self.key, avatar=PtGetLocalAvatar())
 
 
-    def OnNotify(self,state,id,events):
+    def OnNotify(self, state, id, events):
         global LocalAvatar
         global YeeshaBook
         global gAreWeLinkingOut
@@ -124,22 +116,22 @@ class clftGetPersonalBook(ptResponder):
             for event in events:
                 # is it from the YeeshaBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
-                    PtDebugPrint("clftGetPersonalBook: BookNotify  event=%d, id=%d" % (event[1],event[2]),level=kDebugDumpLevel)
+                    PtDebugPrint("clftGetPersonalBook: BookNotify  event=%d, id=%d" % (event[1], event[2]), level=kDebugDumpLevel)
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
                         if event[2] == xLinkingBookDefs.kYeeshaBookLinkID:
-                            PtDebugPrint("clftGetPersonalBook:Book: hit linking panel",level=kDebugDumpLevel)
+                            PtDebugPrint("clftGetPersonalBook:Book: hit linking panel", level=kDebugDumpLevel)
                             gAreWeLinkingOut = 1
                             YeeshaBook.hide()
                             self.ILinktoPersonalAge()
                     elif event[1] == PtBookEventTypes.kNotifyShow:
                         pass
                     elif event[1] == PtBookEventTypes.kNotifyHide:
-                        PtDebugPrint("clftGetPersonalBook:Book: NotifyHide",level=kDebugDumpLevel)
+                        PtDebugPrint("clftGetPersonalBook:Book: NotifyHide", level=kDebugDumpLevel)
                         # don't really care if they close the book, but re-enable the clickable for them
                         if not gAreWeLinkingOut:
                             actClickableBook.enable()
                             # only re-enable the KI and BB if they are not linking out
-                            PtSendKIMessage(kEnableKIandBB,0)
+                            PtSendKIMessage(kEnableKIandBB, 0)
                         pass
                     elif event[1] == PtBookEventTypes.kNotifyNextPage:
                         pass
@@ -155,7 +147,7 @@ class clftGetPersonalBook(ptResponder):
                 # disable the book... need to re-enable if they cancel
                 actClickableBook.disable()
                 # prevent Martin from hitting the option menu and playing the live movie
-                PtSendKIMessage(kDisableKIandBB,0)
+                PtSendKIMessage(kDisableKIandBB, 0)
                 gAreWeLinkingOut = 0
                 LocalAvatar = PtFindAvatar(events)
                 SmartSeek.run(LocalAvatar)
@@ -166,8 +158,8 @@ class clftGetPersonalBook(ptResponder):
                     # if smart seek completed. Exit multistage, and show GUI.
                     if event[0] == kMultiStageEvent and event[2] == kEnterStage:
                         SmartSeek.gotoStage(LocalAvatar, -1) 
-                        YeeshaBook = ptBook(xLinkingBookDefs.xYeeshaBookNoShare,self.key)
-                        YeeshaBook.setSize( xLinkingBookDefs.YeeshaBookSizeWidth, xLinkingBookDefs.YeeshaBookSizeHeight )
+                        YeeshaBook = ptBook(xLinkingBookDefs.xYeeshaBookNoShare, self.key)
+                        YeeshaBook.setSize(xLinkingBookDefs.YeeshaBookSizeWidth, xLinkingBookDefs.YeeshaBookSizeHeight)
                         YeeshaBook.show(1)
 
             # picking up the book is beginning
@@ -180,85 +172,36 @@ class clftGetPersonalBook(ptResponder):
                         cam.disableFirstPersonOverride()
                         cam.undoFirstPerson()
                         if currentgender == 1:
-                            #~ PtDebugPrint("Playing female book animation")
+                            PtDebugPrint("Playing female book animation")
                             BookAnimFemale.animation.play()
                         elif currentgender == 0:
-                            #~ PtDebugPrint("Playing male book animation")
+                            PtDebugPrint("Playing male book animation")
                             BookAnimMale.animation.play()
                         else:
-                            PtDebugPrint("clftGetPersonalBook: unreadable gender or special character.",level=kErrorLevel)
+                            PtDebugPrint("clftGetPersonalBook: unreadable gender or special character.", level=kErrorLevel)
                             BookAnimMale.animation.play()
 
     def ILinktoPersonalAge(self):
         global LocalAvatar
         # start the alert of the personal book blinking
-        PtSendKIMessage(kStartBookAlert,0)
+        PtSendKIMessage(kStartBookAlert, 0)
         #~ PtDebugPrint("trying to get book.")
         MultiBeh.run(LocalAvatar)
         self.SolveCleft()
         PtAtTimeCallback(self.key, 8, kLinkRespID) 
 
     def SolveCleft(self):
-        if not PtIsDemoMode():
-            vault = ptVault()
-            vault.addChronicleEntry("CleftSolved",1,"yes")
-            PtDebugPrint("Chronicle updated with variable 'CleftSolved'.",level=kDebugDumpLevel)
-            PtSendKIMessage(kEnableEntireYeeshaBook,0)
-            psnlSDL = vault.getPsnlAgeSDL()
-            if psnlSDL:
-                YeeshaPageVar = psnlSDL.findVar("YeeshaPage25")
-                YeeshaPageVar.setInt(4)
-                vault.updatePsnlAgeSDL (psnlSDL)
+        vault = ptVault()
+        vault.addChronicleEntry("CleftSolved", 1, "yes")
+        PtDebugPrint("Chronicle updated with variable 'CleftSolved'.", level=kDebugDumpLevel)
+        PtSendKIMessage(kEnableEntireYeeshaBook, 0)
+        psnlSDL = vault.getPsnlAgeSDL()
+        if psnlSDL:
+            YeeshaPageVar = psnlSDL.findVar("YeeshaPage25")
+            YeeshaPageVar.setInt(4)
+            vault.updatePsnlAgeSDL(psnlSDL)
 
-    def OnTimer(self,id):
-        global gDemoMovie
-        global gWasMuted
+    def OnTimer(self, id):
         if id == kLinkRespID:
-            respLinkResponder.run(self.key, self.key,avatar=PtGetLocalAvatar())
-            if PtIsDemoMode():
-                PtFadeOut(kTrailerFadeOutSeconds,1)
-                PtAtTimeCallback(self.key, kTrailerFadeOutSeconds, kTrailerFadeOutID)
-            else:
-                # only re-enable the KI and BB if they are not in demo mode
-                PtSendKIMessage(kEnableKIandBB,0)
-        elif id == kTrailerFadeOutID:
-            try:
-                os.stat(kDemoMovieName)
-                # its there! show the background, which will start the movie
-                # just continue processing
-            except:
-                PtDebugPrint("xLiveTrailer - no intro movie!!!",level=kDebugDumpLevel)
-                PtDebugPrint("Quitting demo now...")
-                PtConsole("App.Quit")
-            PtDebugPrint("xLiveTrailer - start showing movie",level=kDebugDumpLevel)
-            PtShowDialog("IntroBahroBgGUI")
-            #TrailerDlg.dialog.show()
-            # stop rendering the scene while showing the movie
-            PtDisableRenderScene()
-            # dim the cursor
-            PtGUICursorDimmed()
-            # temp mute sound
-            audio = ptAudioControl()
-            if audio.isMuted():
-                gWasMuted = 1
-            else:
-                gWasMuted = 0
-                audio.muteAll()
-            PtFadeIn(kTrailerInSeconds,0)
-            PtAtTimeCallback(self.key, kTrailerInSeconds, kTrailerFadeInID)
-            if PtIsDemoMode():
-                gDemoMovie = ptMoviePlayer(kDemoMovieName,self.key)
-            gDemoMovie.playPaused()
-        elif id == kTrailerFadeInID:
-            PtDebugPrint("xLiveTrailer - roll the movie",level=kDebugDumpLevel)
-            if gDemoMovie is not None:
-                gDemoMovie.resume()
-        elif id == kTrailerDoneID:
-            PtDebugPrint("Quitting demo now...")
-            PtConsole("App.Quit")
-
-    def OnMovieEvent(self,movieName,reason):
-        PtDebugPrint("xLiveTrailer: got movie done event on %s, reason=%d" % (movieName,reason),level=kDebugDumpLevel)
-        if gDemoMovie:
-            #PtFadeOut(kTrailerFadeOutSeconds, kTrailerDoneID)
-            PtConsole("App.Quit")
+            respLinkResponder.run(self.key, self.key, avatar=PtGetLocalAvatar())
+            PtSendKIMessage(kEnableKIandBB, 0)

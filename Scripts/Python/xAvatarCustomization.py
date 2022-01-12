@@ -940,7 +940,7 @@ class xAvatarCustomization(ptModifier):
                                 if entry is not None:
                                     # player has solved the cleft
                                     # just go back to your personal age
-                                        self.ILinkToCloset()
+                                    self.ILinkToCloset()
                                 else:
                                     # player has not solved the cleft, link them to it
                                     ageLink = ptAgeLinkStruct()
@@ -948,10 +948,7 @@ class xAvatarCustomization(ptModifier):
                                     temp = ptAgeInfoStruct()
                                     temp.copyFrom(ageInfo)
                                     ageInfo = temp
-                                    if PtIsDemoMode():
-                                        ageInfo.setAgeFilename("Demo")
-                                    else:
-                                        ageInfo.setAgeFilename("Cleft")
+                                    ageInfo.setAgeFilename("Cleft")
                                     ageInfo.setAgeInstanceName("D'ni-Riltagamin")
                                     ageLink.setAgeInfo(ageInfo)
                                     ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
@@ -1000,10 +997,7 @@ class xAvatarCustomization(ptModifier):
                                     temp = ptAgeInfoStruct()
                                     temp.copyFrom(ageInfo)
                                     ageInfo = temp
-                                    if PtIsDemoMode():
-                                        ageInfo.setAgeFilename("Demo")
-                                    else:
-                                        ageInfo.setAgeFilename("Cleft")
+                                    ageInfo.setAgeFilename("Cleft")
                                     ageInfo.setAgeInstanceName("D'ni-Riltagamin")
                                     ageLink.setAgeInfo(ageInfo)
                                     ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
