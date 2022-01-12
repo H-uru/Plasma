@@ -331,7 +331,7 @@ class grsnWallPython(ptResponder):
             if(ageSDL["nState"][0] == kSit):
                 self.ResetWall(resetState=False)
                 self.ChangeGameState(kNorth, kSelectCount)
-                NorthPanelSound.run(self.key, state='main')
+                #NorthPanelSound.run(self.key, state='main')
             ### Confirm Blocker ###
             elif(ageSDL["nState"][0] == kSetBlocker):
                 if(self.GetNumBlockerSet(kNorth) < ageSDL["NumBlockers"][0]):
@@ -348,7 +348,7 @@ class grsnWallPython(ptResponder):
             if(ageSDL["sState"][0] == kSit):
                 self.ResetWall(resetState=False)
                 self.ChangeGameState(kSouth, kSelectCount)
-                SouthPanelSound.run(self.key, state='main')
+                #SouthPanelSound.run(self.key, state='main')
             ### Confirm Blocker ###
             elif(ageSDL["sState"][0] == kSetBlocker):
                 if(self.GetNumBlockerSet(kSouth) < ageSDL["NumBlockers"][0]):
@@ -558,8 +558,8 @@ class grsnWallPython(ptResponder):
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and ageSDL["nState"] != kEnd):
                 eventHandler.Handle(kEventNorthWin)
-            self.ChangeGameState(kNorth, kEnd)
-            self.ChangeGameState(kSouth, kEnd)
+                self.ChangeGameState(kNorth, kEnd)
+                self.ChangeGameState(kSouth, kEnd)
             return
         if(id == SouthTeamWin.id):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
@@ -578,8 +578,8 @@ class grsnWallPython(ptResponder):
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and ageSDL["nState"] != kEnd):
                 eventHandler.Handle(kEventSouthWin)             
-            self.ChangeGameState(kNorth, kEnd)
-            self.ChangeGameState(kSouth, kEnd)
+                self.ChangeGameState(kNorth, kEnd)
+                self.ChangeGameState(kSouth, kEnd)
             return
         ### Quit button ###
         if(id == NorthTeamQuit.id and state):
@@ -588,8 +588,8 @@ class grsnWallPython(ptResponder):
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and ageSDL["nState"] != kEnd):
                 eventHandler.Handle(kEventNorthQuit)
-            self.ChangeGameState(kNorth, kEnd)
-            self.ChangeGameState(kSouth, kEnd)
+                self.ChangeGameState(kNorth, kEnd)
+                self.ChangeGameState(kSouth, kEnd)
             return
         if(id == SouthTeamQuit.id and state):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
@@ -597,8 +597,8 @@ class grsnWallPython(ptResponder):
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and ageSDL["nState"] != kEnd):
                 eventHandler.Handle(kEventSouthQuit)
-            self.ChangeGameState(kNorth, kEnd)
-            self.ChangeGameState(kSouth, kEnd)
+                self.ChangeGameState(kNorth, kEnd)
+                self.ChangeGameState(kSouth, kEnd)
             return
         if(id == NorthQuitBehavior.id):
             for event in events:
@@ -696,7 +696,7 @@ class grsnWallPython(ptResponder):
                     self.ChangeGameState(kSouth, kSelectCount)
                 else:
                     #We were forced by South - update Display
-                    NorthPanelSound.run(self.key, state='main')
+                    #NorthPanelSound.run(self.key, state='main')
                     if(eventHandler):
                         eventHandler.Handle(kEventInit)
                 self.SetPanelMode(kNorth)
@@ -725,7 +725,7 @@ class grsnWallPython(ptResponder):
                     self.ChangeGameState(kNorth, kSelectCount)
                 else:
                     #We were forced by North - update Display
-                    SouthPanelSound.run(self.key, state='main')
+                    #SouthPanelSound.run(self.key, state='main')
                     if(eventHandler):
                         eventHandler.Handle(kEventInit)
                 self.SetPanelMode(kSouth)
