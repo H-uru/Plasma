@@ -186,7 +186,7 @@ PyObject* EnumValue_or(PyObject *v, PyObject *w)
     } else {
         PYTHON_RETURN_NOT_IMPLEMENTED;
     }
-    return PyLong_FromLong(obj->value | other);
+    return PyLong_FromSsize_t(obj->value | other);
 }
 
 PyObject* EnumValue_long(EnumValue* v)

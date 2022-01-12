@@ -212,7 +212,7 @@ void INtConnPostOperation (NtObject * ntObj, Operation * op, unsigned bytes) {
 
 //===========================================================================
 AsyncId INtConnSequenceStart (NtObject * ntObj) {
-    unsigned result;
+    intptr_t result;
     if (0 == (result = ++ntObj->nextStartSequence))
         result = ++ntObj->nextStartSequence;
     return (AsyncId) result;

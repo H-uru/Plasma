@@ -73,7 +73,7 @@ plVarDescriptor* plStateDescriptor::FindVar(const ST::string& name, int* idx) co
         if (!(*it)->GetName().compare_i(name))
         {
             if (idx)
-                *idx = it-fVarsList.begin();
+                *idx = (int)(it-fVarsList.begin());
             return *it;
         }
     }

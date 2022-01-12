@@ -72,7 +72,7 @@ bool plNetTransportMember::RemoveSubscription(int chan)
 int plNetTransportMember::FindSubscription(int chan)
 {
     std::vector<int>::iterator it=std::find(fSubscriptions.begin(), fSubscriptions.end(), chan);
-    return (it==fSubscriptions.end()) ? -1 : (it-fSubscriptions.begin());
+    return (it==fSubscriptions.end()) ? -1 : (int)(it-fSubscriptions.begin());
 }
 
 ST::string plNetTransportMember::AsString() const

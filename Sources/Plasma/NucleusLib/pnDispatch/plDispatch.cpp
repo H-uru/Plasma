@@ -404,7 +404,7 @@ void plDispatch::IMsgDispatch()
 
         delete fMsgCurrent;
         // TEMP
-        fMsgCurrent = (class plMsgWrap *)0xdeadc0de;
+        fMsgCurrent = (class plMsgWrap *)(uintptr_t)0xdeadc0de;
     }
 
     fMsgActive = false;

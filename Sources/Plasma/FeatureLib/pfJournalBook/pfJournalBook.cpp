@@ -1606,7 +1606,7 @@ void    pfJournalBook::IHandleLeftSideClick()
     if (hsSsize_t idx = IFindCurrVisibleLink(false, false); idx != -1)
     {
         if( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kActAsCB )
-            IHandleCheckClick( idx, pfBookData::kLeftSide );
+            IHandleCheckClick((uint32_t)idx, pfBookData::kLeftSide);
         else
             ISendNotify( kNotifyImageLink, fVisibleLinks[ idx ]->fEventID );
         return;
@@ -1624,7 +1624,7 @@ void    pfJournalBook::IHandleRightSideClick()
     if (hsSsize_t idx = IFindCurrVisibleLink(true, false); idx != -1)
     {
         if( fVisibleLinks[ idx ]->fFlags & pfEsHTMLChunk::kActAsCB )
-            IHandleCheckClick( idx, pfBookData::kRightSide );
+            IHandleCheckClick((uint32_t)idx, pfBookData::kRightSide);
         else
             ISendNotify( kNotifyImageLink, fVisibleLinks[ idx ]->fEventID );
         return;
@@ -2210,7 +2210,7 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
         return false;
 
     // Copy name
-    uint32_t len = ((uintptr_t)string - (uintptr_t)c)/2; // divide length by 2 because each character is two bytes
+    size_t len = ((uintptr_t)string - (uintptr_t)c)/2; // divide length by 2 because each character is two bytes
     wcsncpy( name, c, len );
     name[len] = L'\0';
 
@@ -3103,7 +3103,7 @@ void pfJournalBook::ISetDecalLayers(hsGMaterial *material, const std::vector<plL
     // First, clear out the existing layers.
     for (hsSsize_t i = material->GetNumLayers() - 1; i >= 0; i--)
     {
-        plMatRefMsg* refMsg = new plMatRefMsg(material->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer);
+        plMatRefMsg* refMsg = new plMatRefMsg(material->GetKey(), plRefMsg::kOnRemove, (int32_t)i, plMatRefMsg::kLayer);
         hsgResMgr::ResMgr()->SendRef(material->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
     }
 

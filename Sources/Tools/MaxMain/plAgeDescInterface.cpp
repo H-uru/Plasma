@@ -101,7 +101,7 @@ public:
 //// Static Tree Helpers //////////////////////////////////////////////////////
 
 static HTREEITEM    SAddTreeItem( HWND hTree, HTREEITEM hParent, const TCHAR* label, int userData );
-static int  SGetTreeData( HWND tree, HTREEITEM item );
+static LPARAM  SGetTreeData(HWND tree, HTREEITEM item);
 
 static void     RemovePageItem( HWND listBox, int item )
 {
@@ -435,7 +435,7 @@ INT_PTR plAgeDescInterface::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
                     else if( treeNotify->nmcd.dwDrawStage == CDDS_ITEMPREPAINT )
                     {
                         // Prepaint on an item. We get to change item font and color here
-                        int idx = SGetTreeData( hdr->hwndFrom, (HTREEITEM)treeNotify->nmcd.dwItemSpec );
+                        LPARAM idx = SGetTreeData(hdr->hwndFrom, (HTREEITEM)treeNotify->nmcd.dwItemSpec);
 /*                      if (item == nullptr || item->fType != plAgeFile::kBranch)
                         {
                             // Default drawing, with default font and such
@@ -627,7 +627,7 @@ void    plAgeDescInterface::IInvalidateCheckOutIndicator()
 
 bool    plAgeDescInterface::IMakeSureCheckedIn()
 {
-    int result;
+    INT_PTR result;
     plAgeFile* currAge = IGetCurrentAge();
     if (!currAge)
         return true;
@@ -1351,7 +1351,7 @@ plAgeFile* plAgeDescInterface::IGetCurrentAge()
     if (fCurrAgeItem == nullptr)
         return nullptr;
 
-    int idx = SGetTreeData( ageTree, fCurrAgeItem );
+    LPARAM idx = SGetTreeData(ageTree, fCurrAgeItem);
     if (idx == -1)
         return nullptr;
 
@@ -1385,7 +1385,7 @@ static HTREEITEM SAddTreeItem( HWND hTree, HTREEITEM hParent, const TCHAR* label
 //// SGetTreeData /////////////////////////////////////////////////////////////
 //  Gets the tree data for the given item
 
-int SGetTreeData( HWND tree, HTREEITEM item )
+LPARAM SGetTreeData( HWND tree, HTREEITEM item )
 {
     TVITEM  itemInfo;
     itemInfo.mask = TVIF_PARAM | TVIF_HANDLE;

@@ -119,7 +119,7 @@ struct NtSock : NtObject {
 static std::recursive_mutex             s_listenCrit;
 static LISTDECL(NtOpConnAttempt, link)  s_connectList;
 static bool                             s_runListenThread;
-static unsigned                         s_nextConnectCancelId = 1;
+static uintptr_t                        s_nextConnectCancelId = 1;
 static std::thread                      s_listenThread;
 static HANDLE                           s_listenEvent;
 

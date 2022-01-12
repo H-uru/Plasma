@@ -61,7 +61,7 @@ float plNetListenList::kMaxListenDistSq=75.0f*75.0f;
 int plNetVoiceList::FindMember(plNetTransportMember* e) 
 {
     VoiceListType::iterator result = std::find(fMembers.begin(), fMembers.end(), e);
-    return result!=fMembers.end() ? result-fMembers.begin() : -1;
+    return result!=fMembers.end() ? (int)(result-fMembers.begin()) : -1;
 }
 
 

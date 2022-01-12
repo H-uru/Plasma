@@ -386,8 +386,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
             PYTHON_RETURN_ERROR;
         }
 
-        int len = PyList_Size(argObj);
-        for (int curItem = 0; curItem < len; curItem++)
+        Py_ssize_t len = PyList_Size(argObj);
+        for (Py_ssize_t curItem = 0; curItem < len; curItem++)
         {
             PyObject* item = PyList_GetItem(argObj, curItem);
             ST::string arg = ST_LITERAL("INVALID ARG");

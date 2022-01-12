@@ -164,7 +164,7 @@ void hsGMaterial::ReplaceLayer(plLayerInterface* oldLay, plLayerInterface* newLa
     hsAssert(iter != layers.cend(), "Replacing a layer we don't have");
     if (iter == layers.cend())
         return;
-    SetLayer(newLay, iter - layers.cbegin(), piggyBack);
+    SetLayer(newLay, (int32_t)(iter - layers.cbegin()), piggyBack);
 }
 
 void hsGMaterial::RemoveLayer(plLayerInterface* lay, bool piggyBack)

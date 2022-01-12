@@ -811,7 +811,7 @@ void plComponentDlg::IOpenRightClickMenu()
 
     case kMenuHide:
         {
-            ClassDesc *desc = plComponentMgr::Inst().Get(item.lParam-1);
+            ClassDesc *desc = plComponentMgr::Inst().Get((uint32_t)(item.lParam-1));
 
             std::vector<Class_ID>::iterator it;
             it = std::find(fHiddenComps.begin(), fHiddenComps.end(), desc->ClassID());

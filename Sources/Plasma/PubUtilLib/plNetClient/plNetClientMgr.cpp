@@ -768,7 +768,7 @@ bool plNetClientMgr::IsNPCKey(const plKey& npc, int* idx) const
         plKeyVec::const_iterator it = std::find(fNPCKeys.begin(), fNPCKeys.end(), npc);
         bool found = it != fNPCKeys.end();
         if (idx)
-            *idx = found ? (it - fNPCKeys.begin()) : -1;
+            *idx = found ? (int)(it - fNPCKeys.begin()) : -1;
         return found;
     }
     return false;
@@ -792,7 +792,7 @@ bool plNetClientMgr::IsRemotePlayerKey(const plKey& pKey, int *idx)
         plKeyVec::iterator result=std::find(fRemotePlayerKeys.begin(), fRemotePlayerKeys.end(), pKey);
         bool found = result!=fRemotePlayerKeys.end();
         if (idx)
-            *idx = found ? result-fRemotePlayerKeys.begin() : -1;
+            *idx = found ? (int)(result-fRemotePlayerKeys.begin()) : -1;
         return found;
     }
     return false;

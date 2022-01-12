@@ -423,7 +423,7 @@ void plPythonSDLModifier::IPythonVarToSDL(plStateDataRecord* state, const ST::st
         for (Py_ssize_t i = 0; i < count; i++) {
             PyObject* pyVarItem = PyTuple_GetItem(pyVar, i);
             if (pyVarItem)
-                IPythonVarIdxToSDL(var, i, type, pyVarItem,it->second.hintString);
+                IPythonVarIdxToSDL(var, (int)i, type, pyVarItem,it->second.hintString);
         }
     }
 }

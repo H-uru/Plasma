@@ -223,7 +223,7 @@ bool plAgeLoader::IsPendingPageInRoomKey(const plKey& pKey, int *idx)
         plKeyVec::iterator result=std::find(fPendingPageIns.begin(), fPendingPageIns.end(), pKey);
         bool found = result!=fPendingPageIns.end();
         if (idx)
-            *idx = found ? result-fPendingPageIns.begin() : -1;
+            *idx = found ? (int)(result-fPendingPageIns.begin()) : -1;
         return found;
     }
     return false;

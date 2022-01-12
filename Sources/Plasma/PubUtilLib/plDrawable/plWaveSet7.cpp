@@ -2193,7 +2193,7 @@ hsGMaterial* plWaveSet7::ICreateFixedMatPS(hsGMaterial* mat, const int numUVWs)
     // If this is the 
     for (hsSsize_t i = mat->GetNumLayers()-1; i > 0; i--)
     {
-        plMatRefMsg* refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer);
+        plMatRefMsg* refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRemove, (int32_t)i, plMatRefMsg::kLayer);
         hsgResMgr::ResMgr()->SendRef(mat->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
     }
 
@@ -3470,14 +3470,14 @@ void plWaveSet7::ICheckDecalEnvLayers(hsGMaterial* mat)
             }
             else
             {
-                refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+1, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
+                refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, (int32_t)(i+1), plMatRefMsg::kLayer | plMatRefMsg::kInsert);
                 hsgResMgr::ResMgr()->SendRef(lay3->GetKey(), refMsg, plRefFlags::kActiveRef);
             }
 
-            refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+2, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
+            refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, (int32_t)(i+2), plMatRefMsg::kLayer | plMatRefMsg::kInsert);
             hsgResMgr::ResMgr()->SendRef(lay3->GetKey(), refMsg, plRefFlags::kActiveRef);
 
-            refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, i+3, plMatRefMsg::kLayer | plMatRefMsg::kInsert);
+            refMsg = new plMatRefMsg(mat->GetKey(), plRefMsg::kOnRequest, (int32_t)(i+3), plMatRefMsg::kLayer | plMatRefMsg::kInsert);
             hsgResMgr::ResMgr()->SendRef(lay3->GetKey(), refMsg, plRefFlags::kActiveRef);
         }
     }

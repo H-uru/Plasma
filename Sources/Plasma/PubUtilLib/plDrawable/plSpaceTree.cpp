@@ -422,7 +422,7 @@ void plSpaceTree::IHarvestAndCullLeaves(const plSpaceTreeNode& subRoot, hsBitVec
     if( subRoot.fFlags & plSpaceTreeNode::kDisabled )
         return;
 
-    int idx = &subRoot - &fTree[0];
+    auto idx = (uint32_t)(&subRoot - &fTree[0]);
     if( totList.IsBitSet(idx) )
         return;
 
@@ -490,7 +490,7 @@ void plSpaceTree::IHarvestLeaves(const plSpaceTreeNode& subRoot, hsBitVector& to
     if( subRoot.fFlags & plSpaceTreeNode::kDisabled )
         return;
 
-    int idx = &subRoot - &fTree[0];
+    auto idx = (uint32_t)(&subRoot - &fTree[0]);
     if( totList.IsBitSet(idx) )
         return;
 
