@@ -19,7 +19,7 @@ target_link_libraries(pfGLPipeline
         plPipeline
     PRIVATE
         plStatusLog
-        OpenGL::GL
+        epoxy::epoxy
     INTERFACE
         pnFactory
 )

@@ -21,7 +21,15 @@ set_package_properties(
 set_package_properties(
     DirectX PROPERTIES
     DESCRIPTION "Framework for hardware-accelerated 3D graphics on Microsoft platforms"
+    PURPOSE "Required for building the DirectX rendering pipeline"
     TYPE RECOMMENDED
+)
+set_package_properties(
+    epoxy PROPERTIES
+    URL "https://github.com/anholt/libepoxy"
+    DESCRIPTION "Library for OpenGL function pointer management"
+    PURPOSE "Required for building the OpenGL rendering pipeline"
+    TYPE OPTIONAL
 )
 set_package_properties(
     expat PROPERTIES
