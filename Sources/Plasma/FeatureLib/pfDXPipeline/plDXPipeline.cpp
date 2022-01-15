@@ -275,11 +275,11 @@ plProfile_CreateMemCounter("Pipeline Surfaces", "Memory", MemPipelineSurfaces);
 plProfile_Extern(MemVertex);
 plProfile_Extern(MemIndex);
 plProfile_CreateCounter("Feed Triangles", "Draw", DrawFeedTriangles);
-plProfile_CreateCounter("Polys", "General", DrawTriangles);
 plProfile_CreateCounter("Draw Prim Static", "Draw", DrawPrimStatic);
 plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
-plProfile_CreateCounter("Material Change", "Draw", MatChange);
 plProfile_CreateCounter("Layer Change", "Draw", LayChange);
+plProfile_Extern(DrawTriangles);
+plProfile_Extern(MatChange);
 
 plProfile_CreateCounterNoReset("Reload", "PipeC", PipeReload);
 
