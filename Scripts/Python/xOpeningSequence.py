@@ -71,7 +71,8 @@ OrientationDlg = ptAttribGUIDialog(3, "The Orientation dialog")
 #--------
 
 gIntroMovie = None
-kAtrusIntroMovie = "avi/URULiveIntro.webm"
+kAtrusIntroMovie = "avi/AtrusIntro.webm"
+kYeeshaIntroMovie = "avi/URULiveIntro.webm"
 
 gIntroStarted = 0
 
@@ -218,7 +219,12 @@ class xOpeningSequence(ptModifier):
                 # see if the there actually is a movie to play
                 skipMovie = 1
                 try:
-                    os.stat(kAtrusIntroMovie)
+                    vault = ptVault()
+                    start = vault.findChronicleEntry("StartPathChosen")
+                    if (start.chronicleGetValue() == "cleft"):
+                        os.stat(kAtrusIntroMovie)
+                    else:
+                        os.stat(kYeeshaIntroMovie)
                     # its there! show the background, which will start the movie
                     PtShowDialog("IntroBahroBgGUI")
                     skipMovie = 0
@@ -312,7 +318,13 @@ class xOpeningSequence(ptModifier):
         elif id == -1:
             if event == kShowHide:
                 if control.isEnabled():
-                    gIntroMovie = ptMoviePlayer(kAtrusIntroMovie,self.key)
+                    vault = ptVault()
+                    start = vault.findChronicleEntry("StartPathChosen")
+                    entryCleft = vault.findChronicleEntry("CleftSolved")
+                    if (start.chronicleGetValue() == "cleft" and entryCleft is None):
+                        gIntroMovie = ptMoviePlayer(kAtrusIntroMovie,self.key)
+                    else:
+                        gIntroMovie = ptMoviePlayer(kYeeshaIntroMovie,self.key)
                     gIntroMovie.playPaused()
                     if gIntroByTimer:
                         PtAtTimeCallback(self.key, kIntroPauseSeconds, kIntroPauseID)
@@ -374,7 +386,14 @@ class xOpeningSequence(ptModifier):
         # start rendering the scene again
         PtEnableRenderScene()
         PtGUICursorOn()
-        OrientationDlg.dialog.show()
+        vault = ptVault()
+        entry = vault.findChronicleEntry(kIntroPlayedChronicle)
+        start = vault.findChronicleEntry("StartPathChosen")
+        entryCleft = vault.findChronicleEntry("CleftSolved")
+        if (entry is not None and start.chronicleGetValue() == "cleft" and entryCleft is not None):
+            self.IStartGame()
+        else:
+            OrientationDlg.dialog.show()
         PtFadeIn(kHelpFadeInSeconds,0)
 
 
@@ -396,9 +415,12 @@ class xOpeningSequence(ptModifier):
         # 1) set chronicle variable to say they've complete intro
         vault = ptVault()
         entry = vault.findChronicleEntry(kIntroPlayedChronicle)
+        start = vault.findChronicleEntry("StartPathChosen")
         if entry is not None:
             entry.chronicleSetValue("yes")
             entry.save()
+        elif start.chronicleGetValue() == "cleft":
+            vault.addChronicleEntry(kIntroPlayedChronicle,2,"no")
         else:
             vault.addChronicleEntry(kIntroPlayedChronicle,2,"yes")
         # 2) fade screen up.. or something....? maybe
