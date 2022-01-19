@@ -544,17 +544,7 @@ class grsnWallPython(ptResponder):
         if(id == NorthTeamWin.id):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), NorthTeamWinTeleport.value.getKey())
-                avatar = PtGetLocalAvatar()
-                i = 0
-                for item in wornItem:
-                    color1 = DefaultColor1[i]
-                    color2 = DefaultColor2[i]
-                    avatar.avatar.netForce(1)
-                    avatar.avatar.wearClothingItem(item[0],0)
-                    avatar.avatar.tintClothingItem(item[0],color1,0)
-                    avatar.avatar.tintClothingItemLayer(item[0],color2,2,1)
-                    i += 1
-                #PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), False)
+                PtAtTimeCallback(self.key, 2.0, 0)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and ageSDL["nState"] != kEnd):
                 eventHandler.Handle(kEventNorthWin)
@@ -564,17 +554,7 @@ class grsnWallPython(ptResponder):
         if(id == SouthTeamWin.id):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), SouthTeamWinTeleport.value.getKey())
-                avatar = PtGetLocalAvatar()
-                i = 0
-                for item in wornItem:
-                    color1 = DefaultColor1[i]
-                    color2 = DefaultColor2[i]
-                    avatar.avatar.netForce(1)
-                    avatar.avatar.wearClothingItem(item[0],0)
-                    avatar.avatar.tintClothingItem(item[0],color1,0)
-                    avatar.avatar.tintClothingItemLayer(item[0],color2,2,1)
-                    i += 1
-                #PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), False)
+                PtAtTimeCallback(self.key, 2.0, 0)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             if(eventHandler and ageSDL["nState"] != kEnd):
                 eventHandler.Handle(kEventSouthWin)             
@@ -606,17 +586,7 @@ class grsnWallPython(ptResponder):
                     #Touched the Crystal
                     PtDebugPrint("Trigger North Crystal")
                     PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), NorthTeamWinTeleport.value.getKey())
-                    avatar = PtGetLocalAvatar()
-                    i = 0
-                    for item in wornItem:
-                        color1 = DefaultColor1[i]
-                        color2 = DefaultColor2[i]
-                        avatar.avatar.netForce(1)
-                        avatar.avatar.wearClothingItem(item[0],0)
-                        avatar.avatar.tintClothingItem(item[0],color1,0)
-                        avatar.avatar.tintClothingItemLayer(item[0],color2,2,1)
-                        i += 1
-                    #PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), False)
+                    PtAtTimeCallback(self.key, 2.0, 0)
             return
         if(id == SouthQuitBehavior.id):
             for event in events:
@@ -624,18 +594,7 @@ class grsnWallPython(ptResponder):
                     #Touched the Crystal
                     PtDebugPrint("Trigger South Crystal")
                     PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), SouthTeamWinTeleport.value.getKey())
-                    avatar = PtGetLocalAvatar()
-                    i = 0
-                    for item in wornItem:
-                        color1 = DefaultColor1[i]
-                        color2 = DefaultColor2[i]
-                        avatar.avatar.netForce(1)
-                        avatar.avatar.wearClothingItem(item[0],0)
-                        avatar.avatar.tintClothingItem(item[0],color1,0)
-                        avatar.avatar.tintClothingItemLayer(item[0],color2,2,1)
-                        i += 1
-                    #PtWearMaintainerSuit(PtGetLocalAvatar().getKey(), False)
-
+                    PtAtTimeCallback(self.key, 2.0, 0)
             return
         ### Blocker ###
         evAvatar = PtFindAvatar(events)
@@ -664,7 +623,22 @@ class grsnWallPython(ptResponder):
             if clothingName == item[0]:
                 return 1
         return 0
-        
+
+    def OnTimer(self,id):
+        global DefaultColor1
+        global DefaultColor2
+        avatar = PtGetLocalAvatar()
+        if id == 0:
+            i = 0
+            for item in wornItem:
+                color1 = DefaultColor1[i]
+                color2 = DefaultColor2[i]
+                avatar.avatar.netForce(1)
+                avatar.avatar.wearClothingItem(item[0],0)
+                avatar.avatar.tintClothingItem(item[0],color1,0)
+                avatar.avatar.tintClothingItemLayer(item[0],color2,2,1)
+                i += 1
+
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         ageSDL = PtGetAgeSDL()
         value = ageSDL[VARname][0]

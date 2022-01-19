@@ -60,10 +60,12 @@ teamnorthTeleport = ptAttribSceneobject(10,"team north teleport")
 resetResponder = ptAttribResponder(11,"reset floor",netForce=1)
 entryTrigger = ptAttribActivator(12,"entry trigger region",netForce=0)
 fakeLinkBehavior = ptAttribBehavior(13,"link out behavior",netForce=0)
+respElevator = ptAttribResponder(14,"start elevator",netForce=1)
 
 waitingOnSBook = False
 waitingOnNBook = False
 northLink = False
+kStartElevID = 1
 
 class grsnNexusBookMachine(ptResponder):
 
@@ -80,61 +82,65 @@ class grsnNexusBookMachine(ptResponder):
 
     def OnFirstUpdate(self):
         pass
-        
+
     def OnTimer(self,id):
         global northLink
-        
-        avatar = PtGetLocalAvatar()
-        if (northLink):
-            PtFakeLinkAvatarToObject(avatar.getKey(),teamnorthTeleport.value.getKey())
-        else:
-            PtFakeLinkAvatarToObject(avatar.getKey(),teamsouthTeleport.value.getKey())
-        
-        resetResponder.run(self.key,avatar=PtGetLocalAvatar())
-        PtSendKIMessage(kEnableEntireYeeshaBook,0)
-        entryTrigger.enable()
+
+        if id == 0:
+            avatar = PtGetLocalAvatar()
+            if (northLink):
+                PtFakeLinkAvatarToObject(avatar.getKey(),teamnorthTeleport.value.getKey())
+            else:
+                PtFakeLinkAvatarToObject(avatar.getKey(),teamsouthTeleport.value.getKey())
+
+            PtSendKIMessage(kEnableEntireYeeshaBook,0)
+            entryTrigger.enable()
+        elif id == kStartElevID:
+            respElevator.run(self.key,avatar=PtGetLocalAvatar())
 
     def OnNotify(self,state,id,events):
-        global waitingOnSBook 
-        global waitingOnNBook 
+        global waitingOnSBook
+        global waitingOnNBook
         global northLink
-        
+
         PtDebugPrint("id ",id)
-        
+
         avatar=PtFindAvatar(events)
         local = PtGetLocalAvatar()
-        
+
         if (avatar != local):
             return
-        
+
         if (id == fakeLinkBehavior.id):
             PtDebugPrint("notified of link behavior, north book ",northLink)
             for event in events:
                 if (event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
                     PtDebugPrint("started touching book, set warp out timer")
-                    PtAtTimeCallback(self.key ,1.0 ,0)
+                    PtAtTimeCallback(self.key, 1.0, 0)
                     return
-        
+
         if not state:
             return
 
         if (id == booksouthInPos.id):
             PtDebugPrint("South book aligned")
             booksouthOutResponder.run(self.key)
-            
+
         if (id == booknorthInPos.id):
             PtDebugPrint("North book aligned")
             booknorthOutResponder.run(self.key)
-            
+
         if (id == entryTrigger.id):
             #PtWearMaintainerSuit(avatar.getKey(),False)
             entryTrigger.disable()
-            
+            resetResponder.run(self.key,avatar=PtGetLocalAvatar())
+            PtAtTimeCallback(self.key, 3, kStartElevID)
+
         if (id == booksouthClickable.id):
             PtDebugPrint("touched south team room book")
-            northLink = False           
+            northLink = False
             avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value,self.key,fakeLinkBehavior.netForce)
-            
+
         if (id == booknorthClickable.id):
             PtDebugPrint("touched north team room book")
             northLink = True
