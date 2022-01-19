@@ -546,39 +546,39 @@ class grsnWallPython(ptResponder):
                 PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), NorthTeamWinTeleport.value.getKey())
                 PtAtTimeCallback(self.key, 2.0, 0)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
-            if(eventHandler and ageSDL["nState"] != kEnd):
+            if(eventHandler and ageSDL["nState"][0] != kEnd):
                 eventHandler.Handle(kEventNorthWin)
-                self.ChangeGameState(kNorth, kEnd)
-                self.ChangeGameState(kSouth, kEnd)
+            self.ChangeGameState(kNorth, kEnd)
+            self.ChangeGameState(kSouth, kEnd)
             return
         if(id == SouthTeamWin.id):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), SouthTeamWinTeleport.value.getKey())
                 PtAtTimeCallback(self.key, 2.0, 0)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
-            if(eventHandler and ageSDL["nState"] != kEnd):
+            if(eventHandler and ageSDL["nState"][0] != kEnd):
                 eventHandler.Handle(kEventSouthWin)             
-                self.ChangeGameState(kNorth, kEnd)
-                self.ChangeGameState(kSouth, kEnd)
+            self.ChangeGameState(kNorth, kEnd)
+            self.ChangeGameState(kSouth, kEnd)
             return
         ### Quit button ###
         if(id == NorthTeamQuit.id and state):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthQuitBehavior.value, self.key, NorthQuitBehavior.netForce)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
-            if(eventHandler and ageSDL["nState"] != kEnd):
+            if(eventHandler and ageSDL["nState"][0] != kEnd):
                 eventHandler.Handle(kEventNorthQuit)
-                self.ChangeGameState(kNorth, kEnd)
-                self.ChangeGameState(kSouth, kEnd)
+            self.ChangeGameState(kNorth, kEnd)
+            self.ChangeGameState(kSouth, kEnd)
             return
         if(id == SouthTeamQuit.id and state):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtGetLocalAvatar().avatar.runBehaviorSetNotify(SouthQuitBehavior.value, self.key, SouthQuitBehavior.netForce)
                 PtSendKIMessage(kEnableEntireYeeshaBook, 0)
-            if(eventHandler and ageSDL["nState"] != kEnd):
+            if(eventHandler and ageSDL["nState"][0] != kEnd):
                 eventHandler.Handle(kEventSouthQuit)
-                self.ChangeGameState(kNorth, kEnd)
-                self.ChangeGameState(kSouth, kEnd)
+            self.ChangeGameState(kNorth, kEnd)
+            self.ChangeGameState(kSouth, kEnd)
             return
         if(id == NorthQuitBehavior.id):
             for event in events:
