@@ -1014,7 +1014,7 @@ pfLocalizedString pfLocalizationDataMgr::GetElement(const ST::string & name) con
     // Force to English
     auto englishIt = fLocalizedElements[name].find("English");
     if (englishIt != fLocalizedElements[name].cend())
-        return currLangIt->second;
+        return englishIt->second;
 
     return {};
 }
