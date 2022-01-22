@@ -1245,33 +1245,44 @@ class CommandsProcessor:
     ## Look around for exits and informational text.
     def LookAround(self, params):
 
-        # Find the nearby people.
-        playerList = self.chatMgr.GetPlayersInChatDistance(minPlayers=-1)
-        people = "nobody in particular"
-        if len(playerList) > 0:
-            people = ""
-            for player in playerList:
-                people += player.getPlayerName() + ", "
-            people = people[:-2]
-
         # Load the Age-specific text.
         ageInfo = PtGetAgeInfo()
         if ageInfo is None:
             return
+
         currentAge = ageInfo.getAgeFilename()
         see = ""
         exits = " North and West."
+        people = ""
+        peopleVerb = "is"
         if currentAge in kEasterEggs:
             see = kEasterEggs[currentAge]["see"]
+
             if not kEasterEggs[currentAge]["exits"]:
                 exits = "... well, there are no exits."
             else:
-                exits = " " + kEasterEggs[currentAge]["exits"]
+                exits = kEasterEggs[currentAge]["exits"]
+
             if "people" in kEasterEggs[currentAge]:
                 people = kEasterEggs[currentAge]["people"]
 
+        # Find the nearby people if kEasterEggs didn't define people text override for the Age.
+        if not people:
+            playerList = self.chatMgr.GetPlayersInChatDistance(minPlayers=-1)
+            playerListLen = len(playerList)
+            people = " nobody in particular."
+            peopleVerb = "are" if playerListLen > 1 else "is"
+
+            if playerListLen > 0:
+                people = " "
+                for idx, player in enumerate(playerList):
+                    # concatenate player names together with commas (using "and" before the last name)
+                    people += player.getPlayerName() + (", " if idx != playerListLen - 2 else ", and ")
+                people = people[:-2]
+                people += "."
+
         ## Display the info.
-        self.chatMgr.AddChatLine(None, "{}: {} Standing near you is {}. There are exits to the{}".format(GetAgeName(), see, people, exits), 0)
+        self.chatMgr.AddChatLine(None, "{}: {} Standing near you {}{} There are exits to the{}".format(GetAgeName(), see, peopleVerb, people, exits), 0)
 
     ## Get a feather in the current Age.
     def GetFeather(self, params):
