@@ -90,6 +90,7 @@ public:
     enum flags
     {
         kSetFOV,
+        /** Forces the next camera transition to be cut. */
         kCutNextTrans,
         kRender,
         kRegionIgnore,
@@ -150,6 +151,7 @@ public:
     hsPoint3 GetCameraPOA() const { return fOutputPOA; }
     hsVector3 GetCameraUp() const { return fOutputUp; }
     void    SetCutNextTrans(); // used when player warps into a new camera region
+    void    SetCutNext();
 
     const hsMatrix44 GetCurrentMatrix() { return fMatrix; }
     static plVirtualCam1* Instance() { return fInstance; }

@@ -448,6 +448,22 @@ void plVirtualCam1::SetCutNextTrans()
 #endif
 }
 
+void plVirtualCam1::SetCutNext()
+{
+    plCameraModifier1* cam = GetCurrentCamera();
+    if (cam && cam->GetBrain()) {
+        cam->GetBrain()->SetFlags(plCameraBrain1::kCutPosOnce);
+        cam->GetBrain()->SetFlags(plCameraBrain1::kCutPOAOnce);
+    }
+
+    SetFlags(kCutNextTrans);
+    SetRender(true);
+
+#ifdef STATUS_LOG
+    camLog->AddLine("Set Camera to cut on next frame");
+#endif
+}
+
 void plVirtualCam1::SetRender(bool render)
 {
     fFlags.SetBit(kRender,render);
