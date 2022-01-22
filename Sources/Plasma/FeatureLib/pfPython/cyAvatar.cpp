@@ -2003,3 +2003,12 @@ bool cyAvatar::IsCurrentBrainHuman()
     }
     return false;
 }
+
+void cyAvatar::SetDontPanicLink(bool value)
+{
+    if (!fRecvr.empty()) {
+        plArmatureMod* mod = plAvatarMgr::FindAvatar(fRecvr[0]);
+        if (mod)
+            mod->SetDontPanicLinkFlag(value);
+    }
+}
