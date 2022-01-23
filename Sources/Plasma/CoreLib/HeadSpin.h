@@ -376,10 +376,8 @@ constexpr float hsInvert(float a) { return 1.f / a; }
 
 #ifdef _MSC_VER
 #   define ALIGN(n) __declspec(align(n))
-#   define NORETURN __declspec(noreturn)
 #else
 #   define ALIGN(n) __attribute__((aligned(n)))
-#   define NORETURN __attribute__((noreturn))
 #endif
 
 /************************ Debug/Error Macros **************************/
@@ -393,7 +391,11 @@ extern hsDebugMessageProc gHSStatusProc;
 hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
 
 void ErrorEnableGui (bool enabled);
-NORETURN void ErrorAssert (int line, const char* file, const char* fmt, ...);
+
+#ifndef HS_DEBUGGING
+[[noreturn]]
+#endif
+void ErrorAssert (int line, const char* file, const char* fmt, ...);
 
 bool DebugIsDebuggerPresent();
 void DebugBreakIfDebuggerPresent();
