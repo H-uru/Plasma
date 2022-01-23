@@ -1270,19 +1270,20 @@ class CommandsProcessor:
         if not people:
             playerList = self.chatMgr.GetPlayersInChatDistance(minPlayers=-1)
             playerListLen = len(playerList)
-            people = " nobody in particular."
             peopleVerb = "are" if playerListLen > 1 else "is"
 
-            if playerListLen > 0:
-                people = " "
-                for idx, player in enumerate(playerList):
-                    # concatenate player names together with commas (using "and" before the last name)
-                    people += player.getPlayerName() + (", " if idx != playerListLen - 2 else ", and ")
-                people = people[:-2]
-                people += "."
+            if playerListLen == 0:
+                people = " nobody in particular."
+            else:
+                # concatenate player names together with commas (using "and" before the last name)
+                people = ", ".join((
+                    f"{' ' if idx == 0 else ''}{'and ' if playerListLen > 1 and idx + 1 == playerListLen else ''}"
+                    f"{player.getPlayerName()}{'.' if idx + 1 == playerListLen else ''}"
+                    for idx, player in enumerate(playerList)
+                ))
 
         ## Display the info.
-        self.chatMgr.AddChatLine(None, "{}: {} Standing near you {}{} There are exits to the{}".format(GetAgeName(), see, peopleVerb, people, exits), 0)
+        self.chatMgr.AddChatLine(None, f"{GetAgeName()}: {see} Standing near you {peopleVerb}{people} There are exits to the{exits}", 0)
 
     ## Get a feather in the current Age.
     def GetFeather(self, params):
