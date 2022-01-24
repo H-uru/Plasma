@@ -893,8 +893,8 @@ class CommandsProcessor:
         if message.startswith("/"):
             words = message.split()
             # get the command word, trimming the / off the front
-            commandWord = str(words[0][1:].casefold())
-            if commandWord == "" or commandWord.isspace():
+            commandWord = words[0][1:].casefold()
+            if not commandWord or commandWord.isspace():
                 # no command after the /, so short-circuit trying to do or send anything
                 return None
 
