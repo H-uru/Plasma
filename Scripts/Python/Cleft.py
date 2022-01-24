@@ -182,6 +182,7 @@ class Cleft(ptResponder):
             else:
                 avatar.avatar.removeClothingItem("MAccPlayerBook")
             avatar.avatar.saveClothing()
+            avatar.avatar.setDontPanicLink(True)
         elif start.chronicleGetValue() == "relto" and entryCleft is None:
             ageSDL["clftYeeshaBookVis"] = (0,)
 
