@@ -1277,8 +1277,8 @@ class CommandsProcessor:
             else:
                 # concatenate player names together with commas (using "and" before the last name)
                 people = ", ".join((
-                    f"{' ' if idx == 0 else ''}{'and ' if playerListLen > 1 and idx + 1 == playerListLen else ''}"
-                    f"{player.getPlayerName()}{'.' if idx + 1 == playerListLen else ''}"
+                    f"{' ' if idx == 0 else ''}{'and ' if playerListLen > 1 and playerListLen == idx + 1 else ''}"
+                    f"{player.getPlayerName()}{'.' if playerListLen == idx + 1 else ''}"
                     for idx, player in enumerate(playerList)
                 ))
 
