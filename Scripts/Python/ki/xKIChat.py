@@ -892,8 +892,14 @@ class CommandsProcessor:
         # Is it an emote, a "/me" or invalid command?
         if message.startswith("/"):
             words = message.split()
+            # get the command word, trimming the / off the front
+            commandWord = words[0][1:].casefold()
+            if not commandWord or commandWord.isspace():
+                # no command after the /, so short-circuit trying to do or send anything
+                return None
+
             try:
-                emote = xKIExtChatCommands.xChatEmoteXlate[str(words[0][1:].casefold())]
+                emote = xKIExtChatCommands.xChatEmoteXlate[commandWord]
                 if emote[0] in xKIExtChatCommands.xChatEmoteLoop:
                     PtAvatarEnterAnimMode(emote[0])
                 else:
@@ -918,7 +924,7 @@ class CommandsProcessor:
                 return message[1:]
             except LookupError:
                 try:
-                    command = xKIExtChatCommands.xChatExtendedChat[str(words[0][1:].casefold())]
+                    command = xKIExtChatCommands.xChatExtendedChat[commandWord]
                     if isinstance(command, str):
                         # Retrieved command is just a plain string
                         args = message[len(words[0]):]
