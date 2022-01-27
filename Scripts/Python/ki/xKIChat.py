@@ -1016,10 +1016,18 @@ class CommandsProcessor:
             return int(params)
         except ValueError:
             for player in self.chatMgr.BKPlayerList:
+                # Age Players
                 if isinstance(player, ptPlayer):
                     plyrName = player.getPlayerName().casefold()
                     if params.casefold() == plyrName:
                         return player.getPlayerID()
+                # Buddies or Neighbors
+                elif isinstance(player, ptVaultNodeRef):
+                    plyrInfoNode = player.getChild().upcastToPlayerInfoNode()
+                    if type(plyrInfoNode) != type(None) and plyrInfoNode.getType() == PtVaultNodeTypes.kPlayerInfoNode:
+                        plyrName = plyrInfoNode.playerGetName().casefold()
+                        if params.casefold() == plyrName:
+                            return plyrInfoNode.playerGetID()
             return 0
 
     #~~~~~~~~~~~~~~~~~~~#
