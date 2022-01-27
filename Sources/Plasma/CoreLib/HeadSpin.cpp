@@ -118,7 +118,10 @@ void ErrorEnableGui(bool enabled)
     s_GuiAsserts = enabled;
 }
 
-NORETURN void ErrorAssert(int line, const char* file, const char* fmt, ...)
+#if !defined(HS_DEBUGGING)
+[[noreturn]]
+#endif // defined(HS_DEBUGGING)
+void ErrorAssert(int line, const char* file, const char* fmt, ...)
 {
 #if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
     char msg[1024];
@@ -131,6 +134,9 @@ NORETURN void ErrorAssert(int line, const char* file, const char* fmt, ...)
     {
         if (_CrtDbgReport(_CRT_ASSERT, file, line, nullptr, msg))
             DebugBreakAlways();
+
+        // All handling was done by the GUI, so bail.
+        return;
     } else
 #endif // _MSC_VER
     {
@@ -146,7 +152,9 @@ NORETURN void ErrorAssert(int line, const char* file, const char* fmt, ...)
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 
     // If no debugger break occurred, just crash.
+#if !defined(HS_DEBUGGING)
     std::abort();
+#endif // defined(HS_DEBUGGING)
 }
 
 bool DebugIsDebuggerPresent()
