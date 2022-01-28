@@ -1024,7 +1024,7 @@ class CommandsProcessor:
                 # Buddies or Neighbors
                 elif isinstance(player, ptVaultNodeRef):
                     plyrInfoNode = player.getChild().upcastToPlayerInfoNode()
-                    if type(plyrInfoNode) != type(None) and plyrInfoNode.getType() == PtVaultNodeTypes.kPlayerInfoNode:
+                    if plyrInfoNode is not None:
                         plyrName = plyrInfoNode.playerGetName().casefold()
                         if params.casefold() == plyrName:
                             return plyrInfoNode.playerGetID()
