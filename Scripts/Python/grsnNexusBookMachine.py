@@ -57,15 +57,20 @@ booksouthClickable = ptAttribActivator(7,"south book clickable")
 booknorthClickable = ptAttribActivator(8,"north book clickable")
 teamsouthTeleport = ptAttribSceneobject(9,"team south teleport")
 teamnorthTeleport = ptAttribSceneobject(10,"team north teleport")
-resetResponder = ptAttribResponder(11,"reset floor",netForce=1)
+resetResponder = ptAttribResponder(11,"reset floor",netForce=0)
 entryTrigger = ptAttribActivator(12,"entry trigger region",netForce=0)
 fakeLinkBehavior = ptAttribBehavior(13,"link out behavior",netForce=0)
-respElevator = ptAttribResponder(14,"start elevator",netForce=1)
+respElevator = ptAttribResponder(14,"start elevator",netForce=0)
+camera = ptAttribSceneobject(15,"elevator camera")
+subworld = ptAttribSceneobject(16,"subworld")
+chatChannel = ptAttribInt(17,"chat channel",6)
 
 waitingOnSBook = False
 waitingOnNBook = False
 northLink = False
+runOnce = True
 kStartElevID = 1
+kResetElevID = 2
 
 class grsnNexusBookMachine(ptResponder):
 
@@ -75,16 +80,54 @@ class grsnNexusBookMachine(ptResponder):
         self.id = 53624
         self.version = 2
 
+    def __del__(self):
+        "the destructor"
+        try:
+            PtClearPrivateChatList(PtGetLocalAvatar().getKey())
+        except:
+            pass
+        PtDebugPrint("grsnNexusBookMachine.OnPageUnload:\tremoving ourselves from private chat channel %d" % (chatChannel.value),level=kDebugDumpLevel)
+        PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
+
+    def IAmMaster(self):
+        return (self.sceneobject.isLocallyOwned())
+
+    ## Returns a list of players within chat distance.
+    def GetPlayersInChatDistance(self, minPlayers=8):
+
+        plyrList = []
+        agePlayers = PtGetPlayerListDistanceSorted()
+        for player in agePlayers:
+            if player.getPlayerID() != 0:
+                if player.getDistanceSq() < PtMaxListenDistSq():
+                    plyrList.append(player)
+                else:
+                    if len(plyrList) <= minPlayers:
+                        plyrList.append(player)
+        return plyrList
 
     def OnServerInitComplete(self):
-        pass
+        resetResponder.run(self.key,avatar=PtGetLocalAvatar())
 
 
     def OnFirstUpdate(self):
         pass
 
+    def OnPageLoad(self,what,room):
+        "Check for page unload... then we must be leavin'"
+        # when we unloading the page, then we are no longer in this chat region
+        if what == kUnloaded:
+            PtDebugPrint("grsnNexusBookMachine.OnPageUnload:",level=kDebugDumpLevel)
+            try:
+                PtClearPrivateChatList(PtGetLocalAvatar().getKey())
+            except:
+                pass
+            PtDebugPrint("grsnNexusBookMachine.OnPageUnload:\tremoving ourselves from private chat channel %d" % (chatChannel.value),level=kDebugDumpLevel)
+            PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
+
     def OnTimer(self,id):
         global northLink
+        global runOnce
 
         if id == 0:
             avatar = PtGetLocalAvatar()
@@ -93,20 +136,30 @@ class grsnNexusBookMachine(ptResponder):
             else:
                 PtFakeLinkAvatarToObject(avatar.getKey(),teamsouthTeleport.value.getKey())
 
+            PtDebugPrint("grsnNexusBookMachine.OnTimer:\tremoving ourselves from private chat channel %d" % (chatChannel.value),level=kDebugDumpLevel)
+            PtClearPrivateChatList(PtGetLocalAvatar().getKey())
+            PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
+            
             PtSendKIMessage(kEnableEntireYeeshaBook,0)
-            entryTrigger.enable()
+            PtAtTimeCallback(self.key, 2, kResetElevID)
         elif id == kStartElevID:
             respElevator.run(self.key,avatar=PtGetLocalAvatar())
+        elif id == kResetElevID:
+            resetResponder.run(self.key,avatar=PtGetLocalAvatar())
+            PtFadeIn(4,True,True)
+            runOnce = True
 
     def OnNotify(self,state,id,events):
         global waitingOnSBook
         global waitingOnNBook
         global northLink
+        global runOnce
 
-        PtDebugPrint("id ",id)
+        #PtDebugPrint("id ",id)
 
         avatar=PtFindAvatar(events)
         local = PtGetLocalAvatar()
+        master = self.IAmMaster()
 
         if (avatar != local):
             return
@@ -117,24 +170,31 @@ class grsnNexusBookMachine(ptResponder):
                 if (event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
                     PtDebugPrint("started touching book, set warp out timer")
                     PtAtTimeCallback(self.key, 1.0, 0)
+                    PtFadeOut(2,True,True)
                     return
 
         if not state:
             return
 
-        if (id == booksouthInPos.id):
+        if (id == booksouthInPos.id and master):
             PtDebugPrint("South book aligned")
             booksouthOutResponder.run(self.key)
 
-        if (id == booknorthInPos.id):
+        if (id == booknorthInPos.id and master):
             PtDebugPrint("North book aligned")
             booknorthOutResponder.run(self.key)
 
-        if (id == entryTrigger.id):
-            #PtWearMaintainerSuit(avatar.getKey(),False)
-            entryTrigger.disable()
+        if (id == entryTrigger.id and runOnce):
+            PtDebugPrint("grsnNexusBookMachine.OnNotify:\tadding you to private chat channel %d" % (chatChannel.value),level=kDebugDumpLevel)
+            PtSendPrivateChatList(self.GetPlayersInChatDistance())
+            PtSendKIMessageInt(kSetPrivateChatChannel, chatChannel.value)
+            
+            avatar.avatar.enterSubWorld(subworld.value)
+            camera.value.pushCameraCut(PtGetLocalAvatar().getKey())
             resetResponder.run(self.key,avatar=PtGetLocalAvatar())
             PtAtTimeCallback(self.key, 3, kStartElevID)
+            PtFadeIn(4,True,True)
+            runOnce = False
 
         if (id == booksouthClickable.id):
             PtDebugPrint("touched south team room book")
