@@ -157,6 +157,8 @@ k6FemaleID          = 607
 k6PlayTxtID         = 608
 k6CleftID           = 609
 k6ReltoID           = 610
+k6CleftHelpID       = 611
+k6ReltoHelpID       = 612
 
 #====================================
 # Globals
@@ -414,6 +416,18 @@ class xDialogStartUp(ptResponder):
                     if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6CleftID)).isChecked():
                         ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6CleftID)).setChecked(False)
 
+                elif tagID == k6CleftHelpID: ## Cleft Help Button ##
+                    errorString = PtGetLocalizedString("GUI.Dialog04d.CleftHelp")
+                    ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                    PtShowDialog("GUIDialog04d")
+                    self.ToggleColor(GUIDiag4b, k4bPlayer03)
+
+                elif tagID == k6ReltoHelpID: ## Relto Help Button ##
+                    errorString = PtGetLocalizedString("GUI.Dialog04d.ReltoHelp")
+                    ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                    PtShowDialog("GUIDialog04d")
+                    self.ToggleColor(GUIDiag4b, k4bPlayer03)
+
     ###########################
     def OnAccountUpdate(self, opType, result, playerInt):
         global gExp_HotSpot
@@ -467,7 +481,7 @@ class xDialogStartUp(ptResponder):
             if start is not None:
                 gPlayerStart = start.chronicleGetValue()
             else:
-                vault.addChronicleEntry("StartPathChosen",1,gPlayerStart)
+                vault.addChronicleEntry("StartPathChosen", 1, gPlayerStart)
             if entry is not None:
                 if gPlayerStart == "cleft":
                     entryCleft = vault.findChronicleEntry("CleftSolved")

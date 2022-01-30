@@ -90,7 +90,7 @@ class Personal(ptResponder):
         # test for first time to play the intro movie
         vault = ptVault()
         entry = vault.findChronicleEntry(kIntroPlayedChronicle)
-        if (entry is not None and entry.chronicleGetValue() == "yes"):
+        if entry is not None and entry.chronicleGetValue() == "yes":
             # already played intro sometime in the past... just let 'em play
             # enable twice because if we came from the ACA (closet->ACA->personal) it was disabled twice
             PtSendKIMessage(kEnableKIandBB,0)

@@ -58,59 +58,59 @@ import PlasmaControlKeys
 from xPsnlVaultSDL import *
 
 
-imagerBtn           = ptAttribActivator(1, "fake imager button")
-imagerBrokenBtn     = ptAttribActivator(2, "broken imager go switch")
-imagerLockN         = ptAttribActivator(3, "imager lock N")
-imagerLockS         = ptAttribActivator(4, "imager lock S")
-imagerLockE         = ptAttribActivator(5, "imager lock E")
-imagerLockW         = ptAttribActivator(6, "imager lock W")
-imagerCam           = ptAttribSceneobject(7, "imager camera")
+imagerBtn           = ptAttribActivator(1,"fake imager button")
+imagerBrokenBtn     = ptAttribActivator(2,"broken imager go switch")
+imagerLockN         = ptAttribActivator(3,"imager lock N")
+imagerLockS         = ptAttribActivator(4,"imager lock S")
+imagerLockE         = ptAttribActivator(5,"imager lock E")
+imagerLockW         = ptAttribActivator(6,"imager lock W")
+imagerCam           = ptAttribSceneobject(7,"imager camera")
 # imager animation responders:
-imagerRespN          = ptAttribResponder(8, "N Responder", ['State 1', 'State 2', 'State 3', 'State 4', 'SOLVED', 'State 6', 'State 7'])
-imagerRespS          = ptAttribResponder(9, "S Responder", ['State 1', 'State 2', 'State 3', 'State 4', 'State 5', 'State 6', 'SOLVED'])
-imagerRespW          = ptAttribResponder(10, "W Responder", ['State 1', 'SOLVED', 'State 3', 'State 4', 'State 5', 'State 6', 'State 7'])
-imagerRespE          = ptAttribResponder(11, "E Responder", ['State 1', 'State 2', 'State 3', 'SOLVED', 'State 5', 'State 6', 'State 7'])
+imagerRespN          = ptAttribResponder(8,"N Responder",['State 1','State 2','State 3','State 4','SOLVED','State 6','State 7'])
+imagerRespS          = ptAttribResponder(9,"S Responder",['State 1','State 2','State 3','State 4','State 5','State 6','SOLVED'])
+imagerRespW          = ptAttribResponder(10,"W Responder",['State 1','SOLVED','State 3','State 4','State 5','State 6','State 7'])
+imagerRespE          = ptAttribResponder(11,"E Responder",['State 1','State 2','State 3','SOLVED','State 5','State 6','State 7'])
 # NPC speech responders and stuff
-ImagerOneshot       = ptAttribResponder(12, "Resp: Player avatar oneshot")
-ShortVisionSound    = ptAttribResponder(13, "Resp: Short Vision audio", ['on', 'off'])
-LongVisionSound     = ptAttribResponder(14, "Resp: Long Vision audio", ['on', 'off'])
-#imagerSolvedBtn     = ptAttribActivator(15, "opening speech")
-#imagerEndgameBtn    = ptAttribActivator(16, "endgame speech")
+ImagerOneshot       = ptAttribResponder(12,"Resp: Player avatar oneshot")
+ShortVisionSound    = ptAttribResponder(13,"Resp: Short Vision audio", ['on','off'])
+LongVisionSound     = ptAttribResponder(14,"Resp: Long Vision audio", ['on','off'])
+#imagerSolvedBtn     = ptAttribActivator(15,"opening speech")
+#imagerEndgameBtn    = ptAttribActivator(16,"endgame speech")
 YeeshaMultiStage        = ptAttribBehavior(15, "Yeesha multistage")
 YeeshaSpawner          = ptAttribActivator(16, "Yeesha spawner")
-YeeshaWarpHid          = ptAttribSceneobject(17, "warp: Yeesha hidden")
-YeeshaWarpVis1         = ptAttribSceneobject(18, "warp: Yeesha vis 1")
+YeeshaWarpHid          = ptAttribSceneobject(17,"warp: Yeesha hidden")
+YeeshaWarpVis1         = ptAttribSceneobject(18,"warp: Yeesha vis 1")
 #SDL to kill imager anim if you pull the lever while its playing
-stringSDLVarLocked = ptAttribString(19, "sdl for windmill lock")
+stringSDLVarLocked = ptAttribString(19,"sdl for windmill lock")
 #SDLs for Imager panel/symbol states
-stringSDLVarPanelN = ptAttribString(20, "sdl for PanelN")
-stringSDLVarPanelS = ptAttribString(21, "sdl for PanelS")
-stringSDLVarPanelE = ptAttribString(22, "sdl for PanelE")
-stringSDLVarPanelW = ptAttribString(23, "sdl for PanelW")
+stringSDLVarPanelN = ptAttribString(20,"sdl for PanelN")
+stringSDLVarPanelS = ptAttribString(21,"sdl for PanelS")
+stringSDLVarPanelE = ptAttribString(22,"sdl for PanelE")
+stringSDLVarPanelW = ptAttribString(23,"sdl for PanelW")
 #Endgame Yeesha speech responders
-YeeshaSpeech2 = ptAttribResponder(24, "Resp: Yeesha speech 2", ['on', 'off'])
-respBookAnim = ptAttribResponder(25, "Resp: Tomahna book disabler")
-stringSDLVarRunning = ptAttribString(26, "sdl for windmill running")
-ImagerBtnVisible = ptAttribResponder(27, "Resp: Imager dummy vis")
-ImagerBtnInvisible = ptAttribResponder(28, "Resp: Imager dummy invis")
+YeeshaSpeech2 = ptAttribResponder(24,"Resp: Yeesha speech 2", ['on','off'])
+respBookAnim = ptAttribResponder(25,"Resp: Tomahna book disabler")
+stringSDLVarRunning = ptAttribString(26,"sdl for windmill running")
+ImagerBtnVisible = ptAttribResponder(27,"Resp: Imager dummy vis")
+ImagerBtnInvisible = ptAttribResponder(28,"Resp: Imager dummy invis")
 SeekBehavior = ptAttribBehavior(29, "Smart seek before GUI")
-YeeshaWarpVis2 = ptAttribSceneobject(30, "warp: Yeesha vis 2")
-GetClothesEvent = ptAttribActivator(31, "event to get Yeeshas Clothes")
-StopIntroVisEvent = ptAttribActivator(32, "event to stop intro vis")
-StopFinalVisEvent = ptAttribActivator(33, "event to stop final vis")
-KillIntroVisMusic = ptAttribResponder(34, "Resp: kill intro vis music")
-KillFinalVisMusic = ptAttribResponder(35, "Resp: kill final vis music")
-MakeMeVisible = ptAttribActivator(36, "force visible on local avatar")
-CamSceneSetup = ptAttribResponder(37, "Resp: Yeesha scene cam")
-YeeshaSpeech3 = ptAttribResponder(38, "Resp: Yeesha speech 3")
+YeeshaWarpVis2 = ptAttribSceneobject(30,"warp: Yeesha vis 2")
+GetClothesEvent = ptAttribActivator(31,"event to get Yeeshas Clothes")
+StopIntroVisEvent = ptAttribActivator(32,"event to stop intro vis")
+StopFinalVisEvent = ptAttribActivator(33,"event to stop final vis")
+KillIntroVisMusic = ptAttribResponder(34,"Resp: kill intro vis music")
+KillFinalVisMusic = ptAttribResponder(35,"Resp: kill final vis music")
+MakeMeVisible = ptAttribActivator(36,"force visible on local avatar")
+CamSceneSetup = ptAttribResponder(37,"Resp: Yeesha scene cam")
+YeeshaSpeech3 = ptAttribResponder(38,"Resp: Yeesha speech 3")
 YeeshaSceneTimerDoorClose = ptAttribActivator(39, "AnmEvt: Yeesha scene close door")
 YeeshaSceneTimerDone = ptAttribActivator(40, "AnmEvt: Yeesha scene done")
 RgnSnsrBahroStart = ptAttribActivator(41, "RgnSns: Bahro scene start")
-YeeshaWarpVis3 = ptAttribSceneobject(42, "warp: Yeesha vis 3")
-respPlayTPOTSpeech = ptAttribResponder(43, "resp: TPOT speech", ['on', 'off'])
-rgnTPOTShellLink = ptAttribActivator(44, "rgn sns: TPOT shell link")
-respTPOTShellLink = ptAttribResponder(45, "resp: TPOT shell link")
-StopYeeshaTPOTEvent = ptAttribActivator(46, "event to stop Yeesha TPOT")
+YeeshaWarpVis3 = ptAttribSceneobject(42,"warp: Yeesha vis 3")
+respPlayTPOTSpeech = ptAttribResponder(43,"resp: TPOT speech",['on','off'])
+rgnTPOTShellLink = ptAttribActivator(44,"rgn sns: TPOT shell link")
+respTPOTShellLink = ptAttribResponder(45,"resp: TPOT shell link")
+StopYeeshaTPOTEvent = ptAttribActivator(46,"event to stop Yeesha TPOT")
 
 
 # globals
@@ -126,10 +126,10 @@ kFinished = 55
 kLostPowerID = 33
 PlayFinal = 0
 # lists for Imager panel/symbol states
-statesN = ('State 1', 'State 2', 'State 3', 'State 4', 'SOLVED', 'State 6', 'State 7')
-statesS = ('State 1', 'State 2', 'State 3', 'State 4', 'State 5', 'State 6', 'SOLVED')
-statesE = ('State 1', 'State 2', 'State 3', 'SOLVED', 'State 5', 'State 6', 'State 7')
-statesW = ('State 1', 'SOLVED', 'State 3', 'State 4', 'State 5', 'State 6', 'State 7')
+statesN = ('State 1','State 2','State 3','State 4','SOLVED','State 6','State 7')
+statesS = ('State 1','State 2','State 3','State 4','State 5','State 6','SOLVED')
+statesE = ('State 1','State 2','State 3','SOLVED','State 5','State 6','State 7')
+statesW = ('State 1','SOLVED','State 3','State 4','State 5','State 6','State 7')
 imagerBusted = 0
 speechKilled = 0
 PuzzleView = 0
@@ -138,6 +138,7 @@ PlayScene = 0
 SDLVarSceneYeesha = "clftSceneYeeshaUnseen"
 SDLVarTomahnaActive = "clftTomahnaActive"
 PlayTPOT = 0
+
 
 class clftImager(ptResponder):
 
@@ -171,12 +172,12 @@ class clftImager(ptResponder):
         
         self.ageSDL = PtGetAgeSDL()
         # register for notification of locked SDL var changes
-        self.ageSDL.setNotify(self.key, stringSDLVarLocked.value, 0.0)
+        self.ageSDL.setNotify(self.key,stringSDLVarLocked.value,0.0)
         # register for notification of 4 Imager Panels SDL var changes
-        self.ageSDL.setNotify(self.key, stringSDLVarPanelN.value, 0.0)
-        self.ageSDL.setNotify(self.key, stringSDLVarPanelS.value, 0.0)
-        self.ageSDL.setNotify(self.key, stringSDLVarPanelE.value, 0.0)
-        self.ageSDL.setNotify(self.key, stringSDLVarPanelW.value, 0.0)
+        self.ageSDL.setNotify(self.key,stringSDLVarPanelN.value,0.0)
+        self.ageSDL.setNotify(self.key,stringSDLVarPanelS.value,0.0)
+        self.ageSDL.setNotify(self.key,stringSDLVarPanelE.value,0.0)
+        self.ageSDL.setNotify(self.key,stringSDLVarPanelW.value,0.0)
                 
         # gets SDL values of 4 Imager panels, uses this value to retrieve correct state from 4 state lists,
         # and runs the corresponding responder to set initial default state for each state panel
@@ -186,28 +187,28 @@ class clftImager(ptResponder):
             intPanelN = 3
             PtDebugPrint("ERROR:  clftImager.OnServerInitComplete():\tERROR: age sdl read failed, defaulting intPanelN = 3")                                
         panelN = statesN[intPanelN]
-        imagerRespN.run(self.key, state="%s" % (panelN))
+        imagerRespN.run(self.key,state="%s" % (panelN))
         try:
             intPanelS = self.ageSDL[stringSDLVarPanelS.value][0]            
         except:
             intPanelS = 5
             PtDebugPrint("ERROR:  clftImager.OnServerInitComplete():\tERROR: age sdl read failed, defaulting intPanelS = 5")                                
         panelS = statesS[intPanelS]
-        imagerRespS.run(self.key, state="%s" % (panelS))
+        imagerRespS.run(self.key,state="%s" % (panelS))
         try:
             intPanelE = self.ageSDL[stringSDLVarPanelE.value][0]            
         except:
             intPanelE = 3
             PtDebugPrint("ERROR:  clftImager.OnServerInitComplete():\tERROR: age sdl read failed, defaulting intPanelE = 3")                                
         panelE = statesE[intPanelE]
-        imagerRespE.run(self.key, state="%s" % (panelE))
+        imagerRespE.run(self.key,state="%s" % (panelE))
         try:
             intPanelW = self.ageSDL[stringSDLVarPanelW.value][0]            
         except:
             intPanelW = 0
             PtDebugPrint("ERROR:  clftImager.OnServerInitComplete():\tERROR: age sdl read failed, defaulting intPanelW = 0")                                
         panelW = statesW[intPanelW]
-        imagerRespW.run(self.key, state="%s" % (panelW))
+        imagerRespW.run(self.key,state="%s" % (panelW))
 
         boolSceneYeesha = self.ageSDL[SDLVarSceneYeesha][0]
         boolTomahnaActive = self.ageSDL[SDLVarTomahnaActive][0]
@@ -232,7 +233,7 @@ class clftImager(ptResponder):
             cam = ptCamera()
             cam.disableFirstPersonOverride()
             cam.undoFirstPerson()
-            CamSceneSetup.run(self.key, avatar=PtGetLocalAvatar())
+            CamSceneSetup.run(self.key,avatar=PtGetLocalAvatar())
             import xSndLogTracks
             xSndLogTracks.InitLogTrack("15")
         else:
@@ -241,7 +242,7 @@ class clftImager(ptResponder):
             #YeeshaName.draw.disable()  ## we're already doing this in clftImager.py
 
 
-    def OnBehaviorNotify(self, type, id, state):
+    def OnBehaviorNotify(self,type,id,state):
         global PlayScene
         
         PtDebugPrint("clftImager.OnBehaviorNotify(): %d" % (type))
@@ -253,7 +254,7 @@ class clftImager(ptResponder):
 
 
     # kill vision if you pull lever while its running
-    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
+    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         global visionplaying
         global statesN
         global statesS
@@ -266,7 +267,7 @@ class clftImager(ptResponder):
         if VARname == stringSDLVarLocked.value:
             windmillLocked = self.ageSDL[stringSDLVarLocked.value][0]
             if windmillLocked and visionplaying:
-                PtAtTimeCallback(self.key, 3, kLostPowerID)
+                PtAtTimeCallback(self.key,3,kLostPowerID)
                 #~ speechKilled = 1
                 #~ self.StopVision()
                 #~ imagerBrokenBtn.disableActivator()
@@ -280,19 +281,19 @@ class clftImager(ptResponder):
         if VARname == stringSDLVarPanelN.value:
             intPanelN = self.ageSDL[stringSDLVarPanelN.value][0]
             panelN = statesN[intPanelN]
-            imagerRespN.run(self.key, state="%s" % (panelN))
+            imagerRespN.run(self.key,state="%s" % (panelN))
         if VARname == stringSDLVarPanelS.value:
             intPanelS = self.ageSDL[stringSDLVarPanelS.value][0]
             panelS = statesS[intPanelS]
-            imagerRespS.run(self.key, state="%s" % (panelS))
+            imagerRespS.run(self.key,state="%s" % (panelS))
         if VARname == stringSDLVarPanelE.value:
             intPanelE = self.ageSDL[stringSDLVarPanelE.value][0]
             panelE = statesE[intPanelE]
-            imagerRespE.run(self.key, state="%s" % (panelE))
+            imagerRespE.run(self.key,state="%s" % (panelE))
         if VARname == stringSDLVarPanelW.value:
             intPanelW = self.ageSDL[stringSDLVarPanelW.value][0]
             panelW = statesW[intPanelW]
-            imagerRespW.run(self.key, state="%s" % (panelW))
+            imagerRespW.run(self.key,state="%s" % (panelW))
 
         intPanelN = self.ageSDL[stringSDLVarPanelN.value][0]
         intPanelS = self.ageSDL[stringSDLVarPanelS.value][0]
@@ -300,11 +301,11 @@ class clftImager(ptResponder):
         intPanelW = self.ageSDL[stringSDLVarPanelW.value][0]
         if intPanelN == 0 and intPanelS == 0 and intPanelW == 0 and intPanelE == 0:
             import xSndLogTracks
-            if xSndLogTracks.LogTrack("421", "15"):
+            if xSndLogTracks.LogTrack("421","15"):
                 xSndLogTracks.SetLogMode()
 
 
-    def OnControlKeyEvent(self, controlKey, activeFlag):
+    def OnControlKeyEvent(self,controlKey,activeFlag):
         global PuzzleView
         
         if controlKey == PlasmaControlKeys.kKeyExitMode:
@@ -317,7 +318,6 @@ class clftImager(ptResponder):
 
     def IQuitImager(self):
         global PuzzleView
-
         PtDebugPrint("disengage and exit the imager puzzle")
         avatar = PtGetLocalAvatar()
         imagerCam.value.popCutsceneCamera(avatar.getKey())
@@ -336,16 +336,12 @@ class clftImager(ptResponder):
         #PtGetControlEvents(False,self.key)
         PtDisableControlKeyEvents(self.key)
         PtEnableForwardMovement()
-        vault = ptVault()
-        start = vault.findChronicleEntry("StartPathChosen")
-        entryCleft = vault.findChronicleEntry("CleftSolved")
-        if not (start.chronicleGetValue() == "cleft" and entryCleft is None):
-            PtSendKIMessage(kEnableEntireYeeshaBook, 0)
+        self.CheckforNormalStart()
         PuzzleView = 0
-        PtAtTimeCallback(self.key, 1, imagerBtn.id)
+        PtAtTimeCallback(self.key,1,imagerBtn.id)
 
 
-    def OnNotify(self, state, id, events):
+    def OnNotify(self,state,id,events):
         global YeeshaName
         global PlayFull
         global visionplaying
@@ -409,10 +405,10 @@ class clftImager(ptResponder):
                         cam = ptCamera()
                         cam.disableFirstPersonOverride()
                         cam.undoFirstPerson()
-                        PtSendKIMessage(kDisableEntireYeeshaBook, 0)
+                        PtSendKIMessage(kDisableEntireYeeshaBook,0)
                         PtDisableForwardMovement()
                         PuzzleView = 1
-                        PtAtTimeCallback(self.key, 0.5, imagerBrokenBtn.id)
+                        PtAtTimeCallback(self.key,0.5,imagerBrokenBtn.id)
                         return
 
         # trigger the imager to run, reset clickables
@@ -460,15 +456,14 @@ class clftImager(ptResponder):
                 
             for event in events:
                 if event[0]==2 and event[1]==1: # play avatar oneshot, regardless of whether button is going on or off
-                    ImagerOneshot.run(self.key, events=events, avatar=PtGetLocalAvatar())
+                    ImagerOneshot.run(self.key,events=events,avatar=PtGetLocalAvatar())
                     return
 
         if (id == ImagerOneshot.id):
             PtDebugPrint("avatar oneshot callback")
             PuzzleView = 0
             PtEnableForwardMovement()
-            if not (start.chronicleGetValue() == "cleft" and entryCleft is None):
-                PtSendKIMessage(kEnableEntireYeeshaBook, 0)
+            self.CheckforNormalStart()
             windmillRunning = self.ageSDL[stringSDLVarRunning.value][0]
             if windmillRunning == 1 and imagerBusted == 0:
                 PtDebugPrint("clftImager.OnNotify: SDL says windmill is running, so button will do SOMETHING after oneshot...")
@@ -499,7 +494,7 @@ class clftImager(ptResponder):
                                 #PtAtTimeCallback(self.key, 141.6, kVision)
             else:
                 PtDebugPrint("clftImager.OnNotify: SDL says windmill is NOT running, so button will stop after oneshot...")
-                PtAtTimeCallback(self.key, 1, imagerBtn.id)
+                PtAtTimeCallback(self.key,1,imagerBtn.id)
 
         if (id == GetClothesEvent.id and state):
             avatar = PtGetLocalAvatar()
@@ -510,7 +505,7 @@ class clftImager(ptResponder):
                 clothingName = "02_MTorso09_01"
             if not any((i[0] == clothingName for i in avatar.avatar.getWardrobeClothingList())):
                 PtDebugPrint("adding Yeesha reward clothing %s to wardrobe" % (clothingName))
-                avatar.avatar.addWardrobeClothingItem(clothingName, ptColor().white(), ptColor().black())
+                avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().black())
             else:
                 PtDebugPrint("player already has Yeesha reward clothing, doing nothing")
 
@@ -533,8 +528,8 @@ class clftImager(ptResponder):
             xtraInfo = "fromOutside"
             boolOfficeDoor = self.ageSDL[SDLVarOfficeDoor][0]
             if boolOfficeDoor == 0:
-                self.ageSDL.setTagString(SDLVarOfficeDoor, xtraInfo)
-                self.ageSDL[SDLVarOfficeDoor] = (1, )
+                self.ageSDL.setTagString(SDLVarOfficeDoor,xtraInfo)
+                self.ageSDL[SDLVarOfficeDoor] = (1,)
             else:
                 PtDebugPrint("what's wrong with the door?")
 
@@ -543,21 +538,21 @@ class clftImager(ptResponder):
             self.ageSDL = PtGetAgeSDL()
             YeeshaName.draw.disable()
             YeeshaName.physics.warpObj(YeeshaWarpHid.value.getKey())
-            YeeshaMultiStage.gotoStage(YeeshaName, 0, dirFlag=1, isForward=1)
-            self.ageSDL[SDLVarSceneYeesha] = (0, )
+            YeeshaMultiStage.gotoStage(YeeshaName, 0,dirFlag=1,isForward=1)
+            self.ageSDL[SDLVarSceneYeesha] = (0,)
             PlayScene == 0
             cam = ptCamera()
             cam.enableFirstPersonOverride()
             
         if (id == RgnSnsrBahroStart.id and state):
-            PtSendKIMessage(kDisableKIandBB, 0)
+            PtSendKIMessage(kDisableKIandBB,0)
             cam = ptCamera()
             cam.disableFirstPersonOverride()
             cam.undoFirstPerson()
 
         if (id == rgnTPOTShellLink.id and state):
             self.IDoCityLinksChron("Kveer")
-            respTPOTShellLink.run(self.key, avatar=PtGetLocalAvatar())
+            respTPOTShellLink.run(self.key,avatar=PtGetLocalAvatar())
 
 
     def SceneYeesha(self):
@@ -570,8 +565,8 @@ class clftImager(ptResponder):
             PtDebugPrint("clftImager: Playing scene now...")
             YeeshaName.draw.enable()
             YeeshaName.physics.warpObj(YeeshaWarpVis3.value.getKey())
-            YeeshaMultiStage.gotoStage(YeeshaName, 3, dirFlag=1, isForward=1)
-            YeeshaSpeech3.run(self.key, avatar=PtGetLocalAvatar())
+            YeeshaMultiStage.gotoStage(YeeshaName, 3,dirFlag=1,isForward=1)
+            YeeshaSpeech3.run(self.key,avatar=PtGetLocalAvatar())
         else:
             PtDebugPrint("clftImager: Nope, not playing scene.")
 
@@ -723,17 +718,17 @@ class clftImager(ptResponder):
                             chronSolutions = []
                             for sol in chronString:
                                 chronSolutions.append(int(sol))
-                            PtDebugPrint("found pellet cave solution: ", chronSolutions)
+                            PtDebugPrint("found pellet cave solution: ",chronSolutions)
                             return chronSolutions
 
 
-    def OnTimer(self, id):
+    def OnTimer(self,id):
         global visionplaying
         global kVision
         global kFinished
         global kLostPower
         global speechKilled
-
+        
         if visionplaying == 1 and id == kVision: 
             PtDebugPrint("\nclftImager.Ontimer:Got kVision timer callback. Automatically stopping vision.")
             self.StopVision()
@@ -760,7 +755,7 @@ class clftImager(ptResponder):
             imagerLockS.enableActivator()
             imagerLockW.enableActivator()
             imagerLockE.enableActivator()
-            PtSendKIMessage(kDisableEntireYeeshaBook, 0)
+            PtSendKIMessage(kDisableEntireYeeshaBook,0)
             PtDisableForwardMovement()
         elif id == imagerBtn.id:
             PtDebugPrint("\nclftImager.Ontimer:Got timer callback. Setting up Imager dummy....")
@@ -772,11 +767,7 @@ class clftImager(ptResponder):
             imagerBtn.enableActivator()
             ImagerBtnVisible.run(self.key)
             PtEnableForwardMovement()
-            vault = ptVault()
-            start = vault.findChronicleEntry("StartPathChosen")
-            entryCleft = vault.findChronicleEntry("CleftSolved")
-            if not (start.chronicleGetValue() == "cleft" and entryCleft is None):
-                PtSendKIMessage(kEnableEntireYeeshaBook, 0)
+            self.CheckforNormalStart()
         elif id == kLostPowerID:
             speechKilled = 1
             self.StopVision()
@@ -803,13 +794,13 @@ class clftImager(ptResponder):
         # play the vision
         if PlayFinal == 1:
             YeeshaName.physics.warpObj(YeeshaWarpVis2.value.getKey())
-            YeeshaMultiStage.gotoStage(YeeshaName, 2, dirFlag=1, isForward=1)
+            YeeshaMultiStage.gotoStage(YeeshaName, 2,dirFlag=1,isForward=1)
             #respBookAnim.run(self.key,state="on")
             visionplaying = 1
             VisionID = "final"
-            YeeshaSpeech2.run(self.key, state="on")
+            YeeshaSpeech2.run(self.key,state="on")
             PtDebugPrint("clftImager.StartVision: play final Yeesha speech 01, then enable Tomahna book...")
-            PtAtTimeCallback(self.key, 1, imagerBtn.id)
+            PtAtTimeCallback(self.key,1,imagerBtn.id)
         elif PlayFinal == 0 and PlayFull == 1:
             vault = ptVault()
             entry = vault.findChronicleEntry("YeeshaVisionViewed")
@@ -819,23 +810,23 @@ class clftImager(ptResponder):
                 entry.chronicleSetValue("1")
                 entry.save()
             YeeshaName.physics.warpObj(YeeshaWarpVis1.value.getKey())
-            YeeshaMultiStage.gotoStage(YeeshaName, 1, dirFlag=1, isForward=1)
+            YeeshaMultiStage.gotoStage(YeeshaName, 1,dirFlag=1,isForward=1)
             visionplaying = 1
             VisionID = "long"
             LongVisionSound.run(self.key, state="on")
-            PtAtTimeCallback(self.key, 1, imagerBtn.id)
+            PtAtTimeCallback(self.key,1,imagerBtn.id)
         elif PlayTPOT == 1:
-            respPlayTPOTSpeech.run(self.key, state="on")
+            respPlayTPOTSpeech.run(self.key,state="on")
             visionplaying = 1
             VisionID = "tpots"
             PtDebugPrint("clftImager.StartVision: play TPOT speech...")
         else:
             YeeshaName.physics.warpObj(YeeshaWarpVis1.value.getKey())
-            YeeshaMultiStage.gotoStage(YeeshaName, 1, dirFlag=1, isForward=1)
+            YeeshaMultiStage.gotoStage(YeeshaName, 1,dirFlag=1,isForward=1)
             visionplaying = 1
             VisionID = "short"
             ShortVisionSound.run(self.key, state="on")
-            PtAtTimeCallback(self.key, 1, imagerBtn.id)
+            PtAtTimeCallback(self.key,1,imagerBtn.id)
 
 
     def StopVision(self):
@@ -854,38 +845,38 @@ class clftImager(ptResponder):
         
         #stop the vision
         if VisionID == "final":
-            YeeshaMultiStage.gotoStage(YeeshaName, 0, dirFlag=1, isForward=1)
+            YeeshaMultiStage.gotoStage(YeeshaName, 0,dirFlag=1,isForward=1)
             #respBookAnim.run(self.key,state="off")
             visionplaying = 0
             PtDebugPrint("TRYING TO KILL FINAL VISION")
             if speechKilled == 1:
-                YeeshaSpeech2.run(self.key, state="on", fastforward=1)
+                YeeshaSpeech2.run(self.key,state="on",fastforward=1)
                 KillFinalVisMusic.run(self.key)
                 speechKilled = 0
-            YeeshaSpeech2.run(self.key, state="off")
+            YeeshaSpeech2.run(self.key,state="off")
             #PtAtTimeCallback(self.key,1,imagerBtn.id)
         elif VisionID == "long":
-            YeeshaMultiStage.gotoStage(YeeshaName, 0, dirFlag=1, isForward=1)
+            YeeshaMultiStage.gotoStage(YeeshaName, 0,dirFlag=1,isForward=1)
             visionplaying = 0
             if speechKilled == 1:
-                LongVisionSound.run(self.key, state="on", fastforward=1)
+                LongVisionSound.run(self.key,state="on",fastforward=1)
                 KillIntroVisMusic.run(self.key)
                 speechKilled = 0
-            LongVisionSound.run(self.key, state="off")
+            LongVisionSound.run(self.key,state="off")
             #PtAtTimeCallback(self.key,1,imagerBtn.id)
         elif VisionID == "short":
-            YeeshaMultiStage.gotoStage(YeeshaName, 0, dirFlag=1, isForward=1)
+            YeeshaMultiStage.gotoStage(YeeshaName, 0,dirFlag=1,isForward=1)
             visionplaying = 0
-            ShortVisionSound.run(self.key, state="on", fastforward=1)
-            ShortVisionSound.run(self.key, state="off")
+            ShortVisionSound.run(self.key,state="on",fastforward=1)
+            ShortVisionSound.run(self.key,state="off")
             speechKilled = 0
             #PtAtTimeCallback(self.key,1,imagerBtn.id)
         elif VisionID == "tpots":
             visionplaying = 0
             if speechKilled == 1:
-                respPlayTPOTSpeech.run(self.key, state="off")
+                respPlayTPOTSpeech.run(self.key,state="off")
                 speechKilled = 0
-            respPlayTPOTSpeech.run(self.key, state="off")
+            respPlayTPOTSpeech.run(self.key,state="off")
         else:
             PtDebugPrint("clftImager.StopVision: Don't know which vision to kill!")
 
@@ -894,39 +885,39 @@ class clftImager(ptResponder):
         avatar = PtGetLocalAvatar()
         if PuzzleView:
             avatar.draw.disable()
-            PtAtTimeCallback(self.key, 0.5, imagerBrokenBtn.id)
+            PtAtTimeCallback(self.key,0.5,imagerBrokenBtn.id)
         else:
             avatar.draw.enable()
-            PtAtTimeCallback(self.key, 0.5, imagerBtn.id)
+            PtAtTimeCallback(self.key,0.5,imagerBtn.id)
 
 
-    def IDoCityLinksChron(self, agePanel):
+    def IDoCityLinksChron(self,agePanel):
         CityLinks = []
         vault = ptVault()
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
         if entryCityLinks is not None:
             valCityLinks = entryCityLinks.chronicleGetValue()
-            PtDebugPrint("valCityLinks = ", valCityLinks)
+            PtDebugPrint("valCityLinks = ",valCityLinks)
             CityLinks = valCityLinks.split(",")
-            PtDebugPrint("CityLinks = ", CityLinks)
+            PtDebugPrint("CityLinks = ",CityLinks)
             if agePanel not in CityLinks:
                 NewLinks = valCityLinks + "," + agePanel
                 entryCityLinks.chronicleSetValue(NewLinks)
                 entryCityLinks.save()
-                PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  setting citylinks chron entry to include: ", agePanel)
+                PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  setting citylinks chron entry to include: ",agePanel)
                 valCityLinks = entryCityLinks.chronicleGetValue()
                 CityLinks = valCityLinks.split(",")
-                PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  citylinks now = ", CityLinks)
+                PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  citylinks now = ",CityLinks)
             else:
-                PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  do nothing, citylinks chron already contains: ", agePanel)
+                PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  do nothing, citylinks chron already contains: ",agePanel)
         else:
-            vault.addChronicleEntry("CityBookLinks", 0, agePanel)
-            PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  creating citylinks chron entry and adding: ", agePanel)
+            vault.addChronicleEntry("CityBookLinks",0,agePanel)
+            PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  creating citylinks chron entry and adding: ",agePanel)
         
         psnlSDL = xPsnlVaultSDL()
         GotBook = psnlSDL["psnlGotCityBook"][0]
         if not GotBook:
-            psnlSDL["psnlGotCityBook"] = (1, )
+            psnlSDL["psnlGotCityBook"] = (1,)
             PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  setting SDL for city book to 1")
 
 
@@ -935,24 +926,29 @@ class clftImager(ptResponder):
             if param == "off":
                 YeeshaName.draw.disable()
                 YeeshaName.physics.warpObj(YeeshaWarpHid.value.getKey())
-                YeeshaMultiStage.gotoStage(YeeshaName, 0, dirFlag=1, isForward=1)
+                YeeshaMultiStage.gotoStage(YeeshaName, 0,dirFlag=1,isForward=1)
             elif param == "on":
                 if target == "yeesha1":
                     YeeshaName.draw.enable()
                     YeeshaName.physics.warpObj(YeeshaWarpVis1.value.getKey())
-                    YeeshaMultiStage.gotoStage(YeeshaName, 1, dirFlag=1, isForward=1)
+                    YeeshaMultiStage.gotoStage(YeeshaName, 1,dirFlag=1,isForward=1)
                 elif target == "yeesha2":
                     YeeshaName.draw.enable()
                     YeeshaName.physics.warpObj(YeeshaWarpVis2.value.getKey())
-                    YeeshaMultiStage.gotoStage(YeeshaName, 2, dirFlag=1, isForward=1)
+                    YeeshaMultiStage.gotoStage(YeeshaName, 2,dirFlag=1,isForward=1)
                 elif target == "yeesha3":
                     YeeshaName.draw.enable()
                     YeeshaName.physics.warpObj(YeeshaWarpVis3.value.getKey())
-                    YeeshaMultiStage.gotoStage(YeeshaName, 3, dirFlag=1, isForward=1)
+                    YeeshaMultiStage.gotoStage(YeeshaName, 3,dirFlag=1,isForward=1)
         elif target == "tpots":
             if param == "on" or param == "1":
-                respPlayTPOTSpeech.run(self.key, state="on")
+                respPlayTPOTSpeech.run(self.key,state="on")
             elif param == "off" or param == "0":
-                respPlayTPOTSpeech.run(self.key, state="off")
+                respPlayTPOTSpeech.run(self.key,state="off")
 
-
+    def CheckforNormalStart(self):
+        vault = ptVault()
+        start = vault.findChronicleEntry("StartPathChosen")
+        entryCleft = vault.findChronicleEntry("CleftSolved")
+        if not (start.chronicleGetValue() == "cleft" and entryCleft is None):
+            PtSendKIMessage(kEnableEntireYeeshaBook,0)

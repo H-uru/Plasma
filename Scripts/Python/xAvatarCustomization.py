@@ -944,10 +944,7 @@ class xAvatarCustomization(ptModifier):
                                 else:
                                     # player has not solved the cleft, link them to it
                                     ageLink = ptAgeLinkStruct()
-                                    ageInfo = ageLink.getAgeInfo()
-                                    temp = ptAgeInfoStruct()
-                                    temp.copyFrom(ageInfo)
-                                    ageInfo = temp
+                                    ageInfo = ptAgeInfoStruct()
                                     ageInfo.setAgeFilename("Cleft")
                                     ageInfo.setAgeInstanceName("D'ni-Riltagamin")
                                     ageLink.setAgeInfo(ageInfo)
@@ -965,10 +962,7 @@ class xAvatarCustomization(ptModifier):
                                 #Link straight to personal, no more going to cleft from the AVC!
                                 linkmgr = ptNetLinkingMgr()
                                 ageLink = ptAgeLinkStruct()
-                                ageInfo = ageLink.getAgeInfo()
-                                temp = ptAgeInfoStruct()
-                                temp.copyFrom(ageInfo)
-                                ageInfo = temp
+                                ageInfo = ptAgeInfoStruct()
                                 ageInfo.setAgeFilename("Personal")
                                 ageLink.setAgeInfo(ageInfo)
                                 ageLink.setLinkingRules(PtLinkingRules.kOwnedBook)
@@ -980,11 +974,7 @@ class xAvatarCustomization(ptModifier):
                                     # just go back to your personal age
                                     linkmgr = ptNetLinkingMgr()
                                     ageLink = ptAgeLinkStruct()
-
-                                    ageInfo = ageLink.getAgeInfo()
-                                    temp = ptAgeInfoStruct()
-                                    temp.copyFrom(ageInfo)
-                                    ageInfo = temp
+                                    ageInfo = ptAgeInfoStruct()
                                     ageInfo.setAgeFilename("Personal")
                                     ageLink.setAgeInfo(ageInfo)
                                     ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
@@ -992,16 +982,13 @@ class xAvatarCustomization(ptModifier):
 
                                 else:
                                     # this was their first time... go to the cleft
+                                    linkmgr = ptNetLinkingMgr()
                                     ageLink = ptAgeLinkStruct()
-                                    ageInfo = ageLink.getAgeInfo()
-                                    temp = ptAgeInfoStruct()
-                                    temp.copyFrom(ageInfo)
-                                    ageInfo = temp
+                                    ageInfo = ptAgeInfoStruct()
                                     ageInfo.setAgeFilename("Cleft")
                                     ageInfo.setAgeInstanceName("D'ni-Riltagamin")
                                     ageLink.setAgeInfo(ageInfo)
                                     ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
-                                    linkmgr = ptNetLinkingMgr()
                                     linkmgr.linkToAge(ageLink)
 
                     elif btnID == kQuitBtnID:

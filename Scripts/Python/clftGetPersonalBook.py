@@ -52,6 +52,7 @@ Sets Chronical Entry to ensure that players who have "solved" the cleft can't re
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
+from xPsnlVaultSDL import *
 import xLinkingBookDefs
 import os
 
@@ -80,7 +81,7 @@ class clftGetPersonalBook(ptResponder):
         ptResponder.__init__(self)
         self.id = 5219
         self.version = 10
-        PtDebugPrint("__init__clftGetPersonalBook v%d.%d" % (self.version, 2), level=kWarningLevel)
+        PtDebugPrint("__init__clftGetPersonalBook v%d.%d" % (self.version,2),level=kWarningLevel)
 
     def OnFirstUpdate(self):
         pass
@@ -95,18 +96,18 @@ class clftGetPersonalBook(ptResponder):
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
-        ageSDL.setNotify(self.key, "clftIsCleftDone", 0.0)
+        ageSDL.setNotify(self.key,"clftIsCleftDone",0.0)
 
     
-    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
+    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         if VARname == "clftIsCleftDone":
             ageSDL = PtGetAgeSDL()
             boolCleftDone = ageSDL["clftIsCleftDone"][0]
             if boolCleftDone:
-                respLinkOutNew.run(self.key, avatar=PtGetLocalAvatar())
+                respLinkOutNew.run(self.key,avatar=PtGetLocalAvatar())
 
 
-    def OnNotify(self, state, id, events):
+    def OnNotify(self,state,id,events):
         global LocalAvatar
         global YeeshaBook
         global gAreWeLinkingOut
@@ -116,22 +117,22 @@ class clftGetPersonalBook(ptResponder):
             for event in events:
                 # is it from the YeeshaBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
-                    PtDebugPrint("clftGetPersonalBook: BookNotify  event=%d, id=%d" % (event[1], event[2]), level=kDebugDumpLevel)
+                    PtDebugPrint("clftGetPersonalBook: BookNotify  event=%d, id=%d" % (event[1],event[2]),level=kDebugDumpLevel)
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
                         if event[2] == xLinkingBookDefs.kYeeshaBookLinkID:
-                            PtDebugPrint("clftGetPersonalBook:Book: hit linking panel", level=kDebugDumpLevel)
+                            PtDebugPrint("clftGetPersonalBook:Book: hit linking panel",level=kDebugDumpLevel)
                             gAreWeLinkingOut = 1
                             YeeshaBook.hide()
                             self.ILinktoPersonalAge()
                     elif event[1] == PtBookEventTypes.kNotifyShow:
                         pass
                     elif event[1] == PtBookEventTypes.kNotifyHide:
-                        PtDebugPrint("clftGetPersonalBook:Book: NotifyHide", level=kDebugDumpLevel)
+                        PtDebugPrint("clftGetPersonalBook:Book: NotifyHide",level=kDebugDumpLevel)
                         # don't really care if they close the book, but re-enable the clickable for them
                         if not gAreWeLinkingOut:
                             actClickableBook.enable()
                             # only re-enable the KI and BB if they are not linking out
-                            PtSendKIMessage(kEnableKIandBB, 0)
+                            PtSendKIMessage(kEnableKIandBB,0)
                         pass
                     elif event[1] == PtBookEventTypes.kNotifyNextPage:
                         pass
@@ -147,7 +148,7 @@ class clftGetPersonalBook(ptResponder):
                 # disable the book... need to re-enable if they cancel
                 actClickableBook.disable()
                 # prevent Martin from hitting the option menu and playing the live movie
-                PtSendKIMessage(kDisableKIandBB, 0)
+                PtSendKIMessage(kDisableKIandBB,0)
                 gAreWeLinkingOut = 0
                 LocalAvatar = PtFindAvatar(events)
                 SmartSeek.run(LocalAvatar)
@@ -158,8 +159,8 @@ class clftGetPersonalBook(ptResponder):
                     # if smart seek completed. Exit multistage, and show GUI.
                     if event[0] == kMultiStageEvent and event[2] == kEnterStage:
                         SmartSeek.gotoStage(LocalAvatar, -1) 
-                        YeeshaBook = ptBook(xLinkingBookDefs.xYeeshaBookNoShare, self.key)
-                        YeeshaBook.setSize(xLinkingBookDefs.YeeshaBookSizeWidth, xLinkingBookDefs.YeeshaBookSizeHeight)
+                        YeeshaBook = ptBook(xLinkingBookDefs.xYeeshaBookNoShare,self.key)
+                        YeeshaBook.setSize( xLinkingBookDefs.YeeshaBookSizeWidth, xLinkingBookDefs.YeeshaBookSizeHeight )
                         YeeshaBook.show(1)
 
             # picking up the book is beginning
@@ -178,13 +179,13 @@ class clftGetPersonalBook(ptResponder):
                             PtDebugPrint("Playing male book animation")
                             BookAnimMale.animation.play()
                         else:
-                            PtDebugPrint("clftGetPersonalBook: unreadable gender or special character.", level=kErrorLevel)
+                            PtDebugPrint("clftGetPersonalBook: unreadable gender or special character.",level=kErrorLevel)
                             BookAnimMale.animation.play()
 
     def ILinktoPersonalAge(self):
         global LocalAvatar
         # start the alert of the personal book blinking
-        PtSendKIMessage(kStartBookAlert, 0)
+        PtSendKIMessage(kStartBookAlert,0)
         #~ PtDebugPrint("trying to get book.")
         MultiBeh.run(LocalAvatar)
         self.SolveCleft()
@@ -195,13 +196,12 @@ class clftGetPersonalBook(ptResponder):
         vault.addChronicleEntry("CleftSolved", 1, "yes")
         PtDebugPrint("Chronicle updated with variable 'CleftSolved'.", level=kDebugDumpLevel)
         PtSendKIMessage(kEnableEntireYeeshaBook, 0)
-        psnlSDL = vault.getPsnlAgeSDL()
+        psnlSDL = xPsnlVaultSDL()
         if psnlSDL:
-            YeeshaPageVar = psnlSDL.findVar("YeeshaPage25")
-            YeeshaPageVar.setInt(4)
-            vault.updatePsnlAgeSDL(psnlSDL)
+            psnlSDL["YeeshaPage25"] = (4,)
 
     def OnTimer(self, id):
         if id == kLinkRespID:
             respLinkResponder.run(self.key, self.key, avatar=PtGetLocalAvatar())
             PtSendKIMessage(kEnableKIandBB, 0)
+            avatar.avatar.setDontPanicLink(False)

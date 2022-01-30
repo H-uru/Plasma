@@ -221,7 +221,7 @@ class xOpeningSequence(ptModifier):
                 try:
                     vault = ptVault()
                     start = vault.findChronicleEntry("StartPathChosen")
-                    if (start.chronicleGetValue() == "cleft"):
+                    if start.chronicleGetValue() == "cleft":
                         os.stat(kAtrusIntroMovie)
                     else:
                         os.stat(kYeeshaIntroMovie)
@@ -321,10 +321,10 @@ class xOpeningSequence(ptModifier):
                     vault = ptVault()
                     start = vault.findChronicleEntry("StartPathChosen")
                     entryCleft = vault.findChronicleEntry("CleftSolved")
-                    if (start.chronicleGetValue() == "cleft" and entryCleft is None):
-                        gIntroMovie = ptMoviePlayer(kAtrusIntroMovie,self.key)
+                    if start.chronicleGetValue() == "cleft" and entryCleft is None:
+                        gIntroMovie = ptMoviePlayer(kAtrusIntroMovie, self.key)
                     else:
-                        gIntroMovie = ptMoviePlayer(kYeeshaIntroMovie,self.key)
+                        gIntroMovie = ptMoviePlayer(kYeeshaIntroMovie, self.key)
                     gIntroMovie.playPaused()
                     if gIntroByTimer:
                         PtAtTimeCallback(self.key, kIntroPauseSeconds, kIntroPauseID)
@@ -390,7 +390,7 @@ class xOpeningSequence(ptModifier):
         entry = vault.findChronicleEntry(kIntroPlayedChronicle)
         start = vault.findChronicleEntry("StartPathChosen")
         entryCleft = vault.findChronicleEntry("CleftSolved")
-        if (entry is not None and start.chronicleGetValue() == "cleft" and entryCleft is not None):
+        if entry is not None and start.chronicleGetValue() == "cleft" and entryCleft is not None:
             self.IStartGame()
         else:
             OrientationDlg.dialog.show()
@@ -420,7 +420,7 @@ class xOpeningSequence(ptModifier):
             entry.chronicleSetValue("yes")
             entry.save()
         elif start.chronicleGetValue() == "cleft":
-            vault.addChronicleEntry(kIntroPlayedChronicle,2,"no")
+            vault.addChronicleEntry(kIntroPlayedChronicle, 2, "no")
         else:
             vault.addChronicleEntry(kIntroPlayedChronicle,2,"yes")
         # 2) fade screen up.. or something....? maybe

@@ -175,8 +175,6 @@ class Cleft(ptResponder):
             PtSendKIMessage(kDisableEntireYeeshaBook,0)
             avatar = PtGetLocalAvatar()
             gender = avatar.avatar.getAvatarClothingGroup()
-            if gender > kFemaleClothingGroup:
-                gender = kMaleClothingGroup
             if gender == kFemaleClothingGroup:
                 avatar.avatar.removeClothingItem("FAccPlayerBook")
             else:
