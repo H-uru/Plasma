@@ -208,6 +208,7 @@ class kChat:
     SystemMessage = 8
     InterAge = 9
     InterAgeSelf = 10
+    AudioSubtitle = 11
     
     # Chat fading.
     FadeNotActive = 0

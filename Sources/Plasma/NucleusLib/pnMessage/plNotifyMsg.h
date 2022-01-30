@@ -75,7 +75,7 @@ public:
         kOfferLinkingBook=14,
         kBook=15,
         kClimbingBlockerHit=16,
-        kAudioSubtitle=17,
+        kShowAudioSubtitle=17,
         kNone
     };
 
@@ -210,7 +210,7 @@ protected:
     virtual void IWriteNumber(hsStream * stream);
 };
 
-proEventType(AudioSubtitle)
+proEventType(ShowAudioSubtitle)
     ST::string  fText;          // line of subtitle text
 
 protected:
@@ -224,7 +224,7 @@ protected:
 proEventType(Facing)
     plKey       fFacer; // what was facing
     plKey       fFacee; // what was being faced
-    float    dot;     // the dot prod of their view vectors
+    float       dot;     // the dot prod of their view vectors
     bool        enabled; // Now meets facing requirement (true) or no longer meets requirement (false)
 
 protected:

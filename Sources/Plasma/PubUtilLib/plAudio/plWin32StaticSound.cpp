@@ -44,10 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plgDispatch.h"
 #include "plProfile.h"
+
 #include "plWin32StaticSound.h"
 #include "plWin32Sound.h"
 #include "plDSoundBuffer.h"
 #include "plAudioSystem.h"
+#include "plSrtFileReader.h"
+
 #include "plAudioCore/plSoundBuffer.h"
 #include "plAudioCore/plSoundDeswizzler.h"
 #include "pnMessage/plEventCallbackMsg.h"
@@ -55,9 +58,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plLinkToAgeMsg.h"
 #include "plMessage/plAvatarMsg.h"
 #include "pnNetCommon/plNetApp.h"
+#include "pnMessage/plNotifyMsg.h"
 
 #include "plPipeline/plPlates.h"
 #include "plStatusLog/plStatusLog.h"
+
+#include <regex>
 
 plProfile_Extern(MemSounds);
 plProfile_CreateAsynchTimer( "Static Shove Time", "Sound", StaticSndShoveTime );
@@ -67,6 +73,8 @@ plWin32StaticSound::~plWin32StaticSound()
 {
     DeActivate();
     IUnloadDataBuffer();
+
+    delete fSrtFileReader;
 }
 
 void plWin32StaticSound::Activate( bool forcePlay )
@@ -145,13 +153,16 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         if( 0 )
             tryStatic = false;
 
+        plFileName srcFilename = GetFileName();
+
         // Create our DSound buffer (or rather, the wrapper around it)
         fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), tryStatic );
         if( !fDSoundBuffer->IsValid() )
         {
-            ST::string str = ST::format("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
-                                        " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
-                                        GetFileName());
+            ST::string str = ST::format(
+                "Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
+                " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
+                srcFilename);
             IPrintDbgMessage(str.c_str(), true);
             fFailed = true;
 
@@ -169,6 +180,15 @@ bool plWin32StaticSound::LoadSound( bool is3D )
             fDSoundBuffer = nullptr;
             plStatusLog::AddLineSF("audio.log", "Could not play static sound, no voices left {}", GetKeyName());
             return false;
+        }
+
+        // check if subtitles are enabled and if srcFilename is a localized audio file (e.g., ending in _eng, _fre, etc.)
+        // TODO: surely there is already a function somewhere to do this localization filename check?
+        if (plgAudioSys::IsEnabledSubtitles() && std::regex_match(srcFilename.StripFileExt().AsString().c_str(), std::regex(".*_[eng|fre|ger|spa|ita|jpn]\..*", std::regex_constants::icase)))
+        {
+            delete fSrtFileReader;
+            fSrtFileReader = new plSrtFileReader(srcFilename);
+            fSrtFileReader->ReadFile();
         }
 
         plProfile_EndTiming( StaticSndShoveTime );
@@ -201,6 +221,22 @@ void plWin32StaticSound::Update()
             {
                 Stop();
             }
+            else if (fSrtFileReader != nullptr)
+            {
+                plSrtEntry* nextEntry = nullptr;
+                do
+                {
+                    nextEntry = fSrtFileReader->GetNextEntryStartingBeforeTime((int)(this->GetActualTimeSec() * 1000.0f));
+
+                    if (nextEntry != nullptr)
+                    {
+                        plNotifyMsg* notifyMsg = new plNotifyMsg();
+                        notifyMsg->AddAudioSubtitleEvent(nextEntry->GetSubtitleText());
+                        notifyMsg->Send();
+                        delete notifyMsg;
+                    }
+                } while (nextEntry != nullptr);
+            }
         }
     }
 }
@@ -212,6 +248,16 @@ void plWin32StaticSound::IDerivedActuallyPlay()
     {   
         for(;;)
         {
+            // throw away any subtitles that would end before the synched start time
+            if (fSrtFileReader != nullptr)
+            {
+                plSrtEntry* nextEntry = nullptr;
+                do
+                {
+                    nextEntry = fSrtFileReader->GetNextEntryEndingBeforeTime(fSynchedStartTimeSec * 1000.0);
+                } while (nextEntry != nullptr);
+            }
+
             if(IsPropertySet(kPropIncidental))
             {
                 if(fIncidentalsPlaying >= MAX_INCIDENTALS)

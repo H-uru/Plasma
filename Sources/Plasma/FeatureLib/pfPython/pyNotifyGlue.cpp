@@ -477,6 +477,7 @@ void pyNotify::AddPlasmaConstantsClasses(PyObject *m)
     PYTHON_ENUM_ELEMENT(PtEventType, kClickDrag,        proEventData::kClickDrag)
     PYTHON_ENUM_ELEMENT(PtEventType, kOfferLinkingBook, proEventData::kOfferLinkingBook)
     PYTHON_ENUM_ELEMENT(PtEventType, kBook,             proEventData::kBook)
+    PYTHON_ENUM_ELEMENT(PtEventType, kShowAudioSubtitle, proEventData::kShowAudioSubtitle)
     PYTHON_ENUM_END(m, PtEventType)
 
     PYTHON_ENUM_START(PtNotifyDataType)

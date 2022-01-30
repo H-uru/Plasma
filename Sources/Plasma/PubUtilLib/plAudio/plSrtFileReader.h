@@ -39,59 +39,58 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plWin32StaticSound_h
-#define plWin32StaticSound_h
+//////////////////////////////////////////////////////////////////////////////
+//                                                                          //
+//  plSrtFileReader - Class for reading an SRT format file and              //
+//                    storing the read entries for access later             //
+//                                                                          //
+//////////////////////////////////////////////////////////////////////////////
 
-#include "plSoundEvent.h"
-#include "plWin32Sound.h"
-#include "plSrtFileReader.h"
+#ifndef _plSrtFileReader_h
+#define _plSrtFileReader_h
 
-class hsResMgr;
-class plDSoundBuffer;
-class plEventCallbackMsg;
+#include "plFileSystem.h"
 
-class plWin32StaticSound : public plWin32Sound
+#include <queue>
+
+class plSrtEntry
 {
 public:
-    plWin32StaticSound() : fRegisteredOnThread(), fSrtFileReader() { }
-    ~plWin32StaticSound();
 
-    CLASSNAME_REGISTER( plWin32StaticSound );
-    GETINTERFACE_ANY( plWin32StaticSound, plWin32Sound );
-    
-    void    Activate(bool forcePlay = false) override;
-    void    DeActivate() override;
-    bool    LoadSound(bool is3D) override;
-    void    Update() override;
-    bool    MsgReceive(plMessage* pMsg) override;
-    void    SetStartPos(unsigned bytes) override { }
+    plSrtEntry(uint32_t entryNum, uint32_t startTimeMs, uint32_t endTimeMs, ST::string subtitleText)
+        : fEntryNum(entryNum), fStartTimeMs(startTimeMs), fEndTimeMs(endTimeMs), fSubtitleText(subtitleText) { }
+    ~plSrtEntry() { }
+
+    ST::string      GetSubtitleText() { return "Zandi: Test subtitle text"; /*fSubtitleText;*/ }
+    uint32_t        GetStartTimeMs() { return fStartTimeMs; }
+    uint32_t        GetEndTimeMs() { return fEndTimeMs; }
 
 protected:
-    bool            fRegisteredOnThread;
-    plSrtFileReader* fSrtFileReader;
 
-    void    IDerivedActuallyPlay() override;
-    void    ISetActualTime(double t) override;
-    float   GetActualTimeSec() override;
-
-    void    IAddCallback(plEventCallbackMsg *pCBMsg) override;
-    void    IRemoveCallback(plEventCallbackMsg *pCBMsg) override;
+    uint32_t      fEntryNum;
+    uint32_t      fStartTimeMs;
+    uint32_t      fEndTimeMs;
+    ST::string    fSubtitleText;
 
 };
 
-// Same as a plWin32StaticSound, except this registers for a plLinkEffectBCMsg to play the sound on linking.
-class plWin32LinkSound : public plWin32StaticSound
+class plSrtFileReader
 {
 public:
-    plWin32LinkSound();
-    ~plWin32LinkSound() { }
 
-    CLASSNAME_REGISTER( plWin32LinkSound );
-    GETINTERFACE_ANY( plWin32LinkSound, plWin32StaticSound );
+    plSrtFileReader(plFileName audioFileName)
+        : fAudioFileName(audioFileName), fEntryQueue() { }
+    ~plSrtFileReader();
 
-    void    Read(hsStream* s, hsResMgr* mgr) override;
-    void    Write(hsStream* s, hsResMgr* mgr) override;
-    bool    MsgReceive(plMessage* pMsg) override;
+    bool            ReadFile();
+    plSrtEntry*     GetNextEntryStartingBeforeTime(uint32_t timeMs);
+    plSrtEntry*     GetNextEntryEndingBeforeTime(uint32_t timeMs);
+
+protected:
+
+    plFileName      fAudioFileName;
+    std::queue<plSrtEntry>* fEntryQueue;
+
 };
 
-#endif //plWin32StaticSound_h
+#endif //_plSrtFileReader_h
