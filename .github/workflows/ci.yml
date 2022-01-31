@@ -234,6 +234,7 @@ jobs:
             -Dexpat_ROOT=$(brew --prefix expat) \
             -DOpenSSL_ROOT=$(brew --prefix openssl@1.1) \
             -DOpenAL_ROOT=$(brew --prefix openal-soft) \
+            -DPython3_ROOT=$(brew --prefix python@3.10) \
             -DZLIB_ROOT=$(brew --prefix zlib) \
             -S . -B build
 
