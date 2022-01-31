@@ -229,10 +229,10 @@ jobs:
             -DPLASMA_BUILD_TESTS=ON \
             -DPLASMA_BUILD_TOOLS=ON \
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
-            -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5 \
+            -DQt5_ROOT=$(brew --prefix qt@5) \
             -DCURL_ROOT=$(brew --prefix curl) \
             -Dexpat_ROOT=$(brew --prefix expat) \
-            -DOpenSSL_ROOT=$(brew --prefix openssl) \
+            -DOpenSSL_ROOT=$(brew --prefix openssl@1.1) \
             -DOpenAL_ROOT=$(brew --prefix openal-soft) \
             -DZLIB_ROOT=$(brew --prefix zlib) \
             -S . -B build
