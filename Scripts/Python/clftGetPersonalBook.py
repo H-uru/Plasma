@@ -196,6 +196,7 @@ class clftGetPersonalBook(ptResponder):
         vault.addChronicleEntry("CleftSolved", 1, "yes")
         PtDebugPrint("Chronicle updated with variable 'CleftSolved'.", level=kDebugDumpLevel)
         PtSendKIMessage(kEnableEntireYeeshaBook, 0)
+        PtFindSceneobject("microBlackBarBody", "GUI").draw.enable()
         psnlSDL = xPsnlVaultSDL()
         if psnlSDL:
             psnlSDL["YeeshaPage25"] = (4,)

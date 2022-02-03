@@ -160,6 +160,15 @@ class Cleft(ptResponder):
             # It's the first time... start the intro movie, just by loading the movie dialog
             PtLoadDialog("IntroMovieGUI")
 
+    def OnTimer(self,id):
+        avatar = PtGetLocalAvatar()
+        gender = avatar.avatar.getAvatarClothingGroup()
+        if gender == kFemaleClothingGroup:
+            avatar.avatar.removeClothingItem("FAccPlayerBook")
+        else:
+            avatar.avatar.removeClothingItem("MAccPlayerBook")
+        avatar.avatar.saveClothing()
+
 
     def OnServerInitComplete(self):
         global loadTomahna
@@ -172,14 +181,10 @@ class Cleft(ptResponder):
         entryCleft = vault.findChronicleEntry("CleftSolved")
         if start.chronicleGetValue() == "cleft" and entryCleft is None:
             ageSDL["clftYeeshaBookVis"] = (1,)
+            PtSendKIMessageInt(kUpgradeKILevel, kMicroKI)
             PtSendKIMessage(kDisableEntireYeeshaBook,0)
-            avatar = PtGetLocalAvatar()
-            gender = avatar.avatar.getAvatarClothingGroup()
-            if gender == kFemaleClothingGroup:
-                avatar.avatar.removeClothingItem("FAccPlayerBook")
-            else:
-                avatar.avatar.removeClothingItem("MAccPlayerBook")
-            avatar.avatar.saveClothing()
+            PtFindSceneobject("microBlackBarBody", "GUI").draw.disable()
+            PtAtTimeCallback(self.key,1,0)
             avatar.avatar.setDontPanicLink(True)
         elif start.chronicleGetValue() == "relto" and entryCleft is None:
             ageSDL["clftYeeshaBookVis"] = (0,)
