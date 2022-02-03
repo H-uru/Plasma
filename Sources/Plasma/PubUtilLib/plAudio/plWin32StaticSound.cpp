@@ -57,8 +57,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plAudioSysMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "plMessage/plAvatarMsg.h"
+#include "plMessage/plSubtitleMsg.h"
 #include "pnNetCommon/plNetApp.h"
-#include "pnMessage/plNotifyMsg.h"
 
 #include "plPipeline/plPlates.h"
 #include "plStatusLog/plStatusLog.h"
@@ -230,10 +230,9 @@ void plWin32StaticSound::Update()
 
                     if (nextEntry != nullptr)
                     {
-                        plNotifyMsg* notifyMsg = new plNotifyMsg();
-                        notifyMsg->AddAudioSubtitleEvent(nextEntry->GetSubtitleText());
-                        notifyMsg->Send();
-                        delete notifyMsg;
+                        // add a plSubtitleMsg to go... to whoever is listening (probably the KI)
+                        plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText());
+                        msg->Send();
                     }
                 } while (nextEntry != nullptr);
             }

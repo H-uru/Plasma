@@ -75,7 +75,6 @@ public:
         kOfferLinkingBook=14,
         kBook=15,
         kClimbingBlockerHit=16,
-        kShowAudioSubtitle=17,
         kNone
     };
 
@@ -208,17 +207,6 @@ protected:
 
     virtual void IReadNumber(hsStream * stream);
     virtual void IWriteNumber(hsStream * stream);
-};
-
-proEventType(ShowAudioSubtitle)
-    ST::string  fText;          // line of subtitle text
-
-protected:
-    void IRead(hsStream* stream, hsResMgr* mgr) override;
-    void IWrite(hsStream* stream, hsResMgr* mgr) override;
-
-    void IReadVersion(hsStream* s, hsResMgr* mgr) override;
-    void IWriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 proEventType(Facing)

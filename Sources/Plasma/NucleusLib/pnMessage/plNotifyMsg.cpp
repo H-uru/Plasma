@@ -217,12 +217,6 @@ void plNotifyMsg::AddEvent( proEventData* ed )
                 AddHitClimbingBlockerEvent(evt->fBlockerKey);
             }
             break;
-        case proEventData::kShowAudioSubtitle:
-            {
-                proShowAudioSubtitleEventData* evt = (proShowAudioSubtitleEventData*)ed;
-                AddAudioSubtitleEvent(evt->fText);
-            }
-            break;
     }
 }
 
@@ -760,22 +754,6 @@ void plNotifyMsg::AddHitClimbingBlockerEvent(const plKey &blocker)
     pED->fBlockerKey = blocker;
     fEvents.emplace_back(pED);    // then add it to the list of event records
 }
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : AddAudioSubtitleEvent
-//  PARAMETERS : fSubtitleText - the text that should be displayed
-//
-//  PURPOSE    : this is to notify python to display a line of audio subtitle text 
-//
-void plNotifyMsg::AddAudioSubtitleEvent(const ST::string& subtitleText)
-{
-    // create the audio subtitle event record
-    proShowAudioSubtitleEventData* pED = new proShowAudioSubtitleEventData;
-    pED->fText = subtitleText;
-    fEvents.emplace_back(pED);    // then add it to the list of event records
-}
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1331,40 +1309,6 @@ void proVariableEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
     IWriteNumber(s);
     // kProVariableKey
     mgr->WriteKey(s, fKey);
-}
-
-void proShowAudioSubtitleEventData::IRead(hsStream* stream, hsResMgr* mgr)
-{
-    fText = stream->ReadSafeWString();
-}
-
-void proShowAudioSubtitleEventData::IWrite(hsStream* stream, hsResMgr* mgr)
-{
-    stream->WriteSafeWString(fText);
-}
-
-enum ProShowAudioSubtitleFlags
-{
-    kProShowAudioSubtitleText
-};
-
-void proShowAudioSubtitleEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
-{
-    hsBitVector contentFlags;
-    contentFlags.Read(s);
-
-    if (contentFlags.IsBitSet(kProShowAudioSubtitleText))
-        fText = s->ReadSafeWString();
-}
-
-void proShowAudioSubtitleEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
-{
-    hsBitVector contentFlags;
-    contentFlags.SetBit(kProShowAudioSubtitleText);
-    contentFlags.Write(s);
-
-    // kProShowAudioSubtitleText    
-    s->WriteSafeWString(fText);
 }
 
 void proFacingEventData::IRead(hsStream* stream, hsResMgr* mgr)

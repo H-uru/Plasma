@@ -461,7 +461,6 @@ class xKI(ptModifier):
         PtDebugPrint("xKI.OnNotify(): Notify state = {}, ID = {}.".format(state, ID), level=kDebugDumpLevel)
         # Is it a notification from the scene input interface or PlayerBook?
         for event in events:
-            PtDebugPrint("xKI.OnNotify(): Event Type = {}.".format(event[0]), level=kDebugDumpLevel)
             if event[0] == kOfferLinkingBook:
                 if self.KILevel == kMicroKI:
                     plybkCB = ptGUIControlCheckBox(KIMicroBlackbar.dialog.getControlFromTag(kGUI.PlayerBookCBID))
@@ -557,11 +556,6 @@ class xKI(ptModifier):
                         sdlvar = xLinkingBookDefs.xYeeshaPages[whatpage][0]
                         self.ToggleYeeshaPageSDL(sdlvar, 0)
                 return
-
-            # Is it a notification from the audio player telling us to show the current subtitle?
-            elif event[0] == PtEventType.kShowAudioSubtitle:
-                if isinstance(event[1], str) and len(event[1]) > 0:
-                    self.AddChatLine(None, event[1], kChat.AudioSubtitle)
         if state:
             # Is it one of the responders that are displaying the BigKI?
             if ID == KIOnResp.id:
@@ -1289,6 +1283,12 @@ class xKI(ptModifier):
 
         # Process any remaining queued ops.
         self.ProcessScoreOps()
+
+    ## Called by Plasma to notify that a subtitle should be shown.
+    def OnSubtitleMsg(self, subtitleText):
+
+        PtDebugPrint("xKI.OnSubtitleMsg(): Received a subtitle.")
+        self.chatMgr.AddChatLine(None, subtitleText, kChat.AudioSubtitle)
 
     #~~~~~~~~~~#
     # KI Setup #

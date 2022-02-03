@@ -297,6 +297,9 @@ REGISTER_CREATABLE(plSpawnModMsg);
 #include "plSpawnRequestMsg.h"
 REGISTER_CREATABLE(plSpawnRequestMsg);
 
+#include "plSubtitleMsg.h"
+REGISTER_CREATABLE(plSubtitleMsg);
+
 #include "plSwimMsg.h"
 REGISTER_CREATABLE(plSwimMsg);
 

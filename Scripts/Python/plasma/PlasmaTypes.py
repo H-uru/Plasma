@@ -66,7 +66,6 @@ kMultiStageEvent=PtEventType.kMultiStage     # [1]=what stage, [2]=event(see bel
 kSpawnedEvent=PtEventType.kSpawned           # [1]=spawner, [2]=spawnee (usually avatar)
 kClickDragEvent=PtEventType.kClickDrag       # not used yet
 kOfferLinkingBook=PtEventType.kOfferLinkingBook	# [1]=offerer, [2]=link panel ID of age offered
-kShowAudioSubtitle=PtEventType.kShowAudioSubtitle # [1]=subtitle text
     
 # OnNotify Var Event Data Types
 kVarNumberType=PtNotifyDataType.kFloat

@@ -58,6 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnMessage/plAudioSysMsg.h"
 #include "pnMessage/plSoundMsg.h"
+#include "plMessage/plSubtitleMsg.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plAudioInterface.h"
 
@@ -122,6 +123,13 @@ PF_CONSOLE_CMD(Audio, MuteAll, "bool on", "Mute or unmute all sounds")
 PF_CONSOLE_CMD(Audio, EnableSubtitles, "bool on", "Enable or disable displaying subtitles for audio files containing speech")
 {
     plgAudioSys::SetEnableSubtitles((bool)params[0]);
+}
+
+PF_CONSOLE_CMD(Audio, SendSubtitle, "string subtitle", "Send a subtitle to any receivers")
+{
+    // TODO: remove this after subtitle messages are working
+    plSubtitleMsg* msg = new plSubtitleMsg(ST::string::from_utf8((char*)(params[0])));
+    msg->Send();
 }
 
 PF_CONSOLE_CMD(Audio, SetDistanceModel, "int type", "Sets the distance model for all 3d sounds")

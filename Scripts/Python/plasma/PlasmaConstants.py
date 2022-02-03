@@ -154,7 +154,6 @@ class PtEventType:
     kClickDrag = 12
     kOfferLinkingBook = 14
     kBook = 15
-    kShowAudioSubtitle = 17
 
 class PtGUIMultiLineDirection:
     """(none)"""

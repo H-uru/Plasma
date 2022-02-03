@@ -39,59 +39,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-//////////////////////////////////////////////////////////////////////////////
-//                                                                          //
-//  plSrtFileReader - Class for reading an SRT format file and              //
-//                    storing the read entries for access later             //
-//                                                                          //
-//////////////////////////////////////////////////////////////////////////////
 
-#ifndef _plSrtFileReader_h
-#define _plSrtFileReader_h
+#ifndef plSubtitleMsg_inc
+#define plSubtitleMsg_inc
 
-#include "plFileSystem.h"
+#include <string_theory/string>
 
-#include <vector>
+#include "pnMessage/plMessage.h"
 
-class plSrtEntry
+/** Show subtitle text for in-game audio */
+class plSubtitleMsg : public plMessage
 {
 public:
-
-    plSrtEntry(uint32_t entryNum, uint32_t startTimeMs, uint32_t endTimeMs, ST::string subtitleText)
-        : fEntryNum(entryNum), fStartTimeMs(startTimeMs), fEndTimeMs(endTimeMs), fSubtitleText(subtitleText) { }
-    ~plSrtEntry() { }
-
-    ST::string      GetSubtitleText() { return fSubtitleText; }
-    uint32_t        GetStartTimeMs() { return fStartTimeMs; }
-    uint32_t        GetEndTimeMs() { return fEndTimeMs; }
+    
 
 protected:
+    ST::string fText;
 
-    uint32_t      fEntryNum;
-    uint32_t      fStartTimeMs;
-    uint32_t      fEndTimeMs;
-    ST::string    fSubtitleText;
-
-};
-
-class plSrtFileReader
-{
 public:
+    plSubtitleMsg()
+    {
+        SetBCastFlag(plMessage::kBCastByExactType);
+    }
 
-    plSrtFileReader(plFileName audioFileName)
-        : fAudioFileName(audioFileName), fEntries(), fCurrentEntryIndex(0) { }
-    ~plSrtFileReader();
+    plSubtitleMsg(ST::string msg) : plSubtitleMsg() { fText = std::move(msg); }
 
-    bool            ReadFile();
-    plSrtEntry*     GetNextEntryStartingBeforeTime(uint32_t timeMs);
-    plSrtEntry*     GetNextEntryEndingBeforeTime(uint32_t timeMs);
+    CLASSNAME_REGISTER(plSubtitleMsg);
+    GETINTERFACE_ANY(plSubtitleMsg, plMessage);
 
-protected:
+    void Read(hsStream*, hsResMgr*) override { FATAL("no"); }
+    void Write(hsStream*, hsResMgr*) override { FATAL("no"); }
 
-    plFileName      fAudioFileName;
-    std::vector<plSrtEntry>* fEntries;
-    uint32_t        fCurrentEntryIndex;
-
+    ST::string GetText() const { return fText; }
 };
 
-#endif //_plSrtFileReader_h
+#endif // plSubtitleMsg_inc

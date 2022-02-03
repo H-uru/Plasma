@@ -104,6 +104,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvBrainCritter.h"
 #include "pfMessage/pfGameScoreMsg.h"
+#include "plMessage/plSubtitleMsg.h"
 
 #include "plProfile.h"
 
@@ -191,6 +192,7 @@ const char* plPythonFileMod::fFunctionNames[] =
     "gotPublicAgeList",     // kfunc_gotPublicAgeList
     "OnAIMsg",              // kfunc_OnAIMsg
     "OnGameScoreMsg",       // kfunc_OnGameScoreMsg
+    "OnSubtitleMsg",        // kfunc_OnSubtitleMsg
     nullptr
 };
 
@@ -1633,6 +1635,13 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     auto pScoreMsg = IScriptWantsMsg<pfGameScoreMsg>(kfunc_OnGameScoreMsg, msg);
     if (pScoreMsg) {
         ICallScriptMethod(kfunc_OnGameScoreMsg, pyGameScoreMsg::CreateFinal(pScoreMsg));
+        return true;
+    }
+
+    // are they looking for a subtitle notification message?
+    auto pSubMsg = IScriptWantsMsg<plSubtitleMsg>(kfunc_OnSubtitleMsg, msg);
+    if (pSubMsg) {
+        ICallScriptMethod(kfunc_OnSubtitleMsg, pSubMsg->GetText());
         return true;
     }
 

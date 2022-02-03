@@ -50,7 +50,7 @@ plSrtFileReader::~plSrtFileReader()
 {
     // TODO: do I need to remove or delete any remaining values in the queue?
 
-    delete fEntryQueue;
+    delete fEntries;
 }
 
 bool plSrtFileReader::ReadFile()
@@ -73,7 +73,7 @@ bool plSrtFileReader::ReadFile()
             uint32_t subtitleStartTimeMs = 0;
             uint32_t subtitleEndTimeMs = 0;
             std::string subtitleText = "";
-            fEntryQueue = new std::queue<plSrtEntry>();
+            fEntries = new std::vector<plSrtEntry>();
 
             for (std::string line; std::getline(srtFile, line); )
             {
@@ -129,7 +129,7 @@ bool plSrtFileReader::ReadFile()
                 else
                 {
                     // entry is complete, add to the queue and reset our temp variables
-                    fEntryQueue->emplace(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText);
+                    fEntries->emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText);
 
                     subtitleNumber = 0;
                     subtitleTimings = "";
@@ -142,7 +142,7 @@ bool plSrtFileReader::ReadFile()
 
             if (subtitleNumber > 0 && subtitleStartTimeMs >= 0 && subtitleEndTimeMs >= 0 && subtitleText != "") {
                 // enqueue the last subtitle from the file if we didn't have an extra blank line at the end
-                fEntryQueue->emplace(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText);
+                fEntries->emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText);
             }
 
             return true;
@@ -154,11 +154,11 @@ bool plSrtFileReader::ReadFile()
 
 plSrtEntry* plSrtFileReader::GetNextEntryStartingBeforeTime(uint32_t timeMs)
 {
-    if (fEntryQueue != nullptr && !fEntryQueue->empty()) {
-        plSrtEntry nextEntry = fEntryQueue->front();
+    if (fEntries != nullptr && fCurrentEntryIndex >= 0 && fCurrentEntryIndex < fEntries->size()) {
+        plSrtEntry& nextEntry = fEntries->at(fCurrentEntryIndex);
 
         if (nextEntry.GetStartTimeMs() <= timeMs) {
-            fEntryQueue->pop();
+            fCurrentEntryIndex++;
             return &nextEntry;
         }
     }
@@ -168,11 +168,11 @@ plSrtEntry* plSrtFileReader::GetNextEntryStartingBeforeTime(uint32_t timeMs)
 
 plSrtEntry* plSrtFileReader::GetNextEntryEndingBeforeTime(uint32_t timeMs)
 {
-    if (fEntryQueue != nullptr && !fEntryQueue->empty()) {
-        plSrtEntry nextEntry = fEntryQueue->front();
+    if (fEntries != nullptr && fCurrentEntryIndex >= 0 && fCurrentEntryIndex < fEntries->size()) {
+        plSrtEntry& nextEntry = fEntries->at(fCurrentEntryIndex);
 
         if (nextEntry.GetEndTimeMs() <= timeMs) {
-            fEntryQueue->pop();
+            fCurrentEntryIndex++;
             return &nextEntry;
         }
     }
