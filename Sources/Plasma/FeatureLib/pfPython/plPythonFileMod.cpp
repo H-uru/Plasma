@@ -686,6 +686,9 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
             if (fPyFunctionInstances[kfunc_OnAIMsg])
                 plgDispatch::Dispatch()->RegisterForExactType(plAIBrainCreatedMsg::Index(), GetKey());
 
+            if (fPyFunctionInstances[kfunc_OnSubtitleMsg])
+                plgDispatch::Dispatch()->RegisterForExactType(plSubtitleMsg::Index(), GetKey());
+
             // As the last thing... call the OnInit function if they have one
             ICallScriptMethod(kfunc_Init);
 

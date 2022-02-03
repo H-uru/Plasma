@@ -125,13 +125,6 @@ PF_CONSOLE_CMD(Audio, EnableSubtitles, "bool on", "Enable or disable displaying 
     plgAudioSys::SetEnableSubtitles((bool)params[0]);
 }
 
-PF_CONSOLE_CMD(Audio, SendSubtitle, "string subtitle", "Send a subtitle to any receivers")
-{
-    // TODO: remove this after subtitle messages are working
-    plSubtitleMsg* msg = new plSubtitleMsg(ST::string::from_utf8((char*)(params[0])));
-    msg->Send();
-}
-
 PF_CONSOLE_CMD(Audio, SetDistanceModel, "int type", "Sets the distance model for all 3d sounds")
 {
     plgAudioSys::SetDistanceModel((int)params[0]);

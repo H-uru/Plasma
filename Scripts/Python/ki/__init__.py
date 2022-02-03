@@ -1287,7 +1287,6 @@ class xKI(ptModifier):
     ## Called by Plasma to notify that a subtitle should be shown.
     def OnSubtitleMsg(self, subtitleText):
 
-        PtDebugPrint("xKI.OnSubtitleMsg(): Received a subtitle.")
         self.chatMgr.AddChatLine(None, subtitleText, kChat.AudioSubtitle)
 
     #~~~~~~~~~~#

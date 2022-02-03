@@ -574,6 +574,15 @@ class xKIChat(object):
             if cFlags == kChat.SystemMessage:
                 headerColor = kColors.ChatHeaderError
                 pretext = PtGetLocalizedString("KI.Chat.ErrorMsgRecvd")
+            elif cFlags == kChat.AudioSubtitle:
+                headerColor = kColors.AudioSubtitleHeader
+                player = None
+
+                PtDebugPrint("xKIChat.AddChatLine(): Adding subtitle {}.".format(message))
+                messageMatches = SUBTITLE_REGEX.match(message)
+                if messageMatches is not None:
+                    pretext = messageMatches.group("speaker")
+                    message = messageMatches.group("subtitle")
             else:
                 headerColor = kColors.ChatHeaderBroadcast
                 pretext = PtGetLocalizedString("KI.Chat.BroadcastMsgRecvd")
