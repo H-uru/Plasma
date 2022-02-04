@@ -187,11 +187,20 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
 
         // check if subtitles are enabled and if fSrcFilename is a localized audio file (e.g., ending in _eng, _fre, etc.)
         // TODO: surely there is already a function somewhere to do this localization filename check?
-        if (plgAudioSys::IsEnabledSubtitles() && std::regex_match(fSrcFilename.StripFileExt().AsString().c_str(), std::regex(".*_[eng|fre|ger|spa|ita|jpn]\..*", std::regex_constants::icase)))
+        if (plgAudioSys::IsEnabledSubtitles() && std::regex_match(fSrcFilename.StripFileExt().AsString().c_str(), std::regex(".*_(eng|fre|ger|spa|ita|jpn)$", std::regex_constants::icase)))
         {
-            delete fSrtFileReader;
-            fSrtFileReader = new plSrtFileReader(fSrcFilename);
-            fSrtFileReader->ReadFile();
+            if (fSrtFileReader != nullptr && fSrtFileReader->GetCurrentAudioFileName().AsString().compare(fSrcFilename.AsString()) == 0)
+            {
+                // same file as we were playing before
+                // so make the SRT feed start over instead of deleting and reloading
+                fSrtFileReader->StartOver();
+            }
+            else
+            {
+                delete fSrtFileReader;
+                fSrtFileReader = new plSrtFileReader(fSrcFilename);
+                fSrtFileReader->ReadFile();
+            }
         }
 
         if (fDataStream == nullptr || !fDataStream->IsValid())
@@ -441,6 +450,7 @@ void plWin32StreamingSound::IDerivedActuallyPlay()
                 fSynchedStartTimeSec = 0;
 
                 // throw away any subtitles that would end before the synched start time
+                // TODO: when would this actually happen? Need to find test case
                 if (fSrtFileReader != nullptr) {
                     plSrtEntry* nextEntry = nullptr;
                     do

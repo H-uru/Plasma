@@ -83,6 +83,8 @@ public:
     ~plSrtFileReader();
 
     bool            ReadFile();
+    void            StartOver() { fCurrentEntryIndex = 0; }
+    plFileName      GetCurrentAudioFileName() { return fAudioFileName; }
     plSrtEntry*     GetNextEntryStartingBeforeTime(uint32_t timeMs);
     plSrtEntry*     GetNextEntryEndingBeforeTime(uint32_t timeMs);
 

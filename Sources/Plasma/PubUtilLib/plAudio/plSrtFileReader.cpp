@@ -48,8 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plSrtFileReader::~plSrtFileReader()
 {
-    // TODO: do I need to remove or delete any remaining values in the queue?
-
+    // TODO: do I need to remove or delete the individual values in the collection?
     delete fEntries;
 }
 
@@ -89,7 +88,7 @@ bool plSrtFileReader::ReadFile()
                     subtitleTimings = line;
                     std::smatch matches;
 
-                    if (std::regex_search(subtitleTimings, matches, std::regex("^(\\d{2}):(\\d{2}):(\\d{2}),(\\d{3}) --> (\\d{2}):(\\d{2}):(\\d{2}),(\\d{3})$")))
+                    if (std::regex_match(subtitleTimings, matches, std::regex("^(\\d{2}):(\\d{2}):(\\d{2}),(\\d{3}) --> (\\d{2}):(\\d{2}):(\\d{2}),(\\d{3})$")))
                     {
                         if (matches.size() < 9)
                         {
