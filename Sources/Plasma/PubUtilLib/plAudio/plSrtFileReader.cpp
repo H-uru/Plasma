@@ -56,15 +56,13 @@ bool plSrtFileReader::ReadFile()
 {
     plFileName audioSrtPath = plFileName::Join(plFileSystem::GetCWD(), "dat", fAudioFileName.StripFileExt() + ".srt");
 
-    if (audioSrtPath.IsValid())
-    {
+    if (audioSrtPath.IsValid()) {
         // read sets of SRT data until end of file
         std::ifstream srtFile;
         srtFile.open(audioSrtPath.AbsolutePath().AsString().c_str(), std::ifstream::in);
 
         // if file exists and was opened successfully
-        if (srtFile)
-        {
+        if (srtFile) {
             plStatusLog::AddLineSF("audio.log", "Successfully opened subtitle file {}", audioSrtPath.AbsolutePath().AsString().c_str());
 
             int subtitleNumber = 0;
@@ -74,29 +72,21 @@ bool plSrtFileReader::ReadFile()
             std::string subtitleText = "";
             fEntries = new std::vector<plSrtEntry>();
 
-            for (std::string line; std::getline(srtFile, line); )
-            {
+            for (std::string line; std::getline(srtFile, line); ) {
                 plStatusLog::AddLineSF("audio.log", "   Read subtitle file line {}", line);
 
-                if (subtitleNumber == 0)
-                {
+                if (subtitleNumber == 0) {
                     subtitleNumber = std::stoi(line);
                     continue;
-                }
-                else if (subtitleTimings.compare("") == 0)
-                {
+                } else if (subtitleTimings.compare("") == 0) {
                     subtitleTimings = line;
                     std::smatch matches;
 
-                    if (std::regex_match(subtitleTimings, matches, std::regex("^(\\d{2}):(\\d{2}):(\\d{2}),(\\d{3}) --> (\\d{2}):(\\d{2}):(\\d{2}),(\\d{3})$")))
-                    {
-                        if (matches.size() < 9)
-                        {
+                    if (std::regex_match(subtitleTimings, matches, std::regex("^(\\d{2}):(\\d{2}):(\\d{2}),(\\d{3}) --> (\\d{2}):(\\d{2}):(\\d{2}),(\\d{3})$"))) {
+                        if (matches.size() < 9) {
                             // TODO: I dunno, something wasn't formatted right? What should we do?
                             subtitleStartTimeMs = UINT32_MAX;
-                        }
-                        else
-                        {
+                        } else {
                             // matches[0] is the entire match, we don't do anything with it
                             // matches[1] is the first group    -- the start hour number
                             subtitleStartTimeMs += (atoi(matches[1].str().c_str()) * 3600000);
@@ -119,14 +109,10 @@ bool plSrtFileReader::ReadFile()
                     }
 
                     continue;
-                }
-                else if (subtitleText.compare("") == 0)
-                {
+                } else if (subtitleText.compare("") == 0) {
                     subtitleText = line;
                     continue;
-                }
-                else
-                {
+                } else {
                     // entry is complete, add to the queue and reset our temp variables
                     fEntries->emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText);
 

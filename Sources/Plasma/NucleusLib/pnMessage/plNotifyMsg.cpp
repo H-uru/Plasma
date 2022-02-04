@@ -755,6 +755,8 @@ void plNotifyMsg::AddHitClimbingBlockerEvent(const plKey &blocker)
     fEvents.emplace_back(pED);    // then add it to the list of event records
 }
 
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 //  Function   : FindEventRecord
@@ -1175,7 +1177,6 @@ void proControlKeyEventData::IRead(hsStream* stream, hsResMgr* mgr)
     fControlKey = stream->ReadLE32();
     fDown = stream->ReadBool();
 }
-
 void proControlKeyEventData::IWrite(hsStream* stream, hsResMgr* mgr)
 {
     stream->WriteLE32(fControlKey);
@@ -1198,7 +1199,6 @@ void proControlKeyEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kProControlDown))
         fDown = s->ReadBool();
 }
-
 void proControlKeyEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
 {
     hsBitVector contentFlags;

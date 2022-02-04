@@ -60,7 +60,7 @@ public:
     enum eventType
     {
         kCollision=1,
-        kPicked=2,
+        kPicked =2,
         kControlKey=3,
         kVariable=4,
         kFacing=5,
@@ -212,7 +212,7 @@ protected:
 proEventType(Facing)
     plKey       fFacer; // what was facing
     plKey       fFacee; // what was being faced
-    float       dot;     // the dot prod of their view vectors
+    float    dot;     // the dot prod of their view vectors
     bool        enabled; // Now meets facing requirement (true) or no longer meets requirement (false)
 
 protected:
@@ -400,7 +400,6 @@ public:
     void AddOfferBookEvent(const plKey& offerer, int targetAge, int offeree);
     void AddBookEvent( uint32_t event, uint32_t linkID = 0 );
     void AddHitClimbingBlockerEvent(const plKey &blocker);
-    void AddAudioSubtitleEvent(const ST::string& subtitleText);
     proEventData* FindEventRecord( int32_t eventtype );
     size_t GetEventCount() { return fEvents.size(); }
     proEventData* GetEventRecord(size_t i) { return fEvents[i]; }

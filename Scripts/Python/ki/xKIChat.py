@@ -912,13 +912,6 @@ class CommandsProcessor:
                 v = "are"
             self.chatMgr.AddChatLine(None, "The %s %s too heavy to lift. Maybe you should stick to feathers." % (message[len("/get "):], v), 0)
             return None
-        elif PtIsInternalRelease() and msg.startswith("/sub"):
-            # test sending an audio subtitle to the chat manager
-            send = message[len("/sub "):]
-            cFlags = ChatFlags(0)
-            cFlags.subtitle = 1
-            self.chatMgr.AddChatLine(None, send, cFlags)
-            return None
         elif PtIsInternalRelease() and msg.startswith("/system "):
             send = message[len("/system "):]
             cFlags = ChatFlags(0)
