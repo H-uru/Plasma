@@ -343,6 +343,8 @@ kAudioModeEAXTextID = 757
 
 kGSEnableVoiceChat=340
 
+kGSEnableSubtitles=341
+
 ####==> GUI dialog sounds will just match the SoundFX levels
 ##kGSGUIVolSlider=305
 ####==> GUI dialog sounds will just match the SoundFX levels
@@ -1291,7 +1293,14 @@ class xOptionsMenu(ptModifier):
                     audio = ptAudioControl()
                     audio.enableVoiceRecording( control.isChecked() )
                     audio.enableVoiceChat( control.isChecked() )
-
+                    
+                elif tagID == kGSEnableSubtitles:
+                    audio = ptAudioControl()
+                    if control.isChecked():
+                        audio.enableSubtitles()
+                    else:
+                        audio.disableSubtitles()
+                    
                 elif tagID == kAudioMusicVolumeSliderTag:
                     audio = ptAudioControl()
                     audio.setMusicVolume( control.getValue() )
@@ -1671,7 +1680,6 @@ class xOptionsMenu(ptModifier):
         xIniAudio.SetAmbienceVolume( audio.getAmbienceVolume() )
         xIniAudio.SetNPCVoiceVolume( audio.getNPCVoiceVolume() )
         xIniAudio.SetMute( audio.isMuted() )
-        xIniAudio.SetSubtitle( audio.isEnabledSubtitles() )
 
         EAXcheckbox = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeCBID03))
 
