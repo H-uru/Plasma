@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsThread.h"
 #include "plDSoundBuffer.h"
-#include <al.h>
 
 #include "plgDispatch.h"
 #include "plAudioSystem.h"
@@ -59,8 +58,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEAXEffects.h"
 
 #include "plProfile.h"
-
 #include "plStatusLog/plStatusLog.h"
+
+#include <al.h>
 
 uint32_t plDSoundBuffer::fNumBuffers = 0;
 plProfile_CreateCounterNoReset( "Playing", "Sound", SoundPlaying );

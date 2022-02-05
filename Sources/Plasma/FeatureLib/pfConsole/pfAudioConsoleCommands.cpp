@@ -97,7 +97,7 @@ PF_CONSOLE_CMD(Audio, Enable, "bool on", "Switch Audio on or off at runtime")
     plgAudioSys::Activate( on );
 }
 
-PF_CONSOLE_CMD(Audio, UseEAX, "bool on", "Enable EAX sound acceleration (requires hardware acceleration)")
+PF_CONSOLE_CMD(Audio, UseEAX, "bool on", "Enable EFX environmental sound")
 {
     bool on = params[0];
     plgAudioSys::EnableEAX( on );
