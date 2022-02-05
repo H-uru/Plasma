@@ -514,7 +514,7 @@ inline plKeyImp* IFindKeyLocalized(const plUoid& uoid, plRegistryPageNode* page)
     // If we're running localized, try to find a localized version first
     if ((!objectName.empty()) && plLocalization::IsLocalized())
     {
-        plFileName localName = plLocalization::GetLocalized(objectName.c_str());
+        plFileName localName = plLocalization::GetLocalized(objectName);
         if (localName.IsValid())
         {
             plKeyImp* localKey = page->FindKey(uoid.GetClassType(), localName.AsString());
