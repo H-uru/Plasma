@@ -58,6 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plPipeline/plPlates.h"
 #include "plStatusLog/plStatusLog.h"
+#include "plMessage/plSubtitleMsg.h"
 
 #if HS_BUILD_FOR_WIN32
 #    include <direct.h>
@@ -99,6 +100,23 @@ void plWin32Sound::IFreeBuffers()
 
 void plWin32Sound::Update()
 {
+    auto buf = this->GetDataBuffer();
+    if (plgAudioSys::AreSubtitlesEnabled() && buf != nullptr) {
+        auto srtReader = buf->GetSrtReader();
+        if (srtReader != nullptr) {
+            plSrtEntry* nextEntry = nullptr;
+            do {
+                nextEntry = srtReader->GetNextEntryStartingBeforeTime((uint32_t)(this->GetActualTimeSec() * 1000.0f));
+
+                if (nextEntry != nullptr) {
+                    // add a plSubtitleMsg to go... to whoever is listening (probably the KI)
+                    plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText());
+                    msg->Send();
+                }
+            } while (nextEntry != nullptr);
+        }
+    }
+
     plSound::Update();
 }
 
@@ -111,6 +129,20 @@ void plWin32Sound::IActuallyPlay()
     {
         if (fDSoundBuffer && plgAudioSys::Active() )
         {
+            if (!fReallyPlaying && fSynchedStartTimeSec > 0) {
+                // advance past any subtitles that would end before the synched start time
+                // TODO: when would this actually happen? Need to find test case
+                auto buf = this->GetDataBuffer();
+                if (buf != nullptr) {
+                    auto srtReader = buf->GetSrtReader();
+                    if (srtReader != nullptr) {
+                        plSrtEntry* nextEntry = nullptr;
+                        do {
+                            nextEntry = srtReader->GetNextEntryEndingBeforeTime(fSynchedStartTimeSec * 1000.0);
+                        } while (nextEntry != nullptr);
+                    }
+                }
+            }
 
             // Sometimes base/derived classes can be annoying
             IDerivedActuallyPlay();

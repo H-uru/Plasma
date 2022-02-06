@@ -58,12 +58,11 @@ class plSrtEntry
 public:
 
     plSrtEntry(uint32_t entryNum, uint32_t startTimeMs, uint32_t endTimeMs, ST::string subtitleText)
-        : fEntryNum(entryNum), fStartTimeMs(startTimeMs), fEndTimeMs(endTimeMs), fSubtitleText(subtitleText) { }
-    ~plSrtEntry() { }
+        : fEntryNum(entryNum), fStartTimeMs(startTimeMs), fEndTimeMs(endTimeMs), fSubtitleText(std::move(subtitleText)) { }
 
-    ST::string      GetSubtitleText() { return fSubtitleText; }
-    uint32_t        GetStartTimeMs() { return fStartTimeMs; }
-    uint32_t        GetEndTimeMs() { return fEndTimeMs; }
+    ST::string      GetSubtitleText() const { return fSubtitleText; }
+    uint32_t        GetStartTimeMs() const { return fStartTimeMs; }
+    uint32_t        GetEndTimeMs() const { return fEndTimeMs; }
 
 protected:
 
@@ -80,18 +79,17 @@ public:
 
     plSrtFileReader(plFileName audioFileName)
         : fAudioFileName(audioFileName), fEntries(), fCurrentEntryIndex(0) { }
-    ~plSrtFileReader();
 
     bool            ReadFile();
     void            StartOver() { fCurrentEntryIndex = 0; }
-    plFileName      GetCurrentAudioFileName() { return fAudioFileName; }
+    plFileName      GetCurrentAudioFileName() const { return fAudioFileName; }
     plSrtEntry*     GetNextEntryStartingBeforeTime(uint32_t timeMs);
     plSrtEntry*     GetNextEntryEndingBeforeTime(uint32_t timeMs);
 
 protected:
 
     plFileName      fAudioFileName;
-    std::vector<plSrtEntry>* fEntries;
+    std::vector<plSrtEntry> fEntries;
     uint32_t        fCurrentEntryIndex;
 
 };

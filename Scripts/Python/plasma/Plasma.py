@@ -1375,7 +1375,7 @@ class ptAudioControl:
         """Is the audio enabled? Returns 1 if true otherwise returns 0."""
         pass
 
-    def isEnabledSubtitles(self):
+    def areSubtitlesEnabled(self):
         """Are subtitles for the audio enabled? Returns 1 if true otherwise returns 0."""
         pass
 

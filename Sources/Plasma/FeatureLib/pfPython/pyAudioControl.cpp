@@ -257,9 +257,9 @@ void pyAudioControl::DisableSubtitles()
     plgAudioSys::SetEnableSubtitles(false);
 }
 
-bool pyAudioControl::IsEnabledSubtitles() const
+bool pyAudioControl::AreSubtitlesEnabled() const
 {
-    return plgAudioSys::IsEnabledSubtitles();
+    return plgAudioSys::AreSubtitlesEnabled();
 }
 
 

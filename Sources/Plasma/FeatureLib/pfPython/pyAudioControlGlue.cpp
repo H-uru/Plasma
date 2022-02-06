@@ -223,9 +223,9 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isMuted)
 PYTHON_BASIC_METHOD_DEFINITION(ptAudioControl, enableSubtitles, EnableSubtitles)
 PYTHON_BASIC_METHOD_DEFINITION(ptAudioControl, disableSubtitles, DisableSubtitles)
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isEnabledSubtitles)
+PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, areSubtitlesEnabled)
 {
-    PYTHON_RETURN_BOOL(self->fThis->IsEnabledSubtitles());
+    PYTHON_RETURN_BOOL(self->fThis->AreSubtitlesEnabled());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, canSetMicLevel)

@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWin32StreamingSound.h"
 #include "plDSoundBuffer.h"
 #include "plAudioSystem.h"
-#include "plSrtFileReader.h"
 
 #include "plAudioCore/plAudioFileReader.h"
 #include "plAudioCore/plSoundBuffer.h"
@@ -76,7 +75,7 @@ plProfile_Extern( SoundLoadTime );
 
 plWin32StreamingSound::plWin32StreamingSound()
     : fDataStream(), fBlankBufferFillCounter(), fDeswizzler(), fStreamType(kNoStream),
-      fLastStreamingUpdate(), fStopping(), fPlayWhenStopped(), fStartPos(), fSrtFileReader(),
+      fLastStreamingUpdate(), fStopping(), fPlayWhenStopped(), fStartPos(),
       fTimeAtBufferStart(), fIsCompressed(), fBufferLengthInSecs(plgAudioSys::GetStreamingBufferSize())
 { }
 
@@ -88,7 +87,6 @@ plWin32StreamingSound::~plWin32StreamingSound()
 
     delete fDataStream;
     delete fDeswizzler;
-    delete fSrtFileReader;
 }
 
 void plWin32StreamingSound::DeActivate()
@@ -181,19 +179,6 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
                 strPath = plFileName::Join(strPath, "sfx");
             strPath = plFileName::Join(strPath, fSrcFilename);
             fDataStream = plAudioFileReader::CreateReader(strPath, select, type);
-        }
-
-        // check if subtitles are enabled and if fSrcFilename is a localized audio file (e.g., ending in _eng, _fre, etc.)
-        // TODO: surely there is already a function somewhere to do this localization filename check?
-        if (plgAudioSys::IsEnabledSubtitles() && std::regex_match(fSrcFilename.StripFileExt().AsString().c_str(), std::regex(".*_(eng|fre|ger|spa|ita|jpn)$", std::regex_constants::icase))) {
-            if (fSrtFileReader != nullptr && fSrtFileReader->GetCurrentAudioFileName().AsString().compare(fSrcFilename.AsString()) == 0) {
-                // same file we were playing before, so start the SRT feed over instead of deleting and reloading
-                fSrtFileReader->StartOver();
-            } else {
-                delete fSrtFileReader;
-                fSrtFileReader = new plSrtFileReader(fSrcFilename);
-                fSrtFileReader->ReadFile();
-            }
         }
 
         if (fDataStream == nullptr || !fDataStream->IsValid())
@@ -384,22 +369,6 @@ void plWin32StreamingSound::IStreamUpdate()
     if(hsTimer::GetMilliSeconds() - fLastStreamingUpdate < STREAMING_UPDATE_MS) // filter out update requests so we aren't doing this more that we need to 
         return;
 
-    if (fSrtFileReader != nullptr)
-    {
-        plSrtEntry* nextEntry = nullptr;
-        do
-        {
-            nextEntry = fSrtFileReader->GetNextEntryStartingBeforeTime((int)(this->GetActualTimeSec() * 1000.0f));
-
-            if (nextEntry != nullptr)
-            {
-                // add a plSubtitleMsg to go... to whoever is listening (probably the KI)
-                plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText());
-                msg->Send();
-            }
-        } while (nextEntry != nullptr);
-    }
-
     plProfile_BeginTiming( StreamSndShoveTime );
     if(fDSoundBuffer)
     {
@@ -441,15 +410,6 @@ void plWin32StreamingSound::IDerivedActuallyPlay()
                 // if we are synching to another sound this is our latency time
                 fDSoundBuffer->SetTimeOffsetSec((float)(hsTimer::GetSeconds() - fSynchedStartTimeSec));
                 fSynchedStartTimeSec = 0;
-
-                // throw away any subtitles that would end before the synched start time
-                // TODO: when would this actually happen? Need to find test case
-                if (fSrtFileReader != nullptr) {
-                    plSrtEntry* nextEntry = nullptr;
-                    do {
-                        nextEntry = fSrtFileReader->GetNextEntryEndingBeforeTime(fSynchedStartTimeSec * 1000.0);
-                    } while (nextEntry != nullptr);
-                }
             }
 
             if(IsPropertySet(kPropIncidental))

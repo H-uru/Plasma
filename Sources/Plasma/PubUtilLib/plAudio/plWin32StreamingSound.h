@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFileSystem.h"
 #include "plWin32Sound.h"
-#include "plSrtFileReader.h"
 
 class plDSoundBuffer;
 class DSoundCallbackHandle;
@@ -66,7 +65,7 @@ public:
     float       GetActualTimeSec() override;
     unsigned    GetByteOffset() override;
     StreamType  GetStreamType() const override { return fStreamType; }
-    virtual void        SetFilename(const char* filename, bool isCompressed);
+    virtual void        SetFilename(const char *filename, bool isCompressed);
     void        Update() override;   // temp
     void                StreamUpdate();
     bool                MsgReceive(plMessage *pMsg) override;
@@ -74,7 +73,6 @@ public:
 protected:
     float               fTimeAtBufferStart;
     plAudioFileReader  *fDataStream;
-    plSrtFileReader    *fSrtFileReader;
     float               fBufferLengthInSecs;
     uint8_t             fBlankBufferFillCounter;
     plSoundDeswizzler  *fDeswizzler;

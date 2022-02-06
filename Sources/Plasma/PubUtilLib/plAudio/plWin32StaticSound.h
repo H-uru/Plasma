@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plSoundEvent.h"
 #include "plWin32Sound.h"
-#include "plSrtFileReader.h"
 
 class hsResMgr;
 class plDSoundBuffer;
@@ -53,7 +52,7 @@ class plEventCallbackMsg;
 class plWin32StaticSound : public plWin32Sound
 {
 public:
-    plWin32StaticSound() : fRegisteredOnThread(), fSrtFileReader() { }
+    plWin32StaticSound() : fRegisteredOnThread() { }
     ~plWin32StaticSound();
 
     CLASSNAME_REGISTER( plWin32StaticSound );
@@ -68,7 +67,6 @@ public:
 
 protected:
     bool            fRegisteredOnThread;
-    plSrtFileReader* fSrtFileReader;
 
     void    IDerivedActuallyPlay() override;
     void    ISetActualTime(double t) override;

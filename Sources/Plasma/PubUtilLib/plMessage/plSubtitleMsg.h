@@ -50,19 +50,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /** Show subtitle text for in-game audio */
 class plSubtitleMsg : public plMessage
 {
-public:
-    
-
 protected:
     ST::string fText;
 
 public:
-    plSubtitleMsg()
+    plSubtitleMsg() : plMessage()
     {
         SetBCastFlag(plMessage::kBCastByExactType);
     }
 
-    plSubtitleMsg(ST::string msg) : plSubtitleMsg() { fText = std::move(msg); }
+    plSubtitleMsg(ST::string msg) : plMessage(), fText(std::move(msg))
+    {
+        SetBCastFlag(plMessage::kBCastByExactType);
+    }
 
     CLASSNAME_REGISTER(plSubtitleMsg);
     GETINTERFACE_ANY(plSubtitleMsg, plMessage);

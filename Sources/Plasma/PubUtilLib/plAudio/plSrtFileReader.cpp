@@ -42,49 +42,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plSrtFileReader.h"
 
-#include <fstream>
+#include "hsStream.h"
+#include "plStatusLog/plStatusLog.h"
+
 #include <regex>
 #include <stdint.h>
-
-plSrtFileReader::~plSrtFileReader()
-{
-    // TODO: do I need to remove or delete the individual values in the collection?
-    delete fEntries;
-}
 
 bool plSrtFileReader::ReadFile()
 {
     plFileName audioSrtPath = plFileName::Join(plFileSystem::GetCWD(), "dat", fAudioFileName.StripFileExt() + ".srt");
 
-    if (audioSrtPath.IsValid()) {
+    if (plFileInfo(audioSrtPath).Exists()) {
         // read sets of SRT data until end of file
-        std::ifstream srtFile;
-        srtFile.open(audioSrtPath.AbsolutePath().AsString().c_str(), std::ifstream::in);
+        hsUNIXStream srtFileStream;
 
         // if file exists and was opened successfully
-        if (srtFile) {
-            plStatusLog::AddLineSF("audio.log", "Successfully opened subtitle file {}", audioSrtPath.AbsolutePath().AsString().c_str());
+        if (srtFileStream.Open(audioSrtPath, "r")) {
+            plStatusLog::AddLineSF("audio.log", "Successfully opened subtitle file {}", audioSrtPath.AbsolutePath());
 
-            int subtitleNumber = 0;
-            std::string subtitleTimings = "";
+            uint32_t subtitleNumber = 0;
             uint32_t subtitleStartTimeMs = 0;
             uint32_t subtitleEndTimeMs = 0;
-            std::string subtitleText = "";
-            fEntries = new std::vector<plSrtEntry>();
+            ST::string subtitleText;
 
-            for (std::string line; std::getline(srtFile, line); ) {
-                plStatusLog::AddLineSF("audio.log", "   Read subtitle file line {}", line);
+            for (int lnCounter = 0; !srtFileStream.AtEnd(); lnCounter++) {
+                if (lnCounter % 4 == 0) {
+                    subtitleNumber = srtFileStream.ReadLn().to_uint();
+                } else if (lnCounter % 4 == 1) {
+                    auto line = srtFileStream.ReadLn();
+                    static const std::regex regex("^(\\d{2}):(\\d{2}):(\\d{2}),(\\d{3}) --> (\\d{2}):(\\d{2}):(\\d{2}),(\\d{3})$");
+                    std::cmatch matches;
 
-                if (subtitleNumber == 0) {
-                    subtitleNumber = std::stoi(line);
-                    continue;
-                } else if (subtitleTimings.compare("") == 0) {
-                    subtitleTimings = line;
-                    std::smatch matches;
-
-                    if (std::regex_match(subtitleTimings, matches, std::regex("^(\\d{2}):(\\d{2}):(\\d{2}),(\\d{3}) --> (\\d{2}):(\\d{2}):(\\d{2}),(\\d{3})$"))) {
+                    if (std::regex_match(line.cbegin(), line.cend(), matches, regex)) {
                         if (matches.size() < 9) {
-                            // TODO: I dunno, something wasn't formatted right? What should we do?
+                            plStatusLog::AddLineSF("audio.log", plStatusLog::kRed, "   Subtitle timings {} are formatted incorrectly.", line);
                             subtitleStartTimeMs = UINT32_MAX;
                         } else {
                             // matches[0] is the entire match, we don't do anything with it
@@ -107,27 +98,21 @@ bool plSrtFileReader::ReadFile()
                             subtitleEndTimeMs += (atoi(matches[8].str().c_str()));
                         }
                     }
-
-                    continue;
-                } else if (subtitleText.compare("") == 0) {
-                    subtitleText = line;
-                    continue;
+                } else if (lnCounter % 4 == 2) {
+                    subtitleText = srtFileStream.ReadLn();
                 } else {
                     // entry is complete, add to the queue and reset our temp variables
-                    fEntries->emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText);
+                    fEntries.emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText);
 
                     subtitleNumber = 0;
-                    subtitleTimings = "";
                     subtitleStartTimeMs = 0;
                     subtitleEndTimeMs = 0;
-                    subtitleText = "";
-                    continue;
                 }
             }
 
             if (subtitleNumber > 0 && subtitleStartTimeMs >= 0 && subtitleEndTimeMs >= 0 && subtitleText != "") {
                 // enqueue the last subtitle from the file if we didn't have an extra blank line at the end
-                fEntries->emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText);
+                fEntries.emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText);
             }
 
             return true;
@@ -139,8 +124,8 @@ bool plSrtFileReader::ReadFile()
 
 plSrtEntry* plSrtFileReader::GetNextEntryStartingBeforeTime(uint32_t timeMs)
 {
-    if (fEntries != nullptr && fCurrentEntryIndex >= 0 && fCurrentEntryIndex < fEntries->size()) {
-        plSrtEntry& nextEntry = fEntries->at(fCurrentEntryIndex);
+    if (fCurrentEntryIndex >= 0 && fCurrentEntryIndex < fEntries.size()) {
+        plSrtEntry& nextEntry = fEntries.at(fCurrentEntryIndex);
 
         if (nextEntry.GetStartTimeMs() <= timeMs) {
             fCurrentEntryIndex++;
@@ -153,8 +138,8 @@ plSrtEntry* plSrtFileReader::GetNextEntryStartingBeforeTime(uint32_t timeMs)
 
 plSrtEntry* plSrtFileReader::GetNextEntryEndingBeforeTime(uint32_t timeMs)
 {
-    if (fEntries != nullptr && fCurrentEntryIndex >= 0 && fCurrentEntryIndex < fEntries->size()) {
-        plSrtEntry& nextEntry = fEntries->at(fCurrentEntryIndex);
+    if (fCurrentEntryIndex >= 0 && fCurrentEntryIndex < fEntries.size()) {
+        plSrtEntry& nextEntry = fEntries.at(fCurrentEntryIndex);
 
         if (nextEntry.GetEndTimeMs() <= timeMs) {
             fCurrentEntryIndex++;

@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plAudioCore.h"
 #include "plAudioFileReader.h"
+#include "plAudio/plSrtFileReader.h"
 #include "hsThread.h"
 #include "plFileSystem.h"
 
@@ -120,6 +121,12 @@ public:
     plAudioFileReader * GetAudioReader();   // transfers ownership to caller
     void                SetAudioReader(plAudioFileReader *reader);
     void                SetLoaded(bool loaded);
+    plSrtFileReader*    GetSrtReader() const { return fSrtReader; }  // does not transfer ownership
+    void                SetSrtReader(plSrtFileReader* reader)
+    {
+        delete fSrtReader;
+        fSrtReader = reader;
+    }
 
     plAudioFileReader::StreamType   GetAudioReaderType() { return fStreamType; }
     unsigned                        GetAsyncLoadLength() { return fAsyncLoadLength ? fAsyncLoadLength : fDataLength; }
@@ -149,6 +156,7 @@ protected:
     bool            fError;
     
     plAudioFileReader * fReader;
+    plSrtFileReader*    fSrtReader;
     uint8_t *           fData;
     plWAVHeader         fHeader;
     uint32_t            fDataLength;
