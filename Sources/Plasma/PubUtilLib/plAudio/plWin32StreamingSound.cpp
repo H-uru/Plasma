@@ -440,21 +440,24 @@ void plWin32StreamingSound::IActuallyStop()
 
 unsigned plWin32StreamingSound::GetByteOffset()
 {
-    if(fDataStream && fDSoundBuffer)
-    {   
+    if (fDataStream && fDSoundBuffer)
+    {
+        uint32_t totalSize = fDataStream->GetDataSize();
+        uint32_t bytesRemaining = fDataStream->NumBytesLeft();
         unsigned bytesQueued = fDSoundBuffer->BuffersQueued() * STREAM_BUFFER_SIZE;
         unsigned offset = fDSoundBuffer->GetByteOffset();
-        long byteoffset = ((fDataStream->GetDataSize() - fDataStream->NumBytesLeft()) - bytesQueued) + offset;
-        
-        return byteoffset < 0 ? fDataStream->GetDataSize() - std::abs(byteoffset) : byteoffset;
+        long byteoffset = ((totalSize - bytesRemaining) - bytesQueued) + offset;
+
+        return byteoffset < 0 ? totalSize - std::abs(byteoffset) : byteoffset;
     }
+
     return 0;
 }
 
 float plWin32StreamingSound::GetActualTimeSec()
 {
-    if(fDataStream && fDSoundBuffer)
-        return fDSoundBuffer->bytePosToMSecs(fDataStream->NumBytesLeft()) / 1000.0f;
+    if (fDataStream && fDSoundBuffer)
+        return fDSoundBuffer->bytePosToMSecs(this->GetByteOffset()) / 1000.0f;
     return 0.0f;
 }
 
