@@ -51,11 +51,12 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
+from xPsnlVaultSDL import *
+from xStartPathHelpers import *
 import random
 import time
 import copy
 import PlasmaControlKeys
-from xPsnlVaultSDL import *
 
 
 imagerBtn           = ptAttribActivator(1,"fake imager button")
@@ -336,7 +337,8 @@ class clftImager(ptResponder):
         #PtGetControlEvents(False,self.key)
         PtDisableControlKeyEvents(self.key)
         PtEnableForwardMovement()
-        self.CheckforNormalStart()
+        if StartInRelto():
+            PtSendKIMessage(kEnableEntireYeeshaBook,0)
         PuzzleView = 0
         PtAtTimeCallback(self.key,1,imagerBtn.id)
 
@@ -358,9 +360,6 @@ class clftImager(ptResponder):
         global PlayTPOT
 
         self.ageSDL = PtGetAgeSDL()
-        vault = ptVault()
-        start = vault.findChronicleEntry("StartPathChosen")
-        entryCleft = vault.findChronicleEntry("CleftSolved")
 
         if (id == MakeMeVisible.id and state):
             if (PtFirstPerson()):
@@ -442,7 +441,7 @@ class clftImager(ptResponder):
                 PlayFull = 1
                 PlayFinal = 0
                 PtDebugPrint("play full opening speech")
-            elif (entryCleft is not None and self.TPOTSolved()):
+            elif (IsCleftSolved() and self.TPOTSolved()):
                 PlayFull = 0
                 PlayFinal = 0
                 PlayTPOT = 1
@@ -463,7 +462,8 @@ class clftImager(ptResponder):
             PtDebugPrint("avatar oneshot callback")
             PuzzleView = 0
             PtEnableForwardMovement()
-            self.CheckforNormalStart()
+            if StartInRelto():
+                PtSendKIMessage(kEnableEntireYeeshaBook,0)
             windmillRunning = self.ageSDL[stringSDLVarRunning.value][0]
             if windmillRunning == 1 and imagerBusted == 0:
                 PtDebugPrint("clftImager.OnNotify: SDL says windmill is running, so button will do SOMETHING after oneshot...")
@@ -767,7 +767,8 @@ class clftImager(ptResponder):
             imagerBtn.enableActivator()
             ImagerBtnVisible.run(self.key)
             PtEnableForwardMovement()
-            self.CheckforNormalStart()
+            if StartInRelto():
+                PtSendKIMessage(kEnableEntireYeeshaBook,0)
         elif id == kLostPowerID:
             speechKilled = 1
             self.StopVision()
@@ -946,9 +947,3 @@ class clftImager(ptResponder):
             elif param == "off" or param == "0":
                 respPlayTPOTSpeech.run(self.key,state="off")
 
-    def CheckforNormalStart(self):
-        vault = ptVault()
-        start = vault.findChronicleEntry("StartPathChosen")
-        entryCleft = vault.findChronicleEntry("CleftSolved")
-        if not (start.chronicleGetValue() == "cleft" and entryCleft is None):
-            PtSendKIMessage(kEnableEntireYeeshaBook,0)

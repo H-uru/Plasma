@@ -53,6 +53,7 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
+from xStartPathHelpers import *
 
 
 # define the attributes that will be entered in max
@@ -166,22 +167,24 @@ class xYeeshaPages(ptModifier):
                 
                 PtDebugPrint ("xYeeshaPages.py: The previous value of the SDL variable %s is %s" % ("YeeshaPage" + str(PageNumber.value), YeeshaPageVar.getInt()))
 
+                if StartInCleft() and not IsCleftSolved():
+                    PtFindSceneobject("YeeshaPageButton","GUI").runAttachedResponder(1)
+                else:
+                    PtFindSceneobject("YeeshaPageButton","GUI").runAttachedResponder(0)
+
                 if YeeshaPageVar.getInt() != 0: 
                     PtDebugPrint ("xYeeshaPages.py: You've already found Yeesha Page #%s. Move along. Move along." % (PageNumber.value))
                     return
                     
                 else:
-                    start = vault.findChronicleEntry("StartPathChosen")
-                    entryCleft = vault.findChronicleEntry("CleftSolved")
-                    if start.chronicleGetValue() == "cleft" and entryCleft is None:
-                        return
                     PtDebugPrint ("xYeeshaPages.py: Yeesha Page #%s is new to you." % (PageNumber.value))
                     
                     PtDebugPrint ("xYeeshaPages.py: Trying to update the value of the SDL variable %s to 1" % ("YeeshaPage" + str(PageNumber.value)))
                     YeeshaPageVar.setInt(4)
                     vault.updatePsnlAgeSDL (psnlSDL)
 
-                    PtSendKIMessageInt(kStartBookAlert,0)
+                    if not (IsTutorialPath() and not IsCleftSolved()):
+                        PtSendKIMessageInt(kStartBookAlert,0)
 
                     if (PageNumber.value) == 25:
                         #Cleft is done, set SDL to start link back to Relto

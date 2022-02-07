@@ -51,6 +51,7 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
+from xStartPathHelpers import *
 
 
 #rgnSnsrFissureDrop = ptAttribActivator(1, "rgn snsr: fissure drop spawn")
@@ -84,14 +85,7 @@ class Cleft(ptResponder):
         #checks chronicle entries, if don't exist or is set to no,
         #then decides if Tomahna or Zandi should be paged in
 
-        vault = ptVault()
-        entryCleft = vault.findChronicleEntry("CleftSolved")
-        if entryCleft is not None:
-            entryCleftValue = entryCleft.chronicleGetValue()
-            if entryCleftValue != "yes":
-                loadZandi = 1
-                loadBook = 1
-        elif entryCleft is None:
+        if not IsCleftSolved():
             loadZandi = 1
             loadBook = 1
 
@@ -175,19 +169,16 @@ class Cleft(ptResponder):
         global fissureDrop
         
         ageSDL = PtGetAgeSDL()
-
-        vault = ptVault()
-        start = vault.findChronicleEntry("StartPathChosen")
-        entryCleft = vault.findChronicleEntry("CleftSolved")
-        if start.chronicleGetValue() == "cleft" and entryCleft is None:
-            ageSDL["clftYeeshaBookVis"] = (1,)
-            PtSendKIMessageInt(kUpgradeKILevel, kMicroKI)
-            PtSendKIMessage(kDisableEntireYeeshaBook,0)
-            PtFindSceneobject("microBlackBarBody", "GUI").draw.disable()
-            PtAtTimeCallback(self.key,1,0)
-            avatar.avatar.setDontPanicLink(True)
-        elif start.chronicleGetValue() == "relto" and entryCleft is None:
-            ageSDL["clftYeeshaBookVis"] = (0,)
+        if not IsCleftSolved():
+            if IsTutorialPath():
+                ageSDL["clftYeeshaBookVis"] = (1,)
+                PtSendKIMessageInt(kUpgradeKILevel, kMicroKI)
+                PtSendKIMessage(kDisableEntireYeeshaBook,0)
+                PtFindSceneobject("microBlackBarBody", "GUI").draw.disable()
+                PtAtTimeCallback(self.key,1,0)
+                #avatar.avatar.setDontPanicLink(True)
+            elif IsAdvancedPath():
+                ageSDL["clftYeeshaBookVis"] = (0,)
 
         # sets Tomahna SDL based on what is being loaded (thanks to chronicle val)
         # also settings previously contained in .fni files

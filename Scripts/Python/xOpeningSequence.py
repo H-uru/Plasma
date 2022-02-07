@@ -53,6 +53,7 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaConstants import *
+from xStartPathHelpers import *
 
 import PlasmaControlKeys
 import os
@@ -219,9 +220,7 @@ class xOpeningSequence(ptModifier):
                 # see if the there actually is a movie to play
                 skipMovie = 1
                 try:
-                    vault = ptVault()
-                    start = vault.findChronicleEntry("StartPathChosen")
-                    if start.chronicleGetValue() == "cleft":
+                    if IsTutorialPath():
                         os.stat(kAtrusIntroMovie)
                     else:
                         os.stat(kYeeshaIntroMovie)
@@ -237,6 +236,14 @@ class xOpeningSequence(ptModifier):
                     PtGUICursorOn()
                     OrientationDlg.dialog.show()
                     PtDebugPrint("xOpeningSequence - no intro movie!!!",level=kDebugDumpLevel)
+                    if IsTutorialPath():
+                        PtFindSceneobject("OrientationPBIcon01","GUI").draw.disable()
+                        PtFindSceneobject("OrientationPBIcon02","GUI").draw.disable()
+                        PtFindSceneobject("OrientationPBIcon01Zandi","GUI").draw.enable()
+                        ptGUIControlTextBox(OrientationDlg.dialog.getControlFromIndex(3)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBTextZandi"))
+                    else:
+                        PtFindSceneobject("OrientationPBIcon01Zandi","GUI").draw.disable()
+                        ptGUIControlTextBox(OrientationDlg.dialog.getControlFromIndex(3)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBText"))
             elif event == kAction or event == kValueChanged:
                 orientationID = control.getTagID()
                 if orientationID == kFirstHelpOkBtn:
@@ -318,10 +325,7 @@ class xOpeningSequence(ptModifier):
         elif id == -1:
             if event == kShowHide:
                 if control.isEnabled():
-                    vault = ptVault()
-                    start = vault.findChronicleEntry("StartPathChosen")
-                    entryCleft = vault.findChronicleEntry("CleftSolved")
-                    if start.chronicleGetValue() == "cleft" and entryCleft is None:
+                    if IsTutorialPath() and not IsCleftSolved():
                         gIntroMovie = ptMoviePlayer(kAtrusIntroMovie, self.key)
                     else:
                         gIntroMovie = ptMoviePlayer(kYeeshaIntroMovie, self.key)
@@ -388,12 +392,18 @@ class xOpeningSequence(ptModifier):
         PtGUICursorOn()
         vault = ptVault()
         entry = vault.findChronicleEntry(kIntroPlayedChronicle)
-        start = vault.findChronicleEntry("StartPathChosen")
-        entryCleft = vault.findChronicleEntry("CleftSolved")
-        if entry is not None and start.chronicleGetValue() == "cleft" and entryCleft is not None:
+        if entry is not None and IsTutorialPath() and IsCleftSolved():
             self.IStartGame()
         else:
             OrientationDlg.dialog.show()
+            if IsTutorialPath():
+                PtFindSceneobject("OrientationPBIcon01","GUI").draw.disable()
+                PtFindSceneobject("OrientationPBIcon02","GUI").draw.disable()
+                PtFindSceneobject("OrientationPBIcon01Zandi","GUI").draw.enable()
+                ptGUIControlTextBox(OrientationDlg.dialog.getControlFromIndex(3)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBTextZandi"))
+            else:
+                PtFindSceneobject("OrientationPBIcon01Zandi","GUI").draw.disable()
+                ptGUIControlTextBox(OrientationDlg.dialog.getControlFromIndex(3)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBText"))
         PtFadeIn(kHelpFadeInSeconds,0)
 
 
@@ -415,11 +425,10 @@ class xOpeningSequence(ptModifier):
         # 1) set chronicle variable to say they've complete intro
         vault = ptVault()
         entry = vault.findChronicleEntry(kIntroPlayedChronicle)
-        start = vault.findChronicleEntry("StartPathChosen")
         if entry is not None:
             entry.chronicleSetValue("yes")
             entry.save()
-        elif start.chronicleGetValue() == "cleft":
+        elif IsTutorialPath():
             vault.addChronicleEntry(kIntroPlayedChronicle, 2, "no")
         else:
             vault.addChronicleEntry(kIntroPlayedChronicle,2,"yes")

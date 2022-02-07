@@ -54,6 +54,7 @@ from PlasmaConstants import *
 from PlasmaKITypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
+from xStartPathHelpers import *
 import PlasmaControlKeys
 
 import re
@@ -475,25 +476,17 @@ class xDialogStartUp(ptResponder):
             self.ageLink = ptAgeLinkStruct()
             ageInfo = ptAgeInfoStruct()
 
-            vault = ptVault()
-            entry = vault.findChronicleEntry("InitialAvCustomizationsDone")
-            start = vault.findChronicleEntry("StartPathChosen")
+            start =  ptVault().findChronicleEntry("StartPathChosen")
             if start is not None:
                 gPlayerStart = start.chronicleGetValue()
-            else:
-                vault.addChronicleEntry("StartPathChosen", 1, gPlayerStart)
-            if entry is not None:
-                if gPlayerStart == "cleft":
-                    entryCleft = vault.findChronicleEntry("CleftSolved")
-                    ageInfo.setAgeFilename("Cleft")
-                    if entryCleft is not None:
-                        entryCleftValue = entryCleft.chronicleGetValue()
-                        if entryCleftValue == "yes":
-                            ageInfo.setAgeFilename("Personal")
-                else:
-                    ageInfo.setAgeFilename("Personal")
-            else:
+            if StartInACA():
                 ageInfo.setAgeFilename("AvatarCustomization")
+            elif StartInCleft():
+                ageInfo.setAgeFilename("Cleft")
+            elif StartInRelto():
+                ageInfo.setAgeFilename("Personal")
+            SelectPath(gPlayerStart)
+                
             self.ageLink.setAgeInfo(ageInfo)
             self.ageLink.setLinkingRules(PtLinkingRules.kOwnedBook)
 

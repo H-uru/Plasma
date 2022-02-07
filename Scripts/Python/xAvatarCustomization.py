@@ -54,6 +54,7 @@ from PlasmaKITypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 from colorsys import *
+from xStartPathHelpers import *
 import PlasmaControlKeys
 import time
 import os   #used for saving pictures locally
@@ -927,17 +928,14 @@ class xAvatarCustomization(ptModifier):
                         avatar.avatar.saveClothing()
                         PtEnableAvatarJump()
                         if InAvatarCloset:
-                            vault = ptVault()
-                            entry = vault.findChronicleEntry(kCleftSolved)
-                            start = vault.findChronicleEntry("StartPathChosen")
                             linkmgr = ptNetLinkingMgr()
 
-                            if start.chronicleGetValue() == "relto":
+                            if IsAdvancedPath():
                                 #Just link back to the closet
                                 self.ILinkToCloset()
-                            elif start.chronicleGetValue() == "cleft":
+                            elif IsTutorialPath():
                                 #Disable other logic... no more going to the cleft from the AVC
-                                if entry is not None:
+                                if IsCleftSolved():
                                     # player has solved the cleft
                                     # just go back to your personal age
                                     self.ILinkToCloset()
@@ -955,10 +953,8 @@ class xAvatarCustomization(ptModifier):
                             # mark the chonicle that we've been here
                             vault = ptVault()
                             vault.addChronicleEntry(kAvaCustaIsDone,kAvaCustaIsDoneType,"1")
-                            entry = vault.findChronicleEntry(kCleftSolved)
-                            start = vault.findChronicleEntry("StartPathChosen")
 
-                            if start.chronicleGetValue() == "relto":
+                            if IsAdvancedPath():
                                 #Link straight to personal, no more going to cleft from the AVC!
                                 linkmgr = ptNetLinkingMgr()
                                 ageLink = ptAgeLinkStruct()
@@ -967,9 +963,9 @@ class xAvatarCustomization(ptModifier):
                                 ageLink.setAgeInfo(ageInfo)
                                 ageLink.setLinkingRules(PtLinkingRules.kOwnedBook)
                                 linkmgr.linkToAge(ageLink)
-                            elif start.chronicleGetValue() == "cleft":
+                            elif IsTutorialPath():
                             #Disable other logic... no more going to cleft from the AVC!
-                                if entry is not None:
+                                if IsCleftSolved():
                                     # player has solved the cleft
                                     # just go back to your personal age
                                     linkmgr = ptNetLinkingMgr()
