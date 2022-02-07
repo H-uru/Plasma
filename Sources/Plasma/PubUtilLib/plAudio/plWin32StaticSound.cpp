@@ -44,25 +44,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plgDispatch.h"
 #include "plProfile.h"
-
 #include "plWin32StaticSound.h"
 #include "plWin32Sound.h"
 #include "plDSoundBuffer.h"
 #include "plAudioSystem.h"
-
 #include "plAudioCore/plSoundBuffer.h"
 #include "plAudioCore/plSoundDeswizzler.h"
 #include "pnMessage/plEventCallbackMsg.h"
 #include "pnMessage/plAudioSysMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "plMessage/plAvatarMsg.h"
-#include "plMessage/plSubtitleMsg.h"
 #include "pnNetCommon/plNetApp.h"
 
 #include "plPipeline/plPlates.h"
 #include "plStatusLog/plStatusLog.h"
-
-#include <regex>
 
 plProfile_Extern(MemSounds);
 plProfile_CreateAsynchTimer( "Static Shove Time", "Sound", StaticSndShoveTime );
@@ -150,16 +145,13 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         if( 0 )
             tryStatic = false;
 
-        plFileName srcFilename = GetFileName();
-
         // Create our DSound buffer (or rather, the wrapper around it)
         fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), tryStatic );
         if( !fDSoundBuffer->IsValid() )
         {
-            ST::string str = ST::format(
-                "Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
-                " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
-                srcFilename);
+            ST::string str = ST::format("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
+                                        " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
+                                        GetFileName());
             IPrintDbgMessage(str.c_str(), true);
             fFailed = true;
 

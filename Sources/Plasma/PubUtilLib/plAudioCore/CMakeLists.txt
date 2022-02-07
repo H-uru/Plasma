@@ -6,6 +6,7 @@ set(plAudioCore_SOURCES
     plOGGCodec.cpp
     plSoundBuffer.cpp
     plSoundDeswizzler.cpp
+    plSrtFileReader.cpp
     plWavFile.cpp
 )
 
@@ -19,6 +20,7 @@ set(plAudioCore_HEADERS
     plOGGCodec.h
     plSoundBuffer.h
     plSoundDeswizzler.h
+    plSrtFileReader.h
     plWavFile.h
 )
 

@@ -56,9 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plSoundMsg.h"
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plStatusLog/plStatusLog.h"
-#include "plMessage/plSubtitleMsg.h"
-
-#include <regex>
 
 #if HS_BUILD_FOR_WIN32
 #    include <direct.h>
@@ -178,7 +175,7 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
             if (sfxPath)
                 strPath = plFileName::Join(strPath, "sfx");
             strPath = plFileName::Join(strPath, fSrcFilename);
-            fDataStream = plAudioFileReader::CreateReader(strPath, select, type);
+            fDataStream = plAudioFileReader::CreateReader(strPath, select,type);
         }
 
         if (fDataStream == nullptr || !fDataStream->IsValid())

@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plAudioCore.h"
 #include "plAudioFileReader.h"
-#include "plAudio/plSrtFileReader.h"
+#include "plAudioCore/plSrtFileReader.h"
 #include "hsThread.h"
 #include "plFileSystem.h"
 

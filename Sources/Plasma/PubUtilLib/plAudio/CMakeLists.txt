@@ -6,7 +6,6 @@ set(plAudio_SOURCES
     plEAXListenerMod.cpp
     plSound.cpp
     plSoundEvent.cpp
-    plSrtFileReader.cpp
     plVoiceChat.cpp
     plVoiceCodec.cpp
     plWin32GroupedSound.cpp
@@ -27,7 +26,6 @@ set(plAudio_HEADERS
     plEAXStructures.h
     plSound.h
     plSoundEvent.h
-    plSrtFileReader.h
     plVoiceChat.h
     plVoiceCodec.h
     plWin32GroupedSound.h
