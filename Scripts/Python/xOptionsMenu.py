@@ -1721,6 +1721,9 @@ class xOptionsMenu(ptModifier):
         audioField = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kGSEnableVoiceChat))
         audioField.setChecked( audio.isVoiceRecordingEnabled() )
 
+        audioField = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kGSEnableSubtitles))
+        audioField.setChecked( audio.areSubtitlesEnabled() )
+
         audioField = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioMuteCheckBoxTag))
         audioField.setChecked( audio.isMuted() )
 
