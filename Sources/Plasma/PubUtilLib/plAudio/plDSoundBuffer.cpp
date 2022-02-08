@@ -695,9 +695,9 @@ bool    plDSoundBuffer::IsEAXAccelerated() const
 
 //// bytePosToMSecs //////////////////////////////////////////////////////////
 
-uint32_t  plDSoundBuffer::bytePosToMSecs( uint32_t bytePos ) const
+uint32_t  plDSoundBuffer::bytePosToMSecs(uint32_t bytePos) const
 {
-    return (uint32_t)(bytePos * 1000 / (float)fBufferDesc->fAvgBytesPerSec);
+    return (uint32_t)(bytePos / ((float)fBufferDesc->fAvgBytesPerSec / 1000.0f));
 }
 
 //// GetBufferBytePos ////////////////////////////////////////////////////////
