@@ -169,16 +169,15 @@ class Cleft(ptResponder):
         global fissureDrop
         
         ageSDL = PtGetAgeSDL()
-        if not IsCleftSolved():
-            if IsTutorialPath():
-                ageSDL["clftYeeshaBookVis"] = (1,)
-                PtSendKIMessageInt(kUpgradeKILevel, kMicroKI)
-                PtSendKIMessage(kDisableEntireYeeshaBook,0)
-                PtFindSceneobject("microBlackBarBody", "GUI").draw.disable()
-                PtAtTimeCallback(self.key,1,0)
-                #avatar.avatar.setDontPanicLink(True)
-            elif IsAdvancedPath():
-                ageSDL["clftYeeshaBookVis"] = (0,)
+        if StartInCleft():
+            ageSDL["clftYeeshaBookVis"] = (1,)
+            PtSendKIMessageInt(kUpgradeKILevel, kMicroKI)
+            PtSendKIMessage(kDisableEntireYeeshaBook,0)
+            PtFindSceneobject("microBlackBarBody", "GUI").draw.disable()
+            PtAtTimeCallback(self.key,1,0)
+            PtGetLocalAvatar().avatar.setDontPanicLink(True)
+        else:
+            ageSDL["clftYeeshaBookVis"] = (0,)
 
         # sets Tomahna SDL based on what is being loaded (thanks to chronicle val)
         # also settings previously contained in .fni files

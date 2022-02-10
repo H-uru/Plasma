@@ -167,7 +167,7 @@ class xYeeshaPages(ptModifier):
                 
                 PtDebugPrint ("xYeeshaPages.py: The previous value of the SDL variable %s is %s" % ("YeeshaPage" + str(PageNumber.value), YeeshaPageVar.getInt()))
 
-                if StartInCleft() and not IsCleftSolved():
+                if StartInCleft():
                     PtFindSceneobject("YeeshaPageButton","GUI").runAttachedResponder(1)
                 else:
                     PtFindSceneobject("YeeshaPageButton","GUI").runAttachedResponder(0)
@@ -183,7 +183,7 @@ class xYeeshaPages(ptModifier):
                     YeeshaPageVar.setInt(4)
                     vault.updatePsnlAgeSDL (psnlSDL)
 
-                    if not (IsTutorialPath() and not IsCleftSolved()):
+                    if not StartInCleft():
                         PtSendKIMessageInt(kStartBookAlert,0)
 
                     if (PageNumber.value) == 25:

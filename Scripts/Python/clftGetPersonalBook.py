@@ -205,4 +205,4 @@ class clftGetPersonalBook(ptResponder):
         if id == kLinkRespID:
             respLinkResponder.run(self.key, self.key, avatar=PtGetLocalAvatar())
             PtSendKIMessage(kEnableKIandBB, 0)
-            avatar.avatar.setDontPanicLink(False)
+            PtGetLocalAvatar().avatar.setDontPanicLink(False)

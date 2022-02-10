@@ -66,7 +66,9 @@ import xOptionsMenu
 IntroMovieDlg = ptAttribGUIDialog(1,"The Intro Movie dialog")
 FirstHelpDlg = ptAttribGUIDialog(2, "The First Help dialog")
 OrientationDlg = ptAttribGUIDialog(3, "The Orientation dialog")
-
+OrientationPBIcon01 = ptAttribSceneobject(4, "Player Book Icon")
+OrientationPBIcon02 = ptAttribSceneobject(5, "Player Book Icon 2")
+OrientationPBIcon01Zandi = ptAttribSceneobject(6, "Zandi Icon")
 
 # globals
 #--------
@@ -140,6 +142,7 @@ kMouseNormalText = 631
 kMouseNoviceText = 632
 kOkButton = 650
 
+kOrientPBText = 311
 
 class xOpeningSequence(ptModifier):
     "The Opening Sequence handler"
@@ -237,13 +240,13 @@ class xOpeningSequence(ptModifier):
                     OrientationDlg.dialog.show()
                     PtDebugPrint("xOpeningSequence - no intro movie!!!",level=kDebugDumpLevel)
                     if IsTutorialPath():
-                        PtFindSceneobject("OrientationPBIcon01","GUI").draw.disable()
-                        PtFindSceneobject("OrientationPBIcon02","GUI").draw.disable()
-                        PtFindSceneobject("OrientationPBIcon01Zandi","GUI").draw.enable()
-                        ptGUIControlTextBox(OrientationDlg.dialog.getControlFromIndex(3)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBTextZandi"))
+                        OrientationPBIcon01.value.draw.disable()
+                        OrientationPBIcon02.value.draw.disable()
+                        OrientationPBIcon01Zandi.value.draw.enable()
+                        ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBTextZandi"))
                     else:
-                        PtFindSceneobject("OrientationPBIcon01Zandi","GUI").draw.disable()
-                        ptGUIControlTextBox(OrientationDlg.dialog.getControlFromIndex(3)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBText"))
+                        OrientationPBIcon01Zandi.value.draw.disable()
+                        ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBText"))
             elif event == kAction or event == kValueChanged:
                 orientationID = control.getTagID()
                 if orientationID == kFirstHelpOkBtn:
@@ -290,7 +293,7 @@ class xOpeningSequence(ptModifier):
                 textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kOkButton))
                 textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Ok"))
                 # hide the ok button until they agree to the terms... or pick normal or novice
-                ##textField.setString(" ")
+                ##textField.setStringW(" ")
                 ##okBtn = ptGUIControlButton(FirstHelpDlg.dialog.getControlFromTag(kFirstHelpOkBtn))
                 ##okBtn.hide()
             elif event == kShowHide:
@@ -325,7 +328,7 @@ class xOpeningSequence(ptModifier):
         elif id == -1:
             if event == kShowHide:
                 if control.isEnabled():
-                    if IsTutorialPath() and not IsCleftSolved():
+                    if StartInCleft():
                         gIntroMovie = ptMoviePlayer(kAtrusIntroMovie, self.key)
                     else:
                         gIntroMovie = ptMoviePlayer(kYeeshaIntroMovie, self.key)
