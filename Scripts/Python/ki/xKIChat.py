@@ -61,6 +61,7 @@ from . import xKIExtChatCommands
 from .xKIConstants import *
 from .xKIHelpers import *
 
+
 ## A class to process all the RT Chat functions of the KI.
 class xKIChat(object):
 
@@ -441,7 +442,6 @@ class xKIChat(object):
             PtDebugPrint("Chat Flags are {}".format(cFlags))
             # Is it subtitles for current audio?
             if cFlags.subtitle:
-                PtDebugPrint("xKIChat.AddChatLine(): Adding subtitle {}.".format(message))
                 headerColor = kColors.AudioSubtitleHeader
                 if player is not None:
                     # add subtitle speaker's name if it was provided
@@ -571,7 +571,6 @@ class xKIChat(object):
                 headerColor = kColors.ChatHeaderError
                 pretext = PtGetLocalizedString("KI.Chat.ErrorMsgRecvd")
             elif cFlags == kChat.AudioSubtitle:
-                PtDebugPrint("xKIChat.AddChatLine(): Adding subtitle {}.".format(message))
                 headerColor = kColors.AudioSubtitleHeader
                 if player is not None:
                     # add subtitle speaker's name if it was provided
@@ -584,7 +583,6 @@ class xKIChat(object):
         if forceKI:
             if not self.KIDisabled and not mKIdialog.isEnabled():
                 mKIdialog.show()
-
         if player is not None:
             separator = "" if pretext.endswith(" ") else " "
             chatHeaderFormatted = "{}{}{}:".format(pretext, separator, player.getPlayerNameW())

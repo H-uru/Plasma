@@ -131,7 +131,7 @@ void plWin32Sound::IActuallyPlay()
         {
             if (!fReallyPlaying && fSynchedStartTimeSec > 0) {
                 // advance past any subtitles that would end before the synched start time
-                // TODO: when would this actually happen? Need to find test case
+                // not sure when this actually happens...
                 auto buf = this->GetDataBuffer();
                 if (buf != nullptr) {
                     auto srtReader = buf->GetSrtReader();
