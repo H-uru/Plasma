@@ -110,7 +110,7 @@ void plWin32Sound::Update()
 
                 if (nextEntry != nullptr) {
                     // add a plSubtitleMsg to go... to whoever is listening (probably the KI)
-                    plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText());
+                    plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText(), nextEntry->GetSpeakerName());
                     msg->Send();
                 }
             } while (nextEntry != nullptr);
@@ -136,10 +136,7 @@ void plWin32Sound::IActuallyPlay()
                 if (buf != nullptr) {
                     auto srtReader = buf->GetSrtReader();
                     if (srtReader != nullptr) {
-                        plSrtEntry* nextEntry = nullptr;
-                        do {
-                            nextEntry = srtReader->GetNextEntryEndingBeforeTime(fSynchedStartTimeSec * 1000.0);
-                        } while (nextEntry != nullptr);
+                        srtReader->AdvanceToTime(fSynchedStartTimeSec * 1000.0);
                     }
                 }
             }

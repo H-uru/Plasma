@@ -57,10 +57,15 @@ class plSrtEntry
 {
 public:
 
+    plSrtEntry(uint32_t entryNum, uint32_t startTimeMs, uint32_t endTimeMs, ST::string subtitleText, ST::string speakerName)
+        : fEntryNum(entryNum), fStartTimeMs(startTimeMs), fEndTimeMs(endTimeMs), fSubtitleText(std::move(subtitleText)),
+        fSpeakerName(std::move(speakerName)) { }
+
     plSrtEntry(uint32_t entryNum, uint32_t startTimeMs, uint32_t endTimeMs, ST::string subtitleText)
         : fEntryNum(entryNum), fStartTimeMs(startTimeMs), fEndTimeMs(endTimeMs), fSubtitleText(std::move(subtitleText)) { }
 
     ST::string      GetSubtitleText() const { return fSubtitleText; }
+    ST::string      GetSpeakerName() const { return fSpeakerName; }
     uint32_t        GetStartTimeMs() const { return fStartTimeMs; }
     uint32_t        GetEndTimeMs() const { return fEndTimeMs; }
 
@@ -70,6 +75,7 @@ protected:
     uint32_t      fStartTimeMs;
     uint32_t      fEndTimeMs;
     ST::string    fSubtitleText;
+    ST::string    fSpeakerName;
 
 };
 
@@ -83,6 +89,7 @@ public:
     bool            ReadFile();
     void            StartOver() { fCurrentEntryIndex = 0; }
     plFileName      GetCurrentAudioFileName() const { return fAudioFileName; }
+    void            AdvanceToTime(uint32_t timeMs);
     plSrtEntry*     GetNextEntryStartingBeforeTime(uint32_t timeMs);
     plSrtEntry*     GetNextEntryEndingBeforeTime(uint32_t timeMs);
 

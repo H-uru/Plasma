@@ -1644,7 +1644,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     // are they looking for a subtitle notification message?
     auto pSubMsg = IScriptWantsMsg<plSubtitleMsg>(kfunc_OnSubtitleMsg, msg);
     if (pSubMsg) {
-        ICallScriptMethod(kfunc_OnSubtitleMsg, pSubMsg->GetText());
+        ICallScriptMethod(kfunc_OnSubtitleMsg, pSubMsg->GetText(), pSubMsg->GetSpeaker());
         return true;
     }
 

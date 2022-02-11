@@ -52,6 +52,7 @@ class plSubtitleMsg : public plMessage
 {
 protected:
     ST::string fText;
+    ST::string fSpeaker;
 
 public:
     plSubtitleMsg() : plMessage()
@@ -59,7 +60,13 @@ public:
         SetBCastFlag(plMessage::kBCastByExactType);
     }
 
-    plSubtitleMsg(ST::string msg) : plMessage(), fText(std::move(msg))
+    plSubtitleMsg(ST::string msgText) : plMessage(), fText(std::move(msgText))
+    {
+        SetBCastFlag(plMessage::kBCastByExactType);
+    }
+
+    plSubtitleMsg(ST::string msgText, ST::string msgSpeaker) : plMessage(), fText(std::move(msgText)), 
+        fSpeaker(std::move(msgSpeaker))
     {
         SetBCastFlag(plMessage::kBCastByExactType);
     }
@@ -71,6 +78,7 @@ public:
     void Write(hsStream*, hsResMgr*) override { FATAL("no"); }
 
     ST::string GetText() const { return fText; }
+    ST::string GetSpeaker() const { return fSpeaker; }
 };
 
 #endif // plSubtitleMsg_inc
