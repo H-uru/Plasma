@@ -46,6 +46,6 @@ from PlasmaTypes import *
 class Vothol(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
-        self.id = -1
+        self.id = 401944
         self.version = 0
 
