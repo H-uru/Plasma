@@ -523,7 +523,17 @@ void plAutoUIBase::ICreateControls()
 
     RECT rect;
     GetWindowRect(fhDlg, &rect);
-    MoveWindow(fhDlg, rect.left, rect.top, rect.right - rect.left, yOffset+5, FALSE);
+
+    // This used to use MoveWindow() to resize the rollup, but in Max 2022,
+    // that does not seem to work anymore. So, we now do the same thing
+    // that WM_SIZE_PANEL does.
+    IRollupWindow* rollup = GetCOREInterface()->GetCommandPanelRollup();
+    int index = rollup->GetPanelIndex(fhDlg);
+
+    if (index >= 0)
+        rollup->SetPageDlgHeight(index, yOffset + 5);
+
+    InvalidateRect(fhDlg, nullptr, TRUE);
 }
 
 void plAutoUIBase::CreateAutoRollup(IParamBlock2 *pb)
