@@ -39,11 +39,12 @@
 #       Mead, WA   99021
 #
 # *==LICENSE==*/
+
 from Plasma import *
 from PlasmaTypes import *
- 
+
 class Tiam(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
-        self.id = -1
+        self.id = 906939
         self.version = 0
