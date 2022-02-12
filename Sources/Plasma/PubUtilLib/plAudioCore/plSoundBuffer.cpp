@@ -123,7 +123,7 @@ void plSoundPreloader::Run()
                             // same file we were playing before, so start the SRT feed over instead of deleting and reloading
                             srtReader->StartOver();
                         } else {
-                            std::unique_ptr<plSrtFileReader> newSrtFileReader(new plSrtFileReader(srcFilename));
+                            auto newSrtFileReader = std::make_unique<plSrtFileReader>(srcFilename);
                             if (newSrtFileReader->ReadFile())
                                 buf->SetSrtReader(newSrtFileReader.release());
                         }

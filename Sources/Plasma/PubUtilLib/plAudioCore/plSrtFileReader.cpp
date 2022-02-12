@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 
 #include <regex>
-#include <stdint.h>
 
 static const std::regex speakerTextRegex("^((([\\w.]+(\\s\\w+)?):) )?(.*)");
 static const std::regex timingsRegex("^(\\d{2}):(\\d{2}):(\\d{2}),(\\d{3}) --> (\\d{2}):(\\d{2}):(\\d{2}),(\\d{3})$");
@@ -71,7 +70,7 @@ bool plSrtFileReader::ReadFile()
             ST::string subtitleText;
             std::cmatch matches;
 
-            for (int lnCounter = 0; !srtFileStream.AtEnd(); lnCounter++) {
+            for (unsigned int lnCounter = 0; !srtFileStream.AtEnd(); lnCounter++) {
                 if (lnCounter % 4 == 0 && srtFileStream.ReadLn(line)) {
                     subtitleNumber = line.to_uint();
                 } else if (lnCounter % 4 == 1 && srtFileStream.ReadLn(line)) {
@@ -119,9 +118,9 @@ bool plSrtFileReader::ReadFile()
                 } else if (lnCounter % 4 == 3 && subtitleNumber > 0 && subtitleStartTimeMs >= 0 && subtitleEndTimeMs >= 0 && !subtitleText.empty()) {
                     // entry is complete, add to the queue and reset our temp variables
                     if (!speakerName.empty())
-                        fEntries.emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText, speakerName);
+                        fEntries.emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, std::move(subtitleText), std::move(speakerName));
                     else
-                        fEntries.emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText);
+                        fEntries.emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, std::move(subtitleText));
 
                     subtitleNumber = 0;
                     subtitleStartTimeMs = 0;
@@ -134,9 +133,9 @@ bool plSrtFileReader::ReadFile()
             if (subtitleNumber > 0 && subtitleStartTimeMs >= 0 && subtitleEndTimeMs >= 0 && !subtitleText.empty()) {
                 // enqueue the last subtitle from the file if we didn't have an extra blank line at the end
                 if (!speakerName.empty())
-                    fEntries.emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText, speakerName);
+                    fEntries.emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, std::move(subtitleText), std::move(speakerName));
                 else
-                    fEntries.emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, subtitleText);
+                    fEntries.emplace_back(subtitleNumber, subtitleStartTimeMs, subtitleEndTimeMs, std::move(subtitleText));
             }
 
             return true;
