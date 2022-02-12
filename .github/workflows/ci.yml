@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   windows:
-    runs-on: windows-latest
+    runs-on: windows-2019
     name: ${{ matrix.platform.str }}-${{ matrix.cfg.str }}
     strategy:
       matrix:
@@ -91,7 +91,7 @@ jobs:
     needs: ["max-secrets"]
     if: needs.max-secrets.outputs.HAS_MACHINE_USER_TOKEN == 'true'
 
-    runs-on: windows-latest
+    runs-on: windows-2019
     name: maxplugin-${{ matrix.cfg.str }}
     strategy:
       matrix:
