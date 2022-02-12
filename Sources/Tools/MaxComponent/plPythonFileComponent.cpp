@@ -1212,12 +1212,12 @@ static void NotifyProc(void *param, NotifyInfo *info)
     // descriptor, which Max may still try to use in between shutdown 1 and 2.
     else if (info->intcode == NOTIFY_SYSTEM_SHUTDOWN2)
     {
-        int count = gAutoUIBlocks.size();
-        for (int i = 0; i < count; i++)
-        {
-            delete gAutoUIBlocks[i];
+        // Debounce recursive shutdowns (they happen for some reason)
+        while (!gAutoUIBlocks.empty()) {
+            plAutoUIBlock* block = gAutoUIBlocks.back();
+            gAutoUIBlocks.pop_back();
+            delete block;
         }
-        gAutoUIBlocks.clear();
     }
 }
 
