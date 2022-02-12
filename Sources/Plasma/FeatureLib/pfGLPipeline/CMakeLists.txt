@@ -1,5 +1,6 @@
 set(pfGLPipeline_SOURCES
     plGLDevice.cpp
+    plGLEnumerate.cpp
     plGLDeviceRefs.cpp
     plGLPipeline.cpp
 )
@@ -20,6 +21,11 @@ target_link_libraries(pfGLPipeline
     PRIVATE
         plStatusLog
         epoxy::epoxy
+
+        # On macOS, we need to link against OpenGL.framework for access to the
+        # CGL functions. On other platforms, the OpenGL library is loaded
+        # dynamically by epoxy.
+        "$<$<PLATFORM_ID:Darwin>:-framework OpenGL>"
     INTERFACE
         pnFactory
 )

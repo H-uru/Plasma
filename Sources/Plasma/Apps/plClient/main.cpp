@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClient.h"
 #include "plClientLoader.h"
 
+#include "plPipeline/hsG3DDeviceSelector.h"
 #include "plProgressMgr/plProgressMgr.h"
 
 // Stub all of these on non-Windows for now

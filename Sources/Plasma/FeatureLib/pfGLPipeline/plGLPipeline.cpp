@@ -57,6 +57,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #  include HS_SIMD_INCLUDE
 #endif
 
+plGLEnumerate plGLPipeline::enumerator;
+
 plGLPipeline::plGLPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode)
     : pl3DPipeline(devMode)
 {}
