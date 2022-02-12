@@ -137,14 +137,14 @@ T plTimedValue<T>::Value() const
 
 
 template <>
-void plTimedSimple<float>::Read(hsStream* s)
+inline void plTimedSimple<float>::Read(hsStream* s)
 {
     float val = s->ReadLEFloat();
     Set(val, 0.f);
 }
 
 template <>
-void plTimedSimple<float>::Write(hsStream* s) const
+inline void plTimedSimple<float>::Write(hsStream* s) const
 {
     float val = this->Value();
     s->WriteLEFloat(val);

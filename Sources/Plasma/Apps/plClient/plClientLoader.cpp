@@ -45,11 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFileSystem.h"
 #include "plPipeline.h"
 
-#ifdef HS_BUILD_FOR_WIN32
-#   include "hsWindows.h"
-#   include <shellapi.h>
-#endif
-
 #include "plClientResMgr/plClientResMgr.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plPhysX/plSimulationMgr.h"
@@ -86,12 +81,7 @@ void plClientLoader::Run()
 void plClientLoader::Start()
 {
     fClient->ResizeDisplayDevice(fClient->GetPipeline()->Width(), fClient->GetPipeline()->Height(), !fClient->GetPipeline()->IsFullScreen());
-
-#ifdef HS_BUILD_FOR_WIN32
-    // Show the client window
-    ShowWindow(fWindow, SW_SHOW);
-    BringWindowToTop(fWindow);
-#endif
+    fClient->ShowClientWindow();
 
     // Now, show the intro video, patch the global ages, etc...
     fClient->BeginGame();
