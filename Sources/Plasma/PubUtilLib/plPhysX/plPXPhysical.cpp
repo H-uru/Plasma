@@ -285,6 +285,10 @@ bool plPXPhysical::InitActor()
     if (IsDynamic() && !GetProperty(plSimulationInterface::kNoSynchronize))
         InitSDL();
 
+    // Kinematics are driven by animations, so don't blow away the animated transform.
+    if (IsKinematic())
+        SetProperty(plSimulationInterface::kPassive, true);
+
     return true;
 }
 
