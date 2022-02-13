@@ -341,9 +341,9 @@ def SetAudioMode(init, device, eax):
 def SetSubtitle(subtitle):
     if gIniFile:
         entry,idx = gIniFile.findByCommand(kSubtitle)
-        mutestr = "%d" % subtitle
+        subtitlestr = "%d" % subtitle
         if entry:
-            entry.setValue(0,mutestr)
+            entry.setValue(0,subtitlestr)
         else:
             gIniFile.addEntry("%s %d" % (kSubtitle,subtitle))
 

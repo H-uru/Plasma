@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plAudioCore.h"
 #include "plAudioFileReader.h"
-#include "plAudioCore/plSrtFileReader.h"
 #include "hsThread.h"
 #include "plFileSystem.h"
 
@@ -66,6 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plUnifiedTime;
 class plAudioFileReader;
+class plSrtFileReader;
 class plSoundBuffer : public hsKeyedObject
 {
 public:
@@ -122,11 +122,7 @@ public:
     void                SetAudioReader(plAudioFileReader *reader);
     void                SetLoaded(bool loaded);
     plSrtFileReader*    GetSrtReader() const { return fSrtReader; }  // does not transfer ownership
-    void                SetSrtReader(plSrtFileReader* reader)
-    {
-        delete fSrtReader;
-        fSrtReader = reader;
-    }
+    void                SetSrtReader(plSrtFileReader* reader);
 
     plAudioFileReader::StreamType   GetAudioReaderType() { return fStreamType; }
     unsigned                        GetAsyncLoadLength() { return fAsyncLoadLength ? fAsyncLoadLength : fDataLength; }

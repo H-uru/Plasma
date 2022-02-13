@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 #include "plSoundBuffer.h"
-#include "plAudioCore/plSrtFileReader.h"
+#include "plSrtFileReader.h"
 
 #include <thread>
 #include <chrono>
@@ -109,7 +109,7 @@ void plSoundPreloader::Run()
 
                 if (buf->GetData())
                 {
-                    auto srcFilename = buf->GetFileName();
+                    plFileName srcFilename = buf->GetFileName();
                     reader = CreateReader(true, srcFilename, buf->GetAudioReaderType(), buf->GetReaderSelect());
                     
                     if( reader )
@@ -118,7 +118,7 @@ void plSoundPreloader::Run()
                         reader->Read( readLen, buf->GetData() );
                         buf->SetAudioReader(reader);     // give sound buffer reader, since we may need it later
 
-                        auto srtReader = buf->GetSrtReader();
+                        plSrtFileReader* srtReader = buf->GetSrtReader();
                         if (srtReader != nullptr && srtReader->GetCurrentAudioFileName() == srcFilename) {
                             // same file we were playing before, so start the SRT feed over instead of deleting and reloading
                             srtReader->StartOver();
@@ -418,6 +418,12 @@ void plSoundBuffer::SetAudioReader(plAudioFileReader *reader)
 void plSoundBuffer::SetLoaded(bool loaded)
 {
     fLoaded = loaded;
+}
+
+void plSoundBuffer::SetSrtReader(plSrtFileReader* reader)
+{
+    delete fSrtReader;
+    fSrtReader = reader;
 }
 
         

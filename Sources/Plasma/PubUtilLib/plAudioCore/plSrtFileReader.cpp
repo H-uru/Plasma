@@ -82,22 +82,22 @@ bool plSrtFileReader::ReadFile()
                         } else {
                             // matches[0] is the entire match, we don't do anything with it
                             // matches[1] is the first group    -- the start hour number
-                            subtitleStartTimeMs += (atoi(matches[1].str().c_str()) * 3600000);
+                            subtitleStartTimeMs += std::stoul(matches[1].str()) * 3600000;
                             // matches[2] is the second group   -- the start minute number
-                            subtitleStartTimeMs += (atoi(matches[2].str().c_str()) * 60000);
+                            subtitleStartTimeMs += std::stoul(matches[2].str()) * 60000;
                             // matches[3] is the third group    -- the start seconds number
-                            subtitleStartTimeMs += (atoi(matches[3].str().c_str()) * 1000);
+                            subtitleStartTimeMs += std::stoul(matches[3].str()) * 1000;
                             // matches[4] is the fourth group   -- the start milliseconds number
-                            subtitleStartTimeMs += (atoi(matches[4].str().c_str()));
+                            subtitleStartTimeMs += std::stoul(matches[4].str());
 
                             // matches[5] is the fifth group    -- the end hour number
-                            subtitleEndTimeMs += (atoi(matches[5].str().c_str()) * 3600000);
+                            subtitleEndTimeMs += std::stoul(matches[5].str()) * 3600000;
                             // matches[6] is the sixth group    -- the end minute number
-                            subtitleEndTimeMs += (atoi(matches[6].str().c_str()) * 60000);
+                            subtitleEndTimeMs += std::stoul(matches[6].str()) * 60000;
                             // matches[7] is the seventh group  -- the end seconds number
-                            subtitleEndTimeMs += (atoi(matches[7].str().c_str()) * 1000);
+                            subtitleEndTimeMs += std::stoul(matches[7].str()) * 1000;
                             // matches[8] is the eighth group   -- the end milliseconds number
-                            subtitleEndTimeMs += (atoi(matches[8].str().c_str()));
+                            subtitleEndTimeMs += std::stoul(matches[8].str());
                         }
                     }
                 } else if (lnCounter % 4 == 2 && srtFileStream.ReadLn(line)) {
@@ -147,17 +147,15 @@ bool plSrtFileReader::ReadFile()
 
 void plSrtFileReader::AdvanceToTime(uint32_t timeMs)
 {
-    if (fCurrentEntryIndex >= 0) {
-        while (fCurrentEntryIndex < fEntries.size() && fEntries.at(fCurrentEntryIndex).GetEndTimeMs() <= timeMs) {
-            fCurrentEntryIndex++;
-        }
+    while (fCurrentEntryIndex < fEntries.size() && fEntries.at(fCurrentEntryIndex).GetEndTimeMs() <= timeMs) {
+        fCurrentEntryIndex++;
     }
 }
 
 
 plSrtEntry* plSrtFileReader::GetNextEntryStartingBeforeTime(uint32_t timeMs)
 {
-    if (fCurrentEntryIndex >= 0 && fCurrentEntryIndex < fEntries.size()) {
+    if (fCurrentEntryIndex < fEntries.size()) {
         plSrtEntry& nextEntry = fEntries.at(fCurrentEntryIndex);
 
         if (nextEntry.GetStartTimeMs() <= timeMs) {
@@ -171,7 +169,7 @@ plSrtEntry* plSrtFileReader::GetNextEntryStartingBeforeTime(uint32_t timeMs)
 
 plSrtEntry* plSrtFileReader::GetNextEntryEndingBeforeTime(uint32_t timeMs)
 {
-    if (fCurrentEntryIndex >= 0 && fCurrentEntryIndex < fEntries.size()) {
+    if (fCurrentEntryIndex < fEntries.size()) {
         plSrtEntry& nextEntry = fEntries.at(fCurrentEntryIndex);
 
         if (nextEntry.GetEndTimeMs() <= timeMs) {

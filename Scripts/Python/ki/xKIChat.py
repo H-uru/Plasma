@@ -439,7 +439,6 @@ class xKIChat(object):
 
         # Is it an object to represent the flags?
         if isinstance(cFlags, ChatFlags):
-            PtDebugPrint("Chat Flags are {}".format(cFlags))
             # Is it subtitles for current audio?
             if cFlags.subtitle:
                 headerColor = kColors.AudioSubtitleHeader

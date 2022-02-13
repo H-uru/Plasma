@@ -58,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnMessage/plAudioSysMsg.h"
 #include "pnMessage/plSoundMsg.h"
-#include "plMessage/plSubtitleMsg.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plAudioInterface.h"
 
