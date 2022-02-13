@@ -33,6 +33,7 @@ install(
 
     FILES_MATCHING
     PATTERN "*.py"
+    PATTERN "lib-dynload/*"
     PATTERN "*.pyc" EXCLUDE
 
     # These Python stdlib modules should be EXCLUDED from the copy due to either practical or
