@@ -89,6 +89,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plProfile.h"
 
+uint32_t  fDbgSetupInitFlags;     // HACK temp only
+
 plProfile_CreateCounter("Feed Triangles", "Draw", DrawFeedTriangles);
 plProfile_CreateCounter("Draw Prim Static", "Draw", DrawPrimStatic);
 plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
@@ -154,6 +156,11 @@ bool plRenderTriListFunc::RenderPrims() const
 
 plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode) :   pl3DPipeline(devMode), fRenderTargetRefList(), fMatRefList(), fPipelineState(nullptr), fCurrentRenderPassUniforms(nullptr), currentDrawableCallback(nullptr), fFragFunction(nullptr), fVShaderRefList(nullptr), fPShaderRefList(nullptr), fULutTextureRef(nullptr)
 {
+    fTextureRefList = nullptr;
+    fVtxBuffRefList = nullptr;
+    fIdxBuffRefList = nullptr;
+    fMatRefList = nullptr;
+    
     fCurrLayerIdx = 0;
     fDevice.fPipeline = this;
     
