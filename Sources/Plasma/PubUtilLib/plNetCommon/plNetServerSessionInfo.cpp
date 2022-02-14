@@ -156,13 +156,13 @@ void plAgeInfoStruct::CopyFrom( const plVaultAgeInfoNode * node )
 //============================================================================
 void plAgeInfoStruct::CopyFrom(const NetAgeInfo & info) {
     // Filename
-    SetAgeFilename(ST::string::from_wchar(info.ageFilename));
+    SetAgeFilename(ST::string::from_utf16(info.ageFilename));
     // InstanceName
-    SetAgeInstanceName(ST::string::from_wchar(info.ageInstName));
+    SetAgeInstanceName(ST::string::from_utf16(info.ageInstName));
     // UserDefinedName
-    SetAgeUserDefinedName(ST::string::from_wchar(info.ageUserName));
+    SetAgeUserDefinedName(ST::string::from_utf16(info.ageUserName));
     // Description
-    SetAgeDescription(ST::string::from_wchar(info.ageDesc));
+    SetAgeDescription(ST::string::from_utf16(info.ageDesc));
 
     plUUID inst(info.ageInstId);
     SetAgeInstanceGuid(&inst);

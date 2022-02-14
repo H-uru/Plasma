@@ -274,7 +274,7 @@ extern const NetMsg kNetMsg_Cli2Auth_AccountExistsRequest;
 struct Cli2Auth_AccountExistsRequest {
     uint32_t messageId;
     uint32_t transId;
-    wchar_t accountName[kMaxAccountNameLength];
+    char16_t accountName[kMaxAccountNameLength];
 };
 
 // LoginRequest
@@ -283,10 +283,10 @@ struct Cli2Auth_AcctLoginRequest {
     uint32_t       messageId;
     uint32_t       transId;
     uint32_t       clientChallenge;
-    wchar_t       acctName[kMaxAccountNameLength];
+    char16_t       acctName[kMaxAccountNameLength];
     ShaDigest   challengeHash;
-    wchar_t       authToken[kMaxPublisherAuthKeyLength];
-    wchar_t       os[kMaxGTOSIdLength];
+    char16_t       authToken[kMaxPublisherAuthKeyLength];
+    char16_t       os[kMaxGTOSIdLength];
 };
 
 // AgeRequest
@@ -294,7 +294,7 @@ extern const NetMsg kNetMsg_Cli2Auth_AgeRequest;
 struct Cli2Auth_AgeRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    wchar_t       ageName[kMaxAgeNameLength];
+    char16_t       ageName[kMaxAgeNameLength];
     plUUID      ageUuid;
 };
 
@@ -303,7 +303,7 @@ extern const NetMsg kNetMsg_Cli2Auth_AcctCreateRequest;
 struct Cli2Auth_AcctCreateRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    wchar_t       accountName[kMaxAccountNameLength];
+    char16_t       accountName[kMaxAccountNameLength];
     ShaDigest   namePassHash;
     uint32_t       accountFlags;
     uint32_t       billingType;
@@ -314,7 +314,7 @@ extern const NetMsg kNetMsg_Cli2Auth_AcctCreateFromKeyRequest;
 struct Cli2Auth_AcctCreateFromKeyRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    wchar_t       accountName[kMaxAccountNameLength];
+    char16_t       accountName[kMaxAccountNameLength];
     ShaDigest   namePassHash;
     plUUID      key;
     uint32_t       billingType;
@@ -325,9 +325,9 @@ extern const NetMsg kNetMsg_Cli2Auth_PlayerCreateRequest;
 struct Cli2Auth_PlayerCreateRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    wchar_t       playerName[kMaxPlayerNameLength];
-    wchar_t       avatarShape[MAX_PATH];
-    wchar_t       friendInvite[MAX_PATH];
+    char16_t       playerName[kMaxPlayerNameLength];
+    char16_t       avatarShape[MAX_PATH];
+    char16_t       friendInvite[MAX_PATH];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_PlayerDeleteRequest;
@@ -357,7 +357,7 @@ extern const NetMsg kNetMsg_Cli2Auth_AcctChangePasswordRequest;
 struct Cli2Auth_AcctChangePasswordRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    wchar_t       accountName[kMaxAccountNameLength];
+    char16_t       accountName[kMaxAccountNameLength];
     ShaDigest   namePassHash;
 };
 
@@ -366,7 +366,7 @@ extern const NetMsg kNetMsg_Cli2Auth_AcctSetRolesRequest;
 struct Cli2Auth_AcctSetRolesRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    wchar_t       accountName[kMaxAccountNameLength];
+    char16_t       accountName[kMaxAccountNameLength];
     uint32_t       accountFlags;
 };
 
@@ -375,7 +375,7 @@ extern const NetMsg kNetMsg_Cli2Auth_AcctSetBillingTypeRequest;
 struct Cli2Auth_AcctSetBillingTypeRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    wchar_t       accountName[kMaxAccountNameLength];
+    char16_t       accountName[kMaxAccountNameLength];
     uint32_t       billingType;
 };
 
@@ -392,8 +392,8 @@ extern const NetMsg kNetMsg_Cli2Auth_FileListRequest;
 struct Cli2Auth_FileListRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    wchar_t       directory[MAX_PATH];
-    wchar_t       ext[MAX_EXT];
+    char16_t       directory[MAX_PATH];
+    char16_t       ext[MAX_EXT];
 };
 
 // FileDownloadRequest
@@ -401,7 +401,7 @@ extern const NetMsg kNetMsg_Cli2Auth_FileDownloadRequest;
 struct Cli2Auth_FileDownloadRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    wchar_t       filename[MAX_PATH];
+    char16_t       filename[MAX_PATH];
 };
 
 // FileDownloadChunkAck
@@ -473,10 +473,10 @@ struct Cli2Auth_VaultInitAgeRequest {
     uint32_t       transId;
     plUUID      ageInstId;
     plUUID      parentAgeInstId;
-    wchar_t       ageFilename[MAX_PATH];
-    wchar_t       ageInstName[MAX_PATH];
-    wchar_t       ageUserName[MAX_PATH];
-    wchar_t       ageDesc[1024];
+    char16_t       ageFilename[MAX_PATH];
+    char16_t       ageInstName[MAX_PATH];
+    char16_t       ageUserName[MAX_PATH];
+    char16_t       ageDesc[1024];
     uint32_t       ageSequenceNumber;
     uint32_t       ageLanguage;
 };
@@ -512,7 +512,7 @@ extern const NetMsg kNetMsg_Cli2Auth_GetPublicAgeList;
 struct Cli2Auth_GetPublicAgeList {
     uint32_t       messageId;
     uint32_t       transId;
-    wchar_t       ageFilename[kMaxAgeNameLength];
+    char16_t       ageFilename[kMaxAgeNameLength];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_SetAgePublic;
@@ -541,13 +541,13 @@ struct Cli2Auth_ClientSetCCRLevel {
 extern const NetMsg kNetMsg_Cli2Auth_LogPythonTraceback;
 struct Cli2Auth_LogPythonTraceback {
     uint32_t messageId;
-    wchar_t traceback[1024];
+    char16_t traceback[1024];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_LogStackDump;
 struct Cli2Auth_LogStackDump {
     uint32_t messageId;
-    wchar_t stackdump[1024];
+    char16_t stackdump[1024];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_LogClientDebuggerConnect;
@@ -574,7 +574,7 @@ struct Cli2Auth_ChangePlayerNameRequest {
     uint32_t messageId;
     uint32_t transId;
     uint32_t playerId;
-    wchar_t newName[kMaxPlayerNameLength];
+    char16_t newName[kMaxPlayerNameLength];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_SendFriendInviteRequest;
@@ -582,8 +582,8 @@ struct Cli2Auth_SendFriendInviteRequest {
     uint32_t   messageId;
     uint32_t   transId;
     plUUID  inviteUuid;
-    wchar_t   emailAddress[kMaxEmailAddressLength];
-    wchar_t   toName[kMaxPlayerNameLength];
+    char16_t   emailAddress[kMaxEmailAddressLength];
+    char16_t   toName[kMaxPlayerNameLength];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_ScoreCreate;
@@ -591,7 +591,7 @@ struct Cli2Auth_ScoreCreate {
     uint32_t messageId;
     uint32_t transId;
     uint32_t ownerId;
-    wchar_t gameName[kMaxGameScoreNameLength];
+    char16_t gameName[kMaxGameScoreNameLength];
     uint32_t gameType;
     uint32_t scoreValue;
 };
@@ -608,7 +608,7 @@ struct Cli2Auth_ScoreGetScores {
     uint32_t messageId;
     uint32_t transId;
     uint32_t ownerId;
-    wchar_t gameName[kMaxGameScoreNameLength];
+    char16_t gameName[kMaxGameScoreNameLength];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_ScoreAddPoints;
@@ -643,7 +643,7 @@ struct Cli2Auth_ScoreGetRanks {
     uint32_t ownerId;
     uint32_t scoreGroup;
     uint32_t parentFolderId;
-    wchar_t gameName[kMaxGameScoreNameLength];
+    char16_t gameName[kMaxGameScoreNameLength];
     uint32_t timePeriod;
     uint32_t numResults;
     uint32_t pageNumber;
@@ -656,7 +656,7 @@ struct Cli2Auth_ScoreGetHighScores {
     uint32_t transId;
     uint32_t ageId;
     uint32_t maxScores;
-    wchar_t gameName[kMaxGameScoreNameLength];
+    char16_t gameName[kMaxGameScoreNameLength];
 };
 
 
@@ -711,8 +711,8 @@ struct Auth2Cli_AcctPlayerInfo {
     uint32_t       messageId;
     uint32_t       transId;
     uint32_t       playerInt;
-    wchar_t       playerName[kMaxPlayerNameLength];
-    wchar_t       avatarShape[kMaxVaultNodeStringLength];
+    char16_t       playerName[kMaxPlayerNameLength];
+    char16_t       avatarShape[kMaxVaultNodeStringLength];
     uint32_t       explorer;
 };
 
@@ -767,8 +767,8 @@ struct Auth2Cli_PlayerCreateReply {
     ENetError       result;
     uint32_t           playerInt;
     uint32_t           explorer;
-    wchar_t           playerName[kMaxPlayerNameLength];
-    wchar_t           avatarShape[kMaxVaultNodeStringLength];
+    char16_t           playerName[kMaxPlayerNameLength];
+    char16_t           avatarShape[kMaxVaultNodeStringLength];
 };
 
 // DeletePlayerReply
@@ -833,8 +833,8 @@ struct Auth2Cli_FileListReply {
     uint32_t           messageId;
     uint32_t           transId;
     ENetError       result;
-    uint32_t           wchar_tCount;
-    wchar_t           fileData[1];        // [wchar_tCount], actually
+    uint32_t           wcharCount;
+    char16_t           fileData[1];        // [wcharCount], actually
     // no more fields
 };
 

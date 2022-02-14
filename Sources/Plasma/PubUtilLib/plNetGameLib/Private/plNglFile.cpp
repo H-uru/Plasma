@@ -144,7 +144,7 @@ struct BuildIdRequestTrans : NetFileTrans {
 struct ManifestRequestTrans : NetFileTrans {
     FNetCliFileManifestRequestCallback  m_callback;
     void *                              m_param;
-    wchar_t                             m_group[MAX_PATH];
+    char16_t                            m_group[MAX_PATH];
     unsigned                            m_buildId;
 
     std::vector<NetCliFileManifestEntry>  m_manifest;
@@ -153,7 +153,7 @@ struct ManifestRequestTrans : NetFileTrans {
     ManifestRequestTrans (
         FNetCliFileManifestRequestCallback  callback,
         void *                              param,
-        const wchar_t                       group[],
+        const char16_t                      group[],
         unsigned                            buildId
     );
 
@@ -862,7 +862,7 @@ bool BuildIdRequestTrans::Recv (
 ManifestRequestTrans::ManifestRequestTrans (
     FNetCliFileManifestRequestCallback  callback,
     void *                              param,
-    const wchar_t                       group[],
+    const char16_t                      group[],
     unsigned                            buildId
 ) : NetFileTrans(kManifestRequestTrans)
 ,   m_callback(callback)
@@ -898,18 +898,26 @@ void ManifestRequestTrans::Post () {
     m_callback(m_result, m_param, m_group, m_manifest.data(), m_manifest.size());
 }
 
-//============================================================================
-void ReadStringFromMsg(const wchar_t* curMsgPtr, wchar_t* destPtr, unsigned* length) {
-    if (!(*length)) {
-        size_t maxlen = wcsnlen(curMsgPtr, MAX_PATH - 1);   // Hacky sack
-        (*length) = maxlen;
-        destPtr[maxlen] = 0;    // Don't do this on fixed length, because there's no room for it
-    }
-    memcpy(destPtr, curMsgPtr, *length * sizeof(wchar_t));
+// Neither char_traits nor C's string library have a "strnlen" equivalent for
+// char16_t strings...
+inline size_t FIXME_u16snlen(const char16_t* str, size_t maxlen)
+{
+    const char16_t* end = std::char_traits<char16_t>::find(str, maxlen, 0);
+    return end ? size_t(end - str) : maxlen;
 }
 
 //============================================================================
-void ReadUnsignedFromMsg(const wchar_t* curMsgPtr, unsigned* val) {
+void ReadStringFromMsg(const char16_t* curMsgPtr, char16_t* destPtr, unsigned* length) {
+    if (!(*length)) {
+        size_t maxlen = FIXME_u16snlen(curMsgPtr, MAX_PATH - 1);   // Hacky sack
+        (*length) = maxlen;
+        destPtr[maxlen] = 0;    // Don't do this on fixed length, because there's no room for it
+    }
+    memcpy(destPtr, curMsgPtr, *length * sizeof(char16_t));
+}
+
+//============================================================================
+void ReadUnsignedFromMsg(const char16_t* curMsgPtr, unsigned* val) {
     (*val) = ((*curMsgPtr) << 16) + (*(curMsgPtr + 1));
 }
 
@@ -923,8 +931,8 @@ bool ManifestRequestTrans::Recv (
     const File2Cli_ManifestReply & reply = *(const File2Cli_ManifestReply *) msg;
 
     uint32_t numFiles = reply.numFiles;
-    uint32_t wchar_tCount = reply.wchar_tCount;
-    const wchar_t* curChar = reply.manifestData; // the pointer is not yet dereferenced here!
+    uint32_t wcharCount = reply.wcharCount;
+    const char16_t* curChar = reply.manifestData; // the pointer is not yet dereferenced here!
 
     // tell the server we got the data
     Cli2File_ManifestEntryAck manifestAck;
@@ -935,9 +943,9 @@ bool ManifestRequestTrans::Recv (
 
     m_conn->Send(&manifestAck, manifestAck.messageBytes);   
 
-    // if wchar_tCount is 2 or less, the data only contains the terminator "\0\0" and we
+    // if wcharCount is 2 or less, the data only contains the terminator "\0\0" and we
     // don't need to convert anything (and we are done)
-    if ((IS_NET_ERROR(reply.result)) || (wchar_tCount <= 2)) {
+    if ((IS_NET_ERROR(reply.result)) || (wcharCount <= 2)) {
         // we have a problem... or we have nothing to so, so we're done
         m_result    = reply.result;
         m_state     = kTransStateComplete;
@@ -950,7 +958,7 @@ bool ManifestRequestTrans::Recv (
     // manifestData format: "clientFile\0downloadFile\0md5\0filesize\0zipsize\0flags\0...\0\0"
     bool done = false;
     while (!done) {
-        if (wchar_tCount == 0)
+        if (wcharCount == 0)
         {
             done = true;
             break;
@@ -964,101 +972,101 @@ bool ManifestRequestTrans::Recv (
         unsigned filenameLen = 0;
         ReadStringFromMsg(curChar, entry.clientName, &filenameLen);
         curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= filenameLen; // keep track of the amount remaining
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // something is screwy, abort and disconnect
 
         // point it at the downloadFile
         curChar++;
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
         // read in the downloadFilename
         filenameLen = 0;
         ReadStringFromMsg(curChar, entry.downloadName, &filenameLen);
         curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= filenameLen; // keep track of the amount remaining
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // something is screwy, abort and disconnect
 
         // point it at the md5
         curChar++;
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
         // read in the md5
         filenameLen = 32;
         ReadStringFromMsg(curChar, entry.md5, &filenameLen);
         curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= filenameLen; // keep track of the amount remaining
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // something is screwy, abort and disconnect
 
         // point it at the md5 for compressed files
         curChar++; 
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
         // read in the md5 for compressed files
         filenameLen = 32;
         ReadStringFromMsg(curChar, entry.md5compressed, &filenameLen);
         curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= filenameLen; // keep track of the amount remaining
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // something is screwy, abort and disconnect
 
         // point it at the first part of the filesize value (format: 0xHHHHLLLL)
         curChar++; 
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
-        if (wchar_tCount < 2) // we have to have 2 chars for the size
+        if (wcharCount < 2) // we have to have 2 chars for the size
             return false; // screwy data
         ReadUnsignedFromMsg(curChar, &entry.fileSize);
         curChar += 2;
-        wchar_tCount -= 2;
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= 2;
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // screwy data
 
         // point it at the first part of the zipsize value (format: 0xHHHHLLLL)
         curChar++; 
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
-        if (wchar_tCount < 2) // we have to have 2 chars for the size
+        if (wcharCount < 2) // we have to have 2 chars for the size
             return false; // screwy data
         ReadUnsignedFromMsg(curChar, &entry.zipSize);
         curChar += 2;
-        wchar_tCount -= 2;
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= 2;
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // screwy data
 
         // point it at the first part of the flags value (format: 0xHHHHLLLL)
         curChar++; 
-        wchar_tCount--;
+        wcharCount--;
 
         // --------------------------------------------------------------------
-        if (wchar_tCount < 2) // we have to have 2 chars for the size
+        if (wcharCount < 2) // we have to have 2 chars for the size
             return false; // screwy data
         ReadUnsignedFromMsg(curChar, &entry.flags);
         curChar += 2;
-        wchar_tCount -= 2;
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
+        wcharCount -= 2;
+        if ((*curChar != L'\0') || (wcharCount <= 0))
             return false; // screwy data
 
         // --------------------------------------------------------------------
         // point it at either the second part of the terminator, or the next filename
         curChar++;
-        wchar_tCount--;
+        wcharCount--;
 
         // do sanity checking
         if (*curChar == L'\0') {
             // we hit the terminator
-            if (wchar_tCount != 1)
+            if (wcharCount != 1)
                 return false; // invalid data, we shouldn't have any more
             done = true; // we're done
         }
-        else if (wchar_tCount < 14)
+        else if (wcharCount < 14)
             // we must have at least three 1-char strings, three nulls, three 32-bit ints, and 2-char terminator left (3+3+6+2)
             return false; // screwy data
 
@@ -1112,7 +1120,8 @@ bool DownloadRequestTrans::Send () {
         return false;
 
     Cli2File_FileDownloadRequest filedownloadReq;
-    StrCopy(filedownloadReq.filename, m_filename.WideString().data(), std::size(filedownloadReq.filename));
+    const ST::utf16_buffer buffer = m_filename.AsString().to_utf16();
+    StrCopy(filedownloadReq.filename, buffer.data(), std::size(filedownloadReq.filename));
     filedownloadReq.messageId = kCli2File_FileDownloadRequest;
     filedownloadReq.transId = m_transId;
     filedownloadReq.messageBytes = sizeof(filedownloadReq);
@@ -1355,7 +1364,7 @@ void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback)
 void NetCliFileManifestRequest (
     FNetCliFileManifestRequestCallback  callback,
     void *                              param,
-    const wchar_t                       group[],
+    const char16_t                      group[],
     unsigned                            buildId /* = 0 */
 ) {
     ManifestRequestTrans * trans = new ManifestRequestTrans(

@@ -85,6 +85,6 @@ void StrCopy (char * dest, const char source[], unsigned chars) {
 }
 
 //===========================================================================
-void StrCopy (wchar_t * dest, const wchar_t source[], unsigned chars) {
+void StrCopy (char16_t * dest, const char16_t source[], unsigned chars) {
     IStrCopy(dest, source, chars);
 }

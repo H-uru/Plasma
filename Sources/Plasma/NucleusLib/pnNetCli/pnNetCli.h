@@ -78,7 +78,7 @@ How to create a message sender/receiver:
     struct PlayerJoin {
         uint32_t   messageId;
         uint32_t   playerId;
-        wchar_t   name[kPlayerNameMaxLength];
+        char16_t   name[kPlayerNameMaxLength];
         uint8_t    data[kPlayerDataMaxLength];
         uint32_t   vaultDataLen;
         uint8_t    vaultData[1];   // vaultData[vaultDataLen], actually
@@ -291,7 +291,7 @@ struct NetCliQueue;
 #define NET_MSG_FIELD_FLOAT_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldReal, maxCount, sizeof(float))
 #define NET_MSG_FIELD_DOUBLE_ARRAY(maxCount)    NET_MSG_FIELD(kNetMsgFieldReal, maxCount, sizeof(double))
 
-#define NET_MSG_FIELD_STRING(maxLength)         NET_MSG_FIELD(kNetMsgFieldString, maxLength, sizeof(wchar_t))
+#define NET_MSG_FIELD_STRING(maxLength)         NET_MSG_FIELD(kNetMsgFieldString, maxLength, sizeof(char16_t))
 
 #define NET_MSG_FIELD_DATA(maxBytes)            NET_MSG_FIELD(kNetMsgFieldData,     maxBytes, 1)
 #define NET_MSG_FIELD_PTR(maxBytes)             NET_MSG_FIELD(kNetMsgFieldPtr,      maxBytes, 1)

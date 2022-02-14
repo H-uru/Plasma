@@ -117,7 +117,7 @@ bool                                NetCommIsLoginComplete ();
 void                                NetCommSetIniPlayerId(unsigned playerId);
 void                                NetCommSetIniStartUpAge(const ST::string& ageName);
 void                                NetCommSetAccountUsernamePassword (const ST::string& username, const ShaDigest &  namePassHash);
-void                                NetCommSetAuthTokenAndOS (wchar_t authToken[], wchar_t os[]);
+void                                NetCommSetAuthTokenAndOS (char16_t authToken[], char16_t os[]);
 ENetError                           NetCommGetAuthResult ();
 
 bool                                NetCommNeedToLoadAvatar ();
@@ -201,12 +201,12 @@ void NetCommAuthenticate (  // --> plNetCommAuthMsg
     void *                  param
 );
 void NetCommGetFileList (   // --> plNetCommFileListMsg
-    const wchar_t             dir[],
-    const wchar_t             ext[],
+    const char16_t          dir[],
+    const char16_t          ext[],
     void *                  param
 );
 void NetCommGetFile (       // --> plNetCommFileDownloadMsg
-    const wchar_t             filename[],
+    const char16_t          filename[],
     hsStream *              writer,
     void *                  param
 );

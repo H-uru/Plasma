@@ -724,9 +724,9 @@ public:
         PyErr_Display(except, val, tb);
 
         // Send to the log server
-        wchar_t* wdata = hsStringToWString(fData.c_str());
-        NetCliAuthLogPythonTraceback(wdata);
-        delete [] wdata;
+        ST::utf16_buffer wdata = ST::utf8_to_utf16(fData.c_str(), fData.size(),
+                                                   ST::substitute_invalid);
+        NetCliAuthLogPythonTraceback(wdata.data());
 
         if (fLog)
             fData.clear();

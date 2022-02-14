@@ -124,8 +124,8 @@ struct pfPatcherQueuedFile
     uint32_t fFlags;
 
     pfPatcherQueuedFile(Type t, const NetCliFileManifestEntry& file)
-        : fType(t), fClientPath(ST::string::from_wchar(file.clientName)),
-          fServerPath(ST::string::from_wchar(file.downloadName)), fChecksum(),
+        : fType(t), fClientPath(ST::string::from_utf16(file.clientName)),
+          fServerPath(ST::string::from_utf16(file.downloadName)), fChecksum(),
           fFileSize(file.fileSize), fZipSize(file.zipSize), fFlags(file.flags)
     {
         ST::string temp(file.md5, std::size(file.md5));
@@ -322,7 +322,7 @@ static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFile
             for (unsigned i = 0; i < infoCount; ++i) {
                 PatcherLogYellow("\tEnqueuing Legacy File '{}'", infoArr[i].filename);
 
-                plFileName fn = ST::string::from_wchar(infoArr[i].filename);
+                plFileName fn = ST::string::from_utf16(infoArr[i].filename);
                 plFileSystem::CreateDir(fn.StripFileName());
 
                 // We purposefully do NOT Open this stream! This uses a special auth-file constructor that
@@ -338,7 +338,7 @@ static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFile
     }
 }
 
-static void IHandleManifestDownload(pfPatcherWorker* patcher, const wchar_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+static void IHandleManifestDownload(pfPatcherWorker* patcher, const char16_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
 {
     PatcherLogGreen("\tDownloaded Manifest '{}'", group);
     {
@@ -350,7 +350,7 @@ static void IHandleManifestDownload(pfPatcherWorker* patcher, const wchar_t grou
     patcher->IssueRequest();
 }
 
-static void IPreloaderManifestDownloadCB(ENetError result, void* param, const wchar_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+static void IPreloaderManifestDownloadCB(ENetError result, void* param, const char16_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
 {
     pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
 
@@ -371,7 +371,7 @@ static void IPreloaderManifestDownloadCB(ENetError result, void* param, const wc
     }
 }
 
-static void IFileManifestDownloadCB(ENetError result, void* param, const wchar_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+static void IFileManifestDownloadCB(ENetError result, void* param, const char16_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
 {
     pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
 
@@ -379,7 +379,7 @@ static void IFileManifestDownloadCB(ENetError result, void* param, const wchar_t
         IHandleManifestDownload(patcher, group, manifest, entryCount);
     else {
         PatcherLogRed("\tDownload Failed: Manifest '{}'", group);
-        patcher->EndPatch(result, ST::string::from_wchar(group));
+        patcher->EndPatch(result, ST::string::from_utf16(group));
     }
 }
 
@@ -486,12 +486,12 @@ bool pfPatcherWorker::IssueRequest()
             NetCliFileDownloadRequest(req.fName, req.fStream, IFileThingDownloadCB, this);
             break;
         case Request::kManifest:
-            NetCliFileManifestRequest(IFileManifestDownloadCB, this, req.fName.to_wchar().data());
+            NetCliFileManifestRequest(IFileManifestDownloadCB, this, req.fName.to_utf16().data());
             break;
         case Request::kSecurePreloader:
             // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
             // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
-            NetCliFileManifestRequest(IPreloaderManifestDownloadCB, this, req.fName.to_wchar().data());
+            NetCliFileManifestRequest(IPreloaderManifestDownloadCB, this, req.fName.to_utf16().data());
             break;
         case Request::kAuthFile:
             // ffffffuuuuuu
@@ -502,10 +502,10 @@ bool pfPatcherWorker::IssueRequest()
             NetCliAuthFileRequest(req.fName, req.fStream, IAuthThingDownloadCB, this);
             break;
         case Request::kPythonList:
-            NetCliAuthFileListRequest(L"Python", L"pak", IGotAuthFileList, this);
+            NetCliAuthFileListRequest(u"Python", u"pak", IGotAuthFileList, this);
             break;
         case Request::kSdlList:
-            NetCliAuthFileListRequest(L"SDL", L"sdl", IGotAuthFileList, this);
+            NetCliAuthFileListRequest(u"SDL", u"sdl", IGotAuthFileList, this);
             break;
         DEFAULT_FATAL(req.fType);
     }
