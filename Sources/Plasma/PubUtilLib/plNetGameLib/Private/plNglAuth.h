@@ -114,7 +114,7 @@ typedef void (*FNetCliAuthAccountExistsRequestCallback)(
     bool        accountExists
 );
 void NetCliAuthAccountExistsRequest (
-    const wchar_t                                 accountName[],
+    const char16_t                              accountName[],
     FNetCliAuthAccountExistsRequestCallback     callback,
     void *                                      param
 );  
@@ -144,8 +144,8 @@ typedef void (*FNetCliAuthLoginRequestCallback)(
 void NetCliAuthLoginRequest (
     const ST::string&               accountName,  // nil --> reuse previous acct name
     const ShaDigest *               accountNamePassHash,  // nil --> reuse previous acct pass
-    const wchar_t                   authToken[],  // nil --> reuse previous auth token
-    const wchar_t                   os[],  // nil --> reuse previous os
+    const char16_t                  authToken[],  // nil --> reuse previous auth token
+    const char16_t                  os[],  // nil --> reuse previous os
     FNetCliAuthLoginRequestCallback callback,
     void *                          param
 );
@@ -172,8 +172,8 @@ typedef void (*FNetCliAuthAccountCreateRequestCallback)(
     const plUUID&                   accountId
 );
 void NetCliAuthAccountCreateRequest (
-    const wchar_t                             accountName[],
-    const wchar_t                             accountPass[],
+    const char16_t                          accountName[],
+    const char16_t                          accountPass[],
     unsigned                                accountFlags,
     unsigned                                billingType,
     FNetCliAuthAccountCreateRequestCallback callback,
@@ -190,8 +190,8 @@ typedef void (*FNetCliAuthAccountCreateFromKeyRequestCallback)(
     const plUUID&                   activationKey
 );
 void NetCliAuthAccountCreateFromKeyRequest (
-    const wchar_t                                     accountName[],
-    const wchar_t                                     accountPass[],
+    const char16_t                                  accountName[],
+    const char16_t                                  accountPass[],
     plUUID                                          key,
     unsigned                                        billingType,
     FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
@@ -292,7 +292,7 @@ typedef void (*FNetCliAuthAccountSetRolesRequestCallback)(
     void *                          param
 );
 void NetCliAuthAccountSetRolesRequest (
-    const wchar_t                                     accountName[],
+    const char16_t                                  accountName[],
     unsigned                                        accountFlags,
     FNetCliAuthAccountSetRolesRequestCallback       callback,
     void *                                          param
@@ -306,7 +306,7 @@ typedef void (*FNetCliAuthAccountSetBillingTypeRequestCallback)(
     void *                          param
 );
 void NetCliAuthAccountSetBillingTypeRequest (
-    const wchar_t                                     accountName[],
+    const char16_t                                  accountName[],
     unsigned                                        billingType,
     FNetCliAuthAccountSetBillingTypeRequestCallback callback,
     void *                                          param
@@ -355,7 +355,7 @@ void NetCliAuthGetEncryptionKey (
 // File List
 //============================================================================
 struct NetCliAuthFileInfo {
-    wchar_t     filename[MAX_PATH];
+    char16_t    filename[MAX_PATH];
     unsigned    filesize;
 };
 typedef void (*FNetCliAuthFileListRequestCallback)(
@@ -365,8 +365,8 @@ typedef void (*FNetCliAuthFileListRequestCallback)(
     unsigned                    infoCount
 );
 void NetCliAuthFileListRequest (
-    const wchar_t                       dir[],
-    const wchar_t                       ext[],
+    const char16_t                      dir[],
+    const char16_t                      ext[],
     FNetCliAuthFileListRequestCallback  callback,
     void *                              param
 );
@@ -538,9 +538,9 @@ void NetCliAuthVaultInitAge (
     void *                      param               // optional
 );
 
-void NetCliAuthLogPythonTraceback (const wchar_t traceback[]);
+void NetCliAuthLogPythonTraceback (const char16_t traceback[]);
 
-void NetCliAuthLogStackDump (const wchar_t stackdump[]);
+void NetCliAuthLogStackDump (const char16_t stackdump[]);
 void NetCliAuthLogClientDebuggerConnect ();
 
 //============================================================================
@@ -573,7 +573,7 @@ typedef void (*FNetCliAuthChangePlayerNameRequestCallback)(
 );
 void NetCliAuthChangePlayerNameRequest (
     unsigned                                    playerId,
-    const wchar_t                                 newName[],
+    const char16_t                              newName[],
     FNetCliAuthChangePlayerNameRequestCallback  callback,
     void *                                      param
 );

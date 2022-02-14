@@ -87,8 +87,8 @@ const NetMsgField kNetMsgFieldBuildId       = NET_MSG_FIELD_DWORD();
 #pragma pack(push,1)
 struct SrvPlayerInfo {
     unsigned    playerInt;
-    wchar_t       playerName[kMaxPlayerNameLength];
-    wchar_t       avatarShape[kMaxVaultNodeStringLength];
+    char16_t    playerName[kMaxPlayerNameLength];
+    char16_t    avatarShape[kMaxVaultNodeStringLength];
     unsigned    explorer;
 };
 #pragma pack(pop)
@@ -102,10 +102,10 @@ struct SrvPlayerInfo {
 
 struct NetAgeInfo {
     plUUID        ageInstId;
-    wchar_t       ageFilename[kMaxAgeNameLength];
-    wchar_t       ageInstName[kMaxAgeNameLength];
-    wchar_t       ageUserName[kMaxAgeNameLength];
-    wchar_t       ageDesc[1024];
+    char16_t      ageFilename[kMaxAgeNameLength];
+    char16_t      ageInstName[kMaxAgeNameLength];
+    char16_t      ageUserName[kMaxAgeNameLength];
+    char16_t      ageDesc[1024];
     uint32_t      ageSequenceNumber;
     uint32_t      ageLanguage;
     uint32_t      population;         // only used with GetPublicAgeList query results
@@ -141,7 +141,7 @@ struct NetGameScore {
 struct NetGameRank {
     unsigned    rank;
     int         score;
-    wchar_t       name[kMaxPlayerNameLength];
+    char16_t    name[kMaxPlayerNameLength];
 
     unsigned Read (const uint8_t inbuffer[], unsigned bufsz, uint8_t** end = nullptr); // returns number of bytes read
     unsigned Write (std::vector<uint8_t> * buffer) const;                             // returns number of bytes written

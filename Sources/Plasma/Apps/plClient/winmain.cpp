@@ -679,7 +679,7 @@ static void SaveUserPass(LoginDialogParam* pLoginParam, wchar_t* password)
     NetCommSetAccountUsernamePassword(theUser, pLoginParam->namePassHash);
 
     // FIXME: Real OS detection
-    NetCommSetAuthTokenAndOS(nullptr, L"win");
+    NetCommSetAuthTokenAndOS(nullptr, u"win");
 }
 
 static void LoadUserPass(LoginDialogParam *pLoginParam)

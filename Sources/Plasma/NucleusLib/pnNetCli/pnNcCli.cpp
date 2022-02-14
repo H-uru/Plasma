@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUUID/pnUUID.h"
 #include "hsLockGuard.h"
 #include <mutex>
+#include <string>
 
 //#define NCCLI_DEBUGGING
 #ifdef NCCLI_DEBUGGING
@@ -355,13 +356,13 @@ static void BufferedSendData (
             case kNetMsgFieldString: {
                 // Use less-than instead of less-or-equal because
                 // we reserve one space for the NULL terminator
-                const uint16_t length = (uint16_t) wcslen((const wchar_t *) *msg);
+                const uint16_t length = (uint16_t) std::char_traits<char16_t>::length((const char16_t *) *msg);
                 ASSERT_MSG_VALID(length < cmd->count);
                 // Write actual string length
                 uint16_t size = hsToLE16(length);
                 AddToSendBuffer(cli, sizeof(uint16_t), (const void*)&size);
                 // Write string data
-                AddToSendBuffer(cli, length * sizeof(wchar_t), (const void *) *msg);
+                AddToSendBuffer(cli, length * sizeof(char16_t), (const void *) *msg);
             }
             break;
 
@@ -558,7 +559,7 @@ static bool DispatchData (NetCli * cli, void * param) {
                         uint16_t length;
                         if (!cli->input.Get(sizeof(uint16_t), &length))
                             goto NEED_MORE_DATA;
-                        cli->recvFieldBytes = hsToLE16(length) * sizeof(wchar_t);
+                        cli->recvFieldBytes = hsToLE16(length) * sizeof(char16_t);
 
                         // Validate size. Use >= instead of > to leave room for the NULL terminator.
                         if (cli->recvFieldBytes >= cli->recvField->count * cli->recvField->size)
@@ -576,7 +577,7 @@ static bool DispatchData (NetCli * cli, void * param) {
                     }
 
                     // Insert NULL terminator
-                    * (wchar_t *)(data + cli->recvFieldBytes) = 0;
+                    * (char16_t *)(data + cli->recvFieldBytes) = 0;
 
                     // IDEA: fill the remainder with a freaky uint8_t pattern
 

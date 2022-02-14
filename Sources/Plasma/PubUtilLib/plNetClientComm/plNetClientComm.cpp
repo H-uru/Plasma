@@ -123,8 +123,8 @@ static ST::string           s_fileSrvAddr;
 
 static ST::string          s_iniAccountUsername;
 static ShaDigest           s_namePassHash;
-static wchar_t             s_iniAuthToken[kMaxPublisherAuthKeyLength];
-static wchar_t             s_iniOS[kMaxGTOSIdLength];
+static char16_t            s_iniAuthToken[kMaxPublisherAuthKeyLength];
+static char16_t            s_iniOS[kMaxGTOSIdLength];
 static ST::string          s_iniStartupAgeName = ST_LITERAL("StartUp");
 static plUUID              s_iniStartupAgeInstId;
 static unsigned            s_iniStartupPlayerId = 0;
@@ -1003,8 +1003,8 @@ void NetCommSetAccountUsernamePassword (
 
 //============================================================================
 void NetCommSetAuthTokenAndOS (
-    wchar_t               authToken[],
-    wchar_t               os[]
+    char16_t              authToken[],
+    char16_t              os[]
 ) {
     if (authToken)
         StrCopy(s_iniAuthToken, authToken, std::size(s_iniAuthToken));

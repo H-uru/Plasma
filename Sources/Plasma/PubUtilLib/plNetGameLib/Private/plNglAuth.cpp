@@ -135,7 +135,7 @@ struct AccountExistsRequestTrans : NetAuthTrans {
     void *                                      m_param;
 
     // send    
-    wchar_t                                       m_accountName[kMaxAccountNameLength];
+    char16_t                                    m_accountName[kMaxAccountNameLength];
 
     // recv
     uint8_t                                        m_exists;
@@ -145,7 +145,7 @@ struct AccountExistsRequestTrans : NetAuthTrans {
     AccountExistsRequestTrans (
         FNetCliAuthAccountExistsRequestCallback callback,
         void *                          param,
-        const wchar_t                     accountName[]
+        const char16_t                  accountName[]
     );
 
     bool Send() override;
@@ -176,8 +176,8 @@ struct LoginRequestTrans : NetAuthTrans {
 
     void AddPlayer (
         unsigned    playerInt,
-        const wchar_t playerName[],
-        const wchar_t avatarShape[],
+        const char16_t playerName[],
+        const char16_t avatarShape[],
         unsigned    explorer
     );
 
@@ -225,7 +225,7 @@ struct AccountCreateRequestTrans : NetAuthTrans {
     void *                                  m_param;
 
     // send    
-    wchar_t                                   m_accountName[kMaxAccountNameLength];
+    char16_t                                m_accountName[kMaxAccountNameLength];
     ShaDigest                               m_namePassHash;
     unsigned                                m_accountFlags;
     unsigned                                m_billingType;
@@ -234,8 +234,8 @@ struct AccountCreateRequestTrans : NetAuthTrans {
     plUUID                                  m_accountId;
 
     AccountCreateRequestTrans (
-        const wchar_t                             accountName[],
-        const wchar_t                             password[],
+        const char16_t                          accountName[],
+        const char16_t                          password[],
         unsigned                                accountFlags,
         unsigned                                billingType,
         FNetCliAuthAccountCreateRequestCallback callback,
@@ -258,7 +258,7 @@ struct AccountCreateFromKeyRequestTrans : NetAuthTrans {
     void *                                          m_param;
 
     // send    
-    wchar_t                                   m_accountName[kMaxAccountNameLength];
+    char16_t                                m_accountName[kMaxAccountNameLength];
     ShaDigest                               m_namePassHash;
     plUUID                                  m_key;
     unsigned                                m_billingType;
@@ -268,8 +268,8 @@ struct AccountCreateFromKeyRequestTrans : NetAuthTrans {
     plUUID                                  m_activationKey;
 
     AccountCreateFromKeyRequestTrans(
-        const wchar_t                                   accountName[],
-        const wchar_t                                   password[],
+        const char16_t                                  accountName[],
+        const char16_t                                  password[],
         const plUUID&                                   key,
         unsigned                                        billingType,
         FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
@@ -455,11 +455,11 @@ struct AccountSetRolesRequestTrans : NetAuthTrans {
     void *                                      m_param;
 
     // send    
-    wchar_t                                   m_accountName[kMaxAccountNameLength];
+    char16_t                                m_accountName[kMaxAccountNameLength];
     unsigned                                m_accountFlags;
 
     AccountSetRolesRequestTrans (
-        const wchar_t                                 accountName[],
+        const char16_t                              accountName[],
         unsigned                                    accountFlags,
         FNetCliAuthAccountSetRolesRequestCallback   callback,
         void *                                      param
@@ -481,11 +481,11 @@ struct AccountSetBillingTypeRequestTrans : NetAuthTrans {
     void *                                          m_param;
 
     // send    
-    wchar_t                                   m_accountName[kMaxAccountNameLength];
+    char16_t                                m_accountName[kMaxAccountNameLength];
     unsigned                                m_billingType;
 
     AccountSetBillingTypeRequestTrans (
-        const wchar_t                                     accountName[],
+        const char16_t                                  accountName[],
         unsigned                                        billingType,
         FNetCliAuthAccountSetBillingTypeRequestCallback callback,
         void *                                          param
@@ -530,16 +530,16 @@ struct FileListRequestTrans : NetAuthTrans {
     FNetCliAuthFileListRequestCallback  m_callback;
     void *                              m_param;
 
-    wchar_t                               m_directory[MAX_PATH];
-    wchar_t                               m_ext[MAX_EXT];
+    char16_t                            m_directory[MAX_PATH];
+    char16_t                            m_ext[MAX_EXT];
 
     std::vector<NetCliAuthFileInfo>       m_fileInfoArray;
 
     FileListRequestTrans (
         FNetCliAuthFileListRequestCallback  callback,
         void *                              param,
-        const wchar_t                         directory[],
-        const wchar_t                         ext[]
+        const char16_t                      directory[],
+        const char16_t                      ext[]
     );
 
     bool Send() override;
@@ -932,11 +932,11 @@ struct ChangePlayerNameRequestTrans : NetAuthTrans {
 
     // send    
     unsigned                                        m_playerId;
-    wchar_t                                           m_newName[kMaxPlayerNameLength];
+    char16_t                                        m_newName[kMaxPlayerNameLength];
 
     ChangePlayerNameRequestTrans (
         unsigned                                    playerId,
-        const wchar_t                                 newName[],
+        const char16_t                              newName[],
         FNetCliAuthChangePlayerNameRequestCallback  callback,
         void *                                      param
     );
@@ -1253,8 +1253,8 @@ static LISTDECL(CliAuConn, link)    s_conns;
 static CliAuConn *                  s_active;
 static ST::string                   s_accountName;
 static ShaDigest                    s_accountNamePassHash;
-static wchar_t                      s_authToken[kMaxPublisherAuthKeyLength];
-static wchar_t                      s_os[kMaxGTOSIdLength];
+static char16_t                     s_authToken[kMaxPublisherAuthKeyLength];
+static char16_t                     s_os[kMaxGTOSIdLength];
 
 static std::atomic<long>            s_perf[kNumPerf];
 
@@ -2069,7 +2069,7 @@ bool PingRequestTrans::Recv (
 //============================================================================
 AccountExistsRequestTrans::AccountExistsRequestTrans(
         FNetCliAuthAccountExistsRequestCallback callback,
-        void* param, const wchar_t accountName[])
+        void* param, const char16_t accountName[])
     : NetAuthTrans(kPingRequestTrans), m_callback(callback), m_param(param),
       m_exists()
 {
@@ -2136,16 +2136,16 @@ LoginRequestTrans::LoginRequestTrans(
 //============================================================================
 void LoginRequestTrans::AddPlayer (
     unsigned      playerInt,
-    const wchar_t playerName[],
-    const wchar_t avatarShape[],
+    const char16_t playerName[],
+    const char16_t avatarShape[],
     unsigned      explorer
 ) {
     unsigned index = m_playerCount++;
     ASSERT(index < kMaxPlayersPerAccount);
     m_players[index].playerInt   = playerInt;
     m_players[index].explorer    = explorer;
-    m_players[index].playerName  = ST::string::from_wchar(playerName);
-    m_players[index].avatarShape = ST::string::from_wchar(avatarShape);
+    m_players[index].playerName  = ST::string::from_utf16(playerName);
+    m_players[index].avatarShape = ST::string::from_utf16(avatarShape);
 }
 
 //============================================================================
@@ -2317,8 +2317,8 @@ bool AgeRequestTrans::Recv (
 
 //============================================================================
 AccountCreateRequestTrans::AccountCreateRequestTrans (
-    const wchar_t                           accountName[],
-    const wchar_t                           password[],
+    const char16_t                          accountName[],
+    const char16_t                          password[],
     unsigned                                accountFlags,
     unsigned                                billingType,
     FNetCliAuthAccountCreateRequestCallback callback,
@@ -2332,8 +2332,8 @@ AccountCreateRequestTrans::AccountCreateRequestTrans (
     StrCopy(m_accountName, accountName, std::size(m_accountName));
 
     CryptHashPassword(
-        ST::string::from_wchar(m_accountName),
-        ST::string::from_wchar(password),
+        ST::string::from_utf16(m_accountName),
+        ST::string::from_utf16(password),
         m_namePassHash
     );
 }
@@ -2387,8 +2387,8 @@ bool AccountCreateRequestTrans::Recv (
 
 //============================================================================
 AccountCreateFromKeyRequestTrans::AccountCreateFromKeyRequestTrans (
-    const wchar_t                                   accountName[],
-    const wchar_t                                   password[],
+    const char16_t                                  accountName[],
+    const char16_t                                  password[],
     const plUUID&                                   key,
     unsigned                                        billingType,
     FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
@@ -2402,8 +2402,8 @@ AccountCreateFromKeyRequestTrans::AccountCreateFromKeyRequestTrans (
     StrCopy(m_accountName, accountName, std::size(m_accountName));
 
     CryptHashPassword(
-        ST::string::from_wchar(m_accountName),
-        ST::string::from_wchar(password),
+        ST::string::from_utf16(m_accountName),
+        ST::string::from_utf16(password),
         m_namePassHash
     );
 }
@@ -2513,8 +2513,8 @@ bool PlayerCreateRequestTrans::Recv (
     if (!IS_NET_ERROR(reply.result)) {
         m_playerInfo.playerInt   = reply.playerInt;
         m_playerInfo.explorer    = reply.explorer;
-        m_playerInfo.playerName  = ST::string::from_wchar(reply.playerName);
-        m_playerInfo.avatarShape = ST::string::from_wchar(reply.avatarShape);
+        m_playerInfo.playerName  = ST::string::from_utf16(reply.playerName);
+        m_playerInfo.avatarShape = ST::string::from_utf16(reply.avatarShape);
     }
     m_result    = reply.result;
     m_state     = kTransStateComplete;
@@ -2813,7 +2813,7 @@ bool GetPublicAgeListTrans::Recv (
 
 //============================================================================
 AccountSetRolesRequestTrans::AccountSetRolesRequestTrans (
-    const wchar_t                                 accountName[],
+    const char16_t                              accountName[],
     unsigned                                    accountFlags,
     FNetCliAuthAccountSetRolesRequestCallback   callback,
     void *                                      param
@@ -2870,7 +2870,7 @@ bool AccountSetRolesRequestTrans::Recv (
 
 //============================================================================
 AccountSetBillingTypeRequestTrans::AccountSetBillingTypeRequestTrans (
-    const wchar_t                                     accountName[],
+    const char16_t                                  accountName[],
     unsigned                                        billingType,
     FNetCliAuthAccountSetBillingTypeRequestCallback callback,
     void *                                          param
@@ -2983,8 +2983,8 @@ bool AccountActivateRequestTrans::Recv (
 FileListRequestTrans::FileListRequestTrans (
     FNetCliAuthFileListRequestCallback  callback,
     void *                              param,
-    const wchar_t                         directory[],
-    const wchar_t                         ext[]
+    const char16_t                      directory[],
+    const char16_t                      ext[]
 ) : NetAuthTrans(kFileListRequestTrans)
 ,   m_callback(callback)
 ,   m_param(param)
@@ -3022,42 +3022,42 @@ bool FileListRequestTrans::Recv (
 ) {
     const Auth2Cli_FileListReply & reply = *(const Auth2Cli_FileListReply *) msg;
 
-    uint32_t wchar_tCount = reply.wchar_tCount;
-    const wchar_t* curChar = reply.fileData;
-    // if wchar_tCount is 2, the data only contains the terminator "\0\0" and we
+    uint32_t wcharCount = reply.wcharCount;
+    const char16_t* curChar = reply.fileData;
+    // if wcharCount is 2, the data only contains the terminator "\0\0" and we
     // don't need to convert anything
-    if (wchar_tCount == 2)
+    if (wcharCount == 2)
         m_fileInfoArray.clear();
     else
     {
         // fileData format: "filename\0size\0filename\0size\0...\0\0"
         bool done = false;
         while (!done) {
-            if (wchar_tCount == 0)
+            if (wcharCount == 0)
             {
                 done = true;
                 break;
             }
 
             // read in the filename
-            wchar_t filename[MAX_PATH];
+            char16_t filename[MAX_PATH];
             StrCopy(filename, curChar, std::size(filename));
             filename[std::size(filename) - 1] = L'\0'; // make sure it's terminated
 
-            unsigned filenameLen = wcslen(filename);
+            unsigned filenameLen = std::char_traits<char16_t>::length(filename);
             curChar += filenameLen; // advance the pointer
-            wchar_tCount -= filenameLen; // keep track of the amount remaining
-            if ((*curChar != L'\0') || (wchar_tCount <= 0))
+            wcharCount -= filenameLen; // keep track of the amount remaining
+            if ((*curChar != L'\0') || (wcharCount <= 0))
                 return false; // something is screwy, abort and disconnect
 
             curChar++; // point it at the first part of the size value (format: 0xHHHHLLLL)
-            wchar_tCount--;
-            if (wchar_tCount < 4) // we have to have 2 chars for the size, and 2 for terminator at least
+            wcharCount--;
+            if (wcharCount < 4) // we have to have 2 chars for the size, and 2 for terminator at least
                 return false; // screwy data
             unsigned size = ((*curChar) << 16) + (*(curChar + 1));
             curChar += 2;
-            wchar_tCount -= 2;
-            if ((*curChar != L'\0') || (wchar_tCount <= 0))
+            wcharCount -= 2;
+            if ((*curChar != L'\0') || (wcharCount <= 0))
                 return false; // screwy data
 
             // save the data in our array
@@ -3067,15 +3067,15 @@ bool FileListRequestTrans::Recv (
 
             // point it at either the second part of the terminator, or the next filename
             curChar++;
-            wchar_tCount--;
+            wcharCount--;
             if (*curChar == L'\0')
             {
                 // we hit the terminator
-                if (wchar_tCount != 1)
+                if (wcharCount != 1)
                     return false; // invalid data, we shouldn't have any more
                 done = true; // we're done
             }
-            else if (wchar_tCount < 6) // we must have at least a 1 char string, '\0', size, and "\0\0" terminator left
+            else if (wcharCount < 6) // we must have at least a 1 char string, '\0', size, and "\0\0" terminator left
                 return false; // screwy data
         }
     }
@@ -3114,8 +3114,9 @@ bool FileDownloadRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    wchar_t filename[MAX_PATH];
-    wcsncpy(filename, m_filename.WideString().data(), std::size(filename));
+    char16_t filename[MAX_PATH] {};
+    const ST::utf16_buffer buffer = m_filename.AsString().to_utf16();
+    memcpy(filename, buffer.data(), std::min(sizeof(filename), buffer.size() * sizeof(char16_t)));
 
     const uintptr_t msg[] = {
         kCli2Auth_FileDownloadRequest,
@@ -3876,7 +3877,7 @@ bool SetPlayerBanStatusRequestTrans::Recv (
 //============================================================================
 ChangePlayerNameRequestTrans::ChangePlayerNameRequestTrans (
     unsigned                                    playerId,
-    const wchar_t                                 newName[],
+    const char16_t                              newName[],
     FNetCliAuthChangePlayerNameRequestCallback  callback,
     void *                                      param
 ) : NetAuthTrans(kChangePlayerNameRequestTrans)
@@ -4799,7 +4800,7 @@ void NetCliAuthPingRequest (
 
 //============================================================================
 void NetCliAuthAccountExistsRequest (
-    const wchar_t                                 accountName[],
+    const char16_t                              accountName[],
     FNetCliAuthAccountExistsRequestCallback     callback,
     void *                                      param
 ) {
@@ -4815,8 +4816,8 @@ void NetCliAuthAccountExistsRequest (
 void NetCliAuthLoginRequest (
     const ST::string&               accountName,
     const ShaDigest *               accountNamePassHash,
-    const wchar_t                   authToken[],
-    const wchar_t                   os[],
+    const char16_t                  authToken[],
+    const char16_t                  os[],
     FNetCliAuthLoginRequestCallback callback,
     void *                          param
 ) {
@@ -4862,8 +4863,8 @@ void NetCliAuthGetEncryptionKey (
 
 //============================================================================
 void NetCliAuthAccountCreateRequest (
-    const wchar_t                             accountName[],
-    const wchar_t                             password[],
+    const char16_t                          accountName[],
+    const char16_t                          password[],
     unsigned                                accountFlags,
     unsigned                                billingType,
     FNetCliAuthAccountCreateRequestCallback callback,
@@ -4882,8 +4883,8 @@ void NetCliAuthAccountCreateRequest (
 
 //============================================================================
 void NetCliAuthAccountCreateFromKeyRequest (
-    const wchar_t                                     accountName[],
-    const wchar_t                                     password[],
+    const char16_t                                  accountName[],
+    const char16_t                                  password[],
     plUUID                                          key,
     unsigned                                        billingType,
     FNetCliAuthAccountCreateFromKeyRequestCallback  callback,
@@ -5037,7 +5038,7 @@ void NetCliAuthAccountChangePasswordRequest (
 
 //============================================================================
 void NetCliAuthAccountSetRolesRequest (
-    const wchar_t                                 accountName[],
+    const char16_t                              accountName[],
     unsigned                                    accountFlags,
     FNetCliAuthAccountSetRolesRequestCallback   callback,
     void *                                      param
@@ -5053,7 +5054,7 @@ void NetCliAuthAccountSetRolesRequest (
 
 //============================================================================
 void NetCliAuthAccountSetBillingTypeRequest (
-    const wchar_t                                     accountName[],
+    const char16_t                                  accountName[],
     unsigned                                        billingType,
     FNetCliAuthAccountSetBillingTypeRequestCallback callback,
     void *                                          param
@@ -5083,8 +5084,8 @@ void NetCliAuthAccountActivateRequest (
 
 //============================================================================
 void NetCliAuthFileListRequest (
-    const wchar_t                       dir[],
-    const wchar_t                       ext[],
+    const char16_t                      dir[],
+    const char16_t                      ext[],
     FNetCliAuthFileListRequestCallback  callback,
     void *                              param
 ) {
@@ -5382,7 +5383,7 @@ void NetCliAuthPropagateBuffer (
 }
 
 //============================================================================
-void NetCliAuthLogPythonTraceback (const wchar_t traceback[]) {
+void NetCliAuthLogPythonTraceback (const char16_t traceback[]) {
     CliAuConn * conn = GetConnIncRef("LogTraceback");
     if (!conn)
         return;
@@ -5399,7 +5400,7 @@ void NetCliAuthLogPythonTraceback (const wchar_t traceback[]) {
 
 
 //============================================================================
-void NetCliAuthLogStackDump (const wchar_t stackdump[]) {
+void NetCliAuthLogStackDump (const char16_t stackdump[]) {
     CliAuConn * conn = GetConnIncRef("LogStackDump");
     if (!conn)
         return;
@@ -5474,7 +5475,7 @@ void NetCliAuthKickPlayer (
 //============================================================================
 void NetCliAuthChangePlayerNameRequest (
     unsigned                                    playerId,
-    const wchar_t                                 newName[],
+    const char16_t                              newName[],
     FNetCliAuthChangePlayerNameRequestCallback  callback,
     void *                                      param
 ) {

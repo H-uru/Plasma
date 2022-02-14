@@ -790,7 +790,7 @@ bool FileSrvIpAddressRequestTrans::Recv (
     
     m_result        = kNetSuccess;
     m_state         = kTransStateComplete;
-    m_addr          = ST::string::from_wchar(reply.address);
+    m_addr          = ST::string::from_utf16(reply.address);
 
     return true;
 }
@@ -847,7 +847,7 @@ bool AuthSrvIpAddressRequestTrans::Recv (
 
     m_result        = kNetSuccess;
     m_state         = kTransStateComplete;
-    m_addr          = ST::string::from_wchar(reply.address);
+    m_addr          = ST::string::from_utf16(reply.address);
 
     return true;
 }

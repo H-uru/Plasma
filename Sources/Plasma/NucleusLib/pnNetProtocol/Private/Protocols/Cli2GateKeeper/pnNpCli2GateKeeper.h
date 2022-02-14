@@ -144,7 +144,7 @@ extern const NetMsg kNetMsg_GateKeeper2Cli_FileSrvIpAddressReply;
 struct GateKeeper2Cli_FileSrvIpAddressReply {
     uint32_t messageId;
     uint32_t transId;
-    wchar_t address[24];
+    char16_t address[24];
 };
 
 
@@ -153,6 +153,6 @@ extern const NetMsg kNetMsg_GateKeeper2Cli_AuthSrvIpAddressReply;
 struct GateKeeper2Cli_AuthSrvIpAddressReply {
     uint32_t messageId;
     uint32_t transId;
-    wchar_t address[24];
+    char16_t address[24];
 };
 #pragma pack(pop)

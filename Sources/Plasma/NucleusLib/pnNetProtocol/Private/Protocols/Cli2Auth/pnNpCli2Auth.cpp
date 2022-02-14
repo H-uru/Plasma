@@ -460,7 +460,7 @@ static const NetMsgField kAcctActivateReplyFields[] = {
 static const NetMsgField kFileListReplyFields[] = {
     kNetMsgFieldTransId,                                    // transId
     kNetMsgFieldENetError,                                  // result
-    NET_MSG_FIELD_VAR_COUNT(sizeof(wchar_t), 1024 * 1024),    // wchar_tCount
+    NET_MSG_FIELD_VAR_COUNT(sizeof(char16_t), 1024 * 1024), // wcharCount
     NET_MSG_FIELD_VAR_PTR(),                                // fileData
 };
 
