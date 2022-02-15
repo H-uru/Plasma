@@ -1,4 +1,3 @@
-from __future__ import annotations
 # -*- coding: utf-8 -*-
 """ *==LICENSE==*
 
@@ -41,14 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-"""Module: xOpeningSequnce
-Age: global
-Author: Mark DeForest
-Date: Aug. 28, 2003
-This is the python handler for the Opening Sequence in the Cleft
-"""
 
-
+from __future__ import annotations
 from Plasma import *
 from typing import Literal, Optional
 

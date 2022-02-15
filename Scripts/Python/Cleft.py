@@ -154,16 +154,6 @@ class Cleft(ptResponder):
             # It's the first time... start the intro movie, just by loading the movie dialog
             PtLoadDialog("IntroMovieGUI")
 
-    def OnTimer(self,id):
-        avatar = PtGetLocalAvatar()
-        gender = avatar.avatar.getAvatarClothingGroup()
-        if gender == kFemaleClothingGroup:
-            avatar.avatar.removeClothingItem("FAccPlayerBook")
-        else:
-            avatar.avatar.removeClothingItem("MAccPlayerBook")
-        avatar.avatar.saveClothing()
-
-
     def OnServerInitComplete(self):
         global loadTomahna
         global fissureDrop
@@ -174,7 +164,6 @@ class Cleft(ptResponder):
             PtSendKIMessageInt(kUpgradeKILevel, kMicroKI)
             PtSendKIMessage(kDisableEntireYeeshaBook,0)
             PtFindSceneobject("microBlackBarBody", "GUI").draw.disable()
-            PtAtTimeCallback(self.key,1,0)
             PtGetLocalAvatar().avatar.setDontPanicLink(True)
         else:
             ageSDL["clftYeeshaBookVis"] = (0,)

@@ -400,13 +400,13 @@ class xOpeningSequence(ptModifier):
         else:
             OrientationDlg.dialog.show()
             if IsTutorialPath():
-                PtFindSceneobject("OrientationPBIcon01","GUI").draw.disable()
-                PtFindSceneobject("OrientationPBIcon02","GUI").draw.disable()
-                PtFindSceneobject("OrientationPBIcon01Zandi","GUI").draw.enable()
-                ptGUIControlTextBox(OrientationDlg.dialog.getControlFromIndex(3)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBTextZandi"))
+                OrientationPBIcon01.value.draw.disable()
+                OrientationPBIcon02.value.draw.disable()
+                OrientationPBIcon01Zandi.value.draw.enable()
+                ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBTextZandi"))
             else:
-                PtFindSceneobject("OrientationPBIcon01Zandi","GUI").draw.disable()
-                ptGUIControlTextBox(OrientationDlg.dialog.getControlFromIndex(3)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBText"))
+                OrientationPBIcon01Zandi.value.draw.disable()
+                ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBText"))
         PtFadeIn(kHelpFadeInSeconds,0)
 
 
