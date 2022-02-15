@@ -102,11 +102,11 @@ void plWin32Sound::IFreeBuffers()
 
 void plWin32Sound::Update()
 {
-    plSoundBuffer* buf = this->GetDataBuffer();
+    plSoundBuffer* buf = GetDataBuffer();
     if (plgAudioSys::AreSubtitlesEnabled() && buf != nullptr) {
         plSrtFileReader* srtReader = buf->GetSrtReader();
         if (srtReader != nullptr) {
-            while (plSrtEntry* nextEntry = srtReader->GetNextEntryStartingBeforeTime((uint32_t)(this->GetActualTimeSec() * 1000.0f))) {
+            while (plSrtEntry* nextEntry = srtReader->GetNextEntryStartingBeforeTime((uint32_t)(GetActualTimeSec() * 1000.0f))) {
                 // add a plSubtitleMsg to go... to whoever is listening (probably the KI)
                 plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText(), nextEntry->GetSpeakerName());
                 msg->Send();
@@ -129,7 +129,7 @@ void plWin32Sound::IActuallyPlay()
             if (!fReallyPlaying && fSynchedStartTimeSec > 0) {
                 // advance past any subtitles that would end before the synched start time
                 // not sure when this actually happens...
-                plSoundBuffer* buf = this->GetDataBuffer();
+                plSoundBuffer* buf = GetDataBuffer();
                 if (buf != nullptr) {
                     plSrtFileReader* srtReader = buf->GetSrtReader();
                     if (srtReader != nullptr) {
