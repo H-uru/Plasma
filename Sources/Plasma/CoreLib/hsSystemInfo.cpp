@@ -56,9 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef HAVE_SYSINFO
 #    include <sys/sysinfo.h>
 #    include <sys/utsname.h>
-#endif
-
-#ifdef HAVE_SYSCTL
+#elif defined(HAVE_SYSCTL)
 #    include <sys/types.h>
 #    include <sys/sysctl.h>
 #endif
