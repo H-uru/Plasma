@@ -53,7 +53,7 @@ static const std::regex timingsRegex("^(\\d{2}):(\\d{2}):(\\d{2}),(\\d{3}) --> (
 
 bool plSrtFileReader::ReadFile()
 {
-    plFileName audioSrtPath = plFileName::Join(plFileSystem::GetCWD(), "dat", fAudioFileName.StripFileExt() + ".srt");
+    plFileName audioSrtPath = plFileName::Join(plFileSystem::GetCWD(), "sfx", fAudioFileName.StripFileExt() + ".sub");
 
     if (plFileInfo(audioSrtPath).Exists()) {
         // read sets of SRT data until end of file
