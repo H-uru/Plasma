@@ -84,7 +84,7 @@ class plSrtFileReader
 public:
 
     plSrtFileReader(plFileName audioFileName)
-        : fAudioFileName(audioFileName), fEntries(), fCurrentEntryIndex(0) { }
+        : fAudioFileName(audioFileName), fEntries(), fCurrentEntryIndex() { }
 
     bool            ReadFile();
     void            StartOver() { fCurrentEntryIndex = 0; }
