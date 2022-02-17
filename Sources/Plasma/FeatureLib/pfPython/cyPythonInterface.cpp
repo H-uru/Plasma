@@ -904,6 +904,7 @@ void PythonInterface::initPython()
     PyWideStringList_Append(&config.module_search_paths, L"./python");
     PyWideStringList_Append(&config.module_search_paths, L"./python/plasma");
     PyWideStringList_Append(&config.module_search_paths, L"./python/system");
+    PyWideStringList_Append(&config.module_search_paths, L"./python/system/lib-dynload");
     config.module_search_paths_set = 1;
 #endif
 
