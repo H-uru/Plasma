@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _CHUNK_BUFFER_H
 #define _CHUNK_BUFFER_H
 
-#include <QLinkedList>
+#include <list>
+
 #include <QString>
 #include <QMutex>
 
@@ -60,7 +61,7 @@ public:
     void chomp(void* out, size_t size);
     void skip(size_t size);
 
-    bool isEmpty() const { return m_chunks.isEmpty(); }
+    bool isEmpty() const { return m_chunks.empty(); }
     size_t size() const;
 
     void clear()
@@ -155,7 +156,7 @@ private:
     };
 
     QMutex              m_mutex;
-    QLinkedList<Buffer> m_chunks;
+    std::list<Buffer>   m_chunks;
 
     void waitOnData();
 };

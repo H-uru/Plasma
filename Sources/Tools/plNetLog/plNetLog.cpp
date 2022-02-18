@@ -410,7 +410,7 @@ static bool getChunk(FILE* file, unsigned& size, unsigned char*& data,
     fgets(buffer, 50, file);
     time = strtoul(buffer, NULL, 10);
 
-    QLinkedList<unsigned char> dataQueue;
+    std::list<unsigned char> dataQueue;
     for ( ;; ) {
         ch = fgetc(file);
         ungetc(ch, file);
@@ -425,8 +425,10 @@ static bool getChunk(FILE* file, unsigned& size, unsigned char*& data,
     data = new unsigned char[size];
 
     unsigned i = 0;
-    while (!dataQueue.isEmpty())
-        data[i++] = dataQueue.takeFirst();
+    while (!dataQueue.empty()) {
+        data[i++] = dataQueue.front();
+        dataQueue.pop_front();
+    }
     return true;
 }
 
