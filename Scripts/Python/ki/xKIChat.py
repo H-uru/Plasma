@@ -970,6 +970,7 @@ class CommandsProcessor:
                             privateChbox = ptGUIControlCheckBox(KIMini.dialog.getControlFromTag(kGUI.miniPrivateToggle))
 
                             # Handling for selecting Age Players, Buddies, or Neighbors
+                            folderName = None
                             if firstWordLower == PtGetLocalizedString("KI.Commands.ChatAge"):
                                 folderName = xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kAgeMembersFolder)
                                 caretValue = ">"
