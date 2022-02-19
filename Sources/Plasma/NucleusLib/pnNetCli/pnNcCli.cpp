@@ -72,7 +72,7 @@ struct NetLogMessage_Header
     unsigned    m_size;
 };
 
-#define HURU_PIPE_NAME "\\\\.\\pipe\\H-Uru_NetLog"
+#define HURU_PIPE_NAME L"\\\\.\\pipe\\H-Uru_NetLog"
 
 static std::recursive_mutex s_pipeCritical;
 static HANDLE               s_netlog = nullptr;
@@ -925,8 +925,8 @@ static NetCli * ConnCreate (
 #if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
     // Network debug pipe
     if (!s_netlog) {
-        WaitNamedPipeA(HURU_PIPE_NAME, NMPWAIT_WAIT_FOREVER);
-        s_netlog = CreateFileA(
+        WaitNamedPipeW(HURU_PIPE_NAME, NMPWAIT_WAIT_FOREVER);
+        s_netlog = CreateFileW(
             HURU_PIPE_NAME,
             GENERIC_READ | GENERIC_WRITE,
             0,

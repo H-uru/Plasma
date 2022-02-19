@@ -9,6 +9,9 @@ if(PLASMA_BUILD_TOOLS)
 
     if(Qt_FOUND)
         add_subdirectory(plLocalizationEditor)
+        if(WIN32)
+            add_subdirectory(plNetLog)
+        endif()
         add_subdirectory(plResBrowser)
     endif()
 
