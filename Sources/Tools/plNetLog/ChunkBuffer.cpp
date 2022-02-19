@@ -46,12 +46,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <windows.h>
 
 #include <QApplication>
+#include <QMutexLocker>
 
 size_t ChunkBuffer::size() const
 {
     size_t accum = 0;
     foreach (const Buffer& buf, m_chunks)
-        accum += buf.m_size;
+        accum += buf.m_data.size();
     if (!isEmpty())
         accum -= m_chunks.front().m_cur;
     return accum;
@@ -59,62 +60,53 @@ size_t ChunkBuffer::size() const
 
 void ChunkBuffer::chomp(void* out, size_t size)
 {
-    m_mutex.lock();
+    QMutexLocker lock(&m_mutex);
     while (size) {
-        waitOnData();
+        waitOnData(lock);
 
         Buffer& current = m_chunks.front();
-        if (size >= (current.m_size - current.m_cur)) {
-            memcpy(out, current.m_data + current.m_cur, current.m_size - current.m_cur);
-            size -= current.m_size - current.m_cur;
-            out = (unsigned char*)out + current.m_size - current.m_cur;
-            delete[] current.m_data;
+        if (size >= (current.m_data.size() - current.m_cur)) {
+            memcpy(out, current.m_data.data() + current.m_cur,
+                   current.m_data.size() - current.m_cur);
+            size -= current.m_data.size() - current.m_cur;
+            out = (unsigned char*)out + current.m_data.size() - current.m_cur;
             m_chunks.pop_front();
         } else {
-            memcpy(out, current.m_data + current.m_cur, size);
+            memcpy(out, current.m_data.data() + current.m_cur, size);
             current.m_cur += size;
             size = 0;
         }
     }
-    m_mutex.unlock();
 }
 
 void ChunkBuffer::skip(size_t size)
 {
-    m_mutex.lock();
+    QMutexLocker lock(&m_mutex);
     while (size) {
-        waitOnData();
+        waitOnData(lock);
 
         Buffer& current = m_chunks.front();
-        if (size >= (current.m_size - current.m_cur)) {
-            size -= current.m_size - current.m_cur;
+        if (size >= (current.m_data.size() - current.m_cur)) {
+            size -= current.m_data.size() - current.m_cur;
             m_chunks.pop_front();
         } else {
             current.m_cur += size;
             size = 0;
         }
     }
-    m_mutex.unlock();
 }
 
-void ChunkBuffer::append(const unsigned char* data, size_t size, unsigned time)
+void ChunkBuffer::append(std::vector<unsigned char> data, unsigned time)
 {
-    m_mutex.lock();
-    m_chunks.push_back(Buffer());
-    Buffer& buf = m_chunks.back();
-    buf.m_cur = 0;
-    buf.m_data = (const unsigned char*)data;
-    buf.m_size = size;
-    buf.m_time = time;
-    m_mutex.unlock();
+    QMutexLocker lock(&m_mutex);
+    m_chunks.emplace_back(std::move(data), 0, time);
 }
 
 unsigned ChunkBuffer::currentTime()
 {
-    m_mutex.lock();
-    waitOnData();
+    QMutexLocker lock(&m_mutex);
+    waitOnData(lock);
     unsigned time = m_chunks.front().m_time;
-    m_mutex.unlock();
     return time;
 }
 
@@ -162,17 +154,15 @@ QString ChunkBuffer::readSafeString()
         read<unsigned short>();   // Discarded
     length &= 0x0FFF;
 
-    char* buffer = new char[length + 1];
-    chomp(buffer, length);
+    auto buffer = std::make_unique<char[]>(length + 1);
+    chomp(buffer.get(), length);
     buffer[length] = 0;
     if (length && (buffer[0] & 0x80)) {
         for (unsigned i = 0; i < length; ++i)
             buffer[i] = ~buffer[i];
     }
 
-    QString str = QString::fromUtf8(buffer, length);
-    delete[] buffer;
-    return str;
+    return QString::fromUtf8(buffer.get(), length);
 }
 
 QString ChunkBuffer::readSafeWString()
@@ -182,8 +172,8 @@ QString ChunkBuffer::readSafeWString()
         read<unsigned short>();   // Discarded
     length &= 0x0FFF;
 
-    unsigned short* buffer = new unsigned short[length + 1];
-    chomp(buffer, length * sizeof(unsigned short));
+    auto buffer = std::make_unique<unsigned short[]>(length + 1);
+    chomp(buffer.get(), length * sizeof(unsigned short));
     read<unsigned short>(); // Extra \0
     buffer[length] = 0;
     if (length && (buffer[0] & 0x8000)) {
@@ -191,18 +181,16 @@ QString ChunkBuffer::readSafeWString()
             buffer[i] = ~buffer[i];
     }
 
-    QString str = QString::fromUtf16(buffer, length);
-    delete[] buffer;
-    return str;
+    return QString::fromUtf16(buffer.get(), length);
 }
 
-void ChunkBuffer::waitOnData()
+void ChunkBuffer::waitOnData(QMutexLocker& lock)
 {
     while (m_chunks.size() == 0) {
         // Give the buffer some time to fill
-        m_mutex.unlock();
+        lock.unlock();
         QApplication::processEvents();
         Sleep(100);
-        m_mutex.lock();
+        lock.relock();
     }
 }

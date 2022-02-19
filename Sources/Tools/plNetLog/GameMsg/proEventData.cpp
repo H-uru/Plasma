@@ -179,8 +179,8 @@ void EventData_Factory(QTreeWidgetItem* parent, ChunkBuffer& buffer)
             item->setFont(0, warnFont);
             item->setForeground(0, Qt::red);
 
-            OutputDebugStringA(QString("Unsupported proEventData type (%1)\n")
-                               .arg(type).toUtf8().data());
+            OutputDebugStringW(QString("Unsupported proEventData type (%1)\n")
+                               .arg(type).toStdWString().c_str());
         }
     }
 }

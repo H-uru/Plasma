@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetLog.h"
 
+#include <memory>
+
 #include <QApplication>
 #include <QCompleter>
 #include <QFileSystemModel>
@@ -60,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Auth.h"
 #include "Game.h"
 
-#define HURU_PIPE_NAME "\\\\.\\pipe\\H-Uru_NetLog"
+#define HURU_PIPE_NAME L"\\\\.\\pipe\\H-Uru_NetLog"
 
 struct NetLogMessage_Header
 {
@@ -70,21 +72,21 @@ struct NetLogMessage_Header
     size_t          m_size;
 };
 
-static void ShowWinError(QString title)
+static void ShowWinError(const QString& title)
 {
-    char errbuf[1024];
-    FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0,
-                   errbuf, 1024, NULL);
-    OutputDebugStringA(QString("[%1]\n%2\n").arg(title).arg(errbuf).toUtf8().data());
+    wchar_t errbuf[1024];
+    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), 0,
+                   errbuf, std::size(errbuf), nullptr);
+    OutputDebugStringW(QString("[%1]\n%2\n").arg(title).arg(errbuf).toStdWString().c_str());
 }
 
 PipeThread::PipeThread(plNetLogGUI* gui)
     : QThread(gui)
 {
     // Create the pipe for listening to the client
-    m_netPipe = CreateNamedPipeA(HURU_PIPE_NAME, PIPE_ACCESS_DUPLEX,
+    m_netPipe = CreateNamedPipeW(HURU_PIPE_NAME, PIPE_ACCESS_DUPLEX,
                                  PIPE_TYPE_BYTE, PIPE_UNLIMITED_INSTANCES,
-                                 0, 0, 0, NULL);
+                                 0, 0, 0, nullptr);
     if (m_netPipe == INVALID_HANDLE_VALUE)
         ShowWinError(tr("Error creating pipe"));
 
@@ -108,19 +110,19 @@ void PipeThread::run()
     if (m_netPipe == INVALID_HANDLE_VALUE)
         return;
 
-    if (!ConnectNamedPipe(m_netPipe, NULL))
+    if (!ConnectNamedPipe(m_netPipe, nullptr))
         ShowWinError(tr("Error waiting for client"));
 
     for ( ;; ) {
         DWORD bytesRead;
 
-        if (!ReadFile(m_netPipe, &header, sizeof(header), &bytesRead, NULL)) {
+        if (!ReadFile(m_netPipe, &header, sizeof(header), &bytesRead, nullptr)) {
             ShowWinError(tr("Error reading pipe"));
             break;
         }
 
-        unsigned char* data = new unsigned char[header.m_size];
-        if (!ReadFile(m_netPipe, data, header.m_size, &bytesRead, NULL)) {
+        std::vector<unsigned char> data(header.m_size);
+        if (!ReadFile(m_netPipe, data.data(), header.m_size, &bytesRead, nullptr)) {
             ShowWinError(tr("Error reading pipe"));
             break;
         }
@@ -137,9 +139,8 @@ void PipeThread::run()
             intProtocol = kWatchedProtocolCli2Game;
             break;
         default:
-            OutputDebugStringA(QString("[queueMessage]\nUnsupported protocol %d\n")
-                               .arg(header.m_protocol).toUtf8().data());
-            delete[] data;
+            OutputDebugStringW(QString("[queueMessage]\nUnsupported protocol %d\n")
+                               .arg(header.m_protocol).toStdWString().c_str());
             continue;
         }
 
@@ -152,12 +153,12 @@ void PipeThread::run()
         fflush(m_logDump[intProtocol]);
 
         static_cast<plNetLogGUI*>(parent())->queueMessage(intProtocol,
-            header.m_time, header.m_direction, data, header.m_size);
+            header.m_time, header.m_direction, data);
         emit moreLogItemsAreAvailable();
     }
 }
 
-PipeThread* s_pipeThread = 0;
+PipeThread* s_pipeThread = nullptr;
 
 
 plNetLogGUI::plNetLogGUI(QWidget* parent)
@@ -231,13 +232,13 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     else
         resize(512, 640);
 
-    connect(btnLaunch, SIGNAL(clicked()), SLOT(onLaunch()));
-    connect(btnClear, SIGNAL(clicked()), SLOT(onClear()));
-    connect(btnSearch, SIGNAL(clicked()), SLOT(onSearch()));
-    connect(m_searchText, SIGNAL(returnPressed()), SLOT(onSearch()));
-    connect(loadGate, SIGNAL(clicked()), SLOT(onLoadGate()));
-    connect(loadAuth, SIGNAL(clicked()), SLOT(onLoadAuth()));
-    connect(loadGame, SIGNAL(clicked()), SLOT(onLoadGame()));
+    connect(btnLaunch, &QPushButton::clicked, this, &plNetLogGUI::onLaunch);
+    connect(btnClear, &QPushButton::clicked, this, &plNetLogGUI::onClear);
+    connect(btnSearch, &QPushButton::clicked, this, &plNetLogGUI::onSearch);
+    connect(m_searchText, &QLineEdit::returnPressed, this, &plNetLogGUI::onSearch);
+    connect(loadGate, &QPushButton::clicked, this, &plNetLogGUI::onLoadGate);
+    connect(loadAuth, &QPushButton::clicked, this, &plNetLogGUI::onLoadAuth);
+    connect(loadGame, &QPushButton::clicked, this, &plNetLogGUI::onLoadGame);
 }
 
 void plNetLogGUI::closeEvent(QCloseEvent* event)
@@ -309,31 +310,31 @@ void plNetLogGUI::addLogItems(unsigned protocol, int direction, ChunkBuffer& buf
 }
 
 void plNetLogGUI::queueMessage(unsigned protocol, unsigned time, int direction,
-                               const unsigned char* data, size_t size)
+                               std::vector<unsigned char> data)
 {
     if (direction == kCli2Srv)
-        m_msgQueues[protocol].m_send.append(data, size, time);
+        m_msgQueues[protocol].m_send.append(std::move(data), time);
     else
-        m_msgQueues[protocol].m_recv.append(data, size, time);
+        m_msgQueues[protocol].m_recv.append(std::move(data), time);
 }
 
 void plNetLogGUI::onLaunch()
 {
     if (!s_pipeThread) {
         s_pipeThread = new PipeThread(this);
-        connect(s_pipeThread, SIGNAL(moreLogItemsAreAvailable()),
-                SLOT(addNodes()), Qt::QueuedConnection);
+        connect(s_pipeThread, &PipeThread::moreLogItemsAreAvailable,
+                this, &plNetLogGUI::addNodes, Qt::QueuedConnection);
     }
 
     s_pipeThread->start();
-    HANDLE hEvent = CreateEventW(NULL, TRUE, FALSE, L"UruPatcherEvent");
+    HANDLE hEvent = CreateEventW(nullptr, TRUE, FALSE, L"UruPatcherEvent");
     if (hEvent != INVALID_HANDLE_VALUE)
         ResetEvent(hEvent);
 
     QDir dir(m_exePath->text());
     dir.cdUp();
     QProcess::startDetached(m_exePath->text(),
-        QStringList() << "/LocalData",
+        QStringList{ "/LocalData" },
         dir.absolutePath());
 }
 
@@ -385,14 +386,14 @@ void plNetLogGUI::onSearch()
     }
 }
 
-static bool getChunk(FILE* file, unsigned& size, unsigned char*& data,
+static bool getChunk(FILE* file, std::vector<unsigned char>& data,
                      unsigned& time, int& direction)
 {
     int ch = fgetc(file);
     if (ch == EOF) {
         return false;
     } else if (ch != '[') {
-        OutputDebugStringA("[getChunk]\nUnexpected character in input\n");
+        OutputDebugStringW(L"[getChunk]\nUnexpected character in input\n");
         return false;
     }
 
@@ -403,14 +404,14 @@ static bool getChunk(FILE* file, unsigned& size, unsigned char*& data,
     } else if (memcmp(buffer, "<<<", 3) == 0) {
         direction = kSrv2Cli;
     } else {
-        OutputDebugStringA("[getChunk]\nUnexpected character in input\n");
+        OutputDebugStringW(L"[getChunk]\nUnexpected character in input\n");
         return false;
     }
 
     fgets(buffer, 50, file);
-    time = strtoul(buffer, NULL, 10);
+    time = strtoul(buffer, nullptr, 10);
 
-    std::list<unsigned char> dataQueue;
+    data.clear();
     for ( ;; ) {
         ch = fgetc(file);
         ungetc(ch, file);
@@ -419,17 +420,15 @@ static bool getChunk(FILE* file, unsigned& size, unsigned char*& data,
 
         fread(buffer, 1, 3, file);
         buffer[2] = 0;
-        dataQueue.push_back(strtoul(buffer, NULL, 16));
-    }
-    size = dataQueue.size();
-    data = new unsigned char[size];
-
-    unsigned i = 0;
-    while (!dataQueue.empty()) {
-        data[i++] = dataQueue.front();
-        dataQueue.pop_front();
+        data.push_back(strtoul(buffer, nullptr, 16));
     }
     return true;
+}
+
+typedef std::unique_ptr<FILE, int (*)(FILE *)> unique_file;
+static inline unique_file fopen_unique(const char* path, const char *mode)
+{
+    return unique_file(fopen(path, mode), &fclose);
 }
 
 void plNetLogGUI::onLoadGate()
@@ -438,18 +437,17 @@ void plNetLogGUI::onLoadGate()
     if (filename.isEmpty())
         return;
 
-    FILE* log = fopen(filename.toUtf8().data(), "rb");
+    unique_file log = fopen_unique(filename.toUtf8().data(), "rb");
     if (!log) {
         QMessageBox::critical(this, tr("Error"), tr("Cannot open log file"));
         return;
     }
 
-    unsigned size;
-    unsigned char* data;
+    std::vector<unsigned char> data;
     unsigned time;
     int direction;
-    while (getChunk(log, size, data, time, direction))
-        queueMessage(kWatchedProtocolCli2GateKeeper, time, direction, data, size);
+    while (getChunk(log.get(), data, time, direction))
+        queueMessage(kWatchedProtocolCli2GateKeeper, time, direction, std::move(data));
 
     addNodes();
     //m_logView->sortItems(0, Qt::AscendingOrder); -- sorts everything :(
@@ -461,18 +459,17 @@ void plNetLogGUI::onLoadAuth()
     if (filename.isEmpty())
         return;
 
-    FILE* log = fopen(filename.toUtf8().data(), "rb");
+    unique_file log = fopen_unique(filename.toUtf8().data(), "rb");
     if (!log) {
         QMessageBox::critical(this, tr("Error"), tr("Cannot open log file"));
         return;
     }
 
-    unsigned size;
-    unsigned char* data;
+    std::vector<unsigned char> data;
     unsigned time;
     int direction;
-    while (getChunk(log, size, data, time, direction))
-        queueMessage(kWatchedProtocolCli2Auth, time, direction, data, size);
+    while (getChunk(log.get(), data, time, direction))
+        queueMessage(kWatchedProtocolCli2Auth, time, direction, std::move(data));
 
     addNodes();
     //m_logView->sortItems(0, Qt::AscendingOrder); -- sorts everything :(
@@ -484,18 +481,17 @@ void plNetLogGUI::onLoadGame()
     if (filename.isEmpty())
         return;
 
-    FILE* log = fopen(filename.toUtf8().data(), "rb");
+    unique_file log = fopen_unique(filename.toUtf8().data(), "rb");
     if (!log) {
         QMessageBox::critical(this, tr("Error"), tr("Cannot open log file"));
         return;
     }
 
-    unsigned size;
-    unsigned char* data;
+    std::vector<unsigned char> data;
     unsigned time;
     int direction;
-    while (getChunk(log, size, data, time, direction))
-        queueMessage(kWatchedProtocolCli2Game, time, direction, data, size);
+    while (getChunk(log.get(), data, time, direction))
+        queueMessage(kWatchedProtocolCli2Game, time, direction, std::move(data));
 
     addNodes();
     //m_logView->sortItems(0, Qt::AscendingOrder); -- sorts everything :(

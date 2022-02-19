@@ -198,5 +198,5 @@ enum
     kAuth2Cli_AccountExistsReply,
 };
 
-bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
+bool Auth_Factory(QTreeWidget* logger, const QString& timeFmt, int direction,
                   ChunkBuffer& buffer);

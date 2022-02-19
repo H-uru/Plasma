@@ -96,9 +96,9 @@ enum ClassIDs
 QString Factory_Name(unsigned type);
 QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size);
 
-void FlagField(QTreeWidgetItem* parent, QString title,
+void FlagField(QTreeWidgetItem* parent, const QString& title,
                unsigned flags, const char* names[]);
-void Location(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer);
-void Uoid(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer);
-void Key(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer);
-void BitVector(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer);
+void Location(QTreeWidgetItem* parent, const QString& title, ChunkBuffer& buffer);
+void Uoid(QTreeWidgetItem* parent, const QString& title, ChunkBuffer& buffer);
+void Key(QTreeWidgetItem* parent, const QString& title, ChunkBuffer& buffer);
+void BitVector(QTreeWidgetItem* parent, const QString& title, ChunkBuffer& buffer);

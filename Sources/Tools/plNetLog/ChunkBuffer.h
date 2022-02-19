@@ -44,15 +44,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _CHUNK_BUFFER_H
 
 #include <list>
+#include <memory>
+#include <vector>
 
 #include <QString>
 #include <QMutex>
 
 class ChunkBuffer
 {
-private:
-    ChunkBuffer(const ChunkBuffer&) { }
-    ChunkBuffer& operator=(const ChunkBuffer&) { }
+    ChunkBuffer(const ChunkBuffer&) = delete;
+    ChunkBuffer& operator=(const ChunkBuffer&) = delete;
 
 public:
     ChunkBuffer() { }
@@ -63,16 +64,9 @@ public:
 
     bool isEmpty() const { return m_chunks.empty(); }
     size_t size() const;
+    void clear() { m_chunks.clear(); }
 
-    void clear()
-    {
-        while (!isEmpty()) {
-            delete[] m_chunks.front().m_data;
-            m_chunks.pop_front();
-        }
-    }
-
-    void append(const unsigned char* data, size_t size, unsigned time);
+    void append(std::vector<unsigned char> data, unsigned time);
     unsigned currentTime();
 
     template<typename _Tp>
@@ -94,23 +88,20 @@ public:
     QString readString()
     {
         unsigned short length = read<unsigned short>();
-        unsigned short* utf16 = new unsigned short[length + 1];
-        chomp(utf16, length * sizeof(unsigned short));
+        auto utf16 = std::make_unique<unsigned short[]>(length + 1);
+        chomp(utf16.get(), length * sizeof(unsigned short));
         utf16[length] = 0;
-        QString temp = QString::fromUtf16(utf16, length);
-        delete[] utf16;
-        return temp;
+        return QString::fromUtf16(utf16.get(), length);
     }
 
     template <typename _Tp>
     QString readPString()
     {
         _Tp length = read<_Tp>();
-        char* str = new char[length + 1];
-        chomp(str, length);
+        auto str = std::make_unique<char[]>(length + 1);
+        chomp(str.get(), length);
         str[length] = 0;
-        QString temp = QString::fromUtf8(str, length);
-        delete[] str;
+        QString temp = QString::fromUtf8(str.get(), length);
         return temp;
     }
 
@@ -118,12 +109,10 @@ public:
     QString readWPString()
     {
         _Tp length = read<_Tp>();
-        unsigned short* str = new unsigned short[length + 1];
-        chomp(str, length * sizeof(unsigned short));
+        auto str = std::make_unique<unsigned short[]>(length + 1);
+        chomp(str.get(), length * sizeof(unsigned short));
         str[length] = 0;
-        QString temp = QString::fromUtf16(str, length);
-        delete[] str;
-        return temp;
+        return QString::fromUtf16(str, length);
     }
 
     QString readUuid()
@@ -149,16 +138,18 @@ public:
 private:
     struct Buffer
     {
-        const unsigned char* m_data;
-        size_t               m_size;
-        size_t               m_cur;
-        unsigned             m_time;
+        Buffer(std::vector<unsigned char> data, size_t cur, unsigned time)
+            : m_data(std::move(data)), m_cur(cur), m_time(time) { }
+
+        std::vector<unsigned char>  m_data;
+        size_t                      m_cur;
+        unsigned                    m_time;
     };
 
     QMutex              m_mutex;
     std::list<Buffer>   m_chunks;
 
-    void waitOnData();
+    void waitOnData(QMutexLocker& lock);
 };
 
 #endif

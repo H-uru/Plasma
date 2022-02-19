@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetMessage.h"
 #include "Factory.h"
 
+#include <memory>
 #include <zlib.h>
 
 static ChunkBuffer* NetMessageStream(ChunkBuffer& buffer)
@@ -50,20 +51,19 @@ static ChunkBuffer* NetMessageStream(ChunkBuffer& buffer)
     unsigned uncompressedSize = buffer.read<unsigned>();
     unsigned char compression = buffer.read<unsigned char>();
     unsigned streamSize = buffer.read<unsigned>();
-    unsigned char* stream = new unsigned char[streamSize];
-    buffer.chomp(stream, streamSize);
+    std::vector<unsigned char> stream(streamSize);
+    buffer.chomp(stream.data(), streamSize);
 
     ChunkBuffer* chunk = new ChunkBuffer();
     if (compression == 2) {
-        unsigned char* ustream = new unsigned char[uncompressedSize];
+        std::vector<unsigned char> ustream(uncompressedSize);
         ustream[0] = stream[0];
         ustream[1] = stream[1];
         uLongf zlength = uncompressedSize - 2;
-        uncompress(ustream + 2, &zlength, stream + 2, streamSize - 2);
-        chunk->append(ustream, uncompressedSize, 0);
-        delete[] stream;
+        uncompress(ustream.data() + 2, &zlength, stream.data() + 2, streamSize - 2);
+        chunk->append(ustream, 0);
     } else {
-        chunk->append(stream, streamSize, 0);
+        chunk->append(stream, 0);
     }
 
     return chunk;
@@ -84,7 +84,7 @@ enum ClientGuidContents
     kHasClientKey      = (1<<10),
 };
 
-static void ClientGuid(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
+static void ClientGuid(QTreeWidgetItem* parent, const QString& title, ChunkBuffer& buffer)
 {
     static const char* s_flagNames[] = {
         "kHasAcctUuid", "kHasPlayerId", "kHasTempPlayerId", "kHasCCRLevel",
@@ -93,7 +93,7 @@ static void ClientGuid(QTreeWidgetItem* parent, QString title, ChunkBuffer& buff
         "(1<<12)", "(1<<13)", "(1<<14)", "(1<<15)"
     };
 
-    QTreeWidgetItem* top = new QTreeWidgetItem(parent, QStringList() << title);
+    QTreeWidgetItem* top = new QTreeWidgetItem(parent, QStringList{ title });
 
     unsigned short contents = buffer.read<unsigned short>();
     FlagField(top, "Contents", contents, s_flagNames);
@@ -239,10 +239,8 @@ void Create_NetMsgGameMessage(QTreeWidgetItem* parent, ChunkBuffer& buffer)
     QTreeWidgetItem* message = new QTreeWidgetItem(parent, QStringList());
     QString msgType = Factory_Create(message, *subStream, subStream->size());
     message->setText(0, QString("Game Message: %1").arg(msgType));
-    if (subStream->size() != 0) {
-        OutputDebugStringA("Substream parse incomplete\n");
-        *(unsigned*)(0) = 0;
-    }
+    if (subStream->size() != 0)
+        throw std::runtime_error("Substream parse incomplete");
     delete subStream;
 
     if (buffer.read<bool>()) {
@@ -519,17 +517,15 @@ void Create_NetMsgSharedState(QTreeWidgetItem* parent, ChunkBuffer& buffer)
                 item->setFont(0, warnFont);
                 item->setForeground(0, Qt::red);
 
-                OutputDebugStringA(QString("Unsupported GenericVar (%1)\n")
-                                   .arg(type, 4, 16, QChar('0')).toUtf8().data());
+                OutputDebugStringW(QString("Unsupported GenericVar (%1)\n")
+                                   .arg(type, 4, 16, QChar('0')).toStdWString().c_str());
                 i = count;
             }
         }
     }
 
-    if (state->size() != 0) {
-        OutputDebugStringA("SharedState parse incomplete\n");
-        *(unsigned*)(0) = 0;
-    }
+    if (state->size() != 0)
+        throw std::runtime_error("SharedState parse incomplete\n");
     delete state;
 
     new QTreeWidgetItem(parent, QStringList()

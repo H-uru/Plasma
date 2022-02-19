@@ -108,13 +108,13 @@ class plNetLogGUI : public QMainWindow
     Q_OBJECT
 
 public:
-    plNetLogGUI(QWidget* parent = 0);
+    plNetLogGUI(QWidget* parent = nullptr);
 
     void addLogItems(unsigned protocol, int direction, ChunkBuffer& buffer);
     void queueMessage(unsigned protocol, unsigned time, int direction,
-                      const unsigned char* data, size_t size);
+                      std::vector<unsigned char> data);
 
-public slots:
+public Q_SLOTS:
     void onLaunch();
     void onClear() { m_logView->clear(); }
     void addNodes();
@@ -124,7 +124,7 @@ public slots:
     void onLoadGame();
 
 protected:
-    virtual void closeEvent(QCloseEvent*);
+    void closeEvent(QCloseEvent*) override;
 
 private:
     QTreeWidget*    m_logView;
@@ -145,9 +145,9 @@ public:
     ~PipeThread();
 
 protected:
-    virtual void run();
+    void run() override;
 
-signals:
+Q_SIGNALS:
     void moreLogItemsAreAvailable();
 
 private:

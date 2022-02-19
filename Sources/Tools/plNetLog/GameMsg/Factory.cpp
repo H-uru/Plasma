@@ -352,7 +352,7 @@ QString Factory_Name(unsigned type)
     if (type >= 0x400 && (type - 0x400) < sizeof(s_postDbNames) / sizeof(s_postDbNames[0]))
         return s_postDbNames[type - 0x400];
 
-    OutputDebugStringA(QString("Unknown class ID (%1)\n").arg(type, 4, 16, QChar('0')).toUtf8().data());
+    OutputDebugStringW(QString("Unknown class ID (%1)\n").arg(type, 4, 16, QChar('0')).toStdWString().c_str());
     return QString("Unknown class ID (%1)").arg(type, 4, 16, QChar('0'));
 }
 
@@ -490,8 +490,8 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
                 item = item->parent();
             }
 
-            OutputDebugStringA(QString("Unsupported creatable (%1)\n")
-                               .arg(type, 4, 16, QChar('0')).toUtf8().data());
+            OutputDebugStringW(QString("Unsupported creatable (%1)\n")
+                               .arg(type, 4, 16, QChar('0')).toStdWString().c_str());
             if (size) {
                 buffer.skip(size - sizeof(unsigned short));
             } else {
@@ -503,7 +503,7 @@ QString Factory_Create(QTreeWidgetItem* parent, ChunkBuffer& buffer, size_t size
     return Factory_Name(type);
 }
 
-void FlagField(QTreeWidgetItem* parent, QString title,
+void FlagField(QTreeWidgetItem* parent, const QString& title,
                unsigned flags, const char* names[])
 {
     QTreeWidgetItem* top = new QTreeWidgetItem(parent, QStringList()
@@ -518,7 +518,7 @@ void FlagField(QTreeWidgetItem* parent, QString title,
     }
 }
 
-void Location(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
+void Location(QTreeWidgetItem* parent, const QString& title, ChunkBuffer& buffer)
 {
     new QTreeWidgetItem(parent, QStringList()
         << QString("%1: %2 (Flags: %3)").arg(title)
@@ -532,7 +532,7 @@ enum UoidContents
     kHasLoadMask    = (1<<1),
 };
 
-void Uoid(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
+void Uoid(QTreeWidgetItem* parent, const QString& title, ChunkBuffer& buffer)
 {
     static const char* s_uoidContents[] = {
         "kHasCloneIDs", "kHasLoadMask", "(1<<2)", "(1<<3)",
@@ -562,7 +562,7 @@ void Uoid(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
     }
 }
 
-void Key(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
+void Key(QTreeWidgetItem* parent, const QString& title, ChunkBuffer& buffer)
 {
     if (buffer.read<bool>()) {
         Uoid(parent, title, buffer);
@@ -572,7 +572,7 @@ void Key(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
     }
 }
 
-void BitVector(QTreeWidgetItem* parent, QString title, ChunkBuffer& buffer)
+void BitVector(QTreeWidgetItem* parent, const QString& title, ChunkBuffer& buffer)
 {
     QTreeWidgetItem* top = new QTreeWidgetItem(parent, QStringList() << title);
 

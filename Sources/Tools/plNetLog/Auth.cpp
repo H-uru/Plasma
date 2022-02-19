@@ -87,11 +87,9 @@ static const QString s_nodeTypeNames[] = {
 static QString readNodeString(ChunkBuffer& buffer)
 {
     unsigned length = buffer.read<unsigned>() / sizeof(unsigned short);
-    unsigned short* utf16 = new unsigned short[length];
-    buffer.chomp(utf16, length * sizeof(unsigned short));
-    QString str = QString::fromUtf16(utf16, length-1);
-    delete[] utf16;
-    return str;
+    auto utf16 = std::make_unique<unsigned short[]>(length);
+    buffer.chomp(utf16.get(), length * sizeof(unsigned short));
+    return QString::fromUtf16(utf16.get(), length-1);
 }
 
 static void Node_Factory(QTreeWidgetItem* parent, ChunkBuffer& buffer)
@@ -102,7 +100,7 @@ static void Node_Factory(QTreeWidgetItem* parent, ChunkBuffer& buffer)
 
     unsigned __int64 fields = buffer.read<unsigned __int64>();
     if (fields >> 32)
-        OutputDebugStringA("[Node_Factory]\nInvalid bits in node field\n");
+        OutputDebugStringW(L"[Node_Factory]\nInvalid bits in node field\n");
 
     if (fields & kNodeIdx)
         new QTreeWidgetItem(parent, QStringList()
@@ -249,7 +247,7 @@ static void Score_Factory(QTreeWidgetItem* parent, ChunkBuffer& buffer)
         << QString("Game Name: %1").arg(readNodeString(buffer)));
 }
 
-bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
+bool Auth_Factory(QTreeWidget* logger, const QString& timeFmt, int direction,
                   ChunkBuffer& buffer)
 {
     unsigned short msgId = buffer.read<unsigned short>();
@@ -525,7 +523,7 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                 warnFont.setBold(true);
                 item->setFont(0, warnFont);
                 item->setForeground(0, Qt::red);
-                OutputDebugStringA(QString("Invalid Cli2Auth message (%1)\n").arg(msgId).toUtf8().data());
+                OutputDebugStringW(QString("Invalid Cli2Auth message (%1)\n").arg(msgId).toStdWString().c_str());
                 return false;
             }
         }
@@ -891,7 +889,7 @@ bool Auth_Factory(QTreeWidget* logger, QString timeFmt, int direction,
                 warnFont.setBold(true);
                 item->setFont(0, warnFont);
                 item->setForeground(0, Qt::red);
-                OutputDebugStringA(QString("Invalid Auth2Cli message (%1)\n").arg(msgId).toUtf8().data());
+                OutputDebugStringW(QString("Invalid Auth2Cli message (%1)\n").arg(msgId).toStdWString().c_str());
                 return false;
             }
         }
