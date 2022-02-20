@@ -114,7 +114,7 @@ enum ENetError: int32_t {
     kNumNetErrors,
 };
 
-//COMPILER_ASSERT_HEADER(pnNbError, sizeof(ENetError) == sizeof(uint32_t));
+static_assert(sizeof(ENetError) == sizeof(int32_t), "ENetError must be sizeof int32_t");
 
 #define IS_NET_ERROR(a)     (((int)(a)) > kNetSuccess)
 #define IS_NET_SUCCESS(a)   (((int)(a)) == kNetSuccess)
