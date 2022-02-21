@@ -1221,8 +1221,8 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     
     size_t pass;
     for (pass = 0; pass < mRef->GetNumPasses(); pass++) {
-        //IHandleMaterial(material, pass, &span, vRef);
-#if 1
+        IHandleMaterial(material, pass, &span, vRef);
+#if 0
         plLayerInterface* lay = material->GetLayer(mRef->GetPassIndex(pass));
         fCurrLayerIdx = mRef->GetPassIndex(pass);
         

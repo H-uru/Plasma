@@ -332,6 +332,7 @@ void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *enc
     
     if (texture != nullptr && encoder) {
         plMetalTextureRef *deviceTexture = (plMetalTextureRef *)texture->GetDeviceRef();
+        hsAssert(offsetFromRootLayer <= 8, "Too many layers requested");
         if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
             encoder->setFragmentTexture(deviceTexture->fTexture, FragmentShaderArgumentAttributeCubicTextures + offsetFromRootLayer);
         } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
