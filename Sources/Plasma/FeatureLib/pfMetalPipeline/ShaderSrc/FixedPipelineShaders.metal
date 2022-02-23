@@ -459,7 +459,7 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
 inline void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
     // Local variable to store the color value
     if (blendFlags & kBlendInvertColor) {
-        srcSample.rgb = 255 - srcSample.rgb;
+        srcSample.rgb = 1.0 - srcSample.rgb;
     }
     
     // Leave fCurrColor null if we are blending without texture color
@@ -469,7 +469,7 @@ inline void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t
 
     if (blendFlags & kBlendInvertAlpha) {
         // 1.0 - texture.a
-        srcSample.a = 255 - srcSample.a;
+        srcSample.a = 1.0 - srcSample.a;
     }
 
     if (!(blendFlags & kBlendNoTexAlpha)) {
@@ -481,7 +481,7 @@ inline void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t
 inline void blend(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
     // Local variable to store the color value
     if (blendFlags & kBlendInvertColor) {
-        srcSample.rgb = 255 - srcSample.rgb;
+        srcSample.rgb = 1.0 - srcSample.rgb;
     }
     
     switch (blendFlags & kBlendMask)
