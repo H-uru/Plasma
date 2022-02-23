@@ -963,6 +963,10 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
                                      uint32_t vStart, uint32_t vLength,
                                      uint32_t iStart, uint32_t iLength)
 {
+    if(iLength == 0) {
+        return;
+    }
+    
     plProfile_BeginTiming(RenderBuff);
 
     plMetalVertexBufferRef* vRef = (plMetalVertexBufferRef*)vb;
