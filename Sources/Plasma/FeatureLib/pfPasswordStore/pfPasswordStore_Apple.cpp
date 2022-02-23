@@ -80,13 +80,37 @@ ST::string pfApplePasswordStore::GetPassword(const ST::string& username)
 bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::string& password)
 {
     ST::string service = GetServerDisplayName();
+    
+    OSStatus err = SecKeychainAddGenericPassword(nullptr,
+                                                service.size(),
+                                                service.c_str(),
+                                                username.size(),
+                                                username.c_str(),
+                                                password.size(),
+                                                password.c_str(),
+                                                nullptr);
+    if (err == errSecDuplicateItem) {
+        // the keychain item already exists, update it
+        CFStringRef cfUsername = CFStringCreateWithCString(nullptr, username.c_str(), kCFStringEncodingUTF8);
+        CFDataRef cfPassword = CFDataCreate(nullptr, (const UInt8*)password.c_str(), password.size());
+        CFStringRef cfServiceName = CFStringCreateWithCString(nullptr, service.c_str(), kCFStringEncodingUTF8);
+        CFAutorelease(cfUsername);
+        CFAutorelease(cfPassword);
+        CFAutorelease(cfServiceName);
+        
+        const void* queryKeys[2] = { kSecClass, kSecAttrService };
+        const void* queryValues[2] = { kSecClassGenericPassword, cfServiceName };
+        CFDictionaryRef query = CFDictionaryCreate(nullptr, queryKeys, queryValues, 2, nullptr, nullptr);
+        
+        const void* attributeKeys[2] = { kSecAttrAccount, kSecValueData };
+        const void* attributeValues[2] = { cfUsername, cfPassword };
+        CFDictionaryRef attributes = CFDictionaryCreate(nullptr, attributeKeys, attributeValues, 2, nullptr, nullptr);
+        
+        err = SecItemUpdate(query, attributes);
+        
+        CFRelease(attributes);
+        CFRelease(query);
+    }
 
-    return SecKeychainAddGenericPassword(nullptr,
-                                         service.size(),
-                                         service.c_str(),
-                                         username.size(),
-                                         username.c_str(),
-                                         password.size(),
-                                         password.c_str(),
-                                         nullptr) == errSecSuccess;
+    return err == errSecSuccess;
 }
