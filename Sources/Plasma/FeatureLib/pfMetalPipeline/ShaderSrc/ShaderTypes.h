@@ -90,7 +90,7 @@ struct plFragmentShaderLayer {
     uint uvIndex;
     uint32_t blendMode;
     uint32_t miscFlags;
-    short sampleType;
+    ushort sampleType;
 };
 
 struct plMetalFragmentShaderArgumentBuffer {

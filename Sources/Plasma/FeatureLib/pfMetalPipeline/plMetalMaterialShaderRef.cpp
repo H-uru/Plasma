@@ -137,7 +137,7 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder *en
         
         assert(i - GetPassIndex(pass) >= 0);
         EncodeTransform(layer, &vertexUniforms->uvTransforms[i - GetPassIndex(pass)]);
-        IBuildLayerTexture(encoder, i, layer, nullptr);
+        IBuildLayerTexture(encoder, i - GetPassIndex(pass), layer, nullptr);
     }
     
     encoder->setFragmentBytes(fPassColors[pass], sizeof(simd_float4) * 8, FragmentShaderArgumentAttributeColors);
