@@ -8,6 +8,7 @@ set(plUruLauncher_SOURCES
 )
 
 set(plUruLauncher_RESOURCES
+    plUruLauncher.exe.manifest
     plUruLauncher.rc
     resource.h
 
