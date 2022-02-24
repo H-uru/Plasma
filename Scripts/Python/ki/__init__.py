@@ -2144,10 +2144,16 @@ class xKI(ptModifier):
             if gender > kFemaleClothingGroup:
                 gender = kMaleClothingGroup
             avatar.netForce(1)
-            if gender == kFemaleClothingGroup:
-                avatar.avatar.wearClothingItem("FAccPlayerBook")
+            if StartInCleft():
+                if gender == kFemaleClothingGroup:
+                    avatar.avatar.removeClothingItem("FAccPlayerBook")
+                else:
+                    avatar.avatar.removeClothingItem("MAccPlayerBook")
             else:
-                avatar.avatar.wearClothingItem("MAccPlayerBook")
+                if gender == kFemaleClothingGroup:
+                    avatar.avatar.wearClothingItem("FAccPlayerBook")
+                else:
+                    avatar.avatar.wearClothingItem("MAccPlayerBook")
             avatar.avatar.saveClothing()
             # Show the microKI.
             KIMicroBlackbar.dialog.show()
