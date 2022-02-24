@@ -203,6 +203,6 @@ class clftGetPersonalBook(ptResponder):
 
     def OnTimer(self, id):
         if id == kLinkRespID:
-            respLinkResponder.run(self.key, self.key, avatar=PtGetLocalAvatar())
+            respLinkResponder.run(self.key, avatar=PtGetLocalAvatar())
             PtSendKIMessage(kEnableKIandBB, 0)
             PtGetLocalAvatar().avatar.setDontPanicLink(False)
