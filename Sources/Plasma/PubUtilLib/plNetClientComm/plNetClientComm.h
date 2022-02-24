@@ -117,7 +117,7 @@ bool                                NetCommIsLoginComplete ();
 void                                NetCommSetIniPlayerId(unsigned playerId);
 void                                NetCommSetIniStartUpAge(const ST::string& ageName);
 void                                NetCommSetAccountUsernamePassword (const ST::string& username, const ShaDigest &  namePassHash);
-void                                NetCommSetAuthTokenAndOS (char16_t authToken[], char16_t os[]);
+void                                NetCommSetAuthTokenAndOS (const char16_t* authToken, const char16_t* os);
 ENetError                           NetCommGetAuthResult ();
 
 bool                                NetCommNeedToLoadAvatar ();
