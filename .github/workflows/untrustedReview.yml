@@ -1,0 +1,37 @@
+# This workflow is the first leg of the automated script file review. It is executing in an
+# unprivledged context that has read-only access to the repository. It is safe to run untrusted
+# (read: contributed) code here. For more information, see:
+# https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
+name: Untrusted PR Review
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PLASMA_PATH: ${{ github.workspace }}/plasma
+      PLASMA_PR_OUTPUT_PATH: ${{ github.workspace }}/pr
+    steps:
+      - name: Checkout Plasma
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          # Use the *lowest* version of Python supported by Plasma for syntax verification.
+          python-version: '3.8'
+
+      - name: Review Game Python
+        run: python Scripts/Tests/xGamePythonReview.py
+
+      - name: Save PR Number
+        run: |
+          echo ${{ github.event.number }} > $PLASMA_PR_OUTPUT_PATH/NR
+
+      # Upload the review content as an artifact to be used by the trusted workflow.
+      - name: Upload Review
+        uses: actions/upload-artifact@v2
+        with:
+          name: pr
+          path: ${{ env.PLASMA_PR_OUTPUT_PATH }}/
+
