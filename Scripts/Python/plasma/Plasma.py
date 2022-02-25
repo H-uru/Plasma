@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 from __future__ import annotations
+from PlasmaConstants import *
 from typing import Callable, Optional, Tuple, Union
 
 def PtAcceptInviteInGame(friendName,inviteKey):
@@ -635,7 +636,7 @@ def PtLocalAvatarRunKeyDown():
     """Returns true if the run key is being held down for the local avatar"""
     pass
 
-def PtLocalizedYesNoDialog(cb: Union[None, Callable, ptKey], path: str, *args, /, *, dialogType: int = PtConfirmationType.YesNo) -> None:
+def PtLocalizedYesNoDialog(cb: Union[None, Callable, ptKey], path: str, *args, dialogType: int = PtConfirmationType.YesNo) -> None:
     """This will display a confirmation dialog to the user with the localized text `path`
        with any optional localization `args` applied. This dialog _has_ to be answered by the user,
        and their answer will be returned in a Notify message or callback given by `cb`."""
