@@ -1,5 +1,15 @@
-find_program(CLANG_APPLY_EXE NAMES "clang-apply-replacements" DOC "Path to clang-apply-replacements executable")
-find_program(CLANG_TIDY_EXE NAMES "clang-tidy" DOC "Path to clang-tidy executable")
+if(CMAKE_VS_DEVENV_COMMAND)
+    set(_vs_install_root "${CMAKE_VS_DEVENV_COMMAND}/../../../")
+    get_filename_component(_vs_install_root "${_vs_install_root}" ABSOLUTE)
+    set(_llvm_dir "${_vs_install_root}/VC/Tools/Llvm")
+    if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "AMD64|x86-64")
+        list(APPEND _llvm_bin "${_llvm_dir}/x64/bin")
+    endif()
+    list(APPEND _llvm_bin "${_llvm_dir}/bin")
+endif()
+
+find_program(CLANG_APPLY_EXE NAMES "clang-apply-replacements" PATHS ${_llvm_bin} DOC "Path to clang-apply-replacements executable")
+find_program(CLANG_TIDY_EXE NAMES "clang-tidy" PATHS ${_llvm_bin} DOC "Path to clang-tidy executable")
 
 if(CMAKE_GENERATOR MATCHES "Makefile|Ninja")
     set(USE_SANITIZE_TARGETS TRUE)
