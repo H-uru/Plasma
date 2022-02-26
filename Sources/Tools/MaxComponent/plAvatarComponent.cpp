@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
-#include "plComponentProcBase.h"
 #include "plComponent.h"
 #include "plComponentReg.h"
 #include "plAudioComponents.h"

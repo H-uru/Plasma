@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 #include <string_theory/string>
 
+// Always include windows before tchar :(
+#include "hsWindows.h"
 #include <tchar.h>
 
 class plErrorMsg;
