@@ -108,61 +108,119 @@ void plMetalDevice::Shutdown()
     hsAssert(0, "Shutdown not implemented for Metal rendering");
 }
 
-void plMetalDevice::SetRenderTarget(plRenderTarget *target)
-{
-    if(fCurrentRenderTargetCommandEncoder) {
+void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool shouldClearDepth, float clearDepth) {
+    
+    if (shouldClearColor) {
+        fClearColor = clearColor;
+    }
+    fShouldClearColor = shouldClearColor;
+    
+    if (shouldClearDepth) {
+        fClearDepth = clearDepth;
+    }
+    
+    if (fCurrentRenderTargetCommandEncoder) {
+        
+        printf("Ending render pass, allowing a new one to lazily be created\n");
+        
+        fCurrentRenderTargetCommandEncoder->endEncoding();
+        fCurrentRenderTargetCommandEncoder->release();
+        fCurrentRenderTargetCommandEncoder = nil;
+    }
+    
+}
+
+void plMetalDevice::BeginNewRenderPass() {
+    
+    printf("Beginning new render pass\n");
+    
+    //lazilly create the screen render encoder if it does not yet exist
+    if (!fCurrentOffscreenCommandBuffer && !fCurrentRenderTargetCommandEncoder) {
+        SetRenderTarget(NULL);
+    }
+    
+    if (fCurrentRenderTargetCommandEncoder) {
         //if we have an existing render target, submit it's commands and release it
         //if we need to come back to this render target, we can always create a new render
         //pass descriptor and submit more commands
         fCurrentRenderTargetCommandEncoder->endEncoding();
         fCurrentRenderTargetCommandEncoder->release();
         fCurrentRenderTargetCommandEncoder = nil;
-        
+    }
+    
+    printf("Setting up render pass descriptor\n");
+    
+    MTL::RenderPassDescriptor *renderPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
+    renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
+    renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
+    renderPassDescriptor->colorAttachments()->object(0)->setClearColor(MTL::ClearColor(fClearColor.x, fClearColor.y, fClearColor.z, fClearColor.w));
+    if (fShouldClearColor) {
+        renderPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionClear);
+    } else {
+        renderPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionLoad);
+    }
+    
+    if (fCurrentRenderTarget) {
+        if ( fCurrentRenderTarget->GetZDepth() ) {
+            plMetalRenderTargetRef* deviceTarget= (plMetalRenderTargetRef *)fCurrentRenderTarget->GetDeviceRef();
+            renderPassDescriptor->depthAttachment()->setTexture(deviceTarget->fDepthBuffer);
+            renderPassDescriptor->depthAttachment()->setClearDepth(fClearDepth);
+            renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
+            renderPassDescriptor->depthAttachment()->setLoadAction(MTL::LoadActionClear);
+        }
+        fCurrentRenderTargetCommandEncoder = fCurrentOffscreenCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
+    } else {
+        renderPassDescriptor->depthAttachment()->setTexture(fCurrentDrawableDepthTexture);
+        renderPassDescriptor->depthAttachment()->setClearDepth(fClearDepth);
+        renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
+        renderPassDescriptor->depthAttachment()->setLoadAction(MTL::LoadActionClear);
+        fCurrentRenderTargetCommandEncoder = fCurrentCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
+    }
+    
+}
+
+void plMetalDevice::SetRenderTarget(plRenderTarget* target)
+{
+    if( fCurrentRenderTargetCommandEncoder ) {
+        //if we have an existing render target, submit it's commands and release it
+        //if we need to come back to this render target, we can always create a new render
+        //pass descriptor and submit more commands
+        fCurrentRenderTargetCommandEncoder->endEncoding();
+        fCurrentRenderTargetCommandEncoder->release();
+        fCurrentRenderTargetCommandEncoder = nil;
+    }
+    
+    if( fCurrentOffscreenCommandBuffer ) {
         fCurrentOffscreenCommandBuffer->enqueue();
         fCurrentOffscreenCommandBuffer->commit();
         fCurrentOffscreenCommandBuffer->release();
         fCurrentOffscreenCommandBuffer = nil;
     }
     
-    if(target) {
+    fCurrentRenderTarget = target;
+    
+    if ( fCurrentRenderTarget && fShouldClearColor == false ) {
+        // clear if a clear color wasn't already set
+        fClearColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
+        fShouldClearColor = true;
+        fClearDepth = 1.0;
+    }
+    
+    if(fCurrentRenderTarget) {
+        printf("Setting render target\n");
         plMetalRenderTargetRef *deviceTarget= (plMetalRenderTargetRef *)target->GetDeviceRef();
         fCurrentOffscreenCommandBuffer = fCommandQueue->commandBuffer();
         fCurrentOffscreenCommandBuffer->retain();
         fCurrentFragmentOutputTexture = deviceTarget->fTexture;
         
-        MTL::RenderPassDescriptor *renderPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
-        renderPassDescriptor->colorAttachments()->object(0)->setTexture(deviceTarget->fTexture);
-        renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
-        renderPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionClear);
-        renderPassDescriptor->colorAttachments()->object(0)->setClearColor(MTL::ClearColor(fClearColor.x, fClearColor.y, fClearColor.z, fClearColor.w));
-        
         if(deviceTarget->fDepthBuffer) {
-            renderPassDescriptor->depthAttachment()->setTexture(deviceTarget->fDepthBuffer);
-            renderPassDescriptor->depthAttachment()->setClearDepth(1.0);
-            renderPassDescriptor->depthAttachment()->setLoadAction(MTL::LoadActionClear);
-            renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
             fCurrentDepthFormat = MTL::PixelFormatDepth32Float_Stencil8;
         } else {
             fCurrentDepthFormat = MTL::PixelFormatInvalid;
         }
-        
-        fCurrentRenderTargetCommandEncoder = fCurrentOffscreenCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
     } else {
-        if(!fDrawableRenderCommandEncoder) {
-            MTL::RenderPassDescriptor *renderPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
-            renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentDrawable->texture());
-            renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
-            renderPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionClear);
-            renderPassDescriptor->colorAttachments()->object(0)->setClearColor(MTL::ClearColor(fClearColor.x, fClearColor.y, fClearColor.z, fClearColor.w));
-            fCurrentFragmentOutputTexture = fCurrentDrawable->texture();
-            
-            renderPassDescriptor->depthAttachment()->setTexture(fCurrentDrawableDepthTexture);
-            renderPassDescriptor->depthAttachment()->setClearDepth(1.0);
-            renderPassDescriptor->depthAttachment()->setLoadAction(MTL::LoadActionClear);
-            renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
-            fDrawableRenderCommandEncoder = fCurrentCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
-        }
-        
+        printf("Setting drawable target\n");
+        fCurrentFragmentOutputTexture = fCurrentDrawable->texture();
         fCurrentDepthFormat = MTL::PixelFormatDepth32Float_Stencil8;
     }
 }
@@ -173,10 +231,10 @@ plMetalDevice::plMetalDevice()
     fCurrentDrawable(nullptr),
     fCommandQueue(nullptr),
     fCurrentRenderTargetCommandEncoder(nullptr),
-    fDrawableRenderCommandEncoder(nullptr),
     fCurrentDrawableDepthTexture(nullptr),
     fCurrentFragmentOutputTexture(nullptr),
-    fCurrentCommandBuffer(nullptr)
+    fCurrentCommandBuffer(nullptr),
+    fCurrentRenderTarget(nullptr)
     {
     fClearColor = {0.0, 0.0, 0.0, 1.0};
         
@@ -537,6 +595,10 @@ uint plMetalDevice::ConfigureAllowedLevels(plMetalDevice::TextureRef *tRef, plMi
 
 void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef *tRef, plMipmap *img, uint slice)
 {
+    
+    if(img->GetKeyName() == "RightDTMap2_dynText") {
+        printf("hi");
+    }
     if (img->IsCompressed()) {
         
         for (int lvl = 0; lvl <= tRef->fLevels; lvl++) {
@@ -1072,6 +1134,7 @@ plMetalDevice::plMetalLinkedPipeline* plMetalDevice::pipelineStateFor(const plMe
 
 void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
 {
+    printf("Creating new command bufffer\n");
     fCurrentCommandBuffer = fCommandQueue->commandBuffer();
     fCurrentCommandBuffer->retain();
     
@@ -1108,9 +1171,10 @@ MTL::CommandBuffer* plMetalDevice::GetCurrentCommandBuffer()
 
 void plMetalDevice::SubmitCommandBuffer()
 {
-    fDrawableRenderCommandEncoder->endEncoding();
-    fDrawableRenderCommandEncoder->release();
-    fDrawableRenderCommandEncoder = nil;
+    printf("Submitting command bufffer\n");
+    fCurrentRenderTargetCommandEncoder->endEncoding();
+    fCurrentRenderTargetCommandEncoder->release();
+    fCurrentRenderTargetCommandEncoder = nil;
     
     fCurrentCommandBuffer->presentDrawable(fCurrentDrawable);
     fCurrentCommandBuffer->enqueue();
@@ -1122,6 +1186,10 @@ void plMetalDevice::SubmitCommandBuffer()
     
     fCurrentDrawable->release();
     fCurrentDrawable = nil;
+    
+    fClearColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
+    fShouldClearColor = false;
+    fClearDepth = 1.0;
 }
 
 MTL::RenderCommandEncoder* plMetalDevice::CurrentRenderCommandEncoder()
@@ -1132,11 +1200,16 @@ MTL::RenderCommandEncoder* plMetalDevice::CurrentRenderCommandEncoder()
         return fCurrentRenderTargetCommandEncoder;
     }
     
-    //lazilly create the screen render encoder if it does not yet exist
-    if(!fDrawableRenderCommandEncoder) {
-        SetRenderTarget(NULL);
+    if (!fCurrentRenderTargetCommandEncoder) {
+        printf("Asked for command encoder, but one not present. Creating...");
+        BeginNewRenderPass();
+        
+        fClearColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
+        fShouldClearColor = false;
+        fClearDepth = 1.0;
     }
-    return fDrawableRenderCommandEncoder;
+    
+    return fCurrentRenderTargetCommandEncoder;
 }
 
 CA::MetalDrawable* plMetalDevice::GetCurrentDrawable()

@@ -170,8 +170,7 @@ public:
     CA::MetalDrawable* GetCurrentDrawable();
     ///Submit the command buffer to the GPU and draws all the render passes. Clears the current command buffer.
     void SubmitCommandBuffer();
-    ///Render encoder to submit draw commands to. This state will automatically reflect the displayable or the current render target, depending on which target has been assigned by Plasma. Will be null if there is no current command buffer.
-    ///
+    void Clear(bool shouldClearColor, simd_float4 clearColor, bool shouldClearDepth, float clearDepth);
 private:
     
     //internal struct for tracking which Metal state goes with which set of
@@ -235,12 +234,16 @@ private:
     MTL::CommandBuffer*         fCurrentCommandBuffer;
     MTL::CommandBuffer*         fCurrentOffscreenCommandBuffer;
     MTL::RenderCommandEncoder*  fCurrentRenderTargetCommandEncoder;
-    MTL::RenderCommandEncoder*  fDrawableRenderCommandEncoder;
     MTL::Texture*               fCurrentDrawableDepthTexture;
     MTL::Texture*               fCurrentFragmentOutputTexture;
     CA::MetalDrawable*          fCurrentDrawable;
     MTL::PixelFormat            fCurrentDepthFormat;
     simd_float4                 fClearColor;
+    bool                        fShouldClearColor;
+    float                       fClearDepth;
+    plRenderTarget*             fCurrentRenderTarget;
+    
+    void BeginNewRenderPass();
 };
 
 #endif

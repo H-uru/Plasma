@@ -357,9 +357,8 @@ void plMetalPipeline::ClearRenderTarget(const hsColorRGBA *col, const float *dep
     if (fView.fRenderState & (kRenderClearColor | kRenderClearDepth)) {
         hsColorRGBA clearColor = col ? *col : GetClearColor();
         float clearDepth = depth ? *depth : fView.GetClearDepth();
-        //FIXME: Depth and color are always cleared, do we need to implement handling for not clearing them?
-
-        fDevice.SetClearColor({clearColor.r, clearColor.g, clearColor.b, clearColor.a});
+        fDevice.Clear(fView.fRenderState & kRenderClearColor, {clearColor.r, clearColor.g, clearColor.b, clearColor.a}, fView.fRenderState & kRenderClearDepth, 1.0);
+        fCurrentDepthStencilState = nullptr;
     }
 }
 
