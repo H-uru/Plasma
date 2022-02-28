@@ -2144,16 +2144,11 @@ class xKI(ptModifier):
             if gender > kFemaleClothingGroup:
                 gender = kMaleClothingGroup
             avatar.netForce(1)
+            playerBook = "FAccPlayerBook" if gender == kFemaleClothingGroup else "MAccPlayerBook"
             if StartInCleft():
-                if gender == kFemaleClothingGroup:
-                    avatar.avatar.removeClothingItem("FAccPlayerBook")
-                else:
-                    avatar.avatar.removeClothingItem("MAccPlayerBook")
+                avatar.avatar.removeClothingItem(playerBook)
             else:
-                if gender == kFemaleClothingGroup:
-                    avatar.avatar.wearClothingItem("FAccPlayerBook")
-                else:
-                    avatar.avatar.wearClothingItem("MAccPlayerBook")
+                avatar.avatar.wearClothingItem(playerBook)
             avatar.avatar.saveClothing()
             # Show the microKI.
             KIMicroBlackbar.dialog.show()
@@ -2194,16 +2189,11 @@ class xKI(ptModifier):
                 if gender > kFemaleClothingGroup:
                     gender = kMaleClothingGroup
                 avatar.netForce(1)
+                playerBook = "FAccPlayerBook" if gender == kFemaleClothingGroup else "MAccPlayerBook"
                 if StartInCleft():
-                    if gender == kFemaleClothingGroup:
-                        avatar.avatar.removeClothingItem("FAccPlayerBook")
-                    else:
-                        avatar.avatar.removeClothingItem("MAccPlayerBook")
+                    avatar.avatar.removeClothingItem(playerBook)
                 else:
-                    if gender == kFemaleClothingGroup:
-                        avatar.avatar.wearClothingItem("FAccPlayerBook")
-                    else:
-                        avatar.avatar.wearClothingItem("MAccPlayerBook")
+                    avatar.avatar.wearClothingItem(playerBook)
                 avatar.avatar.saveClothing()
             except NameError:
                 pass
