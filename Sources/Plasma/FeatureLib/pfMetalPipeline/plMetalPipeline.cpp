@@ -1523,22 +1523,23 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
         
         if(numActivePiggyBacks==0 && fOverBaseLayer == nullptr && fOverAllLayer == nullptr) {
             mRef->FastEncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass);
-        }
+        } else {
         
-        mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &fPiggyBackStack,
-                              [&](plLayerInterface* layer, uint32_t index){
-            if(index==0) {
-                layer = IPushOverBaseLayer(layer);
-            }
-            layer = IPushOverAllLayer(layer);
-            return layer;
-        },
-                              [&](plLayerInterface* layer, uint32_t index){
-            layer = IPopOverAllLayer(layer);
-            if(index==0)
-                layer = IPopOverBaseLayer(layer);
-            return layer;
-        });
+            mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &fPiggyBackStack,
+                                  [&](plLayerInterface* layer, uint32_t index){
+                if(index==0) {
+                    layer = IPushOverBaseLayer(layer);
+                }
+                layer = IPushOverAllLayer(layer);
+                return layer;
+            },
+                                  [&](plLayerInterface* layer, uint32_t index){
+                layer = IPopOverAllLayer(layer);
+                if(index==0)
+                    layer = IPopOverBaseLayer(layer);
+                return layer;
+            });
+        }
     }
     
     return true;

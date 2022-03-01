@@ -140,8 +140,8 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder *en
         IBuildLayerTexture(encoder, i - GetPassIndex(pass), layer, nullptr);
     }
     
-    encoder->setFragmentBytes(fPassColors[pass], sizeof(simd_float4) * 8, FragmentShaderArgumentAttributeColors);
-    encoder->setFragmentBytes(fPassArgumentBuffers[pass], sizeof(plMetalFragmentShaderArgumentBuffer), BufferIndexFragArgBuffer);
+    encoder->setFragmentBuffer(fPassColors[pass], 0, FragmentShaderArgumentAttributeColors);
+    encoder->setFragmentBuffer(fPassArgumentBuffers[pass], 0, BufferIndexFragArgBuffer);
 }
 
 void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder *encoder, VertexUniforms *vertexUniforms, uint pass, std::vector<plLayerInterface*> *piggyBacks, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform)
@@ -284,7 +284,9 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
         MTL::Buffer *argumentBuffer = fDevice->newBuffer(sizeof(plMetalFragmentShaderArgumentBuffer), MTL::ResourceStorageModeManaged);
         MTL::Buffer *colorBuffer = fDevice->newBuffer(sizeof(simd_float4) * 8, MTL::ResourceStorageModeManaged);
         
-        j = IHandleMaterial(iCurrMat, (plMetalFragmentShaderArgumentBuffer *)argumentBuffer->contents(), nullptr,
+        plMetalFragmentShaderArgumentBuffer *layerBuffer = (plMetalFragmentShaderArgumentBuffer *)argumentBuffer->contents();
+        
+        j = IHandleMaterial(iCurrMat, layerBuffer, nullptr,
                             [](plLayerInterface* layer, uint32_t index) {
                                 return layer;
                             },
