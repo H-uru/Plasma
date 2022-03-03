@@ -84,7 +84,7 @@ class plSrtFileReader
 public:
 
     plSrtFileReader(plFileName audioFileName)
-        : fAudioFileName(audioFileName), fEntries(), fCurrentEntryIndex() { }
+        : fAudioFileName(std::move(audioFileName)), fCurrentEntryIndex() { }
 
     bool            ReadFile();
     void            StartOver() { fCurrentEntryIndex = 0; }
