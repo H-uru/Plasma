@@ -549,7 +549,7 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
     } else {
         hsLogEntry(
             plNetClientMgr::GetInstance()->ErrorMsg(
-                "Waiting for a deferred link to {} but got a garbage link?",
+                "Waiting for a deferred link to '{}' but got a garbage link?",
                 fDeferredLink->GetAgeLink()->AsString()
             )
         );
