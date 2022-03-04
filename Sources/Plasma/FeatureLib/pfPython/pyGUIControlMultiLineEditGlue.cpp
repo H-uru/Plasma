@@ -413,6 +413,24 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, isUpdating)
     return PyBool_FromLong(self->fThis->IsUpdating());
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getMargins)
+{
+    auto [top, left, bottom, right] = self->fThis->GetMargins();
+    return Py_BuildValue("iiii", top, left, bottom, right);
+}
+
+PYTHON_METHOD_DEFINITION_WKEY(ptGUIControlMultiLineEdit, setMargins, args, kw)
+{
+    const char* kwlist[] = { "top", "left", "bottom", "right", nullptr };
+    auto [top, left, bottom, right] = self->fThis->GetMargins();
+    if (!PyArg_ParseTupleAndKeywords(args, kw, "|iiii", const_cast<char**>(kwlist), &top, &left, &bottom, &right)) {
+        PyErr_SetString(PyExc_TypeError, "setMargins expects four optional ints");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetMargins(top, left, bottom, right);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, clickable, "Sets this listbox to be clickable by the user."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, unclickable, "Makes this listbox not clickable by the user.\n"
@@ -456,6 +474,8 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, beginUpdate, "Signifies that the control will be updated heavily starting now, so suppress all redraws"),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, endUpdate, "Signifies that the massive updates are over. We can now redraw."),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, isUpdating, "Is someone else already suppressing redraws of the control?"),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getMargins, "Returns a tuple of (top, left, right, bottom) margins"),
+    PYTHON_METHOD_WKEY(ptGUIControlMultiLineEdit, setMargins, "Sets the control's margins"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition

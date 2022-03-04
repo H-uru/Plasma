@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBounds.h"
 
 #include <string_theory/string>
+#include <tuple>
 #include <vector>
 
 #include "pfGUIControlMod.h"
@@ -290,6 +291,15 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    SetCursorToLoc(int32_t loc) {ISetCursor(loc);}
 
         void    SetMargins(int top, int left, int bottom, int right);
+
+        /**
+         * Returns the margins of the GUIMultiLineEdit control
+         * \return A tuple of [top, left, bottom, right] margin.
+         */
+        std::tuple<int, int, int, int> GetMargins() const
+        {
+            return std::make_tuple(fTopMargin, fLeftMargin, fBottomMargin, fRightMargin);
+        }
 
         uint8_t   GetFontSize() {return fFontSize;} // because we're too cool to use the color scheme crap
 
