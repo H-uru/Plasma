@@ -444,7 +444,8 @@ class xKIChat(object):
                 headerColor = kColors.AudioSubtitleHeader
                 if player is not None:
                     # add subtitle speaker's name if it was provided
-                    pretext = player
+                    # add leading space to match indent for broadcast player messages
+                    pretext = f"{PtGetLocalizedString('KI.Chat.BroadcastMsgRecvd')}{player}"
                 player = None
 
             # Is it a status message?
@@ -573,7 +574,8 @@ class xKIChat(object):
                 headerColor = kColors.AudioSubtitleHeader
                 if player is not None:
                     # add subtitle speaker's name if it was provided
-                    pretext = player
+                    # add leading space to match indent for broadcast player messages
+                    pretext = f"{PtGetLocalizedString('KI.Chat.BroadcastMsgRecvd')}{player}"
                 player = None
             else:
                 headerColor = kColors.ChatHeaderBroadcast
