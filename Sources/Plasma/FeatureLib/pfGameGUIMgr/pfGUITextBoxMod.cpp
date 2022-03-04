@@ -119,19 +119,17 @@ void    pfGUITextBoxMod::IUpdate()
     fDynTextMap->ClearToColor( GetColorScheme()->fBackColor );
 
     std::wstring drawStr;
-    if (fUseLocalizationPath && !fLocalizationPath.empty() && pfLocalizationMgr::InstanceValid())
-        drawStr = pfLocalizationMgr::Instance().GetString(fLocalizationPath).to_wchar().data();
-    else
-    {
-        if (fText != nullptr)
-        {
-            int lang = plLocalization::GetLanguage();
-            std::vector<std::wstring> translations = plLocalization::StringToLocal(fText);
-            if (translations[lang] == L"") // if the translations doesn't exist, draw English
-                drawStr = translations[0].c_str();
-            else
-                drawStr = translations[lang].c_str();
-        }
+    if (fUseLocalizationPath && !fLocalizationPath.empty() && pfLocalizationMgr::InstanceValid()) {
+        drawStr = pfLocalizationMgr::Instance().GetString(fLocalizationPath).to_std_wstring();
+    } else if (fText != nullptr) {
+        plLocalization::Language lang = plLocalization::GetLanguage();
+        std::vector<std::wstring> translations = plLocalization::StringToLocal(fText);
+
+        // if the translations doesn't exist, draw English
+        if (translations[lang].empty())
+            drawStr = translations[plLocalization::kEnglish];
+        else
+            drawStr = translations[lang];
     }
 
     if (!drawStr.empty())
