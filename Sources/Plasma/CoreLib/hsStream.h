@@ -97,6 +97,7 @@ public:
 
     bool            GetToken(char *s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
     bool            ReadLn(char* s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
+    bool            ReadLn(ST::string& s, const char beginComment=kComment, const char endComment=kEolnCode);
 
     bool            ReadBOOL(); // Reads a 4-byte BOOLean
     bool            ReadBool(); // Reads a 1-byte boolean

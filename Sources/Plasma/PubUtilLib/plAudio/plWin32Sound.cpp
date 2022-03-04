@@ -39,23 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "hsGeometry3.h"
-#include "hsTimer.h"
-#include "hsResMgr.h"
-#include "plgDispatch.h"
-
-#include "plProfile.h"
 #include "plWin32Sound.h"
+
+#include "HeadSpin.h"
+#include "plgDispatch.h"
+#include "hsGeometry3.h"
+#include "plProfile.h"
+#include "hsResMgr.h"
+#include "hsTimer.h"
+
 #include "plAudioSystem.h"
 #include "plDSoundBuffer.h"
-#include "plAudioCore/plWavFile.h"
+
+#include "pnMessage/plEventCallbackMsg.h"
+#include "pnMessage/plSoundMsg.h"
+#include "pnNetCommon/plNetApp.h"
 
 #include "plAudible/plWinAudible.h"
+#include "plAudioCore/plSrtFileReader.h"
+#include "plAudioCore/plWavFile.h"
+#include "plMessage/plSubtitleMsg.h"
 #include "plNetMessage/plNetMessage.h"
-#include "pnNetCommon/plNetApp.h"
-#include "pnMessage/plSoundMsg.h"
-#include "pnMessage/plEventCallbackMsg.h"
 #include "plPipeline/plPlates.h"
 #include "plStatusLog/plStatusLog.h"
 
@@ -67,7 +71,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plProfile_CreateMemCounter("Sounds", "Memory", MemSounds);
 plProfile_Extern(SoundPlaying);
-
 
 void plWin32Sound::Activate( bool forcePlay )
 {
@@ -99,6 +102,18 @@ void plWin32Sound::IFreeBuffers()
 
 void plWin32Sound::Update()
 {
+    plSoundBuffer* buf = GetDataBuffer();
+    if (plgAudioSys::AreSubtitlesEnabled() && buf != nullptr) {
+        plSrtFileReader* srtReader = buf->GetSrtReader();
+        if (srtReader != nullptr) {
+            while (plSrtEntry* nextEntry = srtReader->GetNextEntryStartingBeforeTime((uint32_t)(GetActualTimeSec() * 1000.0f))) {
+                // add a plSubtitleMsg to go... to whoever is listening (probably the KI)
+                plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText(), nextEntry->GetSpeakerName());
+                msg->Send();
+            }
+        }
+    }
+
     plSound::Update();
 }
 
@@ -111,6 +126,17 @@ void plWin32Sound::IActuallyPlay()
     {
         if (fDSoundBuffer && plgAudioSys::Active() )
         {
+            if (!fReallyPlaying && fSynchedStartTimeSec > 0) {
+                // advance past any subtitles that would end before the synched start time
+                // not sure when this actually happens...
+                plSoundBuffer* buf = GetDataBuffer();
+                if (buf != nullptr) {
+                    plSrtFileReader* srtReader = buf->GetSrtReader();
+                    if (srtReader != nullptr) {
+                        srtReader->AdvanceToTime(fSynchedStartTimeSec * 1000.0);
+                    }
+                }
+            }
 
             // Sometimes base/derived classes can be annoying
             IDerivedActuallyPlay();

@@ -122,6 +122,7 @@ set(plMessage_HEADERS
     plSimStateMsg.h
     plSpawnModMsg.h
     plSpawnRequestMsg.h
+    plSubtitleMsg.h
     plSwimMsg.h
     plSynchEnableMsg.h
     plTimerCallbackMsg.h

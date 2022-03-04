@@ -65,6 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plUnifiedTime;
 class plAudioFileReader;
+class plSrtFileReader;
 class plSoundBuffer : public hsKeyedObject
 {
 public:
@@ -120,6 +121,8 @@ public:
     plAudioFileReader * GetAudioReader();   // transfers ownership to caller
     void                SetAudioReader(plAudioFileReader *reader);
     void                SetLoaded(bool loaded);
+    plSrtFileReader*    GetSrtReader() const { return fSrtReader; }  // does not transfer ownership
+    void                SetSrtReader(plSrtFileReader* reader);
 
     plAudioFileReader::StreamType   GetAudioReaderType() { return fStreamType; }
     unsigned                        GetAsyncLoadLength() { return fAsyncLoadLength ? fAsyncLoadLength : fDataLength; }
@@ -149,6 +152,7 @@ protected:
     bool            fError;
     
     plAudioFileReader * fReader;
+    plSrtFileReader*    fSrtReader;
     uint8_t *           fData;
     plWAVHeader         fHeader;
     uint32_t            fDataLength;

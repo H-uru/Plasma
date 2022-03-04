@@ -78,11 +78,13 @@ public:
     static void Init();
     static void SetActive(bool b);
     static void SetMuted(bool b);
+    static void SetEnableSubtitles(bool b);
     static void EnableEAX(bool b);
     static bool Active() { return fInit; }
     static void Shutdown();
     static void Activate(bool b);
     static bool IsMuted() { return fMuted; }
+    static bool AreSubtitlesEnabled() { return fEnableSubtitles; }
     static void Restart();
     static bool UsingEAX();
 
@@ -216,6 +218,7 @@ private:
     static bool                 fInit;
     static bool                 fActive;
     static bool                 fMuted;
+    static bool                 fEnableSubtitles;
     static bool                 fDelayedActivate;
     static float                fChannelVolumes[kNumChannels];
     static float                fGlobalFadeVolume;

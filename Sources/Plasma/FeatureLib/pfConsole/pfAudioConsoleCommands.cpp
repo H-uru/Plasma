@@ -119,6 +119,11 @@ PF_CONSOLE_CMD(Audio, MuteAll, "bool on", "Mute or unmute all sounds")
     plgAudioSys::SetMuted( (bool)params[ 0 ] );
 }
 
+PF_CONSOLE_CMD(Audio, EnableSubtitles, "bool on", "Enable or disable displaying subtitles for audio files containing speech")
+{
+    plgAudioSys::SetEnableSubtitles((bool)params[0]);
+}
+
 PF_CONSOLE_CMD(Audio, SetDistanceModel, "int type", "Sets the distance model for all 3d sounds")
 {
     plgAudioSys::SetDistanceModel((int)params[0]);

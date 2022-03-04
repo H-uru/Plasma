@@ -108,6 +108,11 @@ public:
     void UnmuteAll();
     bool IsMuted() const;
 
+    // Enable or disable displaying speech subtitles
+    void EnableSubtitles();
+    void DisableSubtitles();
+    bool AreSubtitlesEnabled() const;
+
     void SetPlaybackDevice(const ST::string& device, bool restart);
     ST::string GetPlaybackDevice() const;
 

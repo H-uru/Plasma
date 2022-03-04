@@ -1284,6 +1284,11 @@ class xKI(ptModifier):
         # Process any remaining queued ops.
         self.ProcessScoreOps()
 
+    ## Called by Plasma to notify that a subtitle should be shown.
+    def OnSubtitleMsg(self, subtitleText, speakerName=None):
+
+        self.chatMgr.AddChatLine(speakerName, subtitleText, kChat.AudioSubtitle)
+
     #~~~~~~~~~~#
     # KI Setup #
     #~~~~~~~~~~#

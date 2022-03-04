@@ -1275,6 +1275,10 @@ class ptAudioControl:
         """None"""
         pass
 
+    def areSubtitlesEnabled(self):
+        """Are subtitles for the audio enabled? Returns 1 if true otherwise returns 0."""
+        pass
+
     def canSetMicLevel(self):
         """Can the microphone level be set? Returns 1 if true otherwise returns 0."""
         pass
@@ -1283,8 +1287,16 @@ class ptAudioControl:
         """Disabled audio"""
         pass
 
+    def disableSubtitles(self):
+        """Disables subtitles for audio."""
+        pass
+
     def enable(self):
         """Enables audio"""
+        pass
+
+    def enableSubtitles(self):
+        """Enables subtitles for audio."""
         pass
 
     def enableVoiceChat(self,state):

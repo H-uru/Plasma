@@ -208,6 +208,7 @@ class kChat:
     SystemMessage = 8
     InterAge = 9
     InterAgeSelf = 10
+    AudioSubtitle = 11
     
     # Chat fading.
     FadeNotActive = 0
@@ -263,6 +264,8 @@ class kColors:
     DniGhostBtn    = DniHideBlue
 
     TextNoteURL = DniLilac
+
+    AudioSubtitleHeader = DniBlueDk
 
     # Chat colors (messages and headers).
     ChatMessage             = DniWhite

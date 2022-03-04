@@ -220,6 +220,14 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isMuted)
     PYTHON_RETURN_BOOL(self->fThis->IsMuted());
 }
 
+PYTHON_BASIC_METHOD_DEFINITION(ptAudioControl, enableSubtitles, EnableSubtitles)
+PYTHON_BASIC_METHOD_DEFINITION(ptAudioControl, disableSubtitles, DisableSubtitles)
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, areSubtitlesEnabled)
+{
+    PYTHON_RETURN_BOOL(self->fThis->AreSubtitlesEnabled());
+}
+
 PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, canSetMicLevel)
 {
     PYTHON_RETURN_BOOL(self->fThis->CanSetMicLevel());
@@ -407,6 +415,9 @@ PYTHON_START_METHODS_TABLE(ptAudioControl)
     PYTHON_BASIC_METHOD(ptAudioControl, muteAll, "Mutes all sounds."),
     PYTHON_BASIC_METHOD(ptAudioControl, unmuteAll, "Unmutes all sounds."),
     PYTHON_METHOD_NOARGS(ptAudioControl, isMuted, "Are all sounds muted? Returns 1 if true otherwise returns 0."),
+    PYTHON_BASIC_METHOD(ptAudioControl, enableSubtitles, "Enables audio subtitles."),
+    PYTHON_BASIC_METHOD(ptAudioControl, disableSubtitles, "Disables audio subtitles."),
+    PYTHON_METHOD_NOARGS(ptAudioControl, areSubtitlesEnabled, "Are audio subtitles enabled? Returns 1 if true otherwise returns 0."),
     PYTHON_METHOD(ptAudioControl, setPlaybackDevice, "Params: devicename,restart\nSets audio system output device by name, and optionally restarts it"),
     PYTHON_METHOD(ptAudioControl, getPlaybackDevice, "Gets the name for the device being used by the audio system"),
     PYTHON_METHOD_NOARGS(ptAudioControl, getPlaybackDevices, "Gets the names of all available audio playback devices"),

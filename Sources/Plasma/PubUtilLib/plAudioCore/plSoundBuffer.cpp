@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 #include "plSoundBuffer.h"
+#include "plSrtFileReader.h"
 
 #include <thread>
 #include <chrono>
@@ -99,6 +100,8 @@ void plSoundPreloader::Run()
         else
         {
             plAudioFileReader *reader = nullptr;
+            plSrtFileReader* srtReader = nullptr;
+
             while (!templist.empty())
             {
                 plSoundBuffer* buf = templist.back();
@@ -106,13 +109,24 @@ void plSoundPreloader::Run()
 
                 if (buf->GetData())
                 {
-                    reader = CreateReader(true, buf->GetFileName(), buf->GetAudioReaderType(), buf->GetReaderSelect());
+                    plFileName srcFilename = buf->GetFileName();
+                    reader = CreateReader(true, srcFilename, buf->GetAudioReaderType(), buf->GetReaderSelect());
                     
                     if( reader )
                     {
                         unsigned readLen = buf->GetAsyncLoadLength() ? buf->GetAsyncLoadLength() : buf->GetDataLength();
                         reader->Read( readLen, buf->GetData() );
                         buf->SetAudioReader(reader);     // give sound buffer reader, since we may need it later
+
+                        plSrtFileReader* srtReader = buf->GetSrtReader();
+                        if (srtReader != nullptr && srtReader->GetCurrentAudioFileName() == srcFilename) {
+                            // same file we were playing before, so start the SRT feed over instead of deleting and reloading
+                            srtReader->StartOver();
+                        } else {
+                            auto newSrtFileReader = std::make_unique<plSrtFileReader>(srcFilename);
+                            if (newSrtFileReader->ReadFile())
+                                buf->SetSrtReader(newSrtFileReader.release());
+                        }
                     }
                     else
                     {
@@ -155,14 +169,14 @@ void plSoundBuffer::Shutdown()
 plSoundBuffer::plSoundBuffer()
     : fAsyncLoadLength(), fStreamType(plAudioFileReader::StreamType::kStreamRAM),
       fError(), fValid(), fFileName(), fData(), fDataLength(),
-      fFlags(), fDataRead(), fReader(), fLoaded(), fLoading(),
+      fFlags(), fDataRead(), fReader(), fSrtReader(), fLoaded(), fLoading(),
       fHeader()
 { }
 
 plSoundBuffer::plSoundBuffer(const plFileName &fileName, uint32_t flags)
     : fAsyncLoadLength(), fStreamType(plAudioFileReader::StreamType::kStreamRAM),
       fError(), fValid(), fFileName(fileName), fData(), fDataLength(),
-      fFlags(flags), fDataRead(), fReader(), fLoaded(), fLoading(),
+      fFlags(flags), fDataRead(), fReader(), fSrtReader(), fLoaded(), fLoading(),
       fHeader()
 {
     fValid = IGrabHeaderInfo();
@@ -181,6 +195,8 @@ plSoundBuffer::~plSoundBuffer()
     }
 
     UnLoad();
+
+    delete fSrtReader;
 }
 
 //// GetDataLengthInSecs /////////////////////////////////////////////////////
@@ -402,6 +418,12 @@ void plSoundBuffer::SetAudioReader(plAudioFileReader *reader)
 void plSoundBuffer::SetLoaded(bool loaded)
 {
     fLoaded = loaded;
+}
+
+void plSoundBuffer::SetSrtReader(plSrtFileReader* reader)
+{
+    delete fSrtReader;
+    fSrtReader = reader;
 }
 
         

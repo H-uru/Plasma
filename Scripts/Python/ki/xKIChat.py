@@ -439,9 +439,17 @@ class xKIChat(object):
 
         # Is it an object to represent the flags?
         if isinstance(cFlags, ChatFlags):
+            # Is it subtitles for current audio?
+            if cFlags.subtitle:
+                headerColor = kColors.AudioSubtitleHeader
+                if player is not None:
+                    # add subtitle speaker's name if it was provided
+                    # add leading space to match indent for broadcast player messages
+                    pretext = f"{PtGetLocalizedString('KI.Chat.BroadcastMsgRecvd')}{player}"
+                player = None
 
             # Is it a status message?
-            if cFlags.status:
+            elif cFlags.status:
                 bodyColor = kColors.ChatHeaderStatus
                 player = None
 
@@ -562,6 +570,13 @@ class xKIChat(object):
             if cFlags == kChat.SystemMessage:
                 headerColor = kColors.ChatHeaderError
                 pretext = PtGetLocalizedString("KI.Chat.ErrorMsgRecvd")
+            elif cFlags == kChat.AudioSubtitle:
+                headerColor = kColors.AudioSubtitleHeader
+                if player is not None:
+                    # add subtitle speaker's name if it was provided
+                    # add leading space to match indent for broadcast player messages
+                    pretext = f"{PtGetLocalizedString('KI.Chat.BroadcastMsgRecvd')}{player}"
+                player = None
             else:
                 headerColor = kColors.ChatHeaderBroadcast
                 pretext = PtGetLocalizedString("KI.Chat.BroadcastMsgRecvd")
@@ -574,7 +589,7 @@ class xKIChat(object):
             chatHeaderFormatted = "{}{}{}:".format(pretext, separator, player.getPlayerNameW())
             chatMessageFormatted = " {}".format(message)
         else:
-            # It must be a status or error message.
+            # It must be a subtitle, status or error message.
             chatHeaderFormatted = pretext
             if not pretext:
                 chatMessageFormatted = "{}".format(message)
@@ -757,6 +772,11 @@ class ChatFlags:
         else:
             self.__dict__["neighbors"] = False
 
+        if flags & kRTChatAudioSubtitleMsg:
+            self.__dict__["subtitle"] = True
+        else:
+            self.__dict__["subtitle"] = False
+
         self.__dict__["channel"] = (kRTChatChannelMask & flags) / 256
 
     def __setattr__(self, name, value):
@@ -799,6 +819,11 @@ class ChatFlags:
             if value:
                 self.__dict__["flags"] |= kRTChatNeighborsMsg
 
+        elif name == "subtitle":
+            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatAudioSubtitleMsg
+            if value:
+                self.__dict__["flags"] |= kRTChatAudioSubtitleMsg
+
         elif name == "channel":
             flagsNoChannel = self.__dict__["flags"] & kRTChatNoChannel
             self.__dict__["flags"] = flagsNoChannel + (value * 256)
@@ -822,6 +847,8 @@ class ChatFlags:
             string += "status "
         if self.neighbors:
             string += "neighbors "
+        if self.subtitle:
+            string += "subtitle "
         if self.ccrBcast:
             string += "ccrBcast "
         string += "channel = {} ".format(self.channel)
