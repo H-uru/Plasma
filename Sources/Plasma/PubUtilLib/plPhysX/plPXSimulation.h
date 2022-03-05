@@ -121,6 +121,9 @@ public:
 
     [[nodiscard]]
     const char* c_str() const { return fNameBuf.c_str(); }
+
+    [[nodiscard]]
+    ST::string str() const { return fNameBuf; }
 };
 
 class plPXSimulation
@@ -128,13 +131,19 @@ class plPXSimulation
     friend class plSimulationMgr;
 
 protected:
+    struct World
+    {
+        physx::PxScene* fScene{};
+        physx::PxControllerManager* fControllers{};
+    };
+
     physx::PxFoundation* fPxFoundation;
     physx::PxPvd* fDebugger;
     physx::PxPvdTransport* fTransport;
     physx::PxPhysics* fPxPhysics;
     physx::PxCooking* fPxCooking;
     physx::PxDefaultCpuDispatcher* fPxCpuDispatcher;
-    std::map<plKey, physx::PxScene*> fWorlds;
+    std::map<plKey, World> fWorlds;
     float fAccumulator;
 
 protected:
@@ -177,7 +186,7 @@ public:
 protected:
     /** Creates a scene/subworld. */
     [[nodiscard]]
-    physx::PxScene* InitSubworld(const plKey& world);
+    World& InitSubworld(const plKey& world);
 
     /** Releases and, if needed, frees a scene/subworld. */
     void ReleaseSubworld(const hsKeyedObject* world);
@@ -208,7 +217,12 @@ public:
      * Adds a PhysX Actor to a specific subworld.
      * The actor should have been already initialized eg with \sa CreateRigidActor().
      */
-    void AddToWorld(physx::PxActor* actor, const plKey& world=nullptr);
+    void AddToWorld(physx::PxActor* actor, const plKey& world={});
+
+    /**
+     * Creates and adds a PhysX Character Controller to a specific wubworld.
+     */
+    physx::PxController* CreateCharacterController(physx::PxControllerDesc& desc, const plKey& world={});
 
     /**
      * Finds the PhysX Scene corresponding to the requested subworld.
@@ -223,6 +237,10 @@ public:
      * geometry passed to the initialization function(s) such as \sa CreateRigidActor().
      */
     void RemoveFromWorld(physx::PxRigidActor* actor);
+
+    /** Removes a PhysX Character Controller from a specific subworld.
+     */
+    void RemoveFromWorld(physx::PxController* controller);
 
     /** Advances the simulation. */
     bool Advance(float delta);

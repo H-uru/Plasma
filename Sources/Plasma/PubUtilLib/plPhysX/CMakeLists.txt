@@ -1,5 +1,6 @@
 set(plPhysX_SOURCES
     plGenericPhysical.cpp
+    plKickableLog.cpp
     plLOSDispatch.cpp
     plPXConvert.cpp
     plPXCooking.cpp
@@ -12,6 +13,7 @@ set(plPhysX_SOURCES
 )
 
 set(plPhysX_HEADERS
+    plKickableLog.h
     plLOSDispatch.h
     plPhysXAPI.h
     plPhysXCreatable.h
