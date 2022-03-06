@@ -103,13 +103,15 @@ void plWin32Sound::IFreeBuffers()
 void plWin32Sound::Update()
 {
     plSoundBuffer* buf = GetDataBuffer();
-    if (plgAudioSys::AreSubtitlesEnabled() && buf != nullptr) {
+    if (buf != nullptr) {
         plSrtFileReader* srtReader = buf->GetSrtReader();
         if (srtReader != nullptr) {
             while (plSrtEntry* nextEntry = srtReader->GetNextEntryStartingBeforeTime((uint32_t)(GetActualTimeSec() * 1000.0f))) {
-                // add a plSubtitleMsg to go... to whoever is listening (probably the KI)
-                plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText(), nextEntry->GetSpeakerName());
-                msg->Send();
+                if (plgAudioSys::AreSubtitlesEnabled()) {
+                    // add a plSubtitleMsg to go... to whoever is listening (probably the KI)
+                    plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText(), nextEntry->GetSpeakerName());
+                    msg->Send();
+                }
             }
         }
     }
