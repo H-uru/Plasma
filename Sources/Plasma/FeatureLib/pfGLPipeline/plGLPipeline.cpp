@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/hsWinRef.h"
 
 #include "plGLPipeline.h"
+#include "plGLPlateManager.h"
 
 #ifdef HS_SIMD_INCLUDE
 #  include HS_SIMD_INCLUDE
@@ -61,7 +62,9 @@ plGLEnumerate plGLPipeline::enumerator;
 
 plGLPipeline::plGLPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode)
     : pl3DPipeline(devMode)
-{}
+{
+    fPlateMgr = new plGLPlateManager(this);
+}
 
 bool plGLPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {

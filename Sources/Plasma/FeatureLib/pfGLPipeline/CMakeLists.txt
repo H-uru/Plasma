@@ -3,6 +3,7 @@ set(pfGLPipeline_SOURCES
     plGLEnumerate.cpp
     plGLDeviceRefs.cpp
     plGLPipeline.cpp
+    plGLPlateManager.cpp
 )
 
 set(pfGLPipeline_HEADERS
@@ -10,6 +11,7 @@ set(pfGLPipeline_HEADERS
     plGLDeviceRef.h
     plGLPipeline.h
     pfGLPipelineCreatable.h
+    plGLPlateManager.h
 )
 
 plasma_library(pfGLPipeline SOURCES ${pfGLPipeline_SOURCES} ${pfGLPipeline_HEADERS})
