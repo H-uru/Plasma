@@ -1873,6 +1873,8 @@ void pfGUIMultiLineEditCtrl::SetFontFace(const ST::string &fontFace)
     fDynTextMap->SetFont( fFontFace, fFontSize, fFontStyle,
                             HasFlag( kXparentBgnd ) ? false : true );
     fDynTextMap->CalcStringWidth( "The quick brown fox jumped over the lazy dog.", &fLineHeight );
+    // The line length might have changed due to the new font face, so recalc the line wrapping.
+    IRecalcLineStarts(0, true);
 }
 
 void pfGUIMultiLineEditCtrl::SetFontSize(uint8_t fontSize)
@@ -1883,6 +1885,8 @@ void pfGUIMultiLineEditCtrl::SetFontSize(uint8_t fontSize)
     fDynTextMap->SetFont( fFontFace, fFontSize, fFontStyle,
                             HasFlag( kXparentBgnd ) ? false : true );
     fDynTextMap->CalcStringWidth( "The quick brown fox jumped over the lazy dog.", &fLineHeight );
+    // The line length might have changed due to the new font size, so recalc the line wrapping.
+    IRecalcLineStarts(0, true);
 }
 
 // are we showing the beginning of the buffer? (controls before us are too far up)
