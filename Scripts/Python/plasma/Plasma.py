@@ -4272,7 +4272,7 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         pass
 
     def getMargins(self) -> Tuple[int, int, int, int]:
-        """Returns a tuple of (top, left, right, bottom) margins"""
+        """Returns a tuple of (top, left, bottom, right) margins"""
         pass
 
     def getObjectCenter(self):
