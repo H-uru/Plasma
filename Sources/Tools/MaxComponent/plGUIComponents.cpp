@@ -1468,8 +1468,8 @@ INT_PTR plGUIDialogProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT 
                 {
                     ST::string ageName = ageFile.GetFileNameNoExt();
 
-                    idx = ComboBox_AddString( ageCombo, ageName.c_str() );
-                    if( ageName.compare_i( pmap->GetParamBlock()->GetStr( plGUIDialogComponent::kRefAgeName ) ) == 0 )
+                    idx = ComboBox_AddString( ageCombo, ST2T(ageName) );
+                    if( ageName.compare_i( M2ST( pmap->GetParamBlock()->GetStr( plGUIDialogComponent::kRefAgeName ) ) ) == 0 )
                     {
                         selIdx = idx;
                     }
