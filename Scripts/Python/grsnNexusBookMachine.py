@@ -57,20 +57,25 @@ booksouthClickable = ptAttribActivator(7,"south book clickable")
 booknorthClickable = ptAttribActivator(8,"north book clickable")
 teamsouthTeleport = ptAttribSceneobject(9,"team south teleport")
 teamnorthTeleport = ptAttribSceneobject(10,"team north teleport")
-resetResponder = ptAttribResponder(11,"reset floor",netForce=0)
+resetResponder = ptAttribResponder(11,"reset floor",netForce=1)
 entryTrigger = ptAttribActivator(12,"entry trigger region",netForce=0)
 fakeLinkBehavior = ptAttribBehavior(13,"link out behavior",netForce=0)
-respElevator = ptAttribResponder(14,"start elevator",netForce=0)
+respElevator = ptAttribResponder(14,"start elevator",netForce=1)
 camera = ptAttribSceneobject(15,"elevator camera")
 subworld = ptAttribSceneobject(16,"subworld")
 chatChannel = ptAttribInt(17,"chat channel",6)
+elevatorUp = ptAttribActivator(18,"elevator in up position")
+elevatorMoving = ptAttribActivator(19,"elevator is moving")
+elevatorDown = ptAttribActivator(20,"elevator is down")
 
 waitingOnSBook = False
 waitingOnNBook = False
 northLink = False
 runOnce = True
+resetElevator = False
 kStartElevID = 1
 kResetElevID = 2
+elevatorStatus = 0
 
 class grsnNexusBookMachine(ptResponder):
 
@@ -101,14 +106,12 @@ class grsnNexusBookMachine(ptResponder):
             if player.getPlayerID() != 0:
                 if player.getDistanceSq() < PtMaxListenDistSq():
                     plyrList.append(player)
-                else:
-                    if len(plyrList) <= minPlayers:
-                        plyrList.append(player)
         return plyrList
 
     def OnServerInitComplete(self):
+        if PtGetPlayerList():
+            return
         resetResponder.run(self.key,avatar=PtGetLocalAvatar())
-
 
     def OnFirstUpdate(self):
         pass
@@ -128,8 +131,12 @@ class grsnNexusBookMachine(ptResponder):
     def OnTimer(self,id):
         global northLink
         global runOnce
+        global resetElevator
+        global elevatorStatus
 
         if id == 0:
+            if(len(self.GetPlayersInChatDistance()) == 0):
+                resetElevator = True
             avatar = PtGetLocalAvatar()
             if (northLink):
                 PtFakeLinkAvatarToObject(avatar.getKey(),teamnorthTeleport.value.getKey())
@@ -143,17 +150,21 @@ class grsnNexusBookMachine(ptResponder):
             PtSendKIMessage(kEnableEntireYeeshaBook,0)
             PtAtTimeCallback(self.key, 2, kResetElevID)
         elif id == kStartElevID:
-            respElevator.run(self.key,avatar=PtGetLocalAvatar())
+            if(elevatorStatus == 0):
+                respElevator.run(self.key,avatar=PtGetLocalAvatar())
         elif id == kResetElevID:
-            resetResponder.run(self.key,avatar=PtGetLocalAvatar())
+            if resetElevator == True and elevatorStatus == 2:
+                resetResponder.run(self.key,avatar=PtGetLocalAvatar())
             PtFadeIn(4,True,True)
             runOnce = True
+            resetElevator = False
 
     def OnNotify(self,state,id,events):
         global waitingOnSBook
         global waitingOnNBook
         global northLink
         global runOnce
+        global elevatorStatus
 
         #PtDebugPrint("id ",id)
 
@@ -184,14 +195,24 @@ class grsnNexusBookMachine(ptResponder):
             PtDebugPrint("North book aligned")
             booknorthOutResponder.run(self.key)
 
+        if (id == elevatorUp.id):
+            PtDebugPrint("Nexus elevator is up")
+            elevatorStatus = 2
+
+        if (id == elevatorMoving.id):
+            PtDebugPrint("Nexus elevator is moving")
+            elevatorStatus = 1
+
+        if (id == elevatorDown.id):
+            PtDebugPrint("Nexus elevator is down")
+            elevatorStatus = 0
+
         if (id == entryTrigger.id and runOnce):
             PtDebugPrint("grsnNexusBookMachine.OnNotify:\tadding you to private chat channel %d" % (chatChannel.value),level=kDebugDumpLevel)
+            avatar.avatar.enterSubWorld(subworld.value)
             PtSendPrivateChatList(self.GetPlayersInChatDistance())
             PtSendKIMessageInt(kSetPrivateChatChannel, chatChannel.value)
-            
-            avatar.avatar.enterSubWorld(subworld.value)
             camera.value.pushCameraCut(PtGetLocalAvatar().getKey())
-            resetResponder.run(self.key,avatar=PtGetLocalAvatar())
             PtAtTimeCallback(self.key, 3, kStartElevID)
             PtFadeIn(4,True,True)
             runOnce = False

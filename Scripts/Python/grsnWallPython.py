@@ -45,6 +45,7 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from grsnWallConstants import *
+import xACAItems
 
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
@@ -157,6 +158,8 @@ FemaleSuit = [
 wornItem = []
 DefaultColor1 = []
 DefaultColor2 = []
+
+clothingTypeList = [kHairClothingItem,kFaceClothingItem,kShirtClothingItem,kRightHandClothingItem,kPantsClothingItem,kRightFootClothingItem]
 
 PanelClick = [NorthPanelClick, SouthPanelClick]
 Panel = [NorthPanel, SouthPanel]
@@ -296,6 +299,8 @@ class grsnWallPython(ptResponder):
         ageSDL.setNotify(self.key,"NumBlockers",0.0)
         ageSDL.setNotify(self.key,"northWall",0.0)
         ageSDL.setNotify(self.key,"southWall",0.0)
+        ageSDL.setNotify(self.key,"nWallPlayer",0.0)
+        ageSDL.setNotify(self.key,"sWallPlayer",0.0)
 
         ageSDL.sendToClients("nChairOccupant")
         ageSDL.sendToClients("sChairOccupant")
@@ -378,9 +383,11 @@ class grsnWallPython(ptResponder):
                 self.ResetWall(resetState=False)
                 self.ChangeGameState(kNorth, kSelectCount)
                 #NorthPanelSound.run(self.key, state='main')
+                if(eventHandler):
+                    eventHandler.Handle(kEventInit)
             ### Confirm Blocker ###
             elif(ageSDL["nState"][0] == kSetBlocker):
-                if(self.GetNumBlockerSet(kNorth) < ageSDL["NumBlockers"][0]):
+                if(self.GetNumBlockerSet(kNorth) < ageSDL["NumBlockers"][0] or ageSDL["sState"][0] < kSetBlocker):
                     NorthPanelSound.run(self.key, state='denied')
                 else:
                     self.ChangeGameState(kNorth, kWait)
@@ -395,9 +402,11 @@ class grsnWallPython(ptResponder):
                 self.ResetWall(resetState=False)
                 self.ChangeGameState(kSouth, kSelectCount)
                 #SouthPanelSound.run(self.key, state='main')
+                if(eventHandler):
+                    eventHandler.Handle(kEventInit)
             ### Confirm Blocker ###
             elif(ageSDL["sState"][0] == kSetBlocker):
-                if(self.GetNumBlockerSet(kSouth) < ageSDL["NumBlockers"][0]):
+                if(self.GetNumBlockerSet(kSouth) < ageSDL["NumBlockers"][0] or ageSDL["nState"][0] < kSetBlocker):
                     SouthPanelSound.run(self.key, state='denied')
                 else:
                     self.ChangeGameState(kSouth, kWait)
@@ -484,17 +493,6 @@ class grsnWallPython(ptResponder):
                 self.ChangeChuteState(kNorth, PtGetClientIDFromAvatarKey(PtFindAvatar(events).getKey()))
                 if(PtFindAvatar(events) == PtGetLocalAvatar() and cID == ageSDL["sWallPlayer"][0]):
                     ageSDL["sWallPlayer"] = (-1,)
-            if(ageSDL["sState"][0] == kEntry):
-                if(eventHandler):
-                    eventHandler.Handle(kEventStart)
-                #both players are in the Tube - flush them down
-                if(cID == ageSDL["nWallPlayer"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
-                if(cID == ageSDL["sWallPlayer"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(SouthTubeMulti.value, self.key, SouthTubeMulti.netForce)
-            elif(ageSDL["nState"][0] == kGameInProgress and cID == ageSDL["nWallPlayer"][0]):
-                #additional player joining Game In Progress
-                PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
             return
         if(id == SouthTubeEntry.id and ageSDL["sState"][0] >= kWait and ageSDL["sState"][0] != kEnd):
             if ageSDL["sState"][0] == kWait:
@@ -503,17 +501,6 @@ class grsnWallPython(ptResponder):
                 self.ChangeChuteState(kSouth, PtGetClientIDFromAvatarKey(PtFindAvatar(events).getKey()))
                 if(PtFindAvatar(events) == PtGetLocalAvatar() and cID == ageSDL["nWallPlayer"][0]):
                     ageSDL["nWallPlayer"] = (-1,)
-            if(ageSDL["nState"][0] == kEntry):
-                if(eventHandler):
-                    eventHandler.Handle(kEventStart)
-                #both players are in the Tube - flush them down
-                if(cID == ageSDL["nWallPlayer"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
-                if(cID == ageSDL["sWallPlayer"][0]):
-                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(SouthTubeMulti.value, self.key, SouthTubeMulti.netForce)
-            elif(ageSDL["sState"][0] == kGameInProgress and cID == ageSDL["sWallPlayer"][0]):
-                #additional player joining Game In Progress
-                PtGetLocalAvatar().avatar.runBehaviorSetNotify(SouthTubeMulti.value, self.key, SouthTubeMulti.netForce)
             return
         ### Tube Multibehaviors ###
         if(id == NorthTubeMulti.id):
@@ -521,7 +508,8 @@ class grsnWallPython(ptResponder):
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
                     #Smart seek complete
                     NorthTubeClose.run(self.key)
-                    NorthTubeExclude.clear(self.key)
+                    if(PtFindAvatar(events) != PtGetLocalAvatar()):
+                        NorthTubeExclude.clear(self.key)
                 elif(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage):
                     #Multistage complete
                     if(PtFindAvatar(events) == PtGetLocalAvatar()):
@@ -554,7 +542,8 @@ class grsnWallPython(ptResponder):
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
                     #Smart seek complete
                     SouthTubeClose.run(self.key)
-                    SouthTubeExclude.clear(self.key)
+                    if(PtFindAvatar(events) != PtGetLocalAvatar()):
+                        SouthTubeExclude.clear(self.key)
                 elif(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage):
                     #Multistage complete
                     if(PtFindAvatar(events) == PtGetLocalAvatar()):
@@ -585,7 +574,7 @@ class grsnWallPython(ptResponder):
         ### Win region ###
         if(id == NorthTeamWin.id):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
-                PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), NorthTeamWinTeleport.value.getKey())
+                PtAtTimeCallback(self.key, 3.0, 1)
                 if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["nState"][0] != kEnd and len(PtGetPlayerList())):
                     avatar = PtGetLocalAvatar()
                     currentgender = avatar.avatar.getAvatarClothingGroup()
@@ -597,7 +586,11 @@ class grsnWallPython(ptResponder):
                         if (not self.IItemInCloset(avatar, item)):
                             PtDebugPrint('DEBUG: grsnWallPython.OnNotify():  Adding ' + item + ' to your closet and wearing it.')
                             avatar.avatar.addWardrobeClothingItem(item, ptColor().white(), ptColor().white())
-                PtFadeOut(1,True,True)
+                            avatar.avatar.saveClothing()
+                            wornItem = []
+                            item = self.IGetItem(item)
+                            if hasattr(item, "description"):
+                                PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NewClothing", [item.description]))
             if (ageSDL["nState"][0] != kEnd):
                 if(eventHandler):
                     eventHandler.Handle(kEventNorthWin)
@@ -606,7 +599,7 @@ class grsnWallPython(ptResponder):
             return
         if(id == SouthTeamWin.id):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
-                PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), SouthTeamWinTeleport.value.getKey())
+                PtAtTimeCallback(self.key, 3.0, 2)
                 if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["sState"][0] != kEnd and len(PtGetPlayerList())):
                     avatar = PtGetLocalAvatar()
                     currentgender = avatar.avatar.getAvatarClothingGroup()
@@ -618,7 +611,11 @@ class grsnWallPython(ptResponder):
                         if (not self.IItemInCloset(avatar, item)):
                             PtDebugPrint('DEBUG: grsnWallPython.OnNotify():  Adding ' + item + ' to your closet and wearing it.')
                             avatar.avatar.addWardrobeClothingItem(item, ptColor().white(), ptColor().white())
-                PtFadeOut(1,True,True)
+                            avatar.avatar.saveClothing()
+                            wornItem = []
+                            item = self.IGetItem(item)
+                            if hasattr(item, "description"):
+                                PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NewClothing", [item.description]))
             if (ageSDL["sState"][0] != kEnd):
                 if(eventHandler):
                     eventHandler.Handle(kEventSouthWin)             
@@ -649,19 +646,17 @@ class grsnWallPython(ptResponder):
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage and PtFindAvatar(events) == PtGetLocalAvatar()):
                     #Touched the Crystal
                     PtDebugPrint("Trigger North Crystal")
-                    PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), NorthTeamWinTeleport.value.getKey())
-                    PtFadeOut(1,True,True)
+                    PtAtTimeCallback(self.key, 3.0, 1)
             return
         if(id == SouthQuitBehavior.id):
             for event in events:
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage and PtFindAvatar(events) == PtGetLocalAvatar()):
                     #Touched the Crystal
                     PtDebugPrint("Trigger South Crystal")
-                    PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), SouthTeamWinTeleport.value.getKey())
-                    PtFadeOut(1,True,True)
+                    PtAtTimeCallback(self.key, 3.0, 2)
             return
         #Check for crafty individuals who try to escape the building while still wearing a suit
-        if(id == EscapeArtist.id):
+        if(id == EscapeArtist.id and PtFindAvatar(events) == PtGetLocalAvatar()):
             PtAtTimeCallback(self.key, 2.0, 0)
             PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             return
@@ -709,10 +704,17 @@ class grsnWallPython(ptResponder):
                 avatar.avatar.tintClothingItem(item[0],color1,0)
                 avatar.avatar.tintClothingItemLayer(item[0],color2,2,1)
                 i += 1
+        elif(id == 1):
+            PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), NorthTeamWinTeleport.value.getKey())
+            PtFadeOut(1,True,True)
+        elif(id == 2):
+            PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), SouthTeamWinTeleport.value.getKey())
+            PtFadeOut(1,True,True)
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         ageSDL = PtGetAgeSDL()
         value = ageSDL[VARname][0]
+        cID = PtGetLocalClientID()
         PtDebugPrint("grsn::OnSDLNotify: received SDL '%s' with value %d" % (VARname, value))
         if(VARname == "NumBlockers"):
             if(ageSDL["nState"][0] == kSetBlocker):
@@ -739,11 +741,6 @@ class grsnWallPython(ptResponder):
                 if(ageSDL["sState"][0] != kSelectCount):
                     #Force South to keep up
                     self.ChangeGameState(kSouth, kSelectCount)
-                else:
-                    #We were forced by South - update Display
-                    #NorthPanelSound.run(self.key, state='main')
-                    if(eventHandler):
-                        eventHandler.Handle(kEventInit)
                 self.SetPanelMode(kNorth)
             if(value == kSetBlocker and ageSDL["sState"][0] == kSetBlocker):
                 #Both players are ok with the blocker count
@@ -768,11 +765,6 @@ class grsnWallPython(ptResponder):
                 if(ageSDL["nState"][0] != kSelectCount):
                     #Force North to keep up
                     self.ChangeGameState(kNorth, kSelectCount)
-                else:
-                    #We were forced by North - update Display
-                    #SouthPanelSound.run(self.key, state='main')
-                    if(eventHandler):
-                        eventHandler.Handle(kEventInit)
                 self.SetPanelMode(kSouth)
             if(value == kSetBlocker and ageSDL["nState"][0] == kSetBlocker):
                 #Both players are ok with the blocker count
@@ -786,6 +778,32 @@ class grsnWallPython(ptResponder):
                     SouthWall.value[blocker].physics.enable()
                 if(ageSDL["nState"][0] >= kWait and eventHandler):
                     eventHandler.Handle(kEventEntry)
+                    
+        if(VARname == "nWallPlayer" and ageSDL["nWallPlayer"] != (-1,)):
+            if(ageSDL["sState"][0] == kEntry):
+                if(eventHandler):
+                    eventHandler.Handle(kEventStart)
+                #both players are in the Tube - flush them down
+                if(cID == ageSDL["nWallPlayer"][0]):
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
+                if(cID == ageSDL["sWallPlayer"][0]):
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(SouthTubeMulti.value, self.key, SouthTubeMulti.netForce)
+            elif(ageSDL["nState"][0] == kGameInProgress and cID == ageSDL["nWallPlayer"][0]):
+                #additional player joining Game In Progress
+                PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
+
+        if(VARname == "sWallPlayer" and ageSDL["sWallPlayer"] != (-1,)):
+            if(ageSDL["nState"][0] == kEntry):
+                if(eventHandler):
+                    eventHandler.Handle(kEventStart)
+                #both players are in the Tube - flush them down
+                if(cID == ageSDL["nWallPlayer"][0]):
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
+                if(cID == ageSDL["sWallPlayer"][0]):
+                    PtGetLocalAvatar().avatar.runBehaviorSetNotify(SouthTubeMulti.value, self.key, SouthTubeMulti.netForce)
+            elif(ageSDL["sState"][0] == kGameInProgress and cID == ageSDL["sWallPlayer"][0]):
+                #additional player joining Game In Progress
+                PtGetLocalAvatar().avatar.runBehaviorSetNotify(SouthTubeMulti.value, self.key, SouthTubeMulti.netForce)
 
     def FindBlocker(self,team,id):
         ageSDL = PtGetAgeSDL()
@@ -1116,3 +1134,91 @@ class grsnWallPython(ptResponder):
             adjacencyList[nodeB].append(nodeA)
 
         return DepthFirstSearch(adjacencyList, WALL_START_NODE, WALL_END_NODE)
+
+    def IGetItem(self,name):
+        avatar = PtGetLocalAvatar()
+        # we will return the item corresponding to the name passed in
+        for clothingType in clothingTypeList:
+            clothingList = avatar.avatar.getClosetClothingList(clothingType)
+            for clothingItem in clothingList:
+                tempItem = ClothingItem(clothingItem)
+                if tempItem.name == name:
+                    return tempItem
+        accList = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
+        for accItem in accList:
+            tempAcc = ClothingItem(accItem)
+            if tempAcc.name == name:
+                return tempAcc
+        return None
+        
+class ClothingItem:
+    def __init__(self,clothing):
+        global clothingSets
+        self.name = ""
+        self.type = 0
+        # parameters for the accessories
+        self.groupwith = -1
+        self.accessoryType = -1
+        self.wornwith = []
+        self.donotwear=0
+        self.coloredAsHair=0
+        self.isClothingSet = 0 # are we part of a set of clothing? (clothing that is worn and unworn as a group)
+        self.clothingSet = "" # the set of clothing we belong to
+        try:
+            self.name = clothing[0]
+            self.type = clothing[1]
+            try:
+                if clothing[2] != "":
+                    self.description = PtGetLocalizedString(xACAItems.xClothesXRef[clothing[2]])
+            except:
+                self.description = "*"+clothing[2]+"*"
+            self.thumbnail = clothing[3]
+            # determine more from the custom string
+            if len(clothing[4]) > 0:
+                parts = clothing[4].split(';')
+                for part in parts:
+                    parm = part.split('=')
+                    try:
+                        ls = parm[0].strip().lower()
+                    except LookupError:
+                        ls = ""
+                    try:
+                        rs = parm[1].strip()
+                    except LookupError:
+                        rs = ""
+                    if ls == "clothingtype":
+                        # change clothing group name into clothingtype
+                        rs = rs.lower()
+                        if rs == "pants":
+                            self.groupwith = kPantsClothingItem
+                        elif rs == "shirt":
+                            self.groupwith = kShirtClothingItem
+                        elif rs == "hands":
+                            self.groupwith = kRightHandClothingItem
+                        elif rs == "face":
+                            self.groupwith = kFaceClothingItem
+                        elif rs == "hair":
+                            self.groupwith = kHairClothingItem
+                        elif rs == "feet":
+                            self.groupwith = kRightFootClothingItem
+                        else:
+                            PtDebugPrint("xTakableClothing: Unknown ClothingType %s" % (rs))
+                    elif ls == "accessorytype":
+                        self.accessoryType = 0
+                    elif ls == "accessory":
+                        self.accessoryType = 0
+                    elif ls == "wornwith":
+                        wearlist = rs.split(',')
+                        for wearitem in wearlist:
+                            self.wornwith.append(wearitem.strip())
+                    elif ls == "donotwear":
+                        self.donotwear=1
+                    elif ls == "coloredashair":
+                        self.coloredAsHair=1
+                    elif ls == "clothingset":
+                        self.isClothingSet = 1
+                        self.clothingSet = rs
+                    else:
+                        pass
+        except (TypeError, LookupError):
+            PtDebugPrint("xTakableClothing: some kind of error on clothing " + str(clothing))

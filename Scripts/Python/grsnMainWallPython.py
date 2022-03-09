@@ -109,3 +109,6 @@ class grsnMainWallPython(ptResponder):
             for i in range(0,171):
                 northWall.value[i].runAttachedResponder(kBlockerOff)
                 southWall.value[i].runAttachedResponder(kBlockerOff)
+
+    def IAmMaster(self):
+        return (self.sceneobject.isLocallyOwned())
