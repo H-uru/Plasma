@@ -237,6 +237,7 @@ else:
         "TomahnaFromCleft":     ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelTomahnaDesert' + LinkEnd ),
         "grsnTeamRmPurple":     ( 'xLinkPanelGarrisonPurpleControlRoom' ),
         "grsnTeamRmYellow":     ( 'xLinkPanelGarrisonYellowControlRoom' ),
+        "grsnTrnCtrlRm":       ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelGarrisonControlRoom' + LinkEnd ),
         "grtzGrtZeroLinkRm":    ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelGrtZeroLinkRm' + LinkEnd + YeeshaStamp ),
         "Ercana":     		  ( 1, 1.0, 1.0, DRCStamp1+DRCPos2, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xLinkPanelErcanaDefault' + LinkEnd + YeeshaStamp ),
         "Ahnonay":     		  ( 0, 1.0, 1.0, DRCStamp2+DRCPos1, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xLinkPanelAhnonayVortex' + LinkEnd + YeeshaStamp ),
@@ -315,6 +316,7 @@ xLinkDestinations = {\
     "TomahnaFromCleft":         ( "", "" ),
     "grsnTeamRmPurple":         ( "Garrison", "LinkInPointCtrlRm02" ),
     "grsnTeamRmYellow":         ( "Garrison", "LinkInPointCtrlRm01" ),
+    "grsnTrnCtrlRm":           ( "Garrison", "LinkInPointControlCenter" ),
     "Ercana":     		  ( "Ercana", "LinkInPointDefault" ),
     "Ahnonay":     		  ( "Ahnonay", "LinkInPointDefault" ),
     "AhnonayCathedral":   ( "AhnonayCathedral", "LinkInPointDefault" ),
@@ -375,6 +377,7 @@ xLinkingPages = {\
     # Garrison Wall Control Room Pages
     "grsnTeamRmPurple":     ( PageStart + NoShare + LinkStart + 'xLinkPanelGarrisonPurpleControlRoom' + LinkEndPage ),
     "grsnTeamRmYellow":     ( PageStart + NoShare + LinkStart + 'xLinkPanelGarrisonYellowControlRoom' + LinkEndPage ),
+    "grsnTrnCtrlRm":       ( PageStart + NoShare + LinkStart + 'xLinkPanelGarrisonControlRoom' + LinkEndPage ),
 }
 
 CityBookLinks = ["islmPalaceBalcony02", "islmPalaceBalcony03", "islmDakotahRoof", "KadishGallery", "BaronCityOffice", "dsntShaftFall", "grtzGrtZeroLinkRm", "Spyroom", "islmGreatTree", "Kveer"]
