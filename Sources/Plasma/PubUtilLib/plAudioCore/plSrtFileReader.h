@@ -92,6 +92,7 @@ public:
     void            AdvanceToTime(uint32_t timeMs);
     plSrtEntry*     GetNextEntryStartingBeforeTime(uint32_t timeMs);
     plSrtEntry*     GetNextEntryEndingBeforeTime(uint32_t timeMs);
+    uint32_t        GetLastEntryEndTime();
 
 protected:
 

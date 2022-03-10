@@ -106,11 +106,14 @@ void plWin32Sound::Update()
     if (buf != nullptr) {
         plSrtFileReader* srtReader = buf->GetSrtReader();
         if (srtReader != nullptr) {
-            while (plSrtEntry* nextEntry = srtReader->GetNextEntryStartingBeforeTime((uint32_t)(GetActualTimeSec() * 1000.0f))) {
-                if (plgAudioSys::AreSubtitlesEnabled()) {
-                    // add a plSubtitleMsg to go... to whoever is listening (probably the KI)
-                    plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText(), nextEntry->GetSpeakerName());
-                    msg->Send();
+            uint32_t currentTimeMs = (uint32_t)(GetActualTimeSec() * 1000.0f);
+            if (currentTimeMs <= srtReader->GetLastEntryEndTime()) {
+                while (plSrtEntry* nextEntry = srtReader->GetNextEntryStartingBeforeTime((uint32_t)(GetActualTimeSec() * 1000.0f))) {
+                    if (plgAudioSys::AreSubtitlesEnabled()) {
+                        // add a plSubtitleMsg to go... to whoever is listening (probably the KI)
+                        plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText(), nextEntry->GetSpeakerName());
+                        msg->Send();
+                    }
                 }
             }
         }

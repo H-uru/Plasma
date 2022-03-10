@@ -181,3 +181,12 @@ plSrtEntry* plSrtFileReader::GetNextEntryEndingBeforeTime(uint32_t timeMs)
 
     return nullptr;
 }
+
+uint32_t plSrtFileReader::GetLastEntryEndTime()
+{
+    if (!fEntries.empty()) {
+        return fEntries.back().GetEndTimeMs();
+    }
+
+    return 0;
+}
