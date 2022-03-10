@@ -2012,7 +2012,7 @@ void plClient::IWriteDefaultAudioSettings(const plFileName& destFile)
     WriteInt(stream, "Audio.SetChannelVolume Ambience", 1);
     WriteInt(stream, "Audio.SetChannelVolume NPCVoice", 1);
     WriteInt(stream, "Audio.EnableVoiceRecording", 1);
-    WriteInt(stream, "Audio.EnableSubtitles", true);
+    WriteInt(stream, "Audio.EnableSubtitles", false);
     stream->Close();
     delete stream;
     stream = nullptr;
