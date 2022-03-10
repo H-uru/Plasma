@@ -86,7 +86,7 @@ protected:
     void ILoadAnims();
     void ILoadLoops();
 
-    const char *IGetSel(HWND hCombo);
+    ST::string IGetSel(HWND hCombo) const;
 };
 
 

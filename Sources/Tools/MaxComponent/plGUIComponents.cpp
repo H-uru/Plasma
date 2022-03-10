@@ -527,13 +527,14 @@ INT_PTR plGUITagProc::DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg
 
             // Set the edit control of the combo box to only accept number characters
             edit = GetEditCtrlFromComboBox( GetDlgItem( hWnd, IDC_GUI_TAGCOMBO ) );
-            SetWindowLong( edit, GWL_STYLE, GetWindowLong( edit, GWL_STYLE ) | ES_WANTRETURN );
+            SetWindowLongPtr( edit, GWL_STYLE, GetWindowLongPtr( edit, GWL_STYLE ) | ES_WANTRETURN );
             sOriginalProc = (WNDPROC)SetWindowLongPtr(edit, GWLP_WNDPROC, (LONG_PTR)SubclassedEditProc);
             
             return TRUE;
 
         case WM_DESTROY:
-            SetWindowLongPtr(GetDlgItem(hWnd, IDC_GUI_TAGCOMBO), GWLP_WNDPROC, (LONG_PTR)sOriginalProc);
+            edit = GetEditCtrlFromComboBox(GetDlgItem(hWnd, IDC_GUI_TAGCOMBO));
+            SetWindowLongPtr(edit, GWLP_WNDPROC, (LONG_PTR)sOriginalProc);
             break;
 
         case WM_COMMAND:
