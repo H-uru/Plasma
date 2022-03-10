@@ -413,7 +413,7 @@ protected:
 
     void ISetUserType(plMaxNode* node, const TCHAR* userType) override
     {
-        if (_tcscmp(userType, kUserTypeAll) == 0)
+        if (userType && _tcscmp(userType, kUserTypeAll) == 0)
             ISetNodeValue(nullptr);
     }
 

@@ -603,18 +603,15 @@ protected:
 
     void ISetUserType(plMaxNode* node, const TCHAR* userType) override
     {
-        if (_tcscmp(userType, kUserTypeAll) == 0)
-        {
+        if (userType && _tcscmp(userType, kUserTypeAll) == 0) {
             ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, kNodePB);
-        }
-        else if (_tcscmp(userType, kResponderNodeName) == 0)
-        {
+        } else if (userType && _tcscmp(userType, kResponderNodeName) == 0) {
             ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, kNodeResponder);
-        }
-        else
+        } else {
             fPB->SetValue(fTypeID, 0, kNodePB);
+        }
     }
 
 public:

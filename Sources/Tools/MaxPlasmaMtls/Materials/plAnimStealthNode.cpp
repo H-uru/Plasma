@@ -849,18 +849,15 @@ protected:
 
     void ISetUserType(plMaxNode* node, const TCHAR* userType) override
     {
-        if( _tcscmp( userType, _T(kUseParamBlockNodeString) ) == 0 )
-        {
+        if (userType && _tcscmp(userType, _T(kUseParamBlockNodeString)) == 0) {
             ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseParamBlockNode);
-        }
-        else if( _tcscmp(userType, _T(kUseOwnerNodeString) ) == 0 )
-        {
+        } else if (userType && _tcscmp(userType, _T(kUseOwnerNodeString)) == 0) {
             ISetNodeValue(nullptr);
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseOwnerNode);
-        }
-        else
+        } else {
             fPB->SetValue(fTypeID, 0, plAnimObjInterface::kUseParamBlockNode);
+        }
     }
 
 public:
