@@ -53,8 +53,12 @@ from PlasmaTypes import *
 
 from xCensor import xCensor
 
-_HOST_REGEX = re.compile(R"https?:\/\/(?:www\.)?([^\/]+).*", re.IGNORECASE)
-_URL_REGEX = re.compile(R"https?:\/\/[\S]+", re.IGNORECASE)
+# These regexes match URLs in the format of:
+# https://(anything not a space
+# http://(anything not a space)
+# www.(anything not a space or a dot).(anything not a space)
+_HOST_REGEX = re.compile(R"(?:https?:\/\/)?(?:www\.)?([^\/]+).*", re.IGNORECASE)
+_URL_REGEX = re.compile(R"\b(?:https?:\/\/[\S]+|www\.[^\s.]+\.[^\s]+)\b", re.IGNORECASE)
 
 @dataclass
 class _Link:
