@@ -123,10 +123,10 @@ static inline void ISetCommandLinkSymbols(HWND hwnd, HDC hDC, HFONT font, HTHEME
     HBITMAP mask = IRenderSymbol<RenderMode::kMonochrome>(hwnd, hDC, font, RGB(0, 0, 0), std::get<1>(def));
 
     BUTTON_IMAGELIST imgList{};
-    imgList.margin = { 0, 0, 32, 32 };
+    imgList.margin = { 0, 0, 24, 24 };
     Button_GetImageList(GetDlgItem(hwnd, std::get<0>(def)), &imgList);
     if (imgList.himl == nullptr)
-        imgList.himl = ImageList_Create(32, 32, ILC_COLOR24 | ILC_MASK, 0, 0);
+        imgList.himl = ImageList_Create(24, 24, ILC_COLOR24 | ILC_MASK, 0, 0);
 
     if (theme) {
         // Matches the offsets of PUSHBUTTONSTATES-1, so we can just insert directly into the himl.
@@ -181,7 +181,7 @@ void ISetCommandLinkSymbols(HWND hwnd, _ArgsT&&... args)
 
     HDC hDC = GetDC(hwnd);
     HFONT font = CreateFontW(
-        -MulDiv(18, GetDeviceCaps(hDC, LOGPIXELSY), 72), // cHeight
+        -MulDiv(14, GetDeviceCaps(hDC, LOGPIXELSY), 72), // cHeight
         0,                                               // cWidth
         0,                                               // cEscapement
         0,                                               // cOrientation
@@ -300,8 +300,6 @@ static void ILayoutDialog(HWND dialog)
 {
     SetDlgItemTextW(dialog, IDC_PRODUCTSTRING, plProduct::ProductString().to_wchar().data());
     ILayoutStackTrace(dialog);
-    Button_SetNote(GetDlgItem(dialog, IDC_COPYBUTTON), L"Copy the crash information to the clipboard for pasting elsewhere.");
-    Button_SetNote(GetDlgItem(dialog, IDC_QUITBUTTON), L"Close this window and continue on with life.");
     IDrawCommandLinkIcons(dialog);
 }
 
