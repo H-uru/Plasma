@@ -45,7 +45,6 @@ from Plasma import *
 from PlasmaTypes import *
 from grsnWallConstants import *
 
-## COMMENTED OUT by Jeff due to the re-write in the garrison wall
 
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
@@ -69,7 +68,7 @@ class grsnWallImagerDisplayN(ptResponder):
         
         ageSDL.setNotify(self.key, "nState", 0.0)
         
-        if(len(PtGetPlayerList()) and ageSDL["nState"] >= kWait):
+        if PtGetPlayerList() and ageSDL["nState"] >= kWait:
             for blocker in ageSDL["northWall"]:
                 if(blocker == -1):
                     return

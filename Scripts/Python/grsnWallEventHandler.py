@@ -92,7 +92,7 @@ class grsnWallEventHandler(ptResponder):
                 self.startTime = PtGetDniTime()
             if(value == kEnd):
                 sec = PtGetDniTime() - self.startTime
-                msg = kWallPrefix + PtGetLocalizedString("Gahreesen.Wall.MatchDuration", [time.strftime("%M:%S", time.localtime(sec))])
+                msg = f'{kWallPrefix} {PtGetLocalizedString("Gahreesen.Wall.MatchDuration", [time.strftime("%M:%S", time.localtime(sec))])}'
                 PtSendKIMessage(kKILocalChatStatusMsg, msg)
 
         if(VARname == "sState"):
@@ -125,27 +125,27 @@ class grsnWallEventHandler(ptResponder):
 
             z = random.randint(0, 100)
             if(z <= dniSndChance):
-                max = 5
+                maxBlockerSndPool = 5
                 sndResp = sndRespBlockerDni
                 if(self.BlockersHit > 25):
-                    max += 3
+                    maxBlockerSndPool += 3
             elif(z <= 65):
-                max = 7
+                maxBlockerSndPool = 7
                 sndResp = sndRespBlocker
                 if(self.BlockersHit > 5):
-                    max += 1
+                    maxBlockerSndPool += 1
                 if(self.BlockersHit > 7):
-                    max += 1
+                    maxBlockerSndPool += 1
                 if(self.BlockersHit > 10):
-                    max += 1
+                    maxBlockerSndPool += 1
                 if(self.BlockersHit > 15):
-                    max += 1
+                    maxBlockerSndPool += 1
                 if(self.BlockersHit > 25):
-                    max += 4
+                    maxBlockerSndPool += 4
             else:
                 return
 
-            idx = str(random.randint(1, max))
+            idx = str(random.randint(1, maxBlockerSndPool))
             sndResp.run(self.key, state=idx)
             PtAtTimeCallback(self.key, 4, 1)
         else:
@@ -158,29 +158,29 @@ class grsnWallEventHandler(ptResponder):
 
     ###Handle Functions###
     def HandleInit(self, idx):
-        stage = 'Init' + str(idx)
+        stage = f'Init{idx}'
         return (stage, sndRespInit)
 
     def HandleEntry(self, idx):
-        stage = 'Entry' + str(idx)
+        stage = f'Entry{idx}'
         return (stage, sndRespEntry)
 
     def HandleStart(self, idx):
-        stage = 'Start' + str(idx)
+        stage = f'Start{idx}'
         return (stage, sndRespStart)
 
     def HandleNorthWin(self, idx):
-        stage = 'YWin' + str(idx)
+        stage = f'YWin{idx}'
         return (stage, sndRespYWin)
 
     def HandleSouthWin(self, idx):
-        stage = 'PWin' + str(idx)
+        stage = f'PWin{idx}'
         return (stage, sndRespPWin)
 
     def HandleNorthQuit(self, idx):
-        stage = 'YQuit' + str(idx)
+        stage = f'YQuit{idx}'
         return (stage, sndRespYQuit)
 
     def HandleSouthQuit(self, idx):
-        stage = 'PQuit' + str(idx)
+        stage = f'PQuit{idx}'
         return (stage, sndRespPQuit)

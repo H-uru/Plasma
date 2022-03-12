@@ -68,7 +68,7 @@ class grsnWallImagerDisplayS(ptResponder):
         
         ageSDL.setNotify(self.key, "sState", 0.0)
         
-        if(len(PtGetPlayerList()) and ageSDL["sState"] >= kWait):
+        if PtGetPlayerList() and ageSDL["sState"] >= kWait:
             for blocker in ageSDL["southWall"]:
                 if(blocker == -1):
                     return

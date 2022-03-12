@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-# Include Plasma code
+from collections import defaultdict
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
@@ -128,7 +128,6 @@ SouthQuitBehavior = ptAttribBehavior(56, "South quit behavior", netForce=0)
 NorthPanelSound = ptAttribResponder(57,"North panel sound",['main','up','down','select','blockerOn','blockerOff','gameStart','denied'],netForce=0)
 SouthPanelSound = ptAttribResponder(58,"South panel sound",['main','up','down','select','blockerOn','blockerOff','gameStart','denied'],netForce=0)
 
-#TOC specific
 panelLightAnimSouth = ptAttribMaterialAnimation(61, "South Panel Light Animation")
 panelLightAnimNorth = ptAttribMaterialAnimation(62, "North Panel Light Animation")
 sitPanelLightsNorth = ptAttribSceneobjectList(63, "North sitting indicators")
@@ -160,6 +159,10 @@ DefaultColor1 = []
 DefaultColor2 = []
 
 clothingTypeList = [kHairClothingItem,kFaceClothingItem,kShirtClothingItem,kRightHandClothingItem,kPantsClothingItem,kRightFootClothingItem]
+
+kWearOriginalClothes = 0
+kLinkToNorthNexus = 1
+kLinkToSouthNexus = 2
 
 PanelClick = [NorthPanelClick, SouthPanelClick]
 Panel = [NorthPanel, SouthPanel]
@@ -212,10 +215,53 @@ WALL_START_NODE = 1
 WALL_END_NODE = 84
 
 # Edges are numbered Node-to-Node based on map above
-edgeList = [(1,3),(1,4),(2,3),(2,8),(3,4),(3,9),(4,5),(4,10),(5,11),(6,7),(6,14),(7,8),(7,15),(8,9),(8,16),(9,10),(9,17),(10,11),(10,18),(11,12),(11,19),(12,13),(12,20),(13,21),(14,15),(14,22),(15,16),(15,23),(16,17),(16,24),(17,18),(17,25),(18,19),(18,26),(19,20),(19,27),(20,21),(20,28),(21,29),(22,23),(22,30),(23,24),(23,31),(24,25),(24,32),(25,26),(25,33),(26,27),(26,34),(27,28),(27,35),(28,29),(28,36),(29,37),(30,31),(30,38),(31,32),(31,39),(32,33),(32,40),(33,34),(33,41),(34,35),(34,42),(35,36),(35,43),(36,37),(36,44),(37,45),(38,39),(38,47),(39,40),(39,48),(40,41),(40,49),(41,42),(41,50),(42,43),(42,51),(43,44),(43,52),(44,45),(44,53),(45,54),(46,47),(46,56),(47,48),(47,57),(48,49),(48,58),(49,50),(49,59),(50,51),(50,60),(51,52),(51,61),(52,53),(52,62),(53,54),(53,63),(54,55),(54,64),(55,65),(56,57),(56,66),(57,58),(57,67),(58,59),(58,68),(59,60),(59,69),(60,61),(60,70),(61,62),(61,71),(62,63),(62,72),(63,64),(63,73),(64,65),(64,74),(65,75),(66,67),(66,76),(67,68),(67,77),(68,69),(68,78),(69,70),(69,79),(70,71),(70,84),(71,72),(71,84),(72,73),(72,80),(73,74),(73,81),(74,75),(74,82),(75,83),(76,77),(77,78),(78,79),(79,84),(80,81),(80,84),(81,82),(82,83)]
+edgeList = [(1,3),(1,4),(2,3),(2,8),(3,4),(3,9),(4,5),(4,10),(5,11),(6,7),(6,14),\
+            (7,8),(7,15),(8,9),(8,16),(9,10),(9,17),(10,11),(10,18),(11,12),(11,19),\
+            (12,13),(12,20),(13,21),(14,15),(14,22),(15,16),(15,23),(16,17),(16,24),\
+            (17,18),(17,25),(18,19),(18,26),(19,20),(19,27),(20,21),(20,28),(21,29),\
+            (22,23),(22,30),(23,24),(23,31),(24,25),(24,32),(25,26),(25,33),(26,27),\
+            (26,34),(27,28),(27,35),(28,29),(28,36),(29,37),(30,31),(30,38),(31,32),\
+            (31,39),(32,33),(32,40),(33,34),(33,41),(34,35),(34,42),(35,36),(35,43),\
+            (36,37),(36,44),(37,45),(38,39),(38,47),(39,40),(39,48),(40,41),(40,49),\
+            (41,42),(41,50),(42,43),(42,51),(43,44),(43,52),(44,45),(44,53),(45,54),\
+            (46,47),(46,56),(47,48),(47,57),(48,49),(48,58),(49,50),(49,59),(50,51),\
+            (50,60),(51,52),(51,61),(52,53),(52,62),(53,54),(53,63),(54,55),(54,64),\
+            (55,65),(56,57),(56,66),(57,58),(57,67),(58,59),(58,68),(59,60),(59,69),\
+            (60,61),(60,70),(61,62),(61,71),(62,63),(62,72),(63,64),(63,73),(64,65),\
+            (64,74),(65,75),(66,67),(66,76),(67,68),(67,77),(68,69),(68,78),(69,70),\
+            (69,79),(70,71),(70,84),(71,72),(71,84),(72,73),(72,80),(73,74),(73,81),\
+            (74,75),(74,82),(75,83),(76,77),(77,78),(78,79),(79,84),(80,81),(80,84),\
+            (81,82),(82,83)]
 
 # Blockers are numbered top-down with horizontal blockers first then vertical blockers
-blockerToEdgeDict = {0:None,1:None,2:None,3:None,4:None,5:None,6:None,7:None,8:(76,77),9:(77,78),10:(78,79),11:(79,84),12:(80,84),13:(80,81),14:(81,82),15:(82,83),16:(66,76),17:(67,77),18:(68,78),19:(69,79),20:(70,84),21:(71,84),22:(72,80),23:(73,81),24:(74,82),25:(75,83),26:(66,67),27:(67,68),28:(68,69),29:(69,70),30:(70,71),31:(71,72),32:(72,73),33:(73,74),34:(74,75),35:(56,66),36:(57,67),37:(58,68),38:(59,69),39:(60,70),40:(61,71),41:(62,72),42:(63,73),43:(64,74),44:(65,75),45:(56,57),46:(57,58),47:(58,59),48:(59,60),49:(60,61),50:(61,62),51:(62,63),52:(63,64),53:(64,65),54:(46,56),55:(47,57),56:(48,58),57:(49,59),58:(50,60),59:(51,61),60:(52,62),61:(53,63),62:(54,64),63:(55,65),64:(46,47),65:(47,48),66:(48,49),67:(49,50),68:(50,51),69:(51,52),70:(52,53),71:(53,54),72:(54,55),73:None,74:(38,47),75:(39,48),76:(40,49),77:(41,50),78:(42,51),79:(43,52),80:(44,53),81:(45,54),82:None,83:None,84:(38,39),85:(39,40),86:(40,41),87:(41,42),88:(42,43),89:(43,44),90:(44,45),91:None,92:(30,38),93:(31,39),94:(32,40),95:(33,41),96:(34,42),97:(35,43),98:(36,44),99:(37,45),100:None,101:(30,31),102:(31,32),103:(32,33),104:(33,34),105:(34,35),106:(35,36),107:(36,37),108:None,109:(22,30),110:(23,31),111:(24,32),112:(25,33),113:(26,34),114:(27,35),115:(28,36),116:(29,37),117:None,118:(22,23),119:(23,24),120:(24,25),121:(25,26),122:(26,27),123:(27,28),124:(28,29),125:None,126:(14,22),127:(15,23),128:(16,24),129:(17,25),130:(18,26),131:(19,27),132:(20,28),133:(21,29),134:None,135:(14,15),136:(15,16),137:(16,17),138:(17,18),139:(18,19),140:(19,20),141:(20,21),142:None,143:(6,14),144:(7,15),145:(8,16),146:(9,17),147:(10,18),148:(11,19),149:(12,20),150:(13,21),151:None,152:(6,7),153:(7,8),154:(8,9),155:(9,10),156:(10,11),157:(11,12),158:(12,13),159:None,160:None,161:(2,8),162:(3,9),163:(4,10),164:(5,11),165:None,166:None,167:(2,3),168:(3,4),169:(4,5),170:None}
+blockerToEdgeDict = {0:None,1:None,2:None,3:None,4:None,5:None,6:None,7:None,8:(76,77),\
+                    9:(77,78),10:(78,79),11:(79,84),12:(80,84),13:(80,81),14:(81,82),\
+                    15:(82,83),16:(66,76),17:(67,77),18:(68,78),19:(69,79),20:(70,84),\
+                    21:(71,84),22:(72,80),23:(73,81),24:(74,82),25:(75,83),26:(66,67),\
+                    27:(67,68),28:(68,69),29:(69,70),30:(70,71),31:(71,72),32:(72,73),\
+                    33:(73,74),34:(74,75),35:(56,66),36:(57,67),37:(58,68),38:(59,69),\
+                    39:(60,70),40:(61,71),41:(62,72),42:(63,73),43:(64,74),44:(65,75),\
+                    45:(56,57),46:(57,58),47:(58,59),48:(59,60),49:(60,61),50:(61,62),\
+                    51:(62,63),52:(63,64),53:(64,65),54:(46,56),55:(47,57),56:(48,58),\
+                    57:(49,59),58:(50,60),59:(51,61),60:(52,62),61:(53,63),62:(54,64),\
+                    63:(55,65),64:(46,47),65:(47,48),66:(48,49),67:(49,50),68:(50,51),\
+                    69:(51,52),70:(52,53),71:(53,54),72:(54,55),73:None,74:(38,47),\
+                    75:(39,48),76:(40,49),77:(41,50),78:(42,51),79:(43,52),80:(44,53),\
+                    81:(45,54),82:None,83:None,84:(38,39),85:(39,40),86:(40,41),87:(41,42),\
+                    88:(42,43),89:(43,44),90:(44,45),91:None,92:(30,38),\93:(31,39),\
+                    94:(32,40),95:(33,41),96:(34,42),97:(35,43),98:(36,44),99:(37,45),\
+                    100:None,101:(30,31),102:(31,32),103:(32,33),104:(33,34),105:(34,35),\
+                    106:(35,36),107:(36,37),108:None,109:(22,30),110:(23,31),111:(24,32),\
+                    112:(25,33),113:(26,34),114:(27,35),115:(28,36),116:(29,37),117:None,\
+                    118:(22,23),119:(23,24),120:(24,25),121:(25,26),122:(26,27),123:(27,28),\
+                    124:(28,29),125:None,126:(14,22),127:(15,23),128:(16,24),129:(17,25),\
+                    130:(18,26),131:(19,27),132:(20,28),133:(21,29),134:None,135:(14,15),\
+                    136:(15,16),137:(16,17),138:(17,18),139:(18,19),140:(19,20),141:(20,21),\
+                    142:None,143:(6,14),144:(7,15),145:(8,16),146:(9,17),147:(10,18),\
+                    148:(11,19),149:(12,20),150:(13,21),151:None,152:(6,7),153:(7,8),\
+                    154:(8,9),155:(9,10),156:(10,11),157:(11,12),158:(12,13),159:None,\
+                    160:None,161:(2,8),162:(3,9),163:(4,10),164:(5,11),165:None,166:None,\
+                    167:(2,3),168:(3,4),169:(4,5),170:None}
 
 # find if there is a path from start node to end node
 def DepthFirstSearch(adjacencyList, startNode, endNode, visitedNodes=None): 
@@ -253,23 +299,15 @@ class grsnWallPython(ptResponder):
 
     def __del__(self):
         "the destructor"
-        global DefaultColor1
-        global DefaultColor2
-        global wornItem
         PtDebugPrint("grsnWallPython.__del__:",level=kDebugDumpLevel)
         try:
             PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             avatar = PtGetLocalAvatar()
-            i = 0
-            if(wornItem != []):
-                for item in wornItem:
-                    color1 = DefaultColor1[i]
-                    color2 = DefaultColor2[i]
-                    avatar.avatar.netForce(1)
-                    avatar.avatar.wearClothingItem(item[0],0)
-                    avatar.avatar.tintClothingItem(item[0],color1,0)
-                    avatar.avatar.tintClothingItemLayer(item[0],color2,2,1)
-                    i += 1
+            for item, color1, color2 in zip(wornItem, DefaultColor1, DefaultColor2):
+                avatar.avatar.netForce(True)
+                avatar.avatar.wearClothingItem(item[0], 0)
+                avatar.avatar.tintClothingItem(item[0] ,color1, 0)
+                avatar.avatar.tintClothingItemLayer(item[0], color2, 2, 1)
         except:
             pass
 
@@ -278,9 +316,7 @@ class grsnWallPython(ptResponder):
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnWallPython::OnServerInitComplete")
-        solo = True
-        if(len(PtGetPlayerList())):
-            solo = False
+        solo = bool(PtGetPlayerList())
         ageSDL = PtGetAgeSDL()
 
         #Prepare SDLs (n-North, s-South)
@@ -318,28 +354,6 @@ class grsnWallPython(ptResponder):
         else:
             PtDebugPrint("grsnWallPython::OnServerInitComplete: There is already another Game Master - Request Game Update")
             self.RequestGameUpdate()
-
-    def OnPageLoad(self,what,room):
-        "Check for page unload... then we must be leavin'"
-        global DefaultColor1
-        global DefaultColor2
-        global wornItem
-        if what == kUnloaded:
-            try:
-                PtSendKIMessage(kEnableEntireYeeshaBook, 0)
-                avatar = PtGetLocalAvatar()
-                i = 0
-                if(wornItem != []):
-                    for item in wornItem:
-                        color1 = DefaultColor1[i]
-                        color2 = DefaultColor2[i]
-                        avatar.avatar.netForce(1)
-                        avatar.avatar.wearClothingItem(item[0],0)
-                        avatar.avatar.tintClothingItem(item[0],color1,0)
-                        avatar.avatar.tintClothingItemLayer(item[0],color2,2,1)
-                        i += 1
-            except:
-                pass
 
     def OnNotify(self,state,id,events):
         global wornItem
@@ -519,7 +533,7 @@ class grsnWallPython(ptResponder):
                             clothing = FemaleSuit
                         else:
                             clothing = MaleSuit
-                        if(wornItem == []):
+                        if not wornItem:
                             wornItem = avatar.avatar.getAvatarClothingList()
                             for item in wornItem:
                                 DefaultColor1.append(avatar.avatar.getTintClothingItem(item[0],1))
@@ -553,7 +567,7 @@ class grsnWallPython(ptResponder):
                             clothing = FemaleSuit
                         else:
                             clothing = MaleSuit
-                        if(wornItem == []):
+                        if not wornItem:
                             wornItem = avatar.avatar.getAvatarClothingList()
                             for item in wornItem:
                                 DefaultColor1.append(avatar.avatar.getTintClothingItem(item[0],1))
@@ -574,8 +588,8 @@ class grsnWallPython(ptResponder):
         ### Win region ###
         if(id == NorthTeamWin.id):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
-                PtAtTimeCallback(self.key, 3.0, 1)
-                if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["nState"][0] != kEnd and len(PtGetPlayerList())):
+                PtAtTimeCallback(self.key, 3.0, kLinkToNorthNexus)
+                if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["nState"][0] != kEnd and PtGetPlayerList()):
                     avatar = PtGetLocalAvatar()
                     currentgender = avatar.avatar.getAvatarClothingGroup()
                     if currentgender == kFemaleClothingGroup:
@@ -584,7 +598,7 @@ class grsnWallPython(ptResponder):
                         clothing = MaleSuit
                     for item in clothing[0:]:
                         if (not self.IItemInCloset(avatar, item)):
-                            PtDebugPrint('DEBUG: grsnWallPython.OnNotify():  Adding ' + item + ' to your closet and wearing it.')
+                            PtDebugPrint(f'DEBUG: grsnWallPython.OnNotify():  Adding {item} to your closet and wearing it.')
                             avatar.avatar.addWardrobeClothingItem(item, ptColor().white(), ptColor().white())
                             avatar.avatar.saveClothing()
                             wornItem = []
@@ -599,8 +613,8 @@ class grsnWallPython(ptResponder):
             return
         if(id == SouthTeamWin.id):
             if(PtFindAvatar(events) == PtGetLocalAvatar()):
-                PtAtTimeCallback(self.key, 3.0, 2)
-                if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["sState"][0] != kEnd and len(PtGetPlayerList())):
+                PtAtTimeCallback(self.key, 3.0, kLinkToSouthNexus)
+                if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["sState"][0] != kEnd and PtGetPlayerList()):
                     avatar = PtGetLocalAvatar()
                     currentgender = avatar.avatar.getAvatarClothingGroup()
                     if currentgender == kFemaleClothingGroup:
@@ -609,7 +623,7 @@ class grsnWallPython(ptResponder):
                         clothing = MaleSuit
                     for item in clothing[0:]:
                         if (not self.IItemInCloset(avatar, item)):
-                            PtDebugPrint('DEBUG: grsnWallPython.OnNotify():  Adding ' + item + ' to your closet and wearing it.')
+                            PtDebugPrint(f'DEBUG: grsnWallPython.OnNotify():  Adding {item} to your closet and wearing it.')
                             avatar.avatar.addWardrobeClothingItem(item, ptColor().white(), ptColor().white())
                             avatar.avatar.saveClothing()
                             wornItem = []
@@ -646,18 +660,18 @@ class grsnWallPython(ptResponder):
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage and PtFindAvatar(events) == PtGetLocalAvatar()):
                     #Touched the Crystal
                     PtDebugPrint("Trigger North Crystal")
-                    PtAtTimeCallback(self.key, 3.0, 1)
+                    PtAtTimeCallback(self.key, 3.0, kLinkToNorthNexus)
             return
         if(id == SouthQuitBehavior.id):
             for event in events:
                 if(event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage and PtFindAvatar(events) == PtGetLocalAvatar()):
                     #Touched the Crystal
                     PtDebugPrint("Trigger South Crystal")
-                    PtAtTimeCallback(self.key, 3.0, 2)
+                    PtAtTimeCallback(self.key, 3.0, kLinkToSouthNexus)
             return
         #Check for crafty individuals who try to escape the building while still wearing a suit
         if(id == EscapeArtist.id and PtFindAvatar(events) == PtGetLocalAvatar()):
-            PtAtTimeCallback(self.key, 2.0, 0)
+            PtAtTimeCallback(self.key, 2.0, kWearOriginalClothes)
             PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             return
 
@@ -686,28 +700,21 @@ class grsnWallPython(ptResponder):
         clothingList = avatar.avatar.getWardrobeClothingList()
         for item in clothingList:
             if clothingName == item[0]:
-                return 1
-        return 0
+                return True
+        return False
 
     def OnTimer(self,id):
-        global DefaultColor1
-        global DefaultColor2
-        global wornItem
         avatar = PtGetLocalAvatar()
-        if(id == 0 and wornItem != []):
-            i = 0
-            for item in wornItem:
-                color1 = DefaultColor1[i]
-                color2 = DefaultColor2[i]
-                avatar.avatar.netForce(1)
-                avatar.avatar.wearClothingItem(item[0],0)
-                avatar.avatar.tintClothingItem(item[0],color1,0)
-                avatar.avatar.tintClothingItemLayer(item[0],color2,2,1)
-                i += 1
-        elif(id == 1):
+        if(id == kWearOriginalClothes and wornItem):
+            for item, color1, color2 in zip(wornItem, DefaultColor1, DefaultColor2):
+                avatar.avatar.netForce(True)
+                avatar.avatar.wearClothingItem(item[0], 0)
+                avatar.avatar.tintClothingItem(item[0] ,color1, 0)
+                avatar.avatar.tintClothingItemLayer(item[0], color2, 2, 1)
+        elif(id == kLinkToNorthNexus):
             PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), NorthTeamWinTeleport.value.getKey())
             PtFadeOut(1,True,True)
-        elif(id == 2):
+        elif(id == kLinkToSouthNexus):
             PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), SouthTeamWinTeleport.value.getKey())
             PtFadeOut(1,True,True)
 
@@ -732,7 +739,7 @@ class grsnWallPython(ptResponder):
             self.SetPanelMode(kSouth, onlNorthLights=True)
         ### nState ###
         if(VARname == "nState"):
-            self.TOCPanelLight() #TOC
+            self.PanelLight()
             if(value == kStandby):
                 self.SetPanelMode(kNorth)
             if(value == kSit):
@@ -756,7 +763,7 @@ class grsnWallPython(ptResponder):
                     eventHandler.Handle(kEventEntry)
 
         if(VARname == "sState"):
-            self.TOCPanelLight() #TOC
+            self.PanelLight()
             if(value == kStandby):
                 self.SetPanelMode(kSouth)
             if(value == kSit):
@@ -808,12 +815,12 @@ class grsnWallPython(ptResponder):
     def FindBlocker(self,team,id):
         ageSDL = PtGetAgeSDL()
         blockerFound = False
-        if(team == kNorth):
+        if team == kNorth:
             for blocker in ageSDL["northWall"]:
                 if(blocker == id):
                     blockerFound = True
                     break
-        if(team == kSouth):
+        elif team == kSouth:
             for blocker in ageSDL["southWall"]:
                 if(blocker==id):
                     blockerFound = True
@@ -926,7 +933,7 @@ class grsnWallPython(ptResponder):
                 PtDebugPrint("grsnWallPython::ChangeChuteState: New PlayerID %d for sWallPlayer" % (cID))
                 ageSDL["sWallPlayer"] = (cID,)
 
-    def TOCPanelLight(self):
+    def PanelLight(self):
         ageSDL = PtGetAgeSDL()
         nState = ageSDL["nState"][0]
         sState = ageSDL["sState"][0]
@@ -999,7 +1006,7 @@ class grsnWallPython(ptResponder):
         else:
             SouthTubeClose.run(self.key, netForce=0, netPropagate=0, fastforward=1)
 
-        self.TOCPanelLight() #TOC
+        self.PanelLight()
 
     def SetPanelBlocker(self,team,id,on,onlyLight=False):
         ageSDL = PtGetAgeSDL()
@@ -1030,17 +1037,15 @@ class grsnWallPython(ptResponder):
                     ageSDL.setIndex(sdl,idx,-1)
         else:
             wall = list(ageSDL[sdl])
-            idx = 0
-            for blocker in wall:
-                if(blocker == id):
-                    break
-                idx += 1
-            if(idx >= 20):
+            try:
+                idx = wall.index(id)
+            except ValueError:
                 PtDebugPrint("grsnWallPython::SetPanelBlocker: Blocker %d not found in %s" % (id, sdl))
             else:
-                for i in range(idx,19): #rearrange the array, so all the blockers come at the beginning
-                    wall[i] = wall[i+1]
-                wall[19] = -1
+                # Remove this blocker from the list and append an unset one to the end of the list.
+                # This ensures all blockers are contiguous at the start of the list.
+                wall.pop(idx)
+                wall.append(-1)
                 if(self.IAmMaster()):
                     ageSDL[sdl] = tuple(wall)
                 PanelSound[team].run(self.key, state='blockerOff')
@@ -1053,14 +1058,7 @@ class grsnWallPython(ptResponder):
         elif(team == kSouth):
             sdl = "southWall"
 
-        count = 0
-        for i in range(0,20):
-            if(ageSDL[sdl][i] != -1):
-                count += 1
-            else:
-                break
-
-        return count
+        return sum((1 for i in ageSDL[sdl] if i != -1 else 0))
 
     def ResetWall(self,resetState=True):
         if(self.IAmMaster()):
@@ -1098,7 +1096,7 @@ class grsnWallPython(ptResponder):
         if(eventHandler):
             eventHandler.Reset()
 
-        self.TOCPanelLight() #TOC
+        self.PanelLight()
 
     def OnBackdoorMsg(self, target, param):
         ageSDL = PtGetAgeSDL()
@@ -1115,8 +1113,7 @@ class grsnWallPython(ptResponder):
         # create shallow copy of full edge array
         myEdges = list(edgeList)
 
-        for i in range(0,20):
-            blockerId = ageSDL[team][i]
+        for blockerId in ageSDL[team]:
             if blockerId == -1:
                 # reached the end of set blocker list
                 break
@@ -1126,10 +1123,8 @@ class grsnWallPython(ptResponder):
                 # this blocker has no effect on edges, it's a throwaway
                 pass
 
-        adjacencyList = dict()
+        adjacencyList = defaultdict(list)
         for nodeA, nodeB in myEdges:
-            adjacencyList.setdefault(nodeA,[])
-            adjacencyList.setdefault(nodeB,[])
             adjacencyList[nodeA].append(nodeB)
             adjacencyList[nodeB].append(nodeA)
 

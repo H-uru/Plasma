@@ -3701,8 +3701,8 @@ class xKI(ptModifier):
         ageName = GetAgeName().replace("(null)", "").strip()
         PtDebugPrint("xKI.BigKISetStatics(): Displaying age name of {}.".format(ageName), level=kDebugDumpLevel)
         #Gahreesen Maintainer Nexii use private chat channels 6 and 7
-        if self.chatMgr.privateChatChannel == 6 or self.chatMgr.privateChatChannel == 7:
-            ageText.setStringW("Maintainer Nexus")
+        if self.chatMgr.privateChatChannel == kBlackNexus or self.chatMgr.privateChatChannel == kWhiteNexus:
+            ageText.setStringW(PtGetLocalizedString("Gahreesen.Wall.Nexus"))
         else:
             ageText.setStringW(ageName)
         playerText = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKPlayerName))

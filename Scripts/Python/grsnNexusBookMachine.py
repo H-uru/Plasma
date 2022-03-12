@@ -73,9 +73,13 @@ waitingOnNBook = False
 northLink = False
 runOnce = True
 resetElevator = False
+kFakeLinkID = 0
 kStartElevID = 1
 kResetElevID = 2
-elevatorStatus = 0
+kElevDown = 0
+kElevMoving = 1
+kElevUp = 2
+elevatorStatus = kElevDown
 
 class grsnNexusBookMachine(ptResponder):
 
@@ -116,26 +120,14 @@ class grsnNexusBookMachine(ptResponder):
     def OnFirstUpdate(self):
         pass
 
-    def OnPageLoad(self,what,room):
-        "Check for page unload... then we must be leavin'"
-        # when we unloading the page, then we are no longer in this chat region
-        if what == kUnloaded:
-            PtDebugPrint("grsnNexusBookMachine.OnPageUnload:",level=kDebugDumpLevel)
-            try:
-                PtClearPrivateChatList(PtGetLocalAvatar().getKey())
-            except:
-                pass
-            PtDebugPrint("grsnNexusBookMachine.OnPageUnload:\tremoving ourselves from private chat channel %d" % (chatChannel.value),level=kDebugDumpLevel)
-            PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
-
     def OnTimer(self,id):
         global northLink
         global runOnce
         global resetElevator
         global elevatorStatus
 
-        if id == 0:
-            if(len(self.GetPlayersInChatDistance()) == 0):
+        if id == kFakeLinkID:
+            if not self.GetPlayersInChatDistance():
                 resetElevator = True
             avatar = PtGetLocalAvatar()
             if (northLink):
@@ -150,10 +142,10 @@ class grsnNexusBookMachine(ptResponder):
             PtSendKIMessage(kEnableEntireYeeshaBook,0)
             PtAtTimeCallback(self.key, 2, kResetElevID)
         elif id == kStartElevID:
-            if(elevatorStatus == 0):
+            if(elevatorStatus == kElevDown):
                 respElevator.run(self.key,avatar=PtGetLocalAvatar())
         elif id == kResetElevID:
-            if resetElevator == True and elevatorStatus == 2:
+            if resetElevator == True and elevatorStatus == kElevUp:
                 resetResponder.run(self.key,avatar=PtGetLocalAvatar())
             PtFadeIn(4,True,True)
             runOnce = True
@@ -180,7 +172,7 @@ class grsnNexusBookMachine(ptResponder):
             for event in events:
                 if (event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
                     PtDebugPrint("started touching book, set warp out timer")
-                    PtAtTimeCallback(self.key, 1.0, 0)
+                    PtAtTimeCallback(self.key, 1.0, kFakeLinkID)
                     PtFadeOut(2,True,True)
                     return
 
@@ -197,25 +189,26 @@ class grsnNexusBookMachine(ptResponder):
 
         if (id == elevatorUp.id):
             PtDebugPrint("Nexus elevator is up")
-            elevatorStatus = 2
+            elevatorStatus = kElevUp
 
         if (id == elevatorMoving.id):
             PtDebugPrint("Nexus elevator is moving")
-            elevatorStatus = 1
+            elevatorStatus = kElevMoving
 
         if (id == elevatorDown.id):
             PtDebugPrint("Nexus elevator is down")
-            elevatorStatus = 0
+            elevatorStatus = kElevDown
 
-        if (id == entryTrigger.id and runOnce):
+        if (id == entryTrigger.id):
+            if runOnce:
+                avatar.avatar.enterSubWorld(subworld.value)
+                camera.value.pushCameraCut(PtGetLocalAvatar().getKey())
+                PtAtTimeCallback(self.key, 3, kStartElevID)
+                PtFadeIn(4,True,True)
+                runOnce = False
             PtDebugPrint("grsnNexusBookMachine.OnNotify:\tadding you to private chat channel %d" % (chatChannel.value),level=kDebugDumpLevel)
-            avatar.avatar.enterSubWorld(subworld.value)
             PtSendPrivateChatList(self.GetPlayersInChatDistance())
             PtSendKIMessageInt(kSetPrivateChatChannel, chatChannel.value)
-            camera.value.pushCameraCut(PtGetLocalAvatar().getKey())
-            PtAtTimeCallback(self.key, 3, kStartElevID)
-            PtFadeIn(4,True,True)
-            runOnce = False
 
         if (id == booksouthClickable.id):
             PtDebugPrint("touched south team room book")
