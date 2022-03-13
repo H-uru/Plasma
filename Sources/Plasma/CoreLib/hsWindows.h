@@ -107,7 +107,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
         HRESULT fResult;
 
         hsCOMError() : fResult() { }
-        hsCOMError(hsLastWin32Error_Type) : fResult(HRESULT_FROM_WIN32(GetLastError())) { }
+        hsCOMError(hsLastWin32Error_Type, DWORD error) : fResult(HRESULT_FROM_WIN32(error)) { }
         hsCOMError(HRESULT r) : fResult(r) { }
         hsCOMError& operator =(const hsCOMError&) = delete;
         hsCOMError& operator =(HRESULT r) { fResult = r; return *this; }

@@ -109,10 +109,10 @@ void plClipboard::SetClipboardText(const ST::string& text)
 
     wchar_t* target = reinterpret_cast<wchar_t*>(GlobalLock(copy.get()));
     if (target == nullptr) {
-        hsAssert(0, ST::format("GlobalLock() failed:\n{}", hsCOMError(hsLastWin32Error)).c_str());
+        hsAssert(0, ST::format("GlobalLock() failed:\n{}", hsCOMError(hsLastWin32Error, GetLastError())).c_str());
         return;
     }
-    memcpy(target, buf.data(), (len + 1) * sizeof(wchar_t));
+    memcpy(target, buf.data(), len * sizeof(wchar_t));
     target[len] = L'\0';
     GlobalUnlock(copy.get());
 
