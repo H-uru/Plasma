@@ -41,10 +41,12 @@ Mead, WA   99021
 *==LICENSE==*/
 
 #include "plClipboard.h"
+
+#include "HeadSpin.h"
 #include "hsWindows.h"
-#include <string_theory/string>
 
 #include <memory>
+#include <string_theory/string>
 
 plClipboard& plClipboard::GetInstance()
 {
@@ -89,29 +91,38 @@ void plClipboard::SetClipboardText(const ST::string& text)
 {
     if (text.empty())
         return;
+
 #ifdef HS_BUILD_FOR_WIN32
     ST::wchar_buffer buf = text.to_wchar();
     size_t len = buf.size();
 
-    if (len == 0) 
+    if (len == 0)
         return;
 
-    std::unique_ptr<void, HGLOBAL(WINAPI*)(HGLOBAL)> copy(::GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)), ::GlobalFree);
+    std::unique_ptr<void, HGLOBAL(WINAPI*)(HGLOBAL)> copy(GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)), GlobalFree);
     if (!copy)
         return;
 
-    if (!::OpenClipboard(nullptr))
+    HWND hWnd = GetActiveWindow();
+    if (!OpenClipboard(hWnd))
         return;
 
-    ::EmptyClipboard();
+    wchar_t* target = reinterpret_cast<wchar_t*>(GlobalLock(copy.get()));
+    if (target == nullptr) {
+        hsAssert(0, ST::format("GlobalLock() failed:\n{}", hsCOMError(hsLastWin32Error, GetLastError())).c_str());
+        return;
+    }
+    memcpy(target, buf.data(), len * sizeof(wchar_t));
+    target[len] = L'\0';
+    GlobalUnlock(copy.get());
 
-    wchar_t* target = (wchar_t*)::GlobalLock(copy.get());
-    memcpy(target, buf.data(), (len + 1) * sizeof(wchar_t));
-    target[len] = '\0';
-    ::GlobalUnlock(copy.get());
+    if (SetClipboardData(CF_UNICODETEXT, copy.get()) != nullptr) {
+        // copy is now owned by the clipboard, do not destroy it.
+        // if we don't release it, then subsequent copies will crash.
+        copy.release();
+    }
 
-    ::SetClipboardData(CF_UNICODETEXT, copy.get());
-    ::CloseClipboard();
+    CloseClipboard();
 #endif
 }
 

@@ -97,12 +97,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     // Initializes COM exactly once the first time it's called.
     void hsRequireCOM();
 
+    /** Represents the last Win32 error. */
+    struct hsLastWin32Error_Type {};
+    constexpr hsLastWin32Error_Type hsLastWin32Error;
+
     /** COM Result holder used for formatting to log. */
     struct hsCOMError
     {
         HRESULT fResult;
 
         hsCOMError() : fResult() { }
+        hsCOMError(hsLastWin32Error_Type, DWORD error) : fResult(HRESULT_FROM_WIN32(error)) { }
         hsCOMError(HRESULT r) : fResult(r) { }
         hsCOMError& operator =(const hsCOMError&) = delete;
         hsCOMError& operator =(HRESULT r) { fResult = r; return *this; }
