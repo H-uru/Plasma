@@ -353,19 +353,6 @@ void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *enc
 void plMetalMaterialShaderRef::PopulateFragmentShaderLayerFromLayer(plFragmentShaderLayer *fragmentLayer, plLayerInterface* layer) {
     hsGMatState state = ICompositeLayerState(layer);
     plBitmap* texture = layer->GetTexture();
-    if (texture != nullptr) {
-        plMetalTextureRef *deviceTexture = (plMetalTextureRef *)texture->GetDeviceRef();
-        if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
-            fragmentLayer->passType = PassTypeCubicTexture;
-        } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
-            fragmentLayer->passType = PassTypeTexture;
-        }
-        
-    } else {
-        fragmentLayer->passType = PassTypeColor;
-    }
-    
-    fragmentLayer->uvIndex = layer->GetUVWSrc();
     
     switch (layer->GetClampFlags()) {
     case hsGMatState::kClampTextureU:
@@ -381,9 +368,6 @@ void plMetalMaterialShaderRef::PopulateFragmentShaderLayerFromLayer(plFragmentSh
             fragmentLayer->sampleType = 0;
             break;
     }
-    
-    fragmentLayer->miscFlags = state.fMiscFlags;
-    fragmentLayer->blendMode = state.fBlendFlags;
 }
 
 uint32_t plMetalMaterialShaderRef::ILayersAtOnce(uint32_t which)
@@ -579,11 +563,67 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragme
         if (state.fBlendFlags & hsGMatState::kBlendAlphaTestHigh) {
             uniforms->alphaThreshold = 64.f/255.f;
         } else {
-            uniforms->alphaThreshold = 0.00000000001f;
+            uniforms->alphaThreshold = 0.0001f;
         }
     } else {
         uniforms->alphaThreshold = 0.f;
     }
     
     return layer + currNumLayers;
+}
+
+void plMetalMaterialShaderRef::GetSourceArray(uint8_t *array, uint8_t pass) {
+    memset(array, 0, sizeof(uint8_t) * 8);
+    
+    uint16_t currNumLayers = fPassLengths[pass];
+    uint16_t baseLayer = fPassIndices[pass];
+    uint16_t i = 0;
+    for (i = 0; i < currNumLayers; i++)
+    {
+        plLayerInterface* layPtr = fMaterial->GetLayer(baseLayer + i);
+        plBitmap* texture = layPtr->GetTexture();
+        if (texture != nullptr) {
+            plMetalTextureRef* texRef = (plMetalTextureRef*)texture->GetDeviceRef();
+            if(!texRef->fTexture)
+                continue;
+            
+            plMetalTextureRef *deviceTexture = (plMetalTextureRef *)texture->GetDeviceRef();
+            if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
+                array[i] = PassTypeCubicTexture;
+            } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
+                array[i] = PassTypeTexture;
+            } else {
+                array[i] = PassTypeColor;
+            }
+            
+        } else {
+            array[i] = PassTypeColor;
+        }
+    }
+}
+
+void plMetalMaterialShaderRef::GetBlendFlagArray(uint32_t *array, uint8_t pass) {
+    memset(array, 0, sizeof(uint8_t) * 8);
+    
+    uint16_t currNumLayers = fPassLengths[pass];
+    uint16_t baseLayer = fPassIndices[pass];
+    uint16_t i = 0;
+    for (i = 0; i < currNumLayers; i++)
+    {
+        plLayerInterface* layPtr = fMaterial->GetLayer(baseLayer + i);
+        array[i] = layPtr->GetBlendFlags();
+    }
+}
+
+void plMetalMaterialShaderRef::GetMiscFlagArray(uint32_t *array, uint8_t pass) {
+    memset(array, 0, sizeof(uint8_t) * 8);
+    
+    uint16_t currNumLayers = fPassLengths[pass];
+    uint16_t baseLayer = fPassIndices[pass];
+    uint16_t i = 0;
+    for (i = 0; i < currNumLayers; i++)
+    {
+        plLayerInterface* layPtr = fMaterial->GetLayer(baseLayer + i);
+        array[i] = layPtr->GetMiscFlags();
+    }
 }

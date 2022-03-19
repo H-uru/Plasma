@@ -94,6 +94,9 @@ public:
     static plLayerInterface* Passthrough(plLayerInterface* layer, uint32_t index) {
         return layer;
     }
+    void GetSourceArray(uint8_t *array, uint8_t pass);
+    void GetBlendFlagArray(uint32_t *array, uint8_t pass);
+    void GetMiscFlagArray(uint32_t *array, uint8_t pass);
 private:
     void ILoopOverLayers();
     

@@ -57,6 +57,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plCubicEnvironmap.h"
 #include "plPipeline/plRenderTarget.h"
 
+#include "plMetalPipelineState.h"
+
 matrix_float4x4* hsMatrix2SIMD(const hsMatrix44& src, matrix_float4x4* dst, bool swapOrder)
 {
     if (src.fFlags & hsMatrix44::kIsIdent)
@@ -120,9 +122,6 @@ void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool sh
     }
     
     if (fCurrentRenderTargetCommandEncoder) {
-        
-        printf("Ending render pass, allowing a new one to lazily be created\n");
-        
         fCurrentRenderTargetCommandEncoder->endEncoding();
         fCurrentRenderTargetCommandEncoder->release();
         fCurrentRenderTargetCommandEncoder = nil;
@@ -132,7 +131,7 @@ void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool sh
 
 void plMetalDevice::BeginNewRenderPass() {
     
-    printf("Beginning new render pass\n");
+    //printf("Beginning new render pass\n");
     
     //lazilly create the screen render encoder if it does not yet exist
     if (!fCurrentOffscreenCommandBuffer && !fCurrentRenderTargetCommandEncoder) {
@@ -147,8 +146,6 @@ void plMetalDevice::BeginNewRenderPass() {
         fCurrentRenderTargetCommandEncoder->release();
         fCurrentRenderTargetCommandEncoder = nil;
     }
-    
-    printf("Setting up render pass descriptor\n");
     
     MTL::RenderPassDescriptor *renderPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
     renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
@@ -207,7 +204,6 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
     }
     
     if(fCurrentRenderTarget) {
-        printf("Setting render target\n");
         plMetalRenderTargetRef *deviceTarget= (plMetalRenderTargetRef *)target->GetDeviceRef();
         fCurrentOffscreenCommandBuffer = fCommandQueue->commandBuffer();
         fCurrentOffscreenCommandBuffer->retain();
@@ -219,7 +215,6 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
             fCurrentDepthFormat = MTL::PixelFormatInvalid;
         }
     } else {
-        printf("Setting drawable target\n");
         fCurrentFragmentOutputTexture = fCurrentDrawable->texture();
         fCurrentDepthFormat = MTL::PixelFormatDepth32Float_Stencil8;
     }
@@ -234,7 +229,9 @@ plMetalDevice::plMetalDevice()
     fCurrentDrawableDepthTexture(nullptr),
     fCurrentFragmentOutputTexture(nullptr),
     fCurrentCommandBuffer(nullptr),
-    fCurrentRenderTarget(nullptr)
+    fCurrentOffscreenCommandBuffer(nullptr),
+    fCurrentRenderTarget(nullptr),
+    fNewPipelineStateMap()
     {
     fClearColor = {0.0, 0.0, 0.0, 1.0};
         
@@ -375,7 +372,8 @@ void plMetalDevice::FillVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* gr
         return;
     }
     
-    ref->SetBuffer(fMetalDevice->newBuffer(size, MTL::StorageModeManaged)->autorelease());
+    MTL::Buffer* metalBuffer = fMetalDevice->newBuffer(size, MTL::StorageModeManaged);
+    ref->SetBuffer(metalBuffer);
     uint8_t* buffer = (uint8_t*) ref->GetBuffer()->contents();
 
     if (ref->fData)
@@ -435,6 +433,8 @@ void plMetalDevice::FillVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* gr
 
         hsAssert((ptr - buffer) == size, "Didn't fill the buffer?");
     }
+    
+    metalBuffer->release();
 
     /// Unlock and clean up
     ref->SetRebuiltSinceUsed(true);
@@ -514,8 +514,9 @@ void plMetalDevice::FillIndexBufferRef(plMetalDevice::IndexBufferRef *iRef, plGB
     iRef->PrepareForWrite();
     MTL::Buffer* indexBuffer = iRef->GetBuffer();
     if(!indexBuffer || indexBuffer->length() < size) {
-        indexBuffer = fMetalDevice->newBuffer(size, MTL::ResourceStorageModeManaged)->autorelease();
+        indexBuffer = fMetalDevice->newBuffer(size, MTL::ResourceStorageModeManaged);
         iRef->SetBuffer(indexBuffer);
+        indexBuffer->release();
     }
     
     memcpy(indexBuffer->contents(), owner->GetIndexBufferData(idx), size);
@@ -595,10 +596,6 @@ uint plMetalDevice::ConfigureAllowedLevels(plMetalDevice::TextureRef *tRef, plMi
 
 void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef *tRef, plMipmap *img, uint slice)
 {
-    
-    if(img->GetKeyName() == "RightDTMap2_dynText") {
-        printf("hi");
-    }
     if (img->IsCompressed()) {
         
         for (int lvl = 0; lvl <= tRef->fLevels; lvl++) {
@@ -652,14 +649,18 @@ void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef *tRef, plMipmap *i
     tRef->SetDirty(false);
 }
 
-void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef *tRef, plLayerInterface *layer, plMipmap *img)
+void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* img)
 {
     if (!img->GetImage()) {
         return;
     }
     
+    if(tRef->fTexture) {
+        tRef->fTexture->release();
+    }
+    
     tRef->fLevels = img->GetNumLevels() - 1;
-    if(!tRef->fTexture) {
+    //if(!tRef->fTexture) {
         ConfigureAllowedLevels(tRef, img);
         //texture doesn't exist yet, create it
         bool supportsMipMap = tRef->fLevels;
@@ -675,11 +676,13 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef *tRef, plLayerInter
             descriptor->setMipmapLevelCount(tRef->fLevels + 1);
         }
         tRef->fTexture = fMetalDevice->newTexture(descriptor);
-    }
+    //}
     PopulateTexture( tRef, img, 0);
+    
+    tRef->SetDirty(false);
 }
 
-void plMetalDevice::MakeCubicTextureRef(plMetalDevice::TextureRef *tRef, plLayerInterface *layer, plCubicEnvironmap *img)
+void plMetalDevice::MakeCubicTextureRef(plMetalDevice::TextureRef *tRef, plCubicEnvironmap *img)
 {
     MTL::TextureDescriptor *descriptor = MTL::TextureDescriptor::textureCubeDescriptor(tRef->fFormat, img->GetFace(0)->GetWidth(), tRef->fLevels != 0);
     
@@ -705,6 +708,8 @@ void plMetalDevice::MakeCubicTextureRef(plMetalDevice::TextureRef *tRef, plLayer
     for (size_t i = 0; i < 6; i++) {
         PopulateTexture( tRef, img->GetFace(i), kFaceMapping[i]);
     }
+    
+    tRef->SetDirty(false);
 }
 
 void plMetalDevice::SetProjectionMatrix(const hsMatrix44& src)
@@ -730,414 +735,10 @@ void plMetalDevice::SetLocalToWorldMatrix(const hsMatrix44& src, bool swapOrder)
     hsMatrix2SIMD(inv, &fMatrixW2L, swapOrder);
 }
 
-plMetalDevice::plPipelineStateAtrributes::plPipelineStateAtrributes(const plMetalVertexBufferRef * vRef, const uint32_t blendFlags, const MTL::PixelFormat outputPixelFormat, const MTL::PixelFormat outputDepthFormat, const plShaderID::ID vertexShaderID, const plShaderID::ID fragmentShaderID, const int forShadows, const uint numLayers)
-{
-    numUVs = plGBufferGroup::CalcNumUVs(vRef->fFormat);
-    numWeights = (vRef->fFormat & plGBufferGroup::kSkinWeightMask) >> 4;
-    hasSkinIndices = (vRef->fFormat & plGBufferGroup::kSkinIndices);
-    outputFormat = outputPixelFormat;
-    this->depthFormat = outputDepthFormat;
-    this->blendFlags = blendFlags;
-    this->vertexShaderID = vertexShaderID;
-    this->fragmentShaderID = fragmentShaderID;
-    this->forShadows = forShadows;
-    this->numLayers = numLayers;
-}
-
-
-std::condition_variable * plMetalDevice::prewarmPipelineStateFor(plMetalVertexBufferRef * vRef, uint32_t blendFlags, uint32_t numLayers, plShaderID::ID vertexShaderID, plShaderID::ID fragmentShaderID, bool forShadows)
-{
-    plPipelineStateAtrributes attributes = plPipelineStateAtrributes(vRef, blendFlags, fCurrentFragmentOutputTexture->pixelFormat(), fCurrentDepthFormat, vertexShaderID, fragmentShaderID, forShadows, numLayers);
-    //only render thread is allowed to prewarm, no race conditions around
-    //fConditionMap creation
-    if(!fPipelineStateMap[attributes] && fConditionMap[attributes]) {
-        std::condition_variable *condOut;
-        StartRenderPipelineBuild(attributes, &condOut);
-        return condOut;
-    }
-    return nullptr;
-}
-
-void plMetalDevice::StartRenderPipelineBuild(plPipelineStateAtrributes &attributes, std::condition_variable **condOut)
-{
-    /*
-     Shader building requires both knowledge of the vertex buffer layout and the fragment shader details. For now it lives here. The caching and threading mechanism should be factored out so that OpenGL can share them. Vector buffer dependencies should be factored out so we only need material details. That also means we can use the threading to create these earlier in a render pass.
-     */
-    int vertOffset = 0;
-    int skinWeightOffset = vertOffset + (sizeof(float) * 3);
-    if(attributes.hasSkinIndices) {
-        skinWeightOffset += sizeof(uint32_t);
-    }
-    int normOffset = skinWeightOffset + (sizeof(float) * attributes.numWeights);
-    int colorOffset = normOffset + (sizeof(float) * 3);
-    int baseUvOffset = colorOffset + (sizeof(uint32_t) * 2);
-    int stride = baseUvOffset + (sizeof(float) * 3 * attributes.numUVs);
-    
-    MTL::Library *library = fMetalDevice->newDefaultLibrary();
-    
-    MTL::FunctionConstantValues *functionContents = MTL::FunctionConstantValues::alloc()->init();
-    functionContents->setConstantValue(&attributes.numUVs, MTL::DataTypeUShort, FunctionConstantNumUVs);
-    functionContents->setConstantValue(&attributes.numLayers, MTL::DataTypeUShort, FunctionConstantNumLayers);
-    MTL::Function *fragFunction;
-    MTL::Function *vertFunction;
-    
-    if(!attributes.vertexShaderID && !attributes.fragmentShaderID) {
-        if(attributes.forShadows == 1) {
-            fragFunction = library->newFunction(
-                                                               NS::String::string("shadowFragmentShader", NS::ASCIIStringEncoding),
-                                                               functionContents,
-                                                               (NS::Error **)NULL
-                                                            );
-        } else if(attributes.forShadows == 2) {
-            fragFunction = library->newFunction(
-                                                               NS::String::string("shadowCastFragmentShader", NS::ASCIIStringEncoding),
-                                                               functionContents,
-                                                               (NS::Error **)NULL
-                                                            );
-        } else {
-            fragFunction = library->newFunction(
-                                                           NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
-                                                           functionContents,
-                                                           (NS::Error **)NULL
-                                                        );
-        }
-        vertFunction = library->newFunction(
-                                                           NS::String::string("pipelineVertexShader", NS::ASCIIStringEncoding),
-                                                           functionContents,
-                                                           (NS::Error **)NULL
-                                                        );
-    } else if(attributes.vertexShaderID && attributes.fragmentShaderID) {
-        switch(attributes.vertexShaderID) {
-            case plShaderID::vs_WaveFixedFin7:
-                vertFunction = library->newFunction(
-                                                                   NS::String::string("vs_WaveFixedFin7", NS::ASCIIStringEncoding),
-                                                                   functionContents,
-                                                                   (NS::Error **)NULL
-                                                                );
-                break;
-            case plShaderID::vs_CompCosines:
-                vertFunction = library->newFunction(
-                                                                   NS::String::string("vs_CompCosines", NS::ASCIIStringEncoding),
-                                                                   functionContents,
-                                                                   (NS::Error **)NULL
-                                                                );
-                break;
-            case plShaderID::vs_BiasNormals:
-                vertFunction = library->newFunction(
-                                                                   NS::String::string("vs_BiasNormals", NS::ASCIIStringEncoding),
-                                                                   functionContents,
-                                                                   (NS::Error **)NULL
-                                                                );
-                break;
-            case plShaderID::vs_GrassShader:
-                vertFunction = library->newFunction(
-                                                                   NS::String::string("vs_GrassShader", NS::ASCIIStringEncoding),
-                                                                   functionContents,
-                                                                   (NS::Error **)NULL
-                                                                );
-                break;
-            case plShaderID::vs_WaveDecEnv_7:
-                vertFunction = library->newFunction(
-                                                                   NS::String::string("vs_WaveDecEnv_7", NS::ASCIIStringEncoding),
-                                                                   functionContents,
-                                                                   (NS::Error **)NULL
-                                                                );
-                break;
-            default:
-                hsAssert(0, "unknown shader requested");
-        }
-        
-        switch(attributes.fragmentShaderID) {
-            case plShaderID::ps_WaveFixed:
-                fragFunction = library->newFunction(
-                                                                   NS::String::string("ps_WaveFixed", NS::ASCIIStringEncoding),
-                                                                   functionContents,
-                                                                   (NS::Error **)NULL
-                                                                );
-                break;
-            case plShaderID::ps_MoreCosines:
-                fragFunction = library->newFunction(
-                                                                   NS::String::string("ps_CompCosines", NS::ASCIIStringEncoding),
-                                                                   functionContents,
-                                                                   (NS::Error **)NULL
-                                                                );
-                break;
-            case plShaderID::ps_BiasNormals:
-                fragFunction = library->newFunction(
-                                                                   NS::String::string("ps_BiasNormals", NS::ASCIIStringEncoding),
-                                                                   functionContents,
-                                                                   (NS::Error **)NULL
-                                                                );
-                break;
-            case plShaderID::ps_GrassShader:
-                fragFunction = library->newFunction(
-                                                                   NS::String::string("ps_GrassShader", NS::ASCIIStringEncoding),
-                                                                   functionContents,
-                                                                   (NS::Error **)NULL
-                                                                );
-                break;
-            case plShaderID::ps_WaveDecEnv:
-                fragFunction = library->newFunction(
-                                                                   NS::String::string("ps_WaveDecEnv", NS::ASCIIStringEncoding),
-                                                                   functionContents,
-                                                                   (NS::Error **)NULL
-                                                                );
-                break;
-            default:
-                hsAssert(0, "unknown shader requested");
-        }
-    } else {
-        hsAssert(0, "Pipeline only supports both fragment and vertex shaders together");
-    }
-    
-    MTL::VertexDescriptor *vertexDescriptor = MTL::VertexDescriptor::vertexDescriptor();
-    
-    vertexDescriptor->attributes()->object(VertexAttributePosition)->setFormat(MTL::VertexFormatFloat3);
-    vertexDescriptor->attributes()->object(VertexAttributePosition)->setBufferIndex(0);
-    vertexDescriptor->attributes()->object(VertexAttributePosition)->setOffset(vertOffset);
-    
-    vertexDescriptor->attributes()->object(VertexAttributeNormal)->setFormat(MTL::VertexFormatFloat3);
-    vertexDescriptor->attributes()->object(VertexAttributeNormal)->setBufferIndex(0);
-    vertexDescriptor->attributes()->object(VertexAttributeNormal)->setOffset(normOffset);
-    
-    for(int i=0; i<attributes.numUVs; i++) {
-        vertexDescriptor->attributes()->object(VertexAttributeTexcoord+i)->setFormat(MTL::VertexFormatFloat3);
-        vertexDescriptor->attributes()->object(VertexAttributeTexcoord+i)->setBufferIndex(0);
-        vertexDescriptor->attributes()->object(VertexAttributeTexcoord+i)->setOffset(baseUvOffset + (i * sizeof(float) * 3));
-    }
-    
-    vertexDescriptor->attributes()->object(VertexAttributeColor)->setFormat(MTL::VertexFormatUChar4);
-    vertexDescriptor->attributes()->object(VertexAttributeColor)->setBufferIndex(0);
-    vertexDescriptor->attributes()->object(VertexAttributeColor)->setOffset(colorOffset);
-    
-    vertexDescriptor->layouts()->object(VertexAttributePosition)->setStride(stride);
-    
-    MTL::RenderPipelineDescriptor *descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
-    
-    descriptor->setDepthAttachmentPixelFormat(attributes.depthFormat);
-    
-    
-    descriptor->colorAttachments()->object(0)->setBlendingEnabled(true);
-    // No color, just writing out Z values.
-    if(attributes.forShadows == 1) {
-        descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOne);
-        descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
-        descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
-        descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);
-    } else if(attributes.forShadows == 2) {
-        descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorZero);
-        descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
-        descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceColor);
-        descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);
-    } else if (attributes.blendFlags & hsGMatState::kBlendNoColor) {
-        //printf("glBlendFunc(GL_ZERO, GL_ONE);\n");
-        descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorZero);
-        descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
-        descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
-        descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
-    } else {
-        switch (attributes.blendFlags & hsGMatState::kBlendMask)
-        {
-            // Detail is just a special case of alpha, handled in construction of the texture
-            // mip chain by making higher levels of the chain more transparent.
-            case hsGMatState::kBlendDetail:
-            case hsGMatState::kBlendAlpha:
-                if (attributes.blendFlags & hsGMatState::kBlendInvertFinalAlpha) {
-                    if (attributes.blendFlags & hsGMatState::kBlendAlphaPremultiplied) {
-                        //printf("glBlendFunc(GL_ONE, GL_SRC_ALPHA);\n");
-                        descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOne);
-                        descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
-                        descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorSourceAlpha);
-                        descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorSourceAlpha);
-                    } else {
-                        //printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);\n");
-                        descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-                        descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-                        descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorSourceAlpha);
-                        descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorSourceAlpha);
-                    }
-                } else {
-                    if (attributes.blendFlags & hsGMatState::kBlendAlphaPremultiplied) {
-                        //printf("glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);\n");
-                        descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOne);
-                    } else {
-                        //printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);\n");
-                        descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
-                    }
-                    descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-                }
-                break;
-
-            // Multiply the final color onto the frame buffer.
-            case hsGMatState::kBlendMult:
-                if (attributes.blendFlags & hsGMatState::kBlendInvertFinalColor) {
-                    //printf("glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);\n");
-                    descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorZero);
-                    descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
-                    descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceColor);
-                    descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorOneMinusSourceColor);
-                } else {
-                    //printf("glBlendFunc(GL_ZERO, GL_SRC_COLOR);\n");
-                    descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorZero);
-                    descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
-                    descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorSourceColor);
-                    descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorSourceColor);
-                }
-                break;
-
-            // Add final color to FB.
-            case hsGMatState::kBlendAdd:
-                //printf("glBlendFunc(GL_ONE, GL_ONE);\n");
-                descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOne);
-                descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
-                descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
-                descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
-                break;
-
-            // Multiply final color by FB color and add it into the FB.
-            case hsGMatState::kBlendMADD:
-                //printf("glBlendFunc(GL_DST_COLOR, GL_ONE);\n");
-                descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorDestinationColor);
-                descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorDestinationColor);
-                descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
-                descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
-                break;
-
-            // Final color times final alpha, added into the FB.
-            case hsGMatState::kBlendAddColorTimesAlpha:
-                if (attributes.blendFlags & hsGMatState::kBlendInvertFinalAlpha) {
-                    //printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_ONE);\n");
-                    descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-                    descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-                    descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
-                    descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
-                } else {
-                    //printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE);\n");
-                    descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
-                    descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorSourceAlpha);
-                    descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
-                    descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
-                }
-                break;
-
-            // Overwrite final color onto FB
-            case 0:
-                //printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
-                descriptor->colorAttachments()->object(0)->setRgbBlendOperation(MTL::BlendOperationAdd);
-                //printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
-                descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOne);
-                descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
-                descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
-                descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);
-                
-                /*descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOne);
-                descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
-                descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
-                descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);*/
-                break;
-
-            default:
-                {
-                    /*hsAssert(false, "Too many blend modes specified in material");
-                    plLayer* lay = plLayer::ConvertNoRef(fCurrMaterial->GetLayer(fCurrLayerIdx)->BottomOfStack());
-                    if( lay )
-                    {
-                        if( lay->GetBlendFlags() & hsGMatState::kBlendAlpha )
-                        {
-                            lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAlpha);
-                        }
-                        else
-                        {
-                            lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAdd);
-                        }
-                    }*/
-                }
-                break;
-        }
-    }
-    
-    descriptor->colorAttachments()->object(0)->setPixelFormat(attributes.outputFormat);
-    
-    descriptor->setFragmentFunction(fragFunction);
-    descriptor->setVertexFunction(vertFunction);
-    descriptor->setVertexDescriptor(vertexDescriptor);
-    std::string label = "Render Pipeline: " + std::to_string(attributes.numUVs) + "UVs, " + std::to_string(attributes.numWeights) + " skin weight";
-    descriptor->setLabel(NS::String::string(label.c_str(), NS::UTF8StringEncoding));
-    
-    functionContents->release();
-    
-    __block std::condition_variable *newCondition = new std::condition_variable();
-    fConditionMap[attributes] = newCondition;
-    if(condOut) {
-        *condOut = newCondition;
-    }
-    
-    fMetalDevice->newRenderPipelineState(descriptor, ^(MTL::RenderPipelineState *pipelineState, NS::Error *error){
-        if(error) {
-            hsAssert(0, error->localizedDescription()->cString(NS::UTF8StringEncoding));
-            //leave the condition in place for now, we don't want to
-            //retry if the shader is defective. the condition will
-            //prevent retries
-        } else {
-            //update the pipeline state, if it's null just set null
-            pipelineState->retain();
-            
-            plMetalLinkedPipeline *linkedPipeline = new plMetalLinkedPipeline();
-            linkedPipeline->pipelineState = pipelineState;
-            linkedPipeline->fragFunction = fragFunction;
-            linkedPipeline->vertexFunction = vertFunction;
-            
-            fPipelineStateMap[attributes] = linkedPipeline;
-        }
-        //signal that we're done
-        newCondition->notify_all();
-    });
-    descriptor->release();
-    library->release();
-}
-
-plMetalDevice::plMetalLinkedPipeline* plMetalDevice::pipelineStateFor(const plMetalVertexBufferRef * vRef, uint32_t blendFlags, uint32_t numLayers, plShaderID::ID vertexShaderID, plShaderID::ID fragmentShaderID, int forShadows)
-{
-    plPipelineStateAtrributes attributes = plPipelineStateAtrributes(vRef, blendFlags, fCurrentFragmentOutputTexture->pixelFormat(), fCurrentDepthFormat, vertexShaderID, fragmentShaderID, forShadows, numLayers);
-    plMetalLinkedPipeline* renderState = fPipelineStateMap[attributes];
-    
-    //if it exists, return it, we're done
-    if(renderState) {
-        return renderState;
-    }
-    
-    //check and see if we're already building it. If so, wait.
-    //Note: even if it already exists, this lock will be kept, and it will
-    //let us through. This is to prevent race conditions where the render state
-    //was null, but maybe in the time it took us to get here the state compiled.
-    std::condition_variable *alreadyBuildingCondition = fConditionMap[attributes];
-    if(alreadyBuildingCondition) {
-        std::unique_lock<std::mutex> lock(fPipelineCreationMtx);
-        alreadyBuildingCondition->wait(lock);
-        
-        //should be returning the render state here, if not it failed to build
-        //we'll allow the null return
-        return fPipelineStateMap[attributes];
-    }
-    
-    //it doesn't exist, start a build and wait
-    //only render thread is allowed to start builds,
-    //shouldn't be race conditions here
-    StartRenderPipelineBuild(attributes, &alreadyBuildingCondition);
-    std::unique_lock<std::mutex> lock(fPipelineCreationMtx);
-    alreadyBuildingCondition->wait(lock);
-    
-    //should be returning the render state here, if not it failed to build
-    //we'll allow the null return
-    return fPipelineStateMap[attributes];
-}
-
 void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
 {
-    printf("Creating new command bufffer\n");
     fCurrentCommandBuffer = fCommandQueue->commandBuffer();
     fCurrentCommandBuffer->retain();
-    
     //cache the depth buffer, we'll just clear it every time.
     if(fCurrentDrawableDepthTexture == nullptr ||
        drawable->texture()->width() != fCurrentDrawableDepthTexture->width() ||
@@ -1160,8 +761,135 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
         
         fCurrentDrawableDepthTexture = fMetalDevice->newTexture(depthTextureDescriptor);
     }
-    
     fCurrentDrawable = drawable->retain();
+}
+
+void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condition_variable **condOut) {
+    
+    __block std::condition_variable *newCondition = new std::condition_variable();
+    fConditionMap[record] = newCondition;
+    if(condOut) {
+        *condOut = newCondition;
+    }
+    
+    if (fNewPipelineStateMap[record] != NULL) {
+        return fNewPipelineStateMap[record];
+    }
+    
+    MTL::Library *library = fMetalDevice->newDefaultLibrary();
+    
+    std::shared_ptr<plMetalPipelineState> pipelineState = record.state;
+    
+    MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
+    descriptor->setLabel(pipelineState->GetDescription());
+    
+    const MTL::Function* vertexFunction = pipelineState->GetVertexFunction(library);
+    const MTL::Function* fragmentFunction = pipelineState->GetFragmentFunction(library);
+    descriptor->setVertexFunction(vertexFunction);
+    descriptor->setFragmentFunction(fragmentFunction);
+    
+    descriptor->colorAttachments()->object(0)->setBlendingEnabled(true);
+    pipelineState->ConfigureBlend(descriptor->colorAttachments()->object(0));
+    
+    MTL::VertexDescriptor *vertexDescriptor = MTL::VertexDescriptor::vertexDescriptor();
+    pipelineState->ConfigureVertexDescriptor(vertexDescriptor);
+    descriptor->setVertexDescriptor(vertexDescriptor);
+    descriptor->setDepthAttachmentPixelFormat(record.depthFormat);
+    descriptor->colorAttachments()->object(0)->setPixelFormat(record.colorFormat);
+    
+    NS::Error* error;
+    fMetalDevice->newRenderPipelineState(descriptor, ^(MTL::RenderPipelineState *pipelineState, NS::Error *error){
+        if (error) {
+            //leave the condition in place for now, we don't want to
+            //retry if the shader is defective. the condition will
+            //prevent retries
+            hsAssert(0, error->localizedDescription()->cString(NS::UTF8StringEncoding));
+        } else {
+            plMetalLinkedPipeline *linkedPipeline = new plMetalLinkedPipeline();
+            linkedPipeline->pipelineState = pipelineState->retain();
+            linkedPipeline->fragFunction = fragmentFunction;
+            linkedPipeline->vertexFunction = vertexFunction;
+            
+            fNewPipelineStateMap[record] = linkedPipeline;
+            //signal that we're done
+            newCondition->notify_all();
+        }
+    });
+    
+    descriptor->release();
+    library->release();
+}
+
+plMetalDevice::plMetalLinkedPipeline* plMetalDevice::PipelineState(plMetalPipelineState* pipelineState) {
+    
+    MTL::PixelFormat depthFormat = fCurrentDepthFormat;
+    MTL::PixelFormat colorFormat = fCurrentFragmentOutputTexture->pixelFormat();
+    
+    plMetalPipelineRecord record = {
+        depthFormat,
+        colorFormat
+    };
+    
+    record.state = std::shared_ptr<plMetalPipelineState>(pipelineState->Clone());
+    
+    plMetalLinkedPipeline* renderState = fNewPipelineStateMap[record];
+    
+    //if it exists, return it, we're done
+    if(renderState) {
+        return renderState;
+    }
+    
+    //check and see if we're already building it. If so, wait.
+    //Note: even if it already exists, this lock will be kept, and it will
+    //let us through. This is to prevent race conditions where the render state
+    //was null, but maybe in the time it took us to get here the state compiled.
+    std::condition_variable *alreadyBuildingCondition = fConditionMap[record];
+    if(alreadyBuildingCondition) {
+        std::unique_lock<std::mutex> lock(fPipelineCreationMtx);
+        alreadyBuildingCondition->wait(lock);
+        
+        //should be returning the render state here, if not it failed to build
+        //we'll allow the null return
+        return fNewPipelineStateMap[record];
+    }
+    
+    //it doesn't exist, start a build and wait
+    //only render thread is allowed to start builds,
+    //shouldn't be race conditions here
+    StartPipelineBuild(record, &alreadyBuildingCondition);
+    std::unique_lock<std::mutex> lock(fPipelineCreationMtx);
+    alreadyBuildingCondition->wait(lock);
+    
+    //should be returning the render state here, if not it failed to build
+    //we'll allow the null return
+    return fNewPipelineStateMap[record];
+}
+
+std::condition_variable* plMetalDevice::PrewarmPipelineStateFor(plMetalPipelineState* pipelineState)
+{
+    MTL::PixelFormat depthFormat = fCurrentDepthFormat;
+    MTL::PixelFormat colorFormat = fCurrentFragmentOutputTexture->pixelFormat();
+    
+    plMetalPipelineRecord record = {
+        depthFormat,
+        colorFormat
+    };
+    
+    record.state = std::shared_ptr<plMetalPipelineState>(pipelineState->Clone());
+    //only render thread is allowed to prewarm, no race conditions around
+    //fConditionMap creation
+    if(!fNewPipelineStateMap[record] && fConditionMap[record]) {
+        std::condition_variable *condOut;
+        StartPipelineBuild(record, &condOut);
+        return condOut;
+    }
+    return nullptr;
+}
+
+bool plMetalDevice::plMetalPipelineRecord::operator==(const plMetalPipelineRecord &p) const {
+    return depthFormat == p.depthFormat &&
+    colorFormat == p.colorFormat &&
+    state->operator==(*p.state);
 }
 
 MTL::CommandBuffer* plMetalDevice::GetCurrentCommandBuffer()
@@ -1171,7 +899,6 @@ MTL::CommandBuffer* plMetalDevice::GetCurrentCommandBuffer()
 
 void plMetalDevice::SubmitCommandBuffer()
 {
-    printf("Submitting command bufffer\n");
     fCurrentRenderTargetCommandEncoder->endEncoding();
     fCurrentRenderTargetCommandEncoder->release();
     fCurrentRenderTargetCommandEncoder = nil;
@@ -1192,6 +919,14 @@ void plMetalDevice::SubmitCommandBuffer()
     fClearDepth = 1.0;
 }
 
+std::size_t plMetalDevice::plMetalPipelineRecordHashFunction ::operator()(plMetalPipelineRecord const& s) const noexcept
+{
+    std::size_t value = std::hash<MTL::PixelFormat>()(s.depthFormat);
+    value ^= std::hash<MTL::PixelFormat>()(s.colorFormat);
+    value ^= std::hash<plMetalPipelineState>()(*s.state);
+    return value;
+}
+
 MTL::RenderCommandEncoder* plMetalDevice::CurrentRenderCommandEncoder()
 {
     //return the current render command encoder
@@ -1201,7 +936,6 @@ MTL::RenderCommandEncoder* plMetalDevice::CurrentRenderCommandEncoder()
     }
     
     if (!fCurrentRenderTargetCommandEncoder) {
-        printf("Asked for command encoder, but one not present. Creating...");
         BeginNewRenderPass();
         
         fClearColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);

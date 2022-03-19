@@ -54,7 +54,7 @@ using namespace metal;
 
 //copying this direction from hsGMatState because I am a horrible person but we can't import the header here in since it includes a lot of class stuff.
 //FIXME: Come up with something better.
-enum hsGMatMiscFlags {
+enum hsGMatMiscFlags: uint32_t {
     kMiscWireFrame          = 0x1,          // dev (running out of bits)
     kMiscDrawMeshOutlines   = 0x2,          // dev, currently unimplemented
     kMiscTwoSided           = 0x4,          // view,dev
@@ -92,7 +92,7 @@ enum hsGMatMiscFlags {
     kAllMiscFlags           = 0xffffffff
 };
     
-enum hsGMatBlendFlags {
+enum hsGMatBlendFlags: uint32_t {
     kBlendTest  = 0x1,                          // dev
     // Rest of blends are mutually exclusive
     kBlendAlpha                     = 0x2,      // dev
@@ -133,7 +133,7 @@ enum hsGMatBlendFlags {
     kBlendAlphaPremultiplied        = 0x8000000
 };
     
-enum plUVWSrcModifiers {
+enum plUVWSrcModifiers: uint32_t {
     kUVWPassThru                                = 0x00000000,
     kUVWIdxMask                                 = 0x0000ffff,
     kUVWNormal                                  = 0x00010000,
@@ -142,15 +142,62 @@ enum plUVWSrcModifiers {
 };
 
 using namespace metal;
+    
+constant uint8_t sourceType1 [[ function_constant(FunctionConstantSources + 0)    ]];
+constant uint8_t sourceType2 [[ function_constant(FunctionConstantSources + 1)    ]];
+constant uint8_t sourceType3 [[ function_constant(FunctionConstantSources + 2)    ]];
+constant uint8_t sourceType4 [[ function_constant(FunctionConstantSources + 3)    ]];
+constant uint8_t sourceType5 [[ function_constant(FunctionConstantSources + 4)    ]];
+constant uint8_t sourceType6 [[ function_constant(FunctionConstantSources + 5)    ]];
+constant uint8_t sourceType7 [[ function_constant(FunctionConstantSources + 6)    ]];
+constant uint8_t sourceType8 [[ function_constant(FunctionConstantSources + 7)    ]];
+    
+constant uint32_t blendModes1 [[ function_constant(FunctionConstantBlendModes + 0)    ]];
+constant uint32_t blendModes2 [[ function_constant(FunctionConstantBlendModes + 1)    ]];
+constant uint32_t blendModes3 [[ function_constant(FunctionConstantBlendModes + 2)    ]];
+constant uint32_t blendModes4 [[ function_constant(FunctionConstantBlendModes + 3)    ]];
+constant uint32_t blendModes5 [[ function_constant(FunctionConstantBlendModes + 4)    ]];
+constant uint32_t blendModes6 [[ function_constant(FunctionConstantBlendModes + 5)    ]];
+constant uint32_t blendModes7 [[ function_constant(FunctionConstantBlendModes + 6)    ]];
+constant uint32_t blendModes8 [[ function_constant(FunctionConstantBlendModes + 7)    ]];
+    
+constant uint32_t miscFlags1 [[ function_constant(FunctionConstantLayerFlags + 0)    ]];
+constant uint32_t miscFlags2 [[ function_constant(FunctionConstantLayerFlags + 1)    ]];
+constant uint32_t miscFlags3 [[ function_constant(FunctionConstantLayerFlags + 2)    ]];
+constant uint32_t miscFlags4 [[ function_constant(FunctionConstantLayerFlags + 3)    ]];
+constant uint32_t miscFlags5 [[ function_constant(FunctionConstantLayerFlags + 4)    ]];
+constant uint32_t miscFlags6 [[ function_constant(FunctionConstantLayerFlags + 5)    ]];
+constant uint32_t miscFlags7 [[ function_constant(FunctionConstantLayerFlags + 6)    ]];
+constant uint32_t miscFlags8 [[ function_constant(FunctionConstantLayerFlags + 7)    ]];
 
+#define MAX_BLEND_PASSES 8
+constant const uint8_t sourceTypes[MAX_BLEND_PASSES] = { sourceType1, sourceType2, sourceType3, sourceType4, sourceType5, sourceType6, sourceType7, sourceType8};
+constant const uint32_t blendModes[MAX_BLEND_PASSES] = { blendModes1, blendModes2, blendModes3, blendModes4, blendModes5, blendModes6, blendModes7, blendModes8};
+constant const uint32_t miscFlags[MAX_BLEND_PASSES] = { miscFlags1, miscFlags2, miscFlags3, miscFlags4, miscFlags5, miscFlags6, miscFlags7, miscFlags8};
+constant uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
+    
 typedef struct  {
-    array<texture2d<half>, 8> textures  [[ texture(FragmentShaderArgumentAttributeTextures)  ]];
-    array<texturecube<half>, 8> cubicTextures  [[ texture(FragmentShaderArgumentAttributeCubicTextures)  ]];
-    constant float4* colors   [[ buffer(FragmentShaderArgumentAttributeColors)   ]];
-    constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(BufferIndexFragArgBuffer)   ]];
+    texture2d<half> textures  [[ texture(FragmentShaderArgumentAttributeTextures), function_constant(hasLayer1)  ]];
+    texture2d<half> texture2  [[ texture(FragmentShaderArgumentAttributeTextures + 1), function_constant(hasLayer2)    ]];
+    texture2d<half> texture3  [[ texture(FragmentShaderArgumentAttributeTextures + 2), function_constant(hasLayer3)    ]];
+    texture2d<half> texture4  [[ texture(FragmentShaderArgumentAttributeTextures + 3), function_constant(hasLayer4)    ]];
+    texture2d<half> texture5  [[ texture(FragmentShaderArgumentAttributeTextures + 4), function_constant(hasLayer5)    ]];
+    texture2d<half> texture6  [[ texture(FragmentShaderArgumentAttributeTextures + 5), function_constant(hasLayer6)    ]];
+    texture2d<half> texture7  [[ texture(FragmentShaderArgumentAttributeTextures + 6), function_constant(hasLayer7)    ]];
+    texture2d<half> texture8  [[ texture(FragmentShaderArgumentAttributeTextures + 7), function_constant(hasLayer8)    ]];
+    texturecube<half> cubicTextures  [[ texture(FragmentShaderArgumentAttributeCubicTextures), function_constant(hasLayer1)    ]];
+    texturecube<half> cubicTexture2  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 1), function_constant(hasLayer2)  ]];
+    texturecube<half> cubicTexture3  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 2), function_constant(hasLayer3)  ]];
+    texturecube<half> cubicTexture4  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 3), function_constant(hasLayer4)  ]];
+    texturecube<half> cubicTexture5  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 4), function_constant(hasLayer5)  ]];
+    texturecube<half> cubicTexture6  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 5), function_constant(hasLayer6)  ]];
+    texturecube<half> cubicTexture7  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 6), function_constant(hasLayer7)  ]];
+    texturecube<half> cubicTexture8  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 7), function_constant(hasLayer8)  ]];
+    const constant half4* colors   [[ buffer(FragmentShaderArgumentAttributeColors)   ]];
+    const constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(BufferIndexFragArgBuffer)   ]];
 } FragmentShaderArguments;
 
-inline float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const uint UVWSrc, const uint flags, const float4 normal, const float4 camPosition, const matrix_float4x4 camToWorldMatrix, const matrix_float4x4 projectionMatrix);
+float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const uint UVWSrc, const uint flags, const float4 normal, const float4 camPosition, const matrix_float4x4 camToWorldMatrix, const matrix_float4x4 projectionMatrix);
 
 typedef struct
 {
@@ -168,6 +215,35 @@ typedef struct
     half4 fogColor;
     //float4 vCamNormal;
 } ColorInOut;
+    
+    
+typedef struct
+{
+    float4 position [[position]];
+    float3 texCoord1;
+} ShadowCasterInOut;
+
+constant constexpr sampler colorSamplers[] = {
+    sampler(mip_filter::linear,
+            mag_filter::linear,
+            min_filter::linear,
+            address::repeat),
+    sampler(mip_filter::linear,
+            mag_filter::linear,
+            min_filter::linear,
+            s_address::clamp_to_edge,
+            t_address::repeat),
+    sampler(mip_filter::linear,
+            mag_filter::linear,
+            min_filter::linear,
+            s_address::repeat,
+            t_address::clamp_to_edge),
+    sampler(mip_filter::linear,
+            mag_filter::linear,
+            min_filter::linear,
+            address::clamp_to_edge),
+
+};
 
 vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                                        constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
@@ -175,61 +251,61 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
 {
     ColorInOut out;
     //we should have been able to swizzle, but it didn't work in Xcode beta? Try again later.
-    float4 inColor = float4(in.color.b, in.color.g, in.color.r, in.color.a) / float4(255.0f);
+    const half4 inColor = half4(in.color.b, in.color.g, in.color.r, in.color.a) / half4(255.0f);
     
-    float4 MAmbient = mix(inColor, uniforms.ambientCol, uniforms.ambientSrc);
-    float4 MDiffuse = mix(inColor, uniforms.diffuseCol, uniforms.diffuseSrc);
-    float4 MEmissive = mix(inColor, uniforms.emissiveCol, uniforms.emissiveSrc);
-    float4 MSpecular = mix(inColor, uniforms.specularCol, uniforms.specularSrc);
+    const half4 MAmbient = half4(mix(inColor, uniforms.ambientCol, uniforms.ambientSrc));
+    const half4 MDiffuse = half4(mix(inColor, uniforms.diffuseCol, uniforms.diffuseSrc));
+    const half4 MEmissive = half4(mix(inColor, uniforms.emissiveCol, uniforms.emissiveSrc));
+    //const half4 MSpecular = half4(mix(inColor, uniforms.specularCol, uniforms.specularSrc));
 
-    float4 LAmbient = float4(0.0, 0.0, 0.0, 0.0);
-    float4 LDiffuse = float4(0.0, 0.0, 0.0, 0.0);
+    half4 LAmbient = half4(0.0, 0.0, 0.0, 0.0);
+    half4 LDiffuse = half4(0.0, 0.0, 0.0, 0.0);
 
-    float3 Ndirection = normalize(uniforms.worldToLocalMatrix * float4(in.normal, 0.0)).xyz;
+    float3 Ndirection = normalize(uniforms.localToWorldMatrix * float4(in.normal, 0.0)).xyz;
 
-    for (uint i = 0; i < 8; i++) {
-        plMetalShaderLightSource lightSource = uniforms.lampSources[i];
-        if(lightSource.scale == 0)
+    for (size_t i = 0; i < 8; i++) {
+        constant plMetalShaderLightSource *lightSource = &uniforms.lampSources[i];
+        if(lightSource->scale == 0.0h)
             continue;
         
         float attenuation;
         float3 direction;
 
-        if (lightSource.position.w == 0.0) {
+        if (lightSource->position.w == 0.0) {
             // Directional Light with no attenuation
-            direction = -(lightSource.direction).xyz;
+            direction = -(lightSource->direction).xyz;
             attenuation = 1.0;
         } else {
             // Omni Light in all directions
-            float3 v2l = lightSource.position.xyz - float3(uniforms.localToWorldMatrix * float4(in.position, 1.0));
-            float distance = length(v2l);
+            const float3 v2l = lightSource->position.xyz - float3(uniforms.localToWorldMatrix * float4(in.position, 1.0));
+            const float distance = length(v2l);
             direction = normalize(v2l);
 
-            attenuation = 1.0 / (lightSource.constAtten + lightSource.linAtten * distance + lightSource.quadAtten * pow(distance, 2.0));
+            attenuation = 1.0 / (lightSource->constAtten + lightSource->linAtten * distance + lightSource->quadAtten * pow(distance, 2.0));
 
             if (uniforms.lampSources[i].spotProps.x > 0.0) {
                 // Spot Light with cone falloff
-                float a = dot(direction.xyz, normalize(-lightSource.direction).xyz);
-                float theta = lightSource.spotProps.y;
-                float phi = lightSource.spotProps.z;
-                float result = pow((a - phi) / (theta - phi), lightSource.spotProps.x);
+                const float a = dot(direction.xyz, normalize(-lightSource->direction).xyz);
+                const float theta = lightSource->spotProps.y;
+                const float phi = lightSource->spotProps.z;
+                const float result = pow((a - phi) / (theta - phi), lightSource->spotProps.x);
 
                 attenuation *= clamp(result, 0.0, 1.0);
             }
         }
 
-        LAmbient.rgb = LAmbient.rgb + attenuation * (uniforms.lampSources[i].ambient.rgb * uniforms.lampSources[i].scale);
+        LAmbient.rgb = LAmbient.rgb + half3(attenuation * (uniforms.lampSources[i].ambient.rgb * uniforms.lampSources[i].scale));
         float3 dotResult = dot(Ndirection, direction);
-        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (uniforms.lampSources[i].diffuse.rgb * uniforms.lampSources[i].scale) * max(0.0, dotResult) * attenuation;
+        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (uniforms.lampSources[i].diffuse.rgb * uniforms.lampSources[i].scale) * half3(max(0.0, dotResult) * attenuation);
     }
 
-    float4 ambient = clamp(float4(MAmbient) * (uniforms.globalAmb + LAmbient), 0.0, 1.0);
-    float4 diffuse = clamp(LDiffuse, 0.0, 1.0);
-    float4 material = clamp(ambient + diffuse + float4(MEmissive), 0.0, 1.0);
+    const half4 ambient = clamp((MAmbient) * (half4(uniforms.globalAmb) + LAmbient), 0.0, 1.0);
+    const half4 diffuse = clamp(LDiffuse, 0.0, 1.0);
+    const half4 material = clamp(ambient + diffuse + half4(MEmissive), 0.0, 1.0);
 
-    out.vtxColor = half4(float4(material.rgb, abs(uniforms.invVtxAlpha - MDiffuse.a)));
+    out.vtxColor = half4(material.rgb, abs(uniforms.invVtxAlpha - MDiffuse.a));
     
-    float4 vCamPosition = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 1.0));
+    const float4 vCamPosition = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 1.0));
     //out.vCamNormal = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 0.0));
     
     //Fog
@@ -238,41 +314,41 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         out.fogColor.a = exp(-pow(uniforms.fogValues.y * length(vCamPosition), uniforms.fogValues.x));
     } else {
         if (uniforms.fogValues.y > 0.0) {
-            float start = uniforms.fogValues.x;
-            float end = uniforms.fogValues.y;
+            const float start = uniforms.fogValues.x;
+            const float end = uniforms.fogValues.y;
             out.fogColor.a = (end - length(vCamPosition.xyz)) / (end - start);
         }
     }
-    out.fogColor.rgb = half3(uniforms.fogColor);
+    out.fogColor.rgb = uniforms.fogColor;
     
-    float4 normal = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.normal, 0.0));
+    const float4 normal = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.normal, 0.0));
     
     if(hasLayer1)
-        out.texCoord1 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[0].transform, uniforms.uvTransforms[0].UVWSrc, uniforms.uvTransforms[0].flags, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord1 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[0].transform, uniforms.uvTransforms[0].UVWSrc, miscFlags1, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
     if(hasLayer2)
-        out.texCoord2 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[1].transform, uniforms.uvTransforms[1].UVWSrc, uniforms.uvTransforms[1].flags, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord2 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[1].transform, uniforms.uvTransforms[1].UVWSrc, miscFlags2, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
     if(hasLayer3)
-        out.texCoord3 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[2].transform, uniforms.uvTransforms[2].UVWSrc, uniforms.uvTransforms[2].flags, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord3 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[2].transform, uniforms.uvTransforms[2].UVWSrc, miscFlags3, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
     if(hasLayer4)
-        out.texCoord4 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[3].transform, uniforms.uvTransforms[3].UVWSrc, uniforms.uvTransforms[3].flags, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord4 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[3].transform, uniforms.uvTransforms[3].UVWSrc, miscFlags4, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
     if(hasLayer5)
-        out.texCoord5 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[4].transform, uniforms.uvTransforms[4].UVWSrc, uniforms.uvTransforms[4].flags, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord5 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[4].transform, uniforms.uvTransforms[4].UVWSrc, miscFlags5, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
     if(hasLayer6)
-        out.texCoord5 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[5].transform, uniforms.uvTransforms[5].UVWSrc, uniforms.uvTransforms[5].flags, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord5 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[5].transform, uniforms.uvTransforms[5].UVWSrc, miscFlags6, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
     if(hasLayer7)
-        out.texCoord7 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[6].transform, uniforms.uvTransforms[6].UVWSrc, uniforms.uvTransforms[6].flags, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord7 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[6].transform, uniforms.uvTransforms[6].UVWSrc, miscFlags7, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
     if(hasLayer8)
-        out.texCoord8 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[7].transform, uniforms.uvTransforms[7].UVWSrc, uniforms.uvTransforms[7].flags, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord8 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[7].transform, uniforms.uvTransforms[7].UVWSrc, miscFlags8, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
     
     out.position = uniforms.projectionMatrix * vCamPosition;
 
     return out;
 }
 
-inline void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags);
-inline void blend(half4 srcSample, thread half4 &destSample, uint32_t blendFlags);
+void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags);
+void blend(half4 srcSample, thread half4 &destSample, uint32_t blendFlags);
     
-inline float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const uint UVWSrc, const uint flags, const float4 normal, const float4 camPosition, const matrix_float4x4 camToWorldMatrix, const matrix_float4x4 projectionMatrix) {
+float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const uint UVWSrc, const uint flags, const float4 normal, const float4 camPosition, const matrix_float4x4 camToWorldMatrix, const matrix_float4x4 projectionMatrix) {
     //Note: If we want to require newer versions of Metal/newer hardware we could pass function pointers instead of doing these ifs.
     if (flags & (kMiscUseReflectionXform | kMiscUseRefractionXform)) {
         matrix = camToWorldMatrix;
@@ -373,56 +449,29 @@ inline float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, c
         break;
     default:
         {
-            int index = UVWSrc & 0x0f;
+            const int index = UVWSrc & 0x0F;
             sampleCoord = matrix * float4(texCoords[index], 1.0);
         }
         break;
     }
     return sampleCoord.xyz;
 }
-
-half4 blendLayer(plFragmentShaderLayer layer, float3 sampleCoord,  half4 color, texture2d<half> texture, thread texturecube<half> *cubicTexture) {
     
-    constexpr sampler colorSamplers[] = {
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                address::repeat),
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                s_address::clamp_to_edge,
-                t_address::repeat),
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                s_address::repeat,
-                t_address::clamp_to_edge),
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                address::clamp_to_edge),
-
-    };
-    
-    ushort passType = layer.passType;
+half4 sampleLayer(uint8_t passType, uint8_t sampleType, uint32_t miscFlags, float3 sampleCoord,  const thread half4 &color, const thread texture2d<half> &texture, const thread texturecube<half> &cubicTexture) {
     
     if(passType == PassTypeColor) {
         return color;
     } else {
         
-        if (layer.miscFlags & kMiscPerspProjection) {
-            sampleCoord.xy = sampleCoord.xy / sampleCoord.z;
+        if (miscFlags & kMiscPerspProjection) {
+            sampleCoord.xy /= sampleCoord.z;
         }
         
-        int colorSamplerIndex = layer.sampleType;
         //do the actual sample
         if(passType == PassTypeTexture) {
-            texture2d<half> colorMap = texture;
-            return colorMap.sample(colorSamplers[colorSamplerIndex], sampleCoord.xy);
+            return texture.sample(colorSamplers[sampleType], sampleCoord.xy);
         } else if(passType == PassTypeCubicTexture) {
-            thread texturecube<half> *colorMap = cubicTexture;
-            return colorMap->sample(colorSamplers[colorSamplerIndex], sampleCoord.xyz);
+            return cubicTexture.sample(colorSamplers[sampleType], sampleCoord.xyz);
         } else {
             return half4(0);
         }
@@ -430,36 +479,52 @@ half4 blendLayer(plFragmentShaderLayer layer, float3 sampleCoord,  half4 color, 
 }
 
 fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
-                                       constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
-                                       FragmentShaderArguments fragmentShaderArgs)
+                                      const FragmentShaderArguments fragmentShaderArgs)
 {
+    
     half4 currentColor = in.vtxColor;
     
-    uint i = 0;
-    for(i=i; i< num_layers; i++) {
-        plFragmentShaderLayer layer = fragmentShaderArgs.bufferedUniforms->layers[i];
+    /*
+     SPECIAL PLASMA RULE:
+     If there is only one layer, and that layer is not a texture,
+     skip straight to the vertex color and return it
+     */
+    if (!(passCount==1 && sourceTypes[0] == PassTypeColor)) {
         
-        thread texturecube<half>* cubicTexture =  &(fragmentShaderArgs.cubicTextures[i]);
-        half4 color = blendLayer(layer, (&in.texCoord1)[i], currentColor, fragmentShaderArgs.textures[i], cubicTexture);
-        if(i==0) {
-            blendFirst(color, currentColor, layer.blendMode);
-        } else {
-            blend(color, currentColor, layer.blendMode);
+        half4 color;
+        
+        /*
+         Note: For loop should be unrolled by the compiler, but it is very sensitive.
+         Always use size_t for the loop interator type.
+         */
+        for(size_t layer=0; layer<passCount; layer++) {
+            
+            float3 sampleCoord = (&in.texCoord1)[layer];
+            
+            color = sampleLayer(sourceTypes[layer], fragmentShaderArgs.bufferedUniforms->layers[layer].sampleType, miscFlags[layer], sampleCoord, half4(in.vtxColor), (&fragmentShaderArgs.textures)[layer], (&fragmentShaderArgs.cubicTextures)[layer]);
+            
+            if(layer==0) {
+                blendFirst(color, currentColor, blendModes[layer]);
+            } else {
+                blend(color, currentColor, blendModes[layer]);
+            }
         }
+        
+        currentColor = half4(in.vtxColor.rgb, 1.0) * currentColor;
     }
     
-    currentColor = half4(in.vtxColor.rgb, 1.0) * currentColor;
-    currentColor.rgb = mix(currentColor.rgb, in.fogColor.rgb * currentColor.a, 1.0f - clamp((float)in.fogColor.a, 0.0f, 1.0f));
+    currentColor.rgb = mix(currentColor.rgb, in.fogColor.rgb, 1.0f - clamp((float)in.fogColor.a, 0.0f, 1.0f));
     
     if (currentColor.a < fragmentShaderArgs.bufferedUniforms->alphaThreshold) { discard_fragment(); }
 
     return currentColor;
 }
 
-inline void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
+void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
+    
     // Local variable to store the color value
     if (blendFlags & kBlendInvertColor) {
-        srcSample.rgb = 1.0 - srcSample.rgb;
+        srcSample.rgb = 1.0h - srcSample.rgb;
     }
     
     // Leave fCurrColor null if we are blending without texture color
@@ -469,7 +534,7 @@ inline void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t
 
     if (blendFlags & kBlendInvertAlpha) {
         // 1.0 - texture.a
-        srcSample.a = 1.0 - srcSample.a;
+        srcSample.a = 1.0h - srcSample.a;
     }
 
     if (!(blendFlags & kBlendNoTexAlpha)) {
@@ -478,10 +543,10 @@ inline void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t
     }
 }
 
-inline void blend(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
+void blend(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
     // Local variable to store the color value
     if (blendFlags & kBlendInvertColor) {
-        srcSample.rgb = 1.0 - srcSample.rgb;
+        srcSample.rgb = 1.0h - srcSample.rgb;
     }
     
     switch (blendFlags & kBlendMask)
@@ -505,7 +570,7 @@ inline void blend(half4 srcSample, thread half4 &destSample, const uint32_t blen
 
             if (blendFlags & kBlendInvertAlpha) {
                 // 1.0 - texture.a
-                srcSample.a = 1.0 - srcSample.a;
+                srcSample.a = 1.0h - srcSample.a;
             } else {
                 // texture.a
                 srcSample.a = srcSample.a;
@@ -546,7 +611,7 @@ inline void blend(half4 srcSample, thread half4 &destSample, const uint32_t blen
         case kBlendAddSigned:
         {
             // color = color + prev - 0.5
-            destSample.rgb = srcSample.rgb + destSample.rgb - 0.5;
+            destSample.rgb = srcSample.rgb + destSample.rgb - 0.5h;
             break;
         }
 
@@ -554,7 +619,7 @@ inline void blend(half4 srcSample, thread half4 &destSample, const uint32_t blen
         {
             // color = (color + prev - 0.5) << 1
             // Note: using CALL here for multiplication to ensure parentheses
-            destSample.rgb = 2 * (srcSample.rgb + destSample.rgb - 0.5);
+            destSample.rgb = 2.0h * (srcSample.rgb + destSample.rgb - 0.5h);
             break;
         }
 
@@ -567,93 +632,70 @@ inline void blend(half4 srcSample, thread half4 &destSample, const uint32_t blen
     }
 }
     
-fragment float4 shadowFragmentShader(ColorInOut in [[stage_in]],
+vertex ShadowCasterInOut shadowVertexShader(Vertex in [[stage_in]],
                                        constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
+                                       uint v_id [[vertex_id]])
+{
+    ShadowCasterInOut out;
+    
+    const float4 vCamPosition = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 1.0));
+    
+    //out.texCoord1 = (uniforms.uvTransforms[0].transform * vCamPosition).xyz;
+    out.texCoord1 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[0].transform, uniforms.uvTransforms[0].UVWSrc, 0, float4(0.0), vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+    
+    out.position = uniforms.projectionMatrix * vCamPosition;
+
+    return out;
+}
+    
+fragment half4 shadowFragmentShader(ShadowCasterInOut in [[stage_in]],
                                         texture2d<ushort> colorMap     [[ texture(0) ]])
 {
-    constexpr sampler colorSamplers[] = {
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                address::repeat),
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                s_address::clamp_to_edge,
-                t_address::repeat),
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                s_address::repeat,
-                t_address::clamp_to_edge),
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                address::clamp_to_edge),
-
-    };
-    
     //D3DTTFF_COUNT3, D3DTSS_TCI_CAMERASPACEPOSITION
-    ushort4 currentColor = colorMap.sample(colorSamplers[3], in.texCoord1.xy);
+    short currentAlpha = colorMap.sample(colorSamplers[3], float2(in.texCoord1.xy)).a;
 
-    return float4(1.0, 1.0, 1.0, float(currentColor.a)/255.0f);
+    return half4(1.0h, 1.0h, 1.0h, half(currentAlpha)/255.0h);
 }
 
     
-fragment float4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
-                                        constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
+fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
                                         texture2d<float> texture     [[ texture(16) ]],
                                         texture2d<ushort> LUT     [[ texture(17) ]],
                                         constant plMetalShadowCastFragmentShaderArgumentBuffer & fragmentUniforms [[ buffer(BufferIndexShadowCastFragArgBuffer) ]],
                                         FragmentShaderArguments layers,
                                         constant int & alphaSrc [[ buffer(FragmentShaderArgumentShadowAlphaSrc) ]])
 {
-    
-    constexpr sampler colorSamplers[] = {
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                address::repeat),
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                s_address::clamp_to_edge,
-                t_address::repeat),
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                s_address::repeat,
-                t_address::clamp_to_edge),
-        sampler(mip_filter::linear,
-                mag_filter::linear,
-                min_filter::linear,
-                address::clamp_to_edge),
-
-    };
-    
     float3 sampleCoords = in.texCoord1;
     if(fragmentUniforms.pointLightCast) {
         sampleCoords.xy /= sampleCoords.z;
     }
-    float4 currentColor = float4(texture.sample(colorSamplers[3], sampleCoords.xy));
-    currentColor.rgb *= float3(in.vtxColor.rgb);
+    half4 currentColor = half4(texture.sample(colorSamplers[3], sampleCoords.xy));
+    currentColor.rgb *= in.vtxColor.rgb;
     
-    float3 LUTCoords = in.texCoord2;
-    float4 LUTColor = float4(LUT.sample(colorSamplers[3], LUTCoords.xy))/255.0f;
+    const float2 LUTCoords = in.texCoord2.xy;
+    const half4 LUTColor = half4(LUT.sample(colorSamplers[3], LUTCoords))/255.0h;
     
     currentColor.rgb = (1.0 - LUTColor.rgb) * currentColor.rgb;
     currentColor.a = LUTColor.a - currentColor.a;
     
-    if(alphaSrc != -1) {
-        half4 layerColor = blendLayer(layers.bufferedUniforms->layers[alphaSrc], in.texCoord3, half4(layers.colors[alphaSrc]), layers.textures[alphaSrc], nullptr);
+    //only possible alpha sources are layers 0 or 1
+    if(alphaSrc == 0) {
+        
+        half4 layerColor = sampleLayer(sourceTypes[2], layers.bufferedUniforms->layers[0].sampleType, miscFlags[2], in.texCoord3, half4(layers.colors[0]), (&layers.textures)[0], (&layers.cubicTextures)[0]);
         
         currentColor.rgb *= layerColor.a;
-        currentColor.rgb *= uniforms.diffuseCol.a;
+        currentColor.rgb *= in.vtxColor.a;
+    } else if(alphaSrc == 1) {
+        
+        half4 layerColor = sampleLayer(sourceTypes[2], layers.bufferedUniforms->layers[1].sampleType, miscFlags[2], in.texCoord3, half4(layers.colors[1]), (&layers.textures)[1], (&layers.cubicTextures)[1]);
+        
+        currentColor.rgb *= layerColor.a;
+        currentColor.rgb *= in.vtxColor.a;
     }
     
     //alpha blend goes here
     
-    if(currentColor.a <= 0.0)
+    if(currentColor.a <= 0.0h)
         discard_fragment();
     
     return currentColor;

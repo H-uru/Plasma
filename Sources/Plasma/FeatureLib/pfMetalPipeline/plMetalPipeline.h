@@ -149,7 +149,7 @@ private:
     VertexUniforms*                 fCurrentRenderPassUniforms;
     
     //cache to prevent oversetting, Metal won't catch this for us and will encode extra work
-    MTL::RenderPipelineState*       fCurrentPipelineState;
+    const MTL::RenderPipelineState*       fCurrentPipelineState;
     MTL::DepthStencilState*         fCurrentDepthStencilState;
     
     void FindFragFunction();

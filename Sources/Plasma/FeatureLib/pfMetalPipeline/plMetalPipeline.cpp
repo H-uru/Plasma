@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMetalPipeline.h"
 #include "plMetalMaterialShaderRef.h"
 #include "plMetalPlateManager.h"
+#include "plMetalPipelineState.h"
 
 #include "hsTimer.h"
 #include "plPipeDebugFlags.h"
@@ -148,7 +149,6 @@ bool plRenderTriListFunc::RenderPrims() const
     
     
     fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), BufferIndexState);
-    fDevice->CurrentRenderCommandEncoder()->setFragmentBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), BufferIndexState);
     fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
 }
 
@@ -269,7 +269,9 @@ bool plMetalPipeline::PrepForRender(plDrawable *drawable, std::vector<int16_t> &
     return true;
 }
 
-plTextFont *plMetalPipeline::MakeTextFont(char *face, uint16_t size) { return nullptr; }
+plTextFont *plMetalPipeline::MakeTextFont(char *face, uint16_t size) {
+    return nullptr;
+}
 
 bool plMetalPipeline::OpenAccess(plAccessSpan &dst, plDrawableSpans *d, const plVertexSpan *span, bool readOnly) { return false; }
 
@@ -1225,124 +1227,9 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     size_t pass;
     for (pass = 0; pass < mRef->GetNumPasses(); pass++) {
         IHandleMaterial(material, pass, &span, vRef);
-#if 0
-        plLayerInterface* lay = material->GetLayer(mRef->GetPassIndex(pass));
-        fCurrLayerIdx = mRef->GetPassIndex(pass);
-        
-        ICalcLighting(mRef, lay, &span);
-
-        hsGMatState s;
-        s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
-        
-        /*
-         If the layer opacity is 0, don't draw it. This prevents it from contributing to the Z buffer.
-         This can happen with some models like the fire marbles in the neighborhood that have some models
-         for physics only, and then can block other rendering in the Z buffer.
-         DX pipeline does this in ILoopOverLayers.
-         */
-        if( (s.fBlendFlags & hsGMatState::kBlendAlpha)
-           &&lay->GetOpacity() <= 0
-           &&(fCurrLightingMethod != plSpan::kLiteVtxPreshaded) ) {
-            continue;
-        }
-
-        IHandleZMode(s);
-        IHandleBlendMode(s);
-        
-        if (s.fMiscFlags & hsGMatState::kMiscTwoSided) {
-            if(fCurrentCullMode != MTL::CullModeNone) {
-                fDevice.CurrentRenderCommandEncoder()->setCullMode(MTL::CullModeNone);
-                fCurrentCullMode =  MTL::CullModeNone;
-            }
-        } else {
-            ISetCullMode();
-        }
-        
-        if(lay->GetVertexShader()) {
-            //pure shader path
-            plShader *vertexShader = lay->GetVertexShader();
-            plShader *fragShader = lay->GetPixelShader();
-            
-            fCurrLay = lay;
-            fCurrNumLayers = mRef->fPassLengths[pass];
-            
-            ISetShaders(vRef, s, vertexShader, fragShader);
-            
-            //FIXME: Programmable pipeline does not implement the full feature set
-            /*
-             The programmable pipeline doesn't do things like set the texture transform matrices,
-             In practice, the transforms aren't set and used. Does it matter that the Metal
-             implementation doesn't implemention the full inputs the DX version gets?
-             
-             If it is implemented, the same checks the DX version does should be also implemented.
-             DX will set texture transforms, but then turn them off in the pipeline and manually
-             manipulate texture co-ords in the shader.
-             
-             Texture setting should also _maybe_ be reconciled with the "fixed" pipeline. But
-             the fixed pipeline uses indirect textures mapped to a buffer. That approach could
-             work for the programmable pipeline too, but I'm planning changes to the fixed pipeline
-             and the way it stores textures. So maybe things should be reconciled after that
-             work is done.
-             */
-            
-            for (size_t i = mRef->GetPassIndex(pass); i < mRef->GetPassIndex(pass) + mRef->fPassLengths[pass]; i++) {
-                plLayerInterface* layer = material->GetLayer(i);
-                if (!layer) {
-                    continue;
-                }
-
-                CheckTextureRef(layer);
-                
-                plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
-
-                if (!img) {
-                    continue;
-                }
-                
-                plMetalTextureRef* texRef = (plMetalTextureRef*)img->GetDeviceRef();
-
-                if (!texRef->fTexture) {
-                    continue;
-                }
-                fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(texRef->fTexture, i - mRef->GetPassIndex(pass));
-            }
-        } else {
-            //"Fixed" path
-            
-            
-            s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
-            
-            if (s.fBlendFlags & hsGMatState::kBlendInvertVtxAlpha)
-                fCurrentRenderPassUniforms->invVtxAlpha = true;
-            else
-                fCurrentRenderPassUniforms->invVtxAlpha = false;
-            
-            std::vector<plLightInfo*>& spanLights = span.GetLightList(false);
-            
-            int numActivePiggyBacks = 0;
-            //FIXME: In the DX source, this check was done on the first layer. Does that mean the first layer of the material or the first layer of the pass?
-            if( !(s.fMiscFlags & hsGMatState::kMiscBumpChans) && !(s.fShadeFlags & hsGMatState::kShadeEmissive) )
-            {
-                /// Tack lightmap onto last stage if we have one
-                numActivePiggyBacks = fActivePiggyBacks;
-                //if( numActivePiggyBacks > fMaxLayersAtOnce - fCurrNumLayers )
-                //    numActivePiggyBacks = fMaxLayersAtOnce - fCurrNumLayers;
-                
-            }
-            
-            plMetalDevice::plMetalLinkedPipeline *pipeline = fDevice.pipelineStateFor(vRef, s.fBlendFlags, numActivePiggyBacks + mRef->fPassLengths[pass], plShaderID::Unregistered, plShaderID::Unregistered);
-            MTL::RenderPipelineState *pipelineState = pipeline->pipelineState;
-            if(fCurrentPipelineState != pipelineState) {
-                fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pipelineState);
-                fCurrentPipelineState = pipelineState;
-            }
-            
-            mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &fPiggyBackStack, plMetalMaterialShaderRef::Passthrough, plMetalMaterialShaderRef::Passthrough);
-        }
-#endif
         if( aux->fFlags & plAuxSpan::kOverrideLiteModel )
         {
-            fCurrentRenderPassUniforms->ambientCol = simd_float4(1.0f);
+            fCurrentRenderPassUniforms->ambientCol = {1.0f, 1.0f, 1.0f, 1.0f};
             
             fCurrentRenderPassUniforms->diffuseSrc = 1.0;
             fCurrentRenderPassUniforms->ambientSrc = 1.0;
@@ -1513,16 +1400,21 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
             
         }
         
-        plMetalDevice::plMetalLinkedPipeline *pipeline = fDevice.pipelineStateFor(vRef, s.fBlendFlags, numActivePiggyBacks + mRef->fPassLengths[pass], plShaderID::Unregistered, plShaderID::Unregistered);
-        MTL::RenderPipelineState *pipelineState = pipeline->pipelineState;
-        if(fCurrentPipelineState != pipelineState) {
-            fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pipelineState);
-            fCurrentPipelineState = pipelineState;
-        }
+        uint8_t sources[8];
+        uint32_t blendModes[8];
+        uint32_t miscFlags[8];
+        memset(sources, 0, sizeof(sources));
+        memset(blendModes, 0, sizeof(blendModes));
+        memset(miscFlags, 0, sizeof(miscFlags));
+        
         lay = IPopOverBaseLayer(lay);
         
         if(numActivePiggyBacks==0 && fOverBaseLayer == nullptr && fOverAllLayer == nullptr) {
             mRef->FastEncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass);
+            
+            mRef->GetSourceArray(sources, pass);
+            mRef->GetBlendFlagArray(blendModes, pass);
+            mRef->GetMiscFlagArray(miscFlags, pass);
         } else {
         
             mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &fPiggyBackStack,
@@ -1531,6 +1423,22 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
                     layer = IPushOverBaseLayer(layer);
                 }
                 layer = IPushOverAllLayer(layer);
+                
+                plBitmap* texture = layer->GetTexture();
+                if (texture != nullptr) {
+                    plMetalTextureRef *deviceTexture = (plMetalTextureRef *)texture->GetDeviceRef();
+                    if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
+                        sources[index] = PassTypeCubicTexture;
+                    } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
+                        sources[index] = PassTypeTexture;
+                    }
+                    
+                } else {
+                    sources[index] = PassTypeColor;
+                }
+                blendModes[index] = layer->GetBlendFlags();
+                miscFlags[index] = layer->GetMiscFlags();
+                
                 return layer;
             },
                                   [&](plLayerInterface* layer, uint32_t index){
@@ -1539,6 +1447,22 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
                     layer = IPopOverBaseLayer(layer);
                 return layer;
             });
+        }
+        
+         struct plMetalMaterialPassDescription passDescription;
+         memcpy(passDescription.passTypes, sources, sizeof(sources));
+         memcpy(passDescription.blendModes, blendModes, sizeof(blendModes));
+         memcpy(passDescription.miscFlags, miscFlags, sizeof(miscFlags));
+         passDescription.numLayers = numActivePiggyBacks + mRef->fPassLengths[pass];
+         
+         plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalMaterialPassPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();
+         const MTL::RenderPipelineState *pipelineState = linkedPipeline->pipelineState;
+        
+        /*plMetalDevice::plMetalLinkedPipeline *pipeline = fDevice.pipelineStateFor(vRef, s.fBlendFlags, numActivePiggyBacks + mRef->fPassLengths[pass], plShaderID::Unregistered, plShaderID::Unregistered, sources, blendModes, miscFlags);
+        const MTL::RenderPipelineState *pipelineState = pipeline->pipelineState;*/
+        if(fCurrentPipelineState != pipelineState) {
+            fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pipelineState);
+            fCurrentPipelineState = pipelineState;
         }
     }
     
@@ -1778,7 +1702,7 @@ bool plMetalPipeline::ISetShaders(const plMetalVertexBufferRef * vRef, const hsG
     plShaderID::ID vertexShaderID = vShader->GetDecl()->GetID();
     plShaderID::ID fragmentShaderID = pShader->GetDecl()->GetID();
     
-    plMetalDevice::plMetalLinkedPipeline *pipeline = fDevice.pipelineStateFor(vRef, blendMode.fBlendFlags, 0, vertexShaderID, fragmentShaderID);
+    plMetalDevice::plMetalLinkedPipeline *pipeline = plMetalDynamicMaterialPipelineState(&fDevice, vRef, blendMode.fBlendFlags, vertexShaderID, fragmentShaderID).GetRenderPipelineState();
     if(fCurrentPipelineState != pipeline->pipelineState) {
         fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pipeline->pipelineState);
         fCurrentPipelineState = pipeline->pipelineState;
@@ -2092,20 +2016,20 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
                 fCurrentRenderPassUniforms->ambientCol = { 0.0, 0.0, 0.0, 1.0 };
             } else {
                 hsColorRGBA amb = currLayer->GetPreshadeColor();
-                fCurrentRenderPassUniforms->globalAmb = { amb.r, amb.g, amb.b, 1.0 };
-                fCurrentRenderPassUniforms->ambientCol = { amb.r, amb.g, amb.b, 1.0 };
+                fCurrentRenderPassUniforms->globalAmb = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), 1.0 };
+                fCurrentRenderPassUniforms->ambientCol = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), 1.0 };
             }
 
             hsColorRGBA dif = currLayer->GetRuntimeColor();
-            fCurrentRenderPassUniforms->diffuseCol = { dif.r, dif.g, dif.b, currLayer->GetOpacity() };
+            fCurrentRenderPassUniforms->diffuseCol = { static_cast<half>(dif.r), static_cast<half>(dif.g), static_cast<half>(dif.b), static_cast<half>(currLayer->GetOpacity()) };
 
             hsColorRGBA em = currLayer->GetAmbientColor();
-            fCurrentRenderPassUniforms->emissiveCol = { em.r, em.g, em.b, 1.0 };
+            fCurrentRenderPassUniforms->emissiveCol = { static_cast<half>(em.r), static_cast<half>(em.g), static_cast<half>(em.b), 1.0 };
 
             // Set specular properties
             if (state.fShadeFlags & hsGMatState::kShadeSpecular) {
                 hsColorRGBA spec = currLayer->GetSpecularColor();
-                fCurrentRenderPassUniforms->specularCol = { spec.r, spec.g, spec.b, 1.0 };
+                fCurrentRenderPassUniforms->specularCol = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b), 1.0 };
 #if 0
                 mat.Power = currLayer->GetSpecularPower();
 #endif
@@ -2155,12 +2079,12 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
             fCurrentRenderPassUniforms->diffuseCol = { 0.0, 0.0, 0.0, 0.0 };
 
             hsColorRGBA em = currLayer->GetAmbientColor();
-            fCurrentRenderPassUniforms->emissiveCol = { em.r, em.g, em.b, 1.0 };
+            fCurrentRenderPassUniforms->emissiveCol = { static_cast<half>(em.r), static_cast<half>(em.g), static_cast<half>(em.b), 1.0 };
 
             // Set specular properties
             if (state.fShadeFlags & hsGMatState::kShadeSpecular) {
                 hsColorRGBA spec = currLayer->GetSpecularColor();
-                fCurrentRenderPassUniforms->specularCol = { spec.r, spec.g, spec.b, 1.0 };
+                fCurrentRenderPassUniforms->specularCol = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b), 1.0 };
 #if 0
                 mat.Power = currLayer->GetSpecularPower();
 #endif
@@ -2169,7 +2093,7 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
             }
 
             hsColorRGBA amb = currLayer->GetPreshadeColor();
-            fCurrentRenderPassUniforms->globalAmb = { amb.r, amb.g, amb.b, amb.a };
+            fCurrentRenderPassUniforms->globalAmb = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), static_cast<half>(amb.a) };
 
             fCurrentRenderPassUniforms->ambientSrc = 0.0;
             fCurrentRenderPassUniforms->diffuseSrc = 0.0;
@@ -2200,7 +2124,7 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 
             fCurrentRenderPassUniforms->fogExponential = 0;
             fCurrentRenderPassUniforms->fogValues = {start, end};
-            fCurrentRenderPassUniforms->fogColor = { color.r, color.g, color.b };
+            fCurrentRenderPassUniforms->fogColor = { static_cast<half>(color.r), static_cast<half>(color.g), static_cast<half>(color.b) };
             break;
         }
         case plFogEnvironment::kExpFog:
@@ -2212,7 +2136,7 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 
             fCurrentRenderPassUniforms->fogExponential = 1;
             fCurrentRenderPassUniforms->fogValues = { power, density};
-            fCurrentRenderPassUniforms->fogColor = { color.r, color.g, color.b };
+            fCurrentRenderPassUniforms->fogColor = { static_cast<half>(color.r), static_cast<half>(color.g), static_cast<half>(color.b) };
             break;
         }
         default:
@@ -2301,13 +2225,13 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
 void plMetalPipeline::IEnableLight(plMetalMaterialShaderRef* mRef, size_t i, plLightInfo* light)
 {
     hsColorRGBA amb = light->GetAmbient();
-    fCurrentRenderPassUniforms->lampSources[i].ambient = { amb.r, amb.g, amb.b, amb.a };
+    fCurrentRenderPassUniforms->lampSources[i].ambient = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), static_cast<half>(amb.a) };
 
     hsColorRGBA diff = light->GetDiffuse();
-    fCurrentRenderPassUniforms->lampSources[i].diffuse = { diff.r, diff.g, diff.b, diff.a };
+    fCurrentRenderPassUniforms->lampSources[i].diffuse = { static_cast<half>(diff.r), static_cast<half>(diff.g), static_cast<half>(diff.b), static_cast<half>(diff.a) };
 
     hsColorRGBA spec = light->GetSpecular();
-    fCurrentRenderPassUniforms->lampSources[i].specular = { spec.r, spec.g, spec.b, spec.a };
+    fCurrentRenderPassUniforms->lampSources[i].specular = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b), static_cast<half>(spec.a) };
 
     plDirectionalLightInfo* dirLight = nullptr;
     plOmniLightInfo* omniLight = nullptr;
@@ -2413,10 +2337,6 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     fDevice.SetLocalToWorldMatrix(plate->GetTransform());
     
     plMetalPlateManager *pm = (plMetalPlateManager *)fPlateMgr;
-    
-    MTL::RenderPassDescriptor *renderPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
-    renderPassDescriptor->colorAttachments()->object(0)->setTexture(fDevice.GetCurrentDrawable()->texture());
-    renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
     
     fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pm->fPlateRenderPipelineState);
     fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(pm->fDepthState);
@@ -3636,7 +3556,7 @@ void plMetalPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSp
     }
 
     /// Switch to the vertex buffer we want
-    plMetalDevice::plMetalLinkedPipeline *linkedPipeline = fDevice.pipelineStateFor(vRef, hsGMatState::kBlendAlpha, fCurrentRenderPassUniforms->numUVSrcs, plShaderID::ID(0), plShaderID::ID(0), true);
+    plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalRenderShadowCasterPipelineState(&fDevice, vRef).GetRenderPipelineState();
     fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
     fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
@@ -3672,8 +3592,7 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
 
     bool first = true;
 
-    int i;
-    for( i = 0; i < fShadows.size(); i++ )
+    for(size_t i = 0; i < fShadows.size(); i++ )
     {
         if( slaveBits.IsBitSet(fShadows[i]->fIndex) )
         {
@@ -3698,7 +3617,18 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             // in projecting the shadow map onto the scene.
             ISetupShadowLight(fShadows[i]);
             
-            plMetalDevice::plMetalLinkedPipeline *linkedPipeline = fDevice.pipelineStateFor(vRef, hsGMatState::kBlendAlpha, fCurrentRenderPassUniforms->numUVSrcs, plShaderID::ID(0), plShaderID::ID(0), 2);
+            struct plMetalMaterialPassDescription passDescription;
+            memset(&passDescription.miscFlags, 0, sizeof(passDescription.miscFlags));
+            memset(&passDescription.blendModes, 0, sizeof(passDescription.blendModes));
+            memset(&passDescription.passTypes, 0, sizeof(passDescription.passTypes));
+            passDescription.Populate(mat->GetLayer(0), 2);
+            passDescription.numLayers = 3;
+            if (mat->GetNumLayers()>1) {
+                passDescription.Populate(mat->GetLayer(1), 2);
+                passDescription.numLayers = 3;
+            }
+            
+            plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalRenderShadowPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();
             if(fCurrentPipelineState != linkedPipeline->pipelineState) {
                 fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
                 fCurrentPipelineState = linkedPipeline->pipelineState;
@@ -4210,13 +4140,13 @@ void plMetalPipeline::CheckTextureRef(plLayerInterface* layer)
         if (tRef->IsDirty()) {
             plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
             if (mip) {
-                fDevice.MakeTextureRef(tRef, layer, mip);
+                fDevice.MakeTextureRef(tRef, mip);
                 return;
             }
 
             plCubicEnvironmap* cubic = plCubicEnvironmap::ConvertNoRef(bitmap);
             if (cubic) {
-                fDevice.MakeCubicTextureRef(tRef, layer, cubic);
+                fDevice.MakeCubicTextureRef(tRef, cubic);
                 return;
             }
         }

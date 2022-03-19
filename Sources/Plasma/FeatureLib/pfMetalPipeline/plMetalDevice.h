@@ -63,6 +63,7 @@ class plBitmap;
 class plMipmap;
 class plCubicEnvironmap;
 class plLayerInterface;
+class plMetalPipelineState;
 
 matrix_float4x4* hsMatrix2SIMD(const hsMatrix44& src, matrix_float4x4* dst, bool swapOrder = true);
 
@@ -72,6 +73,7 @@ class plMetalDevice
     friend plMetalPipeline;
     friend class plMetalMaterialShaderRef;
     friend class plMetalPlateManager;
+    friend class plMetalPipelineState;
     
 public:
     typedef plMetalVertexBufferRef VertexBufferRef;
@@ -101,9 +103,9 @@ public:
 public:
     
     struct plMetalLinkedPipeline {
-        MTL::RenderPipelineState    *pipelineState;
-        MTL::Function               *fragFunction;
-        MTL::Function               *vertexFunction;
+        const MTL::RenderPipelineState    *pipelineState;
+        const MTL::Function               *fragFunction;
+        const MTL::Function               *vertexFunction;
     };
     
     plMetalDevice();
@@ -137,8 +139,8 @@ public:
 
     void SetupTextureRef(plLayerInterface* layer, plBitmap* img, TextureRef* tRef);
     void CheckTexture(TextureRef* tRef);
-    void MakeTextureRef(TextureRef* tRef, plLayerInterface* layer, plMipmap* img);
-    void MakeCubicTextureRef(TextureRef* tRef, plLayerInterface* layer, plCubicEnvironmap* img);
+    void MakeTextureRef(TextureRef* tRef, plMipmap* img);
+    void MakeCubicTextureRef(TextureRef* tRef, plCubicEnvironmap* img);
     
     
     const char* GetErrorString() const { return fErrorMsg; }
@@ -151,9 +153,6 @@ public:
     
     void PopulateTexture(plMetalDevice::TextureRef *tRef, plMipmap *img, uint slice);
     uint ConfigureAllowedLevels(plMetalDevice::TextureRef *tRef, plMipmap *mipmap);
-    std::condition_variable * prewarmPipelineStateFor(plMetalVertexBufferRef * vRef, uint32_t blendFlags, uint32_t numLayers, plShaderID::ID vertexShaderID, plShaderID::ID fragmentShaderID, bool forShadows = false);
-    ///Returns the proper pipeline state for the given vertex and fragment buffers, and the current drawable. These states should not be reused between drawables.
-    plMetalLinkedPipeline* pipelineStateFor(const plMetalVertexBufferRef * vRef, uint32_t blendFlags, uint32_t numLayers, plShaderID::ID vertexShaderID, plShaderID::ID fragmentShaderID, int forShadows = 0);
     
     //stencil states are expensive to make, they should be cached
     //FIXME: There should be a function to pair these with hsGMatState
@@ -173,59 +172,43 @@ public:
     void Clear(bool shouldClearColor, simd_float4 clearColor, bool shouldClearDepth, float clearDepth);
 private:
     
-    //internal struct for tracking which Metal state goes with which set of
-    //fragment/vertex pass attributes. This allows for shader program reuse.
-    //Hashable so we can use a std::unordered_map for storage
-    struct plPipelineStateAtrributes {
-        uint numUVs;
-        uint numLayers;
-        uint numWeights;
-        bool hasSkinIndices;
-        plShaderID::ID vertexShaderID;
-        plShaderID::ID fragmentShaderID;
-        //the specific blend mode flag, not the entire set of flags from a material
-        //these are defined as mutually exclusive anyway
-        //0 implies no blend flag set
-        uint32_t blendFlags;
+    struct plMetalPipelineRecord {
+        MTL::PixelFormat depthFormat;
+        MTL::PixelFormat colorFormat;
+        std::shared_ptr<plMetalPipelineState> state;
+        
+        bool operator==(const plMetalPipelineRecord &p) const;
+    };
+    
+    
+    struct plMetalPipelineRecordHashFunction
+    {
+        std::size_t operator()(plMetalPipelineRecord const& s) const noexcept;
+    };
+    
+    std::unordered_map<plMetalPipelineRecord, plMetalLinkedPipeline *, plMetalPipelineRecordHashFunction> fNewPipelineStateMap;
+    //the condition map allows consumers of pipeline states to wait until the pipeline state is ready
+    std::unordered_map<plMetalPipelineRecord, std::condition_variable *, plMetalPipelineRecordHashFunction> fConditionMap;
+    std::mutex fPipelineCreationMtx;
+    void StartPipelineBuild(plMetalPipelineRecord& record, std::condition_variable **condOut);
+    std::condition_variable* PrewarmPipelineStateFor(plMetalPipelineState* pipelineState);
+    
+    struct plPipelineStateRecord {
         MTL::PixelFormat outputFormat;
         MTL::PixelFormat depthFormat;
-        int forShadows;
+        plMetalPipelineState *state;
         
-        bool operator==(const plPipelineStateAtrributes &p) const {
-            return numUVs == p.numUVs && numWeights == p.numWeights && blendFlags == p.blendFlags && hasSkinIndices == p.hasSkinIndices && outputFormat == p.outputFormat && vertexShaderID == p.vertexShaderID && fragmentShaderID == p.fragmentShaderID && depthFormat == p.depthFormat && forShadows == p.forShadows && numUVs == p.numUVs && numLayers == p.numLayers;
+        bool operator==(const plPipelineStateRecord &p) const {
+            return (outputFormat == p.outputFormat && depthFormat == p.depthFormat && state == p.state);
         }
         
-        plPipelineStateAtrributes(const plPipelineStateAtrributes &attributes) {
-            memcpy(this, &attributes, sizeof(plPipelineStateAtrributes));
-        }
-        
-        plPipelineStateAtrributes(const plMetalVertexBufferRef * vRef, const uint32_t blendFlags, const MTL::PixelFormat outputPixelFormat, const MTL::PixelFormat outputDepthFormat, const plShaderID::ID vertexShaderID, const plShaderID::ID fragmentShaderID, const int forShadows, const uint numLayers);
-    };
-    
-    struct plPipelineStateAtrributesHashFunction
-    {
-        std::size_t operator() (plPipelineStateAtrributes const & key) const
-        {
-            std::size_t h1 = std::hash<uint>()(key.numUVs);
-            std::size_t h2 = std::hash<uint>()(key.numWeights);
-            std::size_t h3 = std::hash<uint32_t>()(key.blendFlags);
-            std::size_t h4 = std::hash<bool>()(key.hasSkinIndices);
-            std::size_t h5 = std::hash<bool>()(key.outputFormat);
-            std::size_t h6 = std::hash<bool>()(key.vertexShaderID);
-            std::size_t h7 = std::hash<bool>()(key.fragmentShaderID);
-            std::size_t h8 = std::hash<bool>()(key.depthFormat);
-            std::size_t h9 = std::hash<bool>()(key.forShadows);
-            std::size_t h10 = std::hash<bool>()(key.numLayers);
-     
-            return h1 ^ h2 ^ h3 ^ h4 ^ h5 ^ h6 ^ h7 ^ h8 ^ h9 ^ h10;
+        plPipelineStateRecord(const plPipelineStateRecord &attributes) {
+            memcpy(this, &attributes, sizeof(plPipelineStateRecord));
         }
     };
     
-    std::unordered_map<plPipelineStateAtrributes, plMetalLinkedPipeline *, plPipelineStateAtrributesHashFunction> fPipelineStateMap;
-    //the condition map allows consumers of pipeline states to wait until the pipeline state is ready
-    std::unordered_map<plPipelineStateAtrributes, std::condition_variable *, plPipelineStateAtrributesHashFunction> fConditionMap;
-    void StartRenderPipelineBuild(plPipelineStateAtrributes &attributes, std::condition_variable **condOut);
-    std::mutex fPipelineCreationMtx;
+protected:
+    plMetalLinkedPipeline* PipelineState(plMetalPipelineState* pipelineState);
     
 private:
     //these are internal bits for backing the current render pass

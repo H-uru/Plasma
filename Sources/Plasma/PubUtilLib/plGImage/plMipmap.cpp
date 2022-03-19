@@ -463,6 +463,9 @@ plMipmap *plMipmap::IReadRLEImage( hsStream *stream )
     bool done = false;
 
     plMipmap *retVal = new plMipmap(fWidth,fHeight,plMipmap::kARGB32Config,1);
+    if(retVal->GetKeyName() == "RightDTMap2_dynText") {
+        printf("hi");
+    }
 
     uint32_t *curPos = (uint32_t*)retVal->fImage;
     uint32_t curLoc = 0;

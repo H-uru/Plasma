@@ -45,6 +45,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <simd/simd.h>
 
+#ifndef __METAL_VERSION__
+typedef _Float16 half;
+typedef __attribute__((__ext_vector_type__(2))) half half2;
+typedef __attribute__((__ext_vector_type__(3))) half half3;
+typedef __attribute__((__ext_vector_type__(4))) half half4;
+#endif
+
 enum plMetalShaderArgumentIndex
 {
     //Texture is a legacy argument for the simpler plate shader
@@ -75,10 +82,13 @@ enum plMetalFragmentShaderUniform
 enum plMetalFunctionConstant
 {
     FunctionConstantNumUVs    = 0,
-    FunctionConstantNumLayers    = 1
+    FunctionConstantNumLayers    = 1,
+    FunctionConstantSources    = 2,
+    FunctionConstantBlendModes    = 10,
+    FunctionConstantLayerFlags    = 18
 };
 
-enum plMetalLayerPassType
+enum plMetalLayerPassType: uint8_t
 {
     PassTypeTexture = 1,
     PassTypeCubicTexture = 2,
@@ -86,16 +96,12 @@ enum plMetalLayerPassType
 };
 
 struct plFragmentShaderLayer {
-    ushort passType;
-    uint uvIndex;
-    uint32_t blendMode;
-    uint32_t miscFlags;
-    ushort sampleType;
+    uint8_t sampleType;
 };
 
 struct plMetalFragmentShaderArgumentBuffer {
-    ushort layerCount;
-    float alphaThreshold;
+    uint8_t layerCount;
+    __fp16 alphaThreshold;
     plFragmentShaderLayer layers[8];
 };
 
@@ -112,21 +118,21 @@ enum plMetalFragmentShaderTextures {
 
 struct plMetalShaderLightSource {
     simd::float4 position;
-    simd::float4 ambient;
-    simd::float4 diffuse;
-    simd::float4 specular;
+    half4 ambient;
+    half4 diffuse;
+    half4 specular;
     simd::float3 direction;
     simd::float4 spotProps; // (falloff, theta, phi)
-    float constAtten;
-    float linAtten;
-    float quadAtten;
-    float scale;
+    __fp16 constAtten;
+    __fp16 linAtten;
+    __fp16 quadAtten;
+    __fp16 scale;
 };
 
 typedef struct
 {
-    uint UVWSrc;
-    uint flags;
+    uint32_t UVWSrc;
+    uint32_t flags;
     matrix_float4x4 transform;
 } UVOutDescriptor;
 
@@ -140,24 +146,24 @@ typedef struct
     matrix_float4x4 worldToCameraMatrix;
     
     //lighting
-    simd::float4 globalAmb;
-    simd::float4 ambientCol;
-    float ambientSrc;
-    simd::float4 diffuseCol;
-    float diffuseSrc;
-    simd::float4 emissiveCol;
-    float emissiveSrc;
-    simd::float4 specularCol;
-    float specularSrc;
+    half4 globalAmb;
+    half4 ambientCol;
+    uint8_t ambientSrc;
+    half4 diffuseCol;
+    uint8_t diffuseSrc;
+    half4 emissiveCol;
+    uint8_t emissiveSrc;
+    half4 specularCol;
+    uint8_t specularSrc;
     bool invVtxAlpha;
     
-    uint fogExponential;
+    uint8_t fogExponential;
     simd::float2 fogValues;
-    simd::float3 fogColor;
+    half3 fogColor;
     
     plMetalShaderLightSource lampSources[8];
     
-    uint numUVSrcs;
+    uint8_t numUVSrcs;
     UVOutDescriptor uvTransforms[8];
 } VertexUniforms;
 

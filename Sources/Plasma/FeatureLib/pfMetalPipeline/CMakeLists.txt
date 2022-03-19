@@ -14,6 +14,7 @@ set(pfMetalPipeline_SOURCES
     plMetalDeviceRefs.cpp
     plMetalMaterialShaderRef.cpp
     plMetalPipeline.cpp
+    plMetalPipelineState.cpp
     plMetalPlateManager.cpp
     plMetalShader.cpp
     plMetalFragmentShader.cpp
@@ -25,6 +26,7 @@ set(pfMetalPipeline_HEADERS
     plMetalDeviceRef.h
     plMetalMaterialShaderRef.h
     plMetalPipeline.h
+    plMetalPipelineState.h
     plMetalPlateManager.h
     plMetalShader.h
     plMetalFragmentShader.h

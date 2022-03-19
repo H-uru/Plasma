@@ -51,7 +51,7 @@ constant bool hasTexture6 = num_uvs > 5;
 constant bool hasTexture7 = num_uvs > 6;
 constant bool hasTexture8 = num_uvs > 7;
 
-constant ushort num_layers        [[ function_constant(FunctionConstantNumLayers) ]];
+constant uint8_t num_layers        [[ function_constant(FunctionConstantNumLayers) ]];
 constant bool hasLayer1 = num_layers > 0;
 constant bool hasLayer2 = num_layers > 1;
 constant bool hasLayer3 = num_layers > 2;
