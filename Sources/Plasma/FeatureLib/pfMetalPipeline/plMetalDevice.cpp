@@ -752,7 +752,7 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
                                                         drawable->texture()->width(),
                                                         drawable->texture()->height(),
                                                         false);
-        if(fMetalDevice->hasUnifiedMemory()) {
+        if(fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
             depthTextureDescriptor->setStorageMode(MTL::StorageModeMemoryless);
         }   else {
             depthTextureDescriptor->setStorageMode(MTL::StorageModePrivate);

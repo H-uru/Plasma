@@ -399,7 +399,7 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
                                                                                                      owner->GetWidth(),
                                                                                                      owner->GetHeight(),
                                                                                                      false);
-        if(fDevice.fMetalDevice->hasUnifiedMemory()) {
+        if (fDevice.fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
             depthTextureDescriptor->setStorageMode(MTL::StorageModeMemoryless);
         }   else {
             depthTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
@@ -3379,7 +3379,8 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
                                                                                                          owner->GetWidth(),
                                                                                                          owner->GetHeight(),
                                                                                                          false);
-            if(fDevice.fMetalDevice->hasUnifiedMemory()) {
+                                                                                                         
+            if (fDevice.fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
                 depthTextureDescriptor->setStorageMode(MTL::StorageModeMemoryless);
             }   else {
                 depthTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
