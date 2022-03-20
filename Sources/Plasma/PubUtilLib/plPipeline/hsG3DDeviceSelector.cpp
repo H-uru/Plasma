@@ -243,6 +243,8 @@ hsG3DDeviceModeRecord& hsG3DDeviceModeRecord::operator=(const hsG3DDeviceModeRec
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
 
+std::list<hsG3DDeviceSelector::DeviceEnumerator> hsG3DDeviceSelector::sEnumerators;
+
 hsG3DDeviceSelector::~hsG3DDeviceSelector()
 {
     IClear();
@@ -349,23 +351,12 @@ void hsG3DDeviceSelector::Enumerate(hsWindowHndl winRef)
     IClear();
 
 #ifdef PLASMA_PIPELINE_DX
-    /// 9.6.2000 - Create the class to use as our temporary window class
-    WNDCLASS    tempClass;
-
-    strcpy( fTempWinClass, "DSTestClass" );
-    memset( &tempClass, 0, sizeof( tempClass ) );
-    tempClass.lpfnWndProc = DefWindowProc;
-    tempClass.hInstance = GetModuleHandle(nullptr);
-    tempClass.hbrBackground = (HBRUSH)GetStockObject( BLACK_BRUSH );
-    tempClass.lpszClassName = fTempWinClass;
-    uint16_t ret = RegisterClass(&tempClass);
-    hsAssert(ret, "Cannot create temporary window class to test for device modes" );
-
     ITryDirect3DTnL(winRef);
-
-    /// Get rid of the class
-    UnregisterClass(fTempWinClass, GetModuleHandle(nullptr));
 #endif
+
+    for (const auto& enumerator : sEnumerators) {
+        enumerator(fRecords);
+    }
 }
 
 bool hsG3DDeviceSelector::GetRequested(hsG3DDeviceModeRecord *dmr, uint32_t devType)

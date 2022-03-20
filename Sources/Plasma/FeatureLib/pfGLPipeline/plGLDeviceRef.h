@@ -45,11 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsGDeviceRef.h"
 
-#if HS_BUILD_FOR_MACOS
-#    include <OpenGL/gl3.h>
-#else
-#    include <GL/gl.h>
-#endif
+#include <epoxy/gl.h>
 
 class plGLDeviceRef : public hsGDeviceRef
 {

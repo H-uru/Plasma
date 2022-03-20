@@ -46,8 +46,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/pl3DPipeline.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 
+class plGLEnumerate
+{
+public:
+    plGLEnumerate() {
+        hsG3DDeviceSelector::AddDeviceEnumerator(&plGLEnumerate::Enumerate);
+    }
+
+private:
+    static void Enumerate(std::vector<hsG3DDeviceRecord>& records);
+};
+
 class plGLPipeline : public pl3DPipeline<plGLDevice>
 {
+    friend class plGLPlateManager;
+
 public:
     plGLPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode);
     virtual ~plGLPipeline() = default;
@@ -99,6 +112,9 @@ public:
     int GetMaxAntiAlias(int Width, int Height, int ColorDepth) override;
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync = false  ) override;
     void RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList) override;
+
+private:
+    static plGLEnumerate enumerator;
 };
 
 #endif // _plGLPipeline_inc_

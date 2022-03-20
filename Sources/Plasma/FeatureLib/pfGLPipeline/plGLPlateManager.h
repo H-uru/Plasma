@@ -40,25 +40,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plClient.h"
-#include "plClientLoader.h"
+#ifndef _plGLPlateManager_inc_
+#define _plGLPlateManager_inc_
 
-#include "plPipeline/hsG3DDeviceSelector.h"
-#include "plProgressMgr/plProgressMgr.h"
+#include "plPipeline/plPlates.h"
 
-// Stub all of these on non-Windows for now
-void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed) {}
-void plClient::IChangeResolution(int width, int height) {}
-void plClient::IUpdateProgressIndicator(plOperationProgress* progress) {}
-void plClient::InitDLLs() {}
-void plClient::ShutdownDLLs() {}
-void plClient::ShowClientWindow() {}
-void plClient::FlashWindow() {}
+class plGLPipeline;
 
-static plClientLoader gClient;
 
-// Stub main function so it compiles on non-Windows
-int main(int argc, const char** argv)
+class plGLPlateManager : public plPlateManager
 {
-    return 0;
-}
+    friend class plGLPipeline;
+
+public:
+    virtual ~plGLPlateManager();
+
+protected:
+    plGLPlateManager(plGLPipeline* pipe);
+
+    void IDrawToDevice(plPipeline* pipe) override;
+};
+
+#endif //_plGLPlateManager_inc_
+
