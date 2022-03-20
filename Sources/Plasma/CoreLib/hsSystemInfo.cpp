@@ -89,6 +89,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #    else
 #        define cpuid_t int
 #    endif
+#else
+#    define cpuid_t int
 #endif
 
 ST::string hsSystemInfo::AsString()
