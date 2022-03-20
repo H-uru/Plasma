@@ -138,21 +138,21 @@ confirmPanelLightsSouth = ptAttribSceneobjectList(66, "South ready indicators")
 EscapeArtist = ptAttribActivator(67, "Escape Artist Catchall")
 
 MaleSuit = [
-    '03_MHAcc_SuitHelmet',
     '03_MLHand_Suit',
     '03_MRHand_Suit',
-    '03_MTorso_Suit',
-    '03_MLegs_Suit',
+    '03_MHAcc_SuitHelmet',
     '03_MLFoot_Suit',
-    '03_MRFoot_Suit']
+    '03_MRFoot_Suit',
+    '03_MLegs_Suit',
+    '03_MTorso_Suit']
 FemaleSuit = [
-    '03_FHair_SuitHelmet',
     '03_FLHand_Suit',
     '03_FRHand_Suit',
-    '03_FTorso_Suit',
-    '03_FLegs_Suit',
+    '03_FHair_SuitHelmet',
     '03_FLFoot_Suit',
-    '03_FRFoot_Suit']
+    '03_FRFoot_Suit',
+    '03_FLegs_Suit',
+    '03_FTorso_Suit']
     
 wornItem = []
 DefaultColor1 = []
@@ -248,7 +248,7 @@ blockerToEdgeDict = {0:None,1:None,2:None,3:None,4:None,5:None,6:None,7:None,8:(
                     69:(51,52),70:(52,53),71:(53,54),72:(54,55),73:None,74:(38,47),\
                     75:(39,48),76:(40,49),77:(41,50),78:(42,51),79:(43,52),80:(44,53),\
                     81:(45,54),82:None,83:None,84:(38,39),85:(39,40),86:(40,41),87:(41,42),\
-                    88:(42,43),89:(43,44),90:(44,45),91:None,92:(30,38),\93:(31,39),\
+                    88:(42,43),89:(43,44),90:(44,45),91:None,92:(30,38),93:(31,39),\
                     94:(32,40),95:(33,41),96:(34,42),97:(35,43),98:(36,44),99:(37,45),\
                     100:None,101:(30,31),102:(31,32),103:(32,33),104:(33,34),105:(34,35),\
                     106:(35,36),107:(36,37),108:None,109:(22,30),110:(23,31),111:(24,32),\
@@ -316,7 +316,7 @@ class grsnWallPython(ptResponder):
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnWallPython::OnServerInitComplete")
-        solo = bool(PtGetPlayerList())
+        solo = not bool(PtGetPlayerList())
         ageSDL = PtGetAgeSDL()
 
         #Prepare SDLs (n-North, s-South)
@@ -538,11 +538,13 @@ class grsnWallPython(ptResponder):
                             for item in wornItem:
                                 DefaultColor1.append(avatar.avatar.getTintClothingItem(item[0],1))
                                 DefaultColor2.append(avatar.avatar.getTintClothingItem(item[0],2))
+                        i = 1
                         for item in clothing[0:]:
                             avatar.avatar.netForce(1)
                             avatar.avatar.wearClothingItem(item, 0)
-                            avatar.avatar.tintClothingItem(item, ptColor().white(), 0)
-                            avatar.avatar.tintClothingItemLayer(item, ptColor().white(), 2, 1)
+                            avatar.avatar.tintClothingItem(item, DefaultColor1[i], 0)
+                            avatar.avatar.tintClothingItemLayer(item, DefaultColor2[i], 2, 1)
+                            i += 1
                         PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                         PtGetLocalAvatar().physics.warpObj(SouthTeamWarpPt.value.getKey())
                         ageSDL["nWallPlayer"] = (-1,)
@@ -572,11 +574,13 @@ class grsnWallPython(ptResponder):
                             for item in wornItem:
                                 DefaultColor1.append(avatar.avatar.getTintClothingItem(item[0],1))
                                 DefaultColor2.append(avatar.avatar.getTintClothingItem(item[0],2))
+                        i = 1
                         for item in clothing[0:]:
                             avatar.avatar.netForce(1)
                             avatar.avatar.wearClothingItem(item, 0)
-                            avatar.avatar.tintClothingItem(item, ptColor().white(), 0)
-                            avatar.avatar.tintClothingItemLayer(item, ptColor().white(), 2, 1)
+                            avatar.avatar.tintClothingItem(item, DefaultColor1[i], 0)
+                            avatar.avatar.tintClothingItemLayer(item, DefaultColor2[i], 2, 1)
+                            i += 1
                         PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                         PtGetLocalAvatar().physics.warpObj(NorthTeamWarpPt.value.getKey())
                         ageSDL["sWallPlayer"] = (-1,)
@@ -1058,7 +1062,10 @@ class grsnWallPython(ptResponder):
         elif(team == kSouth):
             sdl = "southWall"
 
-        return sum((1 for i in ageSDL[sdl] if i != -1 else 0))
+        try:
+            return list(ageSDL[sdl]).index(-1)
+        except ValueError:
+             return 20
 
     def ResetWall(self,resetState=True):
         if(self.IAmMaster()):
