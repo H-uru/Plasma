@@ -2562,8 +2562,8 @@ int plMetalPipeline::ISetNumActivePiggyBacks()
 }
 
 struct plAVTexVert {
-    simd_float2 fPos;
-    simd_float2 fUv;
+    float fPos[2];
+    float fUv[2];
 };
 
 void plMetalPipeline::IPreprocessAvatarTextures()
@@ -2620,11 +2620,10 @@ void plMetalPipeline::IPreprocessAvatarTextures()
             vertexDescriptor->attributes()->object(0)->setBufferIndex(0);
             vertexDescriptor->attributes()->object(0)->setOffset(0);
             vertexDescriptor->attributes()->object(1)->setFormat(MTL::VertexFormatFloat2);
-            vertexDescriptor->attributes()->object(1)->setBufferIndex(1);
+            vertexDescriptor->attributes()->object(1)->setBufferIndex(0);
             vertexDescriptor->attributes()->object(1)->setOffset(sizeof(float) * 2);
             
             vertexDescriptor->layouts()->object(0)->setStride(sizeof(float) * 4);
-            vertexDescriptor->layouts()->object(1)->setStride(sizeof(float) * 4);
             
             descriptor->setVertexDescriptor(vertexDescriptor);
             
@@ -2709,7 +2708,6 @@ void plMetalPipeline::IDrawClothingQuad(float x, float y, float w, float h,
     plAVTexVert vert;
     vert.fPos[0] = x;
     vert.fPos[1] = y;
-    vert.fPos[2] = 0.5f;
     vert.fUv[0] = uOff;
     vert.fUv[1] = 1.f + vOff;
 
@@ -2734,7 +2732,6 @@ void plMetalPipeline::IDrawClothingQuad(float x, float y, float w, float h,
     ptr[3].fUv[1] -= 1.f;
     
     fDevice.CurrentRenderCommandEncoder()->setVertexBytes(ptr, sizeof(ptr), 0);
-    fDevice.CurrentRenderCommandEncoder()->setVertexBytes(ptr, sizeof(ptr), 1);
     fDevice.CurrentRenderCommandEncoder()->drawPrimitives(MTL::PrimitiveType::PrimitiveTypeTriangleStrip, NS::UInteger(0), NS::UInteger(4));
 }
 
