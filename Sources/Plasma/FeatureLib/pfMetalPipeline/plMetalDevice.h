@@ -137,7 +137,7 @@ public:
     void CheckIndexBuffer(IndexBufferRef* iRef);
     void FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
 
-    void SetupTextureRef(plLayerInterface* layer, plBitmap* img, TextureRef* tRef);
+    void SetupTextureRef(plBitmap* img, TextureRef* tRef);
     void CheckTexture(TextureRef* tRef);
     void MakeTextureRef(TextureRef* tRef, plMipmap* img);
     void MakeCubicTextureRef(TextureRef* tRef, plCubicEnvironmap* img);

@@ -140,7 +140,10 @@ public:
     // Create and/or Refresh geometry buffers
     void            CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
     void            CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
-    void            CheckTextureRef(plLayerInterface* lay) override;
+    void            CheckLayerTextureRef(plLayerInterface* lay) override;
+    void            CheckTextureRef(plBitmap* bitmap);
+    hsGDeviceRef    *MakeTextureRef(plBitmap* bitmap);
+    void            IReloadTexture( plBitmap* bitmap, plMetalTextureRef *ref );
     
     void ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, plMetalVertexBufferRef* vRef);
     uint32_t  IGetBufferFormatSize( uint8_t format ) const;
@@ -164,6 +167,8 @@ private:
     
     void IDrawPlate(plPlate* plate);
     void IPreprocessAvatarTextures();
+    void IDrawClothingQuad(float x, float y, float w, float h,
+                           float uOff, float vOff, plMipmap *tex);
     void IClearShadowSlaves();
     
     void IReleaseDynDeviceObjects();

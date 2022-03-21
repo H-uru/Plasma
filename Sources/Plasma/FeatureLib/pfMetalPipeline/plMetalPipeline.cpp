@@ -1353,7 +1353,7 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
                 return false;
             }
 
-            CheckTextureRef(layer);
+            CheckLayerTextureRef(layer);
             
             plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
@@ -2561,6 +2561,11 @@ int plMetalPipeline::ISetNumActivePiggyBacks()
     return fActivePiggyBacks = std::min(static_cast<size_t>(fMaxPiggyBacks), fPiggyBackStack.size());
 }
 
+struct plAVTexVert {
+    simd_float2 fPos;
+    simd_float2 fUv;
+};
+
 void plMetalPipeline::IPreprocessAvatarTextures()
 {
     plProfile_Set(AvRTPoolUsed, fClothingOutfits.size());
@@ -2573,25 +2578,14 @@ void plMetalPipeline::IPreprocessAvatarTextures()
 
     if (fClothingOutfits.size() == 0)
         return;
-
-    static float kIdentityMatrix[16] = {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
-
-    //glUniformMatrix4fv(mRef->uMatrixProj, 1, GL_TRUE, kIdentityMatrix);
-    //glUniformMatrix4fv(mRef->uMatrixW2C, 1, GL_TRUE, kIdentityMatrix);
-    //glUniformMatrix4fv(mRef->uMatrixC2W, 1, GL_TRUE, kIdentityMatrix);
-    //glUniformMatrix4fv(mRef->uMatrixL2W, 1, GL_TRUE, kIdentityMatrix);
+    
+    plMipmap *itemBufferTex = nullptr;
 
     for (size_t oIdx = 0; oIdx < fClothingOutfits.size(); oIdx++) {
         plClothingOutfit* co = fClothingOutfits[oIdx];
         if (co->fBase == nullptr || co->fBase->fBaseTexture == nullptr)
             continue;
 
-#if 0
         plRenderTarget* rt = plRenderTarget::ConvertNoRef(co->fTargetLayer->GetTexture());
         if (rt != nullptr && co->fDirtyItems.Empty())
             // we've still got our valid RT from last frame and we have nothing to do.
@@ -2601,22 +2595,147 @@ void plMetalPipeline::IPreprocessAvatarTextures()
             rt = IGetNextAvRT();
             co->fTargetLayer->SetTexture(rt);
         }
-#endif
 
-        //PushRenderTarget(rt);
+        PushRenderTarget(rt);
+        fDevice.CurrentRenderCommandEncoder()->setViewport({0, 0, static_cast<double>(rt->GetWidth()), static_cast<double>(rt->GetHeight()), 0.f, 1.f});
+        
+        static MTL::RenderPipelineState* baseAvatarRenderState = nullptr;
+        static MTL::RenderPipelineState* avatarRenderState = nullptr;
+        
+        if (!baseAvatarRenderState) {
+            //This is a bit of a hack, this really should be part of the plMetalDevice's function map.
+            //But that hash map assumes that it follows the vertex arrangement of the models.
+            //After a refactor, this function creation should go there.
+            MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init()->autorelease();
+            MTL::Library* library = fDevice.fMetalDevice->newDefaultLibrary()->autorelease();
+            
+            MTL::Function* vertFunction = library->newFunction(NS::MakeConstantString("PreprocessAvatarVertexShader"))->autorelease();
+            MTL::Function* fragFunction = library->newFunction(NS::MakeConstantString("PreprocessAvatarFragmentShader"))->autorelease();
+            
+            descriptor->setVertexFunction(vertFunction);
+            descriptor->setFragmentFunction(fragFunction);
+            
+            MTL::VertexDescriptor* vertexDescriptor = MTL::VertexDescriptor::vertexDescriptor();
+            vertexDescriptor->attributes()->object(0)->setFormat(MTL::VertexFormatFloat2);
+            vertexDescriptor->attributes()->object(0)->setBufferIndex(0);
+            vertexDescriptor->attributes()->object(0)->setOffset(0);
+            vertexDescriptor->attributes()->object(1)->setFormat(MTL::VertexFormatFloat2);
+            vertexDescriptor->attributes()->object(1)->setBufferIndex(1);
+            vertexDescriptor->attributes()->object(1)->setOffset(sizeof(float) * 2);
+            
+            vertexDescriptor->layouts()->object(0)->setStride(sizeof(float) * 4);
+            vertexDescriptor->layouts()->object(1)->setStride(sizeof(float) * 4);
+            
+            descriptor->setVertexDescriptor(vertexDescriptor);
+            
+            descriptor->colorAttachments()->object(0)->setBlendingEnabled(false);
+            descriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
+            NS::Error* error = nullptr;
+            baseAvatarRenderState = fDevice.fMetalDevice->newRenderPipelineState(descriptor, &error);
+            
+            descriptor->colorAttachments()->object(0)->setBlendingEnabled(true);
+            descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
+            descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
+            descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
+            descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
+            avatarRenderState = fDevice.fMetalDevice->newRenderPipelineState(descriptor, &error);
+        }
 
-        // HACK HACK HACK
-        co->fTargetLayer->SetTexture(co->fBase->fBaseTexture);
+        float uOff = 0.5f / rt->GetWidth();
+        float vOff = 0.5f / rt->GetHeight();
+        
+        plClothingLayout *layout = plClothingMgr::GetClothingMgr()->GetLayout(co->fBase->fLayoutName);
 
-        // TODO: Actually render to the render target
+        for (plClothingItem *item : co->fItems)
+        {
+            
+            for (size_t j = 0; j < item->fElements.size(); j++)
+            {
+                for (int k = 0; k < plClothingElement::kLayerMax; k++)
+                {
+                    if (item->fTextures[j][k] == nullptr)
+                        continue;
+                    
+                    itemBufferTex = item->fTextures[j][k];
+                    hsColorRGBA tint = co->GetItemTint(item, k);
+                    if (k >= plClothingElement::kLayerSkinBlend1 && k <= plClothingElement::kLayerSkinLast)
+                        tint.a = co->fSkinBlends[k - plClothingElement::kLayerSkinBlend1];
+                    
+                    if (k == plClothingElement::kLayerBase)
+                    {
+                        fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(baseAvatarRenderState);
+                    }
+                    else
+                    {
+                        fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(avatarRenderState);
+                    }
+                    
+                    float screenW = (float)item->fElements[j]->fWidth / layout->fOrigWidth * 2.f;
+                    float screenH = (float)item->fElements[j]->fHeight / layout->fOrigWidth * 2.f;
+                    float screenX = (float)item->fElements[j]->fXPos / layout->fOrigWidth * 2.f - 1.f;
+                    float screenY = (1.f - (float)item->fElements[j]->fYPos / layout->fOrigWidth) * 2.f - 1.f - screenH;
+                    IDrawClothingQuad(screenX, screenY, screenW, screenH, uOff, vOff, itemBufferTex);
+                }
+            }
+        }
 
-        //PopRenderTarget();
-        //co->fDirtyItems.Clear();
+        PopRenderTarget();
+        co->fDirtyItems.Clear();
     }
 
     fView.fXformResetFlags = fView.kResetAll;
 
     fClothingOutfits.swap(fPrevClothingOutfits);
+}
+
+void plMetalPipeline::IDrawClothingQuad(float x, float y, float w, float h,
+                                     float uOff, float vOff, plMipmap *tex)
+{
+    const uint32_t kVSize = sizeof(plAVTexVert);
+    plMetalTextureRef* ref = (plMetalTextureRef*)tex->GetDeviceRef();
+    if (!ref || ref->IsDirty())
+    {
+        CheckTextureRef(tex);
+        ref = (plMetalTextureRef*)tex->GetDeviceRef();
+    }
+    if (!ref->fTexture)
+    {
+        IReloadTexture(tex, ref);
+    }
+    hsRefCnt_SafeAssign( fLayerRef[0], ref );
+    fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(ref->fTexture, 0);
+
+    plAVTexVert ptr[4];
+    plAVTexVert vert;
+    vert.fPos[0] = x;
+    vert.fPos[1] = y;
+    vert.fPos[2] = 0.5f;
+    vert.fUv[0] = uOff;
+    vert.fUv[1] = 1.f + vOff;
+
+    // P0
+    ptr[2] = vert;
+
+    // P1
+    ptr[0] = vert;
+    ptr[0].fPos[0] += w;
+    ptr[0].fUv[0] += 1.f;
+
+    // P2
+    ptr[1] = vert;
+    ptr[1].fPos[0] += w;
+    ptr[1].fUv[0] += 1.f;
+    ptr[1].fPos[1] += h;
+    ptr[1].fUv[1] -= 1.f;
+
+    // P3
+    ptr[3] = vert;
+    ptr[3].fPos[1] += h;
+    ptr[3].fUv[1] -= 1.f;
+    
+    fDevice.CurrentRenderCommandEncoder()->setVertexBytes(ptr, sizeof(ptr), 0);
+    fDevice.CurrentRenderCommandEncoder()->setVertexBytes(ptr, sizeof(ptr), 1);
+    fDevice.CurrentRenderCommandEncoder()->drawPrimitives(MTL::PrimitiveType::PrimitiveTypeTriangleStrip, NS::UInteger(0), NS::UInteger(4));
 }
 
 void plMetalPipeline::FindFragFunction() {
@@ -4117,40 +4236,65 @@ void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, 
 
 // CheckTextureRef //////////////////////////////////////////////////////
 // Make sure the given layer's texture has background D3D resources allocated.
-void plMetalPipeline::CheckTextureRef(plLayerInterface* layer)
+void plMetalPipeline::CheckLayerTextureRef(plLayerInterface* layer)
 {
     plBitmap* bitmap = layer->GetTexture();
 
     if (bitmap) {
-        plMetalTextureRef* tRef = static_cast<plMetalTextureRef*>(bitmap->GetDeviceRef());
+        CheckTextureRef(bitmap);
+    }
+}
 
-        if (!tRef) {
-            tRef = new plMetalTextureRef();
+void plMetalPipeline::CheckTextureRef(plBitmap* bitmap)
+{
+    plMetalTextureRef* tRef = static_cast<plMetalTextureRef*>(bitmap->GetDeviceRef());
+    
+    if (!tRef) {
+        tRef = static_cast<plMetalTextureRef*>(MakeTextureRef(bitmap));
+    }
+    
+    // If it's dirty, refill it.
+    if (tRef->IsDirty()) {
+        IReloadTexture(bitmap, tRef);
+    }
+}
 
-            fDevice.SetupTextureRef(layer, bitmap, tRef);
-        }
+hsGDeviceRef    *plMetalPipeline::MakeTextureRef(plBitmap* bitmap)
+{
+    plMetalTextureRef* tRef = static_cast<plMetalTextureRef*>(bitmap->GetDeviceRef());
 
-        if (!tRef->IsLinked()) {
-            tRef->Link(&fTextureRefList);
-        }
+    if (!tRef) {
+        tRef = new plMetalTextureRef();
 
-        // Make sure it has all resources created.
-        fDevice.CheckTexture(tRef);
+        fDevice.SetupTextureRef(bitmap, tRef);
+    }
 
-        // If it's dirty, refill it.
-        if (tRef->IsDirty()) {
-            plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
-            if (mip) {
-                fDevice.MakeTextureRef(tRef, mip);
-                return;
-            }
+    if (!tRef->IsLinked()) {
+        tRef->Link(&fTextureRefList);
+    }
 
-            plCubicEnvironmap* cubic = plCubicEnvironmap::ConvertNoRef(bitmap);
-            if (cubic) {
-                fDevice.MakeCubicTextureRef(tRef, cubic);
-                return;
-            }
-        }
+    // Make sure it has all resources created.
+    fDevice.CheckTexture(tRef);
+
+    // If it's dirty, refill it.
+    if (tRef->IsDirty()) {
+        IReloadTexture( bitmap, tRef );
+    }
+    return tRef;
+}
+
+void    plMetalPipeline::IReloadTexture( plBitmap* bitmap, plMetalTextureRef *ref )
+{
+    plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
+    if (mip) {
+        fDevice.MakeTextureRef(ref, mip);
+        return;
+    }
+
+    plCubicEnvironmap* cubic = plCubicEnvironmap::ConvertNoRef(bitmap);
+    if (cubic) {
+        fDevice.MakeCubicTextureRef(ref, cubic);
+        return;
     }
 }
 

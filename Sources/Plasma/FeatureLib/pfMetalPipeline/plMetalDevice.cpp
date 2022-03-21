@@ -525,7 +525,7 @@ void plMetalDevice::FillIndexBufferRef(plMetalDevice::IndexBufferRef *iRef, plGB
     iRef->SetDirty(false);
 }
 
-void plMetalDevice::SetupTextureRef(plLayerInterface *layer, plBitmap *img, plMetalDevice::TextureRef *tRef)
+void plMetalDevice::SetupTextureRef(plBitmap *img, plMetalDevice::TextureRef *tRef)
 {
     tRef->fOwner = img;
     
