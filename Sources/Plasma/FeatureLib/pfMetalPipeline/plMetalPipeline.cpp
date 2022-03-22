@@ -1355,7 +1355,7 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
                 return false;
             }
 
-            CheckLayerTextureRef(layer);
+            CheckTextureRef(layer);
             
             plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
@@ -4235,7 +4235,7 @@ void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, 
 
 // CheckTextureRef //////////////////////////////////////////////////////
 // Make sure the given layer's texture has background D3D resources allocated.
-void plMetalPipeline::CheckLayerTextureRef(plLayerInterface* layer)
+void plMetalPipeline::CheckTextureRef(plLayerInterface* layer)
 {
     plBitmap* bitmap = layer->GetTexture();
 

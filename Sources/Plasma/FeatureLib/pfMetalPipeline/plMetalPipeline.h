@@ -151,7 +151,7 @@ public:
     // Create and/or Refresh geometry buffers
     void            CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
     void            CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
-    void            CheckLayerTextureRef(plLayerInterface* lay) override;
+    void            CheckTextureRef(plLayerInterface* lay) override;
     void            CheckTextureRef(plBitmap* bitmap);
     hsGDeviceRef    *MakeTextureRef(plBitmap* bitmap);
     void            IReloadTexture( plBitmap* bitmap, plMetalTextureRef *ref );

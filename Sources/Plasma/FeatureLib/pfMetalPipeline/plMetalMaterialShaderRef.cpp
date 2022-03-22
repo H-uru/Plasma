@@ -105,7 +105,7 @@ void plMetalMaterialShaderRef::CheckMateralRef()
                 continue;
             }
 
-            fPipeline->CheckLayerTextureRef(layer);
+            fPipeline->CheckTextureRef(layer);
         }
     }
 }
@@ -121,7 +121,7 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder *en
             continue;
         }
 
-        fPipeline->CheckLayerTextureRef(layer);
+        fPipeline->CheckTextureRef(layer);
         
         plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
@@ -175,7 +175,7 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder *encode
             continue;
         }
 
-        fPipeline->CheckLayerTextureRef(layer);
+        fPipeline->CheckTextureRef(layer);
         
         plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
@@ -202,7 +202,7 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder *encode
                 continue;
             }
 
-            fPipeline->CheckLayerTextureRef(layer);
+            fPipeline->CheckTextureRef(layer);
             
             plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
@@ -243,7 +243,7 @@ void plMetalMaterialShaderRef::prepareTextures(MTL::RenderCommandEncoder *encode
     if (!layer) {
         return;
     }
-    fPipeline->CheckLayerTextureRef(layer);
+    fPipeline->CheckTextureRef(layer);
 
     // Load the image
     plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
@@ -329,7 +329,7 @@ const hsGMatState plMetalMaterialShaderRef::ICompositeLayerState(const plLayerIn
 
 void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer, simd_float4 *colorMap)
 {
-    fPipeline->CheckLayerTextureRef(layer);
+    fPipeline->CheckTextureRef(layer);
     plBitmap* texture = layer->GetTexture();
     
     if (texture != nullptr && encoder) {
