@@ -269,6 +269,7 @@ public:
         kDevTypeUnknown     = 0,
         kDevTypeDirect3D,
         kDevTypeOpenGL,
+        kDevTypeMetal,
 
         kNumDevTypes
     };
