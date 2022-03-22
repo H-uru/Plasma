@@ -84,6 +84,7 @@ set(plClient_TEXT
 )
 
 set(plClient_RESOURCES
+    res/plClient.exe.manifest
     res/plClient.rc
     res/resource.h
     res/banner.bmp

@@ -35,6 +35,7 @@ set(MaxMain_RESOURCES
     resource.h
     veroverrides.h
     SimpleExport.rc
+    PlasmaMax.gup.manifest
 )
 
 set(MaxMain_SOURCES
