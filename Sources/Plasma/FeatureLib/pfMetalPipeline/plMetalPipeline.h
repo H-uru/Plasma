@@ -59,6 +59,17 @@ class plShadowCaster;
 
 const uint kMaxSkinWeightsPerMaterial = 3;
 
+class plMetalEnumerate
+{
+public:
+    plMetalEnumerate() {
+        hsG3DDeviceSelector::AddDeviceEnumerator(&plMetalEnumerate::Enumerate);
+    }
+
+private:
+    static void Enumerate(std::vector<hsG3DDeviceRecord>& records);
+};
+
 //// Helper Classes ///////////////////////////////////////////////////////////
 
 //// The RenderPrimFunc lets you have one function which does a lot of stuff
@@ -238,6 +249,8 @@ private:
     void PushCurrentLightSources();
     void PopCurrentLightSources();
     std::vector<plMetalShaderLightSource *> fLightSourceStack;
+    
+    static plMetalEnumerate enumerator;
 };
 
 #endif // _plGLPipeline_inc_

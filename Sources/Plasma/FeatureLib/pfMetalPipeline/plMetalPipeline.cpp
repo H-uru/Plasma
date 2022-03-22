@@ -124,6 +124,8 @@ plProfile_CreateCounter("AvRTPoolRes", "PipeC", AvRTPoolRes);
 plProfile_CreateCounter("AvRTShrinkTime", "PipeC", AvRTShrinkTime);
 plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
 
+plMetalEnumerate plMetalPipeline::enumerator;
+
 class plRenderTriListFunc : public plRenderPrimFunc
 {
 protected:
