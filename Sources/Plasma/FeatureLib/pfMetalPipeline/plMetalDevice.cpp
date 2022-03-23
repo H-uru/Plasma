@@ -112,13 +112,27 @@ void plMetalDevice::Shutdown()
 
 void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool shouldClearDepth, float clearDepth) {
     
+    //Plasma may clear a target and draw at different times.
+    //This is specifically trouble with the drawable clear
+    //Plasma might clear the drawable, and then go off and do
+    //off screen stuff. Metal doesn't work that way, we need to
+    //draw and clear at the same time. So if it's a clear for the
+    //current drawable, remember that and perform the clear when
+    //we're actually drawing to screen.
     if (shouldClearColor) {
-        fClearColor = clearColor;
-    }
-    fShouldClearColor = shouldClearColor;
-    
-    if (shouldClearDepth) {
-        fClearDepth = clearDepth;
+        if (fCurrentRenderTarget) {
+            fClearRenderTargetColor = clearColor;
+            fShouldClearRenderTarget = shouldClearColor;
+            if (shouldClearDepth) {
+                fClearRenderTargetDepth = clearDepth;
+            }
+        } else {
+            fClearDrawableColor = clearColor;
+            fShouldClearDrawable = shouldClearColor;
+            if (shouldClearDepth) {
+                fClearDrawableDepth = clearDepth;
+            }
+        }
     }
     
     if (fCurrentRenderTargetCommandEncoder) {
@@ -150,25 +164,33 @@ void plMetalDevice::BeginNewRenderPass() {
     MTL::RenderPassDescriptor *renderPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
     renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
     renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
-    renderPassDescriptor->colorAttachments()->object(0)->setClearColor(MTL::ClearColor(fClearColor.x, fClearColor.y, fClearColor.z, fClearColor.w));
-    if (fShouldClearColor) {
-        renderPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionClear);
-    } else {
-        renderPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionLoad);
-    }
     
     if (fCurrentRenderTarget) {
+        renderPassDescriptor->colorAttachments()->object(0)->setClearColor(MTL::ClearColor(fClearRenderTargetColor.x, fClearRenderTargetColor.y, fClearRenderTargetColor.z, fClearRenderTargetColor.w));
+        if (fShouldClearRenderTarget) {
+            renderPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionClear);
+        } else {
+            renderPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionLoad);
+        }
+        
         if ( fCurrentRenderTarget->GetZDepth() ) {
             plMetalRenderTargetRef* deviceTarget= (plMetalRenderTargetRef *)fCurrentRenderTarget->GetDeviceRef();
             renderPassDescriptor->depthAttachment()->setTexture(deviceTarget->fDepthBuffer);
-            renderPassDescriptor->depthAttachment()->setClearDepth(fClearDepth);
+            renderPassDescriptor->depthAttachment()->setClearDepth(fClearRenderTargetDepth);
             renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
             renderPassDescriptor->depthAttachment()->setLoadAction(MTL::LoadActionClear);
         }
         fCurrentRenderTargetCommandEncoder = fCurrentOffscreenCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
     } else {
+        renderPassDescriptor->colorAttachments()->object(0)->setClearColor(MTL::ClearColor(fClearDrawableColor.x, fClearDrawableColor.y, fClearDrawableColor.z, fClearDrawableColor.w));
+        if (fShouldClearDrawable) {
+            renderPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionClear);
+        } else {
+            renderPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionLoad);
+        }
+        
         renderPassDescriptor->depthAttachment()->setTexture(fCurrentDrawableDepthTexture);
-        renderPassDescriptor->depthAttachment()->setClearDepth(fClearDepth);
+        renderPassDescriptor->depthAttachment()->setClearDepth(fClearDrawableDepth);
         renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
         renderPassDescriptor->depthAttachment()->setLoadAction(MTL::LoadActionClear);
         fCurrentRenderTargetCommandEncoder = fCurrentCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
@@ -196,11 +218,11 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
     
     fCurrentRenderTarget = target;
     
-    if ( fCurrentRenderTarget && fShouldClearColor == false ) {
+    if ( fCurrentRenderTarget && fShouldClearRenderTarget == false ) {
         // clear if a clear color wasn't already set
-        fClearColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
-        fShouldClearColor = true;
-        fClearDepth = 1.0;
+        fClearRenderTargetColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
+        fShouldClearRenderTarget = true;
+        fClearRenderTargetDepth = 1.0;
     }
     
     if(fCurrentRenderTarget) {
@@ -233,7 +255,8 @@ plMetalDevice::plMetalDevice()
     fCurrentRenderTarget(nullptr),
     fNewPipelineStateMap()
     {
-    fClearColor = {0.0, 0.0, 0.0, 1.0};
+    fClearRenderTargetColor = {0.0, 0.0, 0.0, 1.0};
+    fClearDrawableColor = {0.0, 0.0, 0.0, 1.0};
         
     fMetalDevice = MTL::CreateSystemDefaultDevice();
     fCommandQueue = fMetalDevice->newCommandQueue();
@@ -914,9 +937,12 @@ void plMetalDevice::SubmitCommandBuffer()
     fCurrentDrawable->release();
     fCurrentDrawable = nil;
     
-    fClearColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
-    fShouldClearColor = false;
-    fClearDepth = 1.0;
+    fClearRenderTargetColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
+    fClearDrawableColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
+    fShouldClearRenderTarget = false;
+    fShouldClearDrawable = false;
+    fClearRenderTargetDepth = 1.0;
+    fClearDrawableDepth = 1.0;
 }
 
 std::size_t plMetalDevice::plMetalPipelineRecordHashFunction ::operator()(plMetalPipelineRecord const& s) const noexcept
@@ -938,9 +964,15 @@ MTL::RenderCommandEncoder* plMetalDevice::CurrentRenderCommandEncoder()
     if (!fCurrentRenderTargetCommandEncoder) {
         BeginNewRenderPass();
         
-        fClearColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
-        fShouldClearColor = false;
-        fClearDepth = 1.0;
+        if (fCurrentRenderTarget) {
+            fClearRenderTargetColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
+            fShouldClearRenderTarget = false;
+            fClearRenderTargetDepth = 1.0;
+        } else {
+            fClearDrawableColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
+            fShouldClearDrawable = false;
+            fClearDrawableDepth = 1.0;
+        }
     }
     
     return fCurrentRenderTargetCommandEncoder;

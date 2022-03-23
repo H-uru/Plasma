@@ -1462,10 +1462,10 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
         
         /*plMetalDevice::plMetalLinkedPipeline *pipeline = fDevice.pipelineStateFor(vRef, s.fBlendFlags, numActivePiggyBacks + mRef->fPassLengths[pass], plShaderID::Unregistered, plShaderID::Unregistered, sources, blendModes, miscFlags);
         const MTL::RenderPipelineState *pipelineState = pipeline->pipelineState;*/
-        if(fCurrentPipelineState != pipelineState) {
+        //if(fCurrentPipelineState != pipelineState) {
             fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pipelineState);
             fCurrentPipelineState = pipelineState;
-        }
+        //}
     }
     
     return true;
@@ -3748,10 +3748,10 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             }
             
             plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalRenderShadowPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();
-            if(fCurrentPipelineState != linkedPipeline->pipelineState) {
+            //if(fCurrentPipelineState != linkedPipeline->pipelineState) {
                 fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
                 fCurrentPipelineState = linkedPipeline->pipelineState;
-            }
+            //}
 
             int selfShadowNow = span->IsShadowBitSet(fShadows[i]->fIndex);
 

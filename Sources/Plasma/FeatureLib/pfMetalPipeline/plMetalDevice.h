@@ -149,8 +149,6 @@ public:
     void SetWorldToCameraMatrix(const hsMatrix44& src);
     void SetLocalToWorldMatrix(const hsMatrix44& src, bool swapOrder = true);
     
-    void SetClearColor(simd_float4 clearColor) { fClearColor = clearColor; };
-    
     void PopulateTexture(plMetalDevice::TextureRef *tRef, plMipmap *img, uint slice);
     uint ConfigureAllowedLevels(plMetalDevice::TextureRef *tRef, plMipmap *mipmap);
     
@@ -221,9 +219,12 @@ private:
     MTL::Texture*               fCurrentFragmentOutputTexture;
     CA::MetalDrawable*          fCurrentDrawable;
     MTL::PixelFormat            fCurrentDepthFormat;
-    simd_float4                 fClearColor;
-    bool                        fShouldClearColor;
-    float                       fClearDepth;
+    simd_float4                 fClearRenderTargetColor;
+    simd_float4                 fClearDrawableColor;
+    bool                        fShouldClearRenderTarget;
+    bool                        fShouldClearDrawable;
+    float                       fClearRenderTargetDepth;
+    float                       fClearDrawableDepth;
     plRenderTarget*             fCurrentRenderTarget;
     
     void BeginNewRenderPass();
