@@ -2341,6 +2341,8 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     plMetalPlateManager *pm = (plMetalPlateManager *)fPlateMgr;
     
     fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pm->fPlateRenderPipelineState);
+    float alpha = material->GetLayer(0)->GetOpacity();
+    fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&alpha, sizeof(float), 6);
     fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(pm->fDepthState);
     fDevice.CurrentRenderCommandEncoder()->setCullMode(MTL::CullModeNone);
     

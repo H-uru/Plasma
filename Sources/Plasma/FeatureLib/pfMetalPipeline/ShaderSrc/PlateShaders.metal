@@ -89,7 +89,8 @@ vertex ColorInOut plateVertexShader(PlateVertex in [[stage_in]],
 
 fragment float4 fragmentShader(ColorInOut in [[stage_in]],
                                constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
-                               device plMetalFragmentShaderArgumentBuffer & fragmentShaderArgs [[ buffer(BufferIndexFragArgBuffer) ]],
+                               constant plMetalFragmentShaderArgumentBuffer & fragmentShaderArgs [[ buffer(BufferIndexFragArgBuffer) ]],
+                               constant float & alpha [[ buffer(6) ]],
                                texture2d<half> colorMap     [[ texture(Texture) ]])
 {
     constexpr sampler colorSampler(mip_filter::linear,
@@ -97,6 +98,7 @@ fragment float4 fragmentShader(ColorInOut in [[stage_in]],
                                    min_filter::linear);
 
     half4 colorSample = colorMap.sample(colorSampler, in.texCoord.xy);
+    colorSample.a *= alpha;
 
     return float4(colorSample);
 }
