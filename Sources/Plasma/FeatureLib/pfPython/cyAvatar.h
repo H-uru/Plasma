@@ -416,6 +416,8 @@ public:
     virtual bool SaveClothingToFile(plFileName filename);
     virtual bool LoadClothingFromFile(plFileName filename);
 
+    virtual PyObject* FindBone(const ST::string& boneName);
+
     /////////////////////////////////////////////////////////////////////////////
     //
     //  Function   : ChangeAvatar
