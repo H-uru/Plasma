@@ -891,7 +891,7 @@ void plMetalPipeline::RenderSpans(plDrawableSpans *ice, const std::vector<int16_
             // What do we change?
 
             plProfile_BeginTiming(SpanTransforms);
-            ISetupTransforms(ice, tempIce, mRef, lastL2W);
+            ISetupTransforms(ice, tempIce, lastL2W);
             plProfile_EndTiming(SpanTransforms);
 
             // Check that the underlying buffers are ready to go.
@@ -922,7 +922,7 @@ void plMetalPipeline::RenderSpans(plDrawableSpans *ice, const std::vector<int16_
     /// All done!
 }
 
-void plMetalPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, plMetalMaterialShaderRef* mRef, hsMatrix44& lastL2W)
+void plMetalPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W)
 {
     if (span.fNumMatrices) {
         if (span.fNumMatrices <= 2) {
@@ -2666,11 +2666,17 @@ void plMetalPipeline::IPreprocessAvatarTextures()
                     
                     if (k == plClothingElement::kLayerBase)
                     {
-                        fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(baseAvatarRenderState);
+                        if(fCurrentPipelineState != baseAvatarRenderState) {
+                            fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(baseAvatarRenderState);
+                            fCurrentPipelineState = baseAvatarRenderState;
+                        }
                     }
                     else
                     {
-                        fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(avatarRenderState);
+                        if(fCurrentPipelineState != avatarRenderState) {
+                            fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(avatarRenderState);
+                            fCurrentPipelineState = avatarRenderState;
+                        }
                     }
                     
                     float screenW = (float)item->fElements[j]->fWidth / layout->fOrigWidth * 2.f;
@@ -2954,8 +2960,8 @@ bool plMetalPipeline::IPrepShadowCaster(const plShadowCaster* caster)
             drawable->PrepForRender( this );
 
             // Do any software skinning.
-            //if( !ISoftwareVertexBlend(drawable, visList) )
-            //    return false;
+            if( !ISoftwareVertexBlend(drawable, visList) )
+                return false;
         }
     }
 
@@ -3064,50 +3070,6 @@ void plMetalPipeline::IPreprocessShadows()
     plProfile_EndTiming(PrepShadows);
 }
 
-// IGetULutTextureRef ///////////////////////////////////////////////////////////
-// The ULut just translates a U coordinate in range [0..1] into
-// color and alpha of U * 255.9f. We just have the one we keep
-// lying around.
-plMetalTextureRef* plMetalPipeline::IGetULutTextureRef()
-{
-    const int width = 256;
-    const int height = 1;
-    if( !fULutTextureRef )
-    {
-        uint32_t* tData = new uint32_t[width * height];
-
-        uint32_t* pData = tData;
-        int j;
-        for( j = 0; j < height; j++ )
-        {
-            int i;
-            for( i = 0; i < width; i++ )
-            {
-                *pData = (i << 24)
-                    | (i << 16)
-                    | (i << 8)
-                    | (i << 0);
-                pData++;
-            }
-        }
-
-        MTL::TextureDescriptor* textureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatRGBA8Uint, width, height, false);
-        textureDescriptor->setResourceOptions(MTL::ResourceStorageModeManaged | MTL::CPUCacheModeWriteCombined);
-        MTL::Buffer* buffer = fDevice.fMetalDevice->newBuffer(tData, width * height * sizeof(uint32_t), MTL::ResourceStorageModeManaged | MTL::CPUCacheModeWriteCombined);
-        buffer->didModifyRange(NS::Range::Make(0, buffer->length()));
-        MTL::Texture* texture = buffer->newTexture(textureDescriptor, 0, width * 4);
-        plMetalTextureRef* ref = new plMetalTextureRef();
-        ref->fTexture = texture;
-        
-        ref->Link(&fTextureRefList);
-
-        fULutTextureRef = ref;
-        
-        buffer->release();
-    }
-    return fULutTextureRef;
-}
-
 // IPushShadowCastState ////////////////////////////////////////////////////////////////////////////////
 // Push all the state necessary to start rendering this shadow map, but independent of the
 // actual shadow caster to be rendered into the map.
@@ -3123,7 +3085,6 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
         return false;
     
     // Set texture to U_LUT
-    plMetalTextureRef* ref = IGetULutTextureRef();
     fCurrentRenderPassUniforms->specularSrc = 0.0;
 
     //if( !ref->fTexture )
@@ -3141,7 +3102,6 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
 
     // Push the shadow map as the current render target
     PushRenderTarget(renderTarg);
-    fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(ref->fTexture, 0);
 
     // We'll be rendering the light space distance to the span fragment into
     // alpha (color is white), so our camera space position, transformed into light space
@@ -3208,9 +3168,6 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
     fD3DDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
     fD3DDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
     fLayerState[1].fBlendFlags = uint32_t(-1);*/
-
-    hsRefCnt_SafeAssign( fLayerRef[0], ref );
-    fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(ref->fTexture, Texture);
 
     //fD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
     //fD3DDevice->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_ONE);
@@ -3693,7 +3650,7 @@ void plMetalPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSp
     static hsMatrix44 emptyMatrix;
     hsMatrix44 m = emptyMatrix;
 
-    ISetupTransforms(drawable, span, NULL, m);
+    ISetupTransforms(drawable, span, m);
 
     bool flip = slave->ReverseCull();
     ISetCullMode(flip);
@@ -3746,7 +3703,6 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             passDescription.numLayers = 3;
             if (mat->GetNumLayers()>1) {
                 passDescription.Populate(mat->GetLayer(1), 2);
-                passDescription.numLayers = 3;
             }
             
             plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalRenderShadowPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();
@@ -3830,15 +3786,6 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
         fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(fDevice.fNoZWriteStencilState);
         fCurrentDepthStencilState = fDevice.fNoZWriteStencilState;
     }
-    
-    plMetalTextureRef* ref = IGetULutTextureRef();
-    if( !ref->fTexture )
-    {
-        //if( ref->fData )
-        //    IReloadTexture(ref);
-    }
-    hsRefCnt_SafeAssign(fLayerRef[1], ref);
-    fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(ref->fTexture, 17);
     
     int numUVSrcs = 2;
     

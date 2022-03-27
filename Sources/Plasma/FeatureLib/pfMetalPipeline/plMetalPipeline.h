@@ -136,7 +136,7 @@ public:
     int GetMaxAntiAlias(int Width, int Height, int ColorDepth) override;
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync = false) override;
     void RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList) override;
-    void ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, plMetalMaterialShaderRef* mRef, hsMatrix44& lastL2W);
+    void ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W);
     bool ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* group, const plSpan* spanBase);
     bool IRefreshDynVertices(plGBufferGroup* group, plMetalVertexBufferRef* vRef);
     void IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
@@ -221,7 +221,6 @@ private:
     bool IPopShadowCastState(plShadowSlave* slave);
     void IResetRenderTargetPools();
     void IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSpans* drawable, const plIcicle& span);
-    plMetalTextureRef* IGetULutTextureRef();
     plMetalTextureRef* fULutTextureRef;
     void ISetupShadowLight(plShadowSlave* slave);
     void IMakeRenderTargetPools();

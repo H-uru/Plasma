@@ -648,19 +648,17 @@ vertex ShadowCasterInOut shadowVertexShader(Vertex in [[stage_in]],
     return out;
 }
     
-fragment half4 shadowFragmentShader(ShadowCasterInOut in [[stage_in]],
-                                        texture2d<ushort> colorMap     [[ texture(0) ]])
+fragment half4 shadowFragmentShader(ShadowCasterInOut in [[stage_in]])
 {
     //D3DTTFF_COUNT3, D3DTSS_TCI_CAMERASPACEPOSITION
-    short currentAlpha = colorMap.sample(colorSamplers[3], float2(in.texCoord1.xy)).a;
+    const half currentAlpha = in.texCoord1.x;
 
-    return half4(1.0h, 1.0h, 1.0h, half(currentAlpha)/255.0h);
+    return half4(1.0h, 1.0h, 1.0h, currentAlpha);
 }
 
     
 fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
                                         texture2d<float> texture     [[ texture(16) ]],
-                                        texture2d<ushort> LUT     [[ texture(17) ]],
                                         constant plMetalShadowCastFragmentShaderArgumentBuffer & fragmentUniforms [[ buffer(BufferIndexShadowCastFragArgBuffer) ]],
                                         FragmentShaderArguments layers,
                                         constant int & alphaSrc [[ buffer(FragmentShaderArgumentShadowAlphaSrc) ]])
@@ -673,21 +671,21 @@ fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
     currentColor.rgb *= in.vtxColor.rgb;
     
     const float2 LUTCoords = in.texCoord2.xy;
-    const half4 LUTColor = half4(LUT.sample(colorSamplers[3], LUTCoords))/255.0h;
+    const half4 LUTColor = half4(LUTCoords.x);
     
-    currentColor.rgb = (1.0 - LUTColor.rgb) * currentColor.rgb;
+    currentColor.rgb = (1.0h - LUTColor.rgb) * currentColor.rgb;
     currentColor.a = LUTColor.a - currentColor.a;
     
     //only possible alpha sources are layers 0 or 1
     if(alphaSrc == 0) {
         
-        half4 layerColor = sampleLayer(sourceTypes[2], layers.bufferedUniforms->layers[0].sampleType, miscFlags[2], in.texCoord3, half4(layers.colors[0]), (&layers.textures)[0], (&layers.cubicTextures)[0]);
+        half4 layerColor = sampleLayer(sourceTypes[2], layers.bufferedUniforms->layers[0].sampleType, miscFlags[1], in.texCoord3, half4(layers.colors[0]), (&layers.textures)[0], (&layers.cubicTextures)[0]);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;
     } else if(alphaSrc == 1) {
         
-        half4 layerColor = sampleLayer(sourceTypes[2], layers.bufferedUniforms->layers[1].sampleType, miscFlags[2], in.texCoord3, half4(layers.colors[1]), (&layers.textures)[1], (&layers.cubicTextures)[1]);
+        half4 layerColor = sampleLayer(sourceTypes[2], layers.bufferedUniforms->layers[1].sampleType, miscFlags[1], in.texCoord3, half4(layers.colors[1]), (&layers.textures)[1], (&layers.cubicTextures)[1]);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;
