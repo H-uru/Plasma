@@ -409,6 +409,13 @@ const MTL::Function* plMetalDynamicMaterialPipelineState::GetVertexFunction(MTL:
                                                                (NS::Error **)nullptr
                                                             );
             break;
+        case plShaderID::vs_WaveDec1Lay_7:
+            vertFunction = library->newFunction(
+                                                               NS::String::string("vs_WaveDec1Lay_7", NS::ASCIIStringEncoding),
+                                                functionConstants,
+                                                               (NS::Error **)nullptr
+                                                            );
+            break;
         default:
             hsAssert(0, "unknown shader requested");
     }
@@ -450,6 +457,13 @@ const MTL::Function* plMetalDynamicMaterialPipelineState::GetFragmentFunction(MT
         case plShaderID::ps_WaveDecEnv:
             fragFunction = library->newFunction(
                                                                NS::String::string("ps_WaveDecEnv", NS::ASCIIStringEncoding),
+                                                functionConstants,
+                                                               (NS::Error **)nullptr
+                                                            );
+            break;
+        case plShaderID::ps_CbaseAbase:
+            fragFunction = library->newFunction(
+                                                               NS::String::string("ps_CbaseAbase", NS::ASCIIStringEncoding),
                                                 functionConstants,
                                                                (NS::Error **)nullptr
                                                             );
