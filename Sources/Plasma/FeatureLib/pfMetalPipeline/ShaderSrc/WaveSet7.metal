@@ -101,13 +101,15 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     float3 column1 = float3(uniforms.LocalToWorldRow1[0], uniforms.LocalToWorldRow2[0], uniforms.LocalToWorldRow3[0]);
     float3 column2 = float3(uniforms.LocalToWorldRow1[1], uniforms.LocalToWorldRow2[1], uniforms.LocalToWorldRow3[1]);
     float3 column3 = float3(uniforms.LocalToWorldRow1[2], uniforms.LocalToWorldRow2[2], uniforms.LocalToWorldRow3[2]);
+    float3 column4 = float3(uniforms.LocalToWorldRow1[3], uniforms.LocalToWorldRow2[3], uniforms.LocalToWorldRow3[3]);
     
-    matrix_float3x3 localToWorld;
+    matrix_float4x3 localToWorld;
     localToWorld[0] = column1;
     localToWorld[1] = column2;
     localToWorld[2] = column3;
+    localToWorld[3] = column4;
     
-    float4 worldPosition = float4(in.position * localToWorld, uniforms.NumericConsts.z);
+    float4 worldPosition = float4(localToWorld * float4(in.position, 1.0), 1.0);
     
     //
 

@@ -1349,7 +1349,7 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
          work is done.
          */
         
-        for (size_t i = mRef->GetPassIndex(pass); i < mRef->GetPassIndex(pass) + mRef->fPassLengths[pass]; i++) {
+        for (size_t i = 0; i < material->GetNumLayers(); i++) {
             plLayerInterface* layer = material->GetLayer(i);
             if (!layer) {
                 return false;
@@ -1375,7 +1375,7 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
                 idOffset = FragmentShaderArgumentAttributeCubicTextures;
             }
             
-            fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(texRef->fTexture, i - mRef->GetPassIndex(pass) + idOffset);
+            fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(texRef->fTexture, i + idOffset);
         }
     } else {
         //"Fixed" path
