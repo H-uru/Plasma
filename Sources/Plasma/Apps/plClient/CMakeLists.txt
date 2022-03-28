@@ -127,6 +127,7 @@ elseif(APPLE)
 	../../FeatureLib/pfMetalPipeline/ShaderSrc/Grass.metal
 	../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveDecEnv.metal
     ../../FeatureLib/pfMetalPipeline/ShaderSrc/Avatar.metal
+    ../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveDec1Lay_7.metal
     )
     set_source_files_properties(${plClient_SHADERS} PROPERTIES LANGUAGE METAL)
     source_group("Metal Shaders" FILES ${plClient_SHADERS})

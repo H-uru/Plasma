@@ -313,17 +313,17 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     
     // Okay, got everything we need, construct r1-3 as surface2world*texture2surface.
     float4 r1, r2, r3 = float4(0);
-    r1.x = dot(r7, float4(in.texCoord1, 1.0));
-    r1.y = dot(r7, float4(in.texCoord2, 1.0));
+    r1.x = dot(r7.xyz, in.texCoord1);
+    r1.y = dot(r7.xyz, in.texCoord2);
     r1.z = dot(r7, r5);
     
-    r2.x = dot(r8, float4(in.texCoord1, 1.0));
-    r2.y = dot(r8, float4(in.texCoord2, 1.0));
-    r2.z = dot(r8, r5);
+    r2.x = dot(r8.xyz, in.texCoord1.xyz);
+    r2.y = dot(r8.xyz, in.texCoord2.xyz);
+    r2.z = dot(r8.xyz, r5.xyz);
     
-    r3.x = dot(r9, float4(in.texCoord1, 1.0));
-    r3.y = dot(r9, float4(in.texCoord2, 1.0));
-    r3.z = dot(r9, r5);
+    r3.x = dot(r9.xyz, in.texCoord1.xyz);
+    r3.y = dot(r9.xyz, in.texCoord2.xyz);
+    r3.z = dot(r9.xyz, r5.xyz);
     
     // Following section is debug only to skip the per-vert tangent space axes.
     //add r1, c13.zxxx, r7.zzxw;
@@ -335,10 +335,10 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
 
     // See vs_WaveFixedFin6.inl for derivation of the following
     float4 r0 = worldPosition - uniforms.CameraPos;
-    r0 *= rsqrt(dot(r0, r0));
+    r0 *= rsqrt(dot(r0.xyz, r0.xyz));
     
     float4 r10 = float4(0);
-    r10.x = dot(r0, uniforms.EnvAdjust);
+    r10.x = dot(r0.xyz, uniforms.EnvAdjust.xyz);
     r10.y = (r10.x * r10.x) - uniforms.EnvAdjust.w;
     
     r10.z = (r10.y * rsqrt(r10.y)) + r10.x;
@@ -356,14 +356,14 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     // Note we're accounting for our environment map being flipped from
     // D3D (and all rational thought) by putting r2 into UV3 and r3 into UV2.
     r10.w = uniforms.NumericConsts.z;
-    r10.x = rsqrt(dot(r1, r1));
-    out.texCoord0 = r1 * r10.xxxw;
+    r10.x = rsqrt(dot(r1.xyz, r1.xyz));
+    out.texCoord1 = r1 * r10.xxxw;
     
-    r10.x = rsqrt(dot(r3, r3));
-    out.texCoord1 = r3 * r10.xxxw;
+    r10.x = rsqrt(dot(r3.xyz, r3.xyz));
+    out.texCoord2 = r3 * r10.xxxw;
     
-    r10.x = rsqrt(dot(r2, r2));
-    out.texCoord2 = r2 * r10.xxxw;
+    r10.x = rsqrt(dot(r2.xyz, r2.xyz));
+    out.texCoord3 = r2 * r10.xxxw;
     
     out.c1 = clamp(float4(in.color).yyyx/255.0 * uniforms.MatColor, 0.0, 1.0);
     
