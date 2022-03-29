@@ -136,7 +136,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     //    dist *= kTwoPi;
     distance *= uniforms.PiConsts.wwww;
     //    dist += -kPi;
-    distance += uniforms.PiConsts.zzzz;
+    distance -= uniforms.PiConsts.zzzz;
     
     //
     //    sincos(dist, sinDist, cosDist);
@@ -192,9 +192,6 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     // r8.z == dampened wave height in world space
     // r6.z == wave height clamped to never go beneath ground level
     //
-    //    cosDist *= kAmplitude.xyzw; // Combine?
-    //METAL NOTE: cosDist is now r7
-    cosDist *= uniforms.Amplitude;
     //    cosDist *= filter;
     cosDist *= filter;
     // Pos = (in.x + S, in.y + R, r6.z)
@@ -287,12 +284,12 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     
     float4 r7 = float4(in.texCoord2, 1.0);
     float4 r5 = float4(0);
-    r5.xyz = r7.yzx * in.texCoord3;
-    r5.xyz = (r7.zxy * -in.texCoord3) + r5.xyz;
+    r5.xyz = r7.yzx * in.texCoord3.zxy;
+    r5.xyz = (r7.zxy * -in.texCoord3.yzx) + r5.xyz;
     
     // Okay, r1 currently has the vector of cosines, and r2 has vector of sines.
     // Everything will want that times amplitude, so go ahead and fold that in.
-    cosDist *= uniforms.Phase;
+    cosDist *= uniforms.Amplitude;
     
     r7.x = dot(sinDist, -uniforms.DirXSqKW);
     r7.y = dot(sinDist, -uniforms.DirXDirYKW);
@@ -302,10 +299,10 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     float4 r8 = float4(0);
     r8.x = dot(sinDist, -uniforms.DirXDirYKW);
     r8.y = dot(sinDist, -uniforms.DirYSqKW);
-    r8.z = dot(cosDist, uniforms.DirYW);
+    r8.z = dot(cosDist, -uniforms.DirYW);
     r8.y = r8.y + uniforms.NumericConsts.z;
     
-    float4 r9 = float4(0);
+    float4 r9 = out.position;
     r9.z = dot(cosDist, -uniforms.WK);
     r9.x = -r7.z;
     r9.y = -r8.z;
@@ -313,16 +310,16 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     
     // Okay, got everything we need, construct r1-3 as surface2world*texture2surface.
     float4 r1, r2, r3 = float4(0);
-    r1.x = dot(r7.xyz, in.texCoord1);
-    r1.y = dot(r7.xyz, in.texCoord2);
-    r1.z = dot(r7, r5);
+    r1.x = dot(r7.xyz, in.texCoord2);
+    r1.y = dot(r7.xyz, in.texCoord3);
+    r1.z = dot(r7.xyz, r5.xyz);
     
-    r2.x = dot(r8.xyz, in.texCoord1.xyz);
-    r2.y = dot(r8.xyz, in.texCoord2.xyz);
+    r2.x = dot(r8.xyz, in.texCoord2);
+    r2.y = dot(r8.xyz, in.texCoord3);
     r2.z = dot(r8.xyz, r5.xyz);
     
-    r3.x = dot(r9.xyz, in.texCoord1.xyz);
-    r3.y = dot(r9.xyz, in.texCoord2.xyz);
+    r3.x = dot(r9.xyz, in.texCoord2);
+    r3.y = dot(r9.xyz, in.texCoord3);
     r3.z = dot(r9.xyz, r5.xyz);
     
     // Following section is debug only to skip the per-vert tangent space axes.
@@ -365,7 +362,8 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     r10.x = rsqrt(dot(r2.xyz, r2.xyz));
     out.texCoord3 = r2 * r10.xxxw;
     
-    out.c1 = clamp(float4(in.color).yyyx/255.0 * uniforms.MatColor, 0.0, 1.0);
+    float4 matColor = uniforms.MatColor;
+    out.c1 = clamp(float4(in.color).yyyz/255.0 * matColor, 0.0, 1.0);
     
     return out;
 }
@@ -381,9 +379,9 @@ fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in [[stage_in]],
                               min_filter::linear,
                               address::repeat);
     float4 t0 = 2 * normalMap.sample(colorSampler, in.texCoord0.xy) - 0.5;
-    float u = dot(in.texCoord1, t0);
-    float v = dot(in.texCoord2, t0);
-    float w = dot(in.texCoord3, t0);
+    float u = dot(in.texCoord1.xyz, t0.xyz);
+    float v = dot(in.texCoord2.xyz, t0.xyz);
+    float w = dot(in.texCoord3.xyz, t0.xyz);
     
     float3 N = float3(u, v, w);
     float3 E = float3(in.texCoord1.w, in.texCoord2.w, in.texCoord3.w);
@@ -397,6 +395,6 @@ fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in [[stage_in]],
     // is to multiply t3 by v0 into r0 and we're done.
     float4 out = float4(environmentMap.sample(colorSampler, coord));
     out.rgb = (out.rgb * in.c1.rgb);
-    out.a = t0.x * in.c1.x;
+    out.a = t0.a * in.c1.a;
     return out;
 }

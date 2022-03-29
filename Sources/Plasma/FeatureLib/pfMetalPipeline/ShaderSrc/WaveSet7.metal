@@ -342,13 +342,14 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     //
     //https://developer.download.nvidia.com/books/HTML/gpugems/gpugems_ch01.html
     
-    float4 r0;
+    
+    float4 r0 = float4(0);
     
     {
         float3 D = r5.xyz;
         float3 F = uniforms.EnvAdjust.xyz;
         float G = uniforms.EnvAdjust.w;
-        float3 t = dot(D, F) + sqrt(pow(dot(D, F), 2) - G);// r10.z = D dot F + SQRT((D dot F)^2 - G)
+        float3 t = dot(D.xyz, F.xyz) + sqrt(pow(dot(D.xyz, F.xyz), 2) - G);// r10.z = D dot F + SQRT((D dot F)^2 - G)
         r0.xyz = (D * t) - F; // r0.xyz = D * t - (envCenter - camPos)
     }
     

@@ -222,7 +222,16 @@ public:
         if (!dynamicState) {
             return false;
         }
-        return dynamicState->fFragmentShaderID == fFragmentShaderID && dynamicState->fVertexShaderID == fVertexShaderID;
+        return dynamicState->fFragmentShaderID == fFragmentShaderID && dynamicState->fVertexShaderID == fVertexShaderID  && dynamicState->fBlendMode == fBlendMode;
+    }
+    
+    size_t GetHash() const override {
+        std::size_t value = std::hash<plShaderID::ID>()(fFragmentShaderID);
+        value ^= std::hash<plShaderID::ID>()(fVertexShaderID);
+        value ^= std::hash<plShaderID::ID>()(fVertexShaderID);
+        value ^= std::hash<uint32_t>()(fBlendMode);
+        
+        return value;
     }
     
     const MTL::Function* GetVertexFunction(MTL::Library *library) override;
