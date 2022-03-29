@@ -259,7 +259,7 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in [[stage_in]],
     // Output alpha is vertex red (vtx alpha is used for wave filtering)
     // Whole thing modulated by material color/opacity.
     
-    out.c0 = half4(in.color.yyyx) * half4(uniforms.MatColor);
+    out.c0 = half4(in.color.yyyz)/255.0 * half4(uniforms.MatColor);
     
     // Usual texture transform
     out.texCoord0.x = dot(float4(in.texCoord1, 1.0), uniforms.Tex0_Row0);

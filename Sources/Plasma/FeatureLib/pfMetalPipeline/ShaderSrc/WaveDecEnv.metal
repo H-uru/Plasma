@@ -378,7 +378,7 @@ fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in [[stage_in]],
                               mag_filter::linear,
                               min_filter::linear,
                               address::repeat);
-    float4 t0 = 2 * normalMap.sample(colorSampler, in.texCoord0.xy) - 0.5;
+    float4 t0 = 2 * (normalMap.sample(colorSampler, in.texCoord0.xy) - 0.5);
     float u = dot(in.texCoord1.xyz, t0.xyz);
     float v = dot(in.texCoord2.xyz, t0.xyz);
     float w = dot(in.texCoord3.xyz, t0.xyz);
