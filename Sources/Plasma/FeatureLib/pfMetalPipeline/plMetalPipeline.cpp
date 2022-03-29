@@ -1886,7 +1886,7 @@ void plMetalPipeline::IHandleZMode(hsGMatState flags)
     }
 
     if (flags.fZFlags & hsGMatState::kZIncLayer) {
-        fDevice.CurrentRenderCommandEncoder()->setDepthBias(0.0, -1.1, -1.1);
+        fDevice.CurrentRenderCommandEncoder()->setDepthBias(0.0, -2.0, -2.0);
     } else {
         fDevice.CurrentRenderCommandEncoder()->setDepthBias(0.0, 0.0, 0.0);
     }
