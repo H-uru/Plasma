@@ -270,7 +270,7 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in [[stage_in]],
     return out;
 }
 
-fragment half4 ps_CalphaAbase(vs_WaveDev1Lay_7InOut in [[stage_in]],
+fragment half4 ps_CbaseAbase(vs_WaveDev1Lay_7InOut in [[stage_in]],
                              texture2d<half> texture [[ texture(0) ]]) {
     
     constexpr sampler colorSampler = sampler(mip_filter::linear,
