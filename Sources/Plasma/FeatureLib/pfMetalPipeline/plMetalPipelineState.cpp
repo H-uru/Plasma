@@ -61,7 +61,8 @@ plMetalPipelineState::plMetalPipelineState(plMetalDevice* device, const plMetalV
 
 void plMetalPipelineState::GetFunctionConstants(MTL::FunctionConstantValues* constants) const
 {
-    constants->setConstantValue(&fNumUVs, MTL::DataTypeUShort, FunctionConstantNumUVs);
+    ushort numUVs = fNumUVs;
+    constants->setConstantValue(&numUVs, MTL::DataTypeUShort, FunctionConstantNumUVs);
 }
 
 size_t plMetalPipelineState::GetHash() const {
