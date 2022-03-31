@@ -247,6 +247,7 @@ constant constexpr sampler colorSamplers[] = {
 
 vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                                        constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
+                                       constant float4x4 & blendMatrix1 [[ buffer(BufferIndexBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]],
                                        uint v_id [[vertex_id]])
 {
     ColorInOut out;
@@ -305,7 +306,12 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
 
     out.vtxColor = half4(material.rgb, abs(uniforms.invVtxAlpha - MDiffuse.a));
     
-    const float4 vCamPosition = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 1.0));
+    float4 position = (uniforms.localToWorldMatrix * float4(in.position, 1.0));
+    if(temp_hasOnlyWeight1) {
+        const float4 position2 = blendMatrix1 * float4(in.position, 1.0);
+        position = (in.weight1 * position) + ((1.0f - in.weight1) * position2);
+    }
+    const float4 vCamPosition = uniforms.worldToCameraMatrix * position;
     //out.vCamNormal = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 0.0));
     
     //Fog

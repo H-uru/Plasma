@@ -61,10 +61,15 @@ constant bool hasLayer6 = num_layers > 5;
 constant bool hasLayer7 = num_layers > 6;
 constant bool hasLayer8 = num_layers > 7;
 
+constant uint8_t num_weights        [[ function_constant(FunctionConstantNumWeights) ]];
+constant bool hasWeight1 = num_weights > 0;
+constant bool temp_hasOnlyWeight1 = num_weights == 1;
+
 typedef struct
 {
     float3 position [[attribute(VertexAttributePosition)]];
     float3 normal [[attribute(VertexAttributeNormal)]];
+    float  weight1 [[attribute(VertexAttributeWeights), function_constant(hasWeight1)]];
     float3 texCoord1 [[attribute(VertexAttributeTexcoord), function_constant(hasTexture1)]];
     float3 texCoord2 [[attribute(VertexAttributeTexcoord+1), function_constant(hasTexture2)]];
     float3 texCoord3 [[attribute(VertexAttributeTexcoord+2), function_constant(hasTexture3)]];

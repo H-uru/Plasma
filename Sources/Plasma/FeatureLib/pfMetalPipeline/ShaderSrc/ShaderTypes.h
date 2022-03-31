@@ -59,7 +59,8 @@ enum plMetalShaderArgumentIndex
     BufferIndexState      = 2,
     BufferIndexUniforms      = 3,
     BufferIndexFragArgBuffer  = 5,
-    BufferIndexShadowCastFragArgBuffer  = 4
+    BufferIndexShadowCastFragArgBuffer  = 4,
+    BufferIndexBlendMatrix1      = 6
 };
 
 enum plMetalVertexShaderUniform
@@ -68,7 +69,8 @@ enum plMetalVertexShaderUniform
     VertexAttributeTexcoord  = 1,
     VertexAttributeNormal  = 9,
     VertexAttributeUVCount = 10,
-    VertexAttributeColor = 11
+    VertexAttributeColor = 11,
+    VertexAttributeWeights  = 12,
 };
 
 enum plMetalFragmentShaderUniform
@@ -85,7 +87,8 @@ enum plMetalFunctionConstant
     FunctionConstantNumLayers    = 1,
     FunctionConstantSources    = 2,
     FunctionConstantBlendModes    = 10,
-    FunctionConstantLayerFlags    = 18
+    FunctionConstantLayerFlags    = 18,
+    FunctionConstantNumWeights    = 26,
 };
 
 enum plMetalLayerPassType: uint8_t

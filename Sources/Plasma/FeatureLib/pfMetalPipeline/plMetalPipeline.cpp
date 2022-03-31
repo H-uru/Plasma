@@ -940,19 +940,12 @@ void plMetalPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& 
         fView.fLocalToWorldLeftHanded = lastL2W.GetParity();
     }
 
-#if 0 // Skinning
     if( span.fNumMatrices == 2 )
     {
-        D3DXMATRIX  mat;
-        IMatrix44ToD3DMatrix(mat, drawable->GetPaletteMatrix(span.fBaseMatrix+1));
-        fD3DDevice->SetTransform(D3DTS_WORLDMATRIX(1), &mat);
-        fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_1WEIGHTS);
+        matrix_float4x4 mat;
+        hsMatrix2SIMD(drawable->GetPaletteMatrix(span.fBaseMatrix+1), &mat);
+        fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&mat, sizeof(matrix_float4x4), BufferIndexBlendMatrix1);
     }
-    else
-    {
-        fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_DISABLE);
-    }
-#endif
 
     fCurrentRenderPassUniforms->projectionMatrix = fDevice.fMatrixProj;
     fCurrentRenderPassUniforms->worldToCameraMatrix = fDevice.fMatrixW2C;

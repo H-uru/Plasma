@@ -63,6 +63,7 @@ void plMetalPipelineState::GetFunctionConstants(MTL::FunctionConstantValues* con
 {
     ushort numUVs = fNumUVs;
     constants->setConstantValue(&numUVs, MTL::DataTypeUShort, FunctionConstantNumUVs);
+    constants->setConstantValue(&fNumWeights, MTL::DataTypeUChar, FunctionConstantNumWeights);
 }
 
 size_t plMetalPipelineState::GetHash() const {
@@ -122,6 +123,14 @@ void plMetalPipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor* vert
     vertexDescriptor->attributes()->object(VertexAttributeNormal)->setFormat(MTL::VertexFormatFloat3);
     vertexDescriptor->attributes()->object(VertexAttributeNormal)->setBufferIndex(0);
     vertexDescriptor->attributes()->object(VertexAttributeNormal)->setOffset(normOffset);
+    
+    if(this->fNumWeights > 0) {
+        int weightOneOffset = skinWeightOffset;
+        
+        vertexDescriptor->attributes()->object(VertexAttributeWeights)->setFormat(MTL::VertexFormatFloat);
+        vertexDescriptor->attributes()->object(VertexAttributeWeights)->setBufferIndex(0);
+        vertexDescriptor->attributes()->object(VertexAttributeWeights)->setOffset(weightOneOffset);
+    }
     
     for(int i=0; i<this->fNumUVs; i++) {
         vertexDescriptor->attributes()->object(VertexAttributeTexcoord+i)->setFormat(MTL::VertexFormatFloat3);
