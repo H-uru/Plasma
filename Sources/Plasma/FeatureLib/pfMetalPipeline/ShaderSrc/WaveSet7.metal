@@ -349,7 +349,8 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
         float3 D = r5.xyz;
         float3 F = uniforms.EnvAdjust.xyz;
         float G = uniforms.EnvAdjust.w;
-        float3 t = dot(D.xyz, F.xyz) + sqrt(pow(dot(D.xyz, F.xyz), 2) - G);// r10.z = D dot F + SQRT((D dot F)^2 - G)
+        //METAL NOTE: HLSL 1.1 always applies an abs operation to values it's about to sqrt
+        float3 t = dot(D.xyz, F.xyz) + sqrt(abs(pow(dot(D.xyz, F.xyz), 2) - G));// r10.z = D dot F + SQRT((D dot F)^2 - G)
         r0.xyz = (D * t) - F; // r0.xyz = D * t - (envCenter - camPos)
     }
     
