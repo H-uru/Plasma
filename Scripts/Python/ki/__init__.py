@@ -2421,11 +2421,6 @@ class xKI(ptModifier):
 
         PtDebugPrint("xKI.SetFontSize(): Setting font size to {} from old size of {}.".format(fontSize, currentSize), level=kWarningLevel)
 
-        if self.KILevel < kNormalKI:
-            mKIdialog = KIMicro.dialog
-        else:
-            mKIdialog = KIMini.dialog
-
         for i in (self.chatMgr.miniChatArea, self.chatMgr.microChatArea):
             i.setFontSize(fontSize)
             i.refresh()
