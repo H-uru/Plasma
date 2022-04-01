@@ -5907,7 +5907,7 @@ class xKI(ptModifier):
                 if shortTB.getStringJustify() == kRightJustify and control.isInteresting():
                     # Switch to long versions.
                     longTB.setForeColor(shortTB.getForeColor())
-                    longTB.setString(shortTB.getString())
+                    longTB.setStringW(shortTB.getStringW())
                     shortTB.hide()
                     longTB.show()
                 else:
