@@ -2210,7 +2210,7 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
         return false;
 
     // Copy name
-    size_t len = ((uintptr_t)string - (uintptr_t)c)/2; // divide length by 2 because each character is two bytes
+    size_t len = string - c;
     wcsncpy( name, c, len );
     name[len] = L'\0';
 
@@ -2230,7 +2230,7 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
         while( *string != L'>' && *string != L'\"' && *string != L'\0' )
             string++;
 
-        len = ((uintptr_t)string - (uintptr_t)c)/2; // divide length by 2 because each character is two bytes
+        len = string - c;
         wcsncpy( option, c, len );
         option[len] = L'\0';
         
@@ -2245,7 +2245,7 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
     while( *string != L' ' && *string != L'>' && *string != L'\0' )
         string++;
 
-    len = ((uintptr_t)string - (uintptr_t)c)/2; // divide length by 2 because each character is two bytes
+    len = string - c;
     wcsncpy( option, c, len );
     option[len] = L'\0';
     
