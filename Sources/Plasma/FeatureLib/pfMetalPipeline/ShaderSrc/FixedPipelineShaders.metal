@@ -519,7 +519,7 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
         currentColor = half4(in.vtxColor.rgb, 1.0) * currentColor;
     }
     
-    currentColor.rgb = mix(currentColor.rgb, in.fogColor.rgb, 1.0f - clamp((float)in.fogColor.a, 0.0f, 1.0f));
+    currentColor.rgb = mix(currentColor.rgb, in.fogColor.rgb, (1.0f - clamp((float)in.fogColor.a, 0.0f, 1.0f)) * (float)currentColor.a);
     
     if (currentColor.a < fragmentShaderArgs.bufferedUniforms->alphaThreshold) { discard_fragment(); }
 

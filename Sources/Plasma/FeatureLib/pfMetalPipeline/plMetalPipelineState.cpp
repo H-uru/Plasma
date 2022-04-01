@@ -207,19 +207,16 @@ void plMetalPipelineState::ConfigureBlendMode(const uint32_t blendMode, MTL::Ren
         // Add final color to FB.
         case hsGMatState::kBlendAdd:
             //printf("glBlendFunc(GL_ONE, GL_ONE);\n");
+            descriptor->setRgbBlendOperation(MTL::BlendOperationAdd);
             descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
-            descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
             descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
-            descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
             break;
 
         // Multiply final color by FB color and add it into the FB.
         case hsGMatState::kBlendMADD:
             //printf("glBlendFunc(GL_DST_COLOR, GL_ONE);\n");
             descriptor->setSourceRGBBlendFactor(MTL::BlendFactorDestinationColor);
-            descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorDestinationColor);
             descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
-            descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
             break;
 
         // Final color times final alpha, added into the FB.
