@@ -47,6 +47,7 @@ using namespace metal;
 typedef struct {
     float4 position [[position]];
     float2 uvPosition;
+    half4 color;
 } PreprocessAvatarTexturesInOut;
 
 typedef struct
@@ -60,14 +61,15 @@ vertex PreprocessAvatarTexturesInOut PreprocessAvatarVertexShader(PreprocessAvat
 }
 
 fragment half4 PreprocessAvatarFragmentShader(PreprocessAvatarTexturesInOut in [[stage_in]],
-                                              texture2d<half> layer            [[ texture(0) ]])
+                                              texture2d<half> layer            [[ texture(0) ]],
+                                              constant float4& blendColor [[ buffer(0 )]])
 {
     constexpr sampler colorSampler(mip_filter::linear,
                                    mag_filter::linear,
                                    min_filter::linear,
                                    address::clamp_to_zero);
 
-    half4 colorSample = layer.sample(colorSampler, in.uvPosition.xy);
+    half4 colorSample = layer.sample(colorSampler, in.uvPosition.xy) * half4(blendColor);
     
     return colorSample;
 }

@@ -2671,6 +2671,7 @@ void plMetalPipeline::IPreprocessAvatarTextures()
                             fCurrentPipelineState = avatarRenderState;
                         }
                     }
+                    fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&tint, sizeof(hsColorRGBA), 0);
                     
                     float screenW = (float)item->fElements[j]->fWidth / layout->fOrigWidth * 2.f;
                     float screenH = (float)item->fElements[j]->fHeight / layout->fOrigWidth * 2.f;
