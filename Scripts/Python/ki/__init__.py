@@ -2414,11 +2414,12 @@ class xKI(ptModifier):
     ## Applies the specified font size.
     def SetFontSize(self, fontSize):
 
-        PtDebugPrint("xKI.SetFontSize(): Setting font size to {}.".format(fontSize), level=kWarningLevel)
-        if self.KILevel < kNormalKI:
-            mKIdialog = KIMicro.dialog
-        else:
-            mKIdialog = KIMini.dialog
+        currentSize = self.GetFontSize()
+        # do nothing if the requested size is our current size
+        if fontSize == currentSize:
+            return
+
+        PtDebugPrint("xKI.SetFontSize(): Setting font size to {} from old size of {}.".format(fontSize, currentSize), level=kWarningLevel)
 
         for i in (self.chatMgr.miniChatArea, self.chatMgr.microChatArea):
             i.setFontSize(fontSize)
