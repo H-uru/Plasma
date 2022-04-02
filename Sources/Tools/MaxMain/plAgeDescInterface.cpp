@@ -1088,14 +1088,14 @@ void plAgeDescInterface::INewPage()
     int count = ListBox_GetCount(hPages);
     for (int i = 0; i < count; i++)
     {
-        char pageName[256];
+        TCHAR pageName[256];
         ListBox_GetText(hPages, i, pageName);
-        if (!name.compare_i(pageName))
+        if (!name.compare_i(T2ST(pageName)))
             return;
     }
 
     // Add the new page and select it
-    int idx = ListBox_AddString(hPages, name.c_str());
+    int idx = ListBox_AddString(hPages, ST2T(name));
 
     // Choose a new sequence suffix for it
     plAgePage *newPage = new plAgePage( name, IGetFreePageSeqSuffix( hPages ), 0 );

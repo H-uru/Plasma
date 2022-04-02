@@ -1041,13 +1041,13 @@ INT_PTR plResponderProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT ms
 #endif
 
             // Add the commands
-            int idx = ComboBox_AddString(hStateName, "Add State");
+            int idx = ComboBox_AddString(hStateName, _T("Add State"));
             ComboBox_SetItemData(hStateName, idx, kStateAdd);
-            idx = ComboBox_AddString(hStateName, "Remove Current State");
+            idx = ComboBox_AddString(hStateName, _T("Remove Current State"));
             ComboBox_SetItemData(hStateName, idx, kStateRemove);
-            idx = ComboBox_AddString(hStateName, "Set Current as Default");
+            idx = ComboBox_AddString(hStateName, _T("Set Current as Default"));
             ComboBox_SetItemData(hStateName, idx, kStateDefault);
-            idx = ComboBox_AddString(hStateName, "Copy Current State");
+            idx = ComboBox_AddString(hStateName, _T("Copy Current State"));
             ComboBox_SetItemData(hStateName, idx, kStateCopy);
 
             HWND hSwitchCombo = GetDlgItem(hWnd, IDC_SWITCH_COMBO);
