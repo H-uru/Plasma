@@ -69,3 +69,29 @@ STATEDESC spyroom
     VAR BOOL	SpyRmTakotahMeetingVis[1]    DEFAULT=0
 
 }
+
+STATEDESC spyroom
+{
+    VERSION 3
+ 
+# Boolean variables
+    VAR BOOL    spySharperHatVis[1]          DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    spySharperHatGet[1]          DEFAULT=1
+ 
+ 
+## Age Mechanics
+    VAR BOOL    SpyRmTakotahMeetingVis[1]    DEFAULT=0
+ 
+}
+ 
+STATEDESC spyroom
+{
+    VERSION 4
+ 
+# Boolean variables
+    VAR BOOL    SpyRmSharperHatVis[1]          DEFAULT=0 DEFAULTOPTION=VAULT
+ 
+## Age Mechanics
+    VAR BOOL    SpyRmTakotahMeetingVis[1]    DEFAULT=0
+ 
+}
