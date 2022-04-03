@@ -1206,8 +1206,7 @@ void    plFont::CalcStringExtents( const wchar_t *string, uint16_t &width, uint1
 
     // firstClippedChar is an index into the given string that points to the start of the part of the string
     // that got clipped (i.e. not rendered).
-    firstClippedChar = (uint32_t)((uintptr_t)fRenderInfo.fVolatileStringPtr - (uintptr_t)string);
-    firstClippedChar /= 2; // divide by 2 because a wchar_t is two bytes wide, instead of one (like a char)
+    firstClippedChar = fRenderInfo.fVolatileStringPtr - string;
 }
 
 //// IGetFreeCharData /////////////////////////////////////////////////////////
