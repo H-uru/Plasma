@@ -137,22 +137,22 @@ confirmPanelLightsSouth = ptAttribSceneobjectList(66, "South ready indicators")
 
 EscapeArtist = ptAttribActivator(67, "Escape Artist Catchall")
 
-MaleSuit = [
-    '03_MLHand_Suit',
-    '03_MRHand_Suit',
-    '03_MHAcc_SuitHelmet',
-    '03_MLFoot_Suit',
-    '03_MRFoot_Suit',
-    '03_MLegs_Suit',
-    '03_MTorso_Suit']
-FemaleSuit = [
-    '03_FLHand_Suit',
-    '03_FRHand_Suit',
-    '03_FHair_SuitHelmet',
-    '03_FLFoot_Suit',
-    '03_FRFoot_Suit',
-    '03_FLegs_Suit',
-    '03_FTorso_Suit']
+MaleSuit = {
+    0:'03_MLegs_Suit',
+    1:'03_MTorso_Suit',
+    2:'03_MLHand_Suit',
+    3:'03_MRHand_Suit',
+    5:'03_MHAcc_SuitHelmet',
+    6:'03_MLFoot_Suit',
+    7:'03_MRFoot_Suit'}
+FemaleSuit = {
+    0:'03_FLegs_Suit',
+    1:'03_FTorso_Suit',
+    2:'03_FLHand_Suit',
+    3:'03_FRHand_Suit',
+    5:'03_FHair_SuitHelmet',
+    6:'03_FLFoot_Suit',
+    7:'03_FRFoot_Suit'}
     
 wornItem = []
 DefaultColor1 = []
@@ -296,20 +296,6 @@ class grsnWallPython(ptResponder):
         self.version = 5
         self.BlockerCount = 0
         self.oldCount = [0, 0]
-
-    def __del__(self):
-        "the destructor"
-        PtDebugPrint("grsnWallPython.__del__:",level=kDebugDumpLevel)
-        try:
-            PtSendKIMessage(kEnableEntireYeeshaBook, 0)
-            avatar = PtGetLocalAvatar()
-            for item, color1, color2 in zip(wornItem, DefaultColor1, DefaultColor2):
-                avatar.avatar.netForce(True)
-                avatar.avatar.wearClothingItem(item[0], 0)
-                avatar.avatar.tintClothingItem(item[0] ,color1, 0)
-                avatar.avatar.tintClothingItemLayer(item[0], color2, 2, 1)
-        except:
-            pass
 
     def IAmMaster(self):
         return (self.sceneobject.isLocallyOwned())
@@ -535,16 +521,13 @@ class grsnWallPython(ptResponder):
                             clothing = MaleSuit
                         if not wornItem:
                             wornItem = avatar.avatar.getAvatarClothingList()
-                            for item in wornItem:
-                                DefaultColor1.append(avatar.avatar.getTintClothingItem(item[0],1))
-                                DefaultColor2.append(avatar.avatar.getTintClothingItem(item[0],2))
-                        i = 1
-                        for item in clothing[0:]:
+                            DefaultColor1 = {item[1] : avatar.avatar.getTintClothingItem(item[0],1) for item in wornItem}
+                            DefaultColor2 = {item[1] : avatar.avatar.getTintClothingItem(item[0],2) for item in wornItem}
+                        for item in clothing:
                             avatar.avatar.netForce(1)
-                            avatar.avatar.wearClothingItem(item, 0)
-                            avatar.avatar.tintClothingItem(item, DefaultColor1[i], 0)
-                            avatar.avatar.tintClothingItemLayer(item, DefaultColor2[i], 2, 1)
-                            i += 1
+                            avatar.avatar.wearClothingItem(clothing[item], 0)
+                            avatar.avatar.tintClothingItem(clothing[item], DefaultColor1[item], 0)
+                            avatar.avatar.tintClothingItemLayer(clothing[item], DefaultColor2[item], 2, 1)
                         PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                         PtGetLocalAvatar().physics.warpObj(SouthTeamWarpPt.value.getKey())
                         ageSDL["nWallPlayer"] = (-1,)
@@ -571,16 +554,13 @@ class grsnWallPython(ptResponder):
                             clothing = MaleSuit
                         if not wornItem:
                             wornItem = avatar.avatar.getAvatarClothingList()
-                            for item in wornItem:
-                                DefaultColor1.append(avatar.avatar.getTintClothingItem(item[0],1))
-                                DefaultColor2.append(avatar.avatar.getTintClothingItem(item[0],2))
-                        i = 1
-                        for item in clothing[0:]:
+                            DefaultColor1 = {item[1] : avatar.avatar.getTintClothingItem(item[0],1) for item in wornItem}
+                            DefaultColor2 = {item[1] : avatar.avatar.getTintClothingItem(item[0],2) for item in wornItem}
+                        for item in clothing:
                             avatar.avatar.netForce(1)
-                            avatar.avatar.wearClothingItem(item, 0)
-                            avatar.avatar.tintClothingItem(item, DefaultColor1[i], 0)
-                            avatar.avatar.tintClothingItemLayer(item, DefaultColor2[i], 2, 1)
-                            i += 1
+                            avatar.avatar.wearClothingItem(clothing[item], 0)
+                            avatar.avatar.tintClothingItem(clothing[item], DefaultColor1[item], 0)
+                            avatar.avatar.tintClothingItemLayer(clothing[item], DefaultColor2[item], 2, 1)
                         PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                         PtGetLocalAvatar().physics.warpObj(NorthTeamWarpPt.value.getKey())
                         ageSDL["sWallPlayer"] = (-1,)
@@ -600,13 +580,13 @@ class grsnWallPython(ptResponder):
                         clothing = FemaleSuit
                     else:
                         clothing = MaleSuit
-                    for item in clothing[0:]:
-                        if (not self.IItemInCloset(avatar, item)):
-                            PtDebugPrint(f'DEBUG: grsnWallPython.OnNotify():  Adding {item} to your closet and wearing it.')
-                            avatar.avatar.addWardrobeClothingItem(item, ptColor().white(), ptColor().white())
+                    for item in clothing:
+                        if (not self.IItemInCloset(avatar, clothing[item])):
+                            PtDebugPrint(f'DEBUG: grsnWallPython.OnNotify():  Adding {clothing[item]} to your closet and wearing it.')
+                            avatar.avatar.addWardrobeClothingItem(clothing[item], ptColor().white(), ptColor().white())
                             avatar.avatar.saveClothing()
                             wornItem = []
-                            item = self.IGetItem(item)
+                            item = self.IGetItem(clothing[item])
                             if hasattr(item, "description"):
                                 PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NewClothing", [item.description]))
             if (ageSDL["nState"][0] != kEnd):
@@ -625,13 +605,13 @@ class grsnWallPython(ptResponder):
                         clothing = FemaleSuit
                     else:
                         clothing = MaleSuit
-                    for item in clothing[0:]:
-                        if (not self.IItemInCloset(avatar, item)):
-                            PtDebugPrint(f'DEBUG: grsnWallPython.OnNotify():  Adding {item} to your closet and wearing it.')
-                            avatar.avatar.addWardrobeClothingItem(item, ptColor().white(), ptColor().white())
+                    for item in clothing:
+                        if (not self.IItemInCloset(avatar, clothing[item])):
+                            PtDebugPrint(f'DEBUG: grsnWallPython.OnNotify():  Adding {clothing[item]} to your closet and wearing it.')
+                            avatar.avatar.addWardrobeClothingItem(clothing[item], ptColor().white(), ptColor().white())
                             avatar.avatar.saveClothing()
                             wornItem = []
-                            item = self.IGetItem(item)
+                            item = self.IGetItem(clothing[item])
                             if hasattr(item, "description"):
                                 PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NewClothing", [item.description]))
             if (ageSDL["sState"][0] != kEnd):
@@ -710,11 +690,11 @@ class grsnWallPython(ptResponder):
     def OnTimer(self,id):
         avatar = PtGetLocalAvatar()
         if(id == kWearOriginalClothes and wornItem):
-            for item, color1, color2 in zip(wornItem, DefaultColor1, DefaultColor2):
+            for item in wornItem:
                 avatar.avatar.netForce(True)
-                avatar.avatar.wearClothingItem(item[0], 0)
-                avatar.avatar.tintClothingItem(item[0] ,color1, 0)
-                avatar.avatar.tintClothingItemLayer(item[0], color2, 2, 1)
+                avatar.avatar.wearClothingItem(wornItem[item], 0)
+                avatar.avatar.tintClothingItem(wornItem[item], DefaultColor1[item], 0)
+                avatar.avatar.tintClothingItemLayer(wornItem[item], DefaultColor2[item], 2, 1)
         elif(id == kLinkToNorthNexus):
             PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), NorthTeamWinTeleport.value.getKey())
             PtFadeOut(1,True,True)
