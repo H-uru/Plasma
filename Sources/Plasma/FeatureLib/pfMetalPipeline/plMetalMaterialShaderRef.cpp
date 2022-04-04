@@ -563,7 +563,7 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragme
         if (state.fBlendFlags & hsGMatState::kBlendAlphaTestHigh) {
             uniforms->alphaThreshold = 64.f/255.f;
         } else {
-            uniforms->alphaThreshold = 0.0001f;
+            uniforms->alphaThreshold = 1.f/255.f;
         }
     } else {
         uniforms->alphaThreshold = 0.f;
