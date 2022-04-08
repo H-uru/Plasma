@@ -67,6 +67,7 @@ chatChannel = ptAttribInt(17,"chat channel",6)
 elevatorUp = ptAttribActivator(18,"elevator in up position")
 elevatorMoving = ptAttribActivator(19,"elevator is moving")
 elevatorDown = ptAttribActivator(20,"elevator is down")
+bookPillarSpinning = ptAttribResponder(21,"Book pillar spins",netForce=True)
 
 waitingOnSBook = False
 waitingOnNBook = False
@@ -89,15 +90,6 @@ class grsnNexusBookMachine(ptResponder):
         self.id = 53624
         self.version = 2
 
-    def __del__(self):
-        "the destructor"
-        try:
-            PtClearPrivateChatList(PtGetLocalAvatar().getKey())
-        except:
-            pass
-        PtDebugPrint("grsnNexusBookMachine.OnPageUnload:\tremoving ourselves from private chat channel %d" % (chatChannel.value),level=kDebugDumpLevel)
-        PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
-
     def IAmMaster(self):
         return (self.sceneobject.isLocallyOwned())
 
@@ -116,6 +108,7 @@ class grsnNexusBookMachine(ptResponder):
         if PtGetPlayerList():
             return
         resetResponder.run(self.key,avatar=PtGetLocalAvatar())
+        bookPillarSpinning.run(self.key, netForce=True, netPropagate=True)
 
     def OnFirstUpdate(self):
         pass
