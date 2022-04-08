@@ -667,9 +667,9 @@ class grsnWallPython(ptResponder):
                     except:
                         PtDebugPrint("grsnWallPython::OnNotify: Blocker not found on either panel")
                         return
-                if(team == kNorth and ageSDL["nState"][0] == kSetBlocker and cID == ageSDL["nChairOccupant"][0]):
+                if(team == kNorth and ageSDL["nState"][0] == kSetBlocker):
                     self.SetPanelBlocker(kNorth, index, not self.FindBlocker(kNorth, index))
-                if(team == kSouth and ageSDL["sState"][0] == kSetBlocker and cID == ageSDL["sChairOccupant"][0]):
+                if(team == kSouth and ageSDL["sState"][0] == kSetBlocker):
                     self.SetPanelBlocker(kSouth, index, not self.FindBlocker(kSouth, index))
 
 
