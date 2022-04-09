@@ -60,6 +60,7 @@ private:
 class plGLPipeline : public pl3DPipeline<plGLDevice>
 {
     friend class plGLPlateManager;
+    friend class plGLDevice;
 
 public:
     plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode);
