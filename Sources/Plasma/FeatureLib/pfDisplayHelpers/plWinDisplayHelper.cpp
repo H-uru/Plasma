@@ -43,8 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWinDisplayHelper.h"
 #include "hsWindows.h"
 
+#define HDC_INVALID_HANDLE_VALUE ((HDC)INVALID_HANDLE_VALUE)
+
 plWinDisplayHelper::plWinDisplayHelper()
-    : fCurrentDisplay(INVALID_HANDLE_VALUE)
+    : fCurrentDisplay(HDC_INVALID_HANDLE_VALUE)
 {
 }
 
@@ -83,5 +85,11 @@ std::vector<plDisplayMode> plWinDisplayHelper::GetSupportedDisplayModes(
 
 hsDisplayHndl plWinDisplayHelper::DefaultDisplay() const
 {
-    return GetActiveWindow();
+    if (fCurrentDisplay == HDC_INVALID_HANDLE_VALUE) {
+        HWND hWnd = GetActiveWindow();
+        HDC hDC = GetDC(hWnd);
+        SetCurrentScreen(hDC);
+    }
+
+    return fCurrentDisplay;
 }

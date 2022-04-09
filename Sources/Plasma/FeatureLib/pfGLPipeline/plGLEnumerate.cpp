@@ -190,7 +190,7 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
 #include "hsWindows.h"
 #include <epoxy/wgl.h>
 
-void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displayHndl = INVALID_HANDLE_VALUE)
+void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displayHndl = (HDC)INVALID_HANDLE_VALUE)
 {
     HINSTANCE inst = GetModuleHandleW(nullptr);
     LPCWSTR className = L"GLTestClass";
@@ -202,6 +202,7 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records, hsDisplayHndl displ
         WNDCLASSW tempClass = {};
         tempClass.lpfnWndProc = DefWindowProcW;
         tempClass.hInstance = inst;
+        tempClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
         tempClass.lpszClassName = className;
         tempClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 

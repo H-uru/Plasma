@@ -69,12 +69,13 @@ namespace ST { class string; }
     // even more bloated than before!
     struct HWND__; typedef struct HWND__ *HWND;
     struct HINSTANCE__; typedef struct HINSTANCE__ *HINSTANCE;
+    struct HDC__; typedef struct HDC__ *HDC;
     typedef void* HANDLE;
     typedef HINSTANCE HMODULE;
     typedef long HRESULT;
 
     typedef HWND hsWindowHndl;
-    typedef HANDLE hsDisplayHndl;
+    typedef HDC hsDisplayHndl;
     typedef HINSTANCE hsWindowInst;
     typedef HMODULE hsLibraryHndl;
 #elif HS_BUILD_FOR_APPLE
