@@ -79,6 +79,7 @@ bool fillDeviceRecord(hsG3DDeviceRecord& devRec)
 }
 
 
+#pragma region EGL_Enumerate
 #ifdef USE_EGL
 #include <epoxy/egl.h>
 
@@ -145,8 +146,10 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
         eglTerminate(display);
 }
 #endif // USE_EGL
+#pragma endregion EGL_Enumerate
 
 
+#pragma region WGL_Enumerate
 #ifdef HS_BUILD_FOR_WIN32
 #include "hsWindows.h"
 #include <epoxy/wgl.h>
@@ -164,7 +167,7 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
         tempClass.hInstance = GetModuleHandle(nullptr);
         tempClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
         tempClass.lpszClassName = L"GLTestClass";
-        tempClass.style = CS_OWNDC;
+        tempClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
         cls = RegisterClassW(&tempClass);
         if (!cls)
@@ -229,9 +232,12 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
         UnregisterClassW(reinterpret_cast<LPCWSTR>(cls), GetModuleHandle(nullptr));
 }
 #endif // HS_BUILD_FOR_WIN32
+#pragma endregion WGL_Enumerate
 
 
+#pragma region CGL_Enumerate
 #ifdef HS_BUILD_FOR_MACOS
+#include <AvailabilityMacros.h>
 #include <CoreGraphics/CoreGraphics.h>
 #include <OpenGL/OpenGL.h>
 
@@ -248,7 +254,10 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
             kCGLPFAAccelerated,
             kCGLPFANoRecovery,
             kCGLPFADoubleBuffer,
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+            // OpenGL profiles introduced in 10.7
             kCGLPFAOpenGLProfile, static_cast<CGLPixelFormatAttribute>(kCGLOGLPVersion_3_2_Core),
+#endif
             kCGLPFADisplayMask, static_cast<CGLPixelFormatAttribute>(CGDisplayIDToOpenGLDisplayMask(mainDisplay)),
             static_cast<CGLPixelFormatAttribute>(0),
         };
@@ -260,7 +269,8 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
         if (CGLCreateContext(pix, nullptr, &ctx) != kCGLNoError)
             break;
 
-        CGLSetCurrentContext(ctx);
+        if (CGLSetCurrentContext(ctx) != kCGLNoError)
+            break;
 
         hsG3DDeviceRecord devRec;
         devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeOpenGL);
@@ -291,6 +301,7 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
     IGNORE_WARNINGS_END
 }
 #endif // HS_BUILD_FOR_MACOS
+#pragma endregion CGL_Enumerate
 
 void plGLEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
 {
