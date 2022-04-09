@@ -164,6 +164,7 @@ private:
     
     //cache to prevent oversetting, Metal won't catch this for us and will encode extra work
     const MTL::RenderPipelineState*       fCurrentPipelineState;
+    MTL::Buffer*                          fCurrentVertexBuffer;
     MTL::DepthStencilState*         fCurrentDepthStencilState;
     
     void FindFragFunction();
@@ -232,6 +233,8 @@ private:
     void IDisableLightsForShadow();
     void IReleaseRenderTargetPools();
     void IRenderProjectionEach(const plRenderPrimFunc& render, hsGMaterial* material, int iPass, const plSpan& span, const plMetalVertexBufferRef* vRef);
+    
+    void ResetMetalStateTracking();
     
     // Shadows
     std::vector<plRenderTarget*>       fRenderTargetPool512;

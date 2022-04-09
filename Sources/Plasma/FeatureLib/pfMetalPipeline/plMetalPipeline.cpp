@@ -317,7 +317,7 @@ void plMetalPipeline::PushRenderRequest(plRenderRequest *req)
         fView.SetMaxCullNodes(0);
     }
 
-    fView.fCullTreeDirty = true;
+    ResetMetalStateTracking();
 }
 
 void plMetalPipeline::PopRenderRequest(plRenderRequest *req)
@@ -330,10 +330,7 @@ void plMetalPipeline::PopRenderRequest(plRenderRequest *req)
     //it won't be set yet on the new target
     //in theory we could have a stack of these so when we unwind we
     //could get the state back.
-    fCurrentPipelineState = nullptr;
-    fCurrentDepthStencilState = nullptr;
-    
-    fCurrentPipelineState = nullptr;
+    ResetMetalStateTracking();
 
     hsRefCnt_SafeUnRef(fView.fRenderRequest);
     fView = fViewStack.top();
@@ -341,6 +338,11 @@ void plMetalPipeline::PopRenderRequest(plRenderRequest *req)
 
     PopRenderTarget();
     fView.fXformResetFlags = fView.kResetProjection | fView.kResetCamera;
+}
+
+plRenderTarget* plMetalPipeline::PopRenderTarget() {
+    pl3DPipeline::PopRenderTarget();
+    ResetMetalStateTracking();
 }
 
 void plMetalPipeline::ClearRenderTarget(plDrawable *d)
@@ -362,7 +364,7 @@ void plMetalPipeline::ClearRenderTarget(const hsColorRGBA *col, const float *dep
         hsColorRGBA clearColor = col ? *col : GetClearColor();
         float clearDepth = depth ? *depth : fView.GetClearDepth();
         fDevice.Clear(fView.fRenderState & kRenderClearColor, {clearColor.r, clearColor.g, clearColor.b, clearColor.a}, fView.fRenderState & kRenderClearDepth, 1.0);
-        fCurrentDepthStencilState = nullptr;
+        ResetMetalStateTracking();
     }
 }
 
@@ -572,7 +574,7 @@ bool plMetalPipeline::BeginRender()
     // offset transform
     RefreshScreenMatrices();
     
-    fCurrentPipelineState = nullptr;
+    ResetMetalStateTracking();
     
     // offset transform
     RefreshScreenMatrices();
@@ -613,11 +615,10 @@ bool plMetalPipeline::BeginRender()
 bool plMetalPipeline::EndRender()
 {
     bool retVal = false;
+    ResetMetalStateTracking();
     
     if (--fInSceneDepth == 0) {
         fDevice.SubmitCommandBuffer();
-        fCurrentPipelineState = nullptr;
-        fCurrentDepthStencilState = nullptr;
         
         IClearShadowSlaves();
     }
@@ -1007,7 +1008,10 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
     if(!vRef->GetBuffer()) {
         return;
     }
-    fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
+    if (fCurrentVertexBuffer != vRef->GetBuffer()) {
+        fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
+        fCurrentVertexBuffer = vRef->GetBuffer();
+    }
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
     
     IPushPiggyBacks(material);
@@ -1066,6 +1070,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
             //if we had to render aux spans, we probably changed the vertex and index buffer
             //reset those
             fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
+            fCurrentVertexBuffer = vRef->GetBuffer();
             fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
             
             IRenderShadowsOntoSpan(render, &span, material, vRef);
@@ -1218,6 +1223,7 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
         return;
     }
     fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
+    fCurrentVertexBuffer = vRef->GetBuffer();
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
     
     plRenderTriListFunc render(&fDevice, 0, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength);
@@ -1458,10 +1464,10 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
         
         /*plMetalDevice::plMetalLinkedPipeline *pipeline = fDevice.pipelineStateFor(vRef, s.fBlendFlags, numActivePiggyBacks + mRef->fPassLengths[pass], plShaderID::Unregistered, plShaderID::Unregistered, sources, blendModes, miscFlags);
         const MTL::RenderPipelineState *pipelineState = pipeline->pipelineState;*/
-        //if(fCurrentPipelineState != pipelineState) {
+        if(fCurrentPipelineState != pipelineState) {
             fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pipelineState);
             fCurrentPipelineState = pipelineState;
-        //}
+        }
     }
     
     return true;
@@ -2336,7 +2342,10 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     
     plMetalPlateManager *pm = (plMetalPlateManager *)fPlateMgr;
     
-    fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pm->fPlateRenderPipelineState);
+    if(fCurrentPipelineState != pm->fPlateRenderPipelineState) {
+        fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pm->fPlateRenderPipelineState);
+        fCurrentPipelineState = pm->fPlateRenderPipelineState;
+    }
     float alpha = material->GetLayer(0)->GetOpacity();
     fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&alpha, sizeof(float), 6);
     fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(pm->fDepthState);
@@ -3632,8 +3641,12 @@ void plMetalPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSp
 
     /// Switch to the vertex buffer we want
     plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalRenderShadowCasterPipelineState(&fDevice, vRef).GetRenderPipelineState();
-    fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
+    if(fCurrentPipelineState != linkedPipeline->pipelineState) {
+        fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
+        fCurrentPipelineState = linkedPipeline->pipelineState;
+    }
     fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
+    fCurrentVertexBuffer = vRef->GetBuffer();
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
     fDevice.CurrentRenderCommandEncoder()->setCullMode(MTL::CullModeNone);
 
@@ -3703,10 +3716,10 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             }
             
             plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalRenderShadowPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();
-            //if(fCurrentPipelineState != linkedPipeline->pipelineState) {
+            if(fCurrentPipelineState != linkedPipeline->pipelineState) {
                 fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
                 fCurrentPipelineState = linkedPipeline->pipelineState;
-            //}
+            }
 
             int selfShadowNow = span->IsShadowBitSet(fShadows[i]->fIndex);
 
@@ -4371,4 +4384,11 @@ uint32_t  plMetalPipeline::IGetBufferFormatSize( uint8_t format ) const
     size += sizeof( float ) * 3 * plGBufferGroup::CalcNumUVs( format );
 
     return size;
+}
+
+void plMetalPipeline::ResetMetalStateTracking()
+{
+    fCurrentPipelineState = nullptr;
+    fCurrentDepthStencilState = nullptr;
+    fCurrentVertexBuffer = nullptr;
 }
