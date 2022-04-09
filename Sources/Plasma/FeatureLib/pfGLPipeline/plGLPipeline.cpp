@@ -46,15 +46,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <epoxy/gl.h>
+#include <string_theory/string>
+
 #include "HeadSpin.h"
 #include "hsWindows.h"
 
-#include <string_theory/string>
-
-#include "plPipeline/hsWinRef.h"
-
 #include "plGLPipeline.h"
 #include "plGLPlateManager.h"
+
+#include "plPipeline/hsWinRef.h"
+#include "plStatusLog/plStatusLog.h"
 
 #ifdef HS_SIMD_INCLUDE
 #  include HS_SIMD_INCLUDE
@@ -65,12 +67,30 @@ plGLEnumerate plGLPipeline::enumerator;
 plGLPipeline::plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode)
     : pl3DPipeline(devMode)
 {
+    plStatusLog::AddLineS("pipeline.log", "Constructing plGLPipeline");
+    plStatusLog::AddLineSF("pipeline.log", "Driver vendor: {}", devMode->GetDevice()->GetDriverDesc());
+
+    fDevice.fWindow = window;
+    fDevice.fDevice = display;
+    fDevice.fPipeline = this;
+
     fPlateMgr = new plGLPlateManager(this);
 }
 
 bool plGLPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
-    return false;
+    plDrawableSpans* ds = plDrawableSpans::ConvertNoRef(drawable);
+    if (!ds)
+        return false;
+
+    if ((ds->GetType() & fView.GetDrawableTypeMask()) == 0)
+        return false;
+
+    fView.GetVisibleSpans(ds, visList, visMgr);
+
+    // TODO: Implement bounds debugging stuff here
+
+    return !visList.empty();
 }
 
 bool plGLPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
@@ -132,12 +152,56 @@ plRenderTarget* plGLPipeline::PopRenderTarget()
 
 bool plGLPipeline::BeginRender()
 {
+    // TODO: Device Init/Reset stuff here
+
+    // offset transform
+    RefreshScreenMatrices();
+
+    // If this is the primary BeginRender, make sure we're really ready.
+    if (fInSceneDepth++ == 0) {
+        fDevice.BeginRender();
+
+        hsColorRGBA clearColor = GetClearColor();
+
+        glDepthMask(GL_TRUE);
+        //glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+        glClearColor(0.f, 0.f, 0.5f, 1.f);
+        glClearDepth(1.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    fRenderCnt++;
+
+    // Would probably rather this be an input.
+    fTime = hsTimer::GetSysSeconds();
+
     return false;
 }
 
 bool plGLPipeline::EndRender()
 {
-    return false;
+    bool retVal = false;
+
+    // Actually end the scene
+    if (--fInSceneDepth == 0) {
+        retVal = fDevice.EndRender();
+
+        //TODO: IClearShadowSlaves();
+    }
+
+    // Do this last, after we've drawn everything
+    // Just letting go of things we're done with for the frame.
+    hsRefCnt_SafeUnRef(fCurrMaterial);
+    fCurrMaterial = nullptr;
+
+    for (int i = 0; i < 8; i++) {
+        if (fLayerRef[i]) {
+            hsRefCnt_SafeUnRef(fLayerRef[i]);
+            fLayerRef[i] = nullptr;
+        }
+    }
+
+    return retVal;
 }
 
 void plGLPipeline::RenderScreenElements()

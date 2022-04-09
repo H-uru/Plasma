@@ -51,12 +51,36 @@ class plRenderTarget;
 
 class plGLDevice
 {
+    friend class plGLPipeline;
+    friend void InitEGLDevice(plGLDevice* dev);
+    friend void InitWGLDevice(plGLDevice* dev);
+    friend void InitCGLDevice(plGLDevice* dev);
+
+    enum ContextType {
+        kNone = 0,
+        kWGL,
+        kCGL,
+        kEGL
+    };
+
 protected:
     ST::string fErrorMsg;
     plGLPipeline*       fPipeline;
+    ContextType         fContextType;
+    hsWindowHndl        fWindow;
+    hsWindowHndl        fDevice;
+    void*               fDisplay;
+    void*               fSurface;
+    void*               fContext;
+    size_t              fActiveThread;
 
 public:
     plGLDevice();
+
+    /**
+     * Initializes the OpenGL rendering context.
+     */
+    bool InitDevice();
 
     /**
      * Set rendering to the specified render target.
@@ -66,9 +90,16 @@ public:
      */
     void SetRenderTarget(plRenderTarget* target);
 
-    /** Translate our viewport into a D3D viewport. */
+    /** Translate our viewport into a GL viewport. */
     void SetViewport();
 
+    bool BeginRender();
+
+    /**
+     * Tell GL we're through rendering for this frame, and flip the back buffer
+     * to front.
+     */
+    bool EndRender();
 
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
