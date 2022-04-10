@@ -64,11 +64,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnNetCommon/plNetApp.h"
 
+#include "plClipboard/plClipboard.h"
 #include "plGImage/plPNG.h"
 #include "plInputCore/plInputDevice.h"
 #include "plInputCore/plInputInterface.h"
 #include "plInputCore/plInputInterfaceMgr.h"
 #include "plMessage/plCaptureRenderMsg.h"
+#include "plMessage/plConfirmationMsg.h"
 #include "plMessage/plConsoleMsg.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
@@ -357,7 +359,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
 {
     char            *c;
     wchar_t         key;
-    int             i,eol;
+    size_t          i,eol;
     static bool     findAgain = false;
     static uint32_t   findCounter = 0;
 
@@ -525,144 +527,56 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     }
     else if( msg->GetKeyCode() == KEY_ENTER )
     {
-        // leave leading space for Python multi lines (need the indents!)
-        if ( fPythonMultiLines == 0 )
-        {
-            // Clean up working line by removing any leading whitespace
-            for( c = fWorkingLine; *c == ' ' || *c == '\t'; c++ );
-            for( i = 0; *c != 0; i++, c++ )
-                fWorkingLine[ i ] = *c;
-            fWorkingLine[ i ] = 0;
-            eol = i;
-        }
-
-        if( fWorkingLine[ 0 ] == 0 && !fHelpMode && !fPythonMode )
-        {
-            // Blank line--just print a blank line to the console and skip
-            IAddLine( "" );
-            return;
-        }
-
-        // only save history line if there is something there
-        if( fWorkingLine[ 0 ] != 0 )
-        {
-            // Save to history
-            strcpy( fHistory[ fPythonMode ].fData[ fHistory[ fPythonMode ].fCursor ], fWorkingLine );
-            fHistory[ fPythonMode ].fCursor = ( fHistory[ fPythonMode ].fCursor < kNumHistoryItems - 1 ) ? fHistory[ fPythonMode ].fCursor + 1 : 0;
-            fHistory[ fPythonMode ].fRecallCursor = fHistory[ fPythonMode ].fCursor;
-        }
-
-        // EXECUTE!!! (warning: DESTROYS fWorkingLine)
-        if( fHelpMode )
-        {
-            if( fWorkingLine[ 0 ] == 0 )
-                IPrintSomeHelp();
-            else if( stricmp( fWorkingLine, "commands" ) == 0 )
-            {
-                char empty[] = "";
-                fEngine->PrintCmdHelp( empty, IAddLineCallback );
-            }
-            else if( !fEngine->PrintCmdHelp( fWorkingLine, IAddLineCallback ) )
-            {
-                c = (char *)fEngine->GetErrorMsg();
-                AddLine( c );
-            }
-
-            fHelpMode = false;
-        }
-        // are we in Python mode?
-        else if ( fPythonMode )
-        {
-            // are we in Python multi-line mode?
-            if ( fPythonMultiLines > 0 )
-            {
-                // if there was a line then bump num lines
-                if ( fWorkingLine[0] != 0 )
-                {
-                    AddLineF("... %s", fWorkingLine);
-                    fPythonMultiLines++;
-                }
-
-                // is it time to evaluate all the multi lines that are saved?
-                if ( fWorkingLine[0] == 0 || fPythonMultiLines >= kNumHistoryItems )
-                {
-                    if ( fPythonMultiLines >= kNumHistoryItems )
-                        AddLine("Python Multi-line buffer full!");
-                    // get the lines and stuff them in our buffer
-                    char biglines[kNumHistoryItems*(kMaxCharsWide+1)];
-                    biglines[0] = 0;
-                    for ( i=fPythonMultiLines; i>0 ; i--)
-                    {
-                        // reach back in the history and find this line and paste it in here
-                        int recall = fHistory[ fPythonMode ].fCursor - i;
-                        if ( recall < 0 )
-                            recall += kNumHistoryItems;
-                        strcat(biglines,fHistory[ fPythonMode ].fData[ recall ]);
-                        strcat(biglines,"\n");
-                    }
-                    // now evaluate this mess they made
-                    PyObject* mymod = PythonInterface::FindModule("__main__");
-                    PythonInterface::RunStringInteractive(biglines,mymod);
-                    std::string output;
-                    // get the messages
-                    PythonInterface::getOutputAndReset(&output);
-                    AddLine( output.c_str() );
-                    // all done doing multi lines...
-                    fPythonMultiLines = 0;
-                }
-            }
-            // else we are just doing single lines
-            else
-            {
-                // was there actually anything in the input buffer?
-                if ( fWorkingLine[0] != 0 )
-                {
-                    AddLineF(">>> %s", fWorkingLine);
-                    // check to see if this is going to be a multi line mode ( a ':' at the end)
-                    if ( fWorkingLine[eol-1] == ':' )
-                    {
-                        fPythonMultiLines = 1;
-                    }
-                    else
-                    // else if not the start of a multi-line then execute it
-                    {
-                        PyObject* mymod = PythonInterface::FindModule("__main__");
-                        PythonInterface::RunStringInteractive(fWorkingLine,mymod);
-                        std::string output;
-                        // get the messages
-                        PythonInterface::getOutputAndReset(&output);
-                        AddLine( output.c_str() );
-                    }
-                }
-                else
-                    AddLine( ">>> " );
-            }
-            // find the end of the line
-            for( c = fWorkingLine, eol = 0; *c != 0; eol++, c++ );
-        }
-        else
-        {
-            if( !fEngine->RunCommand( fWorkingLine, IAddLineCallback ) )
-            {
-                c = (char *)fEngine->GetErrorMsg();
-                if( c[ 0 ] != 0 )
-                    AddLine( c );
-            }
-        }
-
-        // Clear
-        fWorkingLine[ fWorkingCursor = 0 ] = 0;
+        IExecuteWorkingLine();
         findAgain = false;
         findCounter = 0;
         IUpdateTooltip();
     }
     else if( msg->GetKeyCode() == KEY_END )
     {
-        fWorkingCursor = strlen( fWorkingLine );
+        fWorkingCursor = strnlen(fWorkingLine, std::size(fWorkingLine));
     }
     else if( msg->GetKeyCode() == KEY_HOME )
     {
         fWorkingCursor = 0;
+    }
+    else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_V)
+    {
+        ST::string text = plClipboard::GetInstance().GetClipboardText();
+        if (text.empty())
+            return;
+
+        // FIXME: Unfortunately, the console is currently limited to single byte
+        //        characters. Remove this when the console is unicode safe.
+        ST::char_buffer buf = text.to_latin_1(ST::utf_validation_t::substitute_invalid);
+
+        // If there are any embedded newlines, we will need to execute the commands
+        // or Python code, otherwise we will get a mess in the working line. However,
+        // executing arbitrary commands without warning is not ideal, so ask the user
+        // if this is OK.
+        if (text.find('\n') != -1) {
+            plConfirmationMsg* yesno = new plConfirmationMsg(
+                ST_LITERAL(
+                    "You are pasting text that contains multiple lines. "
+                    "This may cause commands to execute. Should we continue?"
+                ),
+                plConfirmationMsg::Type::YesNo,
+                [this, buf = std::move(buf)](plConfirmationMsg::Result result) -> void {
+                    if (result == plConfirmationMsg::Result::Yes) {
+                        for (const char c : buf)
+                            IHandleCharacter(c);
+                    }
+                }
+            );
+            yesno->Send();
+        } else {
+            for (const char c : buf)
+                IHandleCharacter(c);
+        }
+
+        findAgain = false;
+        findCounter = 0;
+        IUpdateTooltip();
     }
     else if (msg->GetKeyChar())
     {
@@ -693,19 +607,37 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
             }
         }
         // or are they just typing in a working line
-        else if( strlen( fWorkingLine ) < kMaxCharsWide - 2 && key != 0 )
+        else
         {
-            for( i = strlen( fWorkingLine ) + 1; i > fWorkingCursor; i-- )
-                fWorkingLine[ i ] = fWorkingLine[ i - 1 ];
-
-            // TODO: What about keys outside of `char` range?
-            fWorkingLine[fWorkingCursor++] = char(key);
-
+            // FIXME: make the console unicode friendly.
+            IHandleCharacter((char)key);
             findAgain = false;
             findCounter = 0;
             IUpdateTooltip();
         }
     }
+}
+
+void    pfConsole::IHandleCharacter(const char c)
+{
+    // Properly handle embedded newlines as execution triggers.
+    if (c == '\r')
+        return;
+    if (c == '\n') {
+        IExecuteWorkingLine();
+        return;
+    }
+
+    size_t i = strnlen(fWorkingLine, std::size(fWorkingLine));
+
+    // The current working line is too long. Ignore this character.
+    if (!(i < kMaxCharsWide - 2 && c != '\0'))
+        return;
+
+    // Advance any trailing characters one space to make room for the new character.
+    for (i += 1; i > fWorkingCursor; --i)
+        fWorkingLine[i] = fWorkingLine[i - 1];
+    fWorkingLine[fWorkingCursor++] = c;
 }
 
 //// IAddLineCallback ////////////////////////////////////////////////////////
@@ -1000,6 +932,120 @@ void    pfConsole::IUpdateTooltip()
         fHelpTimer = kHelpDelay;
         strncpy( fLastHelpMsg, c ? c : "", kMaxCharsWide - 2 );
     }
+}
+
+//// IExecuteWorkingLine /////////////////////////////////////////////////////
+
+void    pfConsole::IExecuteWorkingLine()
+{
+    int   i, eol;
+    char* c;
+
+    // leave leading space for Python multi lines (need the indents!)
+    if (fPythonMultiLines == 0) {
+        // Clean up working line by removing any leading whitespace
+        for (c = fWorkingLine; *c == ' ' || *c == '\t'; c++);
+        for (i = 0; *c != 0; i++, c++)
+            fWorkingLine[i] = *c;
+        fWorkingLine[i] = 0;
+        eol = i;
+    }
+
+    if (fWorkingLine[0] == 0 && !fHelpMode && !fPythonMode) {
+        // Blank line--just print a blank line to the console and skip
+        IAddLine("");
+        return;
+    }
+
+    // only save history line if there is something there
+    if (fWorkingLine[0] != 0) {
+        // Save to history
+        strcpy(fHistory[fPythonMode].fData[fHistory[fPythonMode].fCursor], fWorkingLine);
+        fHistory[fPythonMode].fCursor = (fHistory[fPythonMode].fCursor < kNumHistoryItems - 1) ? fHistory[fPythonMode].fCursor + 1 : 0;
+        fHistory[fPythonMode].fRecallCursor = fHistory[fPythonMode].fCursor;
+    }
+
+    // EXECUTE!!! (warning: DESTROYS fWorkingLine)
+    if (fHelpMode) {
+        if (fWorkingLine[0] == 0) {
+            IPrintSomeHelp();
+        } else if (stricmp(fWorkingLine, "commands") == 0) {
+            char empty[] = "";
+            fEngine->PrintCmdHelp(empty, IAddLineCallback);
+        } else if (!fEngine->PrintCmdHelp(fWorkingLine, IAddLineCallback)) {
+            c = (char*)fEngine->GetErrorMsg();
+            AddLine(c);
+        }
+
+        fHelpMode = false;
+    } else if (fPythonMode) {
+        // are we in Python multi-line mode?
+        if (fPythonMultiLines > 0) {
+            // if there was a line then bump num lines
+            if (fWorkingLine[0] != 0) {
+                AddLineF("... %s", fWorkingLine);
+                fPythonMultiLines++;
+            }
+
+            // is it time to evaluate all the multi lines that are saved?
+            if (fWorkingLine[0] == 0 || fPythonMultiLines >= kNumHistoryItems) {
+                if (fPythonMultiLines >= kNumHistoryItems)
+                    AddLine("Python Multi-line buffer full!");
+                // get the lines and stuff them in our buffer
+                char biglines[kNumHistoryItems * (kMaxCharsWide + 1)];
+                biglines[0] = 0;
+                for (i = fPythonMultiLines; i > 0; i--) {
+                    // reach back in the history and find this line and paste it in here
+                    int recall = fHistory[fPythonMode].fCursor - i;
+                    if (recall < 0)
+                        recall += kNumHistoryItems;
+                    strcat(biglines, fHistory[fPythonMode].fData[recall]);
+                    strcat(biglines, "\n");
+                }
+                // now evaluate this mess they made
+                PyObject* mymod = PythonInterface::FindModule("__main__");
+                PythonInterface::RunStringInteractive(biglines, mymod);
+                std::string output;
+                // get the messages
+                PythonInterface::getOutputAndReset(&output);
+                AddLine(output.c_str());
+                // all done doing multi lines...
+                fPythonMultiLines = 0;
+            }
+        } else {
+            // else we are just doing single lines
+            // was there actually anything in the input buffer?
+            if (fWorkingLine[0] != 0) {
+                AddLineF(">>> %s", fWorkingLine);
+                // check to see if this is going to be a multi line mode ( a ':' at the end)
+                if (fWorkingLine[eol - 1] == ':') {
+                    fPythonMultiLines = 1;
+                } else
+                    // else if not the start of a multi-line then execute it
+                {
+                    PyObject* mymod = PythonInterface::FindModule("__main__");
+                    PythonInterface::RunStringInteractive(fWorkingLine, mymod);
+                    std::string output;
+                    // get the messages
+                    PythonInterface::getOutputAndReset(&output);
+                    AddLine(output.c_str());
+                }
+            } else {
+                AddLine(">>> ");
+            }
+        }
+        // find the end of the line
+        for (c = fWorkingLine, eol = 0; *c != 0; eol++, c++);
+    } else {
+        if (!fEngine->RunCommand(fWorkingLine, IAddLineCallback)) {
+            c = (char*)fEngine->GetErrorMsg();
+            if (c[0] != 0)
+                AddLine(c);
+        }
+    }
+
+    // Clear
+    fWorkingLine[fWorkingCursor = 0] = 0;
 }
 
 //// IPrintSomeHelp //////////////////////////////////////////////////////////
