@@ -185,7 +185,6 @@ private:
     void IPreprocessAvatarTextures();
     void IDrawClothingQuad(float x, float y, float w, float h,
                            float uOff, float vOff, plMipmap* tex);
-    void IClearShadowSlaves();
 
     void ICreateDeviceObjects();
     void IReleaseDynDeviceObjects();
