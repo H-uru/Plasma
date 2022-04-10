@@ -53,6 +53,7 @@ from PlasmaKITypes import *
 from PlasmaConstants import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
+from xStartPathHelpers import *
 
 import time
 import xCensor
@@ -2144,10 +2145,11 @@ class xKI(ptModifier):
             if gender > kFemaleClothingGroup:
                 gender = kMaleClothingGroup
             avatar.netForce(1)
-            if gender == kFemaleClothingGroup:
-                avatar.avatar.wearClothingItem("FAccPlayerBook")
+            playerBook = "FAccPlayerBook" if gender == kFemaleClothingGroup else "MAccPlayerBook"
+            if StartInCleft():
+                avatar.avatar.removeClothingItem(playerBook)
             else:
-                avatar.avatar.wearClothingItem("MAccPlayerBook")
+                avatar.avatar.wearClothingItem(playerBook)
             avatar.avatar.saveClothing()
             # Show the microKI.
             KIMicroBlackbar.dialog.show()
@@ -2188,10 +2190,11 @@ class xKI(ptModifier):
                 if gender > kFemaleClothingGroup:
                     gender = kMaleClothingGroup
                 avatar.netForce(1)
-                if gender == kFemaleClothingGroup:
-                    avatar.avatar.wearClothingItem("FAccPlayerBook")
+                playerBook = "FAccPlayerBook" if gender == kFemaleClothingGroup else "MAccPlayerBook"
+                if StartInCleft():
+                    avatar.avatar.removeClothingItem(playerBook)
                 else:
-                    avatar.avatar.wearClothingItem("MAccPlayerBook")
+                    avatar.avatar.wearClothingItem(playerBook)
                 avatar.avatar.saveClothing()
             except NameError:
                 pass

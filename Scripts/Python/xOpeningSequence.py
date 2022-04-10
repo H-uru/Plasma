@@ -53,6 +53,7 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaConstants import *
+from xStartPathHelpers import *
 
 import PlasmaControlKeys
 import os
@@ -65,13 +66,16 @@ import xOptionsMenu
 IntroMovieDlg = ptAttribGUIDialog(1,"The Intro Movie dialog")
 FirstHelpDlg = ptAttribGUIDialog(2, "The First Help dialog")
 OrientationDlg = ptAttribGUIDialog(3, "The Orientation dialog")
-
+OrientationPBIcon01 = ptAttribSceneobject(4, "Player Book Icon")
+OrientationPBIcon02 = ptAttribSceneobject(5, "Player Book Icon 2")
+OrientationPBIcon01Zandi = ptAttribSceneobject(6, "Zandi Icon")
 
 # globals
 #--------
 
 gIntroMovie = None
-kAtrusIntroMovie = "avi/URULiveIntro.webm"
+kAtrusIntroMovie = "avi/AtrusIntro.webm"
+kYeeshaIntroMovie = "avi/URULiveIntro.webm"
 
 gIntroStarted = 0
 
@@ -138,6 +142,7 @@ kMouseNormalText = 631
 kMouseNoviceText = 632
 kOkButton = 650
 
+kOrientPBText = 311
 
 class xOpeningSequence(ptModifier):
     "The Opening Sequence handler"
@@ -218,7 +223,10 @@ class xOpeningSequence(ptModifier):
                 # see if the there actually is a movie to play
                 skipMovie = 1
                 try:
-                    os.stat(kAtrusIntroMovie)
+                    if IsTutorialPath():
+                        os.stat(kAtrusIntroMovie)
+                    else:
+                        os.stat(kYeeshaIntroMovie)
                     # its there! show the background, which will start the movie
                     PtShowDialog("IntroBahroBgGUI")
                     skipMovie = 0
@@ -231,6 +239,14 @@ class xOpeningSequence(ptModifier):
                     PtGUICursorOn()
                     OrientationDlg.dialog.show()
                     PtDebugPrint("xOpeningSequence - no intro movie!!!",level=kDebugDumpLevel)
+                    if IsTutorialPath():
+                        OrientationPBIcon01.value.draw.disable()
+                        OrientationPBIcon02.value.draw.disable()
+                        OrientationPBIcon01Zandi.value.draw.enable()
+                        ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBTextZandi"))
+                    else:
+                        OrientationPBIcon01Zandi.value.draw.disable()
+                        ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBText"))
             elif event == kAction or event == kValueChanged:
                 orientationID = control.getTagID()
                 if orientationID == kFirstHelpOkBtn:
@@ -277,7 +293,7 @@ class xOpeningSequence(ptModifier):
                 textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kOkButton))
                 textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Ok"))
                 # hide the ok button until they agree to the terms... or pick normal or novice
-                ##textField.setString(" ")
+                ##textField.setStringW(" ")
                 ##okBtn = ptGUIControlButton(FirstHelpDlg.dialog.getControlFromTag(kFirstHelpOkBtn))
                 ##okBtn.hide()
             elif event == kShowHide:
@@ -312,7 +328,10 @@ class xOpeningSequence(ptModifier):
         elif id == -1:
             if event == kShowHide:
                 if control.isEnabled():
-                    gIntroMovie = ptMoviePlayer(kAtrusIntroMovie,self.key)
+                    if StartInCleft():
+                        gIntroMovie = ptMoviePlayer(kAtrusIntroMovie, self.key)
+                    else:
+                        gIntroMovie = ptMoviePlayer(kYeeshaIntroMovie, self.key)
                     gIntroMovie.playPaused()
                     if gIntroByTimer:
                         PtAtTimeCallback(self.key, kIntroPauseSeconds, kIntroPauseID)
@@ -374,7 +393,20 @@ class xOpeningSequence(ptModifier):
         # start rendering the scene again
         PtEnableRenderScene()
         PtGUICursorOn()
-        OrientationDlg.dialog.show()
+        vault = ptVault()
+        entry = vault.findChronicleEntry(kIntroPlayedChronicle)
+        if entry is not None and IsTutorialPath() and IsCleftSolved():
+            self.IStartGame()
+        else:
+            OrientationDlg.dialog.show()
+            if IsTutorialPath():
+                OrientationPBIcon01.value.draw.disable()
+                OrientationPBIcon02.value.draw.disable()
+                OrientationPBIcon01Zandi.value.draw.enable()
+                ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBTextZandi"))
+            else:
+                OrientationPBIcon01Zandi.value.draw.disable()
+                ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setStringW(PtGetLocalizedString("GUI.OrientationGUI.OrientPBText"))
         PtFadeIn(kHelpFadeInSeconds,0)
 
 
@@ -399,6 +431,8 @@ class xOpeningSequence(ptModifier):
         if entry is not None:
             entry.chronicleSetValue("yes")
             entry.save()
+        elif IsTutorialPath():
+            vault.addChronicleEntry(kIntroPlayedChronicle, 2, "no")
         else:
             vault.addChronicleEntry(kIntroPlayedChronicle,2,"yes")
         # 2) fade screen up.. or something....? maybe

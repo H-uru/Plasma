@@ -51,6 +51,7 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
+from xStartPathHelpers import *
 
 
 #rgnSnsrFissureDrop = ptAttribActivator(1, "rgn snsr: fissure drop spawn")
@@ -62,7 +63,7 @@ loadZandi = 0
 loadBook = 0
 fissureDrop = 0
 
-#kIntroPlayedChronicle = "IntroPlayed"
+kIntroPlayedChronicle = "IntroPlayed"
 
 
 class Cleft(ptResponder):
@@ -84,14 +85,7 @@ class Cleft(ptResponder):
         #checks chronicle entries, if don't exist or is set to no,
         #then decides if Tomahna or Zandi should be paged in
 
-        vault = ptVault()
-        entryCleft = vault.findChronicleEntry("CleftSolved")
-        if entryCleft is not None:
-            entryCleftValue = entryCleft.chronicleGetValue()
-            if entryCleftValue != "yes":
-                loadZandi = 1
-                loadBook = 1
-        elif entryCleft is None:
+        if not IsCleftSolved():
             loadZandi = 1
             loadBook = 1
 
@@ -148,25 +142,32 @@ class Cleft(ptResponder):
 
     def OnFirstUpdate(self):
         pass
-        #~ # test for first time to play the intro movie
-        #~ vault = ptVault()
-        #~ entry = vault.findChronicleEntry(kIntroPlayedChronicle)
-        #~ if entry is not None:
-            #~ # already played intro sometime in the past... just let 'em play
-            #~ PtSendKIMessage(kEnableKIandBB,0)
-        #~ else:
-            #~ # make sure the KI and blackbar is still diabled
-            #~ PtSendKIMessage(kDisableKIandBB,0)
-            #~ # It's the first time... start the intro movie, just by loading the movie dialog
-            #~ PtLoadDialog("IntroMovieGUI")
-
+        # test for first time to play the intro movie
+        vault = ptVault()
+        entry = vault.findChronicleEntry(kIntroPlayedChronicle)
+        if entry is not None:
+            # already played intro sometime in the past... just let 'em play
+            PtSendKIMessage(kEnableKIandBB,0)
+        else:
+            # make sure the KI and blackbar is still diabled
+            PtSendKIMessage(kDisableKIandBB,0)
+            # It's the first time... start the intro movie, just by loading the movie dialog
+            PtLoadDialog("IntroMovieGUI")
 
     def OnServerInitComplete(self):
         global loadTomahna
         global fissureDrop
         
         ageSDL = PtGetAgeSDL()
-        
+        if StartInCleft():
+            ageSDL["clftYeeshaBookVis"] = (1,)
+            PtSendKIMessageInt(kUpgradeKILevel, kMicroKI)
+            PtSendKIMessage(kDisableEntireYeeshaBook,0)
+            PtFindSceneobject("microBlackBarBody", "GUI").draw.disable()
+            PtGetLocalAvatar().avatar.setDontPanicLink(True)
+        else:
+            ageSDL["clftYeeshaBookVis"] = (0,)
+
         # sets Tomahna SDL based on what is being loaded (thanks to chronicle val)
         # also settings previously contained in .fni files
         if loadTomahna:

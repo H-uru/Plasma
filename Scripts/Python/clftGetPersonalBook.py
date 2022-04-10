@@ -52,6 +52,7 @@ Sets Chronical Entry to ensure that players who have "solved" the cleft can't re
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
+from xPsnlVaultSDL import *
 import xLinkingBookDefs
 import os
 
@@ -69,17 +70,9 @@ respLinkOutNew = ptAttribResponder(7, "resp:  new linkout")
 # global variables
 LocalAvatar = None
 YeeshaBook = None
-gDemoMovie = None
-kDemoMovieName = "avi/UruPreview.webm"
-gWasMuted = 0
 gAreWeLinkingOut = 0
 
 kLinkRespID = 7
-kTrailerFadeInID = 5
-kTrailerInSeconds = 1.0
-kTrailerFadeOutID = 3
-kTrailerFadeOutSeconds = 1.0
-kTrailerDoneID = 9
 
 
 class clftGetPersonalBook(ptResponder):
@@ -180,10 +173,10 @@ class clftGetPersonalBook(ptResponder):
                         cam.disableFirstPersonOverride()
                         cam.undoFirstPerson()
                         if currentgender == 1:
-                            #~ PtDebugPrint("Playing female book animation")
+                            PtDebugPrint("Playing female book animation")
                             BookAnimFemale.animation.play()
                         elif currentgender == 0:
-                            #~ PtDebugPrint("Playing male book animation")
+                            PtDebugPrint("Playing male book animation")
                             BookAnimMale.animation.play()
                         else:
                             PtDebugPrint("clftGetPersonalBook: unreadable gender or special character.",level=kErrorLevel)
@@ -199,60 +192,17 @@ class clftGetPersonalBook(ptResponder):
         PtAtTimeCallback(self.key, 8, kLinkRespID) 
 
     def SolveCleft(self):
-        if not PtIsDemoMode():
-            vault = ptVault()
-            vault.addChronicleEntry("CleftSolved",1,"yes")
-            PtDebugPrint("Chronicle updated with variable 'CleftSolved'.",level=kDebugDumpLevel)
+        vault = ptVault()
+        vault.addChronicleEntry("CleftSolved", 1, "yes")
+        PtDebugPrint("Chronicle updated with variable 'CleftSolved'.", level=kDebugDumpLevel)
+        PtSendKIMessage(kEnableEntireYeeshaBook, 0)
+        PtFindSceneobject("microBlackBarBody", "GUI").draw.enable()
+        psnlSDL = xPsnlVaultSDL()
+        if psnlSDL:
+            psnlSDL["YeeshaPage25"] = (4,)
 
-    def OnTimer(self,id):
-        global gDemoMovie
-        global gWasMuted
+    def OnTimer(self, id):
         if id == kLinkRespID:
-            respLinkResponder.run(self.key, self.key,avatar=PtGetLocalAvatar())
-            if PtIsDemoMode():
-                PtFadeOut(kTrailerFadeOutSeconds,1)
-                PtAtTimeCallback(self.key, kTrailerFadeOutSeconds, kTrailerFadeOutID)
-            else:
-                # only re-enable the KI and BB if they are not in demo mode
-                PtSendKIMessage(kEnableKIandBB,0)
-        elif id == kTrailerFadeOutID:
-            try:
-                os.stat(kDemoMovieName)
-                # its there! show the background, which will start the movie
-                # just continue processing
-            except:
-                PtDebugPrint("xLiveTrailer - no intro movie!!!",level=kDebugDumpLevel)
-                PtDebugPrint("Quitting demo now...")
-                PtConsole("App.Quit")
-            PtDebugPrint("xLiveTrailer - start showing movie",level=kDebugDumpLevel)
-            PtShowDialog("IntroBahroBgGUI")
-            #TrailerDlg.dialog.show()
-            # stop rendering the scene while showing the movie
-            PtDisableRenderScene()
-            # dim the cursor
-            PtGUICursorDimmed()
-            # temp mute sound
-            audio = ptAudioControl()
-            if audio.isMuted():
-                gWasMuted = 1
-            else:
-                gWasMuted = 0
-                audio.muteAll()
-            PtFadeIn(kTrailerInSeconds,0)
-            PtAtTimeCallback(self.key, kTrailerInSeconds, kTrailerFadeInID)
-            if PtIsDemoMode():
-                gDemoMovie = ptMoviePlayer(kDemoMovieName,self.key)
-            gDemoMovie.playPaused()
-        elif id == kTrailerFadeInID:
-            PtDebugPrint("xLiveTrailer - roll the movie",level=kDebugDumpLevel)
-            if gDemoMovie is not None:
-                gDemoMovie.resume()
-        elif id == kTrailerDoneID:
-            PtDebugPrint("Quitting demo now...")
-            PtConsole("App.Quit")
-
-    def OnMovieEvent(self,movieName,reason):
-        PtDebugPrint("xLiveTrailer: got movie done event on %s, reason=%d" % (movieName,reason),level=kDebugDumpLevel)
-        if gDemoMovie:
-            #PtFadeOut(kTrailerFadeOutSeconds, kTrailerDoneID)
-            PtConsole("App.Quit")
+            respLinkResponder.run(self.key, avatar=PtGetLocalAvatar())
+            PtSendKIMessage(kEnableKIandBB, 0)
+            PtGetLocalAvatar().avatar.setDontPanicLink(False)
