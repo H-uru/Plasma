@@ -186,7 +186,7 @@ bool plGLPipeline::EndRender()
     if (--fInSceneDepth == 0) {
         retVal = fDevice.EndRender();
 
-        //TODO: IClearShadowSlaves();
+        IClearShadowSlaves();
     }
 
     // Do this last, after we've drawn everything
