@@ -1602,6 +1602,10 @@ Such as a game master, only running on the client that owns a particular object"
         """Save avatar clothing to a file"""
         pass
 
+    def setDontPanicLink(self, value: bool) -> None:
+        """Disables panic linking to Personal Age (warps the avatar back to the start instead)"""
+        pass
+
     def setMorph(self,clothing_name,layer,value):
         """Set the morph value (clipped between -1 and 1)"""
         pass

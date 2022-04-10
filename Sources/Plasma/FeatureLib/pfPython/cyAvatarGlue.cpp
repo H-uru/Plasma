@@ -639,6 +639,18 @@ PYTHON_METHOD_DEFINITION(ptAvatar, loadClothingFromFile, args)
     PYTHON_RETURN_BOOL(self->fThis->LoadClothingFromFile(filename));
 }
 
+PYTHON_METHOD_DEFINITION(ptAvatar, setDontPanicLink, args)
+{
+    bool value;
+    if (!PyArg_ParseTuple(args, "b", &value)) {
+        PyErr_SetString(PyExc_TypeError, "setDontPanicLink expects a boolean");
+        PYTHON_RETURN_ERROR;
+    }
+
+    self->fThis->SetDontPanicLink(value);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_START_METHODS_TABLE(ptAvatar)
     PYTHON_METHOD(ptAvatar, netForce, "Params: forceFlag\nSpecify whether this object needs to use messages that are forced to the network\n"
                 "- This is to be used if your Python program is running on only one client\n"
@@ -697,6 +709,8 @@ PYTHON_START_METHODS_TABLE(ptAvatar)
 
     PYTHON_METHOD(ptAvatar, saveClothingToFile, "Params: filename\nSave avatar clothing to a file"),
     PYTHON_METHOD(ptAvatar, loadClothingFromFile, "Params: filename\nLoad avatar clothing from a file"),
+
+    PYTHON_METHOD(ptAvatar, setDontPanicLink, "Params: value\nDisables panic linking to Personal Age (warps the avatar back to the start instead)"),
 PYTHON_END_METHODS_TABLE;
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetBehaviorLoopCount, args, "Params: behaviorKey,stage,loopCount,netForce\nThis will set the loop count for a particular stage in a multistage behavior")

@@ -577,6 +577,14 @@ public:
 
     static bool IsCurrentBrainHuman();
 
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    //  Function   : SetDontPanicLink
+    //  PARAMETERS : value
+    //
+    //  PURPOSE    : Disables panic linking to Personal Age (warps the avatar back to the start instead)
+    //
+    void SetDontPanicLink(bool value);
 };
 
 #endif  // cyAvatar_h

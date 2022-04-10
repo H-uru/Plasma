@@ -826,10 +826,10 @@ void plArmatureMod::SpawnAt(int spawnNum, double time)
     w2l.RemoveScale();
     ci->SetTransform(l2w, w2l);
     ci->FlushTransform();
-    
-    if (plVirtualCam1::Instance())
-        plVirtualCam1::Instance()->SetCutNextTrans();
-    
+
+    if (IsLocalAvatar() && plVirtualCam1::Instance())
+        plVirtualCam1::Instance()->SetCutNext();
+
     if (GetFollowerParticleSystemSO())
     {
         // Since particles are in world space, if we've got some surrounding us, we've got to translate them to compensate for our warp.

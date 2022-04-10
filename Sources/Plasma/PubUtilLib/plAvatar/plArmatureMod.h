@@ -233,7 +233,9 @@ public:
     virtual void PanicLink(bool playLinkOutAnim = true);
     virtual void PersonalLink();
 
-    virtual bool ToggleDontPanicLinkFlag() { fDontPanicLink = fDontPanicLink ? false : true; return fDontPanicLink; }
+    bool ToggleDontPanicLinkFlag() { fDontPanicLink = fDontPanicLink ? false : true; return fDontPanicLink; }
+
+    void SetDontPanicLinkFlag(bool value) { fDontPanicLink = value; }
 
     size_t GetBrainCount() const { return fBrains.size(); }
     plArmatureBrain *GetNextBrain(plArmatureBrain *brain);
