@@ -2967,18 +2967,6 @@ void plMetalPipeline::IDrawClothingQuad(float x, float y, float w, float h,
     return pipe;
 }*/
 
-// IClearShadowSlaves ///////////////////////////////////////////////////////////////////////////
-// At EndRender(), we need to clear our list of shadow slaves. They are only valid for one frame.
-void plMetalPipeline::IClearShadowSlaves()
-{
-    int i;
-    for (i = 0; i < fShadows.size(); i++) {
-        const plShadowCaster* caster = fShadows[i]->fCaster;
-        caster->GetKey()->UnRefObject();
-    }
-    fShadows.clear();
-}
-
 // Create all our video memory consuming D3D objects.
 bool plMetalPipeline::ICreateDynDeviceObjects()
 {
