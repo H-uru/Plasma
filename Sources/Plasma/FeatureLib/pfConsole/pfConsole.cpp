@@ -540,6 +540,20 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     {
         fWorkingCursor = 0;
     }
+    else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_C)
+    {
+        // FIXME: console unicode friendly
+        plClipboard::GetInstance().SetClipboardText(ST::string::from_latin_1(fWorkingLine));
+    }
+    else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_X)
+    {
+        // FIXME: console unicode friendly
+        plClipboard::GetInstance().SetClipboardText(ST::string::from_latin_1(fWorkingLine));
+        fWorkingLine[fWorkingCursor = 0] = 0;
+        findAgain = false;
+        findCounter = 0;
+        IUpdateTooltip();
+    }
     else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_V)
     {
         ST::string text = plClipboard::GetInstance().GetClipboardText();
