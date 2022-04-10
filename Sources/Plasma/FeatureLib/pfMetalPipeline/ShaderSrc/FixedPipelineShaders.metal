@@ -195,6 +195,7 @@ typedef struct  {
     texturecube<half> cubicTexture8  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 7), function_constant(hasLayer8)  ]];
     const constant half4* colors   [[ buffer(FragmentShaderArgumentAttributeColors)   ]];
     const constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(BufferIndexFragArgBuffer)   ]];
+    array<sampler, 4> samplers [[ sampler(0)   ]];
 } FragmentShaderArguments;
 
 float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const uint UVWSrc, const uint flags, const float4 normal, const float4 camPosition, const matrix_float4x4 camToWorldMatrix, const matrix_float4x4 projectionMatrix);
@@ -227,21 +228,25 @@ constant constexpr sampler colorSamplers[] = {
     sampler(mip_filter::linear,
             mag_filter::linear,
             min_filter::linear,
-            address::repeat),
+            address::repeat,
+            max_anisotropy(16)),
     sampler(mip_filter::linear,
             mag_filter::linear,
             min_filter::linear,
             s_address::clamp_to_edge,
-            t_address::repeat),
+            t_address::repeat,
+            max_anisotropy(16)),
     sampler(mip_filter::linear,
             mag_filter::linear,
             min_filter::linear,
             s_address::repeat,
-            t_address::clamp_to_edge),
+            t_address::clamp_to_edge,
+            max_anisotropy(16)),
     sampler(mip_filter::linear,
             mag_filter::linear,
             min_filter::linear,
-            address::clamp_to_edge),
+            address::clamp_to_edge,
+            max_anisotropy(16)),
 
 };
 
@@ -463,7 +468,7 @@ float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const ui
     return sampleCoord.xyz;
 }
     
-half4 sampleLayer(uint8_t passType, uint8_t sampleType, uint32_t miscFlags, float3 sampleCoord,  const thread half4 &color, const thread texture2d<half> &texture, const thread texturecube<half> &cubicTexture) {
+half4 sampleLayer(uint8_t passType, uint32_t miscFlags, float3 sampleCoord,  const thread half4 &color, const thread texture2d<half> &texture, const thread texturecube<half> &cubicTexture, const thread sampler& colorSampler) {
     
     if(passType == PassTypeColor) {
         return color;
@@ -475,9 +480,9 @@ half4 sampleLayer(uint8_t passType, uint8_t sampleType, uint32_t miscFlags, floa
         
         //do the actual sample
         if(passType == PassTypeTexture) {
-            return texture.sample(colorSamplers[sampleType], sampleCoord.xy);
+            return texture.sample(colorSampler, sampleCoord.xy);
         } else if(passType == PassTypeCubicTexture) {
-            return cubicTexture.sample(colorSamplers[sampleType], sampleCoord.xyz);
+            return cubicTexture.sample(colorSampler, sampleCoord.xyz);
         } else {
             return half4(0);
         }
@@ -507,7 +512,7 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
             
             float3 sampleCoord = (&in.texCoord1)[layer];
             
-            color = sampleLayer(sourceTypes[layer], fragmentShaderArgs.bufferedUniforms->layers[layer].sampleType, miscFlags[layer], sampleCoord, half4(in.vtxColor), (&fragmentShaderArgs.textures)[layer], (&fragmentShaderArgs.cubicTextures)[layer]);
+            color = sampleLayer(sourceTypes[layer], miscFlags[layer], sampleCoord, half4(in.vtxColor), (&fragmentShaderArgs.textures)[layer], (&fragmentShaderArgs.cubicTextures)[layer], fragmentShaderArgs.samplers[fragmentShaderArgs.bufferedUniforms->layers[layer].sampleType]);
             
             if(layer==0) {
                 blendFirst(color, currentColor, blendModes[layer]);
@@ -685,13 +690,13 @@ fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
     //only possible alpha sources are layers 0 or 1
     if(alphaSrc == 0) {
         
-        half4 layerColor = sampleLayer(sourceTypes[2], layers.bufferedUniforms->layers[0].sampleType, miscFlags[1], in.texCoord3, half4(layers.colors[0]), (&layers.textures)[0], (&layers.cubicTextures)[0]);
+        half4 layerColor = sampleLayer(sourceTypes[2], miscFlags[1], in.texCoord3, half4(layers.colors[0]), (&layers.textures)[0], (&layers.cubicTextures)[0], layers.samplers[sourceTypes[layers.bufferedUniforms->layers[0].sampleType]]);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;
     } else if(alphaSrc == 1) {
         
-        half4 layerColor = sampleLayer(sourceTypes[2], layers.bufferedUniforms->layers[1].sampleType, miscFlags[1], in.texCoord3, half4(layers.colors[1]), (&layers.textures)[1], (&layers.cubicTextures)[1]);
+        half4 layerColor = sampleLayer(sourceTypes[2], miscFlags[1], in.texCoord3, half4(layers.colors[1]), (&layers.textures)[1], (&layers.cubicTextures)[1], layers.samplers[sourceTypes[layers.bufferedUniforms->layers[1].sampleType]]);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;

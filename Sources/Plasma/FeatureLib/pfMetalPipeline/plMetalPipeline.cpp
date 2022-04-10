@@ -196,7 +196,7 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     if (fMaxLayersAtOnce < 4)
         SetDebugFlag(plPipeDbg::kFlagBumpUV, true);
     //plDynamicCamMap::SetCapable(false);
-    plQuality::SetQuality(fDefaultPipeParams.VideoQuality);
+    //plQuality::SetQuality(fDefaultPipeParams.VideoQuality);
     //plQuality::SetCapability(fDefaultPipeParams.VideoQuality);
     plQuality::SetCapability(plQuality::kPS_3);
     //plShadowCaster::EnableShadowCast(false);
@@ -209,6 +209,8 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     // RenderTarget pools are shared for our shadow generation algorithm.
     // Different sizes for different resolutions.
     IMakeRenderTargetPools();
+    
+    fDevice.SetMaxAnsiotropy(fInitialPipeParams.AnisotropicLevel);
 }
 
 plMetalPipeline::~plMetalPipeline()
@@ -811,20 +813,32 @@ void plMetalPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode> *res, 
 
 int plMetalPipeline::GetMaxAnisotropicSamples()
 {
-    //FIXME: Fix antialiasing
-    return 0;
+    //Metal always supports 16. There is no device check (as far as I know.)
+    return 16;
 }
 
 int plMetalPipeline::GetMaxAntiAlias(int Width, int Height, int ColorDepth)
 {
-    //FIXME: Fix antialiasing
-    return 0;
+    //Metal devices may not support the full antialias range
+    //return the max and we'll work it out later
+    if (fDevice.fMetalDevice->supportsTextureSampleCount(8)) {
+        return 8;
+    }
+    if (fDevice.fMetalDevice->supportsTextureSampleCount(4)) {
+        return 4;
+    }
+    if (fDevice.fMetalDevice->supportsTextureSampleCount(2)) {
+        return 2;
+    }
+    return 1;
 }
 
 void plMetalPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync)
 {
     //FIXME: Whats this?
     //Seems like an entry point for passing in display settings.
+    
+    fDevice.SetMaxAnsiotropy(MaxAnisotropicSamples);
 }
 
 void plMetalPipeline::RenderSpans(plDrawableSpans *ice, const std::vector<int16_t> &visList)

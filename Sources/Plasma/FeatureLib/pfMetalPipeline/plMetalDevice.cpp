@@ -110,6 +110,57 @@ void plMetalDevice::Shutdown()
     hsAssert(0, "Shutdown not implemented for Metal rendering");
 }
 
+
+void plMetalDevice::SetMaxAnsiotropy(int8_t maxAnsiotropy)
+{
+    //setup the material pass samplers
+    //load them all at once and then let the shader pick
+    
+    if (maxAnsiotropy == 0)
+        maxAnsiotropy = 1;
+    
+    if(fSamplerStates[0] != nullptr) {
+        ReleaseSamplerStates();
+    }
+    
+    MTL::SamplerDescriptor *samplerDescriptor = MTL::SamplerDescriptor::alloc()->init();
+    samplerDescriptor->setMaxAnisotropy(maxAnsiotropy);
+    samplerDescriptor->setMinFilter(MTL::SamplerMinMagFilterLinear);
+    samplerDescriptor->setMagFilter(MTL::SamplerMinMagFilterLinear);
+    samplerDescriptor->setMipFilter(MTL::SamplerMipFilterLinear);
+    
+    samplerDescriptor->setSAddressMode(MTL::SamplerAddressModeRepeat);
+    samplerDescriptor->setTAddressMode(MTL::SamplerAddressModeRepeat);
+    fSamplerStates[0] = fMetalDevice->newSamplerState(samplerDescriptor);
+    
+    samplerDescriptor->setSAddressMode(MTL::SamplerAddressModeClampToEdge);
+    samplerDescriptor->setTAddressMode(MTL::SamplerAddressModeRepeat);
+    fSamplerStates[1] = fMetalDevice->newSamplerState(samplerDescriptor);
+    
+    samplerDescriptor->setSAddressMode(MTL::SamplerAddressModeRepeat);
+    samplerDescriptor->setTAddressMode(MTL::SamplerAddressModeClampToEdge);
+    fSamplerStates[2] = fMetalDevice->newSamplerState(samplerDescriptor);
+    
+    samplerDescriptor->setSAddressMode(MTL::SamplerAddressModeClampToEdge);
+    samplerDescriptor->setTAddressMode(MTL::SamplerAddressModeClampToEdge);
+    fSamplerStates[3] = fMetalDevice->newSamplerState(samplerDescriptor);
+}
+
+void plMetalDevice::ReleaseSamplerStates()
+{
+    fSamplerStates[0]->release();
+    fSamplerStates[0] = nullptr;
+    
+    fSamplerStates[1]->release();
+    fSamplerStates[1] = nullptr;
+    
+    fSamplerStates[2]->release();
+    fSamplerStates[2] = nullptr;
+    
+    fSamplerStates[3]->release();
+    fSamplerStates[3] = nullptr;
+}
+
 void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool shouldClearDepth, float clearDepth) {
     
     //Plasma may clear a target and draw at different times.
@@ -196,6 +247,7 @@ void plMetalDevice::BeginNewRenderPass() {
         fCurrentRenderTargetCommandEncoder = fCurrentCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
     }
     
+    fCurrentRenderTargetCommandEncoder->setFragmentSamplerStates(fSamplerStates, NS::Range::Make(0, 4));
 }
 
 void plMetalDevice::SetRenderTarget(plRenderTarget* target)
@@ -257,6 +309,7 @@ plMetalDevice::plMetalDevice()
     {
     fClearRenderTargetColor = {0.0, 0.0, 0.0, 1.0};
     fClearDrawableColor = {0.0, 0.0, 0.0, 1.0};
+    fSamplerStates[0] = nullptr;
         
     fMetalDevice = MTL::CreateSystemDefaultDevice();
     fCommandQueue = fMetalDevice->newCommandQueue();

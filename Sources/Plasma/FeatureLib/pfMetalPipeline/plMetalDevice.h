@@ -168,6 +168,8 @@ public:
     ///Submit the command buffer to the GPU and draws all the render passes. Clears the current command buffer.
     void SubmitCommandBuffer();
     void Clear(bool shouldClearColor, simd_float4 clearColor, bool shouldClearDepth, float clearDepth);
+    
+    void SetMaxAnsiotropy(int8_t maxAnsiotropy);
 private:
     
     struct plMetalPipelineRecord {
@@ -226,8 +228,10 @@ private:
     float                       fClearRenderTargetDepth;
     float                       fClearDrawableDepth;
     plRenderTarget*             fCurrentRenderTarget;
+    MTL::SamplerState*          fSamplerStates[4];
     
     void BeginNewRenderPass();
+    void ReleaseSamplerStates();
 };
 
 #endif
