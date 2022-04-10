@@ -781,6 +781,12 @@ protected:
      */
     void ISetShadowFromGroup(plDrawableSpans* drawable, const plSpan* span, plLightInfo* liInfo);
 
+    /**
+     * At EndRender(), we need to clear our list of shadow slaves.
+     * They are only valid for one frame.
+     */
+    void IClearShadowSlaves();
+
     void IClearClothingOutfits(std::vector<plClothingOutfit*>* outfits);
     void IFillAvRTPool();
 
@@ -1473,6 +1479,17 @@ void pl3DPipeline<DeviceType>::ISetShadowFromGroup(plDrawableSpans* drawable, co
     }
 }
 
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::IClearShadowSlaves()
+{
+    for (plShadowSlave* shadow : fShadows)
+    {
+        const plShadowCaster* caster = shadow->fCaster;
+        caster->GetKey()->UnRefObject();
+    }
+    fShadows.clear();
+}
 
 
 template<class DeviceType>

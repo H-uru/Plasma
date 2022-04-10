@@ -11439,18 +11439,6 @@ void plDXPipeline::IPreprocessShadows()
     plProfile_EndTiming(PrepShadows);
 }
 
-// IClearShadowSlaves ///////////////////////////////////////////////////////////////////////////
-// At EndRender(), we need to clear our list of shadow slaves. They are only valid for one frame.
-void plDXPipeline::IClearShadowSlaves()
-{
-    for (plShadowSlave* shadow : fShadows)
-    {
-        const plShadowCaster* caster = shadow->fCaster;
-        caster->GetKey()->UnRefObject();
-    }
-    fShadows.clear();
-}
-
 
 // IRenderShadowsOntoSpan /////////////////////////////////////////////////////////////////////
 // After doing the usual render for a span (all passes), we call the following.
