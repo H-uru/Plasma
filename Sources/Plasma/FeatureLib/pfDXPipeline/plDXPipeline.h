@@ -480,7 +480,6 @@ protected:
 
     /////// Shadow internals
     // Generation
-    void    IClearShadowSlaves();
     void    IPreprocessShadows();
     bool    IPrepShadowCaster(const plShadowCaster* caster);
     void    IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSpans* drawable, const plIcicle& span);
