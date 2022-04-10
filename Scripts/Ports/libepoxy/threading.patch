@@ -1,0 +1,177 @@
+https://github.com/anholt/libepoxy/pull/265
+From: gjz010 <gjz010944@gmail.com>
+
+diff --git a/src/dispatch_common.h b/src/dispatch_common.h
+index a136943..3449b22 100644
+--- a/src/dispatch_common.h
++++ b/src/dispatch_common.h
+@@ -23,12 +23,18 @@
+ 
+ #include "config.h"
+ 
++#ifdef __GNUC__
++#define EPOXY_THREADLOCAL __thread
++#elif defined (_MSC_VER)
++#define EPOXY_THREADLOCAL __declspec(thread)
++#endif
++
+ #ifdef _WIN32
+ #define PLATFORM_HAS_EGL ENABLE_EGL
+ #define PLATFORM_HAS_GLX ENABLE_GLX
+ #define PLATFORM_HAS_WGL 1
+ #elif defined(__APPLE__)
+-#define PLATFORM_HAS_EGL 0 
++#define PLATFORM_HAS_EGL 0
+ #define PLATFORM_HAS_GLX ENABLE_GLX
+ #define PLATFORM_HAS_WGL 0
+ #elif defined(ANDROID)
+diff --git a/src/dispatch_wgl.c b/src/dispatch_wgl.c
+index 7baf130..dc1b0c4 100644
+--- a/src/dispatch_wgl.c
++++ b/src/dispatch_wgl.c
+@@ -27,9 +27,6 @@
+ 
+ #include "dispatch_common.h"
+ 
+-static bool first_context_current = false;
+-static bool already_switched_to_dispatch_table = false;
+-
+ /**
+  * If we can determine the WGL extension support from the current
+  * context, then return that, otherwise give the answer that will just
+@@ -75,71 +72,10 @@
+ void
+ epoxy_handle_external_wglMakeCurrent(void)
+ {
+-    if (!first_context_current) {
+-        first_context_current = true;
+-    } else {
+-        if (!already_switched_to_dispatch_table) {
+-            already_switched_to_dispatch_table = true;
+-            gl_switch_to_dispatch_table();
+-            wgl_switch_to_dispatch_table();
+-        }
+-
+-        gl_init_dispatch_table();
+-        wgl_init_dispatch_table();
+-    }
++    gl_init_dispatch_table();
++    wgl_init_dispatch_table();
+ }
+ 
+-/**
+- * This global symbol is apparently looked up by Windows when loading
+- * a DLL, but it doesn't declare the prototype.
+- */
+-BOOL WINAPI
+-DllMain(HINSTANCE dll, DWORD reason, LPVOID reserved);
+-
+-BOOL WINAPI
+-DllMain(HINSTANCE dll, DWORD reason, LPVOID reserved)
+-{
+-    void *data;
+-
+-    switch (reason) {
+-    case DLL_PROCESS_ATTACH:
+-        gl_tls_index = TlsAlloc();
+-        if (gl_tls_index == TLS_OUT_OF_INDEXES)
+-            return FALSE;
+-        wgl_tls_index = TlsAlloc();
+-        if (wgl_tls_index == TLS_OUT_OF_INDEXES)
+-            return FALSE;
+-
+-        first_context_current = false;
+-
+-        /* FALLTHROUGH */
+-
+-    case DLL_THREAD_ATTACH:
+-        data = LocalAlloc(LPTR, gl_tls_size);
+-        TlsSetValue(gl_tls_index, data);
+-
+-        data = LocalAlloc(LPTR, wgl_tls_size);
+-        TlsSetValue(wgl_tls_index, data);
+-
+-        break;
+-
+-    case DLL_THREAD_DETACH:
+-    case DLL_PROCESS_DETACH:
+-        data = TlsGetValue(gl_tls_index);
+-        LocalFree(data);
+-
+-        data = TlsGetValue(wgl_tls_index);
+-        LocalFree(data);
+-
+-        if (reason == DLL_PROCESS_DETACH) {
+-            TlsFree(gl_tls_index);
+-            TlsFree(wgl_tls_index);
+-        }
+-        break;
+-    }
+-
+-    return TRUE;
+-}
+ 
+ WRAPPER_VISIBILITY (BOOL)
+ WRAPPER(epoxy_wglMakeCurrent)(HDC hdc, HGLRC hglrc)
+diff --git a/src/gen_dispatch.py b/src/gen_dispatch.py
+index 3daad84..ed0fb95 100755
+--- a/src/gen_dispatch.py
++++ b/src/gen_dispatch.py
+@@ -639,7 +639,7 @@
+                                                                        func.args_list))
+ 
+     def write_function_pointer(self, func):
+-        self.outln('{0} epoxy_{1} = epoxy_{1}_global_rewrite_ptr;'.format(func.ptr_type, func.wrapped_name))
++        self.outln('{0} epoxy_{1} = EPOXY_DISPATCH_PTR(epoxy_{1});'.format(func.ptr_type, func.wrapped_name))
+         self.outln('')
+ 
+     def write_provider_enums(self):
+@@ -816,7 +816,11 @@
+             self.write_thunks(func)
+         self.outln('')
+ 
++        self.outln('#define EPOXY_DISPATCH_PTR(name) name##_global_rewrite_ptr')
++
+         self.outln('#if USING_DISPATCH_TABLE')
++        self.outln('#undef EPOXY_DISPATCH_PTR')
++        self.outln('#define EPOXY_DISPATCH_PTR(name) name##_dispatch_table_thunk')
+ 
+         self.outln('static struct dispatch_table resolver_table = {')
+         for func in self.sorted_functions:
+@@ -824,14 +828,15 @@
+         self.outln('};')
+         self.outln('')
+ 
+-        self.outln('uint32_t {0}_tls_index;'.format(self.target))
+-        self.outln('uint32_t {0}_tls_size = sizeof(struct dispatch_table);'.format(self.target))
+-        self.outln('')
++        self.outln('EPOXY_THREADLOCAL struct dispatch_table {0}_tls_data = {{'.format(self.target))
++        for func in self.sorted_functions:
++            self.outln('    epoxy_{0}_dispatch_table_rewrite_ptr, /* {0} */'.format(func.wrapped_name))
++        self.outln('};')
+ 
+         self.outln('static inline struct dispatch_table *')
+         self.outln('get_dispatch_table(void)')
+         self.outln('{')
+-        self.outln('	return TlsGetValue({0}_tls_index);'.format(self.target))
++        self.outln('	return &{0}_tls_data;'.format(self.target))
+         self.outln('}')
+         self.outln('')
+ 
+@@ -843,16 +848,6 @@
+         self.outln('}')
+         self.outln('')
+ 
+-        self.outln('void')
+-        self.outln('{0}_switch_to_dispatch_table(void)'.format(self.target))
+-        self.outln('{')
+-
+-        for func in self.sorted_functions:
+-            self.outln('    epoxy_{0} = epoxy_{0}_dispatch_table_thunk;'.format(func.wrapped_name))
+-
+-        self.outln('}')
+-        self.outln('')
+-
+         self.outln('#endif /* !USING_DISPATCH_TABLE */')
+ 
+         for func in self.sorted_functions:
