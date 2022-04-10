@@ -1421,9 +1421,11 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
         uint8_t sources[8];
         uint32_t blendModes[8];
         uint32_t miscFlags[8];
+        size_t sampleTypes[8];
         memset(sources, 0, sizeof(sources));
         memset(blendModes, 0, sizeof(blendModes));
         memset(miscFlags, 0, sizeof(miscFlags));
+        memset(sampleTypes, 0, sizeof(sampleTypes));
         
         lay = IPopOverBaseLayer(lay);
         
@@ -1433,6 +1435,7 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
             mRef->GetSourceArray(sources, pass);
             mRef->GetBlendFlagArray(blendModes, pass);
             mRef->GetMiscFlagArray(miscFlags, pass);
+            mRef->GetSampleTypeArray(sampleTypes, pass);
         } else {
         
             mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &fPiggyBackStack,
@@ -1457,6 +1460,21 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
                 blendModes[index] = layer->GetBlendFlags();
                 miscFlags[index] = layer->GetMiscFlags();
                 
+                switch (layer->GetClampFlags()) {
+                case hsGMatState::kClampTextureU:
+                        sampleTypes[index] = 1;
+                    break;
+                case hsGMatState::kClampTextureV:
+                        sampleTypes[index] = 2;
+                    break;
+                case hsGMatState::kClampTexture:
+                        sampleTypes[index] = 3;
+                    break;
+                default:
+                        sampleTypes[index] = 0;
+                        break;
+                }
+                
                 return layer;
             },
                                   [&](plLayerInterface* layer, uint32_t index){
@@ -1471,6 +1489,7 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
          memcpy(passDescription.passTypes, sources, sizeof(sources));
          memcpy(passDescription.blendModes, blendModes, sizeof(blendModes));
          memcpy(passDescription.miscFlags, miscFlags, sizeof(miscFlags));
+         memcpy(passDescription.sampleTypes, sampleTypes, sizeof(sampleTypes));
          passDescription.numLayers = numActivePiggyBacks + mRef->fPassLengths[pass];
          
          plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalMaterialPassPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();
@@ -3723,6 +3742,7 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             memset(&passDescription.miscFlags, 0, sizeof(passDescription.miscFlags));
             memset(&passDescription.blendModes, 0, sizeof(passDescription.blendModes));
             memset(&passDescription.passTypes, 0, sizeof(passDescription.passTypes));
+            memset(&passDescription.sampleTypes, 0, sizeof(passDescription.sampleTypes));
             passDescription.Populate(mat->GetLayer(0), 2);
             passDescription.numLayers = 3;
             if (mat->GetNumLayers()>1) {

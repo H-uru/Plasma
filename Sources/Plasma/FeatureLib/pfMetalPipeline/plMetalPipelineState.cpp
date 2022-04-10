@@ -96,6 +96,7 @@ void plMetalMaterialPassPipelineState::GetFunctionConstants(MTL::FunctionConstan
     constants->setConstantValues(&fPassDescription.passTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSources, 8));
     constants->setConstantValues(&fPassDescription.blendModes, MTL::DataTypeUInt, NS::Range(FunctionConstantBlendModes, 8));
     constants->setConstantValues(&fPassDescription.miscFlags, MTL::DataTypeUInt, NS::Range(FunctionConstantLayerFlags, 8));
+    constants->setConstantValues(&fPassDescription.sampleTypes, MTL::DataTypeULong, NS::Range(FunctionConstantSampleTypes, 8));
 }
 
 size_t plMetalMaterialPassPipelineState::GetHash() const {
@@ -333,6 +334,21 @@ void plMetalMaterialPassDescription::Populate(plLayerInterface* layPtr, uint8_t 
         passTypes[index] = PassTypeColor;
     }
     
+    
+    switch (layPtr->GetClampFlags()) {
+    case hsGMatState::kClampTextureU:
+            sampleTypes[index] = 1;
+        break;
+    case hsGMatState::kClampTextureV:
+            sampleTypes[index] = 2;
+        break;
+    case hsGMatState::kClampTexture:
+            sampleTypes[index] = 3;
+        break;
+    default:
+            sampleTypes[index] = 0;
+            break;
+    }
 }
 
 bool plMetalMaterialPassPipelineState::IsEqual(const plMetalPipelineState &p) const {

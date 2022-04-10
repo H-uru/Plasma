@@ -155,7 +155,6 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder *encode
     
     simd_float4 colorMap[8];
     plMetalFragmentShaderArgumentBuffer uniforms;
-    uniforms.layerCount = 0;
     
     IHandleMaterial(GetPassIndex(pass), &uniforms, piggyBacks,
     [&](plLayerInterface* layer, uint32_t index) {
@@ -350,26 +349,6 @@ void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *enc
     }
 }
 
-void plMetalMaterialShaderRef::PopulateFragmentShaderLayerFromLayer(plFragmentShaderLayer *fragmentLayer, plLayerInterface* layer) {
-    hsGMatState state = ICompositeLayerState(layer);
-    plBitmap* texture = layer->GetTexture();
-    
-    switch (layer->GetClampFlags()) {
-    case hsGMatState::kClampTextureU:
-            fragmentLayer->sampleType = 1;
-        break;
-    case hsGMatState::kClampTextureV:
-            fragmentLayer->sampleType = 2;
-        break;
-    case hsGMatState::kClampTexture:
-            fragmentLayer->sampleType = 3;
-        break;
-    default:
-            fragmentLayer->sampleType = 0;
-            break;
-    }
-}
-
 uint32_t plMetalMaterialShaderRef::ILayersAtOnce(uint32_t which)
 {
     uint32_t currNumLayers = 1;
@@ -511,9 +490,6 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragme
         //ISetBumpMatrices(currLay);
     }
     
-    PopulateFragmentShaderLayerFromLayer(&uniforms->layers[0], currLay);
-    
-    uniforms->layerCount++;
     
     postEncodeTransform(currLay, 0);
     
@@ -527,10 +503,6 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragme
         }
         preEncodeTransform(layPtr, i);
         
-        PopulateFragmentShaderLayerFromLayer(&uniforms->layers[i], layPtr);
-        
-        uniforms->layerCount++;
-        
         postEncodeTransform(layPtr, i);
     }
     
@@ -543,10 +515,6 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragme
                 return -1;
             }
             preEncodeTransform(layPtr, i + currPiggyback);
-            
-            PopulateFragmentShaderLayerFromLayer(&uniforms->layers[i + currPiggyback], layPtr);
-            
-            uniforms->layerCount++;
             
             postEncodeTransform(layPtr, i + currPiggyback);
         }
@@ -625,5 +593,32 @@ void plMetalMaterialShaderRef::GetMiscFlagArray(uint32_t *array, uint8_t pass) {
     {
         plLayerInterface* layPtr = fMaterial->GetLayer(baseLayer + i);
         array[i] = layPtr->GetMiscFlags();
+    }
+}
+
+void plMetalMaterialShaderRef::GetSampleTypeArray(size_t *array, uint8_t pass) {
+    memset(array, 0, sizeof(uint8_t) * 8);
+    
+    uint16_t currNumLayers = fPassLengths[pass];
+    uint16_t baseLayer = fPassIndices[pass];
+    uint16_t i = 0;
+    for (i = 0; i < currNumLayers; i++)
+    {
+        plLayerInterface* layPtr = fMaterial->GetLayer(baseLayer + i);
+        
+        switch (layPtr->GetClampFlags()) {
+        case hsGMatState::kClampTextureU:
+                array[i] = 1;
+            break;
+        case hsGMatState::kClampTextureV:
+                array[i] = 2;
+            break;
+        case hsGMatState::kClampTexture:
+                array[i] = 3;
+            break;
+        default:
+                array[i] = 0;
+                break;
+        }
     }
 }

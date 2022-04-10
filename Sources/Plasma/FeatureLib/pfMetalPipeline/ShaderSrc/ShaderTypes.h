@@ -89,6 +89,7 @@ enum plMetalFunctionConstant
     FunctionConstantBlendModes    = 10,
     FunctionConstantLayerFlags    = 18,
     FunctionConstantNumWeights    = 26,
+    FunctionConstantSampleTypes   = 34,
 };
 
 enum plMetalLayerPassType: uint8_t
@@ -98,14 +99,8 @@ enum plMetalLayerPassType: uint8_t
     PassTypeColor = 3
 };
 
-struct plFragmentShaderLayer {
-    uint8_t sampleType;
-};
-
 struct plMetalFragmentShaderArgumentBuffer {
-    uint8_t layerCount;
     __fp16 alphaThreshold;
-    plFragmentShaderLayer layers[8];
 };
 
 struct plMetalShadowCastFragmentShaderArgumentBuffer {

@@ -97,6 +97,7 @@ public:
     void GetSourceArray(uint8_t *array, uint8_t pass);
     void GetBlendFlagArray(uint32_t *array, uint8_t pass);
     void GetMiscFlagArray(uint32_t *array, uint8_t pass);
+    void GetSampleTypeArray(size_t *array, uint8_t pass);
 private:
     void ILoopOverLayers();
     
@@ -106,7 +107,6 @@ private:
     uint32_t ILayersAtOnce(uint32_t which);
     
     void IBuildLayerTexture(MTL::RenderCommandEncoder *encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer, simd_float4 *colorMap);
-    void PopulateFragmentShaderLayerFromLayer(plFragmentShaderLayer *fragmentLayer, plLayerInterface* layer);
     void EncodeTransform(plLayerInterface* layer, UVOutDescriptor *transform);
 };
 

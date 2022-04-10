@@ -143,38 +143,48 @@ enum plUVWSrcModifiers: uint32_t {
 
 using namespace metal;
     
-constant uint8_t sourceType1 [[ function_constant(FunctionConstantSources + 0)    ]];
-constant uint8_t sourceType2 [[ function_constant(FunctionConstantSources + 1)    ]];
-constant uint8_t sourceType3 [[ function_constant(FunctionConstantSources + 2)    ]];
-constant uint8_t sourceType4 [[ function_constant(FunctionConstantSources + 3)    ]];
-constant uint8_t sourceType5 [[ function_constant(FunctionConstantSources + 4)    ]];
-constant uint8_t sourceType6 [[ function_constant(FunctionConstantSources + 5)    ]];
-constant uint8_t sourceType7 [[ function_constant(FunctionConstantSources + 6)    ]];
-constant uint8_t sourceType8 [[ function_constant(FunctionConstantSources + 7)    ]];
+constant const uint8_t sourceType1 [[ function_constant(FunctionConstantSources + 0)    ]];
+constant const uint8_t sourceType2 [[ function_constant(FunctionConstantSources + 1)    ]];
+constant const uint8_t sourceType3 [[ function_constant(FunctionConstantSources + 2)    ]];
+constant const uint8_t sourceType4 [[ function_constant(FunctionConstantSources + 3)    ]];
+constant const uint8_t sourceType5 [[ function_constant(FunctionConstantSources + 4)    ]];
+constant const uint8_t sourceType6 [[ function_constant(FunctionConstantSources + 5)    ]];
+constant const uint8_t sourceType7 [[ function_constant(FunctionConstantSources + 6)    ]];
+constant const uint8_t sourceType8 [[ function_constant(FunctionConstantSources + 7)    ]];
     
-constant uint32_t blendModes1 [[ function_constant(FunctionConstantBlendModes + 0)    ]];
-constant uint32_t blendModes2 [[ function_constant(FunctionConstantBlendModes + 1)    ]];
-constant uint32_t blendModes3 [[ function_constant(FunctionConstantBlendModes + 2)    ]];
-constant uint32_t blendModes4 [[ function_constant(FunctionConstantBlendModes + 3)    ]];
-constant uint32_t blendModes5 [[ function_constant(FunctionConstantBlendModes + 4)    ]];
-constant uint32_t blendModes6 [[ function_constant(FunctionConstantBlendModes + 5)    ]];
-constant uint32_t blendModes7 [[ function_constant(FunctionConstantBlendModes + 6)    ]];
-constant uint32_t blendModes8 [[ function_constant(FunctionConstantBlendModes + 7)    ]];
+constant const uint32_t blendModes1 [[ function_constant(FunctionConstantBlendModes + 0)    ]];
+constant const uint32_t blendModes2 [[ function_constant(FunctionConstantBlendModes + 1)    ]];
+constant const uint32_t blendModes3 [[ function_constant(FunctionConstantBlendModes + 2)    ]];
+constant const uint32_t blendModes4 [[ function_constant(FunctionConstantBlendModes + 3)    ]];
+constant const uint32_t blendModes5 [[ function_constant(FunctionConstantBlendModes + 4)    ]];
+constant const uint32_t blendModes6 [[ function_constant(FunctionConstantBlendModes + 5)    ]];
+constant const uint32_t blendModes7 [[ function_constant(FunctionConstantBlendModes + 6)    ]];
+constant const uint32_t blendModes8 [[ function_constant(FunctionConstantBlendModes + 7)    ]];
     
-constant uint32_t miscFlags1 [[ function_constant(FunctionConstantLayerFlags + 0)    ]];
-constant uint32_t miscFlags2 [[ function_constant(FunctionConstantLayerFlags + 1)    ]];
-constant uint32_t miscFlags3 [[ function_constant(FunctionConstantLayerFlags + 2)    ]];
-constant uint32_t miscFlags4 [[ function_constant(FunctionConstantLayerFlags + 3)    ]];
-constant uint32_t miscFlags5 [[ function_constant(FunctionConstantLayerFlags + 4)    ]];
-constant uint32_t miscFlags6 [[ function_constant(FunctionConstantLayerFlags + 5)    ]];
-constant uint32_t miscFlags7 [[ function_constant(FunctionConstantLayerFlags + 6)    ]];
-constant uint32_t miscFlags8 [[ function_constant(FunctionConstantLayerFlags + 7)    ]];
+constant const uint32_t miscFlags1 [[ function_constant(FunctionConstantLayerFlags + 0)    ]];
+constant const uint32_t miscFlags2 [[ function_constant(FunctionConstantLayerFlags + 1)    ]];
+constant const uint32_t miscFlags3 [[ function_constant(FunctionConstantLayerFlags + 2)    ]];
+constant const uint32_t miscFlags4 [[ function_constant(FunctionConstantLayerFlags + 3)    ]];
+constant const uint32_t miscFlags5 [[ function_constant(FunctionConstantLayerFlags + 4)    ]];
+constant const uint32_t miscFlags6 [[ function_constant(FunctionConstantLayerFlags + 5)    ]];
+constant const uint32_t miscFlags7 [[ function_constant(FunctionConstantLayerFlags + 6)    ]];
+constant const uint32_t miscFlags8 [[ function_constant(FunctionConstantLayerFlags + 7)    ]];
+    
+constant const size_t sampleType1 [[ function_constant(FunctionConstantSampleTypes + 0)    ]];
+constant const size_t sampleType2 [[ function_constant(FunctionConstantSampleTypes + 1)    ]];
+constant const size_t sampleType3 [[ function_constant(FunctionConstantSampleTypes + 2)    ]];
+constant const size_t sampleType4 [[ function_constant(FunctionConstantSampleTypes + 3)    ]];
+constant const size_t sampleType5 [[ function_constant(FunctionConstantSampleTypes + 4)    ]];
+constant const size_t sampleType6 [[ function_constant(FunctionConstantSampleTypes + 5)    ]];
+constant const size_t sampleType7 [[ function_constant(FunctionConstantSampleTypes + 6)    ]];
+constant const size_t sampleType8 [[ function_constant(FunctionConstantSampleTypes + 7)    ]];
 
 #define MAX_BLEND_PASSES 8
 constant const uint8_t sourceTypes[MAX_BLEND_PASSES] = { sourceType1, sourceType2, sourceType3, sourceType4, sourceType5, sourceType6, sourceType7, sourceType8};
 constant const uint32_t blendModes[MAX_BLEND_PASSES] = { blendModes1, blendModes2, blendModes3, blendModes4, blendModes5, blendModes6, blendModes7, blendModes8};
 constant const uint32_t miscFlags[MAX_BLEND_PASSES] = { miscFlags1, miscFlags2, miscFlags3, miscFlags4, miscFlags5, miscFlags6, miscFlags7, miscFlags8};
-constant uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
+constant const size_t sampleTypes[MAX_BLEND_PASSES] = { sampleType1, sampleType2, sampleType3, sampleType4, sampleType5, sampleType6, sampleType7, sampleType8};
+constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
     
 typedef struct  {
     texture2d<half> textures  [[ texture(FragmentShaderArgumentAttributeTextures), function_constant(hasLayer1)  ]];
@@ -195,7 +205,10 @@ typedef struct  {
     texturecube<half> cubicTexture8  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 7), function_constant(hasLayer8)  ]];
     const constant half4* colors   [[ buffer(FragmentShaderArgumentAttributeColors)   ]];
     const constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(BufferIndexFragArgBuffer)   ]];
-    array<sampler, 4> samplers [[ sampler(0)   ]];
+    sampler samplers [[ sampler(0)   ]];
+    sampler sampler2 [[ sampler(1)   ]];
+    sampler sampler3 [[ sampler(2)   ]];
+    sampler sampler4 [[ sampler(3)   ]];
 } FragmentShaderArguments;
 
 float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const uint UVWSrc, const uint flags, const float4 normal, const float4 camPosition, const matrix_float4x4 camToWorldMatrix, const matrix_float4x4 projectionMatrix);
@@ -356,8 +369,8 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
     return out;
 }
 
-void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags);
-void blend(half4 srcSample, thread half4 &destSample, uint32_t blendFlags);
+constexpr void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags);
+constexpr void blend(half4 srcSample, thread half4 &destSample, uint32_t blendFlags);
     
 float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const uint UVWSrc, const uint flags, const float4 normal, const float4 camPosition, const matrix_float4x4 camToWorldMatrix, const matrix_float4x4 projectionMatrix) {
     //Note: If we want to require newer versions of Metal/newer hardware we could pass function pointers instead of doing these ifs.
@@ -468,11 +481,27 @@ float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const ui
     return sampleCoord.xyz;
 }
     
-half4 sampleLayer(uint8_t passType, uint32_t miscFlags, float3 sampleCoord,  const thread half4 &color, const thread texture2d<half> &texture, const thread texturecube<half> &cubicTexture, const thread sampler& colorSampler) {
+constexpr half4 sampleLayer(uint8_t passType, uint32_t miscFlags, float3 sampleCoord,  const thread half4 &color, const thread texture2d<half> &texture, const thread texturecube<half> &cubicTexture, const uint8_t sampleType, const thread sampler* colorSamplers) {
     
     if(passType == PassTypeColor) {
         return color;
     } else {
+        /*
+         Not using array based lookup here because the compiler
+         seems to have an easier time unrolling this if each lookup is done
+         with a constant. Using an array based lookup was hurting performance by
+         about 1/3rd on Apple Silicon.
+         */
+        sampler colorSampler;
+        if(sampleType == 0) {
+            colorSampler = colorSamplers[0];
+        } else if(sampleType == 1) {
+            colorSampler = colorSamplers[1];
+        } else if(sampleType == 2) {
+            colorSampler = colorSamplers[2];
+        } else if(sampleType == 3) {
+            colorSampler = colorSamplers[3];
+        }
         
         if (miscFlags & kMiscPerspProjection) {
             sampleCoord.xy /= sampleCoord.z;
@@ -511,8 +540,10 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
         for(size_t layer=0; layer<passCount; layer++) {
             
             float3 sampleCoord = (&in.texCoord1)[layer];
+            size_t sampleType = sampleTypes[layer];
+            //sampler colorSampler = colorSamplers[sampleTypes[layer]];
             
-            color = sampleLayer(sourceTypes[layer], miscFlags[layer], sampleCoord, half4(in.vtxColor), (&fragmentShaderArgs.textures)[layer], (&fragmentShaderArgs.cubicTextures)[layer], fragmentShaderArgs.samplers[fragmentShaderArgs.bufferedUniforms->layers[layer].sampleType]);
+            color = sampleLayer(sourceTypes[layer], miscFlags[layer], sampleCoord, half4(in.vtxColor), (&fragmentShaderArgs.textures)[layer], (&fragmentShaderArgs.cubicTextures)[layer], sampleType, &fragmentShaderArgs.samplers);
             
             if(layer==0) {
                 blendFirst(color, currentColor, blendModes[layer]);
@@ -521,17 +552,17 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
             }
         }
         
-        currentColor = half4(in.vtxColor.rgb, 1.0) * currentColor;
+        currentColor = half4(in.vtxColor.rgb, 1.0h) * currentColor;
     }
     
-    currentColor.rgb = mix(currentColor.rgb, in.fogColor.rgb, (1.0f - clamp((float)in.fogColor.a, 0.0f, 1.0f)) * (float)currentColor.a);
+    currentColor.rgb = mix(currentColor.rgb, in.fogColor.rgb, (1.0h - clamp((float)in.fogColor.a, 0.0f, 1.0f)) * (float)currentColor.a);
     
     if (currentColor.a < fragmentShaderArgs.bufferedUniforms->alphaThreshold) { discard_fragment(); }
 
     return currentColor;
 }
 
-void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
+constexpr void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
     
     // Local variable to store the color value
     if (blendFlags & kBlendInvertColor) {
@@ -554,7 +585,7 @@ void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendF
     }
 }
 
-void blend(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
+constexpr void blend(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
     // Local variable to store the color value
     if (blendFlags & kBlendInvertColor) {
         srcSample.rgb = 1.0h - srcSample.rgb;
@@ -690,13 +721,13 @@ fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
     //only possible alpha sources are layers 0 or 1
     if(alphaSrc == 0) {
         
-        half4 layerColor = sampleLayer(sourceTypes[2], miscFlags[1], in.texCoord3, half4(layers.colors[0]), (&layers.textures)[0], (&layers.cubicTextures)[0], layers.samplers[sourceTypes[layers.bufferedUniforms->layers[0].sampleType]]);
+        half4 layerColor = sampleLayer(sourceTypes[2], miscFlags[1], in.texCoord3, half4(layers.colors[0]), (&layers.textures)[0], (&layers.cubicTextures)[0], sampleTypes[0], &layers.samplers);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;
     } else if(alphaSrc == 1) {
         
-        half4 layerColor = sampleLayer(sourceTypes[2], miscFlags[1], in.texCoord3, half4(layers.colors[1]), (&layers.textures)[1], (&layers.cubicTextures)[1], layers.samplers[sourceTypes[layers.bufferedUniforms->layers[1].sampleType]]);
+        half4 layerColor = sampleLayer(sourceTypes[2], miscFlags[1], in.texCoord3, half4(layers.colors[1]), (&layers.textures)[1], (&layers.cubicTextures)[1], sampleTypes[1], &layers.samplers);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;
