@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 import re
 import time
 import random
+from inspect import signature
 
 # Plasma Engine.
 from Plasma import *
@@ -79,6 +80,7 @@ class xKIChat(object):
         self.onlyAllowBuddiesOnRequest = False
         self.privateChatChannel = 0
         self.toReplyToLastPrivatePlayerID = None
+        self.chatTextColor = None
 
         # Fading & blinking globals.
         self.currentFadeTick = 0
@@ -601,6 +603,11 @@ class xKIChat(object):
         else:
             chatMentions = []
 
+        # if we have an override chat color set, use it instead of the various default chat colors
+        headerColor = self.chatTextColor if self.chatTextColor is not None else headerColor
+        bodyColor = self.chatTextColor if self.chatTextColor is not None else bodyColor
+        mentionColor = self.chatTextColor if self.chatTextColor is not None else mentionColor
+
         for chatArea in (self.miniChatArea, self.microChatArea):
             with PtBeginGUIUpdate(chatArea):
                 savedPosition = chatArea.getScrollPosition()
@@ -884,12 +891,14 @@ class CommandsProcessor:
         # Does the message contain a standard command?
         for command, function in commands.items():
             if msg.startswith(command):
-                theMessage = message.split(" ", 1)
+                callableCommandFn = getattr(self, function)
+                numParams = len(signature(callableCommandFn).parameters)
+                PtDebugPrint(f"xKI.CommandsProcessor: Processing {command} function with {numParams} parameters", level=kDebugDumpLevel)
+                theMessage = message.split(" ", numParams)
                 if len(theMessage) > 1 and theMessage[1]:
-                    params = theMessage[1]
+                    callableCommandFn(*theMessage[1:])
                 else:
-                    params = None
-                getattr(self, function)(params)
+                    callableCommandFn(None)
                 return None
 
         # Is it a simple text-based command?
@@ -1207,6 +1216,63 @@ class CommandsProcessor:
             self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.PasswordTooLong"), kChat.SystemMessage)
             return
         PtChangePassword(newPassword)
+
+    ## Overrides the chat area text colors to be a single user-selected color
+    def SetTextColor(self, arg1, arg2=None, arg3=None):
+
+        clamp = lambda val, minVal, maxVal: max(minVal, min(val, maxVal))
+
+        if not arg1:
+            self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.MalformedChatSetTextColorCmd"), kChat.SystemMessage)
+            return
+
+        try:
+            colorRed = float(arg1)
+            colorBlue = float(arg2)
+            colorGreen = float(arg3)
+        except ValueError:
+            pass # arguments weren't valid float numbers, so we will try treating arg1 as a string below
+        else:
+            # args were a valid set of float numbers
+            colorRed = clamp(colorRed, 0.0, 1.0)
+            colorBlue = clamp(colorBlue, 0.0, 1.0)
+            colorGreen = clamp(colorGreen, 0.0, 1.0)
+            self.chatMgr.chatTextColor = ptColor(colorRed, colorBlue, colorGreen)
+            self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [f"({colorRed}, {colorBlue}, {colorGreen})"]))
+            return
+
+        newColor = arg1.strip().casefold()
+        if newColor in kColorNames:
+            # newColor is a valid color name with a corresponding function on the ptColor class
+            colorFn = getattr(ptColor(), newColor)
+            self.chatMgr.chatTextColor = colorFn()
+            self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [newColor]))
+        elif newColor == PtGetLocalizedString("KI.Commands.ChatSetTextColorDefaultArg"):
+            # user requested resetting text colors to defaults
+            self.chatMgr.chatTextColor = None
+            self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetDefault"))
+        else:
+            hexColor = newColor.lstrip("#")
+            if len(hexColor) == 3:
+                # turn RGB into RRGGBB
+                hexColor = f"{hexColor[0]}{hexColor[0]}{hexColor[1]}{hexColor[1]}{hexColor[2]}{hexColor[2]}"
+
+            if len(hexColor) == 6:
+                try:
+                    colorRed = int(hexColor[0:2], 16) / 255.0
+                    colorBlue = int(hexColor[2:4], 16) / 255.0
+                    colorGreen = int(hexColor[4:6], 16) / 255.0
+                except ValueError:
+                    # argument was not a valid hexadecimal number
+                    self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.MalformedChatSetTextColorCmd"), kChat.SystemMessage)
+                    return
+                else:
+                    self.chatMgr.chatTextColor = ptColor(colorRed, colorBlue, colorGreen)
+                    self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [f"#{hexColor}"]))
+            else: 
+                # argument was not 3 or 6 characters long, so it cannot be a valid hexadecimal color
+                self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.MalformedChatSetTextColorCmd"), kChat.SystemMessage)
+                return
 
     #~~~~~~~~~~~~~~~~#
     # Jalak Commands #
