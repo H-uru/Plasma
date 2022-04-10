@@ -158,6 +158,8 @@ public:
     
     void ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, plMetalVertexBufferRef* vRef);
     uint32_t  IGetBufferFormatSize( uint8_t format ) const;
+    
+    plRenderTarget* PopRenderTarget() override;
 private:
     MTL::RenderPipelineState*       fPipelineState;
     VertexUniforms*                 fCurrentRenderPassUniforms;
