@@ -81,3 +81,54 @@ class Neighborhood(ptResponder):
             
     def OnNotify(self,state,id,events):
         pass
+
+    def _AddClothingFromAgeSDL(self, clothingList, *sdls):
+        ageSDL = PtGetAgeSDL()
+        for i in sdls:
+            if not ageSDL[i][0]:
+                PtDebugPrint(f"Neighborhood._AddClothingFromAgeSDL(): You don't have the SDL '{i}' so no '{clothingList}' for you", level=kWarningLevel)
+                return
+
+        if isinstance(clothingList, str):
+            clothingList = [clothingList]
+
+        avatar = PtGetLocalAvatar()
+        if avatar.avatar.getAvatarClothingGroup() == kFemaleClothingGroup:
+            clothingPrefix = "FReward"
+        else:
+            clothingPrefix = "MReward"
+
+        entireClothingList = avatar.avatar.getEntireClothingList(0)
+        for i in filter(None, clothingList):
+            desiredName = "_".join((clothingPrefix, i))
+            if desiredName not in entireClothingList:
+                PtDebugPrint(f"ERROR: Neighborhood._AddClothingFromAgeSDL(): Invalid clothing item '{desiredName}' requested!")
+                continue
+            if not any((j[0] == desiredName for j in avatar.avatar.getWardrobeClothingList())):
+                PtDebugPrint(f"Neighborhood._AddClothingFromAgeSDL(): Adding '{desiredName}' clothing item to your closet! Aren't you lucky?", level=kWarningLevel)
+                avatar.avatar.addWardrobeClothingItem(desiredName, ptColor().white(), ptColor().white())
+            else:
+                PtDebugPrint(f"Neighborhood._AddClothingFromAgeSDL(): You already have {desiredName} so I'm not going to add it again.", level=kDebugDumpLevel)
+
+    def OnServerInitComplete(self):
+        if not ptVault().amOwnerOfCurrentAge():
+            PtDebugPrint("Neighborhood.OnServerInitComplete(): This isn't my Hood, so no reward clothing grants.", level=kWarningLevel)
+            return
+
+        ageSDL = PtGetAgeSDL()
+        try:
+            localRewardClothing = ageSDL["HoodClothing"][0]
+        except:
+            PtDebugPrint("Neighborhood.OnServerInitComplete(): Unable to grab the local reward clothing list from SDL, not going to add anything")
+            localRewardClothing = ""
+            pass
+        try:
+            globalRewardClothing = ageSDL["GlobalHoodClothing"][0]
+        except:
+            PtDebugPrint("Neighborhood.OnServerInitComplete(): Unable to grab the global reward clothing list from SDL, not going to add anything")
+            globalRewardClothing = ""
+
+        # Add clothing items based on SDL variables: (clothing suffix, all required sdls...)
+        self._AddClothingFromAgeSDL(localRewardClothing.split(";"))
+        self._AddClothingFromAgeSDL(globalRewardClothing.split(";"))
+
