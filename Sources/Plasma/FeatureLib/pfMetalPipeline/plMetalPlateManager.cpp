@@ -67,6 +67,7 @@ plMetalPlateManager::plMetalPlateManager(plMetalPipeline* pipe)
     descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
     descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
     descriptor->setDepthAttachmentPixelFormat(MTL::PixelFormatDepth32Float_Stencil8);
+    descriptor->setSampleCount(pipe->fDevice.fSampleCount);
     
     //create the descriptor of the vertex array
     MTL::VertexDescriptor *vertexDescriptor = MTL::VertexDescriptor::vertexDescriptor();

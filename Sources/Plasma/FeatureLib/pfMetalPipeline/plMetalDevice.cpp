@@ -111,7 +111,7 @@ void plMetalDevice::Shutdown()
 }
 
 
-void plMetalDevice::SetMaxAnsiotropy(int8_t maxAnsiotropy)
+void plMetalDevice::SetMaxAnsiotropy(uint8_t maxAnsiotropy)
 {
     //setup the material pass samplers
     //load them all at once and then let the shader pick
@@ -144,6 +144,31 @@ void plMetalDevice::SetMaxAnsiotropy(int8_t maxAnsiotropy)
     samplerDescriptor->setSAddressMode(MTL::SamplerAddressModeClampToEdge);
     samplerDescriptor->setTAddressMode(MTL::SamplerAddressModeClampToEdge);
     fSamplerStates[3] = fMetalDevice->newSamplerState(samplerDescriptor);
+}
+
+void plMetalDevice::SetMSAASampleCount(uint8_t sampleCount)
+{
+    //Plasma has some MSAA levels that don't completely correspond to what Metal can do
+    //Best fit them to levels Metal can do. Once they are best fit see if the hardware
+    //is capable.
+    
+    uint8_t actualSampleCount = 1;
+    if (sampleCount == 6) {
+        actualSampleCount = 8;
+    } else if (sampleCount == 4) {
+        actualSampleCount = 4;
+    } else if (sampleCount == 2) {
+        actualSampleCount = 2;
+    }
+    
+    while (actualSampleCount != 1) {
+        if (fMetalDevice->supportsTextureSampleCount(actualSampleCount)) {
+            break;
+        }
+        actualSampleCount /= 2;
+    }
+    
+    fSampleCount = actualSampleCount;
 }
 
 void plMetalDevice::ReleaseSamplerStates()
@@ -213,7 +238,6 @@ void plMetalDevice::BeginNewRenderPass() {
     }
     
     MTL::RenderPassDescriptor *renderPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
-    renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
     renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
     
     if (fCurrentRenderTarget) {
@@ -231,6 +255,9 @@ void plMetalDevice::BeginNewRenderPass() {
             renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
             renderPassDescriptor->depthAttachment()->setLoadAction(MTL::LoadActionClear);
         }
+        
+        renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
+        
         fCurrentRenderTargetCommandEncoder = fCurrentOffscreenCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
     } else {
         renderPassDescriptor->colorAttachments()->object(0)->setClearColor(MTL::ClearColor(fClearDrawableColor.x, fClearDrawableColor.y, fClearDrawableColor.z, fClearDrawableColor.w));
@@ -240,10 +267,17 @@ void plMetalDevice::BeginNewRenderPass() {
             renderPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionLoad);
         }
         
-        renderPassDescriptor->depthAttachment()->setTexture(fCurrentDrawableDepthTexture);
         renderPassDescriptor->depthAttachment()->setClearDepth(fClearDrawableDepth);
-        renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
         renderPassDescriptor->depthAttachment()->setLoadAction(MTL::LoadActionClear);
+        renderPassDescriptor->depthAttachment()->setTexture(fCurrentDrawableDepthTexture);
+        renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
+        
+        if (fSampleCount == 1) {
+            renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
+        } else {
+            renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentMSAAOutputTexture);
+        }
+        
         fCurrentRenderTargetCommandEncoder = fCurrentCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
     }
     
@@ -305,7 +339,8 @@ plMetalDevice::plMetalDevice()
     fCurrentCommandBuffer(nullptr),
     fCurrentOffscreenCommandBuffer(nullptr),
     fCurrentRenderTarget(nullptr),
-    fNewPipelineStateMap()
+    fNewPipelineStateMap(),
+    fCurrentFragmentMSAAOutputTexture(nullptr)
     {
     fClearRenderTargetColor = {0.0, 0.0, 0.0, 1.0};
     fClearDrawableColor = {0.0, 0.0, 0.0, 1.0};
@@ -822,20 +857,39 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
        ) {
         if(fCurrentDrawableDepthTexture) {
             fCurrentDrawableDepthTexture->release();
+            fCurrentFragmentMSAAOutputTexture->release();
         }
         
         MTL::TextureDescriptor *depthTextureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatDepth32Float_Stencil8,
                                                         drawable->texture()->width(),
                                                         drawable->texture()->height(),
                                                         false);
-        if(fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
+        if (fMetalDevice->supportsFamily(MTL::GPUFamilyApple1) && fSampleCount == 1) {
             depthTextureDescriptor->setStorageMode(MTL::StorageModeMemoryless);
         }   else {
             depthTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
         }
         depthTextureDescriptor->setUsage(MTL::TextureUsageRenderTarget);
         
-        fCurrentDrawableDepthTexture = fMetalDevice->newTexture(depthTextureDescriptor);
+        if (fSampleCount != 1) {
+            //MSSA depth and color output
+            depthTextureDescriptor->setSampleCount(fSampleCount);
+            depthTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
+            depthTextureDescriptor->setTextureType(MTL::TextureType2DMultisample);
+            fCurrentDrawableDepthTexture = fMetalDevice->newTexture(depthTextureDescriptor);
+            
+            MTL::TextureDescriptor *msaaColorTextureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(),
+                                                                                                             drawable->texture()->width(),
+                                                                                                             drawable->texture()->height(),
+                                                                                                             false);
+            msaaColorTextureDescriptor->setUsage(MTL::TextureUsageRenderTarget);
+            msaaColorTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
+            msaaColorTextureDescriptor->setTextureType(MTL::TextureType2DMultisample);
+            msaaColorTextureDescriptor->setSampleCount(fSampleCount);
+            fCurrentFragmentMSAAOutputTexture = fMetalDevice->newTexture(msaaColorTextureDescriptor);
+        } else {
+            fCurrentDrawableDepthTexture = fMetalDevice->newTexture(depthTextureDescriptor);
+        }
     }
     fCurrentDrawable = drawable->retain();
 }
@@ -873,6 +927,8 @@ void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condi
     descriptor->setDepthAttachmentPixelFormat(record.depthFormat);
     descriptor->colorAttachments()->object(0)->setPixelFormat(record.colorFormat);
     
+    descriptor->setSampleCount(record.sampleCount);
+    
     NS::Error* error;
     fMetalDevice->newRenderPipelineState(descriptor, ^(MTL::RenderPipelineState *pipelineState, NS::Error *error){
         if (error) {
@@ -903,7 +959,8 @@ plMetalDevice::plMetalLinkedPipeline* plMetalDevice::PipelineState(plMetalPipeli
     
     plMetalPipelineRecord record = {
         depthFormat,
-        colorFormat
+        colorFormat,
+        CurrentTargetSampleCount()
     };
     
     record.state = std::shared_ptr<plMetalPipelineState>(pipelineState->Clone());
@@ -948,7 +1005,8 @@ std::condition_variable* plMetalDevice::PrewarmPipelineStateFor(plMetalPipelineS
     
     plMetalPipelineRecord record = {
         depthFormat,
-        colorFormat
+        colorFormat,
+        CurrentTargetSampleCount()
     };
     
     record.state = std::shared_ptr<plMetalPipelineState>(pipelineState->Clone());
@@ -965,6 +1023,7 @@ std::condition_variable* plMetalDevice::PrewarmPipelineStateFor(plMetalPipelineS
 bool plMetalDevice::plMetalPipelineRecord::operator==(const plMetalPipelineRecord &p) const {
     return depthFormat == p.depthFormat &&
     colorFormat == p.colorFormat &&
+    sampleCount == p.sampleCount &&
     state->operator==(*p.state);
 }
 
@@ -978,6 +1037,20 @@ void plMetalDevice::SubmitCommandBuffer()
     fCurrentRenderTargetCommandEncoder->endEncoding();
     fCurrentRenderTargetCommandEncoder->release();
     fCurrentRenderTargetCommandEncoder = nil;
+    
+    if (fSampleCount != 1) {
+        //MSAA is enabled, do the final multisampling resolve pass
+        
+        MTL::RenderPassDescriptor *resolvePassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
+        resolvePassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionLoad);
+        resolvePassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionMultisampleResolve);
+        resolvePassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentMSAAOutputTexture);
+        resolvePassDescriptor->colorAttachments()->object(0)->setResolveTexture(fCurrentFragmentOutputTexture);
+        
+        MTL::RenderCommandEncoder * resolveCommand = fCurrentCommandBuffer->renderCommandEncoder(resolvePassDescriptor);
+        resolveCommand->setLabel(NS::MakeConstantString("Resolve Multisampling Pass"));
+        resolveCommand->endEncoding();
+    }
     
     fCurrentCommandBuffer->presentDrawable(fCurrentDrawable);
     fCurrentCommandBuffer->enqueue();
@@ -1003,6 +1076,7 @@ std::size_t plMetalDevice::plMetalPipelineRecordHashFunction ::operator()(plMeta
     std::size_t value = std::hash<MTL::PixelFormat>()(s.depthFormat);
     value ^= std::hash<MTL::PixelFormat>()(s.colorFormat);
     value ^= std::hash<plMetalPipelineState>()(*s.state);
+    value ^= std::hash<NS::UInteger>()(s.sampleCount);
     return value;
 }
 

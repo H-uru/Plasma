@@ -201,6 +201,9 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     plQuality::SetCapability(plQuality::kPS_3);
     //plShadowCaster::EnableShadowCast(false);
     
+    fDevice.SetMaxAnsiotropy(fInitialPipeParams.AnisotropicLevel);
+    fDevice.SetMSAASampleCount(fInitialPipeParams.AntiAliasingAmount);
+    
     fPlateMgr = new plMetalPlateManager(this);
     
     fCurrentRenderPassUniforms = (VertexUniforms *) calloc(sizeof(VertexUniforms), sizeof(char));
@@ -209,8 +212,6 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     // RenderTarget pools are shared for our shadow generation algorithm.
     // Different sizes for different resolutions.
     IMakeRenderTargetPools();
-    
-    fDevice.SetMaxAnsiotropy(fInitialPipeParams.AnisotropicLevel);
 }
 
 plMetalPipeline::~plMetalPipeline()

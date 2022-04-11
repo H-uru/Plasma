@@ -159,6 +159,7 @@ public:
     MTL::DepthStencilState *fNoZReadOrWriteStencilState;
     MTL::DepthStencilState *fReverseZStencilState;
     MTL::DepthStencilState *fDefaultStencilState;
+    uint8_t                     fSampleCount;
     
     ///Create a new command buffer to encode all the operations needed to draw a frame
     //Currently requires a CA drawable and not a Metal drawable. In since CA drawable is only abstract implementation I know about, not sure where we would find others?
@@ -169,12 +170,22 @@ public:
     void SubmitCommandBuffer();
     void Clear(bool shouldClearColor, simd_float4 clearColor, bool shouldClearDepth, float clearDepth);
     
-    void SetMaxAnsiotropy(int8_t maxAnsiotropy);
+    void SetMaxAnsiotropy(uint8_t maxAnsiotropy);
+    void SetMSAASampleCount(uint8_t sampleCount);
+    
+    NS::UInteger CurrentTargetSampleCount() {
+        if (fCurrentRenderTarget) {
+            return 1;
+        } else {
+            return fSampleCount;
+        }
+    }
 private:
     
     struct plMetalPipelineRecord {
         MTL::PixelFormat depthFormat;
         MTL::PixelFormat colorFormat;
+        NS::UInteger sampleCount;
         std::shared_ptr<plMetalPipelineState> state;
         
         bool operator==(const plMetalPipelineRecord &p) const;
@@ -193,20 +204,6 @@ private:
     void StartPipelineBuild(plMetalPipelineRecord& record, std::condition_variable **condOut);
     std::condition_variable* PrewarmPipelineStateFor(plMetalPipelineState* pipelineState);
     
-    struct plPipelineStateRecord {
-        MTL::PixelFormat outputFormat;
-        MTL::PixelFormat depthFormat;
-        plMetalPipelineState *state;
-        
-        bool operator==(const plPipelineStateRecord &p) const {
-            return (outputFormat == p.outputFormat && depthFormat == p.depthFormat && state == p.state);
-        }
-        
-        plPipelineStateRecord(const plPipelineStateRecord &attributes) {
-            memcpy(this, &attributes, sizeof(plPipelineStateRecord));
-        }
-    };
-    
 protected:
     plMetalLinkedPipeline* PipelineState(plMetalPipelineState* pipelineState);
     
@@ -217,8 +214,11 @@ private:
     MTL::CommandBuffer*         fCurrentCommandBuffer;
     MTL::CommandBuffer*         fCurrentOffscreenCommandBuffer;
     MTL::RenderCommandEncoder*  fCurrentRenderTargetCommandEncoder;
+    
     MTL::Texture*               fCurrentDrawableDepthTexture;
     MTL::Texture*               fCurrentFragmentOutputTexture;
+    MTL::Texture*               fCurrentFragmentMSAAOutputTexture;
+    
     CA::MetalDrawable*          fCurrentDrawable;
     MTL::PixelFormat            fCurrentDepthFormat;
     simd_float4                 fClearRenderTargetColor;
