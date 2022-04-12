@@ -205,10 +205,10 @@ typedef struct  {
     texturecube<half> cubicTexture8  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 7), function_constant(hasLayer8)  ]];
     const constant half4* colors   [[ buffer(FragmentShaderArgumentAttributeColors)   ]];
     const constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(BufferIndexFragArgBuffer)   ]];
-    sampler samplers [[ sampler(0)   ]];
-    sampler sampler2 [[ sampler(1)   ]];
-    sampler sampler3 [[ sampler(2)   ]];
-    sampler sampler4 [[ sampler(3)   ]];
+    sampler repeatSampler [[ sampler(0)   ]];
+    sampler clampRepeatSampler [[ sampler(1)   ]];
+    sampler repeatClampSampler [[ sampler(2)   ]];
+    sampler clampSampler [[ sampler(3)   ]];
     half4 sampleLayer(const size_t index, const uint8_t passType, float3 sampleCoord) const;
 } FragmentShaderArguments;
 
@@ -496,13 +496,13 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const uint8_t pas
         size_t sampleType = sampleTypes[index];
         sampler colorSampler;
         if(sampleType == 0) {
-            colorSampler = colorSamplers[0];
+            colorSampler = repeatSampler;
         } else if(sampleType == 1) {
-            colorSampler = colorSamplers[1];
+            colorSampler = clampRepeatSampler;
         } else if(sampleType == 2) {
-            colorSampler = colorSamplers[2];
+            colorSampler = repeatClampSampler;
         } else if(sampleType == 3) {
-            colorSampler = colorSamplers[3];
+            colorSampler = clampSampler;
         }
         
         if (miscFlags[index] & kMiscPerspProjection) {
