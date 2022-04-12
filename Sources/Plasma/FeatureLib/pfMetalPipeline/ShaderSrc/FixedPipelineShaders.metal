@@ -209,6 +209,7 @@ typedef struct  {
     sampler sampler2 [[ sampler(1)   ]];
     sampler sampler3 [[ sampler(2)   ]];
     sampler sampler4 [[ sampler(3)   ]];
+    half4 sampleLayer(const size_t index, const uint8_t passType, float3 sampleCoord) const;
 } FragmentShaderArguments;
 
 float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const uint UVWSrc, const uint flags, const float4 normal, const float4 camPosition, const matrix_float4x4 camToWorldMatrix, const matrix_float4x4 projectionMatrix);
@@ -481,10 +482,10 @@ float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const ui
     return sampleCoord.xyz;
 }
     
-constexpr half4 sampleLayer(uint8_t passType, uint32_t miscFlags, float3 sampleCoord,  const thread half4 &color, const thread texture2d<half> &texture, const thread texturecube<half> &cubicTexture, const uint8_t sampleType, const thread sampler* colorSamplers) {
+half4 FragmentShaderArguments::sampleLayer(const size_t index, const uint8_t passType, float3 sampleCoord) const {
     
     if(passType == PassTypeColor) {
-        return color;
+        return colors[index];
     } else {
         /*
          Not using array based lookup here because the compiler
@@ -492,6 +493,7 @@ constexpr half4 sampleLayer(uint8_t passType, uint32_t miscFlags, float3 sampleC
          with a constant. Using an array based lookup was hurting performance by
          about 1/3rd on Apple Silicon.
          */
+        size_t sampleType = sampleTypes[index];
         sampler colorSampler;
         if(sampleType == 0) {
             colorSampler = colorSamplers[0];
@@ -503,15 +505,15 @@ constexpr half4 sampleLayer(uint8_t passType, uint32_t miscFlags, float3 sampleC
             colorSampler = colorSamplers[3];
         }
         
-        if (miscFlags & kMiscPerspProjection) {
+        if (miscFlags[index] & kMiscPerspProjection) {
             sampleCoord.xy /= sampleCoord.z;
         }
         
         //do the actual sample
         if(passType == PassTypeTexture) {
-            return texture.sample(colorSampler, sampleCoord.xy);
+            return (&textures)[index].sample(colorSampler, sampleCoord.xy);
         } else if(passType == PassTypeCubicTexture) {
-            return cubicTexture.sample(colorSampler, sampleCoord.xyz);
+            return (&cubicTextures)[index].sample(colorSampler, sampleCoord.xyz);
         } else {
             return half4(0);
         }
@@ -540,10 +542,8 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
         for(size_t layer=0; layer<passCount; layer++) {
             
             float3 sampleCoord = (&in.texCoord1)[layer];
-            size_t sampleType = sampleTypes[layer];
-            //sampler colorSampler = colorSamplers[sampleTypes[layer]];
             
-            color = sampleLayer(sourceTypes[layer], miscFlags[layer], sampleCoord, half4(in.vtxColor), (&fragmentShaderArgs.textures)[layer], (&fragmentShaderArgs.cubicTextures)[layer], sampleType, &fragmentShaderArgs.samplers);
+            color = fragmentShaderArgs.sampleLayer(layer, sourceTypes[layer], sampleCoord);
             
             if(layer==0) {
                 blendFirst(color, currentColor, blendModes[layer]);
@@ -721,13 +721,13 @@ fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
     //only possible alpha sources are layers 0 or 1
     if(alphaSrc == 0) {
         
-        half4 layerColor = sampleLayer(sourceTypes[2], miscFlags[1], in.texCoord3, half4(layers.colors[0]), (&layers.textures)[0], (&layers.cubicTextures)[0], sampleTypes[0], &layers.samplers);
+        half4 layerColor = layers.sampleLayer(0, sourceTypes[2], in.texCoord3);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;
     } else if(alphaSrc == 1) {
         
-        half4 layerColor = sampleLayer(sourceTypes[2], miscFlags[1], in.texCoord3, half4(layers.colors[1]), (&layers.textures)[1], (&layers.cubicTextures)[1], sampleTypes[1], &layers.samplers);
+        half4 layerColor = layers.sampleLayer(1, sourceTypes[2], in.texCoord3);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;
