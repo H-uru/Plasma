@@ -70,8 +70,28 @@ kListLightResps = ["respKILightOff","respKILightOn" ]
 kKILightObjectName = "RTOmniKILight"
 
 ## The color names usable to set the KI text color override
-## TODO: Can/should these be localized somehow? Would need conversion back to English before used as the ptColor method names.
-kColorNames = set(["black", "blue", "brown", "cyan", "darkbrown", "darkgreen", "darkpurple", "gray", "green", "magenta", "maroon", "navyblue", "orange", "pink", "red", "slateblue", "steelblue", "tan", "white", "yellow"])
+kColorNames = {
+    PtGetLocalizedString("Global.Colors.Black"): "black",
+    PtGetLocalizedString("Global.Colors.Blue"): "blue",
+    PtGetLocalizedString("Global.Colors.Brown"): "brown",
+    PtGetLocalizedString("Global.Colors.Cyan"): "cyan",
+    PtGetLocalizedString("Global.Colors.DarkBrown"): "darkbrown",
+    PtGetLocalizedString("Global.Colors.DarkGreen"): "darkgreen",
+    PtGetLocalizedString("Global.Colors.DarkPurple"): "darkpurple",
+    PtGetLocalizedString("Global.Colors.Gray"): "gray",
+    PtGetLocalizedString("Global.Colors.Green"): "green",
+    PtGetLocalizedString("Global.Colors.Magenta"): "magenta",
+    PtGetLocalizedString("Global.Colors.Maroon"): "maroon",
+    PtGetLocalizedString("Global.Colors.NavyBlue"): "navyblue",
+    PtGetLocalizedString("Global.Colors.Orange"): "orange",
+    PtGetLocalizedString("Global.Colors.Pink"): "pink",
+    PtGetLocalizedString("Global.Colors.Red"): "red",
+    PtGetLocalizedString("Global.Colors.SlateBlue"): "slateblue",
+    PtGetLocalizedString("Global.Colors.SteelBlue"): "steelblue",
+    PtGetLocalizedString("Global.Colors.Tan"): "tan",
+    PtGetLocalizedString("Global.Colors.White"): "white",
+    PtGetLocalizedString("Global.Colors.Yellow"): "yellow"
+}
 
 ## The easter eggs chat command fill-ins.
 ## Dictionary key is Age filename

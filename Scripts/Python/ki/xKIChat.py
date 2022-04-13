@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 import re
 import time
 import random
-from inspect import signature
+import inspect
 
 # Plasma Engine.
 from Plasma import *
@@ -892,7 +892,7 @@ class CommandsProcessor:
         for command, function in commands.items():
             if msg.startswith(command):
                 callableCommandFn = getattr(self, function)
-                numParams = len(signature(callableCommandFn).parameters)
+                numParams = len(inspect.signature(callableCommandFn).parameters)
                 PtDebugPrint(f"xKI.CommandsProcessor: Processing {command} function with {numParams} parameters", level=kDebugDumpLevel)
                 theMessage = message.split(" ", numParams)
                 if len(theMessage) > 1 and theMessage[1]:
@@ -1227,11 +1227,28 @@ class CommandsProcessor:
             return
 
         try:
+            colorRed = int(arg1)
+            colorBlue = int(arg2)
+            colorGreen = int(arg3)
+        except ValueError:
+            # arguments weren't valid integer numbers, so we will try treating them as floats below
+            pass
+        else:
+            # args were a valid set of integer numbers
+            colorRed = clamp(colorRed, 0, 255)
+            colorBlue = clamp(colorBlue, 0, 255)
+            colorGreen = clamp(colorGreen, 0, 255)
+            self.chatMgr.chatTextColor = ptColor(colorRed / 255.0, colorBlue / 255.0, colorGreen / 255.0)
+            self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [f"({colorRed}, {colorBlue}, {colorGreen})"]))
+            return
+
+        try:
             colorRed = float(arg1)
             colorBlue = float(arg2)
             colorGreen = float(arg3)
         except ValueError:
-            pass # arguments weren't valid float numbers, so we will try treating arg1 as a string below
+            # arguments weren't valid float numbers, so we will try treating arg1 as a string below
+            pass
         else:
             # args were a valid set of float numbers
             colorRed = clamp(colorRed, 0.0, 1.0)
@@ -1243,8 +1260,8 @@ class CommandsProcessor:
 
         newColor = arg1.strip().casefold()
         if newColor in kColorNames:
-            # newColor is a valid color name with a corresponding function on the ptColor class
-            colorFn = getattr(ptColor(), newColor)
+            # newColor is a valid localized color name with a corresponding function on the ptColor class
+            colorFn = getattr(ptColor(), kColorNames[newColor])
             self.chatMgr.chatTextColor = colorFn()
             self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [newColor]))
         elif newColor == PtGetLocalizedString("KI.Commands.ChatSetTextColorDefaultArg"):
