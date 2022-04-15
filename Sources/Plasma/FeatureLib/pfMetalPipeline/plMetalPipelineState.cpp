@@ -51,28 +51,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plRenderTarget.h"
 #include "plMetalDevice.h"
 
-plMetalPipelineState::plMetalPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef)
+size_t plMetalPipelineState::GetHash() const {
+    return std::hash<uint8_t>()(GetID());
+}
+
+plMetalPipelineState::plMetalPipelineState(plMetalDevice* device)
 :   fDevice(device)
+{
+}
+
+plMetalRenderSpanPipelineState::plMetalRenderSpanPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef)
+:   plMetalPipelineState(device)
 {
     fNumUVs = plGBufferGroup::CalcNumUVs(vRef->fFormat);
     fNumWeights = (vRef->fFormat & plGBufferGroup::kSkinWeightMask) >> 4;
     fHasSkinIndices = (vRef->fFormat & plGBufferGroup::kSkinIndices);
 }
 
-void plMetalPipelineState::GetFunctionConstants(MTL::FunctionConstantValues* constants) const
+void plMetalRenderSpanPipelineState::GetFunctionConstants(MTL::FunctionConstantValues* constants) const
 {
     ushort numUVs = fNumUVs;
     constants->setConstantValue(&numUVs, MTL::DataTypeUShort, FunctionConstantNumUVs);
     constants->setConstantValue(&fNumWeights, MTL::DataTypeUChar, FunctionConstantNumWeights);
 }
 
-size_t plMetalPipelineState::GetHash() const {
+size_t plMetalRenderSpanPipelineState::GetHash() const {
     std::size_t h1 = std::hash<uint8_t>()(fNumUVs);
     std::size_t h2 = std::hash<uint8_t>()(fNumWeights);
     std::size_t h3 = std::hash<bool>()(fHasSkinIndices);
-    std::size_t h4 = std::hash<uint8_t>()(GetID());
 
-    return h1 ^ h2 ^ h3 ^ h4;
+    return h1 ^ h2 ^ h3 ^ plMetalPipelineState::GetHash();
 }
 
 plMetalDevice::plMetalLinkedPipeline* plMetalPipelineState::GetRenderPipelineState() {
@@ -85,13 +93,13 @@ void plMetalPipelineState::PrewarmRenderPipelineState() {
 
 
 plMetalMaterialPassPipelineState::plMetalMaterialPassPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef, const plMetalMaterialPassDescription &description)
-:   plMetalPipelineState(device, vRef) {
+:   plMetalRenderSpanPipelineState(device, vRef) {
     fPassDescription = description;
 }
 
 void plMetalMaterialPassPipelineState::GetFunctionConstants(MTL::FunctionConstantValues* constants) const
 {
-    plMetalPipelineState::GetFunctionConstants(constants);
+    plMetalRenderSpanPipelineState::GetFunctionConstants(constants);
     constants->setConstantValue(&fPassDescription.numLayers, MTL::DataTypeUChar, FunctionConstantNumLayers);
     constants->setConstantValues(&fPassDescription.passTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSources, 8));
     constants->setConstantValues(&fPassDescription.blendModes, MTL::DataTypeUInt, NS::Range(FunctionConstantBlendModes, 8));
@@ -100,13 +108,13 @@ void plMetalMaterialPassPipelineState::GetFunctionConstants(MTL::FunctionConstan
 }
 
 size_t plMetalMaterialPassPipelineState::GetHash() const {
-    std::size_t value = plMetalPipelineState::GetHash();
+    std::size_t value = plMetalRenderSpanPipelineState::GetHash();
     value ^= fPassDescription.GetHash();
 
     return value;
 }
 
-void plMetalPipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) {
+void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) {
     int vertOffset = 0;
     int skinWeightOffset = vertOffset + (sizeof(float) * 3);
     if(this->fHasSkinIndices) {
@@ -146,7 +154,7 @@ void plMetalPipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor* vert
     vertexDescriptor->layouts()->object(VertexAttributePosition)->setStride(stride);
 }
 
-void plMetalPipelineState::ConfigureBlendMode(const uint32_t blendMode, MTL::RenderPipelineColorAttachmentDescriptor *descriptor)
+void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode, MTL::RenderPipelineColorAttachmentDescriptor *descriptor)
 {
     if (blendMode & hsGMatState::kBlendNoColor) {
         //printf("glBlendFunc(GL_ZERO, GL_ONE);\n");
@@ -352,7 +360,7 @@ void plMetalMaterialPassDescription::Populate(plLayerInterface* layPtr, uint8_t 
 }
 
 bool plMetalMaterialPassPipelineState::IsEqual(const plMetalPipelineState &p) const {
-    return static_cast<const plMetalMaterialPassPipelineState*>(&p)->fPassDescription == this->fPassDescription;
+    return plMetalRenderSpanPipelineState::IsEqual(p) && static_cast<const plMetalMaterialPassPipelineState*>(&p)->fPassDescription == this->fPassDescription;
 }
 
 

@@ -195,26 +195,47 @@ void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool sh
     //draw and clear at the same time. So if it's a clear for the
     //current drawable, remember that and perform the clear when
     //we're actually drawing to screen.
-    if (shouldClearColor) {
-        if (fCurrentRenderTarget) {
-            fClearRenderTargetColor = clearColor;
-            fShouldClearRenderTarget = shouldClearColor;
-            if (shouldClearDepth) {
-                fClearRenderTargetDepth = clearDepth;
-            }
-        } else {
-            fClearDrawableColor = clearColor;
-            fShouldClearDrawable = shouldClearColor;
-            if (shouldClearDepth) {
-                fClearDrawableDepth = clearDepth;
-            }
-        }
-    }
     
     if (fCurrentRenderTargetCommandEncoder) {
-        fCurrentRenderTargetCommandEncoder->endEncoding();
-        fCurrentRenderTargetCommandEncoder->release();
-        fCurrentRenderTargetCommandEncoder = nil;
+        half4 halfClearColor;
+        halfClearColor[0] = clearColor.r;
+        halfClearColor[1] = clearColor.g;
+        halfClearColor[2] = clearColor.b;
+        halfClearColor[3] = clearColor.a;
+        plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalClearPipelineState(this, shouldClearColor, shouldClearDepth).GetRenderPipelineState();
+        
+        const MTL::RenderPipelineState *pipelineState = linkedPipeline->pipelineState;
+        CurrentRenderCommandEncoder()->setRenderPipelineState(pipelineState);
+        
+        float clearCoords[8] = {
+            -1, -1,
+            1, -1,
+            -1, 1,
+            1, 1
+        };
+        float clearDepth = 1.0f;
+        CurrentRenderCommandEncoder()->setDepthStencilState(fNoZReadStencilState);
+        
+        CurrentRenderCommandEncoder()->setVertexBytes(&clearCoords, sizeof(clearCoords), 0);
+        CurrentRenderCommandEncoder()->setFragmentBytes(&halfClearColor, sizeof(halfClearColor), 0);
+        CurrentRenderCommandEncoder()->setFragmentBytes(&clearDepth, sizeof(float), 1);
+        CurrentRenderCommandEncoder()->drawPrimitives(MTL::PrimitiveTypeTriangleStrip, NS::UInteger(0), NS::UInteger(4));
+    } else {
+        if (shouldClearColor) {
+            if (fCurrentRenderTarget) {
+                fClearRenderTargetColor = clearColor;
+                fShouldClearRenderTarget = shouldClearColor;
+                if (shouldClearDepth) {
+                    fClearRenderTargetDepth = clearDepth;
+                }
+            } else {
+                fClearDrawableColor = clearColor;
+                fShouldClearDrawable = shouldClearColor;
+                if (shouldClearDepth) {
+                    fClearDrawableDepth = clearDepth;
+                }
+            }
+        }
     }
     
 }
@@ -272,10 +293,13 @@ void plMetalDevice::BeginNewRenderPass() {
         renderPassDescriptor->depthAttachment()->setTexture(fCurrentDrawableDepthTexture);
         renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
         
+        renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionMultisampleResolve);
+        
         if (fSampleCount == 1) {
             renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
         } else {
             renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentMSAAOutputTexture);
+            renderPassDescriptor->colorAttachments()->object(0)->setResolveTexture(fCurrentFragmentOutputTexture);
         }
         
         fCurrentRenderTargetCommandEncoder = fCurrentCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
@@ -286,6 +310,15 @@ void plMetalDevice::BeginNewRenderPass() {
 
 void plMetalDevice::SetRenderTarget(plRenderTarget* target)
 {
+    /*
+     If we're being asked to set the render target to the current drawable,
+     but we're being asked to set the render target to the drawable, don't do anything.
+     We used to allow starting new passes on the same drawable but that would break
+     memoryless buffers on Apple Silicon that don't survive between passes.
+     */
+    if((!fCurrentRenderTarget && !target) && fCurrentRenderTargetCommandEncoder) {
+        return;
+    }
     if( fCurrentRenderTargetCommandEncoder ) {
         //if we have an existing render target, submit it's commands and release it
         //if we need to come back to this render target, we can always create a new render
@@ -1037,20 +1070,6 @@ void plMetalDevice::SubmitCommandBuffer()
     fCurrentRenderTargetCommandEncoder->endEncoding();
     fCurrentRenderTargetCommandEncoder->release();
     fCurrentRenderTargetCommandEncoder = nil;
-    
-    if (fSampleCount != 1) {
-        //MSAA is enabled, do the final multisampling resolve pass
-        
-        MTL::RenderPassDescriptor *resolvePassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
-        resolvePassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionLoad);
-        resolvePassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionMultisampleResolve);
-        resolvePassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentMSAAOutputTexture);
-        resolvePassDescriptor->colorAttachments()->object(0)->setResolveTexture(fCurrentFragmentOutputTexture);
-        
-        MTL::RenderCommandEncoder * resolveCommand = fCurrentCommandBuffer->renderCommandEncoder(resolvePassDescriptor);
-        resolveCommand->setLabel(NS::MakeConstantString("Resolve Multisampling Pass"));
-        resolveCommand->endEncoding();
-    }
     
     fCurrentCommandBuffer->presentDrawable(fCurrentDrawable);
     fCurrentCommandBuffer->enqueue();
