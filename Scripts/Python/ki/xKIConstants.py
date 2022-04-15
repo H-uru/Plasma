@@ -310,30 +310,30 @@ class kColors:
 ## Constants for KI Chat commands.
 class kCommands:
     Localized = {PtGetLocalizedString("KI.Commands.ChatClearAll") : "ClearChat",
-        PtGetLocalizedString("KI.Commands.ChatSetTextColor") : "SetTextColor",
-        PtGetLocalizedString("KI.Commands.ChatStartLog") : "StartLog",
-        PtGetLocalizedString("KI.Commands.ChatStopLog") : "StopLog",
-        PtGetLocalizedString("KI.Commands.AddBuddy") : "AddBuddy",
-        PtGetLocalizedString("KI.Commands.RemoveBuddy") : "RemoveBuddy",
-        PtGetLocalizedString("KI.Commands.Ignore") : "IgnorePlayer",
-        PtGetLocalizedString("KI.Commands.Unignore") : "UnignorePlayer",
-        PtGetLocalizedString("KI.Commands.DumpLogs") : "DumpLogs",
-        PtGetLocalizedString("KI.Commands.DumpLog") : "DumpLogs",
-        PtGetLocalizedString("KI.Commands.ChangePassword") : "ChangePassword"}
+                 PtGetLocalizedString("KI.Commands.ChatSetTextColor") : "SetTextColor",
+                 PtGetLocalizedString("KI.Commands.ChatStartLog") : "StartLog",
+                 PtGetLocalizedString("KI.Commands.ChatStopLog") : "StopLog",
+                 PtGetLocalizedString("KI.Commands.AddBuddy") : "AddBuddy",
+                 PtGetLocalizedString("KI.Commands.RemoveBuddy") : "RemoveBuddy",
+                 PtGetLocalizedString("KI.Commands.Ignore") : "IgnorePlayer",
+                 PtGetLocalizedString("KI.Commands.Unignore") : "UnignorePlayer",
+                 PtGetLocalizedString("KI.Commands.DumpLogs") : "DumpLogs",
+                 PtGetLocalizedString("KI.Commands.DumpLog") : "DumpLogs",
+                 PtGetLocalizedString("KI.Commands.ChangePassword") : "ChangePassword"}
     Jalak = {"/savecolumns" : "SaveColumns",
              "/loadcolumns" : "LoadColumns"}
     Internal = {"/revisitcleft" : "RevisitCleft",
-        "/restart" : "RestartGame",
+                "/restart" : "RestartGame",
                 "/gamereward" : "MarkerGameReward"}
     EasterEggs = {"/look" : "LookAround",
-        "/get feather" : "GetFeather",
-        "/look in pocket" : "LookForFeathers"}
+                  "/get feather" : "GetFeather",
+                  "/look in pocket" : "LookForFeathers"}
     Text = {"/go" : "Put one foot in front of the other and eventually you will get there.",
             "/fly" : "You close your eyes, you feel light headed and the ground slips away from your feet... Then you open your eyes and WAKE UP! (Ha, you can only dream about flying.)"}
     Other = {"/party" : "PartyTime",
-        "/saveclothing" : "SaveClothing",
-        "/loadclothing" : "LoadClothing",
-        "/threaten" : "CoopExample",
+             "/saveclothing" : "SaveClothing",
+             "/loadclothing" : "LoadClothing",
+             "/threaten" : "CoopExample",
              "/roll": "RollDice"}
 
 ## Numeric limits for the KI.
