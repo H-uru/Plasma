@@ -684,6 +684,8 @@ class grsnWallPython(ptResponder):
         avatar = PtGetLocalAvatar()
         if(id == kWearOriginalClothes and wornItem):
             for item in wornItem:
+                if item[1] == 8:
+                    continue
                 avatar.avatar.netForce(True)
                 avatar.avatar.wearClothingItem(item[0], 0)
                 avatar.avatar.tintClothingItem(item[0], DefaultColor1[item[1]], 0)
