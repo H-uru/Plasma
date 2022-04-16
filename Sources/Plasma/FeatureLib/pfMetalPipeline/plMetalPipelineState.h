@@ -246,7 +246,7 @@ public:
         if (!dynamicState) {
             return false;
         }
-        return dynamicState->fFragmentShaderID == fFragmentShaderID && dynamicState->fVertexShaderID == fVertexShaderID  && dynamicState->fBlendMode == fBlendMode;
+        return plMetalRenderSpanPipelineState::IsEqual(p) && dynamicState->fFragmentShaderID == fFragmentShaderID && dynamicState->fVertexShaderID == fVertexShaderID  && dynamicState->fBlendMode == fBlendMode;
     }
     
     size_t GetHash() const override {
@@ -255,7 +255,7 @@ public:
         value ^= std::hash<plShaderID::ID>()(fVertexShaderID);
         value ^= std::hash<uint32_t>()(fBlendMode);
         
-        return value;
+        return value ^ plMetalRenderSpanPipelineState::GetHash();
     }
     
     const MTL::Function* GetVertexFunction(MTL::Library *library) override;
