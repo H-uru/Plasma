@@ -203,7 +203,6 @@ typedef struct  {
     texturecube<half> cubicTexture6  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 5), function_constant(hasLayer6)  ]];
     texturecube<half> cubicTexture7  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 6), function_constant(hasLayer7)  ]];
     texturecube<half> cubicTexture8  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 7), function_constant(hasLayer8)  ]];
-    const constant half4* colors   [[ buffer(FragmentShaderArgumentAttributeColors)   ]];
     const constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(BufferIndexFragArgBuffer)   ]];
     sampler repeatSampler [[ sampler(0)   ]];
     sampler clampRepeatSampler [[ sampler(1)   ]];

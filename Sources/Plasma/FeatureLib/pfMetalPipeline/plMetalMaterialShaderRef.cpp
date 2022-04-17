@@ -85,12 +85,6 @@ void plMetalMaterialShaderRef::Release()
     }
     fPassArgumentBuffers.clear();
     
-    for(auto & buffer : fPassColors) {
-        buffer->release();
-        buffer = nil;
-    }
-    fPassColors.clear();
-    
     fNumPasses = 0;
 }
 
@@ -137,10 +131,9 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder *en
         
         assert(i - GetPassIndex(pass) >= 0);
         EncodeTransform(layer, &vertexUniforms->uvTransforms[i - GetPassIndex(pass)]);
-        IBuildLayerTexture(encoder, i - GetPassIndex(pass), layer, nullptr);
+        IBuildLayerTexture(encoder, i - GetPassIndex(pass), layer);
     }
     
-    encoder->setFragmentBuffer(fPassColors[pass], 0, FragmentShaderArgumentAttributeColors);
     encoder->setFragmentBuffer(fPassArgumentBuffers[pass], 0, BufferIndexFragArgBuffer);
 }
 
@@ -153,13 +146,12 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder *encode
         vertexUniforms->numUVSrcs += piggyBacks->size();
     }
     
-    simd_float4 colorMap[8];
     plMetalFragmentShaderArgumentBuffer uniforms;
     
     IHandleMaterial(GetPassIndex(pass), &uniforms, piggyBacks,
     [&](plLayerInterface* layer, uint32_t index) {
         layer = preEncodeTransform(layer, index);
-        IBuildLayerTexture(encoder, index, layer, colorMap);
+        IBuildLayerTexture(encoder, index, layer);
         return layer;
     }, [&](plLayerInterface* layer, uint32_t index) {
         layer = postEncodeTransform(layer, index);
@@ -220,7 +212,6 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder *encode
         }
     }
     
-    encoder->setFragmentBytes(colorMap, sizeof(colorMap), FragmentShaderArgumentAttributeColors);
     encoder->setFragmentBytes(&uniforms, sizeof(plMetalFragmentShaderArgumentBuffer), BufferIndexFragArgBuffer);
 }
 
@@ -280,7 +271,6 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
         //I'd like to encode more data here, and use a heap. The heap hasn't happened yet because heaps are
         //private memory, and we don't have a window yet for a blit phase into private memory.
         MTL::Buffer *argumentBuffer = fDevice->newBuffer(sizeof(plMetalFragmentShaderArgumentBuffer), MTL::ResourceStorageModeManaged);
-        MTL::Buffer *colorBuffer = fDevice->newBuffer(sizeof(simd_float4) * 8, MTL::ResourceStorageModeManaged);
         
         plMetalFragmentShaderArgumentBuffer *layerBuffer = (plMetalFragmentShaderArgumentBuffer *)argumentBuffer->contents();
         
@@ -299,14 +289,12 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
         
         //encode the colors for this pass into our buffer for fast rendering
         for(int colorToEncode = 0; colorToEncode < j - iCurrMat; colorToEncode ++) {
-            IBuildLayerTexture(NULL, colorToEncode, fMaterial->GetLayer(iCurrMat + colorToEncode), (simd_float4*) colorBuffer->contents());
+            IBuildLayerTexture(NULL, colorToEncode, fMaterial->GetLayer(iCurrMat + colorToEncode));
         }
         
         argumentBuffer->didModifyRange(NS::Range(0, argumentBuffer->length()));
-        colorBuffer->didModifyRange(NS::Range(0, colorBuffer->length()));
         
         fPassArgumentBuffers.push_back(argumentBuffer);
-        fPassColors.push_back(colorBuffer);
         
         fPassIndices.push_back(iCurrMat);
         fPassLengths.push_back(j - iCurrMat);
@@ -325,7 +313,7 @@ const hsGMatState plMetalMaterialShaderRef::ICompositeLayerState(const plLayerIn
     return state;
 }
 
-void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer, simd_float4 *colorMap)
+void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer)
 {
     fPipeline->CheckTextureRef(layer);
     plBitmap* texture = layer->GetTexture();
@@ -339,12 +327,6 @@ void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *enc
             encoder->setFragmentTexture(deviceTexture->fTexture, FragmentShaderArgumentAttributeTextures + offsetFromRootLayer);
         }
         
-    } else {
-        hsColorRGBA preshadeColor = layer->GetPreshadeColor();
-        colorMap[offsetFromRootLayer].r = preshadeColor.r;
-        colorMap[offsetFromRootLayer].g = preshadeColor.g;
-        colorMap[offsetFromRootLayer].b = preshadeColor.b;
-        colorMap[offsetFromRootLayer].a = preshadeColor.a;
     }
 }
 

@@ -55,8 +55,6 @@ using namespace metal;
 typedef struct  {
     array<texture2d<half>, 8> textures  [[ id(FragmentShaderArgumentAttributeTextures)  ]];
     array<texturecube<half>, 8> cubicTextures  [[ id(FragmentShaderArgumentAttributeCubicTextures)  ]];
-    array<half4,           8>  colors   [[ id(FragmentShaderArgumentAttributeColors)   ]];
-    plMetalFragmentShaderArgumentBuffer     uniforms   [[ id(FragmentShaderArgumentAttributeUniforms)   ]];
 } FragmentShaderArguments;
 
 typedef struct

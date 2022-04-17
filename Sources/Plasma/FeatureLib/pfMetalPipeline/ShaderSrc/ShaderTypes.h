@@ -110,7 +110,6 @@ struct plMetalShadowCastFragmentShaderArgumentBuffer {
 enum plMetalFragmentShaderTextures {
     FragmentShaderArgumentAttributeTextures = 0,
     FragmentShaderArgumentAttributeCubicTextures = 8,
-    FragmentShaderArgumentAttributeColors = 16,
     FragmentShaderArgumentAttributeUniforms = 32
 };
 

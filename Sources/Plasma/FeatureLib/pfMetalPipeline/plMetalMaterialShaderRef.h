@@ -64,7 +64,6 @@ private:
     //FIXME: This should be retained/released
     MTL::Device*                        fDevice;
     std::vector<MTL::Buffer *>          fPassArgumentBuffers;
-    std::vector<MTL::Buffer *>          fPassColors;
     
 public:
     void Link(plMetalMaterialShaderRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
@@ -106,7 +105,7 @@ private:
     bool ICanEatLayer(plLayerInterface* lay);
     uint32_t ILayersAtOnce(uint32_t which);
     
-    void IBuildLayerTexture(MTL::RenderCommandEncoder *encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer, simd_float4 *colorMap);
+    void IBuildLayerTexture(MTL::RenderCommandEncoder *encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer);
     void EncodeTransform(plLayerInterface* layer, UVOutDescriptor *transform);
 };
 
