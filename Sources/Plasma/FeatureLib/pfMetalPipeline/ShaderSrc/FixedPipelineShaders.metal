@@ -209,10 +209,8 @@ typedef struct  {
     sampler clampRepeatSampler [[ sampler(1)   ]];
     sampler repeatClampSampler [[ sampler(2)   ]];
     sampler clampSampler [[ sampler(3)   ]];
-    half4 sampleLayer(const size_t index, const uint8_t passType, float3 sampleCoord) const;
+    half4 sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const;
 } FragmentShaderArguments;
-
-float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const uint UVWSrc, const uint flags, const float4 normal, const float4 camPosition, const matrix_float4x4 camToWorldMatrix, const matrix_float4x4 projectionMatrix);
 
 typedef struct
 {
@@ -226,7 +224,7 @@ typedef struct
     float3 texCoord7 [[function_constant(hasLayer7)]];
     float3 texCoord8 [[function_constant(hasLayer8)]];
     //float4 normal;
-    half4 vtxColor;
+    half4 vtxColor [[ centroid_perspective ]];
     half4 fogColor;
     //float4 vCamNormal;
 } ColorInOut;
@@ -234,7 +232,7 @@ typedef struct
     
 typedef struct
 {
-    float4 position [[position]];
+    float4 position [[position, invariant]];
     float3 texCoord1;
 } ShadowCasterInOut;
 
@@ -349,21 +347,21 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
     const float4 normal = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.normal, 0.0));
     
     if(hasLayer1)
-        out.texCoord1 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[0].transform, uniforms.uvTransforms[0].UVWSrc, miscFlags1, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord1 = uniforms.sampleLocation(0, &in.texCoord1, normal, vCamPosition);
     if(hasLayer2)
-        out.texCoord2 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[1].transform, uniforms.uvTransforms[1].UVWSrc, miscFlags2, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord2 = uniforms.sampleLocation(1, &in.texCoord1, normal, vCamPosition);
     if(hasLayer3)
-        out.texCoord3 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[2].transform, uniforms.uvTransforms[2].UVWSrc, miscFlags3, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord3 = uniforms.sampleLocation(2, &in.texCoord1, normal, vCamPosition);
     if(hasLayer4)
-        out.texCoord4 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[3].transform, uniforms.uvTransforms[3].UVWSrc, miscFlags4, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord4 = uniforms.sampleLocation(3, &in.texCoord1, normal, vCamPosition);
     if(hasLayer5)
-        out.texCoord5 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[4].transform, uniforms.uvTransforms[4].UVWSrc, miscFlags5, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord5 = uniforms.sampleLocation(4, &in.texCoord1, normal, vCamPosition);
     if(hasLayer6)
-        out.texCoord5 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[5].transform, uniforms.uvTransforms[5].UVWSrc, miscFlags6, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord5 = uniforms.sampleLocation(5, &in.texCoord1, normal, vCamPosition);
     if(hasLayer7)
-        out.texCoord7 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[6].transform, uniforms.uvTransforms[6].UVWSrc, miscFlags7, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord7 = uniforms.sampleLocation(6, &in.texCoord1, normal, vCamPosition);
     if(hasLayer8)
-        out.texCoord8 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[7].transform, uniforms.uvTransforms[7].UVWSrc, miscFlags8, normal, vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+        out.texCoord8 = uniforms.sampleLocation(7, &in.texCoord1, normal, vCamPosition);
     
     out.position = uniforms.projectionMatrix * vCamPosition;
 
@@ -373,10 +371,13 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
 constexpr void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags);
 constexpr void blend(half4 srcSample, thread half4 &destSample, uint32_t blendFlags);
     
-float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const uint UVWSrc, const uint flags, const float4 normal, const float4 camPosition, const matrix_float4x4 camToWorldMatrix, const matrix_float4x4 projectionMatrix) {
+float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, const float4 normal, const float4 camPosition) constant {
+    const uint32_t UVWSrc = uvTransforms[index].UVWSrc;
+    float4x4 matrix = uvTransforms[index].transform;
+    const uint32_t flags = miscFlags[index];
     //Note: If we want to require newer versions of Metal/newer hardware we could pass function pointers instead of doing these ifs.
     if (flags & (kMiscUseReflectionXform | kMiscUseRefractionXform)) {
-        matrix = camToWorldMatrix;
+        matrix = cameraToWorldMatrix;
         matrix[3][0] = matrix[3][1] = matrix[3][2] = 0;
 
         // This is just a rotation about X of Pi/2 (y = z, z = -y),
@@ -444,7 +445,7 @@ float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const ui
         // Multiply by the projection matrix
         matrix = matrix * projectionMatrix;
     } else if (flags & kMiscProjection) {
-        matrix_float4x4 cam2World = camToWorldMatrix;
+        matrix_float4x4 cam2World = cameraToWorldMatrix;
         if( !(UVWSrc & kUVWPosition) ) {
             cam2World.columns[3][0] = 0;
             cam2World.columns[3][1] = 0;
@@ -482,10 +483,10 @@ float3 sampleLocation(thread float3 *texCoords, matrix_float4x4 matrix, const ui
     return sampleCoord.xyz;
 }
     
-half4 FragmentShaderArguments::sampleLayer(const size_t index, const uint8_t passType, float3 sampleCoord) const {
+half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const {
     
     if(passType == PassTypeColor) {
-        return colors[index];
+        return vertexColor;
     } else {
         /*
          Not using array based lookup here because the compiler
@@ -543,7 +544,7 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
             
             float3 sampleCoord = (&in.texCoord1)[layer];
             
-            color = fragmentShaderArgs.sampleLayer(layer, sourceTypes[layer], sampleCoord);
+            color = fragmentShaderArgs.sampleLayer(layer, in.vtxColor, sourceTypes[layer], sampleCoord);
             
             if(layer==0) {
                 blendFirst(color, currentColor, blendModes[layer]);
@@ -618,12 +619,16 @@ constexpr void blend(half4 srcSample, thread half4 &destSample, const uint32_t b
                 srcSample.a = srcSample.a;
             }
 
-            if (blendFlags & kBlendAlphaAdd) {
-                // alpha = alphaVal + prev
-                destSample.a = srcSample.a + destSample.a;
-            } else if (blendFlags & kBlendAlphaMult) {
-                // alpha = alphaVal * prev
-                destSample.a = srcSample.a * destSample.a;
+            switch( blendFlags & ( kBlendAlphaAdd | kBlendAlphaMult ) ) {
+                case 0:
+                    destSample.a = destSample.a;
+                    break;
+                case kBlendAlphaAdd:
+                    destSample.a = srcSample.a + destSample.a;
+                    break;
+                case kBlendAlphaMult:
+                    destSample.a = srcSample.a * destSample.a;
+                break;
             }
             break;
         }
@@ -682,8 +687,9 @@ vertex ShadowCasterInOut shadowVertexShader(Vertex in [[stage_in]],
     
     const float4 vCamPosition = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 1.0));
     
-    //out.texCoord1 = (uniforms.uvTransforms[0].transform * vCamPosition).xyz;
-    out.texCoord1 = sampleLocation(&in.texCoord1, uniforms.uvTransforms[0].transform, uniforms.uvTransforms[0].UVWSrc, 0, float4(0.0), vCamPosition, uniforms.cameraToWorldMatrix, uniforms.projectionMatrix);
+    float4x4 matrix = uniforms.uvTransforms[0].transform * uniforms.cameraToWorldMatrix;
+    
+    out.texCoord1 = (vCamPosition * matrix).xyz;
     
     out.position = uniforms.projectionMatrix * vCamPosition;
 
@@ -719,15 +725,15 @@ fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
     currentColor.a = LUTColor.a - currentColor.a;
     
     //only possible alpha sources are layers 0 or 1
-    if(alphaSrc == 0) {
+    if(alphaSrc == 0 && passCount > 0) {
         
-        half4 layerColor = layers.sampleLayer(0, sourceTypes[2], in.texCoord3);
+        half4 layerColor = layers.sampleLayer(0, in.vtxColor,sourceTypes[2], in.texCoord3);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;
-    } else if(alphaSrc == 1) {
+    } else if(alphaSrc == 1 && passCount > 1) {
         
-        half4 layerColor = layers.sampleLayer(1, sourceTypes[2], in.texCoord3);
+        half4 layerColor = layers.sampleLayer(1, in.vtxColor, sourceTypes[2], in.texCoord3);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;

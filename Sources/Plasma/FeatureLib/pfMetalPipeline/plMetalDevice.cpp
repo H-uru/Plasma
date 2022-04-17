@@ -293,13 +293,13 @@ void plMetalDevice::BeginNewRenderPass() {
         renderPassDescriptor->depthAttachment()->setTexture(fCurrentDrawableDepthTexture);
         renderPassDescriptor->depthAttachment()->setStoreAction(MTL::StoreActionDontCare);
         
-        renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionMultisampleResolve);
         
         if (fSampleCount == 1) {
             renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
         } else {
             renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentMSAAOutputTexture);
             renderPassDescriptor->colorAttachments()->object(0)->setResolveTexture(fCurrentFragmentOutputTexture);
+            renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionMultisampleResolve);
         }
         
         fCurrentRenderTargetCommandEncoder = fCurrentCommandBuffer->renderCommandEncoder(renderPassDescriptor)->retain();
@@ -916,7 +916,11 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
                                                                                                              drawable->texture()->height(),
                                                                                                              false);
             msaaColorTextureDescriptor->setUsage(MTL::TextureUsageRenderTarget);
-            msaaColorTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
+            if (fMetalDevice->supportsFamily(MTL::GPUFamilyApple1) && fSampleCount == 1) {
+                msaaColorTextureDescriptor->setStorageMode(MTL::StorageModeMemoryless);
+            }   else {
+                msaaColorTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
+            }
             msaaColorTextureDescriptor->setTextureType(MTL::TextureType2DMultisample);
             msaaColorTextureDescriptor->setSampleCount(fSampleCount);
             fCurrentFragmentMSAAOutputTexture = fMetalDevice->newTexture(msaaColorTextureDescriptor);

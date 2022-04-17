@@ -970,7 +970,6 @@ void plMetalPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& 
     fCurrentRenderPassUniforms->worldToCameraMatrix = fDevice.fMatrixW2C;
     fCurrentRenderPassUniforms->cameraToWorldMatrix = fDevice.fMatrixC2W;
     fCurrentRenderPassUniforms->localToWorldMatrix = fDevice.fMatrixL2W;
-    fCurrentRenderPassUniforms->worldToLocalMatrix = fDevice.fMatrixW2L;
 }
 
 void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
@@ -1084,7 +1083,6 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
         if( fShadows.size() ) {
             //if we had to render aux spans, we probably changed the vertex and index buffer
             //reset those
-            fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
             fCurrentVertexBuffer = vRef->GetBuffer();
             fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
             
@@ -1823,9 +1821,9 @@ bool plMetalPipeline::ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup
     //MTL::PurgeableState bufferState = vRef->fVertexBuffer->setPurgeableState(MTL::PurgeableStateNonVolatile);
     if (vRef->Expired(fVtxRefTime)) {
         IRefreshDynVertices(group, vRef);
-        fDevice.GetCurrentCommandBuffer()->addCompletedHandler( ^(MTL::CommandBuffer *buffer) {
+        //fDevice.GetCurrentCommandBuffer()->addCompletedHandler( ^(MTL::CommandBuffer *buffer) {
             //vRef->fVertexBuffer->setPurgeableState(MTL::PurgeableStateVolatile);
-        });
+        //});
     }
 
     if (iRef->IsDirty()) {
@@ -2390,7 +2388,6 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     uniforms.projectionMatrix = projMat;
     matrix_float4x4 modelMatrix;
     uniforms.worldToCameraMatrix = modelMatrix;
-    uniforms.uvTransforms[0].flags = 0;
     uniforms.uvTransforms[0].UVWSrc = 0;
     uniforms.numUVSrcs = 1;
     //uniforms.worldToLocalMatrix = fDevice.fMatrixW2L;
@@ -3162,7 +3159,6 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
     hsMatrix2SIMD(castLUT, &tXfm);
 
     fCurrentRenderPassUniforms->uvTransforms[0].transform = tXfm;
-    fCurrentRenderPassUniforms->uvTransforms[0].flags = 0;
     fCurrentRenderPassUniforms->uvTransforms[0].UVWSrc = plLayerInterface::kUVWPosition;
 
     /*DWORD clearColor = 0xff000000L;
@@ -3679,7 +3675,12 @@ void plMetalPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSp
         fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
         fCurrentPipelineState = linkedPipeline->pipelineState;
     }
-    fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
+    
+    if (fCurrentVertexBuffer != vRef->GetBuffer()) {
+        fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
+        fCurrentVertexBuffer = vRef->GetBuffer();
+    }
+    
     fCurrentVertexBuffer = vRef->GetBuffer();
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
     fDevice.CurrentRenderCommandEncoder()->setCullMode(MTL::CullModeNone);
@@ -3740,10 +3741,7 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             ISetupShadowLight(fShadows[i]);
             
             struct plMetalMaterialPassDescription passDescription;
-            memset(&passDescription.miscFlags, 0, sizeof(passDescription.miscFlags));
-            memset(&passDescription.blendModes, 0, sizeof(passDescription.blendModes));
-            memset(&passDescription.passTypes, 0, sizeof(passDescription.passTypes));
-            memset(&passDescription.sampleTypes, 0, sizeof(passDescription.sampleTypes));
+            memset(&passDescription, 0, sizeof(passDescription));
             passDescription.Populate(mat->GetLayer(0), 2);
             passDescription.numLayers = 3;
             if (mat->GetNumLayers()>1) {
@@ -3862,7 +3860,6 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
             // Normal UVW source.
         fCurrentRenderPassUniforms->uvTransforms[2].UVWSrc = uvwSrc;
         // MiscFlags to layer's misc flags
-        fCurrentRenderPassUniforms->uvTransforms[2].flags = layer->GetMiscFlags();
         matrix_float4x4 tXfm;
         hsMatrix2SIMD(layer->GetTransform(), &tXfm);
         fCurrentRenderPassUniforms->uvTransforms[2].transform = tXfm;
@@ -3946,7 +3943,6 @@ void plMetalPipeline::ISetupShadowSlaveTextures(plShadowSlave* slave)
     hsMatrix2SIMD(cameraToTexture, &tXfm);
     
     fCurrentRenderPassUniforms->uvTransforms[0].UVWSrc = plLayerInterface::kUVWPosition;
-    fCurrentRenderPassUniforms->uvTransforms[0].flags = 0;
     fCurrentRenderPassUniforms->uvTransforms[0].transform = tXfm;
 
     // Stage 1: the lut
@@ -3955,7 +3951,6 @@ void plMetalPipeline::ISetupShadowSlaveTextures(plShadowSlave* slave)
     hsMatrix2SIMD(cameraToLut, &tXfm);
     
     fCurrentRenderPassUniforms->uvTransforms[1].UVWSrc = plLayerInterface::kUVWPosition;
-    fCurrentRenderPassUniforms->uvTransforms[1].flags = 0;
     fCurrentRenderPassUniforms->uvTransforms[1].transform = tXfm;
 
 }

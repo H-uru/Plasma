@@ -228,7 +228,6 @@ void plMetalMaterialShaderRef::EncodeTransform(plLayerInterface* layer, UVOutDes
     matrix_float4x4 tXfm;
     hsMatrix2SIMD(layer->GetTransform(), &tXfm);
     transform->transform = tXfm;
-    transform->flags = layer->GetMiscFlags();
     transform->UVWSrc = layer->GetUVWSrc();
 }
 

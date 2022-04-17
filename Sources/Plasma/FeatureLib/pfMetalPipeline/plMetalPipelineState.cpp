@@ -252,8 +252,8 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
             //printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
             descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
             descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
-            descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
-            descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);
+            descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
+            descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
             
             /*descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOne);
             descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
@@ -383,7 +383,7 @@ const MTL::Function* plMetalRenderShadowCasterPipelineState::GetVertexFunction(M
 {
     NS::Error* error = nullptr;
     MTL::Function* function = library->newFunction(
-                                NS::String::string("shadowVertexShader", NS::ASCIIStringEncoding),
+                                NS::MakeConstantString("shadowVertexShader"),
                                     MakeFunctionConstants(),
                                 &error
                                 )->autorelease();
@@ -394,7 +394,7 @@ const MTL::Function* plMetalRenderShadowCasterPipelineState::GetFragmentFunction
 {
     NS::Error* error = nullptr;
     MTL::Function* function = library->newFunction(
-                                NS::String::string("shadowFragmentShader", NS::ASCIIStringEncoding),
+                                NS::MakeConstantString("shadowFragmentShader"),
                                     MakeFunctionConstants(),
                                 &error
                                 )->autorelease();
