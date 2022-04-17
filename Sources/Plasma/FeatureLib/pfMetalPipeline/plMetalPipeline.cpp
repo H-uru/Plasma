@@ -1066,8 +1066,13 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
     IPopPiggyBacks();
     
     // Render any aux spans associated.
-    if( span.GetNumAuxSpans() )
+    if( span.GetNumAuxSpans() ) {
         IRenderAuxSpans(span);
+        
+        //aux spans will change the current vertex buffer, put ours back
+        fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
+        fCurrentVertexBuffer = vRef->GetBuffer();
+    }
     
     
 
@@ -1088,10 +1093,9 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
             
             IRenderShadowsOntoSpan(render, &span, material, vRef);
         }
-        
-        if( !(fView.fRenderState & kRenderNoProjection) )
-        {
-        }
+    }
+    
+    if ( span.GetNumAuxSpans() || (pass >= 0 && fShadows.size()) ) {
     }
         
 #ifdef _DEBUG
