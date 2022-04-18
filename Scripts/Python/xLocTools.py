@@ -82,38 +82,41 @@ def MemberStatusString():
 
 xTranslatedAgeNames = {
     # City link-in points
-    "Ferry Terminal":       "Global.AgeNames.FerryTerminal",
-    "Tokotah Alley":        "Global.AgeNames.TokotahAlley",
-    "Palace Alcove":        "Global.AgeNames.PalaceAlcove",
-    "Library Courtyard":    "Global.AgeNames.LibraryCourtyard",
-    "Concert Hall Foyer":   "Global.AgeNames.ConcertHallFoyer",
+    "Ferry Terminal": PtGetLocalizedString("Global.AgeNames.FerryTerminal"),
+    "Tokotah Alley": PtGetLocalizedString("Global.AgeNames.TokotahAlley"),
+    "Palace Alcove": PtGetLocalizedString("Global.AgeNames.PalaceAlcove"),
+    "Library Courtyard": PtGetLocalizedString("Global.AgeNames.LibraryCourtyard"),
+    "Concert Hall Foyer": PtGetLocalizedString("Global.AgeNames.ConcertHallFoyer"),
     # Age names
-    "Eder Kemo":            "Global.AgeNames.EderKemo",
-    "Eder Gira":            "Global.AgeNames.EderGira",
-    "Gahreesen":            "Global.AgeNames.Gahreesen",
-    "Kadish":               "Global.AgeNames.Kadish",
-    "Nexus":                "Global.AgeNames.Nexus",
-    "Neighborhood":         "Global.AgeNames.Neighborhood",
-    "Relto":                "Global.AgeNames.Relto",
-    "Teledahn":             "Global.AgeNames.Teledahn",
+    "Eder Kemo": PtGetLocalizedString("Global.AgeNames.EderKemo"),
+    "Eder Gira": PtGetLocalizedString("Global.AgeNames.EderGira"),
+    "Gahreesen": PtGetLocalizedString("Global.AgeNames.Gahreesen"),
+    "Kadish": PtGetLocalizedString("Global.AgeNames.Kadish"),
+    "Nexus": PtGetLocalizedString("Global.AgeNames.Nexus"),
+    "Neighborhood": PtGetLocalizedString("Global.AgeNames.Neighborhood"),
+    "Relto": PtGetLocalizedString("Global.AgeNames.Relto"),
+    "Teledahn": PtGetLocalizedString("Global.AgeNames.Teledahn"),
     # Great Zero link-in points
-    "Great Zero Observation": "Global.AgeNames.GreatZeroObservation",
-    "Great Zero":           "Global.AgeNames.GreatZero",
+    "Great Zero Observation": PtGetLocalizedString("Global.AgeNames.GreatZeroObservation"),
+    "Great Zero": PtGetLocalizedString("Global.AgeNames.GreatZero"),
 }
 
+def CreatePossessiveString(possessorName, possessionName):
 
-def SafeEncode(text):
-    try:
-        #convert 8bit ascii to 16bit unicode characters 
-        encodedText = str(text)
-    except:          #exception called if the incomming string is already in unicode!
-        encodedText=text
-    return encodedText
+    if possessorName is None or possessionName is None:
+        return None
+
+    currLang = PtGetLanguage()
+    if possessorName[:-1] == "s" and currLang in {PtLanguage.kEnglish, PtLanguage.kGerman}:
+        # if the possessor's name ends in an 's', it is appropriate in English and German to just add an apostrophe
+        return f"{possessorName}' {possessionName}"
+    else:
+        # otherwise throw it through the localized possessive formatter
+        return PtGetLocalizedString("Global.Formats.Possessive", [possessorName, possessionName])
 
 def LocalizeAgeName(displayName):
     "Returns a localized version of the age display name you give it"
     localizedName = displayName
-#    localizedName = localizedName + unichr(200)   #Tye: Remove me!!!!
 
     if localizedName == "D'ni-Rudenna":
         # if the poles are not in a certain state, we can't call this age its normal name
@@ -124,7 +127,8 @@ def LocalizeAgeName(displayName):
             else:
                 localizedName = "???"
         except:
-            localizedName = "???" # default to unknown if we can't access the SDL for some reason
+            # default to unknown if we can't access the SDL for some reason
+            localizedName = "???"
     elif localizedName == "Ae'gura":
         localizedName = "D'ni-Ae'gura"
     elif localizedName == "GreatZero":
@@ -134,26 +138,29 @@ def LocalizeAgeName(displayName):
         # check if this is a neighborhood name
         if localizedName[len(localizedName)-12:] == "Neighborhood":
             # chop off the neighborhood part and tack on the localized version of that word
-            localizedName = SafeEncode(localizedName[:len(localizedName)-12])
-            localizedName = localizedName + PtGetLocalizedString(xTranslatedAgeNames["Neighborhood"])
-            return localizedName
-        # we are either a possesive name or a city link, check for city link first
+            return f"{localizedName[:len(localizedName)-12]}{xTranslatedAgeNames['Neighborhood']}"
+
+        # we are either a possessive name or a city link, check for city link first
         try:
-            localizedName = PtGetLocalizedString(xTranslatedAgeNames[localizedName])
-            return localizedName
+            return xTranslatedAgeNames[localizedName]
         except:
-            # ok, we're actually a possesive or something we have no translation for, check possesive
+            # ok, we're actually a possessive or something we have no translation for, check possessive
             pass
+
         apostropheLoc = localizedName.rfind("'")
         if apostropheLoc == -1:
-            return SafeEncode(localizedName)
-        if apostropheLoc + 3 >= len(localizedName):            
-            return SafeEncode(localizedName)
-        if not (localizedName[apostropheLoc+1] == 's' and localizedName[apostropheLoc+2] == ' '):
-            return SafeEncode(localizedName)
+            # no apostrophe found
+            return localizedName
+        if apostropheLoc + 3 >= len(localizedName):
+            # apostrophe (or possessive) is near the end of the name, nothing else to do
+            return localizedName
+        if localizedName[apostropheLoc+1:apostropheLoc+3] != "s ":
+            # apostrophe is not related to being possessive of the next word
+            return localizedName
 
-        # we are possesive, translate it
+        # we are possessive, translate it
         userName = localizedName[:apostropheLoc]
         ageName = localizedName[apostropheLoc+3:]
-        localizedName = PtGetLocalizedString("Global.Formats.Possesive", [userName, ageName])
+        localizedName = CreatePossessiveString(userName, ageName)
+
     return localizedName
