@@ -546,10 +546,43 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
     // Offscreen isn't currently used for anything.
     else if (owner->GetFlags() & plRenderTarget::kIsOffscreen) {
         /// Create a blank surface
-        //if (ref)
-        //    ref->Set(surfFormat, 0, owner);
-        //else
-        //    ref = new plGLRenderTargetRef(surfFormat, 0, owner);
+        
+            if (!ref)
+                ref = new plMetalRenderTargetRef();
+            
+            MTL::TextureDescriptor *textureDescriptor = MTL::TextureDescriptor::alloc()->init();
+            textureDescriptor->setWidth(owner->GetWidth());
+            textureDescriptor->setHeight(owner->GetHeight());
+            textureDescriptor->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
+            textureDescriptor->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead);
+            textureDescriptor->setStorageMode(MTL::StorageModeShared);
+            
+            plMetalDeviceRef *device = (plMetalDeviceRef *)owner->GetDeviceRef();
+            MTL::Texture * texture = fDevice.fMetalDevice->newTexture(textureDescriptor);
+            textureDescriptor->release();
+            
+            //if the ref already has an old texture, release it
+            if(ref->fTexture)
+                ref->fTexture->release();
+            if(ref->fDepthBuffer)
+                ref->fDepthBuffer->release();
+            ref->fTexture = texture;
+            ref->fDepthBuffer = depthBuffer;
+            ref->fOwner = owner;
+            
+            // Keep it in a linked list for ready destruction.
+            if (owner->GetDeviceRef() != ref) {
+                owner->SetDeviceRef(ref);
+                // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
+                hsRefCnt_SafeUnRef(ref);
+                if (ref != nullptr && !ref->IsLinked())
+                    ref->Link(&fRenderTargetRefList);
+            } else {
+                if (ref != nullptr && !ref->IsLinked())
+                    ref->Link(&fRenderTargetRefList);
+            }
+            
+            return ref;
     }
     
     // Keep it in a linked list for ready destruction.
@@ -792,9 +825,44 @@ bool plMetalPipeline::CaptureScreen(plMipmap *dest, bool flipVertical, uint16_t 
 
 plMipmap *plMetalPipeline::ExtractMipMap(plRenderTarget *targ)
 {
-    //FIXME: Add mip map extraction
-    //find who calls this to test
-    return nullptr;
+    if( plCubicRenderTarget::ConvertNoRef(targ) )
+        return nullptr;
+
+    if( targ->GetPixelSize() != 32 )
+    {
+        hsAssert(false, "Only RGBA8888 currently implemented");
+        return nullptr;
+    }
+    
+    plMetalRenderTargetRef* ref = (plMetalRenderTargetRef*)targ->GetDeviceRef();
+    if( !ref )
+        return nullptr;
+    
+    const int width = targ->GetWidth();
+    const int height = targ->GetHeight();
+
+    plMipmap* mipMap = new plMipmap(width, height, plMipmap::kARGB32Config, 1);
+
+    uint8_t* ptr = (uint8_t*)(ref->fTexture->buffer()->contents());
+    const int pitch = ref->fTexture->width() * 4;
+    
+    ref->fTexture->getBytes(mipMap->GetAddr32(0, 0), pitch, MTL::Region(0, 0, width, height), 0);
+
+    const uint32_t blackOpaque = 0xff000000;
+    int y;
+    for( y = 0; y < height; y++ )
+    {
+        uint32_t* destPtr = mipMap->GetAddr32(0, y);
+        uint32_t* srcPtr = (uint32_t*)destPtr;
+        int x;
+        for( x = 0; x < width; x++ )
+        {
+            destPtr[x] = srcPtr[x] | blackOpaque;
+        }
+        ptr += pitch;
+    }
+    
+    return mipMap;
 }
 
 void plMetalPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth)

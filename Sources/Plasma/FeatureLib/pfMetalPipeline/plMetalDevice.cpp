@@ -331,6 +331,11 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
     if( fCurrentOffscreenCommandBuffer ) {
         fCurrentOffscreenCommandBuffer->enqueue();
         fCurrentOffscreenCommandBuffer->commit();
+        if (fCurrentRenderTarget && fCurrentRenderTarget->GetFlags() & plRenderTarget::kIsOffscreen) {
+            //if it's an offscreen buffer, wait for completion
+            //something is probably going to want to syncronously grab data
+            fCurrentOffscreenCommandBuffer->waitUntilCompleted();
+        }
         fCurrentOffscreenCommandBuffer->release();
         fCurrentOffscreenCommandBuffer = nil;
     }
@@ -345,6 +350,9 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
     }
     
     if(fCurrentRenderTarget) {
+        if(!target->GetDeviceRef()) {
+            fPipeline->MakeRenderTargetRef(target);
+        }
         plMetalRenderTargetRef *deviceTarget= (plMetalRenderTargetRef *)target->GetDeviceRef();
         fCurrentOffscreenCommandBuffer = fCommandQueue->commandBuffer();
         fCurrentOffscreenCommandBuffer->retain();
