@@ -446,38 +446,37 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
             else
             {
                 fRef = new plMetalRenderTargetRef();
-                fRef->SetDirty(true);
                 
                 face->SetDeviceRef(fRef);
                 ( (plMetalRenderTargetRef *)face->GetDeviceRef())->Link( &fRenderTargetRefList );
                 // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
                 hsRefCnt_SafeUnRef( face->GetDeviceRef() );
             }
-            if(fRef->IsDirty()) {
-                static const uint kFaceMapping[] = {
-                    1, // kLeftFace
-                    0, // kRightFace
-                    4, // kFrontFace
-                    5, // kBackFace
-                    2, // kTopFace
-                    3  // kBottomFace
-                };
-                
-                if(fRef->fTexture) {
-                    fRef->fTexture->release();
-                    fRef->fTexture = nullptr;
-                }
-                
-                if(fRef->fDepthBuffer) {
-                    fRef->fDepthBuffer->release();
-                    fRef->fDepthBuffer = nullptr;
-                }
-                
-                fRef->fTexture = texture->newTextureView(MTL::PixelFormatBGRA8Unorm, MTL::TextureType2D, NS::Range::Make(0, 1), NS::Range::Make(kFaceMapping[i], 1));
-                //in since the depth buffer is shared each render target gets their own retain
-                fRef->fDepthBuffer = depthBuffer->retain();
-                fRef->SetDirty(false);
+            
+            //in since the root texture has changed reload all the face textures
+            static const uint kFaceMapping[] = {
+                1, // kLeftFace
+                0, // kRightFace
+                4, // kFrontFace
+                5, // kBackFace
+                2, // kTopFace
+                3  // kBottomFace
+            };
+            
+            if(fRef->fTexture) {
+                fRef->fTexture->release();
+                fRef->fTexture = nullptr;
             }
+            
+            if(fRef->fDepthBuffer) {
+                fRef->fDepthBuffer->release();
+                fRef->fDepthBuffer = nullptr;
+            }
+            
+            fRef->fTexture = texture->newTextureView(MTL::PixelFormatBGRA8Unorm, MTL::TextureType2D, NS::Range::Make(0, 1), NS::Range::Make(kFaceMapping[i], 1));
+            //in since the depth buffer is shared each render target gets their own retain
+            fRef->fDepthBuffer = depthBuffer->retain();
+            fRef->SetDirty(false);
         }
         
         //if the ref already has an old texture, release it
@@ -500,6 +499,7 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
             if (ref != nullptr && !ref->IsLinked())
                 ref->Link(&fRenderTargetRefList);
         }
+        ref->SetDirty(false);
         
         return ref;
     }
@@ -2931,14 +2931,6 @@ void plMetalPipeline::IReleaseDynDeviceObjects()
         plMetalRenderTargetRef* rtRef = fRenderTargetRefList;
         rtRef->Release();
         rtRef->Unlink();
-    }
-    
-    //FIXME: Materials wouldn't normally be dynamic resources. But... the buffers can reference render targets which we are swapping. Might be able to fix this if shader references aren't encoded into the material. Piggybacks already aren't included, and it's complicating the fragment shader. So it might be better just to directly load texture references.
-    while( fMatRefList )
-    {
-        plMetalMaterialShaderRef* matRef = fMatRefList;
-        matRef->Release();
-        matRef->Unlink();
     }
 
     // The shared dynamic vertex buffers used by things like objects skinned on CPU, or
