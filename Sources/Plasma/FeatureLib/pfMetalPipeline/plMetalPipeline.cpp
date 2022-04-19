@@ -555,7 +555,7 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
             textureDescriptor->setHeight(owner->GetHeight());
             textureDescriptor->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
             textureDescriptor->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead);
-            textureDescriptor->setStorageMode(MTL::StorageModeShared);
+            textureDescriptor->setStorageMode(MTL::StorageModeManaged);
             
             plMetalDeviceRef *device = (plMetalDeviceRef *)owner->GetDeviceRef();
             MTL::Texture * texture = fDevice.fMetalDevice->newTexture(textureDescriptor);

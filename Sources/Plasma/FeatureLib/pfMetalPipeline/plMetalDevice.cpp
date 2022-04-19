@@ -329,6 +329,12 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
     }
     
     if( fCurrentOffscreenCommandBuffer ) {
+        if (fCurrentRenderTarget && fCurrentRenderTarget->GetFlags() & plRenderTarget::kIsOffscreen) {
+            //if our target was offscreen, go ahead and blit back. Something will want this data.
+            MTL::BlitCommandEncoder* blitEncoder = fCurrentOffscreenCommandBuffer->blitCommandEncoder();
+            blitEncoder->synchronizeResource(fCurrentFragmentOutputTexture);
+            blitEncoder->endEncoding();
+        }
         fCurrentOffscreenCommandBuffer->enqueue();
         fCurrentOffscreenCommandBuffer->commit();
         if (fCurrentRenderTarget && fCurrentRenderTarget->GetFlags() & plRenderTarget::kIsOffscreen) {
