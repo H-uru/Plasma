@@ -145,10 +145,12 @@ DefaultColor1 = {}
 DefaultColor2 = {}
 
 clothingTypeList = [kHairClothingItem,kFaceClothingItem,kShirtClothingItem,kRightHandClothingItem,kPantsClothingItem,kRightFootClothingItem]
+clothingAccessories = 8
 
 kWearOriginalClothes = 0
 kLinkToNorthNexus = 1
 kLinkToSouthNexus = 2
+kFakeFadeIn = 3
 
 PanelClick = [NorthPanelClick, SouthPanelClick]
 Panel = [NorthPanel, SouthPanel]
@@ -649,7 +651,7 @@ class grsnWallPython(ptResponder):
             return
         #Check for crafty individuals who try to escape the building while still wearing a suit
         if(id == EscapeArtist.id and PtFindAvatar(events) == PtGetLocalAvatar()):
-            PtAtTimeCallback(self.key, 2.0, kWearOriginalClothes)
+            PtAtTimeCallback(self.key, 1.0, kWearOriginalClothes)
             PtSendKIMessage(kEnableEntireYeeshaBook, 0)
             return
 
@@ -684,7 +686,7 @@ class grsnWallPython(ptResponder):
         avatar = PtGetLocalAvatar()
         if(id == kWearOriginalClothes and wornItem):
             for item in wornItem:
-                if item[1] == 8:
+                if item[1] == clothingAccessories:
                     continue
                 avatar.avatar.netForce(True)
                 avatar.avatar.wearClothingItem(item[0], 0)
@@ -693,9 +695,13 @@ class grsnWallPython(ptResponder):
         elif(id == kLinkToNorthNexus):
             PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), NorthTeamWinTeleport.value.getKey())
             PtFadeOut(1,True,True)
+            PtAtTimeCallback(self.key, 3.0, kFakeFadeIn)
         elif(id == kLinkToSouthNexus):
             PtFakeLinkAvatarToObject(PtGetLocalAvatar().getKey(), SouthTeamWinTeleport.value.getKey())
             PtFadeOut(1,True,True)
+            PtAtTimeCallback(self.key, 3.0, kFakeFadeIn)
+        elif(id == kFakeFadeIn):
+            PtFadeIn(4,False,True)
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         ageSDL = PtGetAgeSDL()
@@ -973,17 +979,19 @@ class grsnWallPython(ptResponder):
         self.oldCount[0] = ageSDL["NumBlockers"][0]
         self.oldCount[1] = ageSDL["NumBlockers"][0]
 
-        NorthTubeExclude.clear(self.key)
-        SouthTubeExclude.clear(self.key)
-
         if(ageSDL["nState"][0] == kWait or ageSDL["nState"][0] == kEntry or ageSDL["nState"][0] == kGameInProgress):
             NorthTubeOpen.run(self.key, netForce=0, netPropagate=0, fastforward=1)
+            NorthTubeExclude.release(self.key)
         else:
             NorthTubeClose.run(self.key, netForce=0, netPropagate=0, fastforward=1)
+            NorthTubeExclude.clear(self.key)
+        
         if(ageSDL["sState"][0] == kWait or ageSDL["sState"][0] == kEntry or ageSDL["sState"][0] == kGameInProgress):
             SouthTubeOpen.run(self.key, netForce=0, netPropagate=0, fastforward=1)
+            SouthTubeExclude.release(self.key)
         else:
             SouthTubeClose.run(self.key, netForce=0, netPropagate=0, fastforward=1)
+            SouthTubeExclude.clear(self.key)
 
         self.PanelLight()
 

@@ -414,6 +414,11 @@ class xKI(ptModifier):
             KIJalakMiniIconOn.run(self.key, state="off", netPropagate=0, fastforward=1)
             ptGUIControlButton(KIMini.dialog.getControlFromTag(kJalakMiniIconBtn)).disable()
             ptGUIControlButton(KIMini.dialog.getControlFromTag(kJalakMiniIconBtn)).hide()
+            
+        # Clear private chat
+        PtDebugPrint("xKI.OnServerInitComplete(): Clearing Private Chat", level=kDebugDumpLevel)
+        PtClearPrivateChatList(PtGetLocalAvatar().getKey())
+        PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
 
     ## Called by Plasma when the avatar is linked out of an Age.
     # Depending on the Age the avatar was linking out, the Jalak GUI will be

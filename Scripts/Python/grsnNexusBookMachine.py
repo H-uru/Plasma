@@ -74,7 +74,6 @@ waitingOnNBook = False
 northLink = False
 runOnce = True
 resetElevator = False
-AreWeInRoom = False
 kFakeLinkID = 0
 kStartElevID = 1
 kResetElevID = 2
@@ -105,21 +104,6 @@ class grsnNexusBookMachine(ptResponder):
                     plyrList.append(player)
         return plyrList
 
-    def OnPageLoad(self,what,room):
-        "Check for page unload... then we must be leavin'"
-        global AreWeInRoom
-        # when we unloading the page, then we are no longer in this chat region
-        if what == kUnloaded:
-            PtDebugPrint("grsnNexusBookMachine.OnPageUnload:",level=kDebugDumpLevel)
-            if AreWeInRoom:
-                try:
-                    PtClearPrivateChatList(PtGetLocalAvatar().getKey())
-                except:
-                    pass
-                PtDebugPrint("grsnNexusBookMachine.OnPageUnload:\tremoving ourselves from private chat channel %d" % (chatChannel.value),level=kDebugDumpLevel)
-                PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
-                AreWeInRoom = False
-
     def OnServerInitComplete(self):
         bookPillarSpinning.run(self.key,netPropagate=False)
         if PtGetPlayerList():
@@ -134,7 +118,6 @@ class grsnNexusBookMachine(ptResponder):
         global runOnce
         global resetElevator
         global elevatorStatus
-        global AreWeInRoom
 
         if id == kFakeLinkID:
             if not self.GetPlayersInChatDistance():
@@ -145,10 +128,9 @@ class grsnNexusBookMachine(ptResponder):
             else:
                 PtFakeLinkAvatarToObject(avatar.getKey(),teamsouthTeleport.value.getKey())
 
-            PtDebugPrint("grsnNexusBookMachine.OnTimer:\tremoving ourselves from private chat channel %d" % (chatChannel.value),level=kDebugDumpLevel)
+            PtDebugPrint(f"grsnNexusBookMachine.OnTimer:\tremoving ourselves from private chat channel {chatChannel.value}",level=kDebugDumpLevel)
             PtClearPrivateChatList(PtGetLocalAvatar().getKey())
             PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
-            AreWeInRoom = False
             PtSendKIMessage(kEnableEntireYeeshaBook,0)
             PtAtTimeCallback(self.key, 2, kResetElevID)
         elif id == kStartElevID:
@@ -157,7 +139,7 @@ class grsnNexusBookMachine(ptResponder):
         elif id == kResetElevID:
             if resetElevator == True and elevatorStatus == kElevUp:
                 resetResponder.run(self.key,avatar=PtGetLocalAvatar())
-            PtFadeIn(4,True,True)
+            PtFadeIn(4,False,True)
             runOnce = True
             resetElevator = False
 
@@ -167,7 +149,6 @@ class grsnNexusBookMachine(ptResponder):
         global northLink
         global runOnce
         global elevatorStatus
-        global AreWeInRoom
 
         #PtDebugPrint("id ",id)
 
@@ -175,11 +156,11 @@ class grsnNexusBookMachine(ptResponder):
         local = PtGetLocalAvatar()
         master = self.IAmMaster()
 
-        if (id == -1 and events[0][1].find('SouthBook') == 0):
+        if (id == -1 and events[0][1] == 'SouthBook'):
             PtDebugPrint("South book deployed")
             booksouthOutResponder.run(self.key,netPropagate=False)
 
-        if (id == -1 and events[0][1].find('NorthBook') == 0):
+        if (id == -1 and events[0][1] == 'NorthBook'):
             PtDebugPrint("North book deployed")
             booknorthOutResponder.run(self.key,netPropagate=False)
 
@@ -223,12 +204,10 @@ class grsnNexusBookMachine(ptResponder):
                 avatar.avatar.enterSubWorld(subworld.value)
                 camera.value.pushCameraCut(PtGetLocalAvatar().getKey())
                 PtAtTimeCallback(self.key, 3, kStartElevID)
-                PtFadeIn(4,True,True)
                 runOnce = False
-            PtDebugPrint("grsnNexusBookMachine.OnNotify:\tadding you to private chat channel %d" % (chatChannel.value),level=kDebugDumpLevel)
+            PtDebugPrint(f"grsnNexusBookMachine.OnNotify:\tadding you to private chat channel {chatChannel.value}",level=kDebugDumpLevel)
             PtSendPrivateChatList(self.GetPlayersInChatDistance())
             PtSendKIMessageInt(kSetPrivateChatChannel, chatChannel.value)
-            AreWeInRoom = True
 
         if (id == booksouthClickable.id):
             PtDebugPrint("touched south team room book")
