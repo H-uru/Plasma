@@ -714,8 +714,8 @@ void plAvBrainClimb::ICalcProbeLengths()
 {
     // we assume that the up and down climbs go the same distance;
     // same for the left and right climbs
-    plAGAnim *up = fAvMod->FindCustomAnim("ClimbUp");
-    plAGAnim *left = fAvMod->FindCustomAnim("ClimbLeft");
+    plAGAnim *up = fAvMod->FindCustomAnim("WallClimbUp");
+    plAGAnim *left = fAvMod->FindCustomAnim("WallClimbLeft");
 
     hsMatrix44 upMove, leftMove;
 

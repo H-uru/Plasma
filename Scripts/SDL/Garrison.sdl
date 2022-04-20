@@ -912,3 +912,83 @@ STATEDESC Garrison
 	VAR BYTE		grsnClimbingWallEnabled[1] DEFAULT=0 DEFAULTOPTION=VAULT
 }
 
+STATEDESC Garrison
+{
+    VERSION 27
+
+# Boolean variables
+    VAR BOOL    grsnJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnTreasureBook02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTreasureBook11Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage05Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnYeeshaPage02Vis[1]      DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnTrnCtrRotationOn[1]     DEFAULT=1 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnNexusBookVis[1]         DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnWallInfoJournalVis[1]   DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnBahroStoneToShaftVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnWellFirstFloorBlocker[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+    VAR BOOL    grsnCalendarSpark01[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnCalendarSpark04[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    
+    VAR BOOL    grsnGrantMaintainerSuit[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+
+# Age Mechanics
+    VAR BOOL    grsnWellMainPowerOn[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnBahroDoorClosed[1]    DEFAULT=1
+
+    VAR BOOL    grsnMainSwitchOn[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnGearSwitchOn[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnUpElevSwitchOn[1]       DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnDnElevSwitchOn[1]       DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnDoorSwitchOn[1]     DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnGearBrake01On[1]        DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    grsnGearBrake02On[1]        DEFAULT=1 DEFAULTOPTION=VAULT
+
+# prison variables
+
+    VAR BOOL grsnPrisonBones01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonBones02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonBowls01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonBowls02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonBowls03vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonBowls04vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonBowls05vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonChains01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonChains02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonDirt01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonDirt02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonMattress01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonMattress02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonWindow01vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+        VAR BOOL grsnPrisonWindow02vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL grsnYeeshaPage02Vis[1] DEFAULT=0 DEFAULTOPTION=VAULT
+
+
+# climbing wall variables
+
+    VAR INT         nChairOccupant[1] DEFAULT=-1
+    VAR INT         sChairOccupant[1] DEFAULT=-1
+    VAR INT         nWallPlayer[1] DEFAULT=-1
+    VAR INT         sWallPlayer[1] DEFAULT=-1
+    VAR BYTE        grsnClimbingWallEnabled[1] DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BYTE        nState[1] DEFAULT=0
+    VAR BYTE        sState[1] DEFAULT=0
+    VAR BYTE        NumBlockers[1] DEFAULT=0
+    VAR BYTE        nBlockerChange[2] DEFAULT=0 #1-index; 2-on
+    VAR BYTE        sBlockerChange[2] DEFAULT=0
+    VAR INT         northWall[20] DEFAULT=-1 #Blockers set for each team
+    VAR INT         southWall[20] DEFAULT=-1
+}

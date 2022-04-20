@@ -69,6 +69,10 @@ kListLightResps = ["respKILightOff","respKILightOn" ]
 ## The name of the KI light scene object.
 kKILightObjectName = "RTOmniKILight"
 
+## Gahreesen Nexus Private Chat channels
+kBlackNexus = 6
+kWhiteNexus = 7
+
 ## The color names usable to set the KI text color override
 kColorNames = {
     PtGetLocalizedString("Global.Colors.Black"): "black",

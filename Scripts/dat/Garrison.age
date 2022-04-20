@@ -88,3 +88,4 @@ Page=TrnCtrControlRoom01,5,1
 Page=TrnCtrControlRoom02,29,1
 Page=WallRoom,7,1
 Page=WellWindowFake,83,1
+Page=WallAdditions,200

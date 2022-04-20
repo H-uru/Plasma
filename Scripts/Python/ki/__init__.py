@@ -414,6 +414,11 @@ class xKI(ptModifier):
             KIJalakMiniIconOn.run(self.key, state="off", netPropagate=0, fastforward=1)
             ptGUIControlButton(KIMini.dialog.getControlFromTag(kJalakMiniIconBtn)).disable()
             ptGUIControlButton(KIMini.dialog.getControlFromTag(kJalakMiniIconBtn)).hide()
+            
+        # Clear private chat
+        PtDebugPrint("xKI.OnServerInitComplete(): Clearing Private Chat", level=kDebugDumpLevel)
+        PtClearPrivateChatList(PtGetLocalAvatar().getKey())
+        PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
 
     ## Called by Plasma when the avatar is linked out of an Age.
     # Depending on the Age the avatar was linking out, the Jalak GUI will be
@@ -3700,7 +3705,11 @@ class xKI(ptModifier):
         ageText = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKICurAgeNameID))
         ageName = GetAgeName().replace("(null)", "").strip()
         PtDebugPrint("xKI.BigKISetStatics(): Displaying age name of {}.".format(ageName), level=kDebugDumpLevel)
-        ageText.setStringW(ageName)
+        #Gahreesen Maintainer Nexii use private chat channels 6 and 7
+        if self.chatMgr.privateChatChannel == kBlackNexus or self.chatMgr.privateChatChannel == kWhiteNexus:
+            ageText.setStringW(PtGetLocalizedString("Gahreesen.Wall.Nexus"))
+        else:
+            ageText.setStringW(ageName)
         playerText = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKPlayerName))
         IDText = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKPlayerID))
         localPlayer = PtGetLocalPlayer()

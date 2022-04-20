@@ -40,49 +40,47 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-# Include Plasma code
-from Plasma import *
-from PlasmaTypes import *
-from grsnWallConstants import *
+ #Count Light Responder
+kTeamLightsOn = 0
+kTeamLightsOff = 1
+kRedFlash = 2
+kRedOn = 3
+kRedOff = 4
 
+#Go button Responders
+kDim = 0
+kBright = 1
+kPulse = 2
 
-##############################################################
-# define the attributes/parameters that we need from the 3dsMax scene
-##############################################################
-southImager = ptAttribSceneobjectList(2,"South Imager", byObject=1)
-##############################################################
-# grsnWallImagerDisplayS
-##############################################################
+#Blocker Responders
+kBlockerOn = 0
+kBlockerOff = 1
+kBlockerBlink = 2
 
-class grsnWallImagerDisplayS(ptResponder):
-    
-    def __init__(self):
-        PtDebugPrint("grsnWallImagerDisplayS::init")
-        ptResponder.__init__(self)
-        self.id = 52397
-        self.version = 2
+#Game States
+kStandby = 0
+kSit = 1
+kSelectCount = 2
+kSetBlocker = 3
+kWait = 4
+kEntry = 5
+kGameInProgress = 6
+kEnd = 7
 
-    def OnServerInitComplete(self):
-        PtDebugPrint("grsnWallImagerDisplayS::OnServerInitComplete")
-        ageSDL = PtGetAgeSDL()
-        
-        ageSDL.setNotify(self.key, "sState", 0.0)
-        
-        if PtGetPlayerList() and ageSDL["sState"] >= kWait:
-            for blocker in ageSDL["southWall"]:
-                if(blocker == -1):
-                    return
-                southImager.value[blocker].runAttachedResponder(kBlockerOn)
+#Teams
+kNorth = 0
+kSouth = 1
 
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
-        ageSDL = PtGetAgeSDL()
-        #We only get a notify from nState
-        value = ageSDL[VARname][0]
-        if(value == kWait):
-            for blocker in ageSDL["southWall"]:
-                if(blocker == -1):
-                    break
-                southImager.value[blocker].runAttachedResponder(kBlockerOn)
-        if(value == kSelectCount):
-            for i in range(0,171):
-                southImager.value[i].runAttachedResponder(kBlockerOff)
+#Sounds
+kEventInit = "HandleInit"
+kEventEntry = "HandleEntry"
+kEventStart = "HandleStart"
+kEventNorthWin = "HandleNorthWin"
+kEventSouthWin = "HandleSouthWin"
+kEventNorthQuit = "HandleNorthQuit"
+kEventSouthQuit = "HandleSouthQuit"
+
+eventHandler = None
+def InitEventHandler(instance):
+    global eventHandler
+    eventHandler = instance

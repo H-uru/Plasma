@@ -47,23 +47,40 @@ from PlasmaTypes import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
 
-purpleResp = ptAttribResponder(1,"purple responder")
-yellowResp = ptAttribResponder(2,"yellow responder")
-bookPurpleInPos = ptAttribActivator(3,"Purple book in position event")
-bookYellowInPos = ptAttribActivator(4,"Yellow book in position event")
-bookPurpleOutResponder = ptAttribResponder(5,"Purple book out")
-bookYellowOutResponder = ptAttribResponder(6,"Yellow book out")
-bookPurpleClickable = ptAttribActivator(7,"purple book clickable")
-bookYellowClickable = ptAttribActivator(8,"yellow book clickable")
-teamPurpleTeleport = ptAttribSceneobject(9,"team purple teleport")
-teamYellowTeleport = ptAttribSceneobject(10,"team yellow teleport")
-resetResponder = ptAttribResponder(11,"reset floor",netForce=1)
-entryTrigger = ptAttribActivator(12,"entry trigger region",netForce=0)
-fakeLinkBehavior = ptAttribBehavior(13,"link out behavior",netForce=0)
+southResp = ptAttribResponder(1,"south responder")
+northResp = ptAttribResponder(2,"north responder")
+booksouthInPos = ptAttribActivator(3,"South book in position event")
+booknorthInPos = ptAttribActivator(4,"North book in position event")
+booksouthOutResponder = ptAttribResponder(5,"South book out")
+booknorthOutResponder = ptAttribResponder(6,"North book out")
+booksouthClickable = ptAttribActivator(7,"south book clickable")
+booknorthClickable = ptAttribActivator(8,"north book clickable")
+teamsouthTeleport = ptAttribSceneobject(9,"team south teleport")
+teamnorthTeleport = ptAttribSceneobject(10,"team north teleport")
+resetResponder = ptAttribResponder(11,"reset floor",netForce=True)
+entryTrigger = ptAttribActivator(12,"entry trigger region",netForce=False)
+fakeLinkBehavior = ptAttribBehavior(13,"link out behavior",netForce=False)
+respElevator = ptAttribResponder(14,"start elevator",netForce=True)
+camera = ptAttribSceneobject(15,"elevator camera")
+subworld = ptAttribSceneobject(16,"subworld")
+chatChannel = ptAttribInt(17,"chat channel",6)
+elevatorUp = ptAttribActivator(18,"elevator in up position")
+elevatorMoving = ptAttribActivator(19,"elevator is moving")
+elevatorDown = ptAttribActivator(20,"elevator is down")
+bookPillarSpinning = ptAttribResponder(21,"Book pillar spins")
 
-waitingOnPBook = False
-waitingOnYBook = False
-yellowLink = False
+waitingOnSBook = False
+waitingOnNBook = False
+northLink = False
+runOnce = True
+resetElevator = False
+kFakeLinkID = 0
+kStartElevID = 1
+kResetElevID = 2
+kElevDown = 0
+kElevMoving = 1
+kElevUp = 2
+elevatorStatus = kElevDown
 
 class grsnNexusBookMachine(ptResponder):
 
@@ -73,67 +90,141 @@ class grsnNexusBookMachine(ptResponder):
         self.id = 53624
         self.version = 2
 
+    def IAmMaster(self):
+        return (self.sceneobject.isLocallyOwned())
+
+    ## Returns a list of players within chat distance.
+    def GetPlayersInChatDistance(self, minPlayers=8):
+
+        plyrList = []
+        agePlayers = PtGetPlayerListDistanceSorted()
+        for player in agePlayers:
+            if player.getPlayerID() != 0:
+                if player.getDistanceSq() < PtMaxListenDistSq():
+                    plyrList.append(player)
+        return plyrList
 
     def OnServerInitComplete(self):
-        pass
-
+        bookPillarSpinning.run(self.key,netPropagate=False)
+        if PtGetPlayerList():
+            return
+        resetResponder.run(self.key,avatar=PtGetLocalAvatar())
 
     def OnFirstUpdate(self):
         pass
-        
+
     def OnTimer(self,id):
-        global yellowLink
-        
-        avatar = PtGetLocalAvatar()
-        if (yellowLink):
-            PtFakeLinkAvatarToObject(avatar.getKey(),teamYellowTeleport.value.getKey())
-        else:
-            PtFakeLinkAvatarToObject(avatar.getKey(),teamPurpleTeleport.value.getKey())
-        
-        resetResponder.run(self.key,avatar=PtGetLocalAvatar())
-        PtSendKIMessage(kEnableEntireYeeshaBook,0)
+        global northLink
+        global runOnce
+        global resetElevator
+        global elevatorStatus
+
+        if id == kFakeLinkID:
+            if not self.GetPlayersInChatDistance():
+                resetElevator = True
+            avatar = PtGetLocalAvatar()
+            if (northLink):
+                PtFakeLinkAvatarToObject(avatar.getKey(),teamnorthTeleport.value.getKey())
+            else:
+                PtFakeLinkAvatarToObject(avatar.getKey(),teamsouthTeleport.value.getKey())
+
+            PtDebugPrint(f"grsnNexusBookMachine.OnTimer:\tremoving ourselves from private chat channel {chatChannel.value}",level=kDebugDumpLevel)
+            PtClearPrivateChatList(PtGetLocalAvatar().getKey())
+            PtSendKIMessageInt(kUnsetPrivateChatChannel, 0)
+            PtSendKIMessage(kEnableEntireYeeshaBook,0)
+            PtAtTimeCallback(self.key, 2, kResetElevID)
+        elif id == kStartElevID:
+            if(elevatorStatus == kElevDown):
+                respElevator.run(self.key,avatar=PtGetLocalAvatar())
+        elif id == kResetElevID:
+            if resetElevator == True and elevatorStatus == kElevUp:
+                resetResponder.run(self.key,avatar=PtGetLocalAvatar())
+            PtFadeIn(4,False,True)
+            runOnce = True
+            resetElevator = False
 
     def OnNotify(self,state,id,events):
-        global waitingOnPBook 
-        global waitingOnYBook 
-        global yellowLink
-        
-        PtDebugPrint("id ",id)
-        
+        global waitingOnSBook
+        global waitingOnNBook
+        global northLink
+        global runOnce
+        global elevatorStatus
+
+        #PtDebugPrint("id ",id)
+
         avatar=PtFindAvatar(events)
         local = PtGetLocalAvatar()
-        
+        master = self.IAmMaster()
+
+        if (id == -1 and events[0][1] == 'SouthBook'):
+            PtDebugPrint("South book deployed")
+            booksouthOutResponder.run(self.key,netPropagate=False)
+
+        if (id == -1 and events[0][1] == 'NorthBook'):
+            PtDebugPrint("North book deployed")
+            booknorthOutResponder.run(self.key,netPropagate=False)
+
         if (avatar != local):
             return
-        
+
         if (id == fakeLinkBehavior.id):
-            PtDebugPrint("notified of link behavior, yellow book ",yellowLink)
+            PtDebugPrint("notified of link behavior, north book ",northLink)
             for event in events:
                 if (event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
                     PtDebugPrint("started touching book, set warp out timer")
-                    PtAtTimeCallback(self.key ,1.0 ,0)
+                    PtAtTimeCallback(self.key, 1.0, kFakeLinkID)
+                    PtFadeOut(2,True,True)
                     return
-        
+
         if not state:
             return
 
-        if (id == bookPurpleInPos.id):
-            PtDebugPrint("Purple book aligned")
-            bookPurpleOutResponder.run(self.key)
-            
-        if (id == bookYellowInPos.id):
-            PtDebugPrint("Yellow book aligned")
-            bookYellowOutResponder.run(self.key)
-            
+        if (id == booksouthInPos.id and master):
+            PtDebugPrint("South book aligned")
+            self.SendNote('SouthBook')
+
+        if (id == booknorthInPos.id and master):
+            PtDebugPrint("North book aligned")
+            self.SendNote('NorthBook')
+
+        if (id == elevatorUp.id):
+            PtDebugPrint("Nexus elevator is up")
+            elevatorStatus = kElevUp
+
+        if (id == elevatorMoving.id):
+            PtDebugPrint("Nexus elevator is moving")
+            elevatorStatus = kElevMoving
+
+        if (id == elevatorDown.id):
+            PtDebugPrint("Nexus elevator is down")
+            elevatorStatus = kElevDown
+
         if (id == entryTrigger.id):
-            PtWearMaintainerSuit(avatar.getKey(),False)
-            
-        if (id == bookPurpleClickable.id):
-            PtDebugPrint("touched purple team room book")
-            yellowLink = False           
+            if runOnce:
+                avatar.avatar.enterSubWorld(subworld.value)
+                camera.value.pushCameraCut(PtGetLocalAvatar().getKey())
+                PtAtTimeCallback(self.key, 3, kStartElevID)
+                runOnce = False
+            PtDebugPrint(f"grsnNexusBookMachine.OnNotify:\tadding you to private chat channel {chatChannel.value}",level=kDebugDumpLevel)
+            PtSendPrivateChatList(self.GetPlayersInChatDistance())
+            PtSendKIMessageInt(kSetPrivateChatChannel, chatChannel.value)
+
+        if (id == booksouthClickable.id):
+            PtDebugPrint("touched south team room book")
+            northLink = False
             avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value,self.key,fakeLinkBehavior.netForce)
-            
-        if (id == bookYellowClickable.id):
-            PtDebugPrint("touched yellow team room book")
-            yellowLink = True
+
+        if (id == booknorthClickable.id):
+            PtDebugPrint("touched north team room book")
+            northLink = True
             avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value,self.key,fakeLinkBehavior.netForce)
+
+    def SendNote(self, ExtraInfo):
+        notify = ptNotify(self.key)
+        notify.clearReceivers()                
+        notify.addReceiver(self.key)        
+        notify.netPropagate(True)
+        notify.netForce(True)
+        notify.setActivate(1.0)
+        notify.addVarNumber(str(ExtraInfo),1.0)
+        notify.send()
