@@ -4241,6 +4241,10 @@ class xKI(ptModifier):
                             # Remove from inbox (how will this work?).
                             element = ref.getChild()
                             inbox.removeNode(element)
+                    else:
+                        # add non-blocked senders to Recents folder so they can be added to buddies or ignore lists
+                        self.chatMgr.AddPlayerToRecents(ref.getSaverID())
+
         if removeList:
             PtDebugPrint("xKI.BigKIProcessContentList(): Removing {} contents from being displayed.".format(len(removeList)), level=kWarningLevel)
         for removeidx in removeList:
