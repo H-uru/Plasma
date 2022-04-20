@@ -68,3 +68,22 @@ STATEDESC Dereno
 
 }
 
+STATEDESC Dereno
+{
+    VERSION 2
+
+    # Pod Power
+    VAR INT         drnoBatteryCharge[1]            DEFAULT=100 DISPLAYOPTION=hidden
+    VAR BYTE        drnoBatteryCapacity[1]          DEFAULT=100 DEFAULTOPTION=VAULT
+    VAR INT         drnoBatteryLastUpdated[1]       DEFAULT=0   DISPLAYOPTION=hidden
+    VAR BOOL        drnoPodLights[1]                DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        drnoSpeaker01[1]                DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        drnoSpeaker02[1]                DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        drnoSpeaker03[1]                DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        drnoSpeaker04[1]                DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        drnoSpotlight01[1]              DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        drnoSpotlight02[1]              DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        drnoSpotlight03[1]              DEFAULT=0   DEFAULTOPTION=VAULT
+    VAR BOOL        drnoBackpack2Vis[1]             DEFAULT=1   DEFAULTOPTION=VAULT
+
+}
