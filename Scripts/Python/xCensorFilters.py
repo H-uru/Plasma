@@ -92,7 +92,6 @@ xSentenceFilters = [\
             "anus"          : Rating(xRatedR),\
             "apeshit"          : Rating(xRatedR),\
             "ar5e"          : Rating(xRatedR),\
-            "arschloch"          : Rating(xRatedR),\
             "arse"          : Rating(xRatedR),\
             "arrse"          : Rating(xRatedR),\
             "arsehole"          : Rating(xRatedR),\
@@ -167,8 +166,6 @@ xSentenceFilters = [\
             "blowjobber"          : Rating(xRatedX),\
             "blowjobr"          : Rating(xRatedX),\
             "blowjobs"          : Rating(xRatedX),\
-            "boiola"          : Rating(xRatedR),\
-            "boiolas"          : Rating(xRatedR),\
             "bollocks"          : Rating(xRatedR),\
             "bollox"          : Rating(xRatedR),\
             "boner"          : Rating(xRatedR),\
@@ -180,7 +177,6 @@ xSentenceFilters = [\
             "boobz"          : Rating(xRatedR),\
             "booob"          : Rating(xRatedR),\
             "booobs"          : Rating(xRatedR),\
-            "buceta"          : Rating(xRatedX),\
             "bullcrap"          : Rating(xRatedPG),\
             "bullshit"          : Rating(xRatedR),\
             "bunghole"          : Rating(xRatedR),\
@@ -200,12 +196,8 @@ xSentenceFilters = [\
             "c0ck"          : Rating(xRatedX),\
             "c0k"          : Rating(xRatedX),\
             "c0ksukkr"          : Rating(xRatedX),\
-            "cabron"          : Rating(xRatedR),\
             "cawk"          : Rating(xRatedX),\
-            "cazzo"          : Rating(xRatedX),\
             "chink"          : Rating(xRatedX),\
-            "chuj"          : Rating(xRatedX),\
-            "cipa"          : Rating(xRatedX),\
             "cl1t"          : Rating(xRatedX),\
             "clit"          : Rating(xRatedX),\
             "clitcommander"          : Rating(xRatedX),\
@@ -270,7 +262,6 @@ xSentenceFilters = [\
             "dumbshit"          : Rating(xRatedR),\
             "dumbshits"          : Rating(xRatedR),\
             "dumbshitz"          : Rating(xRatedR),\
-            "dupa"          : Rating(xRatedR),\
             "dyke"          : Rating(xRatedR),\
             "dykes"          : Rating(xRatedR),\
             "dykez"          : Rating(xRatedR),\
@@ -280,7 +271,6 @@ xSentenceFilters = [\
             "f4gz"          : Rating(xRatedR),\
             "f4rt"          : Rating(xRatedR),\
             "faeces"          : Rating(xRatedR),\
-            "faen"          : Rating(xRatedR),\
             "fag"          : Rating(xRatedR),\
             "fagg0t"          : Rating(xRatedR),\
             "faggit"          : Rating(xRatedR),\
@@ -290,7 +280,6 @@ xSentenceFilters = [\
             "fagot"          : Rating(xRatedR),\
             "fags"          : Rating(xRatedR),\
             "fagz"          : Rating(xRatedR),\
-            "fanculo"          : Rating(xRatedX),\
             "farging"          : Rating(xRatedR),\
             "fart"          : Rating(xRatedR),\
             "fartface"          : Rating(xRatedR),\
@@ -300,8 +289,6 @@ xSentenceFilters = [\
             "felcher"          : Rating(xRatedX),\
             "fellatio"          : Rating(xRatedX),\
             "fisting"          : Rating(xRatedX),\
-            "flikker"          : Rating(xRatedX),\
-            "fotze"          : Rating(xRatedX),\
             "fudgepacker"          : Rating(xRatedX),\
             "fudgina"          : Rating(xRatedX),\
             "fugly"          : Rating(xRatedX),\
@@ -350,7 +337,6 @@ xSentenceFilters = [\
             "horny"          : Rating(xRatedR),\
             "horseshit"          : Rating(xRatedR),\
             "hotdamn"          : Rating(xRatedPG),\
-            "hui"          : Rating(xRatedR),\
             "jackass"          : Rating(xRatedR),\
             "jackasses"          : Rating(xRatedR),\
             "jackoff"          : Rating(xRatedR),\
@@ -369,15 +355,8 @@ xSentenceFilters = [\
             "jizz"          : Rating(xRatedX),\
             "kawk"          : Rating(xRatedX),\
             "kike"          : Rating(xRatedX),\
-            "klootzak"          : Rating(xRatedR),\
             "koon"          : Rating(xRatedX),\
-            "knulle"          : Rating(xRatedX),\
-            "kuk"          : Rating(xRatedR),\
-            "kuksuger"          : Rating(xRatedX),\
             "kunt"          : Rating(xRatedX),\
-            "kurac"          : Rating(xRatedR),\
-            "kurwa"          : Rating(xRatedX),\
-            "kyrpa"          : Rating(xRatedR),\
             "l3i+ch"          : Rating(xRatedR),\
             "l3itch"          : Rating(xRatedR),\
             "labia"          : Rating(xRatedX),\
@@ -392,14 +371,10 @@ xSentenceFilters = [\
             "masturb8"          : Rating(xRatedR),\
             "masturbate"          : Rating(xRatedR),\
             "masturbates"          : Rating(xRatedR),\
-            "merd"          : Rating(xRatedR),\
-            "merde"          : Rating(xRatedR),\
             "mof0"          : Rating(xRatedX),\
             "mofo"          : Rating(xRatedX),\
             "moulie"          : Rating(xRatedX),\
             "muffdiver"          : Rating(xRatedX),\
-            "muie"          : Rating(xRatedX),\
-            "muschi"          : Rating(xRatedX),\
             "n1gga"          : Rating(xRatedX),\
             "n1ggah"          : Rating(xRatedX),\
             "n1gger"          : Rating(xRatedX),\
@@ -414,22 +389,14 @@ xSentenceFilters = [\
             "niggrz"          : Rating(xRatedX),\
             "nutlicker"          : Rating(xRatedX),\
             "nutsack"          : Rating(xRatedX),\
-            "orospu"          : Rating(xRatedR),\
-            "paska"          : Rating(xRatedR),\
             "pecker"          : Rating(xRatedX),\
             "pederast"          : Rating(xRatedX),\
             "pederaste"          : Rating(xRatedX),\
             "penile"          : Rating(xRatedX),\
             "penis"          : Rating(xRatedX),\
-            "perse"          : Rating(xRatedR),\
-            "picka"          : Rating(xRatedR),\
             "pigshit"          : Rating(xRatedR),\
-            "pillu"          : Rating(xRatedX),\
-            "pimmel"          : Rating(xRatedR),\
-            "pimpis"          : Rating(xRatedX),\
             "piss"          : Rating(xRatedR),\
             "pissflaps"          : Rating(xRatedX),\
-            "pizda"          : Rating(xRatedX),\
             "porchmonkey"          : Rating(xRatedX),\
             "poo"          : Rating(xRatedPG),\
             "poon"          : Rating(xRatedX),\
@@ -440,8 +407,6 @@ xSentenceFilters = [\
             "poopy"          : Rating(xRatedPG),\
             "prick"          : Rating(xRatedX),\
             "prickhead"          : Rating(xRatedX),\
-            "pula"          : Rating(xRatedX),\
-            "pule"          : Rating(xRatedX),\
             "push-shit"          : Rating(xRatedX),\
             "pusse"          : Rating(xRatedX),\
             "pussi"          : Rating(xRatedX),\
@@ -450,8 +415,6 @@ xSentenceFilters = [\
             "pussy-fart"          : Rating(xRatedX),\
             "pussylips"          : Rating(xRatedX),\
             "pussy-lips"          : Rating(xRatedX),\
-            "puta"          : Rating(xRatedX),\
-            "puto"          : Rating(xRatedX),\
             "putz"          : Rating(xRatedX),\
             "puzzy"          : Rating(xRatedX),\
             "queef"          : Rating(xRatedR),\
@@ -464,9 +427,6 @@ xSentenceFilters = [\
             "retard"          : Rating(xRatedR),\
             "rimjob"          : Rating(xRatedX),\
             "rimming"          : Rating(xRatedX),\
-            "scheiss"          : Rating(xRatedR),\
-            "scheisse"          : Rating(xRatedR),\
-            "schlampe"          : Rating(xRatedR),\
             "schlong"          : Rating(xRatedX),\
             "schmuck"          : Rating(xRatedR),\
             "scrotum"          : Rating(xRatedR),\
@@ -476,8 +436,6 @@ xSentenceFilters = [\
             "shag"          : Rating(xRatedR),\
             "shagadelic"          : Rating(xRatedR),\
             "shagged"          : Rating(xRatedR),\
-            "shagscab"          : Rating(xRatedR),\
-            "sharmuta"          : Rating(xRatedR),\
             "shi+"          : Rating(xRatedR),\
             "shit"          : Rating(xRatedR),\
             "shit4brains"          : Rating(xRatedR),\
@@ -498,18 +456,15 @@ xSentenceFilters = [\
             "shitty"          : Rating(xRatedR),\
             "sillypussy"          : Rating(xRatedX),\
             "skinflute"          : Rating(xRatedX),\
-            "skurwysyn"          : Rating(xRatedR),\
             "slut"          : Rating(xRatedR),\
             "sluts"          : Rating(xRatedR),\
             "slutz"          : Rating(xRatedR),\
             "sonofabitch "          : Rating(xRatedR),\
             "spic"          : Rating(xRatedX),\
             "spick"          : Rating(xRatedX),\
-            "spierdalaj"          : Rating(xRatedX),\
             "splooge"          : Rating(xRatedX),\
             "suckdick"          : Rating(xRatedX),\
             "suckoff"          : Rating(xRatedX),\
-            "suka"          : Rating(xRatedR),\
             "t1tt1es"          : Rating(xRatedR),\
             "tagnut"          : Rating(xRatedR),\
             "tagnuts"          : Rating(xRatedR),\
@@ -550,7 +505,6 @@ xSentenceFilters = [\
             "vaginas"          : Rating(xRatedR),\
             "vaginitis"          : Rating(xRatedR),\
             "vagscab"          : Rating(xRatedR),\
-            "vittu"          : Rating(xRatedX),\
             "w4nker"          : Rating(xRatedX),\
             "w4nkerz"          : Rating(xRatedX),\
             "w4nkr"          : Rating(xRatedX),\
@@ -562,13 +516,10 @@ xSentenceFilters = [\
             "wanking"          : Rating(xRatedX),\
             "wetback"          : Rating(xRatedX),\
             "wh0r3"          : Rating(xRatedR),\
-            "wichser"          : Rating(xRatedX),\
             "whore"          : Rating(xRatedR),\
             "whoreson"          : Rating(xRatedR),\
             "whoresons"          : Rating(xRatedR),\
             "wop"          : Rating(xRatedX),\
-            "yed"          : Rating(xRatedX),\
-            "zabourah"          : Rating(xRatedR)\
         }\
     )\
 ]
