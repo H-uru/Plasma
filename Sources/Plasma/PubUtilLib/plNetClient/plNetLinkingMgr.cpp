@@ -511,21 +511,48 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
             return false;
     }
 
-    if (cVaultLink != nullptr)
-    {
-        // This is something that Cyan does... >.<
-        // It's very useful though...
+    if (cVaultLink != nullptr) {
+        // Verify that if the Age vault already exists that it matches the requested
+        // deferred link. If it doesn't exist, well, I hope you're happy with the
+        // result.
         VaultAgeLinkNode accLink(cVaultLink);
-        accLink.CopyTo(cur);
-        if (hsRef<RelVaultNode> rvnInfo = cVaultLink->GetChildNode(plVault::kNodeType_AgeInfo, 1))
-        {
+        if (hsRef<RelVaultNode> rvnInfo = cVaultLink->GetChildNode(plVault::kNodeType_AgeInfo, 1)) {
+            plAgeInfoStruct dest;
             VaultAgeInfoNode accInfo(rvnInfo);
-            accInfo.CopyTo(cur->GetAgeInfo());
+            accInfo.CopyTo(&dest);
+            if (!dest.IsEqualTo(fDeferredLink->GetAgeLink()->GetAgeInfo())) {
+                hsLogEntry(
+                    plNetClientMgr::GetInstance()->DebugMsg(
+                        "Waiting for a deferred link to '{}' but got AgeInfo for '{}' instead.",
+                        fDeferredLink->GetAgeLink()->AsString(),
+                        dest.AsString()
+                    );
+                );
+                return false;
+            }
         }
 
+        // If we're still here, that means the links match. Set the vault copy as our current
+        // AgeLink and AgeInfo. Note this mainly copies the AgeInfo.
+        accLink.CopyTo(cur);
+        hsLogEntry(
+            plNetClientMgr::GetInstance()->DebugMsg(
+                "Performing deferred link to '{}'",
+                cur->AsString()
+            );
+        );
+
+        // Steals fDeferredLink
         IDoLink(fDeferredLink);
         fDeferredLink = nullptr;
         return true;
+    } else {
+        hsLogEntry(
+            plNetClientMgr::GetInstance()->ErrorMsg(
+                "Waiting for a deferred link to '{}' but got a garbage link?",
+                fDeferredLink->GetAgeLink()->AsString()
+            )
+        );
     }
 
     return false;
