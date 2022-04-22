@@ -4879,6 +4879,7 @@ class xKI(ptModifier):
             mbtnMarkerText.disable()
         # Is the player editing a Marker Game?
         elif self.MFdialogMode == kGames.MFEditing or self.MFdialogMode == kGames.MFEditingMarker:
+            mrkfldTitleBtn.show()
             mrkfldTitleBtn.enable()
             mbtnDelete.hide()
             mbtnGameTimePullD.hide()
@@ -5014,9 +5015,6 @@ class xKI(ptModifier):
         # Display the content on the screen.
         mrkfldTitle.setStringW(xCensor.xCensor(element.getGameName(), self.censorLevel))
         mrkfldTitle.show()
-        # Enable the editable Title.
-        mrkfldTitleBtn.show()
-        mrkfldTitleBtn.enable()
 
         count = mgr.marker_total
         if self.MFdialogMode == kGames.MFEditing or self.MFdialogMode == kGames.MFEditingMarker:
