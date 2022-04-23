@@ -73,12 +73,13 @@ class grsnWallEventHandler(ptResponder):
         self.id = 763327
         self.version = 1
         self.BlockersHit = 0
-        self.startTime = PtGetDniTime()
+        self.startTime = 0
         self.BlockerSfxBlock = True
         InitEventHandler(self)
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnWallEventHandler::OnServerInitComplete")
+        self.startTime = PtGetDniTime()
         ageSDL = PtGetAgeSDL()
         ageSDL.setNotify(self.key, "nState", 0.0)
         ageSDL.setNotify(self.key, "sState", 0.0)
