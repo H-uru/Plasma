@@ -878,6 +878,15 @@ void plMetalPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode> *res, 
      
      Ideally we should support some sort of scaling/semi dynamic renderbuffer resolution thing. But don't mess with the window servers framebuffer size. macOS has accelerated resolution scaling like consoles do. Use that.
      */
+    
+    std::vector<plDisplayMode> supported;
+    plDisplayMode mode;
+    mode.Width = 800;
+    mode.Height = 600;
+    mode.ColorDepth = 32;
+    supported.push_back(mode);
+    
+    *res = supported;
 }
 
 int plMetalPipeline::GetMaxAnisotropicSamples()
