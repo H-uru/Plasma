@@ -5474,6 +5474,7 @@ class xKI(ptModifier):
             chatArea.lock()         # Make the chat display immutable.
             chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
             chatArea.disableScrollControl()
+            chatArea.setMargins(left=2, right=2)
             btnUp = ptGUIControlButton(KIMicro.dialog.getControlFromTag(kGUI.miniChatScrollUp))
             btnUp.show()
             btnUp.hide()
@@ -5539,6 +5540,7 @@ class xKI(ptModifier):
             chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
             # Hide the chat scroll buttons (should be nothing in chat area yet anyhow).
             chatArea.disableScrollControl()
+            chatArea.setMargins(left=2, right=2)
             btnUp = ptGUIControlButton(KIMini.dialog.getControlFromTag(kGUI.miniChatScrollUp))
             btnUp.show()
             privateChbox = ptGUIControlCheckBox(KIMini.dialog.getControlFromTag(kGUI.miniPrivateToggle))

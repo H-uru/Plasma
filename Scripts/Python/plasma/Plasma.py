@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 from __future__ import annotations
-from typing import Callable, Tuple, Union
+from typing import Callable, Optional, Tuple, Union
 
 def PtAcceptInviteInGame(friendName,inviteKey):
     """Sends a VaultTask to the server to perform the invite"""
@@ -4287,6 +4287,10 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Returns the ptKey for this GUI control"""
         pass
 
+    def getMargins(self) -> Tuple[int, int, int, int]:
+        """Returns a tuple of (top, left, bottom, right) margins"""
+        pass
+
     def getObjectCenter(self):
         """Returns ptPoint3 of the center of the GUI control object"""
         pass
@@ -4418,6 +4422,10 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
 
     def setForeColor(self,r,g,b,a):
         """Sets the foreground color"""
+        pass
+
+    def setMargins(self, top: Optional[int] = None, left: Optional[int] = None, bottom: Optional[int] = None, right: Optional[int] = None) -> None:
+        """Sets the control's margins"""
         pass
 
     def setNotifyOnInteresting(self,state):

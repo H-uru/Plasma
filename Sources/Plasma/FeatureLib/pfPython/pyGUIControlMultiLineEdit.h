@@ -52,6 +52,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGUIControl.h"
 #include "pyGlueHelpers.h"
 
+#include <tuple>
+
 class pyColor;
 
 class pyGUIControlMultiLineEdit : public pyGUIControl
@@ -121,6 +123,9 @@ public:
     void BeginUpdate();
     void EndUpdate(bool redraw);
     bool IsUpdating() const;
+
+    std::tuple<int, int, int, int> GetMargins() const;
+    void SetMargins(int top, int left, int bottom, int right);
 };
 
 #endif // _pyGUIControlMultiLineEdit_h_

@@ -661,3 +661,23 @@ bool pyGUIControlMultiLineEdit::IsUpdating() const
 
     return false;
 }
+
+std::tuple<int, int, int, int> pyGUIControlMultiLineEdit::GetMargins() const
+{
+    if (fGCkey) {
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            return pbmod->GetMargins();
+    }
+
+    return std::make_tuple(0, 0, 0, 0);
+}
+
+void pyGUIControlMultiLineEdit::SetMargins(int top, int left, int bottom, int right)
+{
+    if (fGCkey) {
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            pbmod->SetMargins(top, left, bottom, right);
+    }
+}
