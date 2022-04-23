@@ -1509,7 +1509,11 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
             mRef->GetSampleTypeArray(sampleTypes, pass);
         } else {
         
-            mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &fPiggyBackStack,
+            //Plasma pulls piggybacks from the rear first, pull the number of active piggybacks
+            auto firstPiggyback = fPiggyBackStack.end() - numActivePiggyBacks;
+            auto lastPiggyback = fPiggyBackStack.end();
+            std::vector<plLayerInterface*> subPiggybacks(firstPiggyback, lastPiggyback);
+            mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &subPiggybacks,
                                   [&](plLayerInterface* layer, uint32_t index){
                 if(index==0) {
                     layer = IPushOverBaseLayer(layer);
