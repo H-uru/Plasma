@@ -1884,12 +1884,7 @@ class xKI(ptModifier):
         ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(kGUI.MarkerGameLabel2)).setForeColor(self.markerGameDefaultColor)
         ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(kGUI.MarkerGameLabel3)).setForeColor(self.markerGameDefaultColor)
 
-        playerName = PtGetLocalPlayer().getPlayerName()
-        if playerName[-1] == "s":
-            addToName = "'"
-        else:
-            addToName = "'s"
-        gameName = playerName + addToName + " Marker Game"
+        gameName = xLocTools.CreatePossessiveString(PtGetLocalPlayer().getPlayerName(), PtGetLocalizedString("KI.MarkerGame.DefaultGameTitle"))
 
         ptGUIControlEditBox(KICreateMarkerGameGUI.dialog.getControlFromTag(kGUI.CreateMarkerGameNameEB)).setString(gameName)
 
@@ -4869,7 +4864,7 @@ class xKI(ptModifier):
             mtbEditStart.show()
             mbtnPlayEnd.show()
             mtbPlayEnd.setForeColor(kColors.DniShowBtn)
-            mtbPlayEnd.setString(PtGetLocalizedString("KI.MarkerGame.PlayButton"))
+            mtbPlayEnd.setStringW(PtGetLocalizedString("KI.MarkerGame.PlayButton"))
             mtbPlayEnd.show()
             mlbMarkerList.hide()
             self.BigKIMarkerListScrollVis(False)
@@ -4986,11 +4981,11 @@ class xKI(ptModifier):
             mbtnMarkerText.disable()
             mbtnEditStart.show()
             mtbEditStart.setForeColor(kColors.DniShowBtn)
-            mtbEditStart.setString(PtGetLocalizedString("KI.MarkerGame.StopPlayingButton"))
+            mtbEditStart.setStringW(PtGetLocalizedString("KI.MarkerGame.StopPlayingButton"))
             mtbEditStart.show()
             mbtnPlayEnd.show()
             mtbPlayEnd.setForeColor(kColors.DniShowBtn)
-            mtbPlayEnd.setString(PtGetLocalizedString("KI.MarkerGame.ResetGameButton"))
+            mtbPlayEnd.setStringW(PtGetLocalizedString("KI.MarkerGame.ResetGameButton"))
             mtbPlayEnd.show()
             mlbMarkerList.clearAllElements()
             mlbMarkerList.show()
