@@ -686,9 +686,9 @@ vertex ShadowCasterInOut shadowVertexShader(Vertex in [[stage_in]],
     
     const float4 vCamPosition = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 1.0));
     
-    float4x4 matrix = uniforms.uvTransforms[0].transform * uniforms.cameraToWorldMatrix;
+    const float4x4 matrix = uniforms.uvTransforms[0].transform;
     
-    out.texCoord1 = (vCamPosition * matrix).xyz;
+    out.texCoord1 = (matrix * vCamPosition).xyz;
     
     out.position = uniforms.projectionMatrix * vCamPosition;
 
@@ -705,7 +705,7 @@ fragment half4 shadowFragmentShader(ShadowCasterInOut in [[stage_in]])
 
     
 fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
-                                        texture2d<float> texture     [[ texture(16) ]],
+                                        texture2d<half> texture     [[ texture(16) ]],
                                         constant plMetalShadowCastFragmentShaderArgumentBuffer & fragmentUniforms [[ buffer(BufferIndexShadowCastFragArgBuffer) ]],
                                         FragmentShaderArguments layers,
                                         constant int & alphaSrc [[ buffer(FragmentShaderArgumentShadowAlphaSrc) ]])
@@ -714,7 +714,7 @@ fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
     if(fragmentUniforms.pointLightCast) {
         sampleCoords.xy /= sampleCoords.z;
     }
-    half4 currentColor = half4(texture.sample(colorSamplers[3], sampleCoords.xy));
+    half4 currentColor = texture.sample(colorSamplers[3], sampleCoords.xy);
     currentColor.rgb *= in.vtxColor.rgb;
     
     const float2 LUTCoords = in.texCoord2.xy;
