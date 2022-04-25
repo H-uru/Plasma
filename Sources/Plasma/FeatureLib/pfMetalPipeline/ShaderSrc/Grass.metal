@@ -71,15 +71,15 @@ vertex vs_GrassInOut vs_GrassShader(Vertex in [[stage_in]],
     return out;
 }
 
-fragment float4 ps_GrassShader(vs_GrassInOut in [[stage_in]],
-                             texture2d<float> t0 [[ texture(0) ]]) {
+fragment half4 ps_GrassShader(vs_GrassInOut in [[stage_in]],
+                             texture2d<half> t0 [[ texture(0) ]]) {
     constexpr sampler colorSampler = sampler(mip_filter::linear,
                               mag_filter::linear,
                               min_filter::linear,
                               address::repeat);
     
-    float4 out = t0.sample(colorSampler, in.texCoord.xy);
-    out *= in.color;
+    half4 out = t0.sample(colorSampler, in.texCoord.xy);
+    out *= half4(in.color);
     if(out.a <= 0.1)
         discard_fragment();
     return out;
