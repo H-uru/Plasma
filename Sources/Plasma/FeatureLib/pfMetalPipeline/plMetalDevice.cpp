@@ -216,6 +216,7 @@ void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool sh
         float clearDepth = 1.0f;
         CurrentRenderCommandEncoder()->setDepthStencilState(fNoZReadStencilState);
         
+        CurrentRenderCommandEncoder()->setCullMode(MTL::CullModeNone);
         CurrentRenderCommandEncoder()->setVertexBytes(&clearCoords, sizeof(clearCoords), 0);
         CurrentRenderCommandEncoder()->setFragmentBytes(&halfClearColor, sizeof(halfClearColor), 0);
         CurrentRenderCommandEncoder()->setFragmentBytes(&clearDepth, sizeof(float), 1);
