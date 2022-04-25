@@ -207,6 +207,8 @@ private:
 protected:
     plMetalLinkedPipeline* PipelineState(plMetalPipelineState* pipelineState);
     
+    MTL::Texture* fGammaLUTTexture;
+    
 private:
     //these are internal bits for backing the current render pass
     //private because the functions should be used to keep a consistant
@@ -217,6 +219,7 @@ private:
     
     MTL::Texture*               fCurrentDrawableDepthTexture;
     MTL::Texture*               fCurrentFragmentOutputTexture;
+    MTL::Texture*               fCurrentUnprocessedOutputTexture;
     MTL::Texture*               fCurrentFragmentMSAAOutputTexture;
     
     CA::MetalDrawable*          fCurrentDrawable;
@@ -229,6 +232,13 @@ private:
     float                       fClearDrawableDepth;
     plRenderTarget*             fCurrentRenderTarget;
     MTL::SamplerState*          fSamplerStates[4];
+    
+    bool NeedsPostprocessing() {
+        return fGammaLUTTexture != nullptr;
+    }
+    void PostprocessIntoDrawable();
+    void CreateGammaAdjustState();
+    MTL::RenderPipelineState* fGammaAdjustState;
     
     void BeginNewRenderPass();
     void ReleaseSamplerStates();

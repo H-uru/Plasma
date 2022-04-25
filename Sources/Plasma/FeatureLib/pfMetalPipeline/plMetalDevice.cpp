@@ -298,7 +298,15 @@ void plMetalDevice::BeginNewRenderPass() {
             renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
         } else {
             renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentMSAAOutputTexture);
-            renderPassDescriptor->colorAttachments()->object(0)->setResolveTexture(fCurrentFragmentOutputTexture);
+            
+            //if we need postprocessing, output to the main pass texture
+            //otherwise we can go straight to the drawable
+            if (NeedsPostprocessing()) {
+                renderPassDescriptor->colorAttachments()->object(0)->setResolveTexture(fCurrentUnprocessedOutputTexture);
+            } else {
+                renderPassDescriptor->colorAttachments()->object(0)->setResolveTexture(fCurrentFragmentOutputTexture);
+            }
+            
             renderPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionMultisampleResolve);
         }
         
@@ -387,7 +395,10 @@ plMetalDevice::plMetalDevice()
     fCurrentOffscreenCommandBuffer(nullptr),
     fCurrentRenderTarget(nullptr),
     fNewPipelineStateMap(),
-    fCurrentFragmentMSAAOutputTexture(nullptr)
+    fCurrentFragmentMSAAOutputTexture(nullptr),
+    fCurrentUnprocessedOutputTexture(nullptr),
+    fGammaLUTTexture(nullptr),
+    fGammaAdjustState(nullptr)
     {
     fClearRenderTargetColor = {0.0, 0.0, 0.0, 1.0};
     fClearDrawableColor = {0.0, 0.0, 0.0, 1.0};
@@ -425,6 +436,8 @@ plMetalDevice::plMetalDevice()
     fReverseZStencilState = fMetalDevice->newDepthStencilState(depthDescriptor);
         
     depthDescriptor->release();
+        
+    CreateGammaAdjustState();
 }
 
 void plMetalDevice::SetViewport() {
@@ -897,11 +910,12 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
 {
     fCurrentCommandBuffer = fCommandQueue->commandBuffer();
     fCurrentCommandBuffer->retain();
+    
+    bool depthNeedsRebuild = fCurrentDrawableDepthTexture == nullptr;
+    depthNeedsRebuild |= drawable->texture()->width() != fCurrentDrawableDepthTexture->width() || drawable->texture()->height() != fCurrentDrawableDepthTexture->height();
+    
     //cache the depth buffer, we'll just clear it every time.
-    if(fCurrentDrawableDepthTexture == nullptr ||
-       drawable->texture()->width() != fCurrentDrawableDepthTexture->width() ||
-       drawable->texture()->height() != fCurrentDrawableDepthTexture->height()
-       ) {
+    if(depthNeedsRebuild) {
         if(fCurrentDrawableDepthTexture) {
             fCurrentDrawableDepthTexture->release();
             fCurrentFragmentMSAAOutputTexture->release();
@@ -942,6 +956,15 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
             fCurrentDrawableDepthTexture = fMetalDevice->newTexture(depthTextureDescriptor);
         }
     }
+    
+    //Do we need to create a unprocessed output texture?
+    //If the depth needs to be rebuilt - we probably need to rebuild this one too
+    if ((fCurrentUnprocessedOutputTexture && depthNeedsRebuild) || (fCurrentUnprocessedOutputTexture == nullptr && NeedsPostprocessing())) {
+        MTL::TextureDescriptor* mainPassDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(), drawable->texture()->width(), drawable->texture()->height(), false);
+        fCurrentUnprocessedOutputTexture->release();
+        fCurrentUnprocessedOutputTexture = fMetalDevice->newTexture(mainPassDescriptor);
+    }
+    
     fCurrentDrawable = drawable->retain();
 }
 
@@ -1089,6 +1112,10 @@ void plMetalDevice::SubmitCommandBuffer()
     fCurrentRenderTargetCommandEncoder->release();
     fCurrentRenderTargetCommandEncoder = nil;
     
+    if( NeedsPostprocessing() ) {
+        PostprocessIntoDrawable();
+    }
+    
     fCurrentCommandBuffer->presentDrawable(fCurrentDrawable);
     fCurrentCommandBuffer->enqueue();
     fCurrentCommandBuffer->commit();
@@ -1106,6 +1133,48 @@ void plMetalDevice::SubmitCommandBuffer()
     fShouldClearDrawable = false;
     fClearRenderTargetDepth = 1.0;
     fClearDrawableDepth = 1.0;
+}
+
+void plMetalDevice::CreateGammaAdjustState() {
+    MTL::RenderPipelineDescriptor *gammaDescriptor = MTL::RenderPipelineDescriptor::alloc()->init();
+    MTL::Library* library = fMetalDevice->newDefaultLibrary();
+    
+    gammaDescriptor->setVertexFunction(library->newFunction(NS::MakeConstantString("gammaCorrectVertex"))->autorelease());
+    gammaDescriptor->setFragmentFunction(library->newFunction(NS::MakeConstantString("gammaCorrectFragment"))->autorelease());
+    
+    library->release();
+    
+    gammaDescriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
+    
+    NS::Error *error;
+    fGammaAdjustState->release();
+    fGammaAdjustState = fMetalDevice->newRenderPipelineState(gammaDescriptor, &error);
+}
+
+void plMetalDevice::PostprocessIntoDrawable() {
+    
+    //Gamma adjust
+    MTL::RenderPassDescriptor* gammaPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
+    gammaPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionLoad);
+    gammaPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentDrawable->texture());
+    gammaPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionDontCare);
+    
+    MTL::RenderCommandEncoder* gammaAdjustEncoder = fCurrentCommandBuffer->renderCommandEncoder(gammaPassDescriptor);
+    
+    gammaAdjustEncoder->setRenderPipelineState(fGammaAdjustState);
+    
+    static const float fullFrameCoords[16] = {
+        //first pair is vertex, second pair is texture
+        -1, -1, 0, 1,
+        1, -1, 1, 1,
+        -1, 1, 0, 0,
+        1, 1, 1, 0
+    };
+    gammaAdjustEncoder->setVertexBytes(&fullFrameCoords, sizeof(fullFrameCoords), 0);
+    gammaAdjustEncoder->setFragmentTexture(fCurrentUnprocessedOutputTexture, 0);
+    gammaAdjustEncoder->setFragmentTexture(fGammaLUTTexture, 1);
+    gammaAdjustEncoder->drawPrimitives(MTL::PrimitiveTypeTriangleStrip, NS::UInteger(0), NS::UInteger(4));
+    gammaAdjustEncoder->endEncoding();
 }
 
 std::size_t plMetalDevice::plMetalPipelineRecordHashFunction ::operator()(plMetalPipelineRecord const& s) const noexcept

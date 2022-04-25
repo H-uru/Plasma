@@ -807,14 +807,71 @@ void plMetalPipeline::LoadResources()
 
 bool plMetalPipeline::SetGamma(float eR, float eG, float eB)
 {
-    //FIXME: Implement Gamma
-    return false;
+    uint16_t tabR[256];
+    uint16_t tabG[256];
+    uint16_t tabB[256];
+
+    tabR[0] = tabG[0] = tabB[0] = 0L;
+
+    plConst(float) kMinE(0.1f);
+    if( eR > kMinE )
+        eR = 1.f / eR;
+    else
+        eR = 1.f / kMinE;
+    if( eG > kMinE )
+        eG = 1.f / eG;
+    else
+        eG = 1.f / kMinE;
+    if( eB > kMinE )
+        eB = 1.f / eB;
+    else
+        eB = 1.f / kMinE;
+
+    int i;
+    for( i = 1; i < 256; i++ )
+    {
+        float orig = float(i) / 255.f;
+
+        float gamm;
+        gamm = pow(orig, eR);
+        gamm *= float(uint16_t(-1));
+        tabR[i] = uint16_t(gamm);
+
+        gamm = pow(orig, eG);
+        gamm *= float(uint16_t(-1));
+        tabG[i] = uint16_t(gamm);
+
+        gamm = pow(orig, eB);
+        gamm *= float(uint16_t(-1));
+        tabB[i] = uint16_t(gamm);
+    }
+
+    SetGamma(tabR, tabG, tabB);
+
+    return true;
 }
 
 bool plMetalPipeline::SetGamma(const uint16_t *const tabR, const uint16_t *const tabG, const uint16_t *const tabB)
 {
-    //FIXME: Implement Gamma
-    return false;
+    //allocate a new buffer every time so we don't cause problems with a running render pass
+    if(fDevice.fGammaLUTTexture) {
+        fDevice.fGammaLUTTexture->release();
+        fDevice.fGammaLUTTexture = nullptr;
+    }
+    
+    MTL::TextureDescriptor* texDescriptor = MTL::TextureDescriptor::alloc()->init()->autorelease();
+    texDescriptor->setTextureType(MTL::TextureType1DArray);
+    texDescriptor->setWidth(256);
+    texDescriptor->setPixelFormat(MTL::PixelFormatR16Uint);
+    texDescriptor->setArrayLength(3);
+    
+    fDevice.fGammaLUTTexture = fDevice.fMetalDevice->newTexture(texDescriptor);
+    
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 0, tabR, 256 * sizeof(uint16_t), 0);
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 1, tabG, 256 * sizeof(uint16_t), 0);
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 2, tabB, 256 * sizeof(uint16_t), 0);
+    
+    return true;
 }
 
 bool plMetalPipeline::CaptureScreen(plMipmap *dest, bool flipVertical, uint16_t desiredWidth, uint16_t desiredHeight)
