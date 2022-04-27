@@ -961,6 +961,7 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
     //If the depth needs to be rebuilt - we probably need to rebuild this one too
     if ((fCurrentUnprocessedOutputTexture && depthNeedsRebuild) || (fCurrentUnprocessedOutputTexture == nullptr && NeedsPostprocessing())) {
         MTL::TextureDescriptor* mainPassDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(), drawable->texture()->width(), drawable->texture()->height(), false);
+        mainPassDescriptor->setStorageMode(MTL::StorageModePrivate);
         fCurrentUnprocessedOutputTexture->release();
         fCurrentUnprocessedOutputTexture = fMetalDevice->newTexture(mainPassDescriptor);
     }
@@ -1155,9 +1156,9 @@ void plMetalDevice::PostprocessIntoDrawable() {
     
     //Gamma adjust
     MTL::RenderPassDescriptor* gammaPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
-    gammaPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionLoad);
+    gammaPassDescriptor->colorAttachments()->object(0)->setLoadAction(MTL::LoadActionDontCare);
     gammaPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentDrawable->texture());
-    gammaPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionDontCare);
+    gammaPassDescriptor->colorAttachments()->object(0)->setStoreAction(MTL::StoreActionStore);
     
     MTL::RenderCommandEncoder* gammaAdjustEncoder = fCurrentCommandBuffer->renderCommandEncoder(gammaPassDescriptor);
     
