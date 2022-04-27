@@ -130,7 +130,7 @@ elseif(APPLE)
     ../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveDec1Lay_7.metal
     ../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveRip.metal
     ../../FeatureLib/pfMetalPipeline/ShaderSrc/Clear.metal
-    ../../FeatureLib/pfMetalPipeline/ShaderSrc/GammaCorrect.metal
+    ../../FeatureLib/pfMetalPipeline/ShaderSrc/GammaCorrection.metal
     )
     set_source_files_properties(${plClient_SHADERS} PROPERTIES LANGUAGE METAL)
     source_group("Metal Shaders" FILES ${plClient_SHADERS})

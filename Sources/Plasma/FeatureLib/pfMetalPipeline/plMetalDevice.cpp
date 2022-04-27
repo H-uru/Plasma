@@ -839,10 +839,9 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* im
         MTL::TextureDescriptor *descriptor = MTL::TextureDescriptor::texture2DDescriptor(tRef->fFormat, img->GetWidth(), img->GetHeight(), supportsMipMap);
         descriptor->setUsage(MTL::TextureUsageShaderRead);
         //if device has unified memory, set storage mode to shared
-        if(fMetalDevice->hasUnifiedMemory()) {
+        if(fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
             descriptor->setStorageMode(MTL::StorageModeShared);
         }
-        descriptor->setUsage(MTL::TextureUsageShaderRead);
         //Metal gets mad if we set this with 0, only set it if we know there are mipmaps
         if(supportsMipMap) {
             descriptor->setMipmapLevelCount(tRef->fLevels + 1);
@@ -863,7 +862,7 @@ void plMetalDevice::MakeCubicTextureRef(plMetalDevice::TextureRef *tRef, plCubic
     }
     descriptor->setUsage(MTL::TextureUsageShaderRead);
     //if device has unified memory, set storage mode to shared
-    if(fMetalDevice->hasUnifiedMemory()) {
+    if(fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
         descriptor->setStorageMode(MTL::StorageModeShared);
     }
     

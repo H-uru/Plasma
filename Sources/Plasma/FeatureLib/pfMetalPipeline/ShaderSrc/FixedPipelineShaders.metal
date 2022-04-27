@@ -170,20 +170,20 @@ constant const uint32_t miscFlags6 [[ function_constant(FunctionConstantLayerFla
 constant const uint32_t miscFlags7 [[ function_constant(FunctionConstantLayerFlags + 6)    ]];
 constant const uint32_t miscFlags8 [[ function_constant(FunctionConstantLayerFlags + 7)    ]];
     
-constant const size_t sampleType1 [[ function_constant(FunctionConstantSampleTypes + 0)    ]];
-constant const size_t sampleType2 [[ function_constant(FunctionConstantSampleTypes + 1)    ]];
-constant const size_t sampleType3 [[ function_constant(FunctionConstantSampleTypes + 2)    ]];
-constant const size_t sampleType4 [[ function_constant(FunctionConstantSampleTypes + 3)    ]];
-constant const size_t sampleType5 [[ function_constant(FunctionConstantSampleTypes + 4)    ]];
-constant const size_t sampleType6 [[ function_constant(FunctionConstantSampleTypes + 5)    ]];
-constant const size_t sampleType7 [[ function_constant(FunctionConstantSampleTypes + 6)    ]];
-constant const size_t sampleType8 [[ function_constant(FunctionConstantSampleTypes + 7)    ]];
+constant const uint32_t sampleType1 [[ function_constant(FunctionConstantSampleTypes + 0)    ]];
+constant const uint32_t sampleType2 [[ function_constant(FunctionConstantSampleTypes + 1)    ]];
+constant const uint32_t sampleType3 [[ function_constant(FunctionConstantSampleTypes + 2)    ]];
+constant const uint32_t sampleType4 [[ function_constant(FunctionConstantSampleTypes + 3)    ]];
+constant const uint32_t sampleType5 [[ function_constant(FunctionConstantSampleTypes + 4)    ]];
+constant const uint32_t sampleType6 [[ function_constant(FunctionConstantSampleTypes + 5)    ]];
+constant const uint32_t sampleType7 [[ function_constant(FunctionConstantSampleTypes + 6)    ]];
+constant const uint32_t sampleType8 [[ function_constant(FunctionConstantSampleTypes + 7)    ]];
 
 #define MAX_BLEND_PASSES 8
 constant const uint8_t sourceTypes[MAX_BLEND_PASSES] = { sourceType1, sourceType2, sourceType3, sourceType4, sourceType5, sourceType6, sourceType7, sourceType8};
 constant const uint32_t blendModes[MAX_BLEND_PASSES] = { blendModes1, blendModes2, blendModes3, blendModes4, blendModes5, blendModes6, blendModes7, blendModes8};
 constant const uint32_t miscFlags[MAX_BLEND_PASSES] = { miscFlags1, miscFlags2, miscFlags3, miscFlags4, miscFlags5, miscFlags6, miscFlags7, miscFlags8};
-constant const size_t sampleTypes[MAX_BLEND_PASSES] = { sampleType1, sampleType2, sampleType3, sampleType4, sampleType5, sampleType6, sampleType7, sampleType8};
+constant const uint32_t sampleTypes[MAX_BLEND_PASSES] = { sampleType1, sampleType2, sampleType3, sampleType4, sampleType5, sampleType6, sampleType7, sampleType8};
 constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
     
 typedef struct  {
@@ -239,32 +239,27 @@ constant constexpr sampler colorSamplers[] = {
     sampler(mip_filter::linear,
             mag_filter::linear,
             min_filter::linear,
-            address::repeat,
-            max_anisotropy(16)),
+            address::repeat),
     sampler(mip_filter::linear,
             mag_filter::linear,
             min_filter::linear,
             s_address::clamp_to_edge,
-            t_address::repeat,
-            max_anisotropy(16)),
+            t_address::repeat),
     sampler(mip_filter::linear,
             mag_filter::linear,
             min_filter::linear,
             s_address::repeat,
-            t_address::clamp_to_edge,
-            max_anisotropy(16)),
+            t_address::clamp_to_edge),
     sampler(mip_filter::linear,
             mag_filter::linear,
             min_filter::linear,
-            address::clamp_to_edge,
-            max_anisotropy(16)),
+            address::clamp_to_edge),
 
 };
 
 vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                                        constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
-                                       constant float4x4 & blendMatrix1 [[ buffer(BufferIndexBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]],
-                                       uint v_id [[vertex_id]])
+                                       constant float4x4 & blendMatrix1 [[ buffer(BufferIndexBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
 {
     ColorInOut out;
     //we should have been able to swizzle, but it didn't work in Xcode beta? Try again later.
@@ -493,11 +488,9 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 verte
          with a constant. Using an array based lookup was hurting performance by
          about 1/3rd on Apple Silicon.
          */
-        size_t sampleType = sampleTypes[index];
-        sampler colorSampler;
-        if(sampleType == 0) {
-            colorSampler = repeatSampler;
-        } else if(sampleType == 1) {
+        const uint32_t sampleType = sampleTypes[index];
+        sampler colorSampler = repeatSampler;
+        if(sampleType == 1) {
             colorSampler = clampRepeatSampler;
         } else if(sampleType == 2) {
             colorSampler = repeatClampSampler;
@@ -533,8 +526,6 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
      */
     if (!(passCount==1 && sourceTypes[0] == PassTypeColor)) {
         
-        half4 color;
-        
         /*
          Note: For loop should be unrolled by the compiler, but it is very sensitive.
          Always use size_t for the loop interator type.
@@ -543,7 +534,7 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
             
             float3 sampleCoord = (&in.texCoord1)[layer];
             
-            color = fragmentShaderArgs.sampleLayer(layer, in.vtxColor, sourceTypes[layer], sampleCoord);
+            half4 color = fragmentShaderArgs.sampleLayer(layer, in.vtxColor, sourceTypes[layer], sampleCoord);
             
             if(layer==0) {
                 blendFirst(color, currentColor, blendModes[layer]);
@@ -679,8 +670,7 @@ constexpr void blend(half4 srcSample, thread half4 &destSample, const uint32_t b
 }
     
 vertex ShadowCasterInOut shadowVertexShader(Vertex in [[stage_in]],
-                                       constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
-                                       uint v_id [[vertex_id]])
+                                       constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]])
 {
     ShadowCasterInOut out;
     
