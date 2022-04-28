@@ -131,7 +131,8 @@ xChatEmoteXlate = {
 # Insert an emote animation from xChatEmoteXlate here to make it become a loop
 xChatEmoteLoop = [
     "Dance",
-    "DanceRetro"
+    "DanceRetro",
+    "Sneeze"
 ]
 
 ## A list of the specially handled extended chat commands.
