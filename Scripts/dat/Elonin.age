@@ -1,0 +1,10 @@
+StartDateTime=0672211080
+DayLength=24.000000
+MaxCapacity=50
+LingerTime=180
+SequencePrefix=481
+ReleaseVersion=0
+Page=House1,1
+Page=House2,2
+Page=Cave,3
+Page=Default,0
