@@ -1,6 +1,6 @@
 from Plasma import *
 from PlasmaTypes import *
- 
+
 class Elonin(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
