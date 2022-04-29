@@ -165,6 +165,7 @@ for py_file in input_path.glob("*.py"):
         # when using an external client.
         spec = importlib.util.spec_from_file_location(py_file.stem, py_file)
         mod = importlib.util.module_from_spec(spec)
+        sys.modules[mod.__name__] = mod
         spec.loader.exec_module(mod)
     except Exception:
         dump_exc("import")
