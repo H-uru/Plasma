@@ -46,7 +46,7 @@ STATEDESC Elonin
    VERSION 1
  
     VAR BOOL    fntOnOff[1] DEFAULT=0
-    VAR BOOL     birdie[1] DEFAULT=0
+    VAR BOOL    birdie[1] DEFAULT=0
     VAR INT     flwrCorrectCount[1] DEFAULT=0
     VAR BOOL    flwrPuzSolved[1] DEFAULT=0
     VAR BOOL    flwrPuzInUse[1] DEFAULT=0
@@ -65,7 +65,7 @@ STATEDESC Elonin
    VERSION 2
  
     VAR BOOL    fntOnOff[1] DEFAULT=0
-    VAR BOOL     birdie[1] DEFAULT=0
+    VAR BOOL    birdie[1] DEFAULT=0
     VAR INT     flwrCorrectCount[1] DEFAULT=0
     VAR BOOL    flwrPuzSolved[1] DEFAULT=0
     VAR BOOL    flwrPuzInUse[1] DEFAULT=0
