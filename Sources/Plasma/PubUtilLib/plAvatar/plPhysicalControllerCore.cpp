@@ -422,6 +422,33 @@ void plWalkingStrategy::Apply(float delSecs)
         velocity.fY *= zGround;
     }
 
+    // Now Cyan's good old "slide along all the contacts" code.
+    hsVector3 offset(0.f, 0.f, 0.f);
+    for (const auto contact : fContacts) {
+        if (!contact.GetPhysical() || contact.GetPhysical()->GetGroup() == plSimDefs::kGroupDynamic)
+            continue;
+        if (contact.Normal.fZ >= .5f)
+            continue;
+        offset += contact.Normal;
+        hsVector3 velNorm = velocity;
+
+        if (velNorm.MagnitudeSquared() > 0.0f)
+            velNorm.Normalize();
+
+        if (velNorm * contact.Normal < 0.0f) {
+            hsVector3 proj = (velNorm % contact.Normal) % contact.Normal;
+            if (velNorm * proj < 0.0f)
+                proj *= -1.0f;
+
+            velocity = velocity.Magnitude() * proj;
+        }
+    }
+    if (offset.MagnitudeSquared() > 0.0f) {
+        // 5 ft/sec is roughly the speed we walk backwards.
+        offset.Normalize();
+        velocity += offset * 5.f;
+    }
+
     fController->SetPushingPhysical(nullptr);
     fController->SetFacingPushingPhysical(false);
     fContacts.clear();

@@ -301,6 +301,7 @@ public:
     virtual void Reset(bool newAge);
 
     virtual bool IsRiding() const { return false; }
+    virtual bool AllowSliding() const { return true; }
 
 protected:
     plPhysicalControllerCore* fController;
@@ -363,6 +364,14 @@ public:
     bool GetFacingPushingPhysical() const;
 
     bool IsRiding() const override { return fFlags & kRidePlatform; }
+
+    /**
+     * Disallow PhysX's built-in sliding algorithm.
+     * Empirical results show that PhysX's built-in sliding along
+     * non-walkable surfaces will trigger getting stuck on some
+     * slightly smaller than 90 degree colliders.
+     */
+    bool AllowSliding() const override { return false; }
 
 protected:
     enum

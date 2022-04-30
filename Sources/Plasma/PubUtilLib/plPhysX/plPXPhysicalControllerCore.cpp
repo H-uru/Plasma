@@ -266,9 +266,11 @@ public:
 
     physx::PxControllerBehaviorFlags getBehaviorFlags(const physx::PxShape& shape, const physx::PxActor& actor) override
     {
-        physx::PxControllerBehaviorFlags flags = physx::PxControllerBehaviorFlag::eCCT_SLIDE;
+        physx::PxControllerBehaviorFlags flags;
         if (fController->fMovementStrategy->IsRiding())
             flags.set(physx::PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT);
+        if (fController->fMovementStrategy->AllowSliding())
+            flags.set(physx::PxControllerBehaviorFlag::eCCT_SLIDE);
 
         plPXActorData* data = static_cast<plPXActorData*>(actor.userData);
         if (data == nullptr || data->GetPhysical() == nullptr)
@@ -798,14 +800,11 @@ void plPXPhysicalControllerCore::ICreateController(const hsPoint3& pos)
     desc.stepOffset = kStepOffset;
     desc.reportCallback = &s_HitReport;
     desc.behaviorCallback = fBehaviorCallback.get();
-    // Skydivers may want to change this to ePREVENT_CLIMBING - it's a bit of a
-    // misnomer in that you can still access OOB areas, you just have to jump onto them.
-    desc.nonWalkableMode = physx::PxControllerNonWalkableMode::ePREVENT_CLIMBING_AND_FORCE_SLIDING;
+    desc.nonWalkableMode = physx::PxControllerNonWalkableMode::ePREVENT_CLIMBING;
     desc.userData = new plPXActorData(this);
     desc.height = fHeight;
     desc.radius = fRadius;
-    // I'm uncertain if eEASY or eCONSTRAINED is better. Let's stick with eEASY for now.
-    desc.climbingMode = physx::PxCapsuleClimbingMode::eEASY;
+    desc.climbingMode = physx::PxCapsuleClimbingMode::eCONSTRAINED;
 
     IDeleteController();
     fController = sim->CreateCharacterController(desc, fWorldKey);
