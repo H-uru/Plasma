@@ -1312,7 +1312,7 @@ class nxusBookMachine(ptModifier):
                 displayName = "The %s' Pub" % (ageData.guild)
             #another special case for the new GoMe Pub
             elif ageData.ageFilename == 'GoMePubNew':
-                displayName = "New Messengers Pub"
+                displayName = PtGetLocalizedString("Nexus.Messages.GoMePubNewName")
             else:
                 displayName = selectedInfo.getDisplayName()
 
