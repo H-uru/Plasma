@@ -139,17 +139,17 @@ void plShader::SetColor(size_t i, const hsColorRGBA& col)
 void plShader::SetVector(size_t i, const hsScalarTriple& vec)
 {
     /* Doesn't touch .fW */
-    fConsts[i].fX = vec.fX;
-    fConsts[i].fY = vec.fY;
-    fConsts[i].fZ = vec.fZ;
+    fConsts[i].fX = std::clamp(vec.fX, -FLT_MAX, FLT_MAX);
+    fConsts[i].fY = std::clamp(vec.fY, -FLT_MAX, FLT_MAX);
+    fConsts[i].fZ = std::clamp(vec.fZ, -FLT_MAX, FLT_MAX);
 }
 
 void plShader::SetVector(size_t i, float x, float y, float z, float w)
 {
-    fConsts[i].x = x;
-    fConsts[i].y = y;
-    fConsts[i].z = z;
-    fConsts[i].w = w;
+    fConsts[i].x = std::clamp(x, -FLT_MAX, FLT_MAX);
+    fConsts[i].y = std::clamp(y, -FLT_MAX, FLT_MAX);
+    fConsts[i].z = std::clamp(z, -FLT_MAX, FLT_MAX);
+    fConsts[i].w = std::clamp(w, -FLT_MAX, FLT_MAX);
 }
 
 void plShader::SetFloat(size_t i, int chan, float v)
@@ -159,10 +159,10 @@ void plShader::SetFloat(size_t i, int chan, float v)
 
 void plShader::SetFloat4(size_t i, const float* const f)
 {
-    fConsts[i].fX = f[0];
-    fConsts[i].fY = f[1];
-    fConsts[i].fZ = f[2];
-    fConsts[i].fW = f[3];
+    fConsts[i].fX = std::clamp(f[0], -FLT_MAX, FLT_MAX);
+    fConsts[i].fY = std::clamp(f[1], -FLT_MAX, FLT_MAX);
+    fConsts[i].fZ = std::clamp(f[2], -FLT_MAX, FLT_MAX);
+    fConsts[i].fW = std::clamp(f[3], -FLT_MAX, FLT_MAX);
 }
 
 plFloat44 plShader::GetMatrix(size_t i) const
