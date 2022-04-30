@@ -108,6 +108,20 @@ class islmRegisterNexusLink(ptModifier):
                     vault.addChronicleEntry("GotLinkToKveerPublic",1,"yes")
                     PtDebugPrint("islmRegisterNexusLink.OnNotify(): Chronicle entry 'GotLinkToKveerPublic' not present, adding entry and setting to 'yes'")
                     PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NexusLinkAdded"))
+            # Hacking away for GoMe Pub
+            if stationName.value == "GoMePubNew":
+                entryName = "GotLinkToGoMePublic"
+                entry = vault.findChronicleEntry(entryName)
+                if entry is not None:
+                    entryValue = entry.chronicleGetValue()
+                    if entryValue != "yes":
+                        entry.chronicleSetValue("yes")
+                        entry.save()
+                        PtDebugPrint("islmRegisterNexusLink.OnNotify(): Chronicle entry 'GotLinkToGoMePublic' already added, setting to 'yes'")
+                else:
+                    vault.addChronicleEntry("GotLinkToGoMePublic",1,"yes")
+                    PtDebugPrint("islmRegisterNexusLink.OnNotify(): Chronicle entry 'GotLinkToGoMePublic' not present, adding entry and setting to 'yes'")
+                    PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NexusLinkAdded"))
             else:
                 # just business-as-usual here
                 self.avatar = 0

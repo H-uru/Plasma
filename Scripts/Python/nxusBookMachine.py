@@ -214,6 +214,7 @@ kAgeSdlVariables = {
 'guildPub' : ('MaxGuildPubPop', None),
 'Neighborhood02' : ('MaxKirelPop', 'nxusShowKirel'),
 'Kveer' : ('MaxKveerPublicPop', None),
+'GoMePubNew' : ('MaxKirelPop', None),
 }
 
 kGuildPubs = ["Cartographers", "Greeters", "Maintainers", "Messengers", "Writers"]
@@ -224,7 +225,8 @@ kHardcodedInstances = {"GuildPub-Cartographers" : "35624301-841e-4a07-8db6-b735c
                       "GuildPub-Maintainers" : "e8306311-56d3-4954-a32d-3da01712e9b5",
                       "GuildPub-Messengers" : "9420324e-11f8-41f9-b30b-c896171a8712",
                       "GuildPub-Writers" : "5cf4f457-d546-47dc-80eb-a07cdfefa95d",
-                      "Kveer" : "68e219e0-ee25-4df0-b855-0435584e29e2"}
+                      "Kveer" : "68e219e0-ee25-4df0-b855-0435584e29e2",
+                      "GoMePubNew" : "d002da26-db26-53f1-bdc0-a05a84274d5c"}
 
 #id for ages descriptions
 kPublicAgesDescription = {
@@ -236,6 +238,7 @@ kPublicAgesDescription = {
      'GuildPub-Maintainers' : ("Nexus.Messages.GuildPubFull", "Nexus.Messages.GuildPubPopulation"),
      'GuildPub-Messengers' : ("Nexus.Messages.GuildPubFull", "Nexus.Messages.GuildPubPopulation"),
      'GuildPub-Writers' : ("Nexus.Messages.GuildPubFull", "Nexus.Messages.GuildPubPopulation"),
+     'GoMePubNew' : ("Nexus.Messages.GoMePubNewFull", "Nexus.Messages.GoMePubNewPopulation"),
 }
 
 # hood sorting vars
@@ -344,6 +347,7 @@ class nxusBookMachine(ptModifier):
             'guildPub' : AgeData(ageFilename = '', defaultMaxPop = 0, linkVisible = 0),
             'Neighborhood02' : AgeData(ageFilename = 'Neighborhood02', defaultMaxPop = 100, linkVisible = 0),
             'Kveer' : AgeData(ageFilename = 'Kveer', defaultMaxPop = 100, linkVisible = 0),
+            'GoMePubNew' : AgeData(ageFilename = 'GoMePubNew', defaultMaxPop = 100, linkVisible = 0),
             }
 
         self.categoryLinksList = {
@@ -438,6 +442,15 @@ class nxusBookMachine(ptModifier):
                 self.publicAges['Kveer'].linkVisible = True
         else:
             PtDebugPrint("nxusBookMachine.OnServerInitComplete(): chron says no link to public Kveer yet, so sorry")
+        # copy pasta for the Pub
+        entrygmpn = vault.findChronicleEntry("GotLinkToGoMePublic")
+        if entrygmpn is not None:
+            entryValue02 = entrygmpn.chronicleGetValue()
+            if entryValue02 == "yes":
+                PtDebugPrint("nxusBookMachine.OnServerInitComplete(): chron says you have the link to public GoMePub, hooray!")
+                self.publicAges['GoMePubNew'].linkVisible = True
+        else:
+            PtDebugPrint("nxusBookMachine.OnServerInitComplete(): chron says no link to public GoMePub yet, so go to Chiso!")
 
 
     def __del__(self):
@@ -1297,6 +1310,9 @@ class nxusBookMachine(ptModifier):
             #special case: and another one for GuildPub name
             elif hasattr(ageData, 'guild'):
                 displayName = "The %s' Pub" % (ageData.guild)
+            #another special case for the new GoMe Pub
+            elif ageData.ageFilename == 'GoMePubNew':
+                displayName = PtGetLocalizedString("Global.AgeNames.GoMePubNew")
             else:
                 displayName = selectedInfo.getDisplayName()
 
