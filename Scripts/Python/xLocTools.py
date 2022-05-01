@@ -41,8 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 from Plasma import *
-from PlasmaVaultConstants import *
 from PlasmaTypes import *
+from PlasmaVaultConstants import *
 
 xFolderIDToFolderName = {
     PtVaultStandardNodes.kUserDefinedNode:          PtGetLocalizedString("Global.FolderNames.UserDefined"),
