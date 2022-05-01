@@ -305,6 +305,7 @@ kRTChatInterAge = 0x08
 kRTChatStatusMsg = 0x10
 kRTChatNeighborsMsg = 0x20
 kRTChatAudioSubtitleMsg = 0x40
+kRTChatLocKeyMsg = 0x80
 
 # flags channel mask
 kRTChatFlagMask = 65535

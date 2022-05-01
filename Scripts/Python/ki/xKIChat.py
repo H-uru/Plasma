@@ -664,16 +664,26 @@ class xKIChat(object):
         self.ResetFadeState()
 
     ## Display a status message to the player (or players if net-propagated).
-    def DisplayStatusMessage(self, statusMessage, netPropagate=0):
+    def DisplayStatusMessage(self, message, netPropagate=0, isMessageLocKey=False):
 
         cFlags = ChatFlags(0)
         cFlags.toSelf = True
         cFlags.status = True
+        cFlags.lockey = isMessageLocKey
+
+        localPlayer = PtGetLocalPlayer()
+
         if netPropagate:
             plyrList = self.GetPlayersInChatDistance()
             if len(plyrList) > 0:
-                PtSendRTChat(PtGetLocalPlayer(), plyrList, statusMessage, cFlags.flags)
-        self.AddChatLine(None, statusMessage, cFlags)
+                PtSendRTChat(localPlayer, plyrList, message, cFlags.flags)
+
+        # the message is just a localization key and needs processing before display
+        if isMessageLocKey:
+            keys = message.split(":")
+            message = PtGetLocalizedString(keys[0], [localPlayer.getPlayerName(), PtGetLocalizedString(keys[1] if len(keys) > 1 else "KI.EmoteStrings.Their")])
+
+        self.AddChatLine(None, message, cFlags)
 
     ###########
     # Players #
@@ -784,6 +794,11 @@ class ChatFlags:
         else:
             self.__dict__["subtitle"] = False
 
+        if flags & kRTChatLocKeyMsg:
+            self.__dict__["lockey"] = True
+        else:
+            self.__dict__["lockey"] = False
+
         self.__dict__["channel"] = (kRTChatChannelMask & flags) / 256
 
     def __setattr__(self, name, value):
@@ -831,6 +846,11 @@ class ChatFlags:
             if value:
                 self.__dict__["flags"] |= kRTChatAudioSubtitleMsg
 
+        elif name == "lockey":
+            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatLocKeyMsg
+            if value:
+                self.__dict__["flags"] |= kRTChatLocKeyMsg
+
         elif name == "channel":
             flagsNoChannel = self.__dict__["flags"] & kRTChatNoChannel
             self.__dict__["flags"] = flagsNoChannel + (value * 256)
@@ -856,6 +876,8 @@ class ChatFlags:
             string += "neighbors "
         if self.subtitle:
             string += "subtitle "
+        if self.lockey:
+            string += "lockey "
         if self.ccrBcast:
             string += "ccrBcast "
         string += "channel = {} ".format(self.channel)
@@ -940,18 +962,9 @@ class CommandsProcessor:
                     PtAvatarEnterAnimMode(emote[0])
                 else:
                     PtEmoteAvatar(emote[0])
-                if PtGetLanguage() == PtLanguage.kEnglish:
-                    avatar = PtGetLocalAvatar()
-                    gender = avatar.avatar.getAvatarClothingGroup()
-                    if gender > kFemaleClothingGroup:
-                        gender = kMaleClothingGroup
-                    hisHer = PtGetLocalizedString("KI.EmoteStrings.His")
-                    if gender == kFemaleClothingGroup:
-                        hisHer = PtGetLocalizedString("KI.EmoteStrings.Her")
-                    statusMsg = PtGetLocalizedString(emote[1], [PtGetLocalPlayer().getPlayerName(), hisHer])
-                else:
-                    statusMsg = PtGetLocalizedString(emote[1], [PtGetLocalPlayer().getPlayerName()])
-                self.chatMgr.DisplayStatusMessage(statusMsg, 1)
+
+                pronounKey = xLocTools.GetLocalAvatarPossessivePronounLocKey()
+                self.chatMgr.DisplayStatusMessage(f"{emote[1]}:{pronounKey}", netPropagate=1, isMessageLocKey=True)
 
                 # Get remaining message string after emote command
                 message = message[len(words[0]):]

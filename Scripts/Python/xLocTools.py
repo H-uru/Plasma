@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 from Plasma import *
 from PlasmaVaultConstants import *
+from PlasmaTypes import *
 
 xFolderIDToFolderName = {
     PtVaultStandardNodes.kUserDefinedNode:          PtGetLocalizedString("Global.FolderNames.UserDefined"),
@@ -113,6 +114,17 @@ def CreatePossessiveString(possessorName, possessionName):
     else:
         # otherwise throw it through the localized possessive formatter
         return PtGetLocalizedString("Global.Formats.Possessive", [possessorName, possessionName])
+
+def GetLocalAvatarPossessivePronounLocKey():
+
+    avatar = PtGetLocalAvatar()
+    clothingGroup = avatar.avatar.getAvatarClothingGroup()
+
+    if clothingGroup == kFemaleClothingGroup:
+        return "KI.EmoteStrings.Her"
+    else:
+        return "KI.EmoteStrings.His"
+
 
 def LocalizeAgeName(displayName):
     "Returns a localized version of the age display name you give it"
