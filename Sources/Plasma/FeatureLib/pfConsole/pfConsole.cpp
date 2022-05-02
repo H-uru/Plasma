@@ -560,6 +560,11 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
         if (text.empty())
             return;
 
+        // Chop off leading or trailing newlines, which are probably not intended.
+        text = text.trim("\r\n");
+        if (text.empty())
+            return;
+
         // FIXME: Unfortunately, the console is currently limited to single byte
         //        characters. Remove this when the console is unicode safe.
         ST::char_buffer buf = text.to_latin_1(ST::utf_validation_t::substitute_invalid);
