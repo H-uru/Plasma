@@ -155,6 +155,8 @@ kChronicleGZMarkersAquired = "GZMarkersAquired"
 kChronicleGZMarkersAquiredType = 1
 kChronicleCalGZMarkersAquired = "CalGZMarkers"
 kChronicleCalGZMarkersAquiredType = 1
+kChronicleKITextColor = "KITextColor"
+kChronicleKITextColorType = 1
 
 
 def PtDetermineKILevel():

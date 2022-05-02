@@ -1217,6 +1217,23 @@ class CommandsProcessor:
             return
         PtChangePassword(newPassword)
 
+    ## Update the Chronicle's KI Text Color values.
+    # This uses an RGB triplet with parts separated by "," or an empty string for the default chat color.
+    def UpdateTextColorChronicle(self):
+
+        vault = ptVault()
+        entry = vault.findChronicleEntry(kChronicleKITextColor)
+        newVal = ""
+        if isinstance(self.chatMgr.chatTextColor, ptColor):
+            newVal = f"{self.chatMgr.chatTextColor.getRed()},{self.chatMgr.chatTextColor.getGreen()},{self.chatMgr.chatTextColor.getBlue()}"
+
+        PtDebugPrint(f"xKIChat.UpdateTextColorChronicle(): Setting KI Text Color chronicle to: \"{newVal}\".", level=kWarningLevel)
+        if entry is not None:
+            entry.chronicleSetValue(newVal)
+            entry.save()
+        else:
+            vault.addChronicleEntry(kChronicleKITextColor, kChronicleKITextColorType, newVal)
+
     ## Overrides the chat area text colors to be a single user-selected color
     def SetTextColor(self, arg1, arg2=None, arg3=None):
 
@@ -1239,6 +1256,7 @@ class CommandsProcessor:
             colorBlue = clamp(colorBlue, 0, 255)
             colorGreen = clamp(colorGreen, 0, 255)
             self.chatMgr.chatTextColor = ptColor(colorRed / 255.0, colorBlue / 255.0, colorGreen / 255.0)
+            self.UpdateTextColorChronicle()
             self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [f"({colorRed}, {colorBlue}, {colorGreen})"]))
             return
 
@@ -1255,6 +1273,7 @@ class CommandsProcessor:
             colorBlue = clamp(colorBlue, 0.0, 1.0)
             colorGreen = clamp(colorGreen, 0.0, 1.0)
             self.chatMgr.chatTextColor = ptColor(colorRed, colorBlue, colorGreen)
+            self.UpdateTextColorChronicle()
             self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [f"({colorRed}, {colorBlue}, {colorGreen})"]))
             return
 
@@ -1263,10 +1282,12 @@ class CommandsProcessor:
             # newColor is a valid localized color name with a corresponding function on the ptColor class
             colorFn = getattr(ptColor(), kColorNames[newColor])
             self.chatMgr.chatTextColor = colorFn()
+            self.UpdateTextColorChronicle()
             self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [newColor]))
         elif newColor == PtGetLocalizedString("KI.Commands.ChatSetTextColorDefaultArg"):
             # user requested resetting text colors to defaults
             self.chatMgr.chatTextColor = None
+            self.UpdateTextColorChronicle()
             self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetDefault"))
         else:
             hexColor = newColor.lstrip("#")
@@ -1285,6 +1306,7 @@ class CommandsProcessor:
                     return
                 else:
                     self.chatMgr.chatTextColor = ptColor(colorRed, colorBlue, colorGreen)
+                    self.UpdateTextColorChronicle()
                     self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [f"#{hexColor}"]))
             else: 
                 # argument was not 3 or 6 characters long, so it cannot be a valid hexadecimal color

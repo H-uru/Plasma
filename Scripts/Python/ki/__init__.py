@@ -1339,6 +1339,7 @@ class xKI(ptModifier):
         self.DetermineKILevel()
         self.DetermineKIFlags()
         self.DetermineGZ()
+        self.DetermineTextColor()
 
         # Hide all dialogs first.
         KIMicroBlackbar.dialog.hide()
@@ -1638,6 +1639,22 @@ class xKI(ptModifier):
                 control.setStringW(self.chatMgr.MessageCurrentLine)
                 control.end()
                 control.refresh()
+
+    #~~~~~~~~~~~~~~~~~#
+    #  KI Text Color  #
+    #~~~~~~~~~~~~~~~~~#
+
+    ## Sets the KI Text Color from the Chronicle.
+    def DetermineTextColor(self):
+
+        vault = ptVault()
+        entry = vault.findChronicleEntry(kChronicleKITextColor)
+        if entry is not None:
+            colorStr = entry.chronicleGetValue()
+            PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color is: \"{colorStr}\".", level=kWarningLevel)
+            args = colorStr.split(",")
+            if len(args) == 3:
+                self.chatMgr.commandsProcessor.SetTextColor(args[0], args[1], args[2])
 
     #~~~~~~~~~~#
     # GZ Games #
