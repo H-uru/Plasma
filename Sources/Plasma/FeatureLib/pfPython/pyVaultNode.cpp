@@ -580,13 +580,13 @@ PyObject * pyVaultNode::GetNode2( uint32_t nodeID ) const
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyVaultNode::FindNode( pyVaultNode * templateNode )
+PyObject* pyVaultNode::FindNode( pyVaultNode * templateNode, unsigned int maxDepth )
 {
     PyObject * result = nullptr;
     if ( fNode && templateNode->fNode )
     {
         hsWeakRef<NetVaultNode> node(templateNode->fNode);
-        if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(node, 1))
+        if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(node, maxDepth))
             result = pyVaultNode::New(rvn);
     }
     

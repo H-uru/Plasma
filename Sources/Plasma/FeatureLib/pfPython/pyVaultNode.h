@@ -181,7 +181,7 @@ public:
     //  Returns a ptVaultNodeRef or nullptr
     PyObject* GetNode2( uint32_t nodeID ) const;          // returns pyVaultNodeRef, for legacy compatibility
     // Get child node matching template node
-    PyObject* FindNode( pyVaultNode * templateNode );   // returns pyVaultNode
+    PyObject* FindNode( pyVaultNode * templateNode, unsigned int maxDepth = 1 );   // returns pyVaultNode
 
     // Get all child nodes.
     virtual PyObject* GetChildNodeRefList(); // for legacy compatibility
