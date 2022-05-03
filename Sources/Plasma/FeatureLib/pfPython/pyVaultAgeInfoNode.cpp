@@ -181,6 +181,10 @@ ST::string pyVaultAgeInfoNode::GetAgeFilename() const
 
 void pyVaultAgeInfoNode::SetAgeFilename(const ST::string& v)
 {
+    if (fNode) {
+        VaultAgeInfoNode access(fNode);
+        access.SetAgeFilename(v);
+    }
 }
 
 ST::string pyVaultAgeInfoNode::GetAgeInstanceName() const
@@ -194,6 +198,10 @@ ST::string pyVaultAgeInfoNode::GetAgeInstanceName() const
 
 void pyVaultAgeInfoNode::SetAgeInstanceName(const ST::string& v)
 {
+    if (fNode) {
+        VaultAgeInfoNode access(fNode);
+        access.SetAgeInstanceName(v);
+    }
 }
 
 ST::string pyVaultAgeInfoNode::GetAgeUserDefinedName() const
@@ -207,6 +215,10 @@ ST::string pyVaultAgeInfoNode::GetAgeUserDefinedName() const
 
 void pyVaultAgeInfoNode::SetAgeUserDefinedName(const ST::string& v)
 {
+    if (fNode) {
+        VaultAgeInfoNode access(fNode);
+        access.SetAgeUserDefinedName(v);
+    }
 }
 
 plUUID pyVaultAgeInfoNode::GetAgeInstanceGuid() const
@@ -221,6 +233,12 @@ plUUID pyVaultAgeInfoNode::GetAgeInstanceGuid() const
 
 void pyVaultAgeInfoNode::SetAgeInstanceGuid( const char * sguid )
 {
+    if (fNode) {
+        VaultAgeInfoNode access(fNode);
+        plUUID uuid;
+        uuid.FromString(sguid);
+        access.SetAgeInstanceGuid(uuid);
+    }
 }
 
 ST::string pyVaultAgeInfoNode::GetAgeDescription() const
@@ -234,6 +252,10 @@ ST::string pyVaultAgeInfoNode::GetAgeDescription() const
 
 void pyVaultAgeInfoNode::SetAgeDescription(const ST::string& v)
 {
+    if (fNode) {
+        VaultAgeInfoNode access(fNode);
+        access.SetAgeDescription(v);
+    }
 }
 
 int32_t pyVaultAgeInfoNode::GetSequenceNumber() const
@@ -247,6 +269,10 @@ int32_t pyVaultAgeInfoNode::GetSequenceNumber() const
 
 void pyVaultAgeInfoNode::SetSequenceNumber( int32_t v )
 {
+    if (fNode) {
+        VaultAgeInfoNode access(fNode);
+        access.SetAgeSequenceNumber(v);
+    }
 }
 
 int32_t pyVaultAgeInfoNode::GetAgeLanguage() const
@@ -260,6 +286,10 @@ int32_t pyVaultAgeInfoNode::GetAgeLanguage() const
 
 void pyVaultAgeInfoNode::SetAgeLanguage( int32_t v )
 {
+    if (fNode) {
+        VaultAgeInfoNode access(fNode);
+        access.SetAgeLanguage(v);
+    }
 }
 
 uint32_t pyVaultAgeInfoNode::GetAgeID() const
