@@ -1228,11 +1228,7 @@ class CommandsProcessor:
             newVal = f"{self.chatMgr.chatTextColor.getRed()},{self.chatMgr.chatTextColor.getGreen()},{self.chatMgr.chatTextColor.getBlue()}"
 
         PtDebugPrint(f"xKIChat.UpdateTextColorChronicle(): Setting KI Text Color chronicle to: \"{newVal}\".", level=kWarningLevel)
-        if entry is not None:
-            entry.chronicleSetValue(newVal)
-            entry.save()
-        else:
-            vault.addChronicleEntry(kChronicleKITextColor, kChronicleKITextColorType, newVal)
+        vault.addChronicleEntry(kChronicleKITextColor, kChronicleKITextColorType, newVal)
 
     ## Overrides the chat area text colors to be a single user-selected color
     def SetTextColor(self, arg1, arg2=None, arg3=None):

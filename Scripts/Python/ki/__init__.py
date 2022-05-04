@@ -1653,8 +1653,14 @@ class xKI(ptModifier):
             colorStr = entry.chronicleGetValue()
             PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color is: \"{colorStr}\".", level=kWarningLevel)
             args = colorStr.split(",")
-            if len(args) == 3:
-                self.chatMgr.commandsProcessor.SetTextColor(args[0], args[1], args[2])
+            try:
+                self.chatMgr.chatTextColor = ptColor(float(args[0]), float(args[1]), float(args[2]))
+            except (IndexError, ValueError):
+                # format is incorrect -- didn't have 3 values, or values weren't floats -- so log an error and destroy all evidence
+                PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color was not in the expected triplet format", level=kWarningLevel)
+                vault.addChronicleEntry(kChronicleKITextColor, kChronicleKITextColorType, "")
+
+
 
     #~~~~~~~~~~#
     # GZ Games #
