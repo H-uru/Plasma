@@ -967,7 +967,7 @@ class CommandsProcessor:
                     PtEmoteAvatar(emote[0])
 
                 pronounKey = xLocTools.GetLocalAvatarPossessivePronounLocKey()
-                self.chatMgr.DisplayStatusMessage(LocKey(emote[1], pronounKey), netPropagate=1)
+                self.chatMgr.DisplayStatusMessage(LocKey(emote[1], pronounKey), netPropagate=True)
 
                 # Get remaining message string after emote command
                 message = message[len(words[0]):]
