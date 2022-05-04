@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 import re
 import time
+from typing import NamedTuple
 import random
 import inspect
 
@@ -62,6 +63,9 @@ from . import xKIExtChatCommands
 from .xKIConstants import *
 from .xKIHelpers import *
 
+class LocKey(NamedTuple):
+    message: str
+    pronoun: str = "KI.EmoteStrings.Their"
 
 ## A class to process all the RT Chat functions of the KI.
 class xKIChat(object):
@@ -664,24 +668,23 @@ class xKIChat(object):
         self.ResetFadeState()
 
     ## Display a status message to the player (or players if net-propagated).
-    def DisplayStatusMessage(self, message, netPropagate=0, isMessageLocKey=False):
+    def DisplayStatusMessage(self, message, netPropagate=0):
 
         cFlags = ChatFlags(0)
         cFlags.toSelf = True
         cFlags.status = True
-        cFlags.lockey = isMessageLocKey
+        cFlags.lockey = isinstance(message, LocKey)
 
         localPlayer = PtGetLocalPlayer()
 
         if netPropagate:
             plyrList = self.GetPlayersInChatDistance()
             if len(plyrList) > 0:
-                PtSendRTChat(localPlayer, plyrList, message, cFlags.flags)
+                PtSendRTChat(localPlayer, plyrList, message if not cFlags.lockey else ":".join(message), cFlags.flags)
 
         # the message is just a localization key and needs processing before display
-        if isMessageLocKey:
-            keys = message.split(":")
-            message = PtGetLocalizedString(keys[0], [localPlayer.getPlayerName(), PtGetLocalizedString(keys[1] if len(keys) > 1 else "KI.EmoteStrings.Their")])
+        if cFlags.lockey:
+            message = PtGetLocalizedString(message.message, [localPlayer.getPlayerName(), PtGetLocalizedString(message.pronoun)])
 
         self.AddChatLine(None, message, cFlags)
 
@@ -964,7 +967,7 @@ class CommandsProcessor:
                     PtEmoteAvatar(emote[0])
 
                 pronounKey = xLocTools.GetLocalAvatarPossessivePronounLocKey()
-                self.chatMgr.DisplayStatusMessage(f"{emote[1]}:{pronounKey}", netPropagate=1, isMessageLocKey=True)
+                self.chatMgr.DisplayStatusMessage(LocKey(emote[1], pronounKey), netPropagate=1)
 
                 # Get remaining message string after emote command
                 message = message[len(words[0]):]
