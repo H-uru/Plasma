@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 import re
 import time
-from typing import NamedTuple
 import random
 import inspect
 
@@ -62,10 +61,6 @@ import xLocTools
 from . import xKIExtChatCommands
 from .xKIConstants import *
 from .xKIHelpers import *
-
-class LocKey(NamedTuple):
-    message: str
-    pronoun: str = "KI.EmoteStrings.Their"
 
 ## A class to process all the RT Chat functions of the KI.
 class xKIChat(object):

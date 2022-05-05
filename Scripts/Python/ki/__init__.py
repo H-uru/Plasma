@@ -1004,8 +1004,8 @@ class xKI(ptModifier):
                 return
 
             if cFlags.lockey:
-                keys = message.split(":")
-                message = PtGetLocalizedString(keys[0], [player.getPlayerName(), PtGetLocalizedString(keys[1] if len(keys) > 1 else "KI.EmoteStrings.Their")])
+                keys = LocKey(*message.split(":"))
+                message = PtGetLocalizedString(keys.message, [player.getPlayerName(), PtGetLocalizedString(keys.pronoun)])
 
             # Display the message if it passed all the above checks.
             self.chatMgr.AddChatLine(player, message, cFlags, forceKI=not self.sawTheKIAtLeastOnce)
