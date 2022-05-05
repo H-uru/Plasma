@@ -1222,7 +1222,6 @@ class CommandsProcessor:
     def UpdateTextColorChronicle(self):
 
         vault = ptVault()
-        entry = vault.findChronicleEntry(kChronicleKITextColor)
         newVal = ""
         if isinstance(self.chatMgr.chatTextColor, ptColor):
             newVal = f"{self.chatMgr.chatTextColor.getRed()},{self.chatMgr.chatTextColor.getGreen()},{self.chatMgr.chatTextColor.getBlue()}"
