@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 import re
+from typing import NamedTuple
 
 # Plasma engine.
 from Plasma import *
@@ -53,6 +54,9 @@ from xPsnlVaultSDL import *
 # xKI sub-modules.
 from .xKIConstants import *
 
+class LocKey(NamedTuple):
+    message: str
+    pronoun: str = "KI.EmoteStrings.Their"
 
 ## Helper class for autocompletion in the KI.
 class AutocompleteState:

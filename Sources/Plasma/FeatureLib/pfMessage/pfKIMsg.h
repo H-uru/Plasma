@@ -164,6 +164,8 @@ class pfKIMsg : public plMessage
             kInterAgeMsg    = 0x00000008,
             kStatusMsg      = 0x00000010,
             kNeighborMsg    = 0x00000020,   // sending to all the neighbors
+            kSubtitleMsg    = 0x00000040,
+            kLocKeyMsg      = 0x00000080,
             kChannelMask    = 0x0000ff00
         };
 
