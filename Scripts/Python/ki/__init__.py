@@ -1342,6 +1342,7 @@ class xKI(ptModifier):
         self.DetermineKILevel()
         self.DetermineKIFlags()
         self.DetermineGZ()
+        self.DetermineTextColor()
 
         # Hide all dialogs first.
         KIMicroBlackbar.dialog.hide()
@@ -1641,6 +1642,28 @@ class xKI(ptModifier):
                 control.setStringW(self.chatMgr.MessageCurrentLine)
                 control.end()
                 control.refresh()
+
+    #~~~~~~~~~~~~~~~~~#
+    #  KI Text Color  #
+    #~~~~~~~~~~~~~~~~~#
+
+    ## Sets the KI Text Color from the Chronicle.
+    def DetermineTextColor(self):
+
+        vault = ptVault()
+        entry = vault.findChronicleEntry(kChronicleKITextColor)
+        if entry is not None:
+            colorStr = entry.chronicleGetValue()
+            PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color is: \"{colorStr}\".", level=kWarningLevel)
+            args = colorStr.split(",")
+            try:
+                self.chatMgr.chatTextColor = ptColor(float(args[0]), float(args[1]), float(args[2]))
+            except (IndexError, ValueError):
+                # format is incorrect -- didn't have 3 values, or values weren't floats -- so log an error and destroy all evidence
+                PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color was not in the expected triplet format", level=kWarningLevel)
+                vault.addChronicleEntry(kChronicleKITextColor, kChronicleKITextColorType, "")
+
+
 
     #~~~~~~~~~~#
     # GZ Games #
