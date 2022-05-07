@@ -65,3 +65,24 @@ STATEDESC ChisoPreniv
     VAR BOOL    BookVis09[1]    DEFAULT=1 DEFAULTOPTION=VAULT    # GoMe Pub Ae'gura
 
 }
+
+STATEDESC ChisoPreniv
+{
+    VERSION 2
+
+# Linking Book Visibility SDL Values
+    VAR BOOL    BookVis01[1]                    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis02[1]                    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis03[1]                    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis04[1]                    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis05[1]                    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis06[1]                    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis07[1]                    DEFAULT=0 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis08[1]                    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    BookVis09[1]                    DEFAULT=1 DEFAULTOPTION=VAULT
+# Hidden Door Variable
+    VAR BOOL    chisoDoorStatClosed[1]               DEFAULT=0
+# Naybree Book Show/Hide
+    VAR BOOL    chisoBookVisNaybree[1]          DEFAULT=0 DEFAULTOPTION=VAULT 
+
+}
