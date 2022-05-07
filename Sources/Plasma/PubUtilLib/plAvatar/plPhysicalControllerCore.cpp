@@ -407,19 +407,29 @@ void plWalkingStrategy::Apply(float delSecs)
         // collider, you may have collisions from both the wall (z=0.0) and
         // the floor (z=-1.0)... be sure to use the floor.
         plKey groundPhys = fController->GetGround();
-        float zGround = 1.f;
+        const hsVector3* groundNormal = nullptr;
         for (const auto& contact : fContacts) {
             if (contact.PhysHit == groundPhys) {
-                float zContact = std::abs(contact.Normal.fZ);
-                if (zGround < zContact) {
-                    // OK, so, don't just kill my velocity, ok?
-                    zGround = std::max(0.5f, zContact);
-                }
+                if (!groundNormal || std::abs(contact.Normal.fZ) > std::abs(groundNormal->fZ))
+                    groundNormal = &contact.Normal;
             }
         }
 
-        velocity.fX *= zGround;
-        velocity.fY *= zGround;
+        if (groundNormal) {
+            // The Y component is forward, so use it always. Further, we can go up some pretty
+            // doggone steep slopes, resulting in the theoretical variantion of half of our velocity.
+            // Debounce that by capping the increase or decrease.
+            const float yFactor = (achievedVelocity.fZ < 0.f) ?
+                // Going downhill leg - note that even a small increase in velocity is VERY obvious here.
+                // Therefore, we make no adjustment.
+                1.f :
+                // Going uphill leg. Ideally this would be some kind of non-linear calculation.
+                // That way, going up stairs is much more noticable than running uphill in Relto.
+                // But MEH, you do it.
+                std::max(1.f - std::abs(groundNormal->fY), .9f);
+            velocity.fX *= yFactor;
+            velocity.fY *= yFactor;
+        }
     }
 
     // Now Cyan's good old "slide along all the contacts" code.
