@@ -45,7 +45,7 @@ Module: psnlYeeshaPageChanges
 Age: Personal Age
 Date: January 2002
 Author: Doug McBride
-Customizes a player's Personal Age based on which Yeesha Pages he's found
+Customizes a player's Personal Age based on which Yeesha Pages they've found
 """
 
 from Plasma import *
