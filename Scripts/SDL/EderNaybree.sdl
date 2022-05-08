@@ -1,0 +1,17 @@
+STATEDESC EderNaybree
+{
+    VERSION 1
+    VAR AGETIMEOFDAY            AthsDayNight01[1]
+    VAR BOOL            VCatBookVis[1]        DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL            ExtcolBookVis[1]        DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL            RewardKelsFleeceVis[1]        DEFAULT=0    DEFAULTOPTION=VAULT
+}
+
+STATEDESC EderNaybree
+{
+    VERSION 2
+    VAR AGETIMEOFDAY            NaybreeTimeOfDay[1]
+    VAR BOOL            VCatBookVis[1]        DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL            ExtcolBookVis[1]        DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL            RewardKelsFleeceVis[1]        DEFAULT=0    DEFAULTOPTION=VAULT
+}
