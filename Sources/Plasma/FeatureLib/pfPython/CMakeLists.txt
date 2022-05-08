@@ -18,6 +18,7 @@ set(pfPython_SOURCES
     pyAgeLinkStruct.cpp
     pyAgeVault.cpp
     pyAlarm.cpp
+    pyAsyncTask.cpp
     pyAudioControl.cpp
     pyCCRMgr.cpp
     pyCluster.cpp
@@ -107,6 +108,7 @@ set(pfPython_HEADERS
     pyAgeLinkStruct.h
     pyAgeVault.h
     pyAlarm.h
+    pyAsyncTask.h
     pyAudioControl.h
     pyCCRMgr.h
     pyCluster.h
@@ -190,6 +192,7 @@ set(pfPython_GLUE
     pyAgeInfoStructGlue.cpp
     pyAgeLinkStructGlue.cpp
     pyAgeVaultGlue.cpp
+    pyAsyncTaskGlue.cpp
     pyAudioControlGlue.cpp
     pyClusterGlue.cpp
     pyColorGlue.cpp

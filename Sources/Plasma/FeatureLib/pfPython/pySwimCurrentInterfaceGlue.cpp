@@ -196,6 +196,7 @@ PYTHON_START_GETSET_TABLE(ptSwimCurrentInterface)
 PYTHON_END_GETSET_TABLE;
 
 // Type structure definition
+#define ptSwimCurrentInterface_AS_ASYNC         PYTHON_NO_AS_ASYNC
 #define ptSwimCurrentInterface_AS_NUMBER        PYTHON_NO_AS_NUMBER
 #define ptSwimCurrentInterface_AS_SEQUENCE      PYTHON_NO_AS_SEQUENCE
 #define ptSwimCurrentInterface_AS_MAPPING       PYTHON_NO_AS_MAPPING
@@ -203,6 +204,8 @@ PYTHON_END_GETSET_TABLE;
 #define ptSwimCurrentInterface_SETATTRO         PYTHON_NO_SETATTRO
 #define ptSwimCurrentInterface_STR              PYTHON_NO_STR
 #define ptSwimCurrentInterface_RICH_COMPARE     PYTHON_NO_RICH_COMPARE
+#define ptSwimCurrentInterface_ITER             PYTHON_NO_ITER
+#define ptSwimCurrentInterface_ITERNEXT         PYTHON_NO_ITERNEXT
 #define ptSwimCurrentInterface_GETSET           PYTHON_DEFAULT_GETSET(ptSwimCurrentInterface)
 #define ptSwimCurrentInterface_BASE             PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptSwimCurrentInterface, "Params: key\nCreates a new ptSwimCurrentInterface");

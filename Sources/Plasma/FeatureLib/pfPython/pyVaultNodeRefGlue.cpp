@@ -109,10 +109,13 @@ PYTHON_START_METHODS_TABLE(ptVaultNodeRef)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
+#define ptVaultNodeRef_AS_ASYNC         PYTHON_NO_AS_ASYNC
 #define ptVaultNodeRef_AS_NUMBER        PYTHON_NO_AS_NUMBER
 #define ptVaultNodeRef_AS_SEQUENCE      PYTHON_NO_AS_SEQUENCE
 #define ptVaultNodeRef_AS_MAPPING       PYTHON_NO_AS_MAPPING
 #define ptVaultNodeRef_RICH_COMPARE     PYTHON_NO_RICH_COMPARE
+#define ptVaultNodeRef_ITER             PYTHON_NO_ITER
+#define ptVaultNodeRef_ITERNEXT         PYTHON_NO_ITERNEXT
 #define ptVaultNodeRef_STR              PYTHON_NO_STR
 #define ptVaultNodeRef_GETATTRO         PYTHON_NO_GETATTRO
 #define ptVaultNodeRef_SETATTRO         PYTHON_NO_SETATTRO

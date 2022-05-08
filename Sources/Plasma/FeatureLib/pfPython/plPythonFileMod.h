@@ -42,6 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plPythonFileMod_h_
 #define _plPythonFileMod_h_
 
+#include "plPythonParameter.h"
+
+#include <list>
+
+#include "pnModifier/plMultiModifier.h"
+
 //////////////////////////////////////////////////////////////////////
 //
 // plPythonFileMod   - the 'special' Python File modifier
@@ -50,15 +56,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pnModifier/plMultiModifier.h"
-#include "plPythonParameter.h"
-
 class PythonVaultCallback;
-class plPythonSDLModifier;
-class pyKey;
 class pfPythonKeyCatcher;
+struct pfPythonAwaitable;
 class plKeyEventMsg;
 class plPipeline;
+class plPythonSDLModifier;
+class pyKey;
+class pyObjectRef;
 
 typedef struct _object PyObject;
 
@@ -111,6 +116,9 @@ private:
         kfunc_lastone
     };
 
+    /** Pending awaitables from bound methods */
+    std::list<pfPythonAwaitable> fAwaitables;
+
     template<typename T>
     T* IScriptWantsMsg(func_num methodId, plMessage* msg) const;
 
@@ -125,6 +133,18 @@ private:
      */
     template<typename... Args>
     void ICallScriptMethod(func_num methodId, Args&&... args);
+
+    /**
+     * \brief Handles any awaitables returned by bound methods in this Python script.
+     * \detail Any bound method in the Python script can return an awaitable (in other
+     *         words, can be an `async def` coroutine) that uses serial asynchronous logic
+     *         ... meaning, no callbacks. These will need to be stored and processed until
+     *         completion.
+     * \param aw A potential Python Awaitable object to handle.
+     */
+    void IHandleAwaitable(PyObject* aw);
+
+    void IPumpAwaitables();
 
 protected:
     friend class plPythonSDLModifier;
@@ -215,7 +235,7 @@ public:
     plPipeline* GetPipeline() const { return fPipe; }
     void SetSourceFile(const ST::string& filename) { fPythonFile = filename; }
     int getPythonOutput(std::string* line);
-    void ReportError();
+    void ReportError() const;
     void DisplayPythonOutput();
     static void SetAtConvertTime() { fAtConvertTime = true; }
     bool AmIAttachedToClone() const { return fAmIAttachedToClone; }

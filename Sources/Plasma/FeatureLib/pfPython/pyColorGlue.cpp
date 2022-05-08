@@ -269,6 +269,7 @@ PYTHON_START_METHODS_TABLE(ptColor)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
+#define ptColor_AS_ASYNC        PYTHON_NO_AS_ASYNC
 #define ptColor_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptColor_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptColor_AS_MAPPING      PYTHON_NO_AS_MAPPING
@@ -276,6 +277,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptColor_GETATTRO        PYTHON_NO_GETATTRO
 #define ptColor_SETATTRO        PYTHON_NO_SETATTRO
 #define ptColor_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptColor)
+#define ptColor_ITER            PYTHON_NO_ITER
+#define ptColor_ITERNEXT        PYTHON_NO_ITERNEXT
 #define ptColor_GETSET          PYTHON_NO_GETSET
 #define ptColor_BASE            PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptColor, "Params: red=0, green=0, blue=0, alpha=0\nPlasma color class");

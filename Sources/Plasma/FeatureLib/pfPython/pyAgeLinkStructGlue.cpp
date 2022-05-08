@@ -213,6 +213,7 @@ PYTHON_START_METHODS_TABLE(ptAgeLinkStruct)
 PYTHON_END_METHODS_TABLE;
 
 // type structure definition
+#define ptAgeLinkStruct_AS_ASYNC        PYTHON_NO_AS_ASYNC
 #define ptAgeLinkStruct_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptAgeLinkStruct_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptAgeLinkStruct_AS_MAPPING      PYTHON_NO_AS_MAPPING
@@ -220,6 +221,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptAgeLinkStruct_GETATTRO        PYTHON_NO_GETATTRO
 #define ptAgeLinkStruct_SETATTRO        PYTHON_NO_SETATTRO
 #define ptAgeLinkStruct_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptAgeLinkStruct)
+#define ptAgeLinkStruct_ITER            PYTHON_NO_ITER
+#define ptAgeLinkStruct_ITERNEXT        PYTHON_NO_ITERNEXT
 #define ptAgeLinkStruct_GETSET          PYTHON_NO_GETSET
 #define ptAgeLinkStruct_BASE            PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptAgeLinkStruct, "Class to hold the data of the AgeLink structure");

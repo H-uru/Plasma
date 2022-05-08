@@ -167,6 +167,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyCritterBrain.h"
 
+#include "pyAsyncTask.h"
+
 int32_t PythonInterface::initialized = 0;                 // only need to initialize all of Python once
 bool    PythonInterface::FirstTimeInit = true;           // start with "this is the first time"
 bool    PythonInterface::IsInShutdown = false;           // whether we are _really_ in shutdown mode
@@ -1023,6 +1025,7 @@ void PythonInterface::AddPlasmaMethods(PyObject* m)
     cyAvatar::AddPlasmaMethods(m);
     cyAccountManagement::AddPlasmaMethods(m);
 
+    pyAsyncTask::AddPlasmaMethods(m);
     pyDrawControl::AddPlasmaMethods(m);
     pyGUIDialog::AddPlasmaMethods(m);
     pyImage::AddPlasmaMethods(m);
@@ -1141,6 +1144,9 @@ void PythonInterface::AddPlasmaClasses(PyObject* plasmaMod)
     pyGameScoreListMsg::AddPlasmaClasses(plasmaMod);
     pyGameScoreTransferMsg::AddPlasmaClasses(plasmaMod);
     pyGameScoreUpdateMsg::AddPlasmaClasses(plasmaMod);
+
+    // Async
+    pyAsyncTask::AddPlasmaClasses(plasmaMod);
 }
 
 

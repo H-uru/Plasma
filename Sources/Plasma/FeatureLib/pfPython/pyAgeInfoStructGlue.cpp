@@ -256,6 +256,7 @@ PYTHON_START_METHODS_TABLE(ptAgeInfoStruct)
 PYTHON_END_METHODS_TABLE;
 
 // type structure definition
+#define ptAgeInfoStruct_AS_ASYNC        PYTHON_NO_AS_ASYNC
 #define ptAgeInfoStruct_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptAgeInfoStruct_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptAgeInfoStruct_AS_MAPPING      PYTHON_NO_AS_MAPPING
@@ -263,6 +264,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptAgeInfoStruct_GETATTRO        PYTHON_NO_GETATTRO
 #define ptAgeInfoStruct_SETATTRO        PYTHON_NO_SETATTRO
 #define ptAgeInfoStruct_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptAgeInfoStruct)
+#define ptAgeInfoStruct_ITER            PYTHON_NO_ITER
+#define ptAgeInfoStruct_ITERNEXT        PYTHON_NO_ITERNEXT
 #define ptAgeInfoStruct_GETSET          PYTHON_NO_GETSET
 #define ptAgeInfoStruct_BASE            PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptAgeInfoStruct, "Class to hold AgeInfo struct data");

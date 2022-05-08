@@ -194,6 +194,7 @@ PYTHON_START_METHODS_TABLE(ptImage)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
+#define ptImage_AS_ASYNC        PYTHON_NO_AS_ASYNC
 #define ptImage_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptImage_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptImage_AS_MAPPING      PYTHON_NO_AS_MAPPING
@@ -201,6 +202,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptImage_GETATTRO        PYTHON_NO_GETATTRO
 #define ptImage_SETATTRO        PYTHON_NO_SETATTRO
 #define ptImage_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptImage)
+#define ptImage_ITER            PYTHON_NO_ITER
+#define ptImage_ITERNEXT        PYTHON_NO_ITERNEXT
 #define ptImage_GETSET          PYTHON_NO_GETSET
 #define ptImage_BASE            PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptImage, "Params: imgKey\nPlasma image class");

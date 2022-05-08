@@ -357,6 +357,7 @@ PYTHON_START_METHODS_TABLE(ptGUIControl)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
+#define ptGUIControl_AS_ASYNC       PYTHON_NO_AS_ASYNC
 #define ptGUIControl_AS_NUMBER      PYTHON_NO_AS_NUMBER
 #define ptGUIControl_AS_SEQUENCE    PYTHON_NO_AS_SEQUENCE
 #define ptGUIControl_AS_MAPPING     PYTHON_NO_AS_MAPPING
@@ -364,6 +365,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptGUIControl_GETATTRO       PYTHON_NO_GETATTRO
 #define ptGUIControl_SETATTRO       PYTHON_NO_SETATTRO
 #define ptGUIControl_RICH_COMPARE   PYTHON_DEFAULT_RICH_COMPARE(ptGUIControl)
+#define ptGUIControl_ITER           PYTHON_NO_ITER
+#define ptGUIControl_ITERNEXT       PYTHON_NO_ITERNEXT
 #define ptGUIControl_GETSET         PYTHON_NO_GETSET
 #define ptGUIControl_BASE           PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptGUIControl, "Params: controlKey\nBase class for all GUI controls");

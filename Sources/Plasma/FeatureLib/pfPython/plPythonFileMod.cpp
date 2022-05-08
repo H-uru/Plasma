@@ -142,13 +142,54 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGUIPopUpMenu.h"
 #include "pyGUIControlClickMap.h"
 
+#include "pyAsyncTask.h"
 #include "pyGameScoreMsg.h"
 
 #include "plPythonSDLModifier.h"
 
 #include "plMessage/plTimerCallbackMsg.h"
 
+plProfile_CreateCounterNoReset("AsyncTasks", "Python", PythonAsyncTaskCounter);
+plProfile_CreateCounterNoReset("AwaitedTasks", "Python", PythonAwaitedTaskCounter);
+plProfile_CreateCounterNoReset("ScriptAwaitables", "Python", PythonScriptAwaitableCounter);
 plProfile_CreateTimer("Update", "Python", PythonUpdate);
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// pfPythonAwaitable - a pending awaitable (read: coroutine) from python scripts
+//
+struct pfPythonAwaitable
+{
+    pyObjectRef fAwaitable;
+    pyObjectRef fIterable;
+    plKey fOwner;
+
+    pfPythonAwaitable(pyObjectRef aws, pyObjectRef it, plKey owner)
+        : fAwaitable(std::move(aws)), fIterable(std::move(it)), fOwner(std::move(owner))
+    {
+        plProfile_Inc(PythonScriptAwaitableCounter);
+        fOwner->RefObject();
+    }
+
+    pfPythonAwaitable(const pfPythonAwaitable& copy) = delete;
+
+    pfPythonAwaitable(pfPythonAwaitable&& move)
+        : fAwaitable(std::move(move.fAwaitable)),
+          fIterable(std::move(move.fIterable)),
+          fOwner(std::move(move.fOwner))
+    {
+        // These don't have strong ownership, so we just have to rely on the destruction
+        // of `move` to decrement the counter appropriately.
+        plProfile_Inc(PythonScriptAwaitableCounter);
+        fOwner->RefObject();
+    }
+
+    ~pfPythonAwaitable()
+    {
+        plProfile_Dec(PythonScriptAwaitableCounter);
+        fOwner->UnRefObject();
+    }
+};
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -372,7 +413,44 @@ void plPythonFileMod::ICallScriptMethod(func_num methodId, Args&&... args)
     pyObjectRef retVal = plPython::CallObject(callable, std::forward<Args>(args)...);
     if (!retVal)
         ReportError();
+    IHandleAwaitable(retVal.Get());
     DisplayPythonOutput();
+}
+
+void plPythonFileMod::IHandleAwaitable(PyObject* aw)
+{
+    if (aw == nullptr)
+        return;
+
+    plProfile_BeginTiming(PythonUpdate);
+    pyObjectRef iter = pyAsyncTask::GetAsyncIter(aw);
+    plProfile_EndTiming(PythonUpdate);
+    if (iter) {
+        plProfile_BeginTiming(PythonUpdate);
+        auto [complete, result] = pyAsyncTask::Pump(iter.Get());
+        plProfile_EndTiming(PythonUpdate);
+        if (!complete) {
+            Py_INCREF(aw);
+            fAwaitables.emplace_back(aw, std::move(iter), GetKey());
+        }
+    }
+}
+
+void plPythonFileMod::IPumpAwaitables()
+{
+    for (auto it = fAwaitables.cbegin(); it != fAwaitables.cend();) {
+        plProfile_BeginTiming(PythonUpdate);
+        auto [complete, result] = pyAsyncTask::Pump(it->fIterable.Get());
+        plProfile_EndTiming(PythonUpdate);
+        if (!result)
+            ReportError();
+        DisplayPythonOutput();
+
+        if (complete)
+            it = fAwaitables.erase(it);
+        else
+            ++it;
+    }
 }
 
 #include "plPythonPack.h"
@@ -868,6 +946,7 @@ bool plPythonFileMod::IEval(double secs, float del, uint32_t dirty)
         }
 
         ICallScriptMethod(kfunc_Update, secs, del);
+        IPumpAwaitables();
     }
     return true;
 }
@@ -1668,7 +1747,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
 //
 //  PURPOSE    : Report error to somewhere
 //
-void plPythonFileMod::ReportError()
+void plPythonFileMod::ReportError() const
 {
     ST::string objectName = this->GetKeyName();
     objectName += " - ";

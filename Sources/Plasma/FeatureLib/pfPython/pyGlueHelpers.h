@@ -260,6 +260,8 @@ PYTHON_TYPE_END
 #define PYTHON_NO_RICH_COMPARE nullptr
 
 // default as_ table names
+#define PYTHON_DEFAULT_AS_ASYNC(pythonClassName) &pythonClassName##_as_async
+#define PYTHON_NO_AS_ASYNC nullptr
 #define PYTHON_DEFAULT_AS_NUMBER(pythonClassName) &pythonClassName##_as_number
 #define PYTHON_NO_AS_NUMBER nullptr
 #define PYTHON_DEFAULT_AS_SEQUENCE(pythonClassName) &pythonClassName##_as_sequence
@@ -276,6 +278,12 @@ PYTHON_TYPE_END
 #define PYTHON_NO_GETATTRO nullptr
 #define PYTHON_DEFAULT_SETATTRO PyObject_GenericSetAttr
 #define PYTHON_NO_SETATTRO nullptr
+
+// iter
+#define PYTHON_DEFAULT_ITER(pythonClassName) (getiterfunc)pythonClassName##_iter
+#define PYTHON_NO_ITER nullptr
+#define PYTHON_DEFAULT_ITERNEXT(pythonClassName) (iternextfunc)pythonClassName##_iternext
+#define PYTHON_NO_ITERNEXT nullptr
 
 // get/set table default name
 #define PYTHON_DEFAULT_GETSET(pythonClassName) pythonClassName##_getseters
@@ -295,7 +303,7 @@ PYTHON_TYPE_END
     PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET, \
     nullptr,                            /* tp_getattr */ \
     nullptr,                            /* tp_setattr */ \
-    nullptr,                            /* tp_as_async */ \
+    pythonClassName##_AS_ASYNC,         /* tp_as_async */ \
     nullptr,                            /* tp_repr */ \
     pythonClassName##_AS_NUMBER,        /* tp_as_number */ \
     pythonClassName##_AS_SEQUENCE,      /* tp_as_sequence */ \
@@ -312,8 +320,8 @@ PYTHON_TYPE_END
     nullptr,                            /* tp_clear */ \
     pythonClassName##_RICH_COMPARE,     /* tp_richcompare */ \
     0,                                  /* tp_weaklistoffset */ \
-    nullptr,                            /* tp_iter */ \
-    nullptr,                            /* tp_iternext */ \
+    pythonClassName##_ITER,             /* tp_iter */ \
+    pythonClassName##_ITERNEXT,         /* tp_iternext */ \
     PYTHON_DEFAULT_METHODS_TABLE(pythonClassName),  /* tp_methods */ \
     nullptr,                            /* tp_members */ \
     pythonClassName##_GETSET,           /* tp_getset */ \
@@ -348,7 +356,7 @@ PYTHON_TYPE_START(pythonClassName) \
     PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET, \
     nullptr,                            /* tp_getattr */ \
     nullptr,                            /* tp_setattr */ \
-    nullptr,                            /* tp_compare */ \
+    nullptr,                            /* tp_as_async */ \
     nullptr,                            /* tp_repr */ \
     nullptr,                            /* tp_as_number */ \
     nullptr,                            /* tp_as_sequence */ \
@@ -522,6 +530,10 @@ int pythonClassName##_set##attribName(PyObject *self, PyObject *value, void *clo
 // as_ table macros
 /////////////////////////////////////////////////////////////////////
 
+// as_async table
+#define PYTHON_START_AS_ASYNC_TABLE(pythonClassName) static PyAsyncMethods pythonClassName##_as_async = {
+#define PYTHON_END_AS_ASYNC_TABLE }
+
 // as_number table
 #define PYTHON_START_AS_NUMBER_TABLE(pythonClassName) static PyNumberMethods pythonClassName##_as_number = {
 #define PYTHON_END_AS_NUMBER_TABLE }
@@ -550,6 +562,16 @@ int pythonClassName##_set##attribName(PyObject *self, PyObject *value, void *clo
 
 // str function
 #define PYTHON_STR_DEFINITION(pythonClassName) PyObject *pythonClassName##_str(pythonClassName *self)
+
+/////////////////////////////////////////////////////////////////////
+// iterator macros
+/////////////////////////////////////////////////////////////////////
+
+// tp_iter
+#define PYTHON_ITER_DEFINITION(pythonClassName) static PyObject* pythonClassName##_iter(pythonClassName* self)
+
+// tp_iternext
+#define PYTHON_ITERNEXT_DEFINITION(pythonClassName) static PyObject* pythonClassName##_iternext(pythonClassName* self)
 
 /////////////////////////////////////////////////////////////////////
 // Global function macros (for those functions that aren't in a class)

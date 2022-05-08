@@ -147,11 +147,12 @@ class xTelescope(ptModifier):
             # if the dialog was just loaded then show it
             control.show()
 
-    def OnControlKeyEvent(self,controlKey,activeFlag):
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
-            self.IQuitTelescope()
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
-            self.IQuitTelescope()
+    async def OnControlKeyEvent(self,controlKey,activeFlag):
+        if controlKey in {PlasmaControlKeys.kKeyExitMode,
+                          PlasmaControlKeys.kKeyMoveBackward,
+                          PlasmaControlKeys.kKeyRotateLeft,
+                          PlasmaControlKeys.kKeyRotateRight}:
+            await self.IQuitTelescope()
  
     def IStartTelescope(self):
         "Start the action of looking at the telescope"
@@ -188,7 +189,7 @@ class xTelescope(ptModifier):
         # get control key events
         PtEnableControlKeyEvents(self.key)
 
-    def IQuitTelescope(self):
+    async def IQuitTelescope(self):
         "Disengage and exit the telescope mode"
         global LocalAvatar
         global boolScopeOperator
@@ -211,15 +212,13 @@ class xTelescope(ptModifier):
         boolScopeOperator = 0
         self.SDL["boolOperated"] = (0,)
         self.SDL["OperatorID"] = (-1,)
-        #Re-enable first person camera
-        cam = ptCamera()
-        cam.enableFirstPersonOverride()
-        PtAtTimeCallback(self.key,3,1) # wait for player to finish exit one-shot, then reenable clickable
-        PtDebugPrint("xTelescope.IQuitTelescope:\tdelaying clickable reenable",level=kDebugDumpLevel)
-        
-    def OnTimer(self,id):
-        if id==1:
-            Activate.enable()
-            PtDebugPrint("xTelescope.OnTimer:\tclickable reenabled",level=kDebugDumpLevel)
-            PtSendKIMessage(kEnableKIandBB,0)
 
+        # Re-enable first person camera
+        virtCam.enableFirstPersonOverride()
+
+        # wait for player to finish exit one-shot, then reenable clickable
+        PtDebugPrint("xTelescope.IQuitTelescope:\tdelaying clickable reenable", level=kWarningLevel)
+        await PtSleep(3.0)
+        Activate.enable()
+        PtSendKIMessage(kEnableKIandBB, 0)
+        PtDebugPrint("xTelescope.OnTimer:\tclickable reenabled", level=kWarningLevel)

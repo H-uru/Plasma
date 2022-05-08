@@ -566,6 +566,7 @@ PYTHON_START_GETSET_TABLE(ptSceneobject)
 PYTHON_END_GETSET_TABLE;
 
 // Type structure definition
+#define ptSceneobject_AS_ASYNC          PYTHON_NO_AS_ASYNC
 #define ptSceneobject_AS_NUMBER         PYTHON_NO_AS_NUMBER
 #define ptSceneobject_AS_SEQUENCE       PYTHON_NO_AS_SEQUENCE
 #define ptSceneobject_AS_MAPPING        PYTHON_NO_AS_MAPPING
@@ -573,6 +574,8 @@ PYTHON_END_GETSET_TABLE;
 #define ptSceneobject_GETATTRO          PYTHON_NO_GETATTRO
 #define ptSceneobject_SETATTRO          PYTHON_NO_SETATTRO
 #define ptSceneobject_RICH_COMPARE      PYTHON_DEFAULT_RICH_COMPARE(ptSceneobject)
+#define ptSceneobject_ITER              PYTHON_NO_ITER
+#define ptSceneobject_ITERNEXT          PYTHON_NO_ITERNEXT
 #define ptSceneobject_GETSET            PYTHON_DEFAULT_GETSET(ptSceneobject)
 #define ptSceneobject_BASE              PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptSceneobject, "Params: objKey, selfKey\nPlasma Sceneobject class");

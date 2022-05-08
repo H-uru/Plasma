@@ -312,6 +312,7 @@ PYTHON_START_METHODS_TABLE(ptGUIDialog)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
+#define ptGUIDialog_AS_ASYNC        PYTHON_NO_AS_ASYNC
 #define ptGUIDialog_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptGUIDialog_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptGUIDialog_AS_MAPPING      PYTHON_NO_AS_MAPPING
@@ -319,6 +320,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptGUIDialog_GETATTRO        PYTHON_NO_GETATTRO
 #define ptGUIDialog_SETATTRO        PYTHON_NO_SETATTRO
 #define ptGUIDialog_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptGUIDialog)
+#define ptGUIDialog_ITER            PYTHON_NO_ITER
+#define ptGUIDialog_ITERNEXT        PYTHON_NO_ITERNEXT
 #define ptGUIDialog_GETSET          PYTHON_NO_GETSET
 #define ptGUIDialog_BASE            PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptGUIDialog, "Params: dialogKey\nPlasma GUI dialog class");

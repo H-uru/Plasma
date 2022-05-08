@@ -387,6 +387,7 @@ PYTHON_START_METHODS_TABLE(ptGUIPopUpMenu)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
+#define ptGUIPopUpMenu_AS_ASYNC     PYTHON_NO_AS_ASYNC
 #define ptGUIPopUpMenu_AS_NUMBER    PYTHON_NO_AS_NUMBER
 #define ptGUIPopUpMenu_AS_SEQUENCE  PYTHON_NO_AS_SEQUENCE
 #define ptGUIPopUpMenu_AS_MAPPING   PYTHON_NO_AS_MAPPING
@@ -394,6 +395,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptGUIPopUpMenu_GETATTRO     PYTHON_NO_GETATTRO
 #define ptGUIPopUpMenu_SETATTRO     PYTHON_NO_SETATTRO
 #define ptGUIPopUpMenu_RICH_COMPARE PYTHON_DEFAULT_RICH_COMPARE(ptGUIPopUpMenu)
+#define ptGUIPopUpMenu_ITER         PYTHON_NO_ITER
+#define ptGUIPopUpMenu_ITERNEXT     PYTHON_NO_ITERNEXT
 #define ptGUIPopUpMenu_GETSET       PYTHON_NO_GETSET
 #define ptGUIPopUpMenu_BASE         PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptGUIPopUpMenu, "Params: arg1,arg2=None,arg3=None,arg4=None\nTakes three diferent argument lists:\n"

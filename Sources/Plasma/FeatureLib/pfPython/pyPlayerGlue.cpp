@@ -174,6 +174,7 @@ PYTHON_START_METHODS_TABLE(ptPlayer)
 PYTHON_END_METHODS_TABLE;
 
 // type structure definition
+#define ptPlayer_AS_ASYNC       PYTHON_NO_AS_ASYNC
 #define ptPlayer_AS_NUMBER      PYTHON_NO_AS_NUMBER
 #define ptPlayer_AS_SEQUENCE    PYTHON_NO_AS_SEQUENCE
 #define ptPlayer_AS_MAPPING     PYTHON_NO_AS_MAPPING
@@ -181,6 +182,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptPlayer_GETATTRO       PYTHON_NO_GETATTRO
 #define ptPlayer_SETATTRO       PYTHON_NO_SETATTRO
 #define ptPlayer_RICH_COMPARE   PYTHON_DEFAULT_RICH_COMPARE(ptPlayer)
+#define ptPlayer_ITER           PYTHON_NO_ITER
+#define ptPlayer_ITERNEXT       PYTHON_NO_ITERNEXT
 #define ptPlayer_GETSET         PYTHON_NO_GETSET
 #define ptPlayer_BASE           PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptPlayer, "Params: avkey,name,playerID,distanceSq\nAnd optionally __init__(name,playerID)");

@@ -146,6 +146,7 @@ PYTHON_START_METHODS_TABLE(ptKey)
 PYTHON_END_METHODS_TABLE;
 
 // type structure definition
+#define ptKey_AS_ASYNC      PYTHON_NO_AS_ASYNC
 #define ptKey_AS_NUMBER     PYTHON_NO_AS_NUMBER
 #define ptKey_AS_SEQUENCE   PYTHON_NO_AS_SEQUENCE
 #define ptKey_AS_MAPPING    PYTHON_NO_AS_MAPPING
@@ -153,6 +154,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptKey_GETATTRO      PYTHON_NO_GETATTRO
 #define ptKey_SETATTRO      PYTHON_NO_SETATTRO
 #define ptKey_RICH_COMPARE  PYTHON_DEFAULT_RICH_COMPARE(ptKey)
+#define ptKey_ITER          PYTHON_NO_ITER
+#define ptKey_ITERNEXT      PYTHON_NO_ITERNEXT
 #define ptKey_GETSET        PYTHON_NO_GETSET
 #define ptKey_BASE          PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptKey, "Plasma Key class");

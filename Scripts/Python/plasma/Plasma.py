@@ -43,7 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 from __future__ import annotations
 from PlasmaConstants import *
-from typing import Callable, Optional, Tuple, Union
+from typing import *
+
+# For use in Plasma type annotations for return values
+_R = TypeVar("_R")
 
 def PtAcceptInviteInGame(friendName,inviteKey):
     """Sends a VaultTask to the server to perform the invite"""
@@ -825,6 +828,14 @@ def PtShowDialog(dialogName):
     """Show a GUI dialog by name (does not load dialog)"""
     pass
 
+@overload
+def PtSleep(time: SupportsFloat, /, block: Literal[False] = False) -> ptAsyncTask[None]:
+    ...
+
+@overload
+def PtSleep(time: SupportsFloat, /, block: Literal[True] = False) -> None:
+    ...
+
 def PtStartScreenCapture(selfKey,width=800,height=600):
     """Starts a capture of the screen"""
     pass
@@ -862,6 +873,16 @@ def PtValidateKey(key):
     """Returns true(1) if 'key' is valid and loaded,
 otherwise returns false(0)"""
     pass
+
+@overload
+def PtWaitFor(aws: Iterable[Awaitable[R]], /, timeout: Optional[SupportsFloat] = None, block: Literal[False] = False) -> Tuple[Sequence[Awaitable[R]], Sequence[Awaitable[R]]]:
+    """Wait on the awaitables in the iterable aws to complete."""
+    ...
+
+@overload
+def PtWaitFor(aws: Iterable[Awaitable[R]], /, timeout: Optional[SupportsFloat] = None, block: Literal[True] = False) -> Tuple[Sequence[Awaitable[R]], Sequence[Awaitable[R]]]:
+    """Wait on the awaitables in the iterable aws to complete."""
+    ...
 
 def PtWasLocallyNotified(selfKey):
     """Returns 1 if the last notify was local or 0 if the notify originated on the network"""
@@ -1269,6 +1290,27 @@ Such as a game master, only running on the client that owns a particular object"
     def stop(self):
         """Stops the animation"""
         pass
+
+class ptAsyncTask(Awaitable[_R]):
+    """An asynchronously completed task"""
+    def __init__(self, aw: Optional[Awaitable[_R]] = None):
+        ...
+
+    def getResult(self, *, block: bool = False) -> _R:
+        """Returns the result of this task. Raises `RuntimeError` if the task is not complete when non-blocking."""
+        ...
+
+    def hasException(self) -> bool:
+        """Gets if the task has an exception set."""
+        ...
+
+    def isDone(self) -> bool:
+        """Gets if the task is done (has a valid result or exception set)."""
+        ...
+
+    def setResult(self, result: _R) -> None:
+        """Sets the result of this task. NOTE: This will override and discard any result the engine would otherwise report."""
+        ...
 
 class ptAudioControl:
     """Accessor class to the Audio controls"""

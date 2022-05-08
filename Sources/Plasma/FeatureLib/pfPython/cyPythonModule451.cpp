@@ -232,6 +232,7 @@ PYTHON_START_METHODS_TABLE(ptModulePackSpec)
     // no methods
 PYTHON_END_METHODS_TABLE;
 
+#define ptModulePackSpec_AS_ASYNC       PYTHON_NO_AS_ASYNC
 #define ptModulePackSpec_AS_NUMBER      PYTHON_NO_AS_NUMBER
 #define ptModulePackSpec_AS_SEQUENCE    PYTHON_NO_AS_SEQUENCE
 #define ptModulePackSpec_AS_MAPPING     PYTHON_NO_AS_MAPPING
@@ -239,6 +240,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptModulePackSpec_GETATTRO       PYTHON_DEFAULT_GETATTRO
 #define ptModulePackSpec_SETATTRO       PYTHON_DEFAULT_SETATTRO
 #define ptModulePackSpec_RICH_COMPARE   PYTHON_NO_RICH_COMPARE
+#define ptModulePackSpec_ITER           PYTHON_NO_ITER
+#define ptModulePackSpec_ITERNEXT       PYTHON_NO_ITERNEXT
 #define ptModulePackSpec_GETSET         PYTHON_DEFAULT_GETSET(ptModulePackSpec)
 #define ptModulePackSpec_BASE           PYTHON_NO_BASE
 

@@ -420,6 +420,7 @@ PYTHON_START_METHODS_TABLE(ptCritterBrain)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
+#define ptCritterBrain_AS_ASYNC     PYTHON_NO_AS_ASYNC
 #define ptCritterBrain_AS_NUMBER    PYTHON_NO_AS_NUMBER
 #define ptCritterBrain_AS_SEQUENCE  PYTHON_NO_AS_SEQUENCE
 #define ptCritterBrain_AS_MAPPING   PYTHON_NO_AS_MAPPING
@@ -427,6 +428,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptCritterBrain_GETATTRO     PYTHON_NO_GETATTRO
 #define ptCritterBrain_SETATTRO     PYTHON_NO_SETATTRO
 #define ptCritterBrain_RICH_COMPARE PYTHON_DEFAULT_RICH_COMPARE(ptCritterBrain)
+#define ptCritterBrain_ITER         PYTHON_NO_ITER
+#define ptCritterBrain_ITERNEXT     PYTHON_NO_ITERNEXT
 #define ptCritterBrain_GETSET       PYTHON_NO_GETSET
 #define ptCritterBrain_BASE         PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptCritterBrain, "Object to manipulate critter brains");

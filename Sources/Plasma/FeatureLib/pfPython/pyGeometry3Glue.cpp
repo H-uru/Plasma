@@ -430,6 +430,7 @@ PYTHON_START_AS_NUMBER_TABLE(ptVector3)
 PYTHON_END_AS_NUMBER_TABLE;
 
 // Type structure definition
+#define ptVector3_AS_ASYNC      PYTHON_NO_AS_ASYNC
 #define ptVector3_AS_NUMBER     PYTHON_DEFAULT_AS_NUMBER(ptVector3)
 #define ptVector3_AS_SEQUENCE   PYTHON_NO_AS_SEQUENCE
 #define ptVector3_AS_MAPPING    PYTHON_NO_AS_MAPPING
@@ -437,6 +438,8 @@ PYTHON_END_AS_NUMBER_TABLE;
 #define ptVector3_GETATTRO      PYTHON_NO_GETATTRO
 #define ptVector3_SETATTRO      PYTHON_NO_SETATTRO
 #define ptVector3_RICH_COMPARE  PYTHON_NO_RICH_COMPARE
+#define ptVector3_ITER          PYTHON_NO_ITER
+#define ptVector3_ITERNEXT      PYTHON_NO_ITERNEXT
 #define ptVector3_GETSET        PYTHON_NO_GETSET
 #define ptVector3_BASE          PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptVector3, "Params: x=0, y=0, z=0\nPlasma 3D Vector class");

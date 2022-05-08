@@ -513,6 +513,7 @@ PYTHON_START_METHODS_TABLE(ptVaultNode)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
+#define ptVaultNode_AS_ASYNC        PYTHON_NO_AS_ASYNC
 #define ptVaultNode_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptVaultNode_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptVaultNode_AS_MAPPING      PYTHON_NO_AS_MAPPING
@@ -520,6 +521,8 @@ PYTHON_END_METHODS_TABLE;
 #define ptVaultNode_GETATTRO        PYTHON_NO_GETATTRO
 #define ptVaultNode_SETATTRO        PYTHON_NO_SETATTRO
 #define ptVaultNode_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptVaultNode)
+#define ptVaultNode_ITER            PYTHON_NO_ITER
+#define ptVaultNode_ITERNEXT        PYTHON_NO_ITERNEXT
 #define ptVaultNode_GETSET          PYTHON_NO_GETSET
 #define ptVaultNode_BASE            PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptVaultNode, "Vault node class");
