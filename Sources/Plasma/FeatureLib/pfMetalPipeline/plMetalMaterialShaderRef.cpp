@@ -577,7 +577,7 @@ void plMetalMaterialShaderRef::GetMiscFlagArray(uint32_t *array, uint8_t pass) {
     }
 }
 
-void plMetalMaterialShaderRef::GetSampleTypeArray(size_t *array, uint8_t pass) {
+void plMetalMaterialShaderRef::GetSampleTypeArray(uint8_t *array, uint8_t pass) {
     memset(array, 0, sizeof(uint8_t) * 8);
     
     uint16_t currNumLayers = fPassLengths[pass];

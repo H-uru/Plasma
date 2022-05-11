@@ -170,20 +170,20 @@ constant const uint32_t miscFlags6 [[ function_constant(FunctionConstantLayerFla
 constant const uint32_t miscFlags7 [[ function_constant(FunctionConstantLayerFlags + 6)    ]];
 constant const uint32_t miscFlags8 [[ function_constant(FunctionConstantLayerFlags + 7)    ]];
     
-constant const uint32_t sampleType1 [[ function_constant(FunctionConstantSampleTypes + 0)    ]];
-constant const uint32_t sampleType2 [[ function_constant(FunctionConstantSampleTypes + 1)    ]];
-constant const uint32_t sampleType3 [[ function_constant(FunctionConstantSampleTypes + 2)    ]];
-constant const uint32_t sampleType4 [[ function_constant(FunctionConstantSampleTypes + 3)    ]];
-constant const uint32_t sampleType5 [[ function_constant(FunctionConstantSampleTypes + 4)    ]];
-constant const uint32_t sampleType6 [[ function_constant(FunctionConstantSampleTypes + 5)    ]];
-constant const uint32_t sampleType7 [[ function_constant(FunctionConstantSampleTypes + 6)    ]];
-constant const uint32_t sampleType8 [[ function_constant(FunctionConstantSampleTypes + 7)    ]];
+constant const uint8_t sampleType1 [[ function_constant(FunctionConstantSampleTypes + 0)    ]];
+constant const uint8_t sampleType2 [[ function_constant(FunctionConstantSampleTypes + 1)    ]];
+constant const uint8_t sampleType3 [[ function_constant(FunctionConstantSampleTypes + 2)    ]];
+constant const uint8_t sampleType4 [[ function_constant(FunctionConstantSampleTypes + 3)    ]];
+constant const uint8_t sampleType5 [[ function_constant(FunctionConstantSampleTypes + 4)    ]];
+constant const uint8_t sampleType6 [[ function_constant(FunctionConstantSampleTypes + 5)    ]];
+constant const uint8_t sampleType7 [[ function_constant(FunctionConstantSampleTypes + 6)    ]];
+constant const uint8_t sampleType8 [[ function_constant(FunctionConstantSampleTypes + 7)    ]];
 
 #define MAX_BLEND_PASSES 8
 constant const uint8_t sourceTypes[MAX_BLEND_PASSES] = { sourceType1, sourceType2, sourceType3, sourceType4, sourceType5, sourceType6, sourceType7, sourceType8};
 constant const uint32_t blendModes[MAX_BLEND_PASSES] = { blendModes1, blendModes2, blendModes3, blendModes4, blendModes5, blendModes6, blendModes7, blendModes8};
 constant const uint32_t miscFlags[MAX_BLEND_PASSES] = { miscFlags1, miscFlags2, miscFlags3, miscFlags4, miscFlags5, miscFlags6, miscFlags7, miscFlags8};
-constant const uint32_t sampleTypes[MAX_BLEND_PASSES] = { sampleType1, sampleType2, sampleType3, sampleType4, sampleType5, sampleType6, sampleType7, sampleType8};
+constant const uint8_t sampleTypes[MAX_BLEND_PASSES] = { sampleType1, sampleType2, sampleType3, sampleType4, sampleType5, sampleType6, sampleType7, sampleType8};
 constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
     
 typedef struct  {
@@ -488,7 +488,7 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 verte
          with a constant. Using an array based lookup was hurting performance by
          about 1/3rd on Apple Silicon.
          */
-        const uint32_t sampleType = sampleTypes[index];
+        const uint8_t sampleType = sampleTypes[index];
         sampler colorSampler = repeatSampler;
         if(sampleType == 1) {
             colorSampler = clampRepeatSampler;

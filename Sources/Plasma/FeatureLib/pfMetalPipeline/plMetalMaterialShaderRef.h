@@ -96,7 +96,7 @@ public:
     void GetSourceArray(uint8_t *array, uint8_t pass);
     void GetBlendFlagArray(uint32_t *array, uint8_t pass);
     void GetMiscFlagArray(uint32_t *array, uint8_t pass);
-    void GetSampleTypeArray(size_t *array, uint8_t pass);
+    void GetSampleTypeArray(uint8_t *array, uint8_t pass);
 private:
     void ILoopOverLayers();
     

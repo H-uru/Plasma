@@ -1558,7 +1558,7 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
         uint8_t sources[8];
         uint32_t blendModes[8];
         uint32_t miscFlags[8];
-        size_t sampleTypes[8];
+        uint8_t sampleTypes[8];
         memset(sources, 0, sizeof(sources));
         memset(blendModes, 0, sizeof(blendModes));
         memset(miscFlags, 0, sizeof(miscFlags));

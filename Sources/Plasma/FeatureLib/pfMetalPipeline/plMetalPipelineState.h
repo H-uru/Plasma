@@ -116,7 +116,7 @@ struct plMetalMaterialPassDescription {
     uint8_t     passTypes[8];
     uint32_t    blendModes[8];
     uint32_t    miscFlags[8];
-    uint32_t    sampleTypes[8];
+    uint8_t     sampleTypes[8];
     uint8_t     numLayers;
     
     bool operator==(const plMetalMaterialPassDescription &p) const {
