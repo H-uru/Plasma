@@ -62,6 +62,7 @@ GUIDialogObject = ptAttribSceneobject(2, "GUIDialog scene object")
 RespOpen = ptAttribResponder(3, "Open Responder")
 RespLoop = ptAttribResponder(4, "Loop Responder")
 RespClose = ptAttribResponder(5, "Close Responder")
+RespGlow = ptAttribResponder(6, "Glow Responder",['GlowSound','PageTurn'])
 
 #Linking Books GUI tags
 DialogName="YeeshaPageGUI"
@@ -147,35 +148,28 @@ class clftYeeshaPage08(ptModifier):
         if isinstance(control,ptGUIControlButton):
             btnID = control.getTagID()
 
-        if event == kShowHide:
-            if control.isEnabled():
-                #control.show()
-                if self.GotPage():
-                    mydialog = PtGetDialogFromString(DialogName)
-                    ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage08)).disable()
-
-        elif event == kAction and btnID == kYeeshaPage08:
+        if event == kAction and btnID == kYeeshaPage08:
             PtDebugPrint("DEBUG: clftYeeshaPage08.OnGUINotify():\tPicked up page")
 
             RespClose.run(self.key)
             isOpen = 0
             PtHideDialog(DialogName)
             self.SetStdGUIVisibility(1)
+            RespGlow.run(self.key, state='GlowSound')
     
             if self.GotPage(): 
                 PtDebugPrint ("DEBUG: clftYeeshaPage08.py: You've already found Yeesha Page #8. Move along. Move along.")
                 return
             else:
                 PtDebugPrint ("DEBUG: clftYeeshaPage08.py: Yeesha Page #8 is new to you.")       
-                PtDebugPrint ("DEBUG: clftYeeshaPage08.py: Trying to update the value of the SDL variable %s to 1" % ("YeeshaPage8"))
+                PtDebugPrint ("DEBUG: clftYeeshaPage08.py: Trying to update the value of the SDL variable %s to 4" % ("YeeshaPage8"))
                 vault = ptVault()  
                 psnlSDL = vault.getPsnlAgeSDL()
                 if psnlSDL:
                     YeeshaPageVar = psnlSDL.findVar("YeeshaPage8")    
-                    YeeshaPageVar.setInt(1)
+                    YeeshaPageVar.setInt(4)
                     vault.updatePsnlAgeSDL (psnlSDL)
                     mydialog = PtGetDialogFromString(DialogName)
-                    ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage08)).disable()
                     PtSendKIMessageInt(kStartBookAlert,0)
 
         elif event == kAction and btnID == kYeeshaPageCancel:
