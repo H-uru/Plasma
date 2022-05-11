@@ -99,11 +99,13 @@ xYeeshaPage23 = ( "YeeshaPage23", '<pb><img src="xYeeshaPageAlphaSketchErcaPlant
 xYeeshaPage24 = ( "YeeshaPage24", '<pb><img src="xYeeshaPageAlphaSketchStorm*1#0.hsm" align=center check=00ff18,00800c,%d link=25>' )
 xYeeshaPage25 = ( "YeeshaPage25", '<pb><img src="xYeeshaPageAlphaSketch14*1#0.hsm" align=center check=00ff18,00800c,%d link=26>' )
 xYeeshaPage26 = ( "YeeshaPage26", '<pb><img src="xYeeshaPageVeelay7.dds" align=center check=00ff18,00800c,%d link=27>' )
+xYeeshaPage27 = ( "YeeshaPage27", '<pb><img src="xYeeshaPageOcean.dds" align=center check=00ff18,00800c,%d link=28>' )
 
 
 xYeeshaPages = [ xYeeshaPage1, xYeeshaPage2, xYeeshaPage3, xYeeshaPage4, xYeeshaPage5, xYeeshaPage6, xYeeshaPage7,\
                 xYeeshaPage8, xYeeshaPage9, xYeeshaPage10, xYeeshaPage12, xYeeshaPage13, xYeeshaPage14, xYeeshaPage15,\
-                xYeeshaPage16, xYeeshaPage17, xYeeshaPage18, xYeeshaPage19, xYeeshaPage20, xYeeshaPage21, xYeeshaPage22, xYeeshaPage23, xYeeshaPage24, xYeeshaPage25, xYeeshaPage26 ]
+                xYeeshaPage16, xYeeshaPage17, xYeeshaPage18, xYeeshaPage19, xYeeshaPage20, xYeeshaPage21, xYeeshaPage22,\
+                xYeeshaPage23, xYeeshaPage24, xYeeshaPage25, xYeeshaPage26, xYeeshaPage27 ]
 
 
 
