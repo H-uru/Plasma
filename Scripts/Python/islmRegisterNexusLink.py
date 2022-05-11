@@ -109,7 +109,7 @@ class islmRegisterNexusLink(ptModifier):
                     PtDebugPrint("islmRegisterNexusLink.OnNotify(): Chronicle entry 'GotLinkToKveerPublic' not present, adding entry and setting to 'yes'")
                     PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NexusLinkAdded"))
             # Hacking away for GoMe Pub
-            if stationName.value == "GoMePubNew":
+            elif stationName.value == "GoMePubNew":
                 entryName = "GotLinkToGoMePublic"
                 entry = vault.findChronicleEntry(entryName)
                 if entry is not None:
