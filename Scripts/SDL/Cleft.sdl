@@ -212,3 +212,47 @@ STATEDESC Cleft
     VAR BOOL    clftIsCleftDone[1]    DEFAULT=0 DISPLAYOPTION=red
 }
 
+
+STATEDESC Cleft
+{
+	VERSION 25
+
+# Boolean variables
+
+    VAR BOOL    clftJourneyCloth01Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth02Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth03Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth04Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth05Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth06Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftJourneyCloth07Vis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftZandiShirtVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftAtrusGogglesVis[1]    DEFAULT=1 DEFAULTOPTION=VAULT
+    VAR BOOL    clftYeeshaPage19Vis[1]    DEFAULT=0 DISPLAYOPTION=VAULT
+    VAR BOOL    clftYeeshaPage28Vis[1]    DEFAULT=0 DISPLAYOPTION=VAULT
+
+# Age Mechanics
+
+    VAR BOOL    clftAgeSDLWindmillLocked[1] DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftAgeSDLWindmillRunning[1] DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftBahroDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftJourneysVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaBookVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftZandiVis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaPage08Vis[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftBridgeCollapse[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftBucketLowered[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftKitchenDoorClosed[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftOfficeDoorClosed[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftTomahnaActive[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftSceneYeeshaUnseen[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BOOL    clftSceneBahroUnseen[1]    DEFAULT=1 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelN[1]    DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelS[1]    DEFAULT=5 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelE[1]    DEFAULT=3 DISPLAYOPTION=red
+    VAR BYTE    clftImagerPanelW[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftWindmillUnstuck[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftYeeshaShowJC[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL    clftIsCleftDone[1]    DEFAULT=0 DISPLAYOPTION=red
+}
+
