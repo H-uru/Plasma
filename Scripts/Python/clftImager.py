@@ -441,7 +441,7 @@ class clftImager(ptResponder):
                 PlayFull = 1
                 PlayFinal = 0
                 PtDebugPrint("play full opening speech")
-            elif (IsCleftSolved() and self.TPOTSolved()):
+            elif (StartInRelto() and self.TPOTSolved()):
                 PlayFull = 0
                 PlayFinal = 0
                 PlayTPOT = 1
