@@ -638,10 +638,6 @@ class xKIChat(object):
 
                 chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
 
-                # Write to the log file.
-                if self.chatLogFile is not None and self.chatLogFile.isOpen():
-                    self.chatLogFile.write(chatHeaderFormatted[0:] + chatMessageFormatted)
-
                 # If the chat is overflowing, erase the first line.
                 if chatArea.getBufferSize() > kChat.MaxChatSize:
                     while chatArea.getBufferSize() > kChat.MaxChatSize and chatArea.getBufferSize() > 0:
@@ -658,6 +654,10 @@ class xKIChat(object):
                     # flash the down arrow to indicate that new chat has come in
                     self.incomingChatFlashState = 3
                     PtAtTimeCallback(self.key, 0.0, kTimers.IncomingChatFlash)
+
+        # Write to the log file.
+        if self.chatLogFile is not None and self.chatLogFile.isOpen():
+            self.chatLogFile.write(chatHeaderFormatted[0:] + chatMessageFormatted)
 
         # Update the fading controls.
         self.ResetFadeState()
