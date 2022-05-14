@@ -1249,40 +1249,39 @@ class CommandsProcessor:
             self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Errors.MalformedChatSetTextColorCmd"), kChat.SystemMessage)
             return
 
-        if arg2 and arg3:
-            try:
-                colorRed = int(arg1)
-                colorBlue = int(arg2)
-                colorGreen = int(arg3)
-            except ValueError:
-                # arguments weren't valid integer numbers, so we will try treating them as floats below
-                pass
-            else:
-                # args were a valid set of integer numbers
-                colorRed = clamp(colorRed, 0, 255)
-                colorBlue = clamp(colorBlue, 0, 255)
-                colorGreen = clamp(colorGreen, 0, 255)
-                self.chatMgr.chatTextColor = ptColor(colorRed / 255.0, colorBlue / 255.0, colorGreen / 255.0)
-                self.UpdateTextColorChronicle()
-                self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [f"({colorRed}, {colorBlue}, {colorGreen})"]))
-                return
+        try:
+            colorRed = int(arg1)
+            colorBlue = int(arg2)
+            colorGreen = int(arg3)
+        except (TypeError, ValueError):
+            # arguments weren't valid integer numbers, so we will try treating them as floats below
+            pass
+        else:
+            # args were a valid set of integer numbers
+            colorRed = clamp(colorRed, 0, 255)
+            colorBlue = clamp(colorBlue, 0, 255)
+            colorGreen = clamp(colorGreen, 0, 255)
+            self.chatMgr.chatTextColor = ptColor(colorRed / 255.0, colorBlue / 255.0, colorGreen / 255.0)
+            self.UpdateTextColorChronicle()
+            self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [f"({colorRed}, {colorBlue}, {colorGreen})"]))
+            return
 
-            try:
-                colorRed = float(arg1)
-                colorBlue = float(arg2)
-                colorGreen = float(arg3)
-            except ValueError:
-                # arguments weren't valid float numbers, so we will try treating arg1 as a string below
-                pass
-            else:
-                # args were a valid set of float numbers
-                colorRed = clamp(colorRed, 0.0, 1.0)
-                colorBlue = clamp(colorBlue, 0.0, 1.0)
-                colorGreen = clamp(colorGreen, 0.0, 1.0)
-                self.chatMgr.chatTextColor = ptColor(colorRed, colorBlue, colorGreen)
-                self.UpdateTextColorChronicle()
-                self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [f"({colorRed}, {colorBlue}, {colorGreen})"]))
-                return
+        try:
+            colorRed = float(arg1)
+            colorBlue = float(arg2)
+            colorGreen = float(arg3)
+        except (TypeError, ValueError):
+            # arguments weren't valid float numbers, so we will try treating arg1 as a string below
+            pass
+        else:
+            # args were a valid set of float numbers
+            colorRed = clamp(colorRed, 0.0, 1.0)
+            colorBlue = clamp(colorBlue, 0.0, 1.0)
+            colorGreen = clamp(colorGreen, 0.0, 1.0)
+            self.chatMgr.chatTextColor = ptColor(colorRed, colorBlue, colorGreen)
+            self.UpdateTextColorChronicle()
+            self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Chat.TextColorSetValue", [f"({colorRed}, {colorBlue}, {colorGreen})"]))
+            return
 
         newColor = arg1.strip().casefold()
         if newColor in kColorNames:
