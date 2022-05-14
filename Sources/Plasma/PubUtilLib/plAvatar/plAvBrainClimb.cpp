@@ -333,7 +333,7 @@ bool plAvBrainClimb::IProcessExitStage(double time, float elapsed)
 
     float curBlend = ai->GetBlend();
     
-    if(curBlend > .99)      // reached peak strength
+    if(fCurStage && curBlend > .99)      // reached peak strength
     {
         fCurStage->Detach(fAvMod);  // remove the (now completely masked) underlying anim
         fCurStage = nullptr;
