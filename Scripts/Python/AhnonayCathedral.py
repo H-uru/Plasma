@@ -60,32 +60,47 @@ class AhnonayCathedral(ptResponder):
         pass
 
     def OnServerInitComplete(self):
-        owner = None
         vault = ptVault()
-        ageStruct = ptAgeInfoStruct()
-        ageStruct.setAgeFilename("Personal")
-        ageLinkNode = vault.getOwnedAgeLink(ageStruct)
-        if ageLinkNode:
-            ageInfoNode = ageLinkNode.getAgeInfo()
-            ageInfoChildren = ageInfoNode.getChildNodeRefList()
-            for ageInfoChildRef in ageInfoChildren:
-                ageInfoChild = ageInfoChildRef.getChild()
-                folder = ageInfoChild.upcastToFolderNode()
-                if folder and folder.folderGetName() == "AgeData":
-                    ageDataFolder = folder
-                    ageDataChildren = folder.getChildNodeRefList()
-                    for ageDataChildRef in ageDataChildren:
-                        ageDataChild = ageDataChildRef.getChild()
-                        chron = ageDataChild.upcastToChronicleNode()
-                        if chron and chron.getName() == "AhnonayOwner":
-                            owner = chron
-                    break
-        if owner == None and vault.amOwnerOfCurrentAge():
-            PtDebugPrint("I own this Cathedral, but I haven't set myself as Ahnonay owner yet.")
-            newNode = ptVaultChronicleNode(0)
-            newNode.chronicleSetName("AhnonayOwner")
-            newNode.chronicleSetValue(str(PtGetClientIDFromAvatarKey(PtGetLocalAvatar().getKey())))
-            ageDataFolder.addNode(newNode)
+        if vault.amOwnerOfCurrentAge():
+            owner = None
+            guid = None
+            ageVault = ptAgeVault()
+            ageStruct = ptAgeInfoStruct()
+            ageStruct.setAgeFilename("Ahnonay")
+            ageLinkNode = ageVault.getSubAgeLink(ageStruct)
+            if ageLinkNode:
+                ageInfoNode = ageLinkNode.getAgeInfo()
+                guid = ageInfoNode.getAgeInstanceGuid()
+
+            ageStruct = ptAgeInfoStruct()
+            ageStruct.setAgeFilename("Personal")
+            ageLinkNode = vault.getOwnedAgeLink(ageStruct)
+            if ageLinkNode:
+                ageInfoNode = ageLinkNode.getAgeInfo()
+                ageInfoChildren = ageInfoNode.getChildNodeRefList()
+                for ageInfoChildRef in ageInfoChildren:
+                    ageInfoChild = ageInfoChildRef.getChild()
+                    folder = ageInfoChild.upcastToFolderNode()
+                    if folder and folder.folderGetName() == "AgeData":
+                        ageDataFolder = folder
+                        ageDataChildren = folder.getChildNodeRefList()
+                        for ageDataChildRef in ageDataChildren:
+                            ageDataChild = ageDataChildRef.getChild()
+                            chron = ageDataChild.upcastToChronicleNode()
+                            if chron and chron.getName() == "AhnonayLink" and guid and chron.getValue() != guid:
+                                PtDebugPrint("Wrong Ahnonay GUID, fixing so you go to correct instance from relto bookshelf")
+                                chron.setValue(guid)
+                                chron.save()
+                            elif chron and chron.getName() == "AhnonayOwner":
+                                owner = chron
+                        break
+
+            if owner == None:
+                PtDebugPrint("I own this Cathedral, but I haven't set myself as Ahnonay owner yet.")
+                newNode = ptVaultChronicleNode(0)
+                newNode.chronicleSetName("AhnonayOwner")
+                newNode.chronicleSetValue(str(PtGetClientIDFromAvatarKey(PtGetLocalAvatar().getKey())))
+                ageDataFolder.addNode(newNode)
 
     def OnNotify(self,state,id,events):
         pass
