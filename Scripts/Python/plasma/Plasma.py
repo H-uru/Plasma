@@ -6639,7 +6639,7 @@ class ptVaultNode:
         """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -6822,7 +6822,7 @@ class ptVaultFolderNode(ptVaultNode):
         """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -7053,7 +7053,7 @@ class ptVaultAgeInfoListNode(ptVaultFolderNode):
         """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -7292,7 +7292,7 @@ class ptVaultAgeInfoNode(ptVaultNode):
         """Returns this ptVaultAgeInfoNode as a ptAgeInfoStruct"""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -7583,7 +7583,7 @@ class ptVaultAgeLinkNode(ptVaultNode):
         """Returns this ptVaultAgeLinkNode as a ptAgeLinkStruct"""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -7822,7 +7822,7 @@ class ptVaultChronicleNode(ptVaultNode):
         """LEGACY: Sets the chronicle to a value that is a string"""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -8029,7 +8029,7 @@ class ptVaultImageNode(ptVaultNode):
         """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -8264,7 +8264,7 @@ class ptVaultMarkerGameNode(ptVaultNode):
         """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -8513,7 +8513,7 @@ class ptVaultPlayerInfoListNode(ptVaultFolderNode):
         """Adds playerID player to this player info list node."""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -8772,7 +8772,7 @@ class ptVaultPlayerInfoNode(ptVaultNode):
         """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -8999,7 +8999,7 @@ class ptVaultSDLNode(ptVaultNode):
         """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -9202,7 +9202,7 @@ class ptVaultSystemNode(ptVaultNode):
         """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
@@ -9385,7 +9385,7 @@ class ptVaultTextNoteNode(ptVaultNode):
         """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
-    def findNode(self,templateNode):
+    def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
