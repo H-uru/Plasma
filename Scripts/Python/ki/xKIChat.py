@@ -1253,7 +1253,7 @@ class CommandsProcessor:
             colorRed = int(arg1)
             colorBlue = int(arg2)
             colorGreen = int(arg3)
-        except ValueError:
+        except (TypeError, ValueError):
             # arguments weren't valid integer numbers, so we will try treating them as floats below
             pass
         else:
@@ -1270,7 +1270,7 @@ class CommandsProcessor:
             colorRed = float(arg1)
             colorBlue = float(arg2)
             colorGreen = float(arg3)
-        except ValueError:
+        except (TypeError, ValueError):
             # arguments weren't valid float numbers, so we will try treating arg1 as a string below
             pass
         else:
