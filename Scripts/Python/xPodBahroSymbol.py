@@ -52,11 +52,11 @@ from PlasmaTypes import *
 import random
 
 # define the attributes that will be entered in max
-respBahroSymbol         = ptAttribResponder(1, "resp: Bahro Symbol", ["beginning","middle","end"], netForce=1)
+respBahroSymbol         = ptAttribResponder(1, "resp: Bahro Symbol", ["beginning","middle","end"])
 SymbolAppears           = ptAttribInt(2, "Frame the Symbol Appears", 226, (0,5000))
 DayFrameSize            = ptAttribInt(3, "Frames in One Day", 2000, (0,5000))
 animMasterDayLight      = ptAttribAnimation(4, "Master Animation Object")
-respSFX                 = ptAttribResponder(5, "resp: Symbol SFX", ["stop","play"],netForce = 1)
+respSFX                 = ptAttribResponder(5, "resp: Symbol SFX", ["stop","play"])
 
 # define globals
 kDayLengthInSeconds = 56585.0
@@ -102,6 +102,17 @@ class xPodBahroSymbol(ptResponder):
     def OnNotify(self,state,id,events):
         PtDebugPrint("xPodBahroSymbol.OnNotify:  state=%f id=%d events=" % (state,id),events)
 
+        if (id == -1 and events[0][1] == 'beginning'):
+            respBahroSymbol.run(self.key, state="beginning", netPropagate=False)
+            respSFX.run(self.key, state="play", netPropagate=False)
+            
+        if (id == -1 and events[0][1] == 'end'):
+            respBahroSymbol.run(self.key, state="end", netPropagate=False)
+            respSFX.run(self.key, state="stop", netPropagate=False)
+            
+        if (id == -1 and events[0][1] == 'reset'):
+            self.ISetTimers()
+
         if id == respBahroSymbol.id:
             PtAtTimeCallback(self.key, 32, 3)
 
@@ -110,13 +121,11 @@ class xPodBahroSymbol(ptResponder):
         PtDebugPrint("xPodBahroSymbol.OnTimer: callback id=%d" % (TimerID))
         if self.sceneobject.isLocallyOwned():
             if TimerID == 1:
-                respBahroSymbol.run(self.key, state="beginning")
-                respSFX.run(self.key, state="play")
+                self.SendNote('beginning')
             elif TimerID == 2:
-                self.ISetTimers()
+                self.SendNote('reset')
             elif TimerID == 3:
-                respBahroSymbol.run(self.key, state="end")
-                respSFX.run(self.key, state="stop")
+                self.SendNote('end')
 
     ###########################
     def ISetTimers(self):
@@ -142,4 +151,14 @@ class xPodBahroSymbol(ptResponder):
                 PtDebugPrint("xPodBahroSymbol.OnBackdoorMsg: Work!")
                 if param == "appear":
                     PtAtTimeCallback(self.key, 1, 1)
+
+    def SendNote(self, ExtraInfo):
+        notify = ptNotify(self.key)
+        notify.clearReceivers()                
+        notify.addReceiver(self.key)        
+        notify.netPropagate(True)
+        notify.netForce(True)
+        notify.setActivate(1.0)
+        notify.addVarNumber(str(ExtraInfo),1.0)
+        notify.send()
 
