@@ -9445,16 +9445,20 @@ class ptVaultTextNoteNode(ptVaultNode):
         """Returns ptVaultNodeRef if is a child node, or None"""
         pass
 
+    def getNoteSubType(self):
+        """Returns the subtype of this text note node."""
+        pass
+
+    def getNoteType(self):
+        """Returns the type of text note for this text note node."""
+        pass
+
     def getOwnerNode(self):
         """Returns a ptVaultNode of the owner of this node"""
         pass
 
     def getOwnerNodeID(self):
         """Returns the node ID of the owner of this node"""
-        pass
-
-    def getSubType(self):
-        """Returns the subtype of this text note node."""
         pass
 
     def getText(self):
@@ -9471,10 +9475,6 @@ class ptVaultTextNoteNode(ptVaultNode):
 
     def getTitleW(self):
         """Unicode version of getTitle"""
-        pass
-
-    def getType(self):
-        """Returns the type of text note for this text note node."""
         pass
 
     def hasNode(self,id):
@@ -9565,12 +9565,16 @@ Sets the type of text note for this text note node."""
         """Sets ID of this ptVaultNode."""
         pass
 
-    def setOwnerNodeID(self,id):
-        """Set node ID of the owner of this node"""
+    def setNoteType(self,type):
+        """Sets the type of text note for this text note node."""
         pass
 
-    def setSubType(self,subType):
+    def setNoteSubType(self,subType):
         """Sets the subtype of the this text note node."""
+        pass
+
+    def setOwnerNodeID(self,id):
+        """Set node ID of the owner of this node"""
         pass
 
     def setText(self,text):
@@ -9587,10 +9591,6 @@ Sets the type of text note for this text note node."""
 
     def setTitleW(self,title):
         """Unicode version of setTitle"""
-        pass
-
-    def setType(self,type):
-        """Sets the type of text note for this text note node."""
         pass
 
     def upcastToAgeInfoListNode(self):

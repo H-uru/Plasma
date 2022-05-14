@@ -206,36 +206,36 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTextW)
     return PyUnicode_FromSTString(self->fThis->Note_GetText());
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setType, args)
+PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setNoteType, args)
 {
     long nodeType;
     if (!PyArg_ParseTuple(args, "l", &nodeType))
     {
-        PyErr_SetString(PyExc_TypeError, "setType expects a long");
+        PyErr_SetString(PyExc_TypeError, "setNoteType expects a long");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->Note_SetType(nodeType);
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getType)
+PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getNoteType)
 {
     return PyLong_FromLong(self->fThis->Note_GetType());
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setSubType, args)
+PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setNoteSubType, args)
 {
     long nodeType;
     if (!PyArg_ParseTuple(args, "l", &nodeType))
     {
-        PyErr_SetString(PyExc_TypeError, "setSubType expects a long");
+        PyErr_SetString(PyExc_TypeError, "setNoteSubType expects a long");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->Note_SetSubType(nodeType);
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getSubType)
+PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getNoteSubType)
 {
     return PyLong_FromLong(self->fThis->Note_GetSubType());
 }
@@ -278,10 +278,10 @@ PYTHON_START_METHODS_TABLE(ptVaultTextNoteNode)
     PYTHON_METHOD(ptVaultTextNoteNode, setTextW, "Params: text\nUnicode version of setText"),
     PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getText, "Returns the text of this text note node."),
     PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getTextW, "Unicode version of getText."),
-    PYTHON_METHOD(ptVaultTextNoteNode, setType, "Params: type\nSets the type of text note for this text note node."),
-    PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getType, "Returns the type of text note for this text note node."),
-    PYTHON_METHOD(ptVaultTextNoteNode, setSubType, "Params: subType\nSets the subtype of the this text note node."),
-    PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getSubType, "Returns the subtype of this text note node."),
+    PYTHON_METHOD(ptVaultTextNoteNode, setNoteType, "Params: type\nSets the type of text note for this text note node."),
+    PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getNoteType, "Returns the type of text note for this text note node."),
+    PYTHON_METHOD(ptVaultTextNoteNode, setNoteSubType, "Params: subType\nSets the subtype of the this text note node."),
+    PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getNoteSubType, "Returns the subtype of this text note node."),
     PYTHON_METHOD(ptVaultTextNoteNode, setDeviceInbox, "Params: inboxName,cb=None,cbContext=0\nSets the device inbox"),
     PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getDeviceInbox, "Returns a ptVaultFolderNode"),
 PYTHON_END_METHODS_TABLE;
