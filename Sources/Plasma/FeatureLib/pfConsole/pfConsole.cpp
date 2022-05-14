@@ -557,8 +557,6 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_V)
     {
         ST::string text = plClipboard::GetInstance().GetClipboardText();
-        if (text.empty())
-            return;
 
         // Chop off leading or trailing newlines, which are probably not intended.
         text = text.trim("\r\n");
@@ -630,9 +628,11 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
         {
             // FIXME: make the console unicode friendly.
             IHandleCharacter((char)key);
-            findAgain = false;
-            findCounter = 0;
-            IUpdateTooltip();
+            if (strnlen(fWorkingLine, std::size(fWorkingLine)) < kMaxCharsWide - 2 && key != 0) {
+                findAgain = false;
+                findCounter = 0;
+                IUpdateTooltip();
+            }
         }
     }
 }
@@ -650,7 +650,7 @@ void    pfConsole::IHandleCharacter(const char c)
     size_t i = strnlen(fWorkingLine, std::size(fWorkingLine));
 
     // The current working line is too long. Ignore this character.
-    if (!(i < kMaxCharsWide - 2 && c != '\0'))
+    if (i >= kMaxCharsWide - 2 || c == '\0')
         return;
 
     // Advance any trailing characters one space to make room for the new character.
