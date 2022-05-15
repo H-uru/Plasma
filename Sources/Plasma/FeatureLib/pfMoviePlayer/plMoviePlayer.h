@@ -55,6 +55,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plMessage;
 
+#ifdef USE_WEBM
+#   include <vpx/vpx_decoder.h>
+#endif
+
 namespace mkvparser
 {
     class BlockEntry;
@@ -74,6 +78,7 @@ protected:
 #ifdef USE_WEBM
     mkvparser::MkvReader* fReader;
     std::unique_ptr<mkvparser::Segment> fSegment;
+    vpx_image_t* fLastImg;
 #endif
     std::unique_ptr<class TrackMgr> fAudioTrack, fVideoTrack; // TODO: vector of tracks?
     std::unique_ptr<class plWin32VideoSound> fAudioSound;

@@ -186,7 +186,8 @@ plMoviePlayer::plMoviePlayer()
       fLastFrameTime(),
       fPosition(),
       fPlaying(),
-      fPaused()
+      fPaused(),
+      fLastImg()
 {
     fScale.Set(1.0f, 1.0f);
 }
@@ -327,13 +328,21 @@ void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
     }
 
     if (img) {
+        if (fLastImg) {
+            vpx_img_free(fLastImg);
+        }
+        fLastImg = img;
+    }
+    
+    // We need to refill the buffer if there is a new image or a new buffer
+    if (img || !fTexture->GetDeviceRef()) {
         // According to VideoLAN[1], I420 is the most common image format in videos. I am inclined to believe this as our
         // attemps to convert the common Uru videos use I420 image data. So, as a shortcut, we will only implement that format.
         // If for some reason we need other formats, please, be my guest!
         // [1] = http://wiki.videolan.org/YUV#YUV_4:2:0_.28I420.2FJ420.2FYV12.29
-        switch (img->fmt) {
+        switch (fLastImg->fmt) {
         case VPX_IMG_FMT_I420:
-            plPlanarImage::Yuv420ToRgba(img->d_w, img->d_h, img->stride, img->planes, reinterpret_cast<uint8_t*>(fTexture->GetImage()));
+            plPlanarImage::Yuv420ToRgba(fLastImg->d_w, fLastImg->d_h, fLastImg->stride, fLastImg->planes, reinterpret_cast<uint8_t*>(fTexture->GetImage()));
             break;
 
         DEFAULT_FATAL("image format");
@@ -460,6 +469,9 @@ bool plMoviePlayer::Stop()
         fAudioSound->Stop();
     if (fPlate)
         fPlate->SetVisible(false);
+    if (fLastImg) {
+        vpx_img_free(fLastImg);
+    }
 
     for (auto cb : fCallbacks)
         cb->Send();
