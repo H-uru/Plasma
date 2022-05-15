@@ -55,10 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plMessage;
 
-#ifdef USE_WEBM
-#   include <vpx/vpx_decoder.h>
-#endif
-
 namespace mkvparser
 {
     class BlockEntry;
@@ -68,6 +64,7 @@ namespace mkvparser
 }
 
 typedef std::tuple<std::unique_ptr<uint8_t>, int32_t> blkbuf_t;
+typedef struct vpx_image vpx_image_t;
 
 class plMoviePlayer
 {
