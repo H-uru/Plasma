@@ -52,11 +52,11 @@ from PlasmaTypes import *
 import random
 
 # define the attributes that will be entered in max
-respBahroSymbol         = ptAttribResponder(1, "resp: Bahro Symbol", ["beginning","middle","end"], netForce=1)
+respBahroSymbol         = ptAttribResponder(1, "resp: Bahro Symbol", ["beginning","middle","end"])
 SymbolAppears           = ptAttribInt(2, "Frame the Symbol Appears", 226, (0,5000))
 DayFrameSize            = ptAttribInt(3, "Frames in One Day", 2000, (0,5000))
 animMasterDayLight      = ptAttribAnimation(4, "Master Animation Object")
-respSFX                 = ptAttribResponder(5, "resp: Symbol SFX", ["stop","play"],netForce = 1)
+respSFX                 = ptAttribResponder(5, "resp: Symbol SFX", ["stop","play"])
 
 # define globals
 kDayLengthInSeconds = 56585.0
@@ -108,15 +108,14 @@ class xPodBahroSymbol(ptResponder):
     ###########################
     def OnTimer(self,TimerID):
         PtDebugPrint("xPodBahroSymbol.OnTimer: callback id=%d" % (TimerID))
-        if self.sceneobject.isLocallyOwned():
-            if TimerID == 1:
-                respBahroSymbol.run(self.key, state="beginning")
-                respSFX.run(self.key, state="play")
-            elif TimerID == 2:
-                self.ISetTimers()
-            elif TimerID == 3:
-                respBahroSymbol.run(self.key, state="end")
-                respSFX.run(self.key, state="stop")
+        if TimerID == 1:
+            respBahroSymbol.run(self.key, state="beginning")
+            respSFX.run(self.key, state="play")
+        elif TimerID == 2:
+            self.ISetTimers()
+        elif TimerID == 3:
+            respBahroSymbol.run(self.key, state="end")
+            respSFX.run(self.key, state="stop")
 
     ###########################
     def ISetTimers(self):
@@ -138,8 +137,7 @@ class xPodBahroSymbol(ptResponder):
     ###########################
     def OnBackdoorMsg(self, target, param):
         if target == "bahro":
-            if self.sceneobject.isLocallyOwned():
-                PtDebugPrint("xPodBahroSymbol.OnBackdoorMsg: Work!")
-                if param == "appear":
-                    PtAtTimeCallback(self.key, 1, 1)
+            PtDebugPrint("xPodBahroSymbol.OnBackdoorMsg: Work!")
+            if param == "appear":
+                PtAtTimeCallback(self.key, 1, 1)
 
