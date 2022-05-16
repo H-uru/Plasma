@@ -28,7 +28,7 @@
       "string-theory",
       {
         "name": "libuuid",
-        "platform": "linux | osx"
+        "platform": "linux"
       },
       "zlib"
     ],
