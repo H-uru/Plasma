@@ -73,6 +73,8 @@ ImagerMax = ptAttribInt( 7, "Maximum number of images",default=5)
 ImagerButtonResp = ptAttribResponder(8,"start or stop the button animation",['buttonOn','buttonOff'])
 ImagerInboxVariable = ptAttribString(9,"Inbox SDL variable (optional)")
 ImagerPelletUpload = ptAttribBoolean(10, "Pellet Score Imager?", 0)
+ImagerClueObject = ptAttribSceneobject(11, "Imager Object (for puzzle clue)")
+ImagerClueTime = ptAttribInt(12, "Number of seconds until clue image shows",default=870)
 #----------
 # globals
 #----------
@@ -97,6 +99,8 @@ AgeStartedIn = None
 #----------
 kFlipImagesTimerStates = 5
 kFlipImagesTimerCurrent = 0
+kImagerClueStart = 1
+kImagerClueEnd = 2
 
 #====================================
 
@@ -154,6 +158,8 @@ class xSimpleImager(ptModifier):
                 # set the current timer value to 
                 kFlipImagesTimerCurrent = (kFlipImagesTimerCurrent + 1) % kFlipImagesTimerStates
                 PtAtTimeCallback(Instance.key,ImagerTime.value,kFlipImagesTimerCurrent)
+                if ImagerClueObject.sceneobject is not None:
+                    PtAtTimeCallback(self.key,ImagerClueTime.value,kImagerClueStart)
                 # turn button animation off
                 ImagerButtonResp.run(Instance.key,state='buttonOff')
 
@@ -164,6 +170,9 @@ class xSimpleImager(ptModifier):
 ###==== Cheat
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
+        if ImagerClueObject.sceneobject is not None:
+            ImagerClueObject.sceneobject.draw.disable()
+            ImagerClueObject.sceneobject.physics.suppress(True)
         if ImagerMap.textmap is None:
             PtDebugPrint("xSimpleImager:ERROR! simpleImager[%s]: Dynamic textmap is broken!" % (ImagerName.value),level=kErrorLevel)
             return
@@ -226,6 +235,19 @@ class xSimpleImager(ptModifier):
                     CurrentContentIdx = 0
             self.IChangeCurrentContent()
             PtAtTimeCallback(self.key,ImagerTime.value,kFlipImagesTimerCurrent)
+        elif id == kImagerClueStart:
+            ImagerClueObject.sceneobject.draw.enable()
+            ImagerClueObject.sceneobject.physics.suppress(False)
+            ImagerObject.sceneobject.draw.disable()
+            ImagerObject.sceneobject.physics.suppress(True)
+            PtAtTimeCallback(self.key,ImagerTime.value,kImagerClueEnd)
+        elif id == kImagerClueEnd:
+            ImagerClueObject.sceneobject.draw.disable()
+            ImagerClueObject.sceneobject.physics.suppress(True)
+            ImagerObject.sceneobject.draw.enable()
+            ImagerObject.sceneobject.physics.suppress(False)
+            PtAtTimeCallback(self.key,ImagerTime.value,kFlipImagesTimerCurrent)
+            PtAtTimeCallback(self.key,ImagerClueTime.value,kImagerClueStart)
 
     def OnVaultEvent(self,event,tupdata):
         "An AgeKI event received"
