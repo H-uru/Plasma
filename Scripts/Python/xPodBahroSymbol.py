@@ -102,30 +102,20 @@ class xPodBahroSymbol(ptResponder):
     def OnNotify(self,state,id,events):
         PtDebugPrint("xPodBahroSymbol.OnNotify:  state=%f id=%d events=" % (state,id),events)
 
-        if (id == -1 and events[0][1] == 'beginning'):
-            respBahroSymbol.run(self.key, state="beginning", netPropagate=False)
-            respSFX.run(self.key, state="play", netPropagate=False)
-            
-        if (id == -1 and events[0][1] == 'end'):
-            respBahroSymbol.run(self.key, state="end", netPropagate=False)
-            respSFX.run(self.key, state="stop", netPropagate=False)
-            
-        if (id == -1 and events[0][1] == 'reset'):
-            self.ISetTimers()
-
         if id == respBahroSymbol.id:
             PtAtTimeCallback(self.key, 32, 3)
 
     ###########################
     def OnTimer(self,TimerID):
         PtDebugPrint("xPodBahroSymbol.OnTimer: callback id=%d" % (TimerID))
-        if self.sceneobject.isLocallyOwned():
-            if TimerID == 1:
-                self.SendNote('beginning')
-            elif TimerID == 2:
-                self.SendNote('reset')
-            elif TimerID == 3:
-                self.SendNote('end')
+        if TimerID == 1:
+            respBahroSymbol.run(self.key, state="beginning")
+            respSFX.run(self.key, state="play")
+        elif TimerID == 2:
+            self.ISetTimers()
+        elif TimerID == 3:
+            respBahroSymbol.run(self.key, state="end")
+            respSFX.run(self.key, state="stop")
 
     ###########################
     def ISetTimers(self):
@@ -147,18 +137,7 @@ class xPodBahroSymbol(ptResponder):
     ###########################
     def OnBackdoorMsg(self, target, param):
         if target == "bahro":
-            if self.sceneobject.isLocallyOwned():
-                PtDebugPrint("xPodBahroSymbol.OnBackdoorMsg: Work!")
-                if param == "appear":
-                    PtAtTimeCallback(self.key, 1, 1)
-
-    def SendNote(self, ExtraInfo):
-        notify = ptNotify(self.key)
-        notify.clearReceivers()                
-        notify.addReceiver(self.key)        
-        notify.netPropagate(True)
-        notify.netForce(True)
-        notify.setActivate(1.0)
-        notify.addVarNumber(str(ExtraInfo),1.0)
-        notify.send()
+            PtDebugPrint("xPodBahroSymbol.OnBackdoorMsg: Work!")
+            if param == "appear":
+                PtAtTimeCallback(self.key, 1, 1)
 
