@@ -75,6 +75,7 @@ ImagerInboxVariable = ptAttribString(9,"Inbox SDL variable (optional)")
 ImagerPelletUpload = ptAttribBoolean(10, "Pellet Score Imager?", 0)
 ImagerClueObject = ptAttribSceneobject(11, "Imager Object (for puzzle clue)")
 ImagerClueTime = ptAttribInt(12, "Number of seconds until clue image shows",default=870)
+ImagerRandomTime = ptAttribInt(13, "Random number added to make timer more variable",default=0)
 #----------
 # globals
 #----------
@@ -99,8 +100,8 @@ AgeStartedIn = None
 #----------
 kFlipImagesTimerStates = 5
 kFlipImagesTimerCurrent = 0
-kImagerClueStart = 1
-kImagerClueEnd = 2
+kImagerClueStart = 1 + ImagerMax.value
+kImagerClueEnd = 2 + ImagerMax.value
 
 #====================================
 
@@ -159,7 +160,8 @@ class xSimpleImager(ptModifier):
                 kFlipImagesTimerCurrent = (kFlipImagesTimerCurrent + 1) % kFlipImagesTimerStates
                 PtAtTimeCallback(Instance.key,ImagerTime.value,kFlipImagesTimerCurrent)
                 if ImagerClueObject.sceneobject is not None:
-                    PtAtTimeCallback(self.key,ImagerClueTime.value,kImagerClueStart)
+                    randomize = random.randint(0, ImagerRandomTime.value)
+                    PtAtTimeCallback(self.key,ImagerClueTime.value + randomize,kImagerClueStart)
                 # turn button animation off
                 ImagerButtonResp.run(Instance.key,state='buttonOff')
 
@@ -169,6 +171,7 @@ class xSimpleImager(ptModifier):
         #~ ImagerMembersOnly.value = 0
 ###==== Cheat
         global AgeStartedIn
+        random.seed()
         AgeStartedIn = PtGetAgeName()
         if ImagerClueObject.sceneobject is not None:
             ImagerClueObject.sceneobject.draw.disable()
@@ -246,8 +249,9 @@ class xSimpleImager(ptModifier):
             ImagerClueObject.sceneobject.physics.suppress(True)
             ImagerObject.sceneobject.draw.enable()
             ImagerObject.sceneobject.physics.suppress(False)
+            randomize = random.randint(0, ImagerRandomTime.value)
             PtAtTimeCallback(self.key,ImagerTime.value,kFlipImagesTimerCurrent)
-            PtAtTimeCallback(self.key,ImagerClueTime.value,kImagerClueStart)
+            PtAtTimeCallback(self.key,ImagerClueTime.value + randomize,kImagerClueStart)
 
     def OnVaultEvent(self,event,tupdata):
         "An AgeKI event received"
