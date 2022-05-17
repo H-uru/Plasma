@@ -121,9 +121,15 @@ public:
 class plPXControllerHitReport : public physx::PxUserControllerHitReport
 {
 protected:
-    void IApplyHitForce(physx::PxRigidBody* body, const physx::PxExtendedVec3& worldPos, const physx::PxVec3& force) const
+    void IApplyHitForce(physx::PxRigidBody* body, const physx::PxExtendedVec3& worldPos, physx::PxVec3 force) const
     {
+        // This is (supposedly) the avatar's mass. I intended for this to be the mass unit
+        // for an eIMPULSE force, but the results of that suck. It works great as a scale
+        // for eVELOCITY_CHANGE, however.
+        force *= 120.f;
+
         // Nuts, eVELOCITY_CHANGE forces are banned in PxRigidBodyExt::addForceAtPos().
+        // So, do it manually here so we can use any mode we want.
         physx::PxTransform globalPose = body->getGlobalPose();
         physx::PxVec3 centerOfMass = globalPose.transform(body->getCMassLocalPose().p);
         physx::PxVec3 torque = (physx::toVec3(worldPos) - centerOfMass).cross(force);
@@ -197,6 +203,9 @@ public:
                 &filterCallback
             );
 
+            // `hit.length` is is the fraction of the movement delta we were in contact.
+            float hitTime = controller->GetController()->fSimLength * hit.length;
+
             const hsVector3& avLinVel = controller->GetController()->GetLinearVelocity();
             float hitUpComponent = std::fabs(hitDir.dot(hit.controller->getUpDirection()));
             if (onGround && hitUpComponent >= .2f) {
@@ -219,7 +228,7 @@ public:
                     // This calculation has been fairly carefully empirically scienced to produce a good
                     // result. We need to give this force a slight boost to ensure that we don't get on
                     // top of some tiny kickable and start blasting off to the moon.
-                    force *= std::max(3.f, avLinVel.Magnitude()) * std::max(0.5f, hit.length);
+                    force *= std::max(3.f, avLinVel.Magnitude()) * hitTime;
                     IApplyHitForce(dynamic, hit.worldPos, force);
                 } else {
                     plKickableLog::Red("Standing on top of tall kickable with Z-extent {.2f} - no force will be applied.", zext);
@@ -235,7 +244,7 @@ public:
                 // object displacement, resulting in stuttering movement because the kickable moves
                 // slightly, then we move forward the same distance and are blocked, the kickable moves
                 // forward, then we move forward the same distance and are blocked... ad nauseum
-                physx::PxVec3 force = hitDir * std::max(3.f, avLinVel.Magnitude()) * std::max(0.25f, hit.length);
+                physx::PxVec3 force = hitDir * std::max(3.f, avLinVel.Magnitude()) * hitTime;
                 IApplyHitForce(dynamic, hit.worldPos, force);
             }
         }
