@@ -471,6 +471,7 @@ bool plMoviePlayer::Stop()
         fPlate->SetVisible(false);
     if (fLastImg) {
         vpx_img_free(fLastImg);
+        fLastImg = nullptr;
     }
 
     for (auto cb : fCallbacks)
