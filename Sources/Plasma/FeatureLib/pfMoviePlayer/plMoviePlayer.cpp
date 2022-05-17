@@ -335,7 +335,7 @@ void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
     }
     
     // We need to refill the buffer if there is a new image or a new buffer
-    if (img || !fTexture->GetDeviceRef()) {
+    if (img || (!fTexture->GetDeviceRef() && fLastImg)) {
         // According to VideoLAN[1], I420 is the most common image format in videos. I am inclined to believe this as our
         // attemps to convert the common Uru videos use I420 image data. So, as a shortcut, we will only implement that format.
         // If for some reason we need other formats, please, be my guest!
