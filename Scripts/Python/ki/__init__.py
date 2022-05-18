@@ -3437,17 +3437,11 @@ class xKI(ptModifier):
                 self.BKGettingPlayerID = False
             elif self.BKRightSideMode == kGUI.BKJournalExpanded:
                 KIJournalExpanded.dialog.show()
-                if self.IsContentMutable(self.BKCurrentContent):
-                    self.BigKIInvertToFolderButtons()
-                else:
-                    self.BigKIOnlySelectedToButtons()
+                self.BigKIInvertToFolderButtons()
                 self.BKGettingPlayerID = False
             elif self.BKRightSideMode == kGUI.BKPictureExpanded:
                 KIPictureExpanded.dialog.show()
-                if self.IsContentMutable(self.BKCurrentContent):
-                    self.BigKIInvertToFolderButtons()
-                else:
-                    self.BigKIOnlySelectedToButtons()
+                self.BigKIInvertToFolderButtons()
                 self.BKGettingPlayerID = False
             elif self.BKRightSideMode == kGUI.BKPlayerExpanded:
                 KIPlayerExpanded.dialog.show()
@@ -3484,10 +3478,7 @@ class xKI(ptModifier):
                 self.BKGettingPlayerID = False
             elif self.BKRightSideMode == kGUI.BKMarkerListExpanded:
                 KIMarkerFolderExpanded.dialog.show()
-                if self.IsContentMutable(self.BKCurrentContent):
-                    self.BigKIInvertToFolderButtons()
-                else:
-                    self.BigKIOnlySelectedToButtons()
+                self.BigKIInvertToFolderButtons()
                 self.BKGettingPlayerID = False
 
     ## Hide an open mode in the BigKI.
@@ -3532,15 +3523,9 @@ class xKI(ptModifier):
         if self.BKRightSideMode == kGUI.BKListMode:
             self.BigKIOnlySelectedToButtons()
         elif self.BKRightSideMode == kGUI.BKJournalExpanded:
-            if self.IsContentMutable(self.BKCurrentContent):
-                self.BigKIInvertToFolderButtons()
-            else:
-                self.BigKIOnlySelectedToButtons()
+            self.BigKIInvertToFolderButtons()
         elif self.BKRightSideMode == kGUI.BKPictureExpanded:
-            if self.IsContentMutable(self.BKCurrentContent):
-                self.BigKIInvertToFolderButtons()
-            else:
-                self.BigKIOnlySelectedToButtons()
+            self.BigKIInvertToFolderButtons()
         elif self.BKRightSideMode == kGUI.BKPlayerExpanded:
             localPlayer = PtGetLocalPlayer()
             if self.BKCurrentContent is not None:
@@ -3564,7 +3549,7 @@ class xKI(ptModifier):
         elif self.BKRightSideMode == kGUI.BKAgeOwnerExpanded:
             self.BigKIOnlySelectedToButtons()
         elif self.BKRightSideMode == kGUI.BKMarkerListExpanded:
-            if self.MFdialogMode not in (kGames.MFEditing, kGames.MFEditingMarker) and self.IsContentMutable(self.BKCurrentContent):
+            if self.MFdialogMode not in (kGames.MFEditing, kGames.MFEditingMarker):
                 self.BigKIInvertToFolderButtons()
             else:
                 self.BigKIOnlySelectedToButtons()
@@ -4518,8 +4503,8 @@ class xKI(ptModifier):
         if self.BKCurrentContent is None:
             PtDebugPrint("xKI.BigKIDisplayJournalEntry(): self.BKCurrentContent is None.", level=kErrorLevel)
             return
+        jrnDeleteBtn.show()
         if self.IsContentMutable(self.BKCurrentContent):
-            jrnDeleteBtn.show()
             jrnNote.unlock()
             if not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldJRNTitle:
                 jrnTitleBtn.show()
@@ -4596,10 +4581,9 @@ class xKI(ptModifier):
         if self.BKCurrentContent is None:
             PtDebugPrint("xKI.BigKIDisplayPicture(): self.BKCurrentContent is None.", level=kErrorLevel)
             return
-        if self.IsContentMutable(self.BKCurrentContent):
-            picDeleteBtn.show()
-            if not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldPICTitle:
-                picTitleBtn.show()
+        picDeleteBtn.show()
+        if self.IsContentMutable(self.BKCurrentContent) and (not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldPICTitle):
+            picTitleBtn.show()
         else:
             picTitleBtn.hide()
         element = self.BKCurrentContent.getChild()
@@ -4778,14 +4762,16 @@ class xKI(ptModifier):
     ## Prepares the display of a marker game, as it may be loading.
     def BigKIDisplayMarkerGame(self):
 
-        # Make sure that the player can view this game.
-        if self.gKIMarkerLevel < kKIMarkerNormalLevel:
-            self.BigKIDisplayMarkerGameMessage(PtGetLocalizedString("KI.MarkerGame.pendingActionUpgradeKI"))
-            return
-
         # Save some typing.
         mgr = self.markerGameManager
         getControl = KIMarkerFolderExpanded.dialog.getControlFromTag
+        mbtnDelete = ptGUIControlButton(getControl(kGUI.MarkerFolderDeleteBtn))
+
+        # Make sure that the player can view this game.
+        if self.gKIMarkerLevel < kKIMarkerNormalLevel:
+            self.BigKIDisplayMarkerGameMessage(PtGetLocalizedString("KI.MarkerGame.pendingActionUpgradeKI"))
+            mbtnDelete.show()
+            return
 
         # Initialize the markerGameDisplay to the currently selected game.
         # But first, ensure that the player meets all the necessary criteria.
@@ -4840,7 +4826,6 @@ class xKI(ptModifier):
         mrkfldStatus = ptGUIControlTextBox(getControl(kGUI.MarkerFolderStatus))
         mrkfldTitle = ptGUIControlTextBox(getControl(kGUI.MarkerFolderTitleText))
         mrkfldTitleBtn = ptGUIControlButton(getControl(kGUI.MarkerFolderTitleBtn))
-        mbtnDelete = ptGUIControlButton(getControl(kGUI.MarkerFolderDeleteBtn))
         mbtnGameTimePullD = ptGUIControlButton(getControl(kGUI.MarkerFolderTimePullDownBtn))
         mtbGameType = ptGUIControlTextBox(getControl(kGUI.MarkerFolderGameTypeTB))
         mbtnGameTypePullD = ptGUIControlButton(getControl(kGUI.MarkerFolderTypePullDownBtn))
@@ -4874,10 +4859,7 @@ class xKI(ptModifier):
         # Is the player merely looking at a Marker Game?
         if self.MFdialogMode == kGames.MFOverview:
             mrkfldTitleBtn.disable()
-            if self.IsContentMutable(self.BKCurrentContent):
-                mbtnDelete.show()
-            else:
-                mbtnDelete.hide()
+            mbtnDelete.show()
             mbtnGameTimePullD.hide()
             mbtnGameTimeArrow.hide()
             if element.getCreatorNodeID() == PtGetLocalClientID():
