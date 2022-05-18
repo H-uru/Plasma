@@ -1653,9 +1653,8 @@ class xKI(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry(kChronicleKITextColor)
         if entry is not None:
-            colorStr = entry.chronicleGetValue()
-            PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color is: \"{colorStr}\".", level=kWarningLevel)
-            if colorStr:
+            if colorStr := entry.chronicleGetValue():
+                PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color is: \"{colorStr}\".", level=kWarningLevel)
                 args = colorStr.split(",")
                 try:
                     self.chatMgr.chatTextColor = ptColor(float(args[0]), float(args[1]), float(args[2]))
@@ -1667,6 +1666,7 @@ class xKI(ptModifier):
 
         # reset to None if there is no set value, otherwise could be carried over from user's previous character
         self.chatMgr.chatTextColor = None
+        PtDebugPrint("xKI.DetermineTextColor(): KI Text Color is not overridden.", level=kWarningLevel)
 
 
 
