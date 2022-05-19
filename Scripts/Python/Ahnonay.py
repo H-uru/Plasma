@@ -72,6 +72,7 @@ class Ahnonay(ptResponder):
 
     def OnServerInitComplete(self):
         agevault = ptAgeVault()
+        vault = ptVault()
         ageinfo = agevault.getAgeInfo()
         guid = ageinfo.getAgeInstanceGuid()
         linkid = None
@@ -87,6 +88,7 @@ class Ahnonay(ptResponder):
         if ageLinkNode:
             localCathedralGuid = ageLinkNode.getAgeInfo().getAgeInstanceGuid()
 
+        folder = vault.getAgesIOwnFolder()
         cathedralInfoTemplate = ptVaultAgeInfoNode(0)
         cathedralInfoTemplate.setAgeFilename("AhnonayCathedral")
         if cathedralInfo := folder.findNode(cathedralInfoTemplate, 2):
@@ -97,7 +99,6 @@ class Ahnonay(ptResponder):
         ageStruct = ptAgeInfoStruct()
         ageStruct.setAgeFilename("Personal")
 
-        vault = ptVault()
         ageLinkNode = vault.getOwnedAgeLink(ageStruct)
         if ageLinkNode:
             ageInfoNode = ageLinkNode.getAgeInfo()
