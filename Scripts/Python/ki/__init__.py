@@ -1653,15 +1653,20 @@ class xKI(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry(kChronicleKITextColor)
         if entry is not None:
-            colorStr = entry.chronicleGetValue()
-            PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color is: \"{colorStr}\".", level=kWarningLevel)
-            args = colorStr.split(",")
-            try:
-                self.chatMgr.chatTextColor = ptColor(float(args[0]), float(args[1]), float(args[2]))
-            except (IndexError, ValueError):
-                # format is incorrect -- didn't have 3 values, or values weren't floats -- so log an error and destroy all evidence
-                PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color was not in the expected triplet format", level=kWarningLevel)
-                vault.addChronicleEntry(kChronicleKITextColor, kChronicleKITextColorType, "")
+            if colorStr := entry.chronicleGetValue():
+                PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color is: \"{colorStr}\".", level=kWarningLevel)
+                args = colorStr.split(",")
+                try:
+                    self.chatMgr.chatTextColor = ptColor(float(args[0]), float(args[1]), float(args[2]))
+                except (IndexError, ValueError):
+                    # format is incorrect -- didn't have 3 values, or values weren't floats -- so log an error and destroy all evidence
+                    PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color was not in the expected triplet format", level=kWarningLevel)
+                    vault.addChronicleEntry(kChronicleKITextColor, kChronicleKITextColorType, "")
+                return
+
+        # reset to None if there is no set value, otherwise could be carried over from user's previous character
+        self.chatMgr.chatTextColor = None
+        PtDebugPrint("xKI.DetermineTextColor(): KI Text Color is not overridden.", level=kWarningLevel)
 
 
 
