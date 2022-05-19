@@ -6073,7 +6073,7 @@ class xKI(ptModifier):
             plID = control.getTagID()
             # Is it one of the buttons?
             if plID == kGUI.BKIPLYDeleteButton:
-                PtLocalizedYesNoDialog(self.HandleBigKIDeleteConfirmation, "KI.Messages.DeletePlayer", self.BKCurrentContentTitle)
+                PtLocalizedYesNoDialog(self.HandleBigKIDeleteConfirmation, "KI.Messages.DeletePlayer", self.BKCurrentContentTitle, self.BKFolderListOrder[self.BKFolderSelected])
             elif plID == kGUI.BKIPLYPlayerIDEditBox:
                 self.BigKICheckSavePlayer()
         elif event == kFocusChange:
