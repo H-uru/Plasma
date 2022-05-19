@@ -4948,7 +4948,7 @@ class xKI(ptModifier):
                 mlbMarkerList.unlock()
 
                 # Refresh the scroll position
-                self.BigKIMarkerListScrollVis(True)
+                self.BigKIMarkerListScrollVis(bool(mgr.markers))
                 mlbMarkerList.setScrollPos(self.MFScrollPos)
 
                 mlbMarkerTextTB.hide()
@@ -5030,7 +5030,6 @@ class xKI(ptModifier):
             mtbPlayEnd.show()
             mlbMarkerList.clearAllElements()
             mlbMarkerList.show()
-            self.BigKIMarkerListScrollVis(True)
 
             # Assume that the game is finished, unless an unseen Marker is still left.
             questGameFinished = True
@@ -5046,6 +5045,10 @@ class xKI(ptModifier):
                     mlbMarkerList.addStringW("[{}:{},{},{}] {}".format(FilterAgeName(age), torans, hSpans, vSpans, xCensor.xCensor(desc, self.censorLevel)))
                 else:
                     questGameFinished = False
+
+            self.BigKIMarkerListScrollVis(bool(mgr.markers_captured))
+            mlbMarkerList.setScrollPos(self.MFScrollPos)
+
             mlbMarkerTextTB.hide()
 
         # Refresh the text of the buttons (color changed).
