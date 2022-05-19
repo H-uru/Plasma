@@ -3699,9 +3699,7 @@ class xKI(ptModifier):
 
         # Get its parent folder.
         if isinstance(nodeRef, ptVaultNodeRef):
-            folder = self.BKCurrentContent.getParent()
-            item = self.BKCurrentContent.getChild()
-            if folder and item:
+            if (folder := self.BKCurrentContent.getParent()) and (item := self.BKCurrentContent.getChild()):
                 # Observed: sometimes, the creator ID is zero. This can mean either a DRC item or
                 # a poorly initialized node. Better check against the saver ID as well, which is
                 # used to display the From field.
@@ -3721,13 +3719,10 @@ class xKI(ptModifier):
 
         # Get its parent folder.
         if isinstance(nodeRef, ptVaultNodeRef):
-            folder = self.BKCurrentContent.getParent()
-            item = self.BKCurrentContent.getChild()
-            if folder and item:
+            if (folder := self.BKCurrentContent.getParent()) and (item := self.BKCurrentContent.getChild()):
                 if folder := folder.upcastToFolderNode():
-                    # Saver ID of zero should mean a DRC item. These inbox items are the only kind
-                    # of content that should *not* be able to be deleted or moved
-                    if folder.folderGetType() == PtVaultStandardNodes.kGlobalInboxFolder and self.BKCurrentContent.getSaverID() == 0:
+                    # Global inbox items should *not* be able to be deleted or moved
+                    if folder.folderGetType() == PtVaultStandardNodes.kGlobalInboxFolder:
                         return False
         return True
 
