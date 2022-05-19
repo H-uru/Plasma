@@ -3437,11 +3437,17 @@ class xKI(ptModifier):
                 self.BKGettingPlayerID = False
             elif self.BKRightSideMode == kGUI.BKJournalExpanded:
                 KIJournalExpanded.dialog.show()
-                self.BigKIInvertToFolderButtons()
+                if self.IsContentDeletableAndMovable(self.BKCurrentContent):
+                    self.BigKIInvertToFolderButtons()
+                else:
+                    self.BigKIOnlySelectedToButtons()
                 self.BKGettingPlayerID = False
             elif self.BKRightSideMode == kGUI.BKPictureExpanded:
                 KIPictureExpanded.dialog.show()
-                self.BigKIInvertToFolderButtons()
+                if self.IsContentDeletableAndMovable(self.BKCurrentContent):
+                    self.BigKIInvertToFolderButtons()
+                else:
+                    self.BigKIOnlySelectedToButtons()
                 self.BKGettingPlayerID = False
             elif self.BKRightSideMode == kGUI.BKPlayerExpanded:
                 KIPlayerExpanded.dialog.show()
@@ -3478,7 +3484,10 @@ class xKI(ptModifier):
                 self.BKGettingPlayerID = False
             elif self.BKRightSideMode == kGUI.BKMarkerListExpanded:
                 KIMarkerFolderExpanded.dialog.show()
-                self.BigKIInvertToFolderButtons()
+                if self.IsContentDeletableAndMovable(self.BKCurrentContent):
+                    self.BigKIInvertToFolderButtons()
+                else:
+                    self.BigKIOnlySelectedToButtons()
                 self.BKGettingPlayerID = False
 
     ## Hide an open mode in the BigKI.
@@ -3523,9 +3532,15 @@ class xKI(ptModifier):
         if self.BKRightSideMode == kGUI.BKListMode:
             self.BigKIOnlySelectedToButtons()
         elif self.BKRightSideMode == kGUI.BKJournalExpanded:
-            self.BigKIInvertToFolderButtons()
+            if self.IsContentDeletableAndMovable(self.BKCurrentContent):
+                self.BigKIInvertToFolderButtons()
+            else:
+                self.BigKIOnlySelectedToButtons()
         elif self.BKRightSideMode == kGUI.BKPictureExpanded:
-            self.BigKIInvertToFolderButtons()
+            if self.IsContentDeletableAndMovable(self.BKCurrentContent):
+                self.BigKIInvertToFolderButtons()
+            else:
+                self.BigKIOnlySelectedToButtons()
         elif self.BKRightSideMode == kGUI.BKPlayerExpanded:
             localPlayer = PtGetLocalPlayer()
             if self.BKCurrentContent is not None:
@@ -3549,7 +3564,7 @@ class xKI(ptModifier):
         elif self.BKRightSideMode == kGUI.BKAgeOwnerExpanded:
             self.BigKIOnlySelectedToButtons()
         elif self.BKRightSideMode == kGUI.BKMarkerListExpanded:
-            if self.MFdialogMode not in (kGames.MFEditing, kGames.MFEditingMarker):
+            if self.MFdialogMode not in (kGames.MFEditing, kGames.MFEditingMarker) and self.IsContentDeletableAndMovable(self.BKCurrentContent):
                 self.BigKIInvertToFolderButtons()
             else:
                 self.BigKIOnlySelectedToButtons()
@@ -3679,7 +3694,7 @@ class xKI(ptModifier):
             return True
         return False
 
-    ## Determines whether the content Node Reference is mutable.
+    ## Determines whether the content Node Reference is mutable (editable).
     def IsContentMutable(self, nodeRef):
 
         # Get its parent folder.
@@ -3698,6 +3713,21 @@ class xKI(ptModifier):
                     return False
                 if folder := folder.upcastToFolderNode():
                     if folder.folderGetType() == PtVaultStandardNodes.kGlobalInboxFolder:
+                        return False
+        return True
+
+    ## Determines whether the content Node Reference is deletable (and by extension movable to other folders).
+    def IsContentDeletableAndMovable(self, nodeRef):
+
+        # Get its parent folder.
+        if isinstance(nodeRef, ptVaultNodeRef):
+            folder = self.BKCurrentContent.getParent()
+            item = self.BKCurrentContent.getChild()
+            if folder and item:
+                if folder := folder.upcastToFolderNode():
+                    # Saver ID of zero should mean a DRC item. These inbox items are the only kind
+                    # of content that should *not* be able to be deleted or moved
+                    if folder.folderGetType() == PtVaultStandardNodes.kGlobalInboxFolder and self.BKCurrentContent.getSaverID() == 0:
                         return False
         return True
 
@@ -4503,7 +4533,8 @@ class xKI(ptModifier):
         if self.BKCurrentContent is None:
             PtDebugPrint("xKI.BigKIDisplayJournalEntry(): self.BKCurrentContent is None.", level=kErrorLevel)
             return
-        jrnDeleteBtn.show()
+        if self.IsContentDeletableAndMovable(self.BKCurrentContent):
+            jrnDeleteBtn.show()
         if self.IsContentMutable(self.BKCurrentContent):
             jrnNote.unlock()
             if not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldJRNTitle:
@@ -4581,7 +4612,8 @@ class xKI(ptModifier):
         if self.BKCurrentContent is None:
             PtDebugPrint("xKI.BigKIDisplayPicture(): self.BKCurrentContent is None.", level=kErrorLevel)
             return
-        picDeleteBtn.show()
+        if self.IsContentDeletableAndMovable(self.BKCurrentContent):
+            picDeleteBtn.show()
         if self.IsContentMutable(self.BKCurrentContent) and (not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldPICTitle):
             picTitleBtn.show()
         else:
