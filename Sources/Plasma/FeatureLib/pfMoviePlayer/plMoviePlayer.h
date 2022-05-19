@@ -64,6 +64,7 @@ namespace mkvparser
 }
 
 typedef std::tuple<std::unique_ptr<uint8_t>, int32_t> blkbuf_t;
+typedef struct vpx_image vpx_image_t;
 
 class plMoviePlayer
 {
@@ -74,6 +75,7 @@ protected:
 #ifdef USE_WEBM
     mkvparser::MkvReader* fReader;
     std::unique_ptr<mkvparser::Segment> fSegment;
+    vpx_image_t* fLastImg;
 #endif
     std::unique_ptr<class TrackMgr> fAudioTrack, fVideoTrack; // TODO: vector of tracks?
     std::unique_ptr<class plWin32VideoSound> fAudioSound;
