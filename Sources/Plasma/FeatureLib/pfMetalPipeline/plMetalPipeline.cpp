@@ -204,13 +204,12 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     fDevice.SetMaxAnsiotropy(fInitialPipeParams.AnisotropicLevel);
     fDevice.SetMSAASampleCount(fInitialPipeParams.AntiAliasingAmount);
     
-    fPlateMgr = new plMetalPlateManager(this);
-    
     fCurrentRenderPassUniforms = (VertexUniforms *) calloc(sizeof(VertexUniforms), sizeof(char));
     
-    //FIXME: Add ICreateDynDeviceObjects like DX
     // RenderTarget pools are shared for our shadow generation algorithm.
     // Different sizes for different resolutions.
+    ICreateDeviceObjects();
+    ICreateDynDeviceObjects();
     IMakeRenderTargetPools();
 }
 
@@ -220,6 +219,10 @@ plMetalPipeline::~plMetalPipeline()
     {
         pm->IReleaseGeometry();
     }
+}
+
+void plMetalPipeline::ICreateDeviceObjects() {
+    fPlateMgr = new plMetalPlateManager(this);
 }
 
 bool plMetalPipeline::PreRender(plDrawable *drawable, std::vector<int16_t> &visList, plVisMgr *visMgr)
@@ -731,7 +734,7 @@ void plMetalPipeline::Resize(uint32_t width, uint32_t height)
     plViewTransform resetTransform = GetViewTransform();
 
     // Destroy old
-    //IReleaseDeviceObjects();
+    IReleaseDeviceObjects();
     IReleaseDynDeviceObjects();
     
     // Reset width and height
@@ -748,6 +751,8 @@ void plMetalPipeline::Resize(uint32_t width, uint32_t height)
         // Just for debug
         hsStatusMessage( "Recreating the pipeline...\n" );
     }
+    
+    ICreateDeviceObjects();
 
     // Restore states
     SetViewTransform(resetTransform);
@@ -763,6 +768,15 @@ void plMetalPipeline::Resize(uint32_t width, uint32_t height)
     plgDispatch::MsgSend(clean);
 }
 
+
+void plMetalPipeline::IReleaseDeviceObjects()
+{
+    IReleaseDynDeviceObjects();
+    
+    delete fPlateMgr;
+    fPlateMgr = nullptr;
+}
+
 void plMetalPipeline::LoadResources()
 {
     hsStatusMessageF("Begin Device Reload t=%f",hsTimer::GetSeconds());
@@ -774,7 +788,8 @@ void plMetalPipeline::LoadResources()
 
     if (plMetalPlateManager* pm = static_cast<plMetalPlateManager*>(fPlateMgr))
         pm->IReleaseGeometry();
-
+    
+    IReleaseDynamicBuffers();
     IReleaseAvRTPool();
 
     // Create all RenderTargets
@@ -3005,10 +3020,20 @@ void plMetalPipeline::IReleaseDynDeviceObjects()
 
     // The shared dynamic vertex buffers used by things like objects skinned on CPU, or
     // particle systems.
-    //IReleaseDynamicBuffers();
+    IReleaseDynamicBuffers();
     //IReleaseAvRTPool();
     IReleaseRenderTargetPools();
 
+}
+
+// IReleaseDynamicBuffers /////////////////////////////////////////////////
+// Release everything we've created in POOL_DEFAULT.
+// This is called on shutdown or when we lose the device. Search for D3DERR_DEVICELOST.
+void plMetalPipeline::IReleaseDynamicBuffers()
+{
+    // PlateMgr has a POOL_DEFAULT vertex buffer for drawing quads.
+    if (plMetalPlateManager* pm = static_cast<plMetalPlateManager*>(fPlateMgr))
+        pm->IReleaseGeometry();
 }
 
 // IReleaseRenderTargetPools //////////////////////////////////////////////////

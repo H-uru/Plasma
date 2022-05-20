@@ -61,6 +61,7 @@ public:
     void IReleaseGeometry();
     MTL::RenderPipelineState *fPlateRenderPipelineState;
     void encodeVertexBuffer(MTL::RenderCommandEncoder *encoder);
+    ~plMetalPlateManager();
 private:
     struct plateVertexBuffer {
         hsPoint2 vertices[4];

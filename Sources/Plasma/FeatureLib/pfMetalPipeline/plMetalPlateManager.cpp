@@ -131,7 +131,11 @@ void plMetalPlateManager::encodeVertexBuffer(MTL::RenderCommandEncoder *encoder)
 
 void plMetalPlateManager::IReleaseGeometry()
 {
-    //fVtxBuffer->release();
+    if (fVtxBuffer)
+    {
+        fVtxBuffer->release();
+        fVtxBuffer = nullptr;
+    }
 }
 
 void plMetalPlateManager::IDrawToDevice(plPipeline *pipe) {
@@ -139,9 +143,19 @@ void plMetalPlateManager::IDrawToDevice(plPipeline *pipe) {
     plPlate* plate = nullptr;
     
     for (plate = fPlates; plate != nullptr; plate = plate->GetNext()) {
+        printf("begginning plate draw\n");
         if (plate->IsVisible()) {
             pipeline->IDrawPlate(plate);
+            printf("drawing plate\n");
+        } else {
+            printf("skipping plate\n");
         }
+        printf("ending plate draw\n");
     }
+}
+
+plMetalPlateManager::~plMetalPlateManager()
+{
+    IReleaseGeometry();
 }
 
