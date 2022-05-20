@@ -68,48 +68,25 @@ bool pyGUIControlTextBox::IsGUIControlTextBox(pyKey& gckey)
 }
 
 
-std::string pyGUIControlTextBox::GetText()
+ST::string pyGUIControlTextBox::GetText() const
 {
-    char *temp = hsWStringToString(GetTextW().c_str());
-    std::string retVal = temp;
-    delete [] temp;
-    return retVal;
-}
-
-std::wstring pyGUIControlTextBox::GetTextW()
-{
-    if (fGCkey)
-    {
+    if (fGCkey) {
         // get the pointer to the modifier
         pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( ptbmod )
-        {
-            if ( ptbmod->GetText() )
-            {
-                std::wstring retVal = ptbmod->GetText();
-                return retVal;
-            }
-        }
+        if (ptbmod)
+            return ptbmod->GetText();
     }
     // else if there is no string... fake one
-    return L"";
+    return {};
 }
 
-void pyGUIControlTextBox::SetText( const char *text )
+void pyGUIControlTextBox::SetText(ST::string text)
 {
-    wchar_t *wText = hsStringToWString(text);
-    SetTextW(wText);
-    delete [] wText;
-}
-
-void pyGUIControlTextBox::SetTextW( const std::wstring& text )
-{
-    if ( fGCkey )
-    {
+    if (fGCkey) {
         // get the pointer to the modifier
         pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( ptbmod )
-            ptbmod->SetText(text.c_str());
+        if (ptbmod)
+            ptbmod->SetText(std::move(text));
     }
 }
 

@@ -60,7 +60,7 @@ class pfGUITextBoxMod : public pfGUIControlMod
 {
     protected:
 
-        wchar_t         *fText;
+        ST::string      fText;
         ST::string      fLocalizationPath;
         bool            fUseLocalizationPath;
 
@@ -73,7 +73,6 @@ class pfGUITextBoxMod : public pfGUIControlMod
     public:
 
         pfGUITextBoxMod();
-        virtual ~pfGUITextBoxMod();
 
         CLASSNAME_REGISTER( pfGUITextBoxMod );
         GETINTERFACE_ANY( pfGUITextBoxMod, pfGUIControlMod );
@@ -95,13 +94,16 @@ class pfGUITextBoxMod : public pfGUIControlMod
 
         void    PurgeDynaTextMapImage() override;
 
-        virtual const wchar_t*  GetText() { return fText; }
+        ST::string  GetText() const { return fText; }
 
         // Export only
-        void    SetText( const char *text );
-        void    SetText( const wchar_t *text );
+        void    SetText(ST::string text)
+        {
+            fText = std::move(text);
+            IUpdate();
+        }
 
-        void    SetLocalizationPath(const ST::string& path);
+        void    SetLocalizationPath(ST::string path);
         void    SetUseLocalizationPath(bool use);
 };
 

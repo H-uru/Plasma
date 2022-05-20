@@ -51,10 +51,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGUIControl.h"
 #include "pyGlueHelpers.h"
-#include <string>
 
 class pyColor;
 class pfGUIColorScheme;
+
+namespace ST { class string; }
 
 class pyGUIControlTextBox : public pyGUIControl
 {
@@ -78,10 +79,8 @@ public:
 
     static bool IsGUIControlTextBox(pyKey& gckey);
 
-    virtual void    SetText( const char *text );
-    virtual void    SetTextW( const std::wstring& text );
-    virtual std::string GetText();
-    virtual std::wstring GetTextW();
+    void SetText(ST::string text);
+    ST::string GetText() const;
     virtual void    SetFontSize( uint8_t size );
     virtual void    SetForeColor( pyColor& color );
     virtual void    SetBackColor( pyColor& color );

@@ -74,47 +74,37 @@ PYTHON_INIT_DEFINITION(ptGUIControlTextBox, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setString, args)
 {
-    char* text;
-    if (!PyArg_ParseTuple(args, "s", &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "setString expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetText(text);
+    self->fThis->SetText(std::move(text));
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setStringW, args)
 {
-    PyObject* textObj;
-    if (!PyArg_ParseTuple(args, "O", &textObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "setStringW expects a unicode string");
+    // TODO: Remove this from the scripts.
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text)) {
+        PyErr_SetString(PyExc_TypeError, "setString expects a string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj))
-    {
-        wchar_t* temp = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->SetTextW(temp);
-        PyMem_Free(temp);
-        PYTHON_RETURN_NONE;
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "setStringW expects a unicode string");
-        PYTHON_RETURN_ERROR;
-    }
+    self->fThis->SetText(std::move(text));
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getString)
 {
-    return PyUnicode_FromStdString(self->fThis->GetText());
+    return PyUnicode_FromSTString(self->fThis->GetText());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getStringW)
 {
-    std::wstring retVal = self->fThis->GetTextW();
-    return PyUnicode_FromWideChar(retVal.c_str(), retVal.length());
+    // TODO: Remove this from the scripts.
+    return PyUnicode_FromSTString(self->fThis->GetText());
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setFontSize, args)
