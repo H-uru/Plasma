@@ -632,7 +632,7 @@ bool plMetalPipeline::BeginRender()
         IPreprocessShadows();
         IPreprocessAvatarTextures();
         
-        CA::MetalDrawable *drawable = currentDrawableCallback();
+        CA::MetalDrawable *drawable = currentDrawableCallback(fDevice.fMetalDevice);
         if(!drawable) {
             fCurrentPool->release();
             return false;

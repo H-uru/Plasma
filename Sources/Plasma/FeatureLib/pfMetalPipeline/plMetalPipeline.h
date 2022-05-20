@@ -85,7 +85,7 @@ class plMetalPipeline : public pl3DPipeline<plMetalDevice>
 {
 public:
    //The actual client should set this callback so we can retrieve drawables from the window server
-    std::function<CA::MetalDrawable *()>    currentDrawableCallback;
+    std::function<CA::MetalDrawable *(MTL::Device* device)>    currentDrawableCallback;
     //caching the frag function here so that the shader compiler can quickly access it
     MTL::Function*                          fFragFunction;
     
