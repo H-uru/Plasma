@@ -3289,7 +3289,7 @@ bool plGUITextBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     pfGUITextBoxMod *ctrl = (pfGUITextBoxMod *)fControl;
 
-    ctrl->SetText( fCompPB->GetStr( kRefInitText ) );
+    ctrl->SetText(M2ST(fCompPB->GetStr(kRefInitText)));
 
     if( fCompPB->GetInt( kRefXparentBgnd ) )
         ctrl->SetFlag( pfGUITextBoxMod::kXparentBgnd );
@@ -3304,7 +3304,7 @@ bool plGUITextBoxComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         ctrl->SetFlag( pfGUIControlMod::kScaleTextWithResolution );
 
     ctrl->SetUseLocalizationPath( fCompPB->GetInt( kRefUseLocalization ) != 0 );
-    ctrl->SetLocalizationPath( fCompPB->GetStr( kRefLocalizationPath ) );
+    ctrl->SetLocalizationPath(M2ST(fCompPB->GetStr(kRefLocalizationPath)));
 
     return true;
 }

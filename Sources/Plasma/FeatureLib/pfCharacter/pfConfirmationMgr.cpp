@@ -85,11 +85,11 @@ class pfConfirmationDialogProc : public pfGUIDialogProc
     friend class pfConfirmationMgr;
     pfConfirmationMgr* fMgr;
 
-    inline void ISetText(const ST::string& text, uint32_t tagID)
+    inline void ISetText(ST::string text, uint32_t tagID)
     {
         pfGUITextBoxMod* mod = pfGUITextBoxMod::ConvertNoRef(fDialog->GetControlFromTag(tagID));
         hsAssert(mod != nullptr, "You sure about this, boss?");
-        mod->SetText(text.to_wchar().data());
+        mod->SetText(std::move(text));
     }
 
     inline void ISetLocalizedText(const ST::string& path, uint32_t tagID)
@@ -97,7 +97,7 @@ class pfConfirmationDialogProc : public pfGUIDialogProc
         ISetText(pfLocalizationMgr::Instance().GetString(path), tagID);
     }
 
-    void ILayoutYesNo(const ST::string& text)
+    void ILayoutYesNo(ST::string text)
     {
         fDialog->GetControlFromTag(kLogoutTextTag)->SetVisible(false);
         fDialog->GetControlFromTag(kLogoutButtonTag)->SetVisible(false);
@@ -107,10 +107,10 @@ class pfConfirmationDialogProc : public pfGUIDialogProc
         fDialog->GetControlFromTag(kNoButtonTag)->SetVisible(true);
         ISetLocalizedText("KI.YesNoDialog.YESButton"_st, kYesTextTag);
         ISetLocalizedText("KI.YesNoDialog.NoButton"_st, kNoTextTag);
-        ISetText(text, kMessageTextTag);
+        ISetText(std::move(text), kMessageTextTag);
     }
 
-    void ILayoutSingle(const ST::string& message, const ST::string& button)
+    void ILayoutSingle(ST::string message, const ST::string& button)
     {
         fDialog->GetControlFromTag(kLogoutTextTag)->SetVisible(false);
         fDialog->GetControlFromTag(kLogoutButtonTag)->SetVisible(false);
@@ -119,10 +119,10 @@ class pfConfirmationDialogProc : public pfGUIDialogProc
         fDialog->GetControlFromTag(kNoTextTag)->SetVisible(true);
         fDialog->GetControlFromTag(kNoButtonTag)->SetVisible(true);
         ISetLocalizedText(button, kNoTextTag);
-        ISetText(message, kMessageTextTag);
+        ISetText(std::move(message), kMessageTextTag);
     }
 
-    void ILayoutQuit(const ST::string& text)
+    void ILayoutQuit(ST::string text)
     {
         bool canLogout = plNetClientApp::GetInstance()->GetPlayerID() != 0;
         fDialog->GetControlFromTag(kLogoutTextTag)->SetVisible(canLogout);
@@ -135,7 +135,7 @@ class pfConfirmationDialogProc : public pfGUIDialogProc
             ISetText("Logout"_st, kLogoutTextTag); // FIXME: This is missing from the LOC files.
         ISetLocalizedText("KI.YesNoDialog.QuitButton"_st, kYesTextTag);
         ISetLocalizedText("KI.YesNoDialog.NoButton"_st, kNoTextTag);
-        ISetText(text, kMessageTextTag);
+        ISetText(std::move(text), kMessageTextTag);
     }
 
 public:
