@@ -1180,7 +1180,7 @@ class xKI(ptModifier):
             avatarSet = 1
             self.BKPlayerSelected = player
             sendToField = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKIPlayerLine))
-            sendToField.setString(player.getPlayerName())
+            sendToField.setStringW(player.getPlayerName())
             self.SetBigKIToButtons()
             # Find the player in the list and select them.
             for pidx in range(len(self.BKPlayerList)):
@@ -1917,7 +1917,7 @@ class xKI(ptModifier):
 
         gameName = xLocTools.CreatePossessiveString(PtGetLocalPlayer().getPlayerName(), PtGetLocalizedString("KI.MarkerGame.DefaultGameTitle"))
 
-        ptGUIControlEditBox(KICreateMarkerGameGUI.dialog.getControlFromTag(kGUI.CreateMarkerGameNameEB)).setString(gameName)
+        ptGUIControlEditBox(KICreateMarkerGameGUI.dialog.getControlFromTag(kGUI.CreateMarkerGameNameEB)).setStringW(gameName)
 
     ## Begin the creation of a new Marker Game.
     def CreateMarkerGame(self):
@@ -3649,7 +3649,7 @@ class xKI(ptModifier):
                 curSendTo = sendToField.getString().strip()
                 if not curSendTo:
                     self.BKPlayerSelected = sender
-                    sendToField.setString(sender.playerGetName())
+                    sendToField.setStringW(sender.playerGetName())
 
     #~~~~~~~~~~~~~~~#
     # BigKI Content #
@@ -3749,7 +3749,7 @@ class xKI(ptModifier):
         playerText = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKPlayerName))
         IDText = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKPlayerID))
         localPlayer = PtGetLocalPlayer()
-        playerText.setString(localPlayer.getPlayerName())
+        playerText.setStringW(localPlayer.getPlayerName())
         IDText.setString("[ID:{:08d}]".format(localPlayer.getPlayerID()))
         self.UpdatePelletScore()
         self.BigKIRefreshHoodStatics()
@@ -4356,7 +4356,7 @@ class xKI(ptModifier):
                             contentIconJ.hide()
                             contentIconP.hide()
                             contentTitle.setForeColor(kColors.DniSelectable)
-                            contentTitle.setString(xCensor.xCensor(content.getPlayerName(), self.censorLevel))
+                            contentTitle.setStringW(xCensor.xCensor(content.getPlayerName(), self.censorLevel))
                             contentTitle.show()
                             contentDate.hide()
                             contentFrom.setForeColor(kColors.DniSelectable)
@@ -4409,7 +4409,7 @@ class xKI(ptModifier):
                                 if isinstance(element, ptVaultPlayerInfoNode):
                                     # If it's a player, use the title for the player name.
                                     contentTitle.setForeColor(kColors.DniSelectable)
-                                    contentTitle.setString(xCensor.xCensor(element.playerGetName(), self.censorLevel))
+                                    contentTitle.setStringW(xCensor.xCensor(element.playerGetName(), self.censorLevel))
                                     contentTitle.show()
                                     contentDate.hide()
                                     contentFrom.setForeColor(kColors.DniSelectable)
@@ -4430,11 +4430,11 @@ class xKI(ptModifier):
                                         contentDate.setForeColor(kColors.DniSelectable)
 
                                     if isinstance(element, ptVaultImageNode):
-                                        contentTitle.setString(xCensor.xCensor(element.imageGetTitle(), self.censorLevel))
+                                        contentTitle.setStringW(xCensor.xCensor(element.imageGetTitle(), self.censorLevel))
                                     elif isinstance(element, ptVaultTextNoteNode):
-                                        contentTitle.setString(xCensor.xCensor(element.noteGetTitle(), self.censorLevel))
+                                        contentTitle.setStringW(xCensor.xCensor(element.noteGetTitle(), self.censorLevel))
                                     elif isinstance(element, ptVaultMarkerGameNode):
-                                        contentTitle.setString(xCensor.xCensor(element.getGameName(), self.censorLevel))
+                                        contentTitle.setStringW(xCensor.xCensor(element.getGameName(), self.censorLevel))
                                     else:
                                         # Probably still downloading because of lag.
                                         contentTitle.setString("--[Downloading]--")
@@ -4460,7 +4460,7 @@ class xKI(ptModifier):
                                         else:
                                             contentFrom.setForeColor(kColors.DniSelectable)
                                             contentFrom.setFontSize(10)
-                                            contentFrom.setString(sender.playerGetName())
+                                            contentFrom.setStringW(sender.playerGetName())
                                         contentFrom.show()
                                     else:
                                         if content.getSaverID() == 0:
@@ -4635,7 +4635,7 @@ class xKI(ptModifier):
         picDate.setString(curTime)
         picDate.show()
         if not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldPICTitle:
-            picTitle.setString(xCensor.xCensor(element.imageGetTitle(), self.censorLevel))
+            picTitle.setStringW(xCensor.xCensor(element.imageGetTitle(), self.censorLevel))
             picTitle.show()
         if picImage.getNumMaps() > 0:
             dynMap = picImage.getMap(0)
@@ -4706,7 +4706,7 @@ class xKI(ptModifier):
             return
         if isinstance(self.BKCurrentContent, ptPlayer):
             # Display the content on the screen.
-            plyName.setString(xCensor.xCensor(self.BKCurrentContent.getPlayerName(), self.censorLevel))
+            plyName.setStringW(xCensor.xCensor(self.BKCurrentContent.getPlayerName(), self.censorLevel))
             plyName.show()
             IDText = "{:08d}".format(self.BKCurrentContent.getPlayerID())
             plyID.setString(IDText)
@@ -4715,7 +4715,7 @@ class xKI(ptModifier):
             plyDetail.show()
             sendToField = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKIPlayerLine))
             self.BKPlayerSelected = self.BKCurrentContent
-            sendToField.setString(self.BKCurrentContent.getPlayerName())
+            sendToField.setStringW(self.BKCurrentContent.getPlayerName())
             return
         element = self.BKCurrentContent.getChild()
         if element is None:
@@ -4727,7 +4727,7 @@ class xKI(ptModifier):
             return
         element = element.upcastToPlayerInfoNode()
         # Display the content on the screen.
-        plyName.setString(xCensor.xCensor(element.playerGetName(), self.censorLevel))
+        plyName.setStringW(xCensor.xCensor(element.playerGetName(), self.censorLevel))
         plyName.show()
         IDText = "{:08d}".format(element.playerGetID())
         plyID.setString(IDText)
@@ -4750,7 +4750,7 @@ class xKI(ptModifier):
             plyDeleteBtn.show()
         sendToField = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKIPlayerLine))
         self.BKPlayerSelected = self.BKCurrentContent
-        sendToField.setString(element.playerGetName())
+        sendToField.setStringW(element.playerGetName())
 
     ## Save after a player was edited.
     def BigKICheckSavePlayer(self):
@@ -5353,11 +5353,11 @@ class xKI(ptModifier):
                 if dataType == PtVaultNodeTypes.kMarkerGameNode:
                     element = element.upcastToMarkerGameNode()
                     if element is not None:
-                        if not control.wasEscaped() and control.getString() != "":
+                        if not control.wasEscaped() and (controlText := control.getStringW()):
                             # Set the new title.
-                            newText = xCensor.xCensor(control.getStringW(), self.censorLevel)
-                            element.setGameName(control.getStringW())
-                            title.setString(control.getStringW())
+                            newText = xCensor.xCensor(controlText, self.censorLevel)
+                            element.setGameName(controlText)
+                            title.setStringW(controlText)
                             element.save()
                             PtDebugPrint("xKI.SaveMarkerGameNameFromEdit(): Updating title to \"{}\".".format(newText), level=kDebugDumpLevel)
                             self.RefreshPlayerList()
@@ -5563,7 +5563,7 @@ class xKI(ptModifier):
             # Get the original position of the miniKI.
             dragbar = ptGUIControlDragBar(KIMini.dialog.getControlFromTag(kGUI.miniDragBar))
             self.originalminiKICenter = dragbar.getObjectCenter()
-            # Retreive the original alpha.
+            # Retrieve the original alpha.
             fore = control.getForeColor()
             self.originalForeAlpha = fore.getAlpha()
             sel = control.getSelectColor()
@@ -5649,13 +5649,13 @@ class xKI(ptModifier):
                         # Can't be sent to.
                         pass
                     elif isinstance(self.BKPlayerSelected, Device):
-                        sendToField.setString(self.BKPlayerSelected.name)
+                        sendToField.setStringW(self.BKPlayerSelected.name)
                     # Is it a specific player info node?
                     elif isinstance(self.BKPlayerSelected, ptVaultNodeRef):
                         plyrInfoNode = self.BKPlayerSelected.getChild()
                         plyrInfo = plyrInfoNode.upcastToPlayerInfoNode()
                         if plyrInfo is not None:
-                            sendToField.setString(plyrInfo.playerGetName())
+                            sendToField.setStringW(plyrInfo.playerGetName())
                             # Set private caret.
                             caret.setStringW(PtGetLocalizedString("KI.Chat.TOPrompt") + str(plyrInfo.playerGetName()) + " >")
                             privateChbox.setChecked(1)
@@ -5663,7 +5663,7 @@ class xKI(ptModifier):
                             self.BKPlayerSelected = None
                     # Is it a specific player?
                     elif isinstance(self.BKPlayerSelected, ptPlayer):
-                        sendToField.setString(self.BKPlayerSelected.getPlayerName())
+                        sendToField.setStringW(self.BKPlayerSelected.getPlayerName())
                         caret.setStringW(PtGetLocalizedString("KI.Chat.TOPrompt") + str(self.BKPlayerSelected.getPlayerName()) + " >")
                         privateChbox.setChecked(1)
                     # Is it a list of players?

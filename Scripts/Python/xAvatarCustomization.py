@@ -1438,7 +1438,7 @@ class xAvatarCustomization(ptModifier):
         editbox = ptGUIControlEditBox(AvCustGUI.dialog.getControlFromTag(kNameEBID))
         editbox.hide() # don't want people changing their name
         localplayer = PtGetLocalPlayer()
-        namebox.setString(localplayer.getPlayerName())
+        namebox.setStringW(localplayer.getPlayerName())
         panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
         clothing_panel = panelRG.getValue()
         zoomBtn = ptGUIControlCheckBox(AvCustGUI.dialog.getControlFromTag(kZoomButton))

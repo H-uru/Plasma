@@ -257,41 +257,41 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addImageInBox, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addStringWithColor, args)
 {
-    char* text;
+    wchar_t* text;
     PyObject* colorObj = nullptr;
     unsigned long inheritAlpha;
-    if (!PyArg_ParseTuple(args, "sOl", &text, &colorObj, &inheritAlpha))
+    if (!PyArg_ParseTuple(args, "uOl", &text, &colorObj, &inheritAlpha))
     {
-        PyErr_SetString(PyExc_TypeError, "addStringWithColor expects a string, ptColor, and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "addStringWithColor expects a unicode string, ptColor, and an unsigned long");
         PYTHON_RETURN_ERROR;
     }
     if (!pyColor::Check(colorObj))
     {
-        PyErr_SetString(PyExc_TypeError, "addStringWithColor expects a string, ptColor, and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "addStringWithColor expects a unicode string, ptColor, and an unsigned long");
         PYTHON_RETURN_ERROR;
     }
     pyColor* color = pyColor::ConvertFrom(colorObj);
-    return PyLong_FromLong(self->fThis->AddTextWColor(text, *color, inheritAlpha));
+    return PyLong_FromLong(self->fThis->AddTextWColorW(text, *color, inheritAlpha));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addStringWithColorWithSize, args)
 {
-    char* text;
+    wchar_t* text;
     PyObject* colorObj = nullptr;
     unsigned long inheritAlpha;
     long textSize;
-    if (!PyArg_ParseTuple(args, "sOll", &text, &colorObj, &inheritAlpha, &textSize))
+    if (!PyArg_ParseTuple(args, "uOll", &text, &colorObj, &inheritAlpha, &textSize))
     {
-        PyErr_SetString(PyExc_TypeError, "addStringWithColorWithSize expects a string, ptColor, an unsigned long, and a long");
+        PyErr_SetString(PyExc_TypeError, "addStringWithColorWithSize expects a unicode string, ptColor, an unsigned long, and a long");
         PYTHON_RETURN_ERROR;
     }
     if (!pyColor::Check(colorObj))
     {
-        PyErr_SetString(PyExc_TypeError, "addStringWithColorWithSize expects a string, ptColor, an unsigned long, and a long");
+        PyErr_SetString(PyExc_TypeError, "addStringWithColorWithSize expects a unicode string, ptColor, an unsigned long, and a long");
         PYTHON_RETURN_ERROR;
     }
     pyColor* color = pyColor::ConvertFrom(colorObj);
-    return PyLong_FromLong(self->fThis->AddTextWColorWSize(text, *color, inheritAlpha, textSize));
+    return PyLong_FromLong(self->fThis->AddTextWColorWSizeW(text, *color, inheritAlpha, textSize));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, add2StringsWithColors, args)
