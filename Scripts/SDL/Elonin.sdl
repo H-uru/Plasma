@@ -43,7 +43,7 @@
 STATEDESC Elonin
  
 {
-   VERSION 1
+   VERSION 2
  
     VAR BOOL    fntOnOff[1] DEFAULT=0
     VAR BOOL    birdie[1] DEFAULT=0
