@@ -2967,7 +2967,7 @@ class xKI(ptModifier):
                     if PLR.playerIsOnline():
                         playerlist.addStringWithColor(PLR.playerGetName(), kColors.DniSelectable, kSelectUseGUIColor)
                     else:
-                        playerlist.addStringWithColor(PLR.playerGetName(), kColors.AgenBlueDk,kSelectDetermined)
+                        playerlist.addStringWithColor(PLR.playerGetName(), kColors.AgenBlueDk, kSelectDetermined)
                 else:
                     PtDebugPrint("xKI.RefreshPlayerListDisplay(): Unknown player element type {}.".format(PLR.getType()), level=kErrorLevel)
             elif isinstance(plyr, ptPlayer):

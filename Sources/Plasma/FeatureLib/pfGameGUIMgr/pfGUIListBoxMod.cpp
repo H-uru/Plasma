@@ -1140,14 +1140,14 @@ void    pfGUIListBoxMod::ClearAllElements()
     HandleExtendedEvent( pfGUIListBoxMod::kListCleared );
 }
 
-uint16_t  pfGUIListBoxMod::AddString( const ST::string &string )
+uint16_t  pfGUIListBoxMod::AddString( ST::string string )
 {
-    return AddElement( new pfGUIListText( string ) );
+    return AddElement( new pfGUIListText( std::move(string) ) );
 }
 
-int16_t   pfGUIListBoxMod::FindString( const ST::string &toCompareTo )
+int16_t   pfGUIListBoxMod::FindString( ST::string toCompareTo )
 {
-    pfGUIListText   text( toCompareTo );
+    pfGUIListText text( std::move(toCompareTo) );
     return FindElement( &text );
 }
 

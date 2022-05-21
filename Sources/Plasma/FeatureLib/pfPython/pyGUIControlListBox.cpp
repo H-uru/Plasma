@@ -286,7 +286,7 @@ class pfListTextInBox : public pfGUIListText
         uint32_t              fMinHeight;
 
     public:
-        pfListTextInBox( const ST::string &text, uint32_t min_width=0, uint32_t min_height=0 ) : pfGUIListText( text )
+        pfListTextInBox( ST::string text, uint32_t min_width=0, uint32_t min_height=0 ) : pfGUIListText( std::move(text) )
         {
             fMinWidth = min_width;
             fMinHeight = min_height;
@@ -502,7 +502,7 @@ uint16_t pyGUIControlListBox::GetNumElements()
     return 0;
 }
 
-void pyGUIControlListBox::SetElement( uint16_t idx, const ST::string& text )
+void pyGUIControlListBox::SetElement( uint16_t idx, ST::string text )
 {
     if ( fGCkey )
     {
@@ -517,7 +517,7 @@ void pyGUIControlListBox::SetElement( uint16_t idx, const ST::string& text )
                 {
                     // if its a text element type then it should be safe to cast it to a pfGUIListText
                     pfGUIListText* letext = (pfGUIListText*)le;
-                    letext->SetText(text);
+                    letext->SetText(std::move(text));
                 }
             }
         }
@@ -575,7 +575,7 @@ ST::string pyGUIControlListBox::GetElement( uint16_t idx )
     return "";
 }
 
-int16_t pyGUIControlListBox::AddString( const ST::string &string )
+int16_t pyGUIControlListBox::AddString( ST::string string )
 {
     if ( fGCkey )
     {
@@ -583,7 +583,7 @@ int16_t pyGUIControlListBox::AddString( const ST::string &string )
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfGUIListText *element = new pfGUIListText(string);
+            pfGUIListText *element = new pfGUIListText(std::move(string));
             if (!fBuildRoots.empty())
                 fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
@@ -610,27 +610,25 @@ int16_t   pyGUIControlListBox::AddImage( pyImage& image, bool respectAlpha )
 }
 
 
-int16_t pyGUIControlListBox::FindString( const ST::string &toCompareTo )
+int16_t pyGUIControlListBox::FindString( ST::string toCompareTo )
 {
     if ( fGCkey )
     {
         // get the pointer to the modifier
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
-            return plbmod->FindString(toCompareTo);
+            return plbmod->FindString(std::move(toCompareTo));
     }
     return -1;
 }
 
-int16_t pyGUIControlListBox::AddTextWColor( const char *str, pyColor& textcolor, uint32_t inheritalpha)
+int16_t pyGUIControlListBox::AddTextWColor( ST::string str, pyColor& textcolor, uint32_t inheritalpha)
 {
-    wchar_t *wStr = hsStringToWString(str);
-    int16_t retVal = AddTextWColorW(wStr,textcolor,inheritalpha);
-    delete [] wStr;
+    int16_t retVal = AddTextWColorW(std::move(str), textcolor, inheritalpha);
     return retVal;
 }
 
-int16_t pyGUIControlListBox::AddTextWColorW( const std::wstring& str, pyColor& textcolor, uint32_t inheritalpha)
+int16_t pyGUIControlListBox::AddTextWColorW( ST::string str, pyColor& textcolor, uint32_t inheritalpha)
 {
     if ( fGCkey )
     {
@@ -647,15 +645,13 @@ int16_t pyGUIControlListBox::AddTextWColorW( const std::wstring& str, pyColor& t
     return -1;
 }
 
-int16_t pyGUIControlListBox::AddTextWColorWSize( const char *str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize)
+int16_t pyGUIControlListBox::AddTextWColorWSize( ST::string str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize)
 {
-    wchar_t *wStr = hsStringToWString(str);
-    int16_t retVal = AddTextWColorWSizeW(wStr,textcolor,inheritalpha,fontsize);
-    delete [] wStr;
+    int16_t retVal = AddTextWColorWSizeW(str, textcolor, inheritalpha, fontsize);
     return retVal;
 }
 
-int16_t pyGUIControlListBox::AddTextWColorWSizeW( const std::wstring& str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize)
+int16_t pyGUIControlListBox::AddTextWColorWSizeW( ST::string str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize)
 {
     if ( fGCkey )
     {
@@ -672,16 +668,12 @@ int16_t pyGUIControlListBox::AddTextWColorWSizeW( const std::wstring& str, pyCol
     return -1;
 }
 
-void pyGUIControlListBox::Add2TextWColor( const char *str1, pyColor& textcolor1,const char *str2, pyColor& textcolor2, uint32_t inheritalpha)
+void pyGUIControlListBox::Add2TextWColor( ST::string str1, pyColor& textcolor1, ST::string str2, pyColor& textcolor2, uint32_t inheritalpha)
 {
-    wchar_t *wStr1 = hsStringToWString(str1);
-    wchar_t *wStr2 = hsStringToWString(str2);
-    Add2TextWColorW(wStr1,textcolor1,wStr2,textcolor2,inheritalpha);
-    delete [] wStr2;
-    delete [] wStr1;
+    Add2TextWColorW(std::move(str1), textcolor1, std::move(str2), textcolor2, inheritalpha);
 }
 
-void pyGUIControlListBox::Add2TextWColorW( const std::wstring& str1, pyColor& textcolor1, const std::wstring& str2, pyColor& textcolor2, uint32_t inheritalpha)
+void pyGUIControlListBox::Add2TextWColorW( ST::string str1, pyColor& textcolor1, ST::string str2, pyColor& textcolor2, uint32_t inheritalpha)
 {
     if ( fGCkey )
     {
@@ -689,7 +681,7 @@ void pyGUIControlListBox::Add2TextWColorW( const std::wstring& str1, pyColor& te
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfColorListElement *element = new pfColorListElement(str1.c_str(),textcolor1.getColor(),str2.c_str(),textcolor2.getColor(),inheritalpha );
+            pfColorListElement *element = new pfColorListElement(str1.c_str(), textcolor1.getColor(), str2.c_str(), textcolor2.getColor(), inheritalpha);
             if (!fBuildRoots.empty())
                 fBuildRoots.back()->AddChild(element);
             plbmod->AddElement( element );
@@ -697,7 +689,7 @@ void pyGUIControlListBox::Add2TextWColorW( const std::wstring& str1, pyColor& te
     }
 }
 
-int16_t pyGUIControlListBox::AddStringInBox( const ST::string &string, uint32_t min_width, uint32_t min_height )
+int16_t pyGUIControlListBox::AddStringInBox( ST::string string, uint32_t min_width, uint32_t min_height )
 {
     if ( fGCkey )
     {
@@ -705,7 +697,7 @@ int16_t pyGUIControlListBox::AddStringInBox( const ST::string &string, uint32_t 
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfListTextInBox *element = new pfListTextInBox( string, min_width, min_height );
+            pfListTextInBox *element = new pfListTextInBox( std::move(string), min_width, min_height );
             if (!fBuildRoots.empty())
                 fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
@@ -870,7 +862,7 @@ void pyGUIControlListBox::Unclickable()
     }
 }
 
-void    pyGUIControlListBox::AddBranch( const ST::string &name, bool initiallyOpen )
+void    pyGUIControlListBox::AddBranch( ST::string name, bool initiallyOpen )
 {
     if ( fGCkey )
     {
@@ -878,7 +870,7 @@ void    pyGUIControlListBox::AddBranch( const ST::string &name, bool initiallyOp
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfGUIListTreeRoot *root = new pfGUIListTreeRoot(name);
+            pfGUIListTreeRoot *root = new pfGUIListTreeRoot(std::move(name));
             root->ShowChildren( initiallyOpen );
             
             if (!fBuildRoots.empty())
