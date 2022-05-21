@@ -42,6 +42,24 @@
 STATEDESC Nexus
 {
 
+    VERSION 8
+
+    VAR INT	MaxCityPop[1]                  DEFAULT=20        DEFAULTOPTION=VAULT
+    VAR BOOL nxusCityLinksVis[1]           DEFAULT=1         DEFAULTOPTION=VAULT
+    VAR BOOL nxusShowGZ[1]                 DEFAULT=0         DEFAULTOPTION=VAULT
+    VAR INT MaxPubPop[1]                   DEFAULT=100       DEFAULTOPTION=VAULT
+    VAR BOOL nxusShowPub[1]                DEFAULT=0         DEFAULTOPTION=VAULT
+    VAR INT MaxKirelPop[1]                 DEFAULT=100       DEFAULTOPTION=VAULT
+    VAR BOOL nxusShowKirel[1]              DEFAULT=0         DEFAULTOPTION=VAULT
+    VAR INT MaxGuildPubPop[1]              DEFAULT=100       DEFAULTOPTION=VAULT
+    VAR INT MaxKveerPublicPop[1]           DEFAULT=100       DEFAULTOPTION=VAULT
+    VAR INT MaxGoMePubNewPublicPop[1]      DEFAULT=100       DEFAULTOPTION=VAULT
+    VAR INT MaxEloninPublicPop[1]          DEFAULT=100       DEFAULTOPTION=VAULT
+}
+
+STATEDESC Nexus
+{
+
     VERSION 7
 
     VAR INT	MaxCityPop[1]    DEFAULT=20 DEFAULTOPTION=VAULT
