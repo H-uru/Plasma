@@ -570,9 +570,9 @@ const char  *pfConsoleCmd::GetSignature()
     for( i = 0; i < fSignature.GetCount(); i++ )
     {
         if (fSigLabels[i] == nullptr)
-            sprintf( pStr, "%s", fSigTypes[ fSignature[ i ] ] );
+            sprintf( pStr, "[%s]", fSigTypes[ fSignature[ i ] ] );
         else
-            sprintf( pStr, "%s %s", fSigTypes[ fSignature[ i ] ], fSigLabels[ i ] );
+            sprintf( pStr, "[%s %s]", fSigTypes[ fSignature[ i ] ], fSigLabels[ i ] );
 
         hsAssert( strlen( string ) + strlen( pStr ) + 2 < sizeof( string ), "Not enough room for signature string" );
         strcat( string, ( i > 0 ) ? ", " : " " );
