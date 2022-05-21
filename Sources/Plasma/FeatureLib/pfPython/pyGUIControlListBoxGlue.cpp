@@ -313,7 +313,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, add2StringsWithColors, args)
     }
     pyColor* color1 = pyColor::ConvertFrom(color1Obj);
     pyColor* color2 = pyColor::ConvertFrom(color2Obj);
-    self->fThis->Add2TextWColor(std::move(text1), *color1, std::move(text2), *color2, inheritAlpha);
+    self->fThis->Add2TextWColorW(std::move(text1), *color1, std::move(text2), *color2, inheritAlpha);
     PYTHON_RETURN_NONE;
 }
 

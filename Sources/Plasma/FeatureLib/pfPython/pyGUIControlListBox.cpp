@@ -60,10 +60,10 @@ class pfColorListElement : public pfGUIListText
     protected:
         hsColorRGBA         fTextColor1;
         hsColorRGBA         fTextColor2;
-        wchar_t             *fString1;
-        wchar_t             *fString2;
-        uint32_t              fInheritAlpha;
-        int32_t               fOverrideFontSize;  // size of font to use (if -1 then just use scheme setting)
+        ST::string          fString1;
+        ST::string          fString2;
+        uint32_t            fInheritAlpha;
+        int32_t             fOverrideFontSize;  // size of font to use (if -1 then just use scheme setting)
 
     public:
         enum InheritTypes
@@ -75,91 +75,33 @@ class pfColorListElement : public pfGUIListText
             kSelectUseGUIColor,
         };
 
-        pfColorListElement( const char *string1, hsColorRGBA color1, const char *string2, hsColorRGBA color2, uint32_t inheritalpha, int32_t fontsize=-1 )
+        pfColorListElement( ST::string string1, hsColorRGBA color1, ST::string string2, hsColorRGBA color2, uint32_t inheritalpha, int32_t fontsize=-1 )
         {
-            if ( string1 )
-            {
-                fString1 = hsStringToWString(string1);
-                fText = ST::string();
-            }
-            else
-            {
-                fString1 = nullptr;
-                fText = ST::string();
-            }
+            fText = ST::string();
+            fString1 = std::move(string1);
             fTextColor1 = color1;
-            if (string2)
-                fString2 = hsStringToWString(string2);
-            else
-                fString2 = nullptr;
+            fString2 = std::move(string2);
             fTextColor2 = color2;
             fInheritAlpha = inheritalpha;
             fJustify = kLeftJustify;
             fOverrideFontSize = fontsize;
         }
 
-        pfColorListElement( const wchar_t *string1, hsColorRGBA color1, const wchar_t *string2, hsColorRGBA color2, uint32_t inheritalpha, int32_t fontsize=-1 )
+        pfColorListElement(ST::string string1, hsColorRGBA color1, uint32_t inheritalpha, int32_t fontsize = -1)
         {
-            if ( string1 )
-            {
-                fString1 = new wchar_t[wcslen(string1)+1];
-                wcscpy(fString1,string1);
-                fText = ST::string();
-            }
-            else
-            {
-                fString1 = nullptr;
-                fText = ST::string();
-            }
+            fText = ST::string();
+            fString1 = std::move(string1);
             fTextColor1 = color1;
-            if (string2)
-            {
-                fString2 = new wchar_t[wcslen(string2)+1];
-                wcscpy(fString2,string2);
-            }
-            else
-                fString2 = nullptr;
-            fTextColor2 = color2;
+            fString2 = ST::string();
+            fTextColor2 = hsColorRGBA();
             fInheritAlpha = inheritalpha;
             fJustify = kLeftJustify;
             fOverrideFontSize = fontsize;
         }
 
-        virtual ~pfColorListElement()
+        virtual void SetText(ST::string text )
         {
-            if ( fString1 )
-            {
-                delete [] fString1;
-                fString1 = nullptr;
-                fText = ST::string();
-            }
-            if ( fString2 )
-                delete [] fString2;
-        }
-
-        virtual void SetText( const char *text )
-        {
-            if ( fString1 )
-                delete [] fString1;
-
-            if (text != nullptr)
-                fString1 = hsStringToWString(text);
-            else
-                fString1 = nullptr;
-        }
-
-        virtual void SetText( const wchar_t *text )
-        {
-            if ( fString1 )
-                delete [] fString1;
-
-            if (text != nullptr)
-            {
-                fString1 = new wchar_t[wcslen(text)+1];
-                wcscpy(fString1,text);
-            }
-            else
-                fString1 = nullptr;
+            fString1 = std::move(text);
         }
 
         bool    Draw(plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight) override
@@ -214,23 +156,23 @@ class pfColorListElement : public pfGUIListText
             }
 
             // draw the first string
-            if (fString1)
+            if (!fString1.empty())
             {
                 if ( fOverrideFontSize != -1 )
                     textGen->SetFont( fColors->fFontFace, (uint16_t)fOverrideFontSize, fColors->fFontFlags );
                 textGen->SetTextColor( textColor1, fColors->fTransparent && fColors->fBackColor.a == 0.f );
                 textGen->DrawWrappedString( x + 2, y, fString1, maxWidth - 4, maxHeight );
                 uint16_t width, height;
-                textGen->CalcWrappedStringSize(fString1,&width,&height);
+                textGen->CalcWrappedStringSize(fString1, &width, &height);
                 x += 2 + width;
-                if (fString2 == nullptr)
+                if (fString2.empty())
                     y += height;
                 if ( fOverrideFontSize != -1 )
                     textGen->SetFont( fColors->fFontFace, fColors->fFontSize, fColors->fFontFlags );
             }
 
             // draw the second string
-            if ( fString2 )
+            if (!fString2.empty())
             {
                 textGen->SetTextColor( textColor2, fColors->fTransparent && fColors->fBackColor.a == 0.f );
                 textGen->DrawWrappedString( x + 2, y, fString2, maxWidth - 4 - x, maxHeight );
@@ -241,21 +183,7 @@ class pfColorListElement : public pfGUIListText
 
         void    GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override
         {
-            bool wemade_string = false;
-            wchar_t* thestring;
-            if ( fString1 && fString2 )
-            {
-                size_t length = wcslen( fString1 ) + wcslen( fString2 ) + 3;
-                thestring = new wchar_t[ length ];
-                swprintf( thestring, length, L"%s %s", fString1, fString2 );
-                wemade_string = true;
-            }
-            else if (fString1)
-                thestring = fString1;
-            else if (fString2)
-                thestring = fString2;
-            else
-                thestring = nullptr;
+            ST::string thestring = ST::format("{} {}", fString1, fString2);            
             *width = textGen->GetVisibleWidth() - 4;
 
             if ( fOverrideFontSize != -1 )
@@ -267,9 +195,6 @@ class pfColorListElement : public pfGUIListText
             if (height != nullptr)
                 *height += 0;
             *width += 4;
-            // clean up thestring if we made it
-            if ( wemade_string )
-                delete [] thestring;
         }
 
         int     CompareTo(pfGUIListElement *rightSide) override
@@ -622,12 +547,6 @@ int16_t pyGUIControlListBox::FindString( ST::string toCompareTo )
     return -1;
 }
 
-int16_t pyGUIControlListBox::AddTextWColor( ST::string str, pyColor& textcolor, uint32_t inheritalpha)
-{
-    int16_t retVal = AddTextWColorW(std::move(str), textcolor, inheritalpha);
-    return retVal;
-}
-
 int16_t pyGUIControlListBox::AddTextWColorW( ST::string str, pyColor& textcolor, uint32_t inheritalpha)
 {
     if ( fGCkey )
@@ -636,19 +555,13 @@ int16_t pyGUIControlListBox::AddTextWColorW( ST::string str, pyColor& textcolor,
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfColorListElement *element = new pfColorListElement(str.c_str(), textcolor.getColor(), nullptr, hsColorRGBA(), inheritalpha);
+            pfColorListElement *element = new pfColorListElement(std::move(str), textcolor.getColor(), inheritalpha);
             if (!fBuildRoots.empty())
                 fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
         }
     }
     return -1;
-}
-
-int16_t pyGUIControlListBox::AddTextWColorWSize( ST::string str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize)
-{
-    int16_t retVal = AddTextWColorWSizeW(str, textcolor, inheritalpha, fontsize);
-    return retVal;
 }
 
 int16_t pyGUIControlListBox::AddTextWColorWSizeW( ST::string str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize)
@@ -659,18 +572,13 @@ int16_t pyGUIControlListBox::AddTextWColorWSizeW( ST::string str, pyColor& textc
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfColorListElement *element = new pfColorListElement(str.c_str(), textcolor.getColor(), nullptr, hsColorRGBA(), inheritalpha, fontsize);
+            pfColorListElement *element = new pfColorListElement(std::move(str), textcolor.getColor(), inheritalpha, fontsize);
             if (!fBuildRoots.empty())
                 fBuildRoots.back()->AddChild(element);
             return plbmod->AddElement( element );
         }
     }
     return -1;
-}
-
-void pyGUIControlListBox::Add2TextWColor( ST::string str1, pyColor& textcolor1, ST::string str2, pyColor& textcolor2, uint32_t inheritalpha)
-{
-    Add2TextWColorW(std::move(str1), textcolor1, std::move(str2), textcolor2, inheritalpha);
 }
 
 void pyGUIControlListBox::Add2TextWColorW( ST::string str1, pyColor& textcolor1, ST::string str2, pyColor& textcolor2, uint32_t inheritalpha)
@@ -681,7 +589,7 @@ void pyGUIControlListBox::Add2TextWColorW( ST::string str1, pyColor& textcolor1,
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
         {
-            pfColorListElement *element = new pfColorListElement(str1.c_str(), textcolor1.getColor(), str2.c_str(), textcolor2.getColor(), inheritalpha);
+            pfColorListElement *element = new pfColorListElement(std::move(str1), textcolor1.getColor(), std::move(str2), textcolor2.getColor(), inheritalpha);
             if (!fBuildRoots.empty())
                 fBuildRoots.back()->AddChild(element);
             plbmod->AddElement( element );

@@ -3133,7 +3133,7 @@ class xKI(ptModifier):
                 myAge = None
             if myAge is not None:
                 title = ptGUIControlTextBox(KIAgeOwnerExpanded.dialog.getControlFromTag(kGUI.BKAgeOwnerTitleTB))
-                title.setString(GetAgeName(myAge))
+                title.setStringW(GetAgeName(myAge))
                 titlebtn = ptGUIControlButton(KIAgeOwnerExpanded.dialog.getControlFromTag(kGUI.BKAgeOwnerTitleBtn))
                 titlebtn.enable()
                 titleEdit = ptGUIControlEditBox(KIAgeOwnerExpanded.dialog.getControlFromTag(kGUI.BKAgeOwnerTitleEditbox))
@@ -4361,7 +4361,7 @@ class xKI(ptModifier):
                             contentDate.hide()
                             contentFrom.setForeColor(kColors.DniSelectable)
                             contentFrom.setFontSize(10)
-                            contentFrom.setString(GetAgeName())
+                            contentFrom.setStringW(GetAgeName())
                             contentFrom.show()
                             # Find the button to enable it.
                             lmButton = ptGUIControlButton(KIListModeDialog.dialog.getControlFromTag(((ID - 100) // 10) + kGUI.BKIListModeCreateBtn))
@@ -4415,7 +4415,7 @@ class xKI(ptModifier):
                                     contentFrom.setForeColor(kColors.DniSelectable)
                                     contentFrom.setFontSize(10)
                                     if element.playerIsOnline():
-                                        contentFrom.setString(FilterAgeName(element.playerGetAgeInstanceName()))
+                                        contentFrom.setStringW(FilterAgeName(element.playerGetAgeInstanceName()))
                                     else:
                                         contentFrom.setString("  ")
                                     contentFrom.show()
@@ -4552,7 +4552,7 @@ class xKI(ptModifier):
             return
         element = element.upcastToTextNoteNode()
         # Display the content on the screen.
-        jrnAgeName.setString(FilterAgeName(xCensor.xCensor(element.getCreateAgeName(), self.censorLevel)))
+        jrnAgeName.setStringW(FilterAgeName(xCensor.xCensor(element.getCreateAgeName(), self.censorLevel)))
         jrnAgeName.show()
         tupTime = time.gmtime(PtGMTtoDniTime(element.getModifyTime()))
         curTime = time.strftime(PtGetLocalizedString("Global.Formats.Date"), tupTime)
@@ -4628,7 +4628,7 @@ class xKI(ptModifier):
             return
         element = element.upcastToImageNode()
         # Display the content on the screen.
-        picAgeName.setString(FilterAgeName(xCensor.xCensor(element.getCreateAgeName(), self.censorLevel)))
+        picAgeName.setStringW(FilterAgeName(xCensor.xCensor(element.getCreateAgeName(), self.censorLevel)))
         picAgeName.show()
         tupTime = time.gmtime(PtGMTtoDniTime(element.getModifyTime()))
         curTime = time.strftime(PtGetLocalizedString("Global.Formats.Date"), tupTime)
@@ -6218,7 +6218,7 @@ class xKI(ptModifier):
                 try:
                     # Get the selected Age config setting.
                     myAge = self.BKConfigFolderDict[self.BKConfigListOrder[self.BKFolderSelected]]
-                    titleEdit.setString(myAge.getAgeUserDefinedName())
+                    titleEdit.setStringW(myAge.getAgeUserDefinedName())
                 except LookupError:
                     titleEdit.setString("")
                 titleEdit.show()
@@ -6245,7 +6245,7 @@ class xKI(ptModifier):
                         myAge = self.BKConfigFolderDict[self.BKConfigListOrder[self.BKFolderSelected]]
                         if myAge is not None:
                             PtDebugPrint("xKI.ProcessNotifyAgeOwnerExpanded(): Age description updated for {}.".format(myAge.getDisplayName()), level=kDebugDumpLevel)
-                            myAge.setAgeDescription(descript.getString())
+                            myAge.setAgeDescription(descript.getStringW())
                             myAge.save()
                         else:
                             PtDebugPrint("xKI.ProcessNotifyAgeOwnerExpanded(): Neighborhood is None while trying to update description.", level=kDebugDumpLevel)
@@ -6256,7 +6256,7 @@ class xKI(ptModifier):
                     myAge = self.BKConfigFolderDict[self.BKConfigListOrder[self.BKFolderSelected]]
                     if myAge is not None:
                         PtDebugPrint("xKI.ProcessNotifyAgeOwnerExpanded(): Age description updated for {}.".format(myAge.getDisplayName()), level=kDebugDumpLevel)
-                        buff = descript.getString()
+                        buff = descript.getStringW()
                         myAge.setAgeDescription(buff)
                         myAge.save()
                     else:

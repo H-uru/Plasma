@@ -101,11 +101,8 @@ public:
     virtual void    SetSwatchEdgeOffset( uint32_t size );
     virtual void    SetStringJustify( uint16_t idx, uint32_t justify);
     virtual int16_t   FindString( ST::string toCompareTo );
-    virtual int16_t   AddTextWColor( ST::string str, pyColor& textcolor, uint32_t inheritalpha);
     virtual int16_t   AddTextWColorW( ST::string str, pyColor& textcolor, uint32_t inheritalpha);
-    virtual int16_t   AddTextWColorWSize( ST::string str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
     virtual int16_t   AddTextWColorWSizeW( ST::string str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
-    virtual void    Add2TextWColor( ST::string str1, pyColor& textcolor1, ST::string str2, pyColor& textcolor2, uint32_t inheritalpha);
     virtual void    Add2TextWColorW( ST::string str1, pyColor& textcolor1, ST::string str2, pyColor& textcolor2, uint32_t inheritalpha);
     virtual int16_t   AddStringInBox( ST::string string, uint32_t min_width, uint32_t min_height );
     virtual void    ScrollToBegin();
