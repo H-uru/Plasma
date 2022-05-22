@@ -215,6 +215,9 @@ jobs:
           - { str: macos-x64 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
+          - { external: OFF, type: Debug, str: internal-debug }
+          - { external: ON, type: RelWithDebInfo, str: external-release }
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
