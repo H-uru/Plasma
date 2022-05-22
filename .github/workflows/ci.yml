@@ -21,13 +21,13 @@ jobs:
 
     steps:
       - name: Checkout Plasma
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
 
       - name: Checkout MaxSDK
         continue-on-error: true
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: H-uruMachineUser/3dsMaxSDK
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
@@ -65,7 +65,7 @@ jobs:
           cmake --build build --target INSTALL --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v3
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
@@ -110,12 +110,12 @@ jobs:
 
     steps:
       - name: Checkout Plasma
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
 
       - name: Checkout MaxSDK
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: H-uruMachineUser/3dsMaxSDK
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
@@ -142,7 +142,7 @@ jobs:
           cmake --build build --target INSTALL --config Release -j 2
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v3
         with:
           name: max-${{ matrix.cfg.str }}
           path: build/install
@@ -161,7 +161,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
 
@@ -217,7 +217,7 @@ jobs:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
 
