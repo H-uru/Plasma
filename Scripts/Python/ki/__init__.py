@@ -4460,7 +4460,7 @@ class xKI(ptModifier):
                                         else:
                                             contentFrom.setForeColor(kColors.DniSelectable)
                                             contentFrom.setFontSize(10)
-                                            contentFrom.setStringW(sender.playerGetName())
+                                            contentFrom.setString(sender.playerGetName())
                                         contentFrom.show()
                                     else:
                                         if content.getSaverID() == 0:
@@ -4727,7 +4727,7 @@ class xKI(ptModifier):
             return
         element = element.upcastToPlayerInfoNode()
         # Display the content on the screen.
-        plyName.setStringW(xCensor.xCensor(element.playerGetName(), self.censorLevel))
+        plyName.setString(xCensor.xCensor(element.playerGetName(), self.censorLevel))
         plyName.show()
         IDText = "{:08d}".format(element.playerGetID())
         plyID.setString(IDText)
