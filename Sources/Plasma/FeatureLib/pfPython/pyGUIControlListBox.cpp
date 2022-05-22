@@ -183,7 +183,14 @@ class pfColorListElement : public pfGUIListText
 
         void    GetSize(plDynamicTextMap *textGen, uint16_t *width, uint16_t *height) override
         {
-            ST::string thestring = ST::format("{} {}", fString1, fString2);            
+            ST::string_stream ss;
+            if (!fString1.empty())
+                ss << fString1;
+            if (!fString1.empty() && !fString2.empty())
+                ss << ' ';
+            if (!fString2.empty())
+                ss << fString2;
+            ST::string thestring = ss.to_string();
             *width = textGen->GetVisibleWidth() - 4;
 
             if ( fOverrideFontSize != -1 )
