@@ -675,30 +675,104 @@ PF_CONSOLE_CMD( Console, SetTextColor, "int r, int g, int b",
 
 class DocGenIterator : public pfConsoleCmdIterator
 {
-    FILE *fFile;    
+    FILE *fFile;
+    bool fFirstGroupPrinted;
+    int fCurDepth;
 
 public:
-    DocGenIterator(FILE *f) { fFile = f; }
+    DocGenIterator(FILE *f) : fFile(f), fFirstGroupPrinted(), fCurDepth(-1) { }
+
     void ProcessCmd(pfConsoleCmd* c, int depth) override
     {
+        if (strncmp("SampleCmd", c->GetName(), 9) == 0)
+            return;
 
-        if(strncmp("SampleCmd",c->GetName(), 9) != 0)
-        {
-            fprintf(fFile, "<p><em>%s </em><br />%s </p>\n",c->GetSignature(),
-                    c->GetHelp());
-        }
+        if (!fFirstGroupPrinted)
+            fprintf(fFile, "<dl>\n");
+
+        // Make the help text HTML-safe and readable
+        ST::string help(c->GetHelp());
+        help = help.replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br>");
+
+        ST::printf(fFile, "<dt><tt>{}</tt></dt><dd>{}</dd>\n", c->GetSignature(), help);
+        fFirstGroupPrinted = true;
     }
+
     bool ProcessGroup(pfConsoleCmdGroup *g, int depth) override
     {
-    //  if (g->GetFirstCommand() != nullptr)
-        {
-            fprintf(fFile, "<p><strong><h%s>Command %sGroup %s </strong></h%s></p>\n",
-                (depth > 0) ? "3" : "2",
-                (depth > 0) ? "Sub" :"" ,
-                g->GetName(),
-                (depth > 0) ? "3" : "2");
+        if (fFirstGroupPrinted) {
+            fprintf(fFile, "</dl>\n");
+
+            for (int i = fCurDepth; i >= depth; i--) {
+                fprintf(fFile, "</details>\n");
+            }
         }
+
+        int hLevel = (depth > 0) ? 3 : 2;
+        ST::printf(fFile, "\n"
+                "<details open>\n"
+                "<summary><h{}><tt>{}</tt> Command {}Group</h{}></summary>\n"
+                "<dl>\n",
+                hLevel, g->GetName(), (depth > 0) ? ST_LITERAL("Sub") : ST_LITERAL(""), hLevel);
+
+        fFirstGroupPrinted = true;
+        fCurDepth = depth;
         return true;
+    }
+
+    void BeginFile()
+    {
+        fprintf(fFile, "<!DOCTYPE html>\n<html lang=\"en\">\n");
+        fprintf(fFile, "<meta charset=\"utf-8\">\n<title>Console Commands for Plasma 2.0 Client</title>\n");
+
+        // Some simple styling
+        fprintf(fFile,
+                "<style>\n"
+                "hgroup { text-align: center; margin-bottom: 1em; }\n"
+                "hgroup h1 { margin-bottom: 0; }\n"
+                "h2, h3 { display: inline; font-weight: 400; }\n"
+                "h2 tt, h3 tt { font-weight: 600; }\n"
+                "dl { margin-top: 0; margin-bottom: 0; }\n"
+                "dt { font-weight: 500; font-size: 1.125em; }\n"
+                "dd { margin-bottom: 0.5em; }\n"
+                "details { margin: 1em 0 1em 1em; }\n"
+                "summary { margin-left: -1em; cursor: pointer; }\n"
+                "</style>\n");
+
+        // Expand/Collapse button functionality
+        fprintf(fFile,
+                "<script>\n"
+                "function toggleAllGroups(open) {\n"
+                "  document.querySelectorAll('details').forEach(function (el) {\n"
+                "    el.open = open;\n"
+                "  });\n"
+                "}\n"
+                "</script>\n\n"
+                "<div>\n"
+                "<button onclick=\"toggleAllGroups(false)\">Collapse All</button>\n"
+                "<button onclick=\"toggleAllGroups(true)\">Expand All</button>\n"
+                "</div>\n\n");
+
+        // File Header
+        ST::printf(fFile,
+                "<hgroup>\n"
+                "<h1>Console Commands for Plasma 2.0 Client ({})</h1>\n"
+                "<span>Built {} on {}</span>\n"
+                "</hgroup>\n\n",
+                plProduct::Tag(), plProduct::BuildTime(), plProduct::BuildDate());
+    }
+
+    void EndFile()
+    {
+        if (fFirstGroupPrinted) {
+            fprintf(fFile, "</dl>\n");
+
+            for (int i = fCurDepth; i >= 0; i--) {
+                fprintf(fFile, "</details>\n");
+            }
+        }
+
+        fprintf(fFile, "</html>");
     }
 };
 
@@ -739,33 +813,23 @@ public:
     }
 };
 
-PF_CONSOLE_CMD( Console, CreateDocumentation, "string fileName", 
+PF_CONSOLE_CMD( Console, CreateDocumentation, "string fileName",
                 "Writes HTML documentation for the current console commands" )
 {
-
     PrintString((char*)params[0]);
 
-
-    pfConsoleCmdGroup   *group;
-    FILE *f;
-
-
-    f = fopen(params[0],"wt");
-    if (f == nullptr)
-    {
+    FILE* f = fopen(params[0], "wt");
+    if (f == nullptr) {
         PrintString("Couldn't Open File");
         return;
     }
-    
 
-    ST::printf(f, "<span style=\"text-align: center;\">"
-                  "<h2>Console Commands for Plasma 2.0 Client ({})</h2>"
-                  "<em>Built {} on {}.</em></span><br />",
-                  plProduct::Tag(), plProduct::BuildTime(), plProduct::BuildDate());
+    pfConsoleCmdGroup* group = pfConsoleCmdGroup::GetBaseGroup();
 
     DocGenIterator iter(f);
-    group = pfConsoleCmdGroup::GetBaseGroup();
+    iter.BeginFile();
     group->IterateCommands(&iter);
+    iter.EndFile();
 
     fclose(f);
 }
