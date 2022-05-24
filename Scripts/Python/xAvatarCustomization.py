@@ -2558,7 +2558,7 @@ class ScrollingListBox:
         listbox.enable()
         displayItems = []
         # sort clothing alphabetically
-        self.clothingList = sorted(self.clothingList, key=lambda x: getattr(x, 'name').lower().replace("*",""))
+        self.clothingList = sorted(self.clothingList, key=lambda x: x.name.lower())
         # check to see if we can just copy it over
         if self.rows == 1 and len(self.clothingList) <= 4:
             displayItems = self.clothingList
