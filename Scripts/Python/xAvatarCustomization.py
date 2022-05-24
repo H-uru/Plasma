@@ -2539,12 +2539,8 @@ class ScrollingListBox:
             rightArrow = ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(self.listboxID+kIDBtnRightOptOffset))
         if self.IShowLeftArrow():
             leftArrow.show()
-        else:
-            leftArrow.hide()
         if self.IShowRightArrow():
             rightArrow.show()
-        else:
-            rightArrow.hide()
         pass
 
     def UpdateListbox(self):
@@ -2561,6 +2557,8 @@ class ScrollingListBox:
         listbox.show()
         listbox.enable()
         displayItems = []
+        # sort clothing alphabetically
+        self.clothingList = sorted(self.clothingList, key=lambda x: getattr(x, 'name').lower().replace("*",""))
         # check to see if we can just copy it over
         if self.rows == 1 and len(self.clothingList) <= 4:
             displayItems = self.clothingList
