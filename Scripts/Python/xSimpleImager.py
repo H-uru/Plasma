@@ -250,7 +250,6 @@ class xSimpleImager(ptModifier):
             ImagerObject.sceneobject.draw.enable()
             ImagerObject.sceneobject.physics.suppress(False)
             randomize = random.randint(0, ImagerRandomTime.value)
-            PtAtTimeCallback(self.key,ImagerTime.value,kFlipImagesTimerCurrent)
             PtAtTimeCallback(self.key,ImagerClueTime.value + randomize,kImagerClueStart)
 
     def OnVaultEvent(self,event,tupdata):
