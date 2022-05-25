@@ -1247,7 +1247,7 @@ class xAvatarCustomization(ptModifier):
                 avatar.avatar.tintClothingItem(matchingItem[0], lastcolor1, 0)
                 avatar.avatar.tintClothingItemLayer(matchingItem[0], lastcolor2, 2, 0)
 
-        PtAtTimeCallback(self.key, 1, 666)
+        PtAtTimeCallback(self.key, 0.1, 666)
 
     def IRemoveWornSet(self):
         setToRemove = ''
@@ -1301,7 +1301,7 @@ class xAvatarCustomization(ptModifier):
             for clothingType in typesNeedingDefault:
                 PtWearDefaultClothingType(avatar.getKey(), clothingType)
 
-        PtAtTimeCallback(self.key, 1, 666)
+        PtAtTimeCallback(self.key, 0.1, 666)
 
 
     def ISaveSeasonalToCloset(self):
@@ -1415,8 +1415,10 @@ class xAvatarCustomization(ptModifier):
             # We need to update our current selection (probably because we just reset the avatar)
             self.IUpdateAllControls()
         elif id == 666:
+            PtClearTimerCallbacks(self.key)
             GetClothingWorn()
             avatar = PtGetLocalAvatar()
+            self.ISetStandardControls()
             self.ISetWhatWearing(avatar)
 
         if id == 999:
