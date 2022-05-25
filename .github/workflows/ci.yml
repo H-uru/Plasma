@@ -21,13 +21,13 @@ jobs:
 
     steps:
       - name: Checkout Plasma
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
 
       - name: Checkout MaxSDK
         continue-on-error: true
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: H-uruMachineUser/3dsMaxSDK
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
@@ -65,7 +65,7 @@ jobs:
           cmake --build build --target INSTALL --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v3
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
           path: build/install
@@ -100,7 +100,7 @@ jobs:
     strategy:
       matrix:
         cfg:
-          # Max 7 and 2020 are tested in the x86 and x64 windows build jobs, respectively.
+          # Max 7 and 2022 are tested in the x86 and x64 windows build jobs, respectively.
           - { sdk-version: 2008, generator: Visual Studio 16 2019, arch: Win32, str: 2008-windows-x86 }
           - { sdk-version: 2012, generator: Visual Studio 16 2019, arch: Win32, str: 2012-windows-x86 }
           - { sdk-version: 2013, generator: Visual Studio 16 2019, arch: x64, str: 2013-windows-x64 }
@@ -110,12 +110,12 @@ jobs:
 
     steps:
       - name: Checkout Plasma
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
 
       - name: Checkout MaxSDK
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: H-uruMachineUser/3dsMaxSDK
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
@@ -142,7 +142,7 @@ jobs:
           cmake --build build --target INSTALL --config Release -j 2
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v3
         with:
           name: max-${{ matrix.cfg.str }}
           path: build/install
@@ -161,7 +161,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
 
@@ -215,9 +215,12 @@ jobs:
           - { str: macos-x64 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
+          - { external: OFF, type: Debug, str: internal-debug }
+          - { external: ON, type: RelWithDebInfo, str: external-release }
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
 
@@ -253,3 +256,9 @@ jobs:
       - name: Install
         run: |
           cmake --build build --target install -j 2
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
+          path: build/install
