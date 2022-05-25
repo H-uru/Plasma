@@ -54,6 +54,7 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaVaultConstants import *
 
+import random
 import xCensor
 
 # vault callback contexts
@@ -101,11 +102,14 @@ AgeStartedIn = None
 kFlipImagesTimerStates = 5
 kFlipImagesTimerCurrent = 0
 kImagerClueStart = 1 + ImagerMax.value
-kImagerClueEnd = 2 + ImagerMax.value
 
 #====================================
 
 Instance = None
+kImagerClueOff = 0
+kImagerClueOn = 1
+kImagerClueEnd = 2
+ImagerClueState = kImagerClueOff
 
 
 class xSimpleImager(ptModifier):
@@ -230,27 +234,31 @@ class xSimpleImager(ptModifier):
         global ImagerContents
         global CurrentContentIdx
         global kFlipImagesTimerCurrent
-        
+        global ImagerClueState
         if id == kFlipImagesTimerCurrent:
-            if len(ImagerContents) > 0:
-                CurrentContentIdx += 1
-                if CurrentContentIdx >= len(ImagerContents):
-                    CurrentContentIdx = 0
-            self.IChangeCurrentContent()
+            if ImagerClueState == kImagerClueOn:
+                ImagerClueObject.sceneobject.draw.enable()
+                ImagerClueObject.sceneobject.physics.suppress(False)
+                ImagerObject.sceneobject.draw.disable()
+                ImagerObject.sceneobject.physics.suppress(True)
+                ImagerClueState = kImagerClueEnd
+            else:
+                if ImagerClueState == kImagerClueEnd:
+                    ImagerClueObject.sceneobject.draw.disable()
+                    ImagerClueObject.sceneobject.physics.suppress(True)
+                    ImagerObject.sceneobject.draw.enable()
+                    ImagerObject.sceneobject.physics.suppress(False)
+                    random = whrandom.randint(0,ImagerRandomTime.value)
+                    PtAtTimeCallback(self.key,ImagerClueTime.value + random,kImagerClueStart)
+                    ImagerClueState = kImagerClueOff
+                if len(ImagerContents) > 0:
+                    CurrentContentIdx += 1
+                    if CurrentContentIdx >= len(ImagerContents):
+                        CurrentContentIdx = 0
+                self.IChangeCurrentContent()
             PtAtTimeCallback(self.key,ImagerTime.value,kFlipImagesTimerCurrent)
         elif id == kImagerClueStart:
-            ImagerClueObject.sceneobject.draw.enable()
-            ImagerClueObject.sceneobject.physics.suppress(False)
-            ImagerObject.sceneobject.draw.disable()
-            ImagerObject.sceneobject.physics.suppress(True)
-            PtAtTimeCallback(self.key,ImagerTime.value,kImagerClueEnd)
-        elif id == kImagerClueEnd:
-            ImagerClueObject.sceneobject.draw.disable()
-            ImagerClueObject.sceneobject.physics.suppress(True)
-            ImagerObject.sceneobject.draw.enable()
-            ImagerObject.sceneobject.physics.suppress(False)
-            randomize = random.randint(0, ImagerRandomTime.value)
-            PtAtTimeCallback(self.key,ImagerClueTime.value + randomize,kImagerClueStart)
+            ImagerClueState = kImagerClueOn
 
     def OnVaultEvent(self,event,tupdata):
         "An AgeKI event received"
