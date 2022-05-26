@@ -75,31 +75,17 @@ class pfColorListElement : public pfGUIListText
             kSelectUseGUIColor,
         };
 
-        pfColorListElement( ST::string string1, hsColorRGBA color1, ST::string string2, hsColorRGBA color2, uint32_t inheritalpha, int32_t fontsize=-1 )
-        {
-            fText = ST::string();
-            fString1 = std::move(string1);
-            fTextColor1 = color1;
-            fString2 = std::move(string2);
-            fTextColor2 = color2;
-            fInheritAlpha = inheritalpha;
-            fJustify = kLeftJustify;
-            fOverrideFontSize = fontsize;
-        }
+        pfColorListElement(ST::string string1, hsColorRGBA color1, ST::string string2, hsColorRGBA color2, uint32_t inheritalpha, int32_t fontsize = -1) 
+            : pfGUIListText(), fTextColor1(color1), fTextColor2(color2), fString1(std::move(string1)), fString2(std::move(string2)),
+            fInheritAlpha(inheritalpha), fOverrideFontSize(fontsize)
+        {}
 
         pfColorListElement(ST::string string1, hsColorRGBA color1, uint32_t inheritalpha, int32_t fontsize = -1)
-        {
-            fText = ST::string();
-            fString1 = std::move(string1);
-            fTextColor1 = color1;
-            fString2 = ST::string();
-            fTextColor2 = hsColorRGBA();
-            fInheritAlpha = inheritalpha;
-            fJustify = kLeftJustify;
-            fOverrideFontSize = fontsize;
-        }
+            : pfGUIListText(), fTextColor1(color1), fTextColor2(), fString1(std::move(string1)), fInheritAlpha(inheritalpha),
+            fOverrideFontSize(fontsize)
+        {}
 
-        virtual void SetText(ST::string text )
+        virtual void SetText(ST::string text)
         {
             fString1 = std::move(text);
         }
