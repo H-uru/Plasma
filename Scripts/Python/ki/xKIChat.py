@@ -447,7 +447,7 @@ class xKIChat(object):
                 contextPrefix = PtGetLocalizedString("KI.Chat.SubtitleContextPrefix")
                 if player is not None:
                     # add subtitle speaker's name if it was provided
-                    # add leading space to match indent for broadcast player messages
+                    # add any leading pretext to match broadcast player messages
                     pretext = f"{PtGetLocalizedString('KI.Chat.BroadcastMsgRecvd')}{player}"
                 player = None
 
@@ -509,6 +509,7 @@ class xKIChat(object):
                     # Are we mentioned in the message?
                     elif self._chatMentionRegex.search(message) is not None:
                         hasMention = True
+                        contextPrefix = PtGetLocalizedString("KI.Chat.MentionContextPrefix")
                         PtFlashWindow()
 
             # Is it a ccr broadcast?
@@ -555,6 +556,7 @@ class xKIChat(object):
                     # Are we mentioned in the message?
                     if self._chatMentionRegex.search(message) is not None:
                         hasMention = True
+                        contextPrefix = PtGetLocalizedString("KI.Chat.MentionContextPrefix")
                         forceKI = True
                         PtFlashWindow()
 
@@ -588,7 +590,7 @@ class xKIChat(object):
                 contextPrefix = PtGetLocalizedString("KI.Chat.SubtitleContextPrefix")
                 if player is not None:
                     # add subtitle speaker's name if it was provided
-                    # add leading space to match indent for broadcast player messages
+                    # add any leading pretext to match broadcast player messages
                     pretext = f"{PtGetLocalizedString('KI.Chat.BroadcastMsgRecvd')}{player}"
                 player = None
             else:
@@ -599,7 +601,7 @@ class xKIChat(object):
             if not self.KIDisabled and not mKIdialog.isEnabled():
                 mKIdialog.show()
         if player is not None:
-            separator = "" if pretext.endswith(" ") else " "
+            separator = "" if not pretext or pretext.endswith(" ") else " "
             chatHeaderFormatted = "{}{}{}:".format(pretext, separator, player.getPlayerNameW())
             chatMessageFormatted = " {}".format(message)
         else:
@@ -643,7 +645,7 @@ class xKIChat(object):
                     lastInsert = end
                     
                     chatArea.insertColor(mentionColor)
-                    chatArea.insertStringW(f"{'*' if self.chatTextColor else ''}{mention}{'*' if self.chatTextColor else ''}", censorLevel=censorLevel, urlDetection=False)
+                    chatArea.insertStringW(mention, censorLevel=censorLevel, urlDetection=False)
                     chatArea.insertColor(bodyColor)
 
                 # If there is remaining text to display after last mention, write it
