@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pyPythonCallable_h_
 
 #include <functional>
+#include <memory>
 #include <type_traits>
 #include <variant>
 
@@ -62,16 +63,82 @@ plProfile_Extern(PythonUpdate);
 
 namespace plPython
 {
+    namespace _detail
+    {
+        template <size_t _NArgsfT, typename... Args>
+        inline pyObjectRef VectorcallObject(PyObject* callable, PyObject* argsObjs[], Args&&... args)
+        {
+            // Python's vectorcall protocol has an optimization whereby it can reuse the memory allocated
+            // for the arguments array if you let it (ab)-use the first slot.
+            {
+                argsObjs[0] = nullptr;
+                size_t i = 1; // Don't touch the first slot...
+                ((argsObjs[i++] = ConvertFrom(std::forward<Args>(args))), ...);
+            }
+
+            // Now, we perform the Python call with the resulting C++ compile-time magic.
+            plProfile_BeginTiming(PythonUpdate);
+            pyObjectRef result = _PyObject_Vectorcall(
+                callable,
+                &argsObjs[1], // This is the optimization mentioned earlier.
+                (_NArgsfT - 1) | PY_VECTORCALL_ARGUMENTS_OFFSET, // Indicates we are passing args[1] instead of args[0]
+                nullptr
+            );
+            plProfile_EndTiming(PythonUpdate);
+
+            for (size_t i = 1; i < _NArgsfT; ++i)
+                Py_XDECREF(argsObjs[i]);
+            return result;
+        }
+    };
+
     template<typename... Args>
     inline pyObjectRef CallObject(const pyObjectRef& callable, Args&&... args)
     {
-        hsAssert(PyCallable_Check(callable.Get()), "Trying to call a non-callable, eh?");
+        return CallObject(callable.Get(), std::forward<Args>(args)...);
+    }
 
-        pyObjectRef tup = ConvertFrom(ToTuple, std::forward<Args>(args)...);
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef result = PyObject_CallObject(callable.Get(), tup.Get());
-        plProfile_EndTiming(PythonUpdate);
-        return result;
+    template<typename... Args>
+    inline pyObjectRef CallObject(PyObject* callable, Args&&... args)
+    {
+        hsAssert(PyCallable_Check(callable), "Trying to call a non-callable, eh?");
+
+        // The point of all this is to use Python's new "vectorcall" calling convention.
+        // PSF claims that is is faster -- the most evident improvement is that we don't
+        // have to allocate a transitional tuple object to pass the arguments.
+        if constexpr (sizeof...(args) == 1) {
+            // Use Python's built-in vectorcall optimization for one argument.
+            pyObjectRef arg = ConvertFrom(std::forward<Args>(args)...);
+            plProfile_BeginTiming(PythonUpdate);
+            pyObjectRef result = _PyObject_CallOneArg(callable, arg.Get());
+            plProfile_EndTiming(PythonUpdate);
+            return result;
+        } else if constexpr (sizeof...(args) == 0) {
+            plProfile_BeginTiming(PythonUpdate);
+#if PY_VERSION_HEX >= 0x03090000
+            // Use Python's built-in vectorcall optimization for no argument.
+            pyObjectRef result = _PyObject_CallNoArg(callable);
+#else
+            // This is basically the same idea.
+            pyObjectRef result = _PyObject_Vectorcall(
+                callable,
+                nullptr,
+                0,
+                nullptr
+            );
+#endif
+            plProfile_EndTiming(PythonUpdate);
+            return result;
+        } else if constexpr (sizeof...(args) < 64) {
+            constexpr size_t nargs = sizeof...(args) + 1;
+            PyObject* argsObjs[nargs];
+            return _detail::VectorcallObject<nargs>(callable, argsObjs, std::forward<Args>(args)...);
+        } else {
+            // Yikes, so many arguments we need to make an alloation.
+            constexpr size_t nargs = sizeof...(args) + 1;
+            auto argsObjs = std::make_unique<PyObject* []>(nargs);
+            return _detail::VectorcallObject<nargs>(callable, argsObjs.get(), std::forward<Args>(args)...);
+        }
     }
 
     template<typename... _CBArgsT>

@@ -145,7 +145,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
             bool foundID = false;
             if (getID != nullptr && PyCallable_Check(getID))
             {
-                PyObject* id = PyObject_CallFunction(getID, nullptr);
+                PyObject* id = _PyObject_Vectorcall(getID, nullptr, 0, nullptr);
                 if ( id && PyLong_Check(id) )
                     foundID = true;
             }
