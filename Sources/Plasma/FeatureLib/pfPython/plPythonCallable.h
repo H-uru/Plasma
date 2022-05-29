@@ -54,102 +54,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 
 #include "cyPythonInterface.h"
+#include "plPythonConvert.h"
 #include "pyGlueHelpers.h"
 #include "pyObjectRef.h"
 
 plProfile_Extern(PythonUpdate);
 
-namespace plPythonCallable
+namespace plPython
 {
-    template<typename ArgT>
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, ArgT value) = delete;
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, bool value)
+    template<typename... Args>
+    inline pyObjectRef CallObject(const pyObjectRef& callable, Args&&... args)
     {
-        PyTuple_SET_ITEM(tuple, idx, PyBool_FromLong(value ? 1 : 0));
-    }
+        hsAssert(PyCallable_Check(callable.Get()), "Trying to call a non-callable, eh?");
 
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, char value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromFormat("%c", (int)value));
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, const char* value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromString(value));
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, double value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyFloat_FromDouble(value));
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, float value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyFloat_FromDouble(value));
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, int8_t value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong(value));
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, int16_t value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong(value));
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, int32_t value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong(value));
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, PyObject* value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, value);
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, pyObjectRef& value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, value.Release());
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, const ST::string& value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromSTString(value));
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint8_t value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyLong_FromSize_t(value));
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint16_t value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyLong_FromSize_t(value));
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint32_t value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyLong_FromSize_t(value));
-    }
-
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, wchar_t value)
-    {
-        PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromFormat("%c", (int)value));
-    }
-
-    template<size_t Size, typename Arg>
-    inline void BuildTupleArgs(PyObject* tuple, Arg&& arg)
-    {
-        IBuildTupleArg(tuple, (Size - 1), std::forward<Arg>(arg));
-    }
-
-    template<size_t Size, typename Arg0, typename... Args>
-    inline void BuildTupleArgs(PyObject* tuple, Arg0&& arg0, Args&&... args)
-    {
-        IBuildTupleArg(tuple, (Size - (sizeof...(args) + 1)), std::forward<Arg0>(arg0));
-        BuildTupleArgs<Size>(tuple, std::forward<Args>(args)...);
+        pyObjectRef tup = ConvertFrom(ToTuple, std::forward<Args>(args)...);
+        plProfile_BeginTiming(PythonUpdate);
+        pyObjectRef result = PyObject_CallObject(callable.Get(), tup.Get());
+        plProfile_EndTiming(PythonUpdate);
+        return result;
     }
 
     template<typename... _CBArgsT>
@@ -160,13 +82,7 @@ namespace plPythonCallable
 
         pyObjectRef cb(callable, pyObjectNewRef);
         return [cb = std::move(cb), parentCall = std::move(parentCall)](_CBArgsT&&... args) -> void {
-            pyObjectRef tuple = PyTuple_New(sizeof...(args));
-            BuildTupleArgs<sizeof...(args)>(tuple.Get(), std::forward<_CBArgsT>(args)...);
-
-            plProfile_BeginTiming(PythonUpdate);
-            pyObjectRef result = PyObject_CallObject(cb.Get(), tuple.Get());
-            plProfile_EndTiming(PythonUpdate);
-
+            pyObjectRef result = plPython::CallObject(cb, std::forward<_CBArgsT>(args)...);
             if (!result) {
                 // Stash the error state so we can get some info about the
                 // callback before printing the exception itself.
@@ -196,15 +112,6 @@ namespace plPythonCallable
         std::variant_alternative_t<_AlternativeN, std::decay_t<decltype(cb)>> cbFunc;
         BuildCallback(std::move(parentCall), callable, cbFunc);
         cb = std::move(cbFunc);
-    }
-
-    template<typename... Args>
-    inline pyObjectRef CallObject(const pyObjectRef& callable, Args&&... args)
-    {
-        hsAssert(PyCallable_Check(callable.Get()), "Trying to call a non-callable, eh?");
-        pyObjectRef tup = PyTuple_New(sizeof...(args));
-        BuildTupleArgs<sizeof...(args)>(tup.Get(), std::forward<Args>(args)...);
-        return PyObject_CallObject(callable.Get(), tup.Get());
     }
 };
 
