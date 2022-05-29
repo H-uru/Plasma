@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "pyObjectRef.h"
 #include "plPythonCallable.h"
+#include "plPythonConvert.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 
@@ -352,12 +353,12 @@ T* plPythonFileMod::IScriptWantsMsg(func_num methodId, plMessage* msg) const
 //  PURPOSE    : Builds Python argument tuple for method calling.
 //
 
-namespace plPythonCallable
+namespace plPython
 {
     template<>
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, ControlEventCode value)
+    inline PyObject* ConvertFrom(ControlEventCode&& value)
     {
-        PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong((long)value));
+        return PyLong_FromLong((long)value);
     }
 };
 
@@ -368,8 +369,7 @@ void plPythonFileMod::ICallScriptMethod(func_num methodId, Args&&... args)
     if (!callable)
         return;
 
-    pyObjectRef tuple = PyTuple_New(sizeof...(args));
-    plPythonCallable::BuildTupleArgs<sizeof...(args)>(tuple.Get(), std::forward<Args>(args)...);
+    pyObjectRef tuple = plPython::ConvertFrom(plPython::ToTuple, std::forward<Args>(args)...);
 
     plProfile_BeginTiming(PythonUpdate);
     pyObjectRef retVal = PyObject_CallObject(callable, tuple.Get());

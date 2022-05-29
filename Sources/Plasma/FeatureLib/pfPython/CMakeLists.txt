@@ -96,6 +96,7 @@ set(pfPython_HEADERS
     cyPhysics.h
     cyPythonInterface.h
     plPythonCallable.h
+    plPythonConvert.h
     pfPythonCreatable.h
     plPythonFileMod.h
     plPythonHelpers.h
