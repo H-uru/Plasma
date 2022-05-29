@@ -53,7 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxComponent/plAutoUIBlock.h"
 #include "MaxComponent/plPythonFileComponent.h"
 #include "MaxComponent/plResponderComponent.h"
+
 #include "pfPython/cyPythonInterface.h"
+#include "pfPython/plPythonCallable.h"
 
 plPythonMgr::plPythonMgr()
 {
@@ -81,7 +83,7 @@ bool ICallVoidFunc(PyObject *dict, const char *funcName, PyObject*& val)
     {
         if (PyCallable_Check(func))
         {
-            val = PyObject_CallFunction(func, nullptr);
+            val = plPython::CallObject(func).Release();
             if (val)
             {
                 // there might have been some message printed, so get it out to the log file
@@ -330,18 +332,17 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
 
             for (int i = numParams-1; i >= 0; i--)
             {
-                PyObject *ret = PyObject_CallFunction(getParamFunc, "l", i);
+                PyObject* ret = plPython::CallObject(getParamFunc, i).Release();
                 
-                PyObject *visinfo = nullptr;
                 int ddlParamID = -1;
                 std::unordered_set<ST::string> vec;
 
                 if (PyCallable_Check(getVisInfoFunc))
                 {
-                    visinfo = PyObject_CallFunction(getVisInfoFunc, "l", i);
-                    if (visinfo && PyTuple_Check(visinfo))
+                    pyObjectRef visinfo = plPython::CallObject(getVisInfoFunc, i);
+                    if (visinfo && PyTuple_Check(visinfo.Get()))
                     {
-                        IExtractVisInfo(visinfo, &ddlParamID, vec);
+                        IExtractVisInfo(visinfo.Get(), &ddlParamID, vec);
                     }
                 }
 

@@ -60,6 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cpython/initconfig.h>
 #include <pylifecycle.h>
 
+#include "plPythonCallable.h"
 #include "cyPythonInterface.h"
 #include "plPythonPack.h"
 
@@ -1248,16 +1249,14 @@ void PythonInterface::debugTimeSlice()
     if (dbgSlice != nullptr)
     {
         // then send it the new text
-        PyObject* retVal = PyObject_CallFunction(dbgSlice, nullptr);
-        if (retVal == nullptr)
-        {
+        pyObjectRef retVal = plPython::CallObject(dbgSlice);
+        if (!retVal) {
             // for some reason this function didn't, remember that and not call it again
             dbgSlice = nullptr;
             // if there was an error make sure that the stderr gets flushed so it can be seen
             PyErr_Print();      // make sure the error is printed
             PyErr_Clear();      // clear the error
         }
-        Py_XDECREF(retVal);
     }
 }
 
@@ -1306,16 +1305,14 @@ int PythonInterface::getOutputAndReset(std::string *output)
         if (dbgOut != nullptr)
         {
             // then send it the new text
-            PyObject* retVal = PyObject_CallFunction(dbgOut, _pycs("s"), strVal.c_str());
-            if (retVal == nullptr)
-            {
+            pyObjectRef retVal = plPython::CallObject(dbgOut, PyUnicode_FromStdString(strVal));
+            if (!retVal) {
                 // for some reason this function didn't, remember that and not call it again
                 dbgOut = nullptr;
                 // if there was an error make sure that the stderr gets flushed so it can be seen
                 PyErr_Print();      // make sure the error is printed
                 PyErr_Clear();      // clear the error
             }
-            Py_XDECREF(retVal);
         }
 
         if (output)
