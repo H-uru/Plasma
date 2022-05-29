@@ -54,9 +54,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plProfile.h"
 
+#include "pyAsyncTask.h"
 #include "cyPythonInterface.h"
 #include "plPythonConvert.h"
 #include "pyGlueHelpers.h"
+#include "pyKey.h"
 #include "pyObjectRef.h"
 
 plProfile_Extern(PythonUpdate);
@@ -143,13 +145,50 @@ namespace plPython
 
     template<typename... _CBArgsT>
     [[nodiscard]]
-    inline std::function<void(_CBArgsT...)> BuildCallback(ST::string parentCall, PyObject* callable)
+    inline std::function<void(_CBArgsT...)> BuildAsyncCallback(hsRef<pyAsyncTask> future)
     {
-        hsAssert(PyCallable_Check(callable) != 0, "BuildCallback() expects a Python callable.");
+        return[future = std::move(future)](_CBArgsT&&... args) -> void {
+            if constexpr (sizeof...(args) == 0) {
+                // No arguments, so just use `None`.
+                Py_INCREF(Py_None);
+                future->SetResult(Py_None);
+            } else if constexpr (sizeof...(args) == 1) {
+                // Pass through a single argument.
+                future->SetResult(ConvertFrom(std::forward<_CBArgsT>(args)...));
+            } else {
+                // Forward multiple arguments as a Python tuple.
+                future->SetResult(ConvertFrom(ToTuple, std::forward<_CBArgsT>(args)...));
+            }
+        };
+    }
+
+    template<typename... _CBArgsT>
+    inline pyObjectRef BuildAsyncTask(const char* parentCall, std::function<void(_CBArgsT...)>& cb)
+    {
+        hsRef<pyAsyncTask> future = hsWeakRef(new pyAsyncTask()); // initial ref, held by the callback
+        PyObject* result = pyAsyncTask::New(future.Get()); // makes its own reference
+        cb = BuildAsyncCallback<_CBArgsT...>(std::move(future));
+        return result;
+    }
+
+    template<size_t _AlternativeN, typename... _VariantArgsT>
+    inline pyObjectRef BuildAsyncTask(const char* parentCall, std::variant<_VariantArgsT...>& cb)
+    {
+        std::variant_alternative_t<_AlternativeN, std::decay_t<decltype(cb)>> cbFunc;
+        pyObjectRef task = BuildAsyncTask(parentCall, cbFunc);
+        cb = std::move(cbFunc);
+        return task;
+    }
+
+    template<typename... _CBArgsT>
+    [[nodiscard]]
+    inline std::function<void(_CBArgsT...)> BuildPythonCallback(const char* parentCall, PyObject* callable)
+    {
+        hsAssert(PyCallable_Check(callable) != 0, "BuildPythonCallback() expects a Python callable.");
 
         pyObjectRef cb(callable, pyObjectNewRef);
-        return [cb = std::move(cb), parentCall = std::move(parentCall)](_CBArgsT&&... args) -> void {
-            pyObjectRef result = plPython::CallObject(cb, std::forward<_CBArgsT>(args)...);
+        return[cb = std::move(cb), parentCall](_CBArgsT&&... args) -> void {
+            pyObjectRef result = CallObject(cb, std::forward<_CBArgsT>(args)...);
             if (!result) {
                 // Stash the error state so we can get some info about the
                 // callback before printing the exception itself.
@@ -157,8 +196,8 @@ namespace plPython
                 PyErr_Fetch(&ptype, &pvalue, &ptraceback);
                 pyObjectRef repr = PyObject_Repr(cb.Get());
                 PythonInterface::WriteToLog(ST::format("Error executing '{}' callback for '{}'",
-                                                       PyUnicode_AsSTString(repr.Get()),
-                                                       parentCall));
+                    PyUnicode_AsSTString(repr.Get()),
+                    parentCall));
                 PyErr_Restore(ptype, pvalue, ptraceback);
                 PyErr_Print();
             }
@@ -166,19 +205,40 @@ namespace plPython
     }
 
     template<typename... _CBArgsT>
-    inline void BuildCallback(ST::string parentCall, PyObject* callable,
-                              std::function<void(_CBArgsT...)>& cb)
+    inline void BuildPythonCallback(const char* parentCall, PyObject* callable,
+        std::function<void(_CBArgsT...)>& cb)
     {
-        cb = BuildCallback<_CBArgsT...>(std::move(parentCall), callable);
+        cb = BuildPythonCallback<_CBArgsT...>(parentCall, callable);
     }
 
     template<size_t _AlternativeN, typename... _VariantArgsT>
-    inline void BuildCallback(ST::string parentCall, PyObject* callable,
-                              std::variant<_VariantArgsT...>& cb)
+    inline void BuildPythonCallback(const char* parentCall, PyObject* callable,
+        std::variant<_VariantArgsT...>& cb)
     {
         std::variant_alternative_t<_AlternativeN, std::decay_t<decltype(cb)>> cbFunc;
-        BuildCallback(std::move(parentCall), callable, cbFunc);
+        BuildPythonCallback(parentCall, callable, cbFunc);
         cb = std::move(cbFunc);
+    }
+
+    template<hsSsize_t _AlternativeN, typename... _VariantArgsT>
+    inline pyObjectRef BuildVariantCallback(const char* parentCall, PyObject* arg, std::variant<_VariantArgsT...>& cb)
+    {
+        constexpr bool hasKey = (std::is_same_v<plKey, _VariantArgsT> || ...);
+        if constexpr (_AlternativeN != -1) {
+            if (arg != nullptr && PyCallable_Check(arg)) {
+                BuildPythonCallback<_AlternativeN>(parentCall, arg, cb);
+                return { Py_None, pyObjectNewRef };
+            } else if (arg == nullptr || arg == Py_None) {
+                return BuildAsyncTask<_AlternativeN>(parentCall, cb);
+            }
+        }
+        if constexpr (hasKey) {
+            if (pyKey::Check(arg)) {
+                cb = pyKey::ConvertFrom(arg)->getKey();
+                return { Py_None, pyObjectNewRef };
+            }
+        }
+        return {};
     }
 };
 

@@ -639,7 +639,15 @@ def PtLocalAvatarRunKeyDown():
     """Returns true if the run key is being held down for the local avatar"""
     pass
 
-def PtLocalizedYesNoDialog(cb: Union[None, Callable, ptKey], path: str, *args, dialogType: int = PtConfirmationType.YesNo) -> None:
+@overload
+def PtLocalizedYesNoDialog(cb: Union[Callable[[PtConfirmationResult], None], ptKey], path: str, *args, dialogType: int = PtConfirmationType.YesNo) -> None:
+    """This will display a confirmation dialog to the user with the localized text `path`
+       with any optional localization `args` applied. This dialog _has_ to be answered by the user,
+       and their answer will be returned in a Notify message or callback given by `cb`."""
+    ...
+
+@overload
+def PtLocalizedYesNoDialog(cb: Literal[None], path: str, *args, dialogType: int = PtConfirmationType.YesNo) -> ptAsyncTask[PtConfirmationResult]:
     """This will display a confirmation dialog to the user with the localized text `path`
        with any optional localization `args` applied. This dialog _has_ to be answered by the user,
        and their answer will be returned in a Notify message or callback given by `cb`."""
@@ -904,7 +912,15 @@ def PtWhatGUIControlType(guiKey):
     """Returns the control type of the key passed in"""
     pass
 
-def PtYesNoDialog(cb: Union[None, ptKey, Callable], message: str, /, dialogType: int = PtConfirmationType.YesNo) -> None:
+@overload
+def PtYesNoDialog(cb: Union[Callable[[PtConfirmationResult], None], ptKey], message: str, /, dialogType: int = PtConfirmationType.YesNo) -> None:
+    """This will display a confirmation dialog to the user with the text `message`. This dialog
+       _has_ to be answered by the user, and their answer will be returned in a Notify message
+       or callback given by `cb`."""
+    ...
+
+@overload
+def PtYesNoDialog(cb: Literal[None], message: str, /, dialogType: int = PtConfirmationType.YesNo) -> ptAsyncTask[PtConfirmationResult]:
     """This will display a confirmation dialog to the user with the text `message`. This dialog
        _has_ to be answered by the user, and their answer will be returned in a Notify message
        or callback given by `cb`."""
