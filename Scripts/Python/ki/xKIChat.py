@@ -435,6 +435,7 @@ class xKIChat(object):
         headerColor = kColors.ChatHeaderBroadcast
         bodyColor = kColors.ChatMessage
         mentionColor = kColors.ChatMessageMention
+        contextPrefix = ""
         censorLevel = self.GetCensorLevel()
         hasMention = False
 
@@ -443,9 +444,10 @@ class xKIChat(object):
             # Is it subtitles for current audio?
             if cFlags.subtitle:
                 headerColor = kColors.AudioSubtitleHeader
+                contextPrefix = PtGetLocalizedString("KI.Chat.SubtitleContextPrefix")
                 if player is not None:
                     # add subtitle speaker's name if it was provided
-                    # add leading space to match indent for broadcast player messages
+                    # add any leading pretext to match broadcast player messages
                     pretext = f"{PtGetLocalizedString('KI.Chat.BroadcastMsgRecvd')}{player}"
                 player = None
 
@@ -459,14 +461,18 @@ class xKIChat(object):
                 if cFlags.private:
                     if cFlags.admin:
                         headerColor = kColors.ChatHeaderError
+                        contextPrefix = PtGetLocalizedString("KI.Chat.AdminContextPrefix")
                     else:
                         headerColor = kColors.ChatHeaderPrivate
+                        contextPrefix = PtGetLocalizedString("KI.Chat.PrivateContextPrefix")
                     forceKI = True
                 else:
                     if cFlags.neighbors:
                         headerColor = kColors.ChatHeaderNeighbors
+                        contextPrefix = PtGetLocalizedString("KI.Chat.NeighborsContextPrefix")
                     else:
                         headerColor = kColors.ChatHeaderBuddies
+                        contextPrefix = PtGetLocalizedString("KI.Chat.BuddiesContextPrefix")
 
                 if cFlags.toSelf:
                     pretext = PtGetLocalizedString("KI.Chat.InterAgeSendTo")
@@ -503,11 +509,13 @@ class xKIChat(object):
                     # Are we mentioned in the message?
                     elif self._chatMentionRegex.search(message) is not None:
                         hasMention = True
+                        contextPrefix = PtGetLocalizedString("KI.Chat.MentionContextPrefix")
                         PtFlashWindow()
 
             # Is it a ccr broadcast?
             elif cFlags.ccrBcast:
                 headerColor = kColors.ChatHeaderAdmin
+                contextPrefix = PtGetLocalizedString("KI.Chat.CCRContextPrefix")
                 if cFlags.toSelf:
                     pretext = PtGetLocalizedString("KI.Chat.PrivateSendTo")
                 else:
@@ -519,6 +527,7 @@ class xKIChat(object):
             elif cFlags.admin:
                 if cFlags.private:
                     headerColor = kColors.ChatHeaderError
+                    contextPrefix = PtGetLocalizedString("KI.Chat.AdminContextPrefix")
                     if cFlags.toSelf:
                         pretext = PtGetLocalizedString("KI.Chat.PrivateSendTo")
                     else:
@@ -531,6 +540,7 @@ class xKIChat(object):
                     PtFlashWindow()
                 else:
                     headerColor = kColors.ChatHeaderAdmin
+                    contextPrefix = PtGetLocalizedString("KI.Chat.AdminContextPrefix")
                     forceKI = True
 
             # Is it a broadcast message?
@@ -546,6 +556,7 @@ class xKIChat(object):
                     # Are we mentioned in the message?
                     if self._chatMentionRegex.search(message) is not None:
                         hasMention = True
+                        contextPrefix = PtGetLocalizedString("KI.Chat.MentionContextPrefix")
                         forceKI = True
                         PtFlashWindow()
 
@@ -553,11 +564,13 @@ class xKIChat(object):
             elif cFlags.private:
                 if cFlags.toSelf:
                     headerColor = kColors.ChatHeaderPrivate
+                    contextPrefix = PtGetLocalizedString("KI.Chat.PrivateContextPrefix")
                     pretext = PtGetLocalizedString("KI.Chat.PrivateSendTo")
                 else:
                     if not self.CheckIfCanPM(player.getPlayerID()):
                         return
                     headerColor = kColors.ChatHeaderPrivate
+                    contextPrefix = PtGetLocalizedString("KI.Chat.PrivateContextPrefix")
                     pretext = PtGetLocalizedString("KI.Chat.PrivateMsgRecvd")
                     forceKI = True
 
@@ -570,12 +583,14 @@ class xKIChat(object):
         else:
             if cFlags == kChat.SystemMessage:
                 headerColor = kColors.ChatHeaderError
+                contextPrefix = PtGetLocalizedString("KI.Chat.ErrorContextPrefix")
                 pretext = PtGetLocalizedString("KI.Chat.ErrorMsgRecvd")
             elif cFlags == kChat.AudioSubtitle:
                 headerColor = kColors.AudioSubtitleHeader
+                contextPrefix = PtGetLocalizedString("KI.Chat.SubtitleContextPrefix")
                 if player is not None:
                     # add subtitle speaker's name if it was provided
-                    # add leading space to match indent for broadcast player messages
+                    # add any leading pretext to match broadcast player messages
                     pretext = f"{PtGetLocalizedString('KI.Chat.BroadcastMsgRecvd')}{player}"
                 player = None
             else:
@@ -586,7 +601,7 @@ class xKIChat(object):
             if not self.KIDisabled and not mKIdialog.isEnabled():
                 mKIdialog.show()
         if player is not None:
-            separator = "" if pretext.endswith(" ") else " "
+            separator = "" if not pretext or pretext.endswith(" ") else " "
             chatHeaderFormatted = "{}{}{}:".format(pretext, separator, player.getPlayerNameW())
             chatMessageFormatted = " {}".format(message)
         else:
@@ -603,9 +618,10 @@ class xKIChat(object):
             chatMentions = []
 
         # if we have an override chat color set, use it instead of the various default chat colors
-        headerColor = self.chatTextColor if self.chatTextColor is not None else headerColor
-        bodyColor = self.chatTextColor if self.chatTextColor is not None else bodyColor
-        mentionColor = self.chatTextColor if self.chatTextColor is not None else mentionColor
+        if self.chatTextColor:
+            headerColor = self.chatTextColor
+            bodyColor = self.chatTextColor
+            mentionColor = self.chatTextColor
 
         for chatArea in (self.miniChatArea, self.microChatArea):
             with PtBeginGUIUpdate(chatArea):
@@ -615,7 +631,7 @@ class xKIChat(object):
                 chatArea.insertColor(headerColor)
 
                 # Added unicode support here.
-                chatArea.insertStringW("\n{}".format(chatHeaderFormatted))
+                chatArea.insertStringW(f"\n{contextPrefix if self.chatTextColor else ''}{chatHeaderFormatted}")
                 chatArea.insertColor(bodyColor)
 
                 lastInsert = 0
@@ -627,6 +643,7 @@ class xKIChat(object):
                         chatArea.insertStringW(chatMessageFormatted[lastInsert:start], censorLevel=censorLevel)
 
                     lastInsert = end
+                    
                     chatArea.insertColor(mentionColor)
                     chatArea.insertStringW(mention, censorLevel=censorLevel, urlDetection=False)
                     chatArea.insertColor(bodyColor)
@@ -657,7 +674,7 @@ class xKIChat(object):
 
         # Write to the log file.
         if self.chatLogFile is not None and self.chatLogFile.isOpen():
-            self.chatLogFile.write(chatHeaderFormatted[0:] + chatMessageFormatted)
+            self.chatLogFile.write(f"{contextPrefix}{chatHeaderFormatted[0:]}{chatMessageFormatted}")
 
         # Update the fading controls.
         self.ResetFadeState()
