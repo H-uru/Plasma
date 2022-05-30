@@ -113,6 +113,7 @@ class pfConsole : public hsKeyedObject
         pfConsoleEngine     *fEngine;
 
         void    IHandleKey( plKeyEventMsg *msg );
+        void    IHandleCharacter(const char c);
 
         static uint32_t       fConsoleTextColor;
         static pfConsole    *fTheConsole;
@@ -130,6 +131,7 @@ class pfConsole : public hsKeyedObject
 
         void    IPrintSomeHelp();
         void    IUpdateTooltip();
+        void    IExecuteWorkingLine();
 
     public:
 

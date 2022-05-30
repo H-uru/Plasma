@@ -76,9 +76,12 @@ ST::string plClipboard::GetClipboardText()
     size_t size = ::GlobalSize(clipboardData) / sizeof(wchar_t);
     wchar_t* clipboardDataPtr = (wchar_t*)::GlobalLock(clipboardData);
 
-    ST::string result = ST::string::from_wchar(clipboardDataPtr, size);
+    // Per MSDN, with CF_UNICODETEXT: "A null character signals the end of the data."
+    // This null character is included in size. Be sure to NOT include it in the size
+    // we give to ST, or we will get a double null terminator.
+    ST::string result = ST::string::from_wchar(clipboardDataPtr, size - 1);
 
-    ::GlobalUnlock(clipboardData);	
+    ::GlobalUnlock(clipboardData);
     ::CloseClipboard();
 
     return result;

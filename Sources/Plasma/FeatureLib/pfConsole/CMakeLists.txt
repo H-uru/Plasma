@@ -39,6 +39,7 @@ target_link_libraries(
         plAnimation
         plAudio
         plAvatar
+        plClipboard
         plDrawable
         plGImage
         plGLight
