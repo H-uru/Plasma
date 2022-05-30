@@ -1917,7 +1917,7 @@ class xKI(ptModifier):
 
         gameName = xLocTools.CreatePossessiveString(PtGetLocalPlayer().getPlayerName(), PtGetLocalizedString("KI.MarkerGame.DefaultGameTitle"))
 
-        ptGUIControlEditBox(KICreateMarkerGameGUI.dialog.getControlFromTag(kGUI.CreateMarkerGameNameEB)).setString(gameName)
+        ptGUIControlEditBox(KICreateMarkerGameGUI.dialog.getControlFromTag(kGUI.CreateMarkerGameNameEB)).setStringW(gameName)
 
     ## Begin the creation of a new Marker Game.
     def CreateMarkerGame(self):
@@ -2967,7 +2967,7 @@ class xKI(ptModifier):
                     if PLR.playerIsOnline():
                         playerlist.addStringWithColor(PLR.playerGetName(), kColors.DniSelectable, kSelectUseGUIColor)
                     else:
-                        playerlist.addStringWithColor(PLR.playerGetName(), kColors.AgenBlueDk,kSelectDetermined)
+                        playerlist.addStringWithColor(PLR.playerGetName(), kColors.AgenBlueDk, kSelectDetermined)
                 else:
                     PtDebugPrint("xKI.RefreshPlayerListDisplay(): Unknown player element type {}.".format(PLR.getType()), level=kErrorLevel)
             elif isinstance(plyr, ptPlayer):
@@ -5356,11 +5356,11 @@ class xKI(ptModifier):
                 if dataType == PtVaultNodeTypes.kMarkerGameNode:
                     element = element.upcastToMarkerGameNode()
                     if element is not None:
-                        if not control.wasEscaped() and control.getString() != "":
+                        if not control.wasEscaped() and (controlText := control.getStringW()):
                             # Set the new title.
-                            newText = xCensor.xCensor(control.getStringW(), self.censorLevel)
-                            element.setGameName(control.getStringW())
-                            title.setString(control.getStringW())
+                            newText = xCensor.xCensor(controlText, self.censorLevel)
+                            element.setGameName(controlText)
+                            title.setString(controlText)
                             element.save()
                             PtDebugPrint("xKI.SaveMarkerGameNameFromEdit(): Updating title to \"{}\".".format(newText), level=kDebugDumpLevel)
                             self.RefreshPlayerList()
@@ -5566,7 +5566,7 @@ class xKI(ptModifier):
             # Get the original position of the miniKI.
             dragbar = ptGUIControlDragBar(KIMini.dialog.getControlFromTag(kGUI.miniDragBar))
             self.originalminiKICenter = dragbar.getObjectCenter()
-            # Retreive the original alpha.
+            # Retrieve the original alpha.
             fore = control.getForeColor()
             self.originalForeAlpha = fore.getAlpha()
             sel = control.getSelectColor()
@@ -6221,7 +6221,7 @@ class xKI(ptModifier):
                 try:
                     # Get the selected Age config setting.
                     myAge = self.BKConfigFolderDict[self.BKConfigListOrder[self.BKFolderSelected]]
-                    titleEdit.setString(myAge.getAgeUserDefinedName())
+                    titleEdit.setStringW(myAge.getAgeUserDefinedName())
                 except LookupError:
                     titleEdit.setString("")
                 titleEdit.show()
@@ -6248,7 +6248,7 @@ class xKI(ptModifier):
                         myAge = self.BKConfigFolderDict[self.BKConfigListOrder[self.BKFolderSelected]]
                         if myAge is not None:
                             PtDebugPrint("xKI.ProcessNotifyAgeOwnerExpanded(): Age description updated for {}.".format(myAge.getDisplayName()), level=kDebugDumpLevel)
-                            myAge.setAgeDescription(descript.getString())
+                            myAge.setAgeDescription(descript.getStringW())
                             myAge.save()
                         else:
                             PtDebugPrint("xKI.ProcessNotifyAgeOwnerExpanded(): Neighborhood is None while trying to update description.", level=kDebugDumpLevel)
@@ -6259,7 +6259,7 @@ class xKI(ptModifier):
                     myAge = self.BKConfigFolderDict[self.BKConfigListOrder[self.BKFolderSelected]]
                     if myAge is not None:
                         PtDebugPrint("xKI.ProcessNotifyAgeOwnerExpanded(): Age description updated for {}.".format(myAge.getDisplayName()), level=kDebugDumpLevel)
-                        buff = descript.getString()
+                        buff = descript.getStringW()
                         myAge.setAgeDescription(buff)
                         myAge.save()
                     else:

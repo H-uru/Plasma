@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGUIControl.h"
 #include "pyGlueHelpers.h"
-#include <string>
 
 
 class pyColor;
@@ -87,12 +86,12 @@ public:
     virtual int32_t   GetSelection();
     virtual void    SetSelection( int32_t item );
     void            Refresh() override;
-    virtual void    SetElement( uint16_t idx, const ST::string& text );
+    virtual void    SetElement( uint16_t idx, ST::string text );
     virtual void    RemoveElement( uint16_t index );
     virtual void    ClearAllElements();
     virtual uint16_t  GetNumElements();
     virtual ST::string  GetElement( uint16_t idx );
-    virtual int16_t   AddString( const ST::string &string );
+    virtual int16_t   AddString( ST::string string );
     virtual int16_t   AddImage( pyImage& image, bool respectAlpha );
     virtual int16_t   AddImageInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha );
     virtual int16_t   AddImageAndSwatchesInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha,
@@ -100,14 +99,11 @@ public:
     virtual void    SetSwatchSize( uint32_t size );
     virtual void    SetSwatchEdgeOffset( uint32_t size );
     virtual void    SetStringJustify( uint16_t idx, uint32_t justify);
-    virtual int16_t   FindString( const ST::string &toCompareTo );
-    virtual int16_t   AddTextWColor( const char *str, pyColor& textcolor, uint32_t inheritalpha);
-    virtual int16_t   AddTextWColorW( const std::wstring& str, pyColor& textcolor, uint32_t inheritalpha);
-    virtual int16_t   AddTextWColorWSize( const char *str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
-    virtual int16_t   AddTextWColorWSizeW( const std::wstring& str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
-    virtual void    Add2TextWColor( const char *str1, pyColor& textcolor1,const char *str2, pyColor& textcolor2, uint32_t inheritalpha);
-    virtual void    Add2TextWColorW( const std::wstring& str1, pyColor& textcolor1, const std::wstring& str2, pyColor& textcolor2, uint32_t inheritalpha);
-    virtual int16_t   AddStringInBox( const ST::string &string, uint32_t min_width, uint32_t min_height );
+    virtual int16_t   FindString( ST::string toCompareTo );
+    virtual int16_t   AddTextWColorW( ST::string str, pyColor& textcolor, uint32_t inheritalpha);
+    virtual int16_t   AddTextWColorWSizeW( ST::string str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
+    virtual void    Add2TextWColorW( ST::string str1, pyColor& textcolor1, ST::string str2, pyColor& textcolor2, uint32_t inheritalpha);
+    virtual int16_t   AddStringInBox( ST::string string, uint32_t min_width, uint32_t min_height );
     virtual void    ScrollToBegin();
     virtual void    ScrollToEnd();
     virtual void    SetScrollPos( int32_t pos );
@@ -119,7 +115,7 @@ public:
 
     // To create tree branches, call AddBranch() with a name, then add elements as usual, including new sub-branches
     // via additional AddBranch() calls. Call CloseBranch() to stop writing elements to that branch.
-    void            AddBranch( const ST::string &name, bool initiallyOpen );
+    void            AddBranch( ST::string name, bool initiallyOpen );
     void            CloseBranch();
 
     void            RemoveSelection( int32_t item );

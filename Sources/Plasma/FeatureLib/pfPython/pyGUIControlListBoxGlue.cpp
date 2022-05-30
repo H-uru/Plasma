@@ -116,26 +116,26 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlListBox, getNumElements)
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, setElement, args)
 {
     unsigned short index;
-    char* text;
-    if (!PyArg_ParseTuple(args, "hs", &index, &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "hO&", &index, PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "setElement expects an unsigned short and a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetElement(index, text);
+    self->fThis->SetElement(index, std::move(text));
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, setElementW, args)
 {
     unsigned short index;
-    wchar_t* text;
-    if (!PyArg_ParseTuple(args, "hu", &index, &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "hO&", &index, PyUnicode_STStringConverter, &text))
     {
-        PyErr_SetString(PyExc_TypeError, "setElementW expects an unsigned short and a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setElementW expects an unsigned short and a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetElement(index, ST::string::from_wchar(text));
+    self->fThis->SetElement(index, std::move(text));
     PYTHON_RETURN_NONE;
 }
 
@@ -176,46 +176,46 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, setStringJustify, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addString, args)
 {
-    char* text;
-    if (!PyArg_ParseTuple(args, "s", &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "addString expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return PyLong_FromLong(self->fThis->AddString(text));
+    return PyLong_FromLong(self->fThis->AddString(std::move(text)));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addStringW, args)
 {
-    wchar_t* text;
-    if (!PyArg_ParseTuple(args, "u", &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
-        PyErr_SetString(PyExc_TypeError, "addStringW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "addStringW expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return PyLong_FromLong(self->fThis->AddString(ST::string::from_wchar(text)));
+    return PyLong_FromLong(self->fThis->AddString(std::move(text)));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, findString, args)
 {
-    char* text;
-    if (!PyArg_ParseTuple(args, "s", &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "findString expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return PyLong_FromLong(self->fThis->FindString(text));
+    return PyLong_FromLong(self->fThis->FindString(std::move(text)));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, findStringW, args)
 {
-    wchar_t* text;
-    if (!PyArg_ParseTuple(args, "u", &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
-        PyErr_SetString(PyExc_TypeError, "findStringW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "findStringW expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return PyLong_FromLong(self->fThis->FindString(ST::string::from_wchar(text)));
+    return PyLong_FromLong(self->fThis->FindString(std::move(text)));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addImage, args)
@@ -257,10 +257,10 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addImageInBox, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addStringWithColor, args)
 {
-    char* text;
+    ST::string text;
     PyObject* colorObj = nullptr;
     unsigned long inheritAlpha;
-    if (!PyArg_ParseTuple(args, "sOl", &text, &colorObj, &inheritAlpha))
+    if (!PyArg_ParseTuple(args, "O&Ol", PyUnicode_STStringConverter, &text, &colorObj, &inheritAlpha))
     {
         PyErr_SetString(PyExc_TypeError, "addStringWithColor expects a string, ptColor, and an unsigned long");
         PYTHON_RETURN_ERROR;
@@ -271,16 +271,16 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addStringWithColor, args)
         PYTHON_RETURN_ERROR;
     }
     pyColor* color = pyColor::ConvertFrom(colorObj);
-    return PyLong_FromLong(self->fThis->AddTextWColor(text, *color, inheritAlpha));
+    return PyLong_FromLong(self->fThis->AddTextWColorW(std::move(text), *color, inheritAlpha));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addStringWithColorWithSize, args)
 {
-    char* text;
+    ST::string text;
     PyObject* colorObj = nullptr;
     unsigned long inheritAlpha;
     long textSize;
-    if (!PyArg_ParseTuple(args, "sOll", &text, &colorObj, &inheritAlpha, &textSize))
+    if (!PyArg_ParseTuple(args, "O&Oll", PyUnicode_STStringConverter, &text, &colorObj, &inheritAlpha, &textSize))
     {
         PyErr_SetString(PyExc_TypeError, "addStringWithColorWithSize expects a string, ptColor, an unsigned long, and a long");
         PYTHON_RETURN_ERROR;
@@ -291,17 +291,17 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addStringWithColorWithSize, args)
         PYTHON_RETURN_ERROR;
     }
     pyColor* color = pyColor::ConvertFrom(colorObj);
-    return PyLong_FromLong(self->fThis->AddTextWColorWSize(text, *color, inheritAlpha, textSize));
+    return PyLong_FromLong(self->fThis->AddTextWColorWSizeW(std::move(text), *color, inheritAlpha, textSize));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, add2StringsWithColors, args)
 {
-    char* text1;
+    ST::string text1;
     PyObject* color1Obj = nullptr;
-    char* text2;
+    ST::string text2;
     PyObject* color2Obj = nullptr;
     unsigned long inheritAlpha;
-    if (!PyArg_ParseTuple(args, "sOsOl", &text1, &color1Obj, &text2, &color2Obj, &inheritAlpha))
+    if (!PyArg_ParseTuple(args, "O&OO&Ol", PyUnicode_STStringConverter, &text1, &color1Obj, PyUnicode_STStringConverter, &text2, &color2Obj, &inheritAlpha))
     {
         PyErr_SetString(PyExc_TypeError, "addStringWithColor expects a string, ptColor, string, ptColor, and an unsigned long");
         PYTHON_RETURN_ERROR;
@@ -313,20 +313,20 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, add2StringsWithColors, args)
     }
     pyColor* color1 = pyColor::ConvertFrom(color1Obj);
     pyColor* color2 = pyColor::ConvertFrom(color2Obj);
-    self->fThis->Add2TextWColor(text1, *color1, text2, *color2, inheritAlpha);
+    self->fThis->Add2TextWColorW(std::move(text1), *color1, std::move(text2), *color2, inheritAlpha);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addStringInBox, args)
 {
-    char* text;
+    ST::string text;
     unsigned long minWidth, minHeight;
-    if (!PyArg_ParseTuple(args, "sll", &text, &minWidth, &minHeight))
+    if (!PyArg_ParseTuple(args, "O&ll", PyUnicode_STStringConverter, &text, &minWidth, &minHeight))
     {
         PyErr_SetString(PyExc_TypeError, "addStringInBox expects a string and two unsigned longs");
         PYTHON_RETURN_ERROR;
     }
-    return PyLong_FromLong(self->fThis->AddStringInBox(text, minWidth, minHeight));
+    return PyLong_FromLong(self->fThis->AddStringInBox(std::move(text), minWidth, minHeight));
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlListBox, scrollToBegin, ScrollToBegin)
@@ -359,38 +359,28 @@ PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlListBox, unlock, UnlockList)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addBranch, args)
 {
-    char* name;
+    ST::string name;
     char initiallyOpen;
-    if (!PyArg_ParseTuple(args, "sb", &name, &initiallyOpen))
+    if (!PyArg_ParseTuple(args, "O&b", PyUnicode_STStringConverter, &name, &initiallyOpen))
     {
         PyErr_SetString(PyExc_TypeError, "addBranch expects a string and a boolean");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->AddBranch(name, initiallyOpen != 0);
+    self->fThis->AddBranch(std::move(name), initiallyOpen != 0);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addBranchW, args)
 {
-    PyObject* textObj;
+    ST::string name;
     char initiallyOpen;
-    if (!PyArg_ParseTuple(args, "Ob", &textObj, &initiallyOpen))
+    if (!PyArg_ParseTuple(args, "O&b", PyUnicode_STStringConverter, &name, &initiallyOpen))
     {
-        PyErr_SetString(PyExc_TypeError, "addBranchW expects a unicode string and a boolean");
+        PyErr_SetString(PyExc_TypeError, "addBranchW expects a string and a boolean");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj))
-    {
-        wchar_t* name = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->AddBranch(ST::string::from_wchar(name), initiallyOpen != 0);
-        PyMem_Free(name);
-        PYTHON_RETURN_NONE;
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "addBranchW expects a unicode string and a boolean");
-        PYTHON_RETURN_ERROR;
-    }
+    self->fThis->AddBranch(std::move(name), initiallyOpen != 0);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlListBox, closeBranch, CloseBranch)

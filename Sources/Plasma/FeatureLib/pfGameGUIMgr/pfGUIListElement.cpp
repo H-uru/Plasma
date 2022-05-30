@@ -83,8 +83,8 @@ pfGUIListText::pfGUIListText()
 {
 }
 
-pfGUIListText::pfGUIListText( const ST::string &text )
-    : pfGUIListElement(kText), fText(text), fJustify(kLeftJustify)
+pfGUIListText::pfGUIListText( ST::string text )
+    : pfGUIListElement(kText), fText(std::move(text)), fJustify(kLeftJustify)
 {
 }
 

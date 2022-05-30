@@ -344,20 +344,10 @@ class xDialogStartUp(ptResponder):
                         self.SelectSlot(GUIDiag4b, 0)
 
                 elif  tagID == k6PlayID: ## Play ##
-                    playerName = ptGUIControlEditBox(GUIDiag6.dialog.getControlFromTag(k6NameID)).getString()  #                 <---
-                    playerNameW = ptGUIControlEditBox(GUIDiag6.dialog.getControlFromTag(k6NameID)).getStringW()  #                 <---
-
-                    try:
-                        playerName == playerNameW
-                    except:
-                        errorString = PtGetLocalizedString("GUI.Dialog04d.InvalidName")
-                        ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setStringW(errorString)
-                        PtShowDialog("GUIDialog04d")
-                        self.ToggleColor(GUIDiag4b, k4bPlayer03)
-                        return
-
+                    playerName = ptGUIControlEditBox(GUIDiag6.dialog.getControlFromTag(k6NameID)).getStringW()
                     playerGender = ""
                     playerStart = ""
+
                     if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6MaleID)).isChecked():
                         playerGender = "male"
                     if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6FemaleID)).isChecked():

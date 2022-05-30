@@ -130,7 +130,7 @@ class pfGUIListText : public pfGUIListElement
     public:
 
         pfGUIListText();
-        pfGUIListText( const ST::string &text );
+        pfGUIListText( ST::string text );
         
         void    Read(hsStream *s, hsResMgr *mgr) override;
         void    Write(hsStream *s, hsResMgr *mgr) override;
@@ -144,7 +144,7 @@ class pfGUIListText : public pfGUIListElement
 
         // These two are virtual so we can derive and override them
         virtual ST::string  GetText() const { return fText; }
-        virtual void        SetText(const ST::string &text) { fText = text; }
+        virtual void        SetText(ST::string text) { fText = std::move(text); }
 };
 
 class pfGUIListPicture : public pfGUIListElement
@@ -187,7 +187,7 @@ class pfGUIListTreeRoot : public pfGUIListElement
     public:
 
         pfGUIListTreeRoot() : pfGUIListElement(kTreeRoot), fShowChildren(true) { }
-        pfGUIListTreeRoot(const ST::string &text) : pfGUIListElement(kTreeRoot), fShowChildren(true), fText(text) { }
+        pfGUIListTreeRoot( ST::string text) : pfGUIListElement(kTreeRoot), fShowChildren(true), fText(std::move(text)) { }
         
         void    Read(hsStream *s, hsResMgr *mgr) override;
         void    Write(hsStream *s, hsResMgr *mgr) override;
@@ -198,8 +198,8 @@ class pfGUIListTreeRoot : public pfGUIListElement
 
         bool    MouseClicked(uint16_t localX, uint16_t localY) override;
 
-        const ST::string GetTitle() const { return fText; }
-        void        SetTitle(const ST::string &text) { fText = text; }
+        ST::string GetTitle() const { return fText; }
+        void SetTitle(ST::string text) { fText = std::move(text); }
 
         size_t              GetNumChildren() const { return fChildren.size(); }
         pfGUIListElement    *GetChild(size_t i) const { return fChildren[i]; }
