@@ -235,28 +235,6 @@ typedef struct
     float3 texCoord1;
 } ShadowCasterInOut;
 
-constant constexpr sampler colorSamplers[] = {
-    sampler(mip_filter::linear,
-            mag_filter::linear,
-            min_filter::linear,
-            address::repeat),
-    sampler(mip_filter::linear,
-            mag_filter::linear,
-            min_filter::linear,
-            s_address::clamp_to_edge,
-            t_address::repeat),
-    sampler(mip_filter::linear,
-            mag_filter::linear,
-            min_filter::linear,
-            s_address::repeat,
-            t_address::clamp_to_edge),
-    sampler(mip_filter::linear,
-            mag_filter::linear,
-            min_filter::linear,
-            address::clamp_to_edge),
-
-};
-
 vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                                        constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
                                        constant float4x4 & blendMatrix1 [[ buffer(BufferIndexBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
@@ -704,7 +682,11 @@ fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
     if(fragmentUniforms.pointLightCast) {
         sampleCoords.xy /= sampleCoords.z;
     }
-    half4 currentColor = texture.sample(colorSamplers[3], sampleCoords.xy);
+    const sampler colorSample = sampler(mip_filter::linear,
+                                           mag_filter::linear,
+                                           min_filter::linear,
+                                           address::clamp_to_edge);
+    half4 currentColor = texture.sample(colorSample, sampleCoords.xy);
     currentColor.rgb *= in.vtxColor.rgb;
     
     const float2 LUTCoords = in.texCoord2.xy;
