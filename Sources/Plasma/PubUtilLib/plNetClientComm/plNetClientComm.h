@@ -322,40 +322,6 @@ void NetCommSendFriendInvite (
 class plNetClientComm
 {
 public:
-    ////////////////////////////////////////////////////////////////
-    // CALLBACK CLASSES
-
-    // Callback object sent with calls to our API as optional arg.
-    class Callback
-    {
-    public:
-        // OPERATION-SPECIFIC RESULT ARGS.
-        //-------------------------------
-        // Auth:            0=guid of server that authenticated us, if success.
-        // Leave:           None
-        // Alive:           None
-        // Ping:            0=The plNetMsgPing rcvd.
-        // FindAge:         0=plNetServerSessionInfo for spawned game server.
-        // Join:            0=fireWalled bool, 1=joinOrder int, 2=experimentalLevel int, 3=initialAgeSDL rec
-        // GetPlayerList:   0=numPlayers int, 1=player1ID int, 2=player1Name string, 3=flags ...
-        // SetActivePlayer: None
-        // CreatePlayer:    0=newPlayerID int
-        // DeletePlayer:    None
-        // GetPublicAgeList:0=plCreatableStream of plAgeInfoStruct, 1=plCreatableStream of nPlayers
-        // PublicAgeCreated:0=plAgeInfoStruct
-        plCreatableListHelper   fCbArgs;
-        //-------------------------------
-        virtual ~Callback(){}
-        virtual void OperationStarted( uint32_t context ) = 0;
-        virtual void OperationComplete( uint32_t context, int resultCode ) = 0;
-    };
-    class StubbedCallback : public Callback
-    {
-    public:
-        void OperationStarted(uint32_t context) override { }
-        void OperationComplete(uint32_t context, int resultCode) override { }
-    };
-
     // Message handler for unsolicited msgs or registered for specific msg types.
     class MsgHandler
     {
