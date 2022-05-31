@@ -83,19 +83,29 @@ namespace plPython
         return PyFloat_FromDouble(value);
     }
 
-    inline PyObject* ConvertFrom(int8_t value)
+    inline PyObject* ConvertFrom(signed char value)
     {
         return PyLong_FromLong(value);
     }
 
-    inline PyObject* ConvertFrom(int16_t value)
+    inline PyObject* ConvertFrom(signed short value)
     {
         return PyLong_FromLong(value);
     }
 
-    inline PyObject* ConvertFrom(int32_t value)
+    inline PyObject* ConvertFrom(signed int value)
     {
         return PyLong_FromLong(value);
+    }
+
+    inline PyObject* ConvertFrom(signed long value)
+    {
+        return PyLong_FromLong(value);
+    }
+
+    inline PyObject* ConvertFrom(signed long long value)
+    {
+        return PyLong_FromLongLong(value);
     }
 
     inline PyObject* ConvertFrom(ST::string&& value)
@@ -103,19 +113,29 @@ namespace plPython
         return PyUnicode_FromSTString(value);
     }
 
-    inline PyObject* ConvertFrom(uint8_t value)
+    inline PyObject* ConvertFrom(unsigned char value)
     {
         return PyLong_FromUnsignedLong(value);
     }
 
-    inline PyObject* ConvertFrom(uint16_t value)
+    inline PyObject* ConvertFrom(unsigned short value)
     {
         return PyLong_FromUnsignedLong(value);
     }
 
-    inline PyObject* ConvertFrom(uint32_t value)
+    inline PyObject* ConvertFrom(unsigned int value)
     {
         return PyLong_FromUnsignedLong(value);
+    }
+
+    inline PyObject* ConvertFrom(unsigned long value)
+    {
+        return PyLong_FromUnsignedLong(value);
+    }
+
+    inline PyObject* ConvertFrom(unsigned long long value)
+    {
+        return PyLong_FromUnsignedLongLong(value);
     }
 
     inline PyObject* ConvertFrom(wchar_t value)
@@ -125,8 +145,7 @@ namespace plPython
 
     inline PyObject* ConvertFrom(std::nullptr_t)
     {
-        Py_INCREF(Py_None);
-        return Py_None;
+        Py_RETURN_NONE;
     }
 
     /**
