@@ -162,6 +162,7 @@ class xJournalBookGUIPopup(ptModifier):
             JournalIdent = LocPath.value
 
         # compile journal text
+        journalContents = ""
         if Dynamic.value:
             inbox = ptVault().getGlobalInbox()
             inboxChildList = inbox.getChildNodeRefList()
