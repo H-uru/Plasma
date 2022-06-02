@@ -189,7 +189,7 @@ class xJournalBookGUIPopup(ptModifier):
             journalContents = PtGetLocalizedString(LocPath.value)
 
         if not journalContents:
-            PtDebugPrint("WARNING - EMPTY JOURNAL: JournalName.value = '%s' LocPath = '%s'" % (JournalName.value, LocPath.value), level=kDebugDumpLevel)
+            PtDebugPrint("WARNING - EMPTY JOURNAL: JournalName.value = '%s' LocPath = '%s'" % (JournalName.value, LocPath.value), level=kErrorLevel)
 
         # hide the KI
         PtSendKIMessage(kDisableKIandBB, 0)
