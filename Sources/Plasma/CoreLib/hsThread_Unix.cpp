@@ -51,7 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if NO_POSIX_CLOCK
 #include <sys/time.h>
 #include <unistd.h>
-#define CLOCK_REALTIME 0
+
+#ifndef CLOCK_REALTIME
+#   define CLOCK_REALTIME 0
+#endif
 
 //
 // A linux hack b/c we're not quite POSIX
@@ -86,11 +89,15 @@ hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const ST::string& name)
             throw hsOSException(errno);
         }
     } else {
+        IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+
         /* Anonymous semaphore shared between threads */
         int shared = 0; // 1 if sharing between processes
         fPSema = new sem_t;
         int status = sem_init(fPSema, shared, initialValue);
         hsThrowIfOSErr(status);
+
+        IGNORE_WARNINGS_END
     }
 #else
     int status = ::pthread_mutex_init(&fPMutex, nullptr);
@@ -110,8 +117,12 @@ hsGlobalSemaphore::~hsGlobalSemaphore()
     if (fNamed) {
         status = sem_close(fPSema);
     } else {
+        IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+
         status = sem_destroy(fPSema);
         delete fPSema;
+
+        IGNORE_WARNINGS_END
     }
     hsThrowIfOSErr(status);
 #else
