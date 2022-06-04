@@ -56,6 +56,6 @@ xTextObjects = {\
     "bcoWrinkledNote":  ( "Michelle",   24, (0,0,0,1),  (0,0,0,0), 10, "BaronCityOffice.TextObjects.WrinkledNote",  PtJustify.kLeftJustify ),
     "WatsonLetter":     ( "Courier",    10, (0,0,0,1),  (0,0,0,0), 0,  "City.TextObjects.WatsonLetter",             PtJustify.kLeftJustify ),
     "JCNote":           ( "Nick",       16, (0,0,0,1),  (0,0,0,0), 5,  "City.TextObjects.JCNote",                   PtJustify.kLeftJustify ),
-    "clftAtrusNote":    ( "Atrus",      16, (0,0,0,1),  (0,0,0,0), 0,  "Cleft.TextObjects.AtrusNote",               PtJustify.kLeftJustify ),
+    "clftAtrusNote":    ( "Atrus",      28, (0,0,0,1),  (0,0,0,0), 0,  "Cleft.TextObjects.AtrusNote",               PtJustify.kLeftJustify ),
     "islmNickNote":     ( "Nick",       18, (0,0,.3,1), (0,0,0,0), 1,  "City.TextObjects.NickNote",                 PtJustify.kLeftJustify ),
 }
