@@ -59,13 +59,18 @@ constexpr std::string_view CRASH_HANDLE_SUFFIX = "CrashHandled";
 #   endif // PLASMA_EXTERNAL_RELEASE
 #endif // HS_BUILD_FOR_WIN32
 
+// Bump the version whenever you change the memory link structure below
+constexpr uint32_t CRASH_LINK_VERSION = 1;
+
 struct plCrashMemLink
 {
-    bool fCrashed;
-    bool fSrvReady;
+    uint32_t fVersion;
+    bool     fCrashed;
+    bool     fSrvReady;
 #ifdef HS_BUILD_FOR_WIN32
     HANDLE   fClientProcess;
     uint32_t fClientProcessID;
+    HANDLE   fClientThread;
     uint32_t fClientThreadID;
     PEXCEPTION_POINTERS fExceptionPtrs;
 #endif

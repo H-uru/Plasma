@@ -65,7 +65,14 @@ public:
 #ifdef HS_BUILD_FOR_WIN32
     void ReportCrash(PEXCEPTION_POINTERS);
 #endif
-    void WaitForHandle();
+
+    /**
+     * Wait for the out-of-process crash server to handle this crash.
+     * \param timeout[in] Maximum amount of time in milliseconds to wait for
+     * the crash server to finish.
+     * \returns Whether or not this crash was handled within the timeout specified.
+     */
+    bool WaitForHandle(uint32_t timeoutMs = 5000);
 };
 
 #endif // _pfCrashCli_h_

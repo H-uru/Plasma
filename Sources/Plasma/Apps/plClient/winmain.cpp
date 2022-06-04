@@ -963,10 +963,14 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
     // Before we do __ANYTHING__, pass the exception to plCrashHandler
     s_crash.ReportCrash(ExceptionInfo);
 
-    // Now, try to create a nice exception dialog after plCrashHandler is done.
-    s_crash.WaitForHandle();
-    HWND parentHwnd = gClient ? gClient->GetWindowHandle() : GetActiveWindow();
-    DialogBoxParam(gHInst, MAKEINTRESOURCE(IDD_EXCEPTION), parentHwnd, ExceptionDialogProc, 0L);
+    // For maximum safety, the crash handler process will do all of the GUI work,
+    // however, if that seems to take too long, then we'll just have to assume life
+    // is not going well in plCrashHandler land and show the crappy "welp, we died"
+    // dialog.
+    if (gClient)
+        ShowWindow(gClient->GetWindowHandle(), SW_HIDE);
+    if (!s_crash.WaitForHandle())
+        DialogBoxParamW(gHInst, MAKEINTRESOURCEW(IDD_EXCEPTION), nullptr, ExceptionDialogProc, 0L);
 
     // Means that we have handled this.
     return EXCEPTION_EXECUTE_HANDLER;

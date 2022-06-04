@@ -84,6 +84,7 @@ plCrashCli::plCrashCli()
     if (!fLink)
         return;
     memset(fLink, 0, sizeof(plCrashMemLink));
+    fLink->fVersion = CRASH_LINK_VERSION;
     fLink->fClientProcessID = GetCurrentProcessId();
 
     // Start the plCrashHandler before a crash
@@ -142,9 +143,17 @@ void plCrashCli::ReportCrash(PEXCEPTION_POINTERS e)
     hsAssert(fLink, "plCrashMemLink is nil");
     if (fLink)
     {
+        DuplicateHandle(GetCurrentProcess(),      // Handle to the source process
+                        GetCurrentThread(),       // Handle that we want duplicated
+                        fCrashSrv.hProcess,       // Handle to target process
+                        &fLink->fClientThread,    // Pointer to Handle to dupliicate to
+                        0,                        // Ignored
+                        FALSE,
+                        DUPLICATE_CLOSE_SOURCE | DUPLICATE_SAME_ACCESS
+        );
         fLink->fClientThreadID = GetCurrentThreadId();
         fLink->fCrashed = true;
-        fLink->fExceptionPtrs  = e;
+        fLink->fExceptionPtrs = e;
     }
 
     fCrashed->Signal();
@@ -154,9 +163,10 @@ void plCrashCli::ReportCrash(PEXCEPTION_POINTERS e)
 #   error "Implement plCrashCli for this platform"
 #endif
 
-void plCrashCli::WaitForHandle()
+bool plCrashCli::WaitForHandle(uint32_t timeoutMs)
 {
     // Don't deadlock... Only wait if the CrashSrv is attached
     if (fLink && fLink->fSrvReady)
-        fHandled->Wait();
+        return fHandled->Wait(timeoutMs);
+    return false;
 }

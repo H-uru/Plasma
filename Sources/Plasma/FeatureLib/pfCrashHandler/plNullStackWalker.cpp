@@ -40,19 +40,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include "pfCrashHandler/plCrashSrv.h"
+#include "plStackWalker.h"
 
-int main(int argc, const char* argv[])
+// ===================================================
+
+plStackWalker::plStackWalker(plStackWalker::Process process, plStackWalker::Thread thread, void* context, size_t levels)
+    : fProcess(process), fThread(thread), fContext(context), fNumLevels(levels)
 {
-    // Parse command line arguments. We MUST have the file argument
-    if (argc != 2)
-    {
-        hsMessageBox("You should never run this manually.", "Error", hsMessageBoxNormal, hsMessageBoxIconExclamation);
-        return 1;
-    }
+}
 
-    plCrashSrv srv(argv[1]);
-    srv.HandleCrash();
-    return 0;
+plStackWalker::~plStackWalker()
+{
+}
+
+// ===================================================
+
+plStackWalker::iterator plStackWalker::cbegin() const
+{
+    return cend();
+}
+
+bool plStackWalker::iterator::next()
+{
+    return false;
+}
+
+plStackEntry plStackWalker::iterator::get() const
+{
+    return {};
 }

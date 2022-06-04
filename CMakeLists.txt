@@ -145,6 +145,7 @@ cmake_dependent_option(PLASMA_BUILD_MAX_PLUGIN "Do we want to build the 3ds Max 
 option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
 option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
+option(PLASMA_STACK_WALKER "Do we want to use the stack walker for crash handling?" ON)
 
 cmake_dependent_option(USE_EGL "Use EGL for OpenGL rendering" ON "epoxy_HAS_EGL" OFF)
 cmake_dependent_option(USE_OPUS "Use Opus audio for voice chat" ON "TARGET Opus::opus" OFF)
