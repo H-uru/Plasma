@@ -69,3 +69,30 @@ STATEDESC Tiam
     VAR BOOL    wtrstrOnOff[1] DEFAULT=0
     VAR BOOL    fliesFlwr[1] DEFAULT=0
 }
+
+STATEDESC Tiam
+{
+   VERSION 16
+ 
+    VAR BOOL    entreDoor[1]             DEFAULT=0
+    VAR BOOL    doorVirvel[1]            DEFAULT=0
+    VAR BOOL    treeDoor[1]              DEFAULT=0
+    VAR BOOL    fruitFA[1]               DEFAULT=0
+    VAR BOOL    fruitMC[1]               DEFAULT=0
+    VAR BOOL    tiamSolved[1]            DEFAULT=0
+    VAR BOOL    tiamPuzInUse[1]          DEFAULT=0
+    VAR INT     tiamCorrectPushes[1]     DEFAULT=0
+    VAR BOOL    fraktSolved[1]           DEFAULT=0
+    VAR BOOL    fraktPuzInUse[1]         DEFAULT=0
+    VAR INT     fraktCorrectPushes[1]    DEFAULT=0
+    VAR BOOL    wheelTurning[1]          DEFAULT=0
+    VAR BOOL    vredeOnOff[1]            DEFAULT=0
+    VAR BOOL    caveDoor[1]              DEFAULT=0
+    VAR BOOL    ballSolved[1]            DEFAULT=0
+    VAR BOOL    ballPzlInUse[1]          DEFAULT=0
+    VAR INT     ballCorrPush[1]          DEFAULT=0
+    VAR BOOL    wtrstrOnOff[1]           DEFAULT=0
+    VAR BOOL    fliesFlwr[1]             DEFAULT=0
+    VAR BOOL    tiamCrystalPageVis[1]    DEFAULT=0    DEFAULTOPTION=VAULT
+
+}
