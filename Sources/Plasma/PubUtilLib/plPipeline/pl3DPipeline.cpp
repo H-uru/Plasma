@@ -45,6 +45,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plProfile_CreateTimer("RenderScene",            "PipeT", RenderScene);
 plProfile_CreateTimer("VisEval",                "PipeT", VisEval);
 plProfile_CreateTimer("VisSelect",              "PipeT", VisSelect);
+plProfile_CreateTimer("PrepShadows",            "PipeT", PrepShadows);
+plProfile_CreateTimer("PrepDrawable",           "PipeT", PrepDrawable);
+plProfile_CreateTimer("  Skin",                 "PipeT", Skin);
+
+plProfile_CreateTimer("RenderSpan",             "PipeT", RenderSpan);
+plProfile_CreateTimer("  MergeCheck",           "PipeT", MergeCheck);
+plProfile_CreateTimer("  MergeSpan",            "PipeT", MergeSpan);
+plProfile_CreateTimer("  SpanTransforms",       "PipeT", SpanTransforms);
+plProfile_CreateTimer("  SpanFog",              "PipeT", SpanFog);
+plProfile_CreateTimer("  SelectLights",         "PipeT", SelectLights);
+plProfile_CreateTimer("  SelectProj",           "PipeT", SelectProj);
+plProfile_CreateTimer("  CheckDyn",             "PipeT", CheckDyn);
+plProfile_CreateTimer("  CheckStat",            "PipeT", CheckStat);
+plProfile_CreateTimer("  RenderBuff",           "PipeT", RenderBuff);
+plProfile_CreateTimer("  RenderPrim",           "PipeT", RenderPrim);
 
 plProfile_CreateTimer("FindSceneLights",        "PipeT", FindSceneLights);
 plProfile_CreateTimer("  Find Lights",          "PipeT", FindLights);
@@ -56,16 +71,36 @@ plProfile_CreateTimer("      ApplyMoving",      "PipeT", ApplyMoving);
 plProfile_CreateTimer("      ApplyToSpec",      "PipeT", ApplyToSpec);
 plProfile_CreateTimer("      ApplyToMoving",    "PipeT", ApplyToMoving);
 
+plProfile_CreateTimer("PlateMgr",               "PipeT", PlateMgr);
+plProfile_CreateTimer("DebugText",              "PipeT", DebugText);
+plProfile_CreateTimer("Reset",                  "PipeT", Reset);
+
+plProfile_CreateCounterNoReset("Reload",        "PipeC", PipeReload);
+
 plProfile_CreateCounter("LightOn",              "PipeC", LightOn);
 plProfile_CreateCounter("LightVis",             "PipeC", LightVis);
 plProfile_CreateCounter("LightChar",            "PipeC", LightChar);
 plProfile_CreateCounter("LightActive",          "PipeC", LightActive);
 plProfile_CreateCounter("Lights Found",         "PipeC", FindLightsFound);
 plProfile_CreateCounter("Perms Found",          "PipeC", FindLightsPerm);
+plProfile_CreateCounter("Merge",                "PipeC", SpanMerge);
+plProfile_CreateCounter("EmptyList",            "PipeC", EmptyList);
+plProfile_CreateCounter("AvRTPoolUsed",         "PipeC", AvRTPoolUsed);
+plProfile_CreateCounter("AvRTPoolCount",        "PipeC", AvRTPoolCount);
+plProfile_CreateCounter("AvRTPoolRes",          "PipeC", AvRTPoolRes);
+plProfile_CreateCounter("AvRTShrinkTime",       "PipeC", AvRTShrinkTime);
+plProfile_CreateCounter("NumSkin",              "PipeC", NumSkin);
 
 plProfile_CreateCounter("Polys",                "General",  DrawTriangles);
 plProfile_CreateCounter("Material Change",      "Draw",     MatChange);
+plProfile_CreateCounter("Feed Triangles",       "Draw",     DrawFeedTriangles);
+plProfile_CreateCounter("Draw Prim Static",     "Draw",     DrawPrimStatic);
+plProfile_CreateCounter("Layer Change",         "Draw",     LayChange);
 
+plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
+plProfile_CreateMemCounter("Vertices", "Memory", MemVertex);
+plProfile_CreateMemCounter("Indices", "Memory", MemIndex);
+plProfile_CreateMemCounter("Textures", "Memory", MemTexture);
 
 PipelineParams plPipeline::fDefaultPipeParams;
 PipelineParams plPipeline::fInitialPipeParams;
