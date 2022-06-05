@@ -34,6 +34,7 @@ function(plasma_executable TARGET)
         list(APPEND addexe_args EXCLUDE_FROM_ALL)
     endif()
     add_executable(${TARGET} ${addexe_args} ${_pex_SOURCES})
+    set_target_properties(${TARGET} PROPERTIES XCODE_GENERATE_SCHEME TRUE)
 
     if(_pex_CLIENT)
         set(install_destination client)

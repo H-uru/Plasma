@@ -45,6 +45,7 @@ endif(UNIX)
 
 if(APPLE)
     add_definitions(-DHS_BUILD_FOR_APPLE)
+    set(CMAKE_XCODE_GENERATE_SCHEME FALSE)
 
     if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
         add_definitions(-DHS_BUILD_FOR_MACOS)
