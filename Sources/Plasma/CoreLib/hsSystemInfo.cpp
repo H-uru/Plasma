@@ -143,9 +143,12 @@ static inline bool IGetAppleVersion(ST::string& system)
         dict = _CFCopySystemVersionDictionary();
 
     if (dict != nullptr) {
-        CFStringRef name = (CFStringRef)CFDictionaryGetValue(dict, _kCFSystemVersionProductNameKey);
-        CFStringRef version = (CFStringRef)CFDictionaryGetValue(dict, _kCFSystemVersionProductVersionKey);
+        CFStringRef name = (CFStringRef)CFRetain(CFDictionaryGetValue(dict, _kCFSystemVersionProductNameKey));
+        CFStringRef version = (CFStringRef)CFRetain(CFDictionaryGetValue(dict, _kCFSystemVersionProductVersionKey));
         CFStringRef info = CFStringCreateWithFormat(nullptr, nullptr, CFSTR("%@ %@"), name, version);
+        CFRelease(version);
+        CFRelease(name);
+        CFRelease(dict);
 
         CFIndex infoLen = CFStringGetLength(info);
         CFIndex infoBufSz = 0;
@@ -156,9 +159,6 @@ static inline bool IGetAppleVersion(ST::string& system)
         system = ST::string(systemBuf);
 
         CFRelease(info);
-        CFRelease(version);
-        CFRelease(name);
-        CFRelease(dict);
 
         return true;
     }
