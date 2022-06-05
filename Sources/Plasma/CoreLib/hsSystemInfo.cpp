@@ -109,7 +109,7 @@ static inline void ICPUID(cpuid_t* info, int function_id)
 #elif defined(GCC_COMPATIBLE)
     __get_cpuid(function_id, &info[0], &info[1], &info[2], &info[3]);
 #elif !defined(HAVE_CPUID)
-    memset(info, 0, sizeof(info));
+    memset(info, 0, sizeof(*info));
 #endif
 }
 
