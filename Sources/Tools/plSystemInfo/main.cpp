@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plFileSystem.h"
 #include "hsSystemInfo.h"
 
 #include <iostream>
@@ -47,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 int main()
 {
-    std::cout << hsSystemInfo::AsString() << std::endl;
+    std::cout << hsSystemInfo::AsString() << std::endl << std::endl;
+
+    std::cout << "User Data Path: " << plFileSystem::GetUserDataPath().AsString() << std::endl;
     return 0;
 }

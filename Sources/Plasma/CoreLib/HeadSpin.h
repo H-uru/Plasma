@@ -128,6 +128,9 @@ typedef int32_t   hsError;
 #define _hsMacroJoin_(lhs, rhs) lhs ## rhs
 #define hsMacroJoin(lhs, rhs)   _hsMacroJoin_(lhs, rhs)
 
+// Macro to string-ize its arguments
+#define hsStringize(exp) #exp
+
 // Declare a file-unique identifier without caring what its full name is
 #define hsUniqueIdentifier(prefix) hsMacroJoin(prefix, __LINE__)
 
@@ -434,6 +437,39 @@ void DebugMsg(const char* fmt, ...);
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); __assume(0); break;
 #else
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); break;
+#endif
+
+#if defined(__clang__) || defined(__GNUC__)
+#   define _COMPILER_WARNING_NAME(warning) "-W" warning
+
+    /* Condition is either 1 (true) or 0 (false, do nothing). */
+#   define IGNORE_WARNINGS_BEGIN_IMPL_1(warning) \
+        _Pragma(hsStringize(GCC diagnostic ignored warning))
+#   define IGNORE_WARNINGS_BEGIN_IMPL_0(warning)
+
+#   define IGNORE_WARNINGS_BEGIN_COND(cond, warning) \
+        _Pragma("GCC diagnostic push") \
+        hsMacroJoin(IGNORE_WARNINGS_BEGIN_IMPL_, cond)(warning)
+
+#   if defined(__has_warning)
+#       define IGNORE_WARNINGS_BEGIN_IMPL(warning) \
+            IGNORE_WARNINGS_BEGIN_COND(__has_warning(warning), warning)
+#       define IGNORE_WARNINGS_END \
+            _Pragma("GCC diagnostic pop")
+#   else
+        /* Suppress -Wpragmas to dodge warnings about attempts to suppress unrecognized warnings. */
+#       define IGNORE_WARNINGS_BEGIN_IMPL(warning) \
+            IGNORE_WARNINGS_BEGIN_COND(1, "-Wpragmas") \
+            IGNORE_WARNINGS_BEGIN_COND(1, warning)
+#       define IGNORE_WARNINGS_END \
+            _Pragma("GCC diagnostic pop") \
+            _Pragma("GCC diagnostic pop")
+#   endif
+
+#   define IGNORE_WARNINGS_BEGIN(warning) IGNORE_WARNINGS_BEGIN_IMPL(_COMPILER_WARNING_NAME(warning))
+#else
+#   define IGNORE_WARNINGS_BEGIN(warning)
+#   define IGNORE_WARNINGS_END
 #endif
 
 #endif
