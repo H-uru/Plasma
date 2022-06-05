@@ -49,6 +49,11 @@ if(APPLE)
 
     if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
         add_definitions(-DHS_BUILD_FOR_MACOS)
+
+        option(PLASMA_MAC_UNIVERSAL "Build macOS multi-architecture universal builds?" OFF)
+        if (PLASMA_MAC_UNIVERSAL)
+            set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD)")
+        endif()
     endif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 endif(APPLE)
 
