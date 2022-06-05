@@ -66,6 +66,9 @@ plProfile_CreateCounter("Perms Found",          "PipeC", FindLightsPerm);
 plProfile_CreateCounter("Polys",                "General",  DrawTriangles);
 plProfile_CreateCounter("Material Change",      "Draw",     MatChange);
 
+plProfile_CreateMemCounter("Vertices", "Memory", MemVertex);
+plProfile_CreateMemCounter("Indices", "Memory", MemIndex);
+plProfile_CreateMemCounter("Textures", "Memory", MemTexture);
 
 PipelineParams plPipeline::fDefaultPipeParams;
 PipelineParams plPipeline::fInitialPipeParams;
