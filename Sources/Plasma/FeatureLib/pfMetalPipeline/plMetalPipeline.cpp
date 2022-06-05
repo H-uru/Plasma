@@ -87,37 +87,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 uint32_t fDbgSetupInitFlags; // HACK temp only
 
-plProfile_CreateCounter("Feed Triangles", "Draw", DrawFeedTriangles);
-plProfile_CreateCounter("Draw Prim Static", "Draw", DrawPrimStatic);
-plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
-plProfile_CreateCounter("Layer Change", "Draw", LayChange);
+plProfile_Extern(DrawFeedTriangles);
+plProfile_Extern(DrawPrimStatic);
+plProfile_Extern(TotalTexSize);
+plProfile_Extern(LayChange);
 plProfile_Extern(DrawTriangles);
 plProfile_Extern(MatChange);
-
-plProfile_CreateTimer("PrepShadows", "PipeT", PrepShadows);
-plProfile_CreateTimer("PrepDrawable", "PipeT", PrepDrawable);
-plProfile_CreateTimer("  Skin", "PipeT", Skin);
-plProfile_CreateTimer("RenderSpan", "PipeT", RenderSpan);
-plProfile_CreateTimer("  MergeCheck", "PipeT", MergeCheck);
-plProfile_CreateTimer("  MergeSpan", "PipeT", MergeSpan);
-plProfile_CreateTimer("  SpanTransforms", "PipeT", SpanTransforms);
-plProfile_CreateTimer("  SpanFog", "PipeT", SpanFog);
-plProfile_CreateTimer("  SelectLights", "PipeT", SelectLights);
-plProfile_CreateTimer("  SelectProj", "PipeT", SelectProj);
-plProfile_CreateTimer("  CheckDyn", "PipeT", CheckDyn);
-plProfile_CreateTimer("  CheckStat", "PipeT", CheckStat);
-plProfile_CreateTimer("  RenderBuff", "PipeT", RenderBuff);
-plProfile_CreateTimer("  RenderPrim", "PipeT", RenderPrim);
-plProfile_CreateTimer("PlateMgr", "PipeT", PlateMgr);
-plProfile_CreateTimer("DebugText", "PipeT", DebugText);
-plProfile_CreateTimer("Reset", "PipeT", Reset);
-
-plProfile_CreateCounterNoReset("Reload", "PipeC", PipeReload);
-plProfile_CreateCounter("AvRTPoolUsed", "PipeC", AvRTPoolUsed);
-plProfile_CreateCounter("AvRTPoolCount", "PipeC", AvRTPoolCount);
-plProfile_CreateCounter("AvRTPoolRes", "PipeC", AvRTPoolRes);
-plProfile_CreateCounter("AvRTShrinkTime", "PipeC", AvRTShrinkTime);
-plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
+plProfile_Extern(PrepShadows);
+plProfile_Extern(PrepDrawable);
+plProfile_Extern(Skin);
+plProfile_Extern(RenderSpan);
+plProfile_Extern(MergeCheck);
+plProfile_Extern(MergeSpan);
+plProfile_Extern(SpanTransforms);
+plProfile_Extern(SpanFog);
+plProfile_Extern(SelectLights);
+plProfile_Extern(SelectProj);
+plProfile_Extern(CheckDyn);
+plProfile_Extern(CheckStat);
+plProfile_Extern(RenderBuff);
+plProfile_Extern(RenderPrim);
+plProfile_Extern(PlateMgr);
+plProfile_Extern(DebugText);
+plProfile_Extern(Reset);
+plProfile_Extern(PipeReload);
+plProfile_Extern(AvRTPoolUsed);
+plProfile_Extern(AvRTPoolCount);
+plProfile_Extern(AvRTPoolRes);
+plProfile_Extern(AvRTShrinkTime);
+plProfile_Extern(NumSkin);
 
 #ifndef PLASMA_FORCE_PER_PIXEL_LIGHTING
 #define PLASMA_FORCE_PER_PIXEL_LIGHTING 0
