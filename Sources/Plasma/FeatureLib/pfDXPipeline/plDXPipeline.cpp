@@ -505,9 +505,7 @@ uint32_t plDXPipeline::fVtxUsed(0);
 uint32_t plDXPipeline::fVtxManaged(0);
 
 plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeRec )
-:   pl3DPipeline(devModeRec),
-    fManagedAlloced(false),
-    fAllocUnManaged(false)
+:   pl3DPipeline(devModeRec)
 {
     hsAssert(D3DTSS_TCI_PASSTHRU == plLayerInterface::kUVWPassThru, "D3D Enum has changed. Notify graphics department.");
     hsAssert(D3DTSS_TCI_CAMERASPACENORMAL == plLayerInterface::kUVWNormal, "D3D Enum has changed. Notify graphics department.");
@@ -1713,8 +1711,8 @@ void    plDXPipeline::IReleaseDeviceObjects()
         fD3DDevice = nullptr;
     }
 
-    fManagedAlloced = false;
-    fAllocUnManaged = false;
+    fDevice.fManagedAlloced = false;
+    fDevice.fAllocUnManaged = false;
 }
 
 // IReleaseDynamicBuffers /////////////////////////////////////////////////
@@ -1807,7 +1805,7 @@ void plDXPipeline::ICreateDynamicBuffers()
     fVtxRefTime++;
 
     DWORD usage = D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC;
-    hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
+    hsAssert(!fDevice.fManagedAlloced, "Alloc default with managed alloc'd");
     D3DPOOL poolType = D3DPOOL_DEFAULT;
     if( fDynVtxSize )
     {
@@ -1971,7 +1969,7 @@ bool plDXPipeline::IResetDevice()
             }
             fSettings.fCurrFVFFormat = 0;
             fSettings.fCurrVertexShader = nullptr;
-            fManagedAlloced = false;
+            fDevice.fManagedAlloced = false;
             ICreateDynDeviceObjects();
             IInitDeviceState();
 
@@ -2187,7 +2185,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
 
         IReleaseDynDeviceObjects();
         HRESULT hr = fD3DDevice->Reset(&fSettings.fPresentParams);
-        fManagedAlloced = false;
+        fDevice.fManagedAlloced = false;
         if( !FAILED(hr) )
         {
             ICreateDynDeviceObjects();
@@ -2718,7 +2716,7 @@ bool plDXPipeline::ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* g
     }
     if( iRef->IsDirty()  )
     {
-        IFillIndexBufferRef(iRef, group, span->fIBufferIdx);
+        fDevice.FillIndexBufferRef(iRef, group, span->fIBufferIdx);
         iRef->SetRebuiltSinceUsed(true);
     }
 
@@ -3452,7 +3450,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
     D3DRESOURCETYPE         resType;
     plCubicRenderTarget     *cubicRT;
 
-    hsAssert(!fManagedAlloced, "Allocating non-managed resource with managed resources alloc'd");
+    hsAssert(!fDevice.fManagedAlloced, "Allocating non-managed resource with managed resources alloc'd");
 
     // If we have Shader Model 3 and support non-POT textures, let's make reflections the pipe size
     plDynamicCamMap* camMap = plDynamicCamMap::ConvertNoRef(owner);
@@ -3687,7 +3685,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
     if( !share )
         return MakeRenderTargetRef(owner);
 
-    hsAssert(!fManagedAlloced, "Allocating non-managed resource with managed resources alloc'd");
+    hsAssert(!fDevice.fManagedAlloced, "Allocating non-managed resource with managed resources alloc'd");
 
 #ifdef HS_DEBUGGING
     // Check out the validity of the match. Debug only.
@@ -3737,7 +3735,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         else
             ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
-        hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
+        hsAssert(!fDevice.fManagedAlloced, "Alloc default with managed alloc'd");
         if( !FAILED( fD3DDevice->CreateCubeTexture( owner->GetWidth(), 1, D3DUSAGE_RENDERTARGET, surfFormat,
                                                     D3DPOOL_DEFAULT, (IDirect3DCubeTexture9 **)&cTexture, nullptr)))
         {
@@ -3784,7 +3782,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
         else
             ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
-        hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
+        hsAssert(!fDevice.fManagedAlloced, "Alloc default with managed alloc'd");
         if( !FAILED( fD3DDevice->CreateTexture( owner->GetWidth(), owner->GetHeight(), 1, D3DUSAGE_RENDERTARGET, surfFormat, 
                                                 D3DPOOL_DEFAULT, (IDirect3DTexture9 **)&texture, nullptr)))
         {
@@ -7238,7 +7236,7 @@ IDirect3DTexture9   *plDXPipeline::IMakeD3DTexture( plDXTextureRef *ref, D3DFORM
 {
     D3DPOOL poolType = D3DPOOL_MANAGED;
     IDirect3DTexture9   *texPtr;
-    fManagedAlloced = true;
+    fDevice.fManagedAlloced = true;
     if( FAILED( fSettings.fDXError = fD3DDevice->CreateTexture( ref->fMaxWidth, ref->fMaxHeight, 
                                           ref->fMMLvs,
                                           IGetD3DTextureUsage(ref),
@@ -7305,7 +7303,7 @@ IDirect3DCubeTexture9   *plDXPipeline::IMakeD3DCubeTexture( plDXTextureRef *ref,
 {
     D3DPOOL                 poolType = D3DPOOL_MANAGED;
     IDirect3DCubeTexture9   *texPtr = nullptr;
-    fManagedAlloced = true;
+    fDevice.fManagedAlloced = true;
     WEAK_ERROR_CHECK(fD3DDevice->CreateCubeTexture( ref->fMaxWidth, ref->fMMLvs, 0, formatType, poolType, &texPtr, nullptr));
     PROFILE_POOL_MEM(poolType, ref->fDataSize, true, ref->fOwner && ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : ST_LITERAL("(UnknownTexture)"));
     fTexManaged += ref->fDataSize;
@@ -8035,200 +8033,6 @@ void    plDXPipeline::ISetCullMode(bool flip)
     }
 }
 
-// ISetupVertexBufferRef /////////////////////////////////////////////////////////
-// Initialize input vertex buffer ref according to source.
-void plDXPipeline::ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXVertexBufferRef* vRef)
-{
-    // Initialize to nullptr, in case something goes wrong.
-    vRef->fD3DBuffer = nullptr;
-
-    uint8_t format = owner->GetVertexFormat();
-
-    // All indexed skinning is currently done on CPU, so the source data
-    // will have indices, but we strip them out for the D3D buffer.
-    if( format & plGBufferGroup::kSkinIndices )
-    {
-        format &= ~(plGBufferGroup::kSkinWeightMask | plGBufferGroup::kSkinIndices);
-        format |= plGBufferGroup::kSkinNoWeights;       // Should do nothing, but just in case...
-        vRef->SetSkinned(true);
-        vRef->SetVolatile(true);
-    }
-
-    uint32_t vertSize = IGetBufferFormatSize(format); // vertex stride
-    uint32_t numVerts = owner->GetVertBufferCount(idx);
-
-    vRef->fDevice = fD3DDevice;
-
-    vRef->fOwner = owner;
-    vRef->fCount = numVerts;
-    vRef->fVertexSize = vertSize;
-    vRef->fFormat = format;
-    vRef->fRefTime = 0;
-
-    vRef->SetDirty(true);
-    vRef->SetRebuiltSinceUsed(true);
-    vRef->fData = nullptr;
-
-    vRef->SetVolatile(vRef->Volatile() || owner->AreVertsVolatile());
-
-    vRef->fIndex = idx;
-
-    owner->SetVertexBufferRef(idx, vRef);
-    hsRefCnt_SafeUnRef(vRef);
-}
-
-// ICheckStaticVertexBuffer ///////////////////////////////////////////////////////////////////////
-// Ensure a static vertex buffer has any D3D resources necessary for rendering created and filled
-// with proper vertex data.
-void plDXPipeline::ICheckStaticVertexBuffer(plDXVertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx)
-{
-    hsAssert(!vRef->Volatile(), "Creating a managed vertex buffer for a volatile buffer ref");
-
-    if( !vRef->fD3DBuffer )
-    {
-        // Okay, haven't done this one.
-
-        DWORD fvfFormat = IGetBufferD3DFormat(vRef->fFormat);
-
-    
-        D3DPOOL poolType = D3DPOOL_MANAGED;
-//      DWORD usage = D3DUSAGE_WRITEONLY;
-        DWORD usage = 0;
-        const int numVerts = vRef->fCount;
-        const int vertSize = vRef->fVertexSize;
-        fManagedAlloced = true;
-        if( FAILED( fD3DDevice->CreateVertexBuffer( numVerts * vertSize,
-                                                    usage, 
-                                                    fvfFormat,
-                                                    poolType, 
-                                                    &vRef->fD3DBuffer, nullptr)))
-        {
-            hsAssert( false, "CreateVertexBuffer() call failed!" );
-            vRef->fD3DBuffer = nullptr;
-            return;
-        }
-        PROFILE_POOL_MEM(poolType, numVerts * vertSize, true, ST_LITERAL("VtxBuff"));
-
-        // Record that we've allocated this into managed memory, in case we're
-        // fighting that NVidia driver bug. Search for OSVERSION for mor info.
-        AllocManagedVertex(numVerts * vertSize);
-
-        // Fill in the vertex data.
-        IFillStaticVertexBufferRef(vRef, owner, idx);
-
-        // This is currently a no op, but this would let the buffer know it can
-        // unload the system memory copy, since we have a managed version now.
-        owner->PurgeVertBuffer(idx);
-    }
-}
-
-// IFillStaticVertexBufferRef //////////////////////////////////////////////////
-// BufferRef is set up, just copy the data in.
-// This is uglied up hugely by the insane non-interleaved data case with cells
-// and whatever else.
-void plDXPipeline::IFillStaticVertexBufferRef(plDXVertexBufferRef *ref, plGBufferGroup *group, uint32_t idx)
-{
-    IDirect3DVertexBuffer9* vertexBuff = ref->fD3DBuffer;
-
-    if( !vertexBuff )
-    {
-        // We most likely already warned about this earlier, best to just quietly return now
-        return;
-    }
-
-    const uint32_t vertSize = ref->fVertexSize;
-    const uint32_t vertStart = group->GetVertBufferStart(idx) * vertSize;
-    const uint32_t size = group->GetVertBufferEnd(idx) * vertSize - vertStart;
-    if( !size )
-        return;
-
-    /// Lock the buffer
-    uint8_t* ptr;
-    if( FAILED( vertexBuff->Lock( vertStart, size, (void **)&ptr, group->AreVertsVolatile() ? D3DLOCK_DISCARD : 0 ) ) )
-    {
-        hsAssert( false, "Failed to lock vertex buffer for writing" );
-    }
-
-    if( ref->fData )
-    {
-        memcpy(ptr, ref->fData + vertStart, size);
-    }
-    else
-    {
-        hsAssert(0 == vertStart, "Offsets on non-interleaved data not supported");
-        hsAssert(group->GetVertBufferCount(idx) * vertSize == size, "Trailing dead space on non-interleaved data not supported");
-
-        const uint32_t vertSmallSize = group->GetVertexLiteStride() - sizeof( hsPoint3 ) * 2;
-        uint8_t* srcVPtr = group->GetVertBufferData(idx);
-        plGBufferColor* const srcCPtr = group->GetColorBufferData( idx );
-
-        const int numCells = group->GetNumCells(idx);
-        int i;
-        for( i = 0; i < numCells; i++ )
-        {
-            plGBufferCell   *cell = group->GetCell( idx, i );
-
-            if( cell->fColorStart == (uint32_t)-1 )
-            {
-                /// Interleaved, do straight copy
-                memcpy( ptr, srcVPtr + cell->fVtxStart, cell->fLength * vertSize );
-                ptr += cell->fLength * vertSize;
-            }
-            else
-            {
-                /// Separated, gotta interleave
-                uint8_t* tempVPtr = srcVPtr + cell->fVtxStart;
-                plGBufferColor* tempCPtr = srcCPtr + cell->fColorStart;
-                int j;
-                for( j = 0; j < cell->fLength; j++ )
-                {
-                    memcpy( ptr, tempVPtr, sizeof( hsPoint3 ) * 2 );
-                    ptr += sizeof( hsPoint3 ) * 2;
-                    tempVPtr += sizeof( hsPoint3 ) * 2;
-
-                    memcpy( ptr, &tempCPtr->fDiffuse, sizeof( uint32_t ) );
-                    ptr += sizeof( uint32_t );
-                    memcpy( ptr, &tempCPtr->fSpecular, sizeof( uint32_t ) );
-                    ptr += sizeof( uint32_t );
-
-                    memcpy( ptr, tempVPtr, vertSmallSize );
-                    ptr += vertSmallSize;
-                    tempVPtr += vertSmallSize;
-                    tempCPtr++;
-                }
-            }
-        }
-    }
-
-    /// Unlock and clean up
-    vertexBuff->Unlock();
-    ref->SetRebuiltSinceUsed(true);
-    ref->SetDirty(false);
-}
-
-void plDXPipeline::IFillVolatileVertexBufferRef(plDXVertexBufferRef* ref, plGBufferGroup* group, uint32_t idx)
-{
-    uint8_t* dst = ref->fData;
-    uint8_t* src = group->GetVertBufferData(idx);
-
-    size_t uvChanSize = plGBufferGroup::CalcNumUVs(group->GetVertexFormat()) * sizeof(float) * 3;
-    uint8_t numWeights = (group->GetVertexFormat() & plGBufferGroup::kSkinWeightMask) >> 4;
-
-    for (uint32_t i = 0; i < ref->fCount; ++i) {
-        inlCopy<hsPoint3>(src, dst); // pre-pos
-        src += numWeights * sizeof(float); // weights
-        if (group->GetVertexFormat() & plGBufferGroup::kSkinIndices)
-            inlSkip<uint32_t, 1>(src); // indices
-        inlCopy<hsVector3>(src, dst); // pre-normal
-        inlCopy<uint32_t>(src, dst); // diffuse
-        inlCopy<uint32_t>(src, dst); // specular
-
-        // UVWs
-        memcpy(dst, src, uvChanSize);
-        src += uvChanSize;
-        dst += uvChanSize;
-    }
-}
 
 // OpenAccess ////////////////////////////////////////////////////////////////////////////////////////
 // Lock the managed buffer and setup the accessSpan to point into the buffers data.
@@ -8341,150 +8145,6 @@ bool plDXPipeline::CloseAccess(plAccessSpan& dst)
     return true;
 }
 
-// CheckVertexBufferRef /////////////////////////////////////////////////////
-// Make sure the buffer group has a valid buffer ref and that it is up to date.
-void plDXPipeline::CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx)
-{
-    // First, do we have a device ref at this index?
-    plDXVertexBufferRef* vRef = (plDXVertexBufferRef*)owner->GetVertexBufferRef(idx);
-    // If not
-    if( !vRef )
-    {
-        // Make the blank ref
-        vRef = new plDXVertexBufferRef;
-
-        ISetupVertexBufferRef(owner, idx, vRef);
-
-    }
-    if( !vRef->IsLinked() )
-        vRef->Link( &fVtxBuffRefList );
-
-    // One way or another, we now have a vbufferref[idx] in owner.
-    // Now, does it need to be (re)filled?
-    // If the owner is volatile, then we hold off. It might not
-    // be visible, and we might need to refill it again if we
-    // have an overrun of our dynamic D3D buffer.
-    if( !vRef->Volatile() )
-    {
-        if( fAllocUnManaged )
-            return;
-
-        // If it's a static buffer, allocate a D3D vertex buffer for it. Otherwise, it'll
-        // be sharing the global D3D dynamic buffer, and marked as volatile.
-        ICheckStaticVertexBuffer(vRef, owner, idx);
-
-        // Might want to remove this assert, and replace it with a dirty check if
-        // we have static buffers that change very seldom rather than never.
-        hsAssert(!vRef->IsDirty(), "Non-volatile vertex buffers should never get dirty");
-    }
-    else
-    {
-        // Make sure we're going to be ready to fill it.
-
-        if( !vRef->fData && (vRef->fFormat != owner->GetVertexFormat()) )
-        {
-            vRef->fData = new uint8_t[vRef->fCount * vRef->fVertexSize];
-            IFillVolatileVertexBufferRef(vRef, owner, idx);
-        }
-    }
-}
-
-// CheckIndexBufferRef /////////////////////////////////////////////////////
-// Make sure the buffer group has an index buffer ref and that its data is current.
-void plDXPipeline::CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx)
-{
-    plDXIndexBufferRef* iRef = (plDXIndexBufferRef*)owner->GetIndexBufferRef(idx);
-    if( !iRef )
-    {
-        // Create one from scratch.
-
-        iRef = new plDXIndexBufferRef;
-
-        ISetupIndexBufferRef(owner, idx, iRef);
-
-    }
-    if( !iRef->IsLinked() )
-        iRef->Link(&fIdxBuffRefList);
-
-    // Make sure it has all D3D resources created.
-    ICheckIndexBuffer(iRef);
-
-    // If it's dirty, refill it.
-    if( iRef->IsDirty()  )
-        IFillIndexBufferRef(iRef, owner, idx);
-}
-
-// IFillIndexBufferRef ////////////////////////////////////////////////////////////
-// Refresh the D3D index buffer from the plasma index buffer.
-void plDXPipeline::IFillIndexBufferRef(plDXIndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx)
-{
-    uint32_t startIdx = owner->GetIndexBufferStart(idx);
-    uint32_t size = (owner->GetIndexBufferEnd(idx) - startIdx) * sizeof(uint16_t);
-    if( !size )
-        return;
-
-    DWORD lockFlags = iRef->Volatile() ? D3DLOCK_DISCARD : 0;
-    uint16_t* destPtr = nullptr;
-    if( FAILED( iRef->fD3DBuffer->Lock(startIdx * sizeof(uint16_t), size, (void **)&destPtr, lockFlags) ) )
-    {
-        hsAssert( false, "Cannot lock index buffer for writing" );
-        return;
-    }
-
-    memcpy( destPtr, owner->GetIndexBufferData(idx) + startIdx, size );
-    
-    iRef->fD3DBuffer->Unlock(); 
-
-    iRef->SetDirty( false );
-
-}
-
-// ICheckIndexBuffer ////////////////////////////////////////////////////////
-// Make sure index buffer ref has any D3D resources it needs.
-void plDXPipeline::ICheckIndexBuffer(plDXIndexBufferRef* iRef)
-{
-    if( !iRef->fD3DBuffer && iRef->fCount )
-    {
-        D3DPOOL poolType = fAllocUnManaged ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED;
-        DWORD usage = D3DUSAGE_WRITEONLY;
-        iRef->SetVolatile(false);
-        if( FAILED( fD3DDevice->CreateIndexBuffer( sizeof( uint16_t ) * iRef->fCount,
-                                                    usage, 
-                                                    D3DFMT_INDEX16, 
-                                                    poolType, 
-                                                    &iRef->fD3DBuffer, nullptr)))
-        {
-            hsAssert( false, "CreateIndexBuffer() call failed!" );
-            iRef->fD3DBuffer = nullptr;
-            return;
-        }
-        PROFILE_POOL_MEM(poolType, sizeof(uint16_t) * iRef->fCount, true, ST_LITERAL("IndexBuff"));
-
-        iRef->fPoolType = poolType;
-        iRef->SetDirty(true);
-        iRef->SetRebuiltSinceUsed(true);
-    }
-}
-
-// ISetupIndexBufferRef ////////////////////////////////////////////////////////////////
-// Initialize the index buffer ref, but don't create anything for it.
-void plDXPipeline::ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXIndexBufferRef* iRef)
-{
-    uint32_t numIndices = owner->GetIndexBufferCount(idx);
-    iRef->fCount = numIndices;
-    iRef->fOwner = owner;
-    iRef->fIndex = idx;
-    iRef->fRefTime = 0;
-
-    iRef->SetDirty(true);
-    iRef->SetRebuiltSinceUsed(true);
-
-    owner->SetIndexBufferRef(idx, iRef);
-    hsRefCnt_SafeUnRef(iRef);
-
-    iRef->SetVolatile(owner->AreIdxVolatile());
-}
-
 //// ISoftwareVertexBlend ///////////////////////////////////////////////////////
 // Emulate matrix palette operations in software. The big difference between the hardware
 // and software versions is we only want to lock the vertex buffer once and blend all the
@@ -8592,29 +8252,6 @@ bool      plDXPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const st
     return true;
 }
 
-// IBeginAllocUnmanaged ///////////////////////////////////////////////////////////////////
-// Before allocating anything into POOL_DEFAULT, we must evict managed memory.
-// See LoadResources.
-void plDXPipeline::IBeginAllocUnManaged()
-{
-    // Flush out all managed resources to make room for unmanaged resources.
-    fD3DDevice->EvictManagedResources();
-
-    fManagedAlloced = false;
-    fAllocUnManaged = true; // we're currently only allocating POOL_DEFAULT
-}
-
-// IEndAllocUnManged.
-// Before allocating anything into POOL_DEFAULT, we must evict managed memory.
-// See LoadResources.
-void plDXPipeline::IEndAllocUnManaged()
-{
-    fAllocUnManaged = false;
-
-    // Flush the (should be empty) resource manager to reset its internal allocation pool.
-    fD3DDevice->EvictManagedResources();
-}
-
 // LoadResources ///////////////////////////////////////////////////////////////////////
 // Basically, we have to load anything that goes into POOL_DEFAULT before
 // anything into POOL_MANAGED, or the memory manager gets confused.
@@ -8634,7 +8271,7 @@ void plDXPipeline::LoadResources()
     IInitDeviceState(); // 9700 THRASH
 
     // Evict mananged memory.
-    IBeginAllocUnManaged();
+    fDevice.BeginAllocUnManaged();
 
     // Release everything we have in POOL_DEFAULT.
     IReleaseDynamicBuffers();
@@ -8658,7 +8295,7 @@ void plDXPipeline::LoadResources()
     IFillAvRTPool();
 
     // We should have everything POOL_DEFAULT we need now.
-    IEndAllocUnManaged();
+    fDevice.EndAllocUnManaged();
 
     // Force a create of all our static D3D vertex buffers.
 #define MF_PRELOAD_MANAGEDBUFFERS
@@ -9631,28 +9268,6 @@ long    plDXPipeline::IGetBufferD3DFormat( uint8_t format ) const
     return fmt;
 }
 
-//// IGetBufferFormatSize /////////////////////////////////////////////////////
-// Calculate the vertex stride from the given format.
-uint32_t  plDXPipeline::IGetBufferFormatSize( uint8_t format ) const
-{
-    uint32_t  size = sizeof( float ) * 6 + sizeof( uint32_t ) * 2; // Position and normal, and two packed colors
-
-    
-    switch( format & plGBufferGroup::kSkinWeightMask )
-    {
-        case plGBufferGroup::kSkinNoWeights: 
-            break;
-        case plGBufferGroup::kSkin1Weight:
-            size += sizeof(float);
-            break;
-        default:
-            hsAssert( false, "Invalid skin weight value in IGetBufferFormatSize()" );
-    }
-
-    size += sizeof( float ) * 3 * plGBufferGroup::CalcNumUVs( format );
-
-    return size;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Plate and PlateManager Functions /////////////////////////////////////////
@@ -11159,7 +10774,7 @@ bool plDXPipeline::IPopShadowCastState(plShadowSlave* slave)
 // must be created before we start creating things in POOL_MANAGED.
 void plDXPipeline::IMakeRenderTargetPools()
 {
-    hsAssert(!fManagedAlloced, "Allocating rendertargets with managed resources alloced");
+    hsAssert(!fDevice.fManagedAlloced, "Allocating rendertargets with managed resources alloced");
     IReleaseRenderTargetPools(); // Just to be sure.
 
     // Numbers of render targets to be created for each size.
