@@ -48,14 +48,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plNullPipelineDevice
 {
+    class NullDeviceRef : public hsGDeviceRef
+    {
+    public:
+        void* fData;
+        uint32_t fCount;
+        uint32_t fVertexSize;
+        uint32_t fFormat;
+
+        void Link(NullDeviceRef** back) { }
+        bool IsLinked() { return true; }
+        bool Volatile() const { return false; }
+    };
+
 public:
-    typedef void VertexBufferRef;
-    typedef void IndexBufferRef;
-    typedef void TextureRef;
+    typedef NullDeviceRef VertexBufferRef;
+    typedef NullDeviceRef IndexBufferRef;
+    typedef NullDeviceRef TextureRef;
 
     bool InitDevice() { return true; }
     void SetRenderTarget(plRenderTarget* target) { }
     void SetViewport() { }
+    void SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, VertexBufferRef* vRef) { }
+    void CheckStaticVertexBuffer(VertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx) { }
+    void FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx) { }
+    void FillVolatileVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx) { }
+    void SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef) { }
+    void CheckIndexBuffer(IndexBufferRef* iRef) { }
+    void FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx) { }
     void SetProjectionMatrix(const hsMatrix44& src) { }
     void SetWorldToCameraMatrix(const hsMatrix44& src) { }
     void SetLocalToWorldMatrix(const hsMatrix44& src) { }

@@ -143,14 +143,10 @@ public:
     plMetalDevice* GetMetalDevice() const;
 
     // Create and/or Refresh geometry buffers
-    void          CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
-    void          CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
     void          CheckTextureRef(plLayerInterface* lay) override;
     void          CheckTextureRef(plBitmap* bitmap);
     hsGDeviceRef* MakeTextureRef(plBitmap* bitmap);
     void          IReloadTexture(plBitmap* bitmap, plMetalTextureRef* ref);
-
-    uint32_t IGetBufferFormatSize(uint8_t format) const;
 
     plRenderTarget* PopRenderTarget() override;
 

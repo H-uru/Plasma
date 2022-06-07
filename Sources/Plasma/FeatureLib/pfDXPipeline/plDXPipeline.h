@@ -168,6 +168,8 @@ class plStatusLogDrawer;
 
 class plDXPipeline : public pl3DPipeline<plDXDevice>
 {
+    friend class plDXDevice;
+
 protected:
     enum {
         kCapsNone               = 0x00000000,
@@ -208,9 +210,6 @@ protected:
     uint32_t                fNextDynVtx;
     uint32_t                fDynVtxSize;
     IDirect3DVertexBuffer9* fDynVtxBuff;
-    bool                    fManagedAlloced;
-    bool                    fAllocUnManaged;
-
 
     // States
     plDXGeneralSettings     fSettings;
@@ -276,19 +275,9 @@ protected:
 
     bool            fForceDeviceReset;
 
-    void            IBeginAllocUnManaged();
-    void            IEndAllocUnManaged();
-
     bool            IRefreshDynVertices(plGBufferGroup* group, plDXVertexBufferRef* vRef);
     bool            ICheckAuxBuffers(const plAuxSpan* span);
     bool            ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* group, const plSpan* span);
-    void            ICheckStaticVertexBuffer(plDXVertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx);
-    void            ICheckIndexBuffer(plDXIndexBufferRef* iRef);
-    void            IFillStaticVertexBufferRef(plDXVertexBufferRef *ref, plGBufferGroup *group, uint32_t idx);
-    void            IFillVolatileVertexBufferRef(plDXVertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
-    void            IFillIndexBufferRef(plDXIndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
-    void            ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXVertexBufferRef* vRef);
-    void            ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXIndexBufferRef* iRef);
     void            ICreateDynamicBuffers();
     void            IReleaseDynamicBuffers();
 
@@ -298,7 +287,6 @@ protected:
     // Rendering
     bool        IFlipSurface();
     long        IGetBufferD3DFormat(uint8_t format) const;
-    uint32_t    IGetBufferFormatSize(uint8_t format) const;
     void        IGetVisibleSpans(plDrawableSpans* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr);
     bool        ILoopOverLayers(const plRenderPrimFunc& render, hsGMaterial* material, const plSpan& span);
     void        IRenderBufferSpan( const plIcicle& span, 
@@ -549,10 +537,6 @@ public:
     // Create a debug text font object
     plTextFont* MakeTextFont(ST::string face, uint16_t size) override;
 
-    // Create and/or Refresh geometry buffers
-    void            CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
-    void            CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
-
     bool            OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) override;
     bool            CloseAccess(plAccessSpan& acc) override;
 
@@ -587,7 +571,7 @@ public:
     /// Error handling
     ST::string GetErrorString() override;
 
-    bool            ManagedAlloced() const { return fManagedAlloced; }
+    bool            ManagedAlloced() const { return fDevice.fManagedAlloced; }
 
     virtual void    GetSupportedColorDepths(std::vector<int> &ColorDepths);
     void            GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32) override;
