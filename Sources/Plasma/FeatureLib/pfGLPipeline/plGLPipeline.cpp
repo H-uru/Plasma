@@ -121,6 +121,11 @@ plGLPipeline::plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG
     fPlateMgr = new plGLPlateManager(this);
 }
 
+plGLPipeline::~plGLPipeline()
+{
+    fDevice.Shutdown();
+}
+
 bool plGLPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
     plDrawableSpans* ds = plDrawableSpans::ConvertNoRef(drawable);
