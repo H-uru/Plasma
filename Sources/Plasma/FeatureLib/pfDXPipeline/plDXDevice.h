@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include <d3d9.h>
 
+class plCubicEnvironmap;
 class plDXPipeline;
 class plGBufferGroup;
 class plRenderTarget;
@@ -107,6 +108,12 @@ public:
     void SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef);
     void CheckIndexBuffer(IndexBufferRef* iRef);
     void FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
+
+    // Texture stuff is all handled in plDXPipeline, not in plDXDevice
+    void SetupTextureRef(plLayerInterface* layer, plBitmap* img, TextureRef* tRef) {}
+    void CheckTexture(TextureRef* tRef) {}
+    void MakeTextureRef(TextureRef* tRef, plLayerInterface* layer, plMipmap* img) {}
+    void MakeCubicTextureRef(TextureRef* tRef, plLayerInterface* layer, plCubicEnvironmap* img) {}
 
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
