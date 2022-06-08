@@ -76,6 +76,10 @@ public:
     void SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef) { }
     void CheckIndexBuffer(IndexBufferRef* iRef) { }
     void FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx) { }
+    void SetupTextureRef(plLayerInterface* layer, plBitmap* img, TextureRef* tRef) {}
+    void CheckTexture(TextureRef* tRef) {}
+    void MakeTextureRef(TextureRef* tRef, plLayerInterface* layer, plMipmap* img) {}
+    void MakeCubicTextureRef(TextureRef* tRef, plLayerInterface* layer, plCubicEnvironmap* img) {}
     void SetProjectionMatrix(const hsMatrix44& src) { }
     void SetWorldToCameraMatrix(const hsMatrix44& src) { }
     void SetLocalToWorldMatrix(const hsMatrix44& src) { }

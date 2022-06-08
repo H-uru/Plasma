@@ -5858,22 +5858,18 @@ void    plDXPipeline::IHandleTextureStage( uint32_t stage, plLayerInterface *lay
 void plDXPipeline::CheckTextureRef(plLayerInterface* layer)
 {
     plBitmap* bitmap = layer->GetTexture();
-    if( bitmap )
-    {
+    if (bitmap) {
         hsGDeviceRef* ref = bitmap->GetDeviceRef();
 
-        if( !ref )
-        {
+        if (!ref) {
             plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
-            if( mip )
-            {
+            if (mip) {
                 MakeTextureRef(layer, mip);
                 return;
             }
 
             plCubicEnvironmap* cubic = plCubicEnvironmap::ConvertNoRef(bitmap);
-            if( cubic )
-            {
+            if (cubic) {
                 IMakeCubicTextureRef(layer, cubic);
                 return;
             }
