@@ -142,6 +142,22 @@ void InitEGLDevice(plGLDevice* dev)
     if (display != EGL_NO_DISPLAY)
         eglTerminate(display);
 }
+
+void FiniEGLDevice(plGLDevice* dev)
+{
+    EGLSurface surface = static_cast<EGLSurface>(dev->fSurface);
+    EGLContext context = static_cast<EGLContext>(dev->fContext);
+    EGLDisplay display = static_cast<EGLDisplay>(dev->fDisplay);
+
+    if (surface != EGL_NO_SURFACE)
+        eglDestroySurface(display, surface);
+
+    if (context != EGL_NO_CONTEXT)
+        eglDestroyContext(display, context);
+
+    if (display != EGL_NO_DISPLAY)
+        eglTerminate(display);
+}
 #endif // USE_EGL
 #pragma endregion EGL_Init
 
@@ -194,6 +210,16 @@ void InitWGLDevice(plGLDevice* dev)
     } while (0);
 
     // Cleanup for failure case:
+    if (ctx) {
+        wglMakeCurrent(nullptr, nullptr);
+        wglDeleteContext(ctx);
+    }
+}
+
+void FiniWGLDevice(plGLDevice* dev)
+{
+    HGLRC ctx = static_cast<HGLRC>(dev->fContext);
+
     if (ctx) {
         wglMakeCurrent(nullptr, nullptr);
         wglDeleteContext(ctx);
@@ -257,6 +283,20 @@ void InitCGLDevice(plGLDevice* dev)
 
     if (pix)
         CGLReleasePixelFormat(pix);
+
+    IGNORE_WARNINGS_END
+}
+
+void FiniCGLDevice(plGLDevice* dev)
+{
+    IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+
+    CGLContextObj ctx = static_cast<CGLContextObj>(dev->fContext);
+
+    if (ctx) {
+        CGLSetCurrentContext(nullptr);
+        CGLReleaseContext(ctx);
+    }
 
     IGNORE_WARNINGS_END
 }
@@ -347,6 +387,24 @@ bool plGLDevice::InitDevice()
     glCullFace(GL_BACK);
 
     return true;
+}
+
+void plGLDevice::Shutdown()
+{
+#ifdef USE_EGL
+    if (fContextType == kEGL) {
+        FiniEGLDevice(this);
+        return;
+    }
+#endif
+
+#ifdef HS_BUILD_FOR_WIN32
+    FiniWGLDevice(this);
+#endif
+
+#ifdef HS_BUILD_FOR_MACOS
+    FiniCGLDevice(this);
+#endif
 }
 
 void plGLDevice::SetRenderTarget(plRenderTarget* target)
