@@ -56,8 +56,11 @@ class plGLDevice
 {
     friend class plGLPipeline;
     friend void InitEGLDevice(plGLDevice* dev);
+    friend void FiniEGLDevice(plGLDevice* dev);
     friend void InitWGLDevice(plGLDevice* dev);
+    friend void FiniWGLDevice(plGLDevice* dev);
     friend void InitCGLDevice(plGLDevice* dev);
+    friend void FiniCGLDevice(plGLDevice* dev);
 
     enum ContextType {
         kNone = 0,
@@ -94,6 +97,7 @@ public:
      * Initializes the OpenGL rendering context.
      */
     bool InitDevice();
+    void Shutdown();
 
     /**
      * Set rendering to the specified render target.

@@ -70,7 +70,7 @@ protected:
 
 public:
     plGLPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode);
-    virtual ~plGLPipeline() = default;
+    virtual ~plGLPipeline();
 
     CLASSNAME_REGISTER(plGLPipeline);
     GETINTERFACE_ANY(plGLPipeline, plPipeline);
