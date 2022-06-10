@@ -388,7 +388,6 @@ void plGLPipeline::LoadResources()
 {
     if (plGLPlateManager* pm = static_cast<plGLPlateManager*>(fPlateMgr)) {
         pm->IReleaseGeometry();
-        pm->ICreateGeometry();
     }
 }
 

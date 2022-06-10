@@ -177,8 +177,12 @@ void plGLPlateManager::IDrawToDevice(plPipeline* pipe)
     uint32_t scrnHeightDiv2 = fOwner->Height() >> 1;
     plPlate* plate = nullptr;
 
-    if (fBuffers.VRef == 0 || fBuffers.IRef == 0)
-        return;
+    if (fBuffers.VRef == 0 || fBuffers.IRef == 0) {
+        ICreateGeometry();
+
+        if (fBuffers.VRef == 0 || fBuffers.IRef == 0)
+            return;
+    }
 
     if (epoxy_gl_version() >= 30) {
         if (fBuffers.ARef == 0)
