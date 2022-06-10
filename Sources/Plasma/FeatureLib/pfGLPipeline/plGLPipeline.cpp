@@ -493,10 +493,12 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
             fDevice.fCurrentProgram = mRef->fRef;
             LOG_GL_ERROR_CHECK(ST::format("Use Program with material \"{}\" failed", material->GetKeyName()));
 
-            // TODO: Figure out how to use VAOs properly :(
-            GLuint vao;
-            glGenVertexArrays(1, &vao);
-            glBindVertexArray(vao);
+            GLuint vao = 0;
+            if (epoxy_gl_version() >= 30) {
+                // TODO: Figure out how to use VAOs properly :(
+                glGenVertexArrays(1, &vao);
+                glBindVertexArray(vao);
+            }
 
             // What do we change?
 
@@ -523,7 +525,8 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
                                 tempIce.fVStartIdx, tempIce.fVLength,   // These are used as our accumulated range
                                 tempIce.fIPackedIdx, tempIce.fILength );
 
-            glDeleteVertexArrays(1, &vao);
+            if (epoxy_gl_version() >= 30)
+                glDeleteVertexArrays(1, &vao);
         }
 
         // Restart our search...
