@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 import re
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 # Plasma engine.
 from Plasma import *
@@ -214,17 +214,9 @@ def CMPplayerOnline(playerA, playerB):
             return -1 if online[0] else 1
     return 0
 
-
-## Helper function to sort nodes according to modification date.
-def CMPNodeDate(nodeA, nodeB):
-
-    elNodeA = nodeA.getChild()
-    elNodeB = nodeB.getChild()
-    if elNodeA is not None and elNodeB is not None:
-        if elNodeA.getModifyTime() > elNodeB.getModifyTime():
-            return -1
-        else:
-            return 1
+def GetChildNodeModifyTime(ref: Optional[ptVaultNodeRef]) -> int:
+    if ref and (node := ref.getChild()):
+        return node.getModifyTime()
     return 0
 
 ## Replace the Age's name as is appropriate.

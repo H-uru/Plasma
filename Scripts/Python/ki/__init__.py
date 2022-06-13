@@ -4302,7 +4302,8 @@ class xKI(ptModifier):
             gInbox = vault.getGlobalInbox()
             if gInbox is not None:
                 self.BKContentList = gInbox.getChildNodeRefList() + self.BKContentList
-                self.BKContentList.sort(key=functools.cmp_to_key(CMPNodeDate))
+                # sort the inbox contents by descending modified date/time
+                self.BKContentList.sort(key=xKIHelpers.GetChildNodeModifyTime, reverse=True)
 
         removeList = []
         for contentidx in range(len(self.BKContentList)):
