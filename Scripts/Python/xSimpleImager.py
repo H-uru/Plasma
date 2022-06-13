@@ -54,8 +54,8 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaVaultConstants import *
 
-import random
 import xCensor
+from xSimpleImagerClueHandler import *
 
 # vault callback contexts
 kAddingDevice           = 1
@@ -101,15 +101,10 @@ AgeStartedIn = None
 #----------
 kFlipImagesTimerStates = 5
 kFlipImagesTimerCurrent = 0
-kImagerClueStart = 1 + ImagerMax.value
 
 #====================================
 
 Instance = None
-kImagerClueOff = 0
-kImagerClueOn = 1
-kImagerClueEnd = 2
-ImagerClueState = kImagerClueOff
 
 
 class xSimpleImager(ptModifier):
@@ -121,6 +116,8 @@ class xSimpleImager(ptModifier):
         self.id = 196
         self.version = 3
         PtDebugPrint("xSimpleImager: init  version=%d.%d"%(self.version,2),level=kWarningLevel)
+
+        self.clueHandler = None
 
     def vaultOperationStarted(self,context):
         PtDebugPrint("xSimpleImager: vaultOperationStarted(%s)"%(context),level=kDebugDumpLevel)
@@ -160,12 +157,9 @@ class xSimpleImager(ptModifier):
                 Instance.IRefreshImagerFolder()
                 Instance.IChangeCurrentContent()
                 # set up our timer callback
-                # set the current timer value to 
+                # set the current timer value to flip to the next image
                 kFlipImagesTimerCurrent = (kFlipImagesTimerCurrent + 1) % kFlipImagesTimerStates
                 PtAtTimeCallback(Instance.key,ImagerTime.value,kFlipImagesTimerCurrent)
-                if ImagerClueObject.sceneobject is not None:
-                    randomize = random.randint(0, ImagerRandomTime.value)
-                    PtAtTimeCallback(self.key,ImagerClueTime.value + randomize,kImagerClueStart)
                 # turn button animation off
                 ImagerButtonResp.run(Instance.key,state='buttonOff')
 
@@ -175,11 +169,7 @@ class xSimpleImager(ptModifier):
         #~ ImagerMembersOnly.value = 0
 ###==== Cheat
         global AgeStartedIn
-        random.seed()
         AgeStartedIn = PtGetAgeName()
-        if ImagerClueObject.sceneobject is not None:
-            ImagerClueObject.sceneobject.draw.disable()
-            ImagerClueObject.sceneobject.physics.suppress(True)
         if ImagerMap.textmap is None:
             PtDebugPrint("xSimpleImager:ERROR! simpleImager[%s]: Dynamic textmap is broken!" % (ImagerName.value),level=kErrorLevel)
             return
@@ -193,7 +183,10 @@ class xSimpleImager(ptModifier):
             ageVault.addDevice(ImagerName.value, self, kAddingDevice)
         else:
             PtDebugPrint("xSimpleImager: There was no imager name!",level=kErrorLevel)
-    
+
+        if ImagerClueObject.sceneobject is not None:
+            self.clueHandler = xSimpleImagerClueHandler(ImagerObject.sceneobject, ImagerMax.value, ImagerClueObject.sceneobject, ImagerClueTime.value, ImagerRandomTime.value)
+
     def OnServerInitComplete(self):
         if AgeStartedIn == PtGetAgeName():
             if ImagerInboxVariable.value:
@@ -234,31 +227,21 @@ class xSimpleImager(ptModifier):
         global ImagerContents
         global CurrentContentIdx
         global kFlipImagesTimerCurrent
-        global ImagerClueState
+
         if id == kFlipImagesTimerCurrent:
-            if ImagerClueState == kImagerClueOn:
-                ImagerClueObject.sceneobject.draw.enable()
-                ImagerClueObject.sceneobject.physics.suppress(False)
-                ImagerObject.sceneobject.draw.disable()
-                ImagerObject.sceneobject.physics.suppress(True)
-                ImagerClueState = kImagerClueEnd
-            else:
-                if ImagerClueState == kImagerClueEnd:
-                    ImagerClueObject.sceneobject.draw.disable()
-                    ImagerClueObject.sceneobject.physics.suppress(True)
-                    ImagerObject.sceneobject.draw.enable()
-                    ImagerObject.sceneobject.physics.suppress(False)
-                    random = whrandom.randint(0,ImagerRandomTime.value)
-                    PtAtTimeCallback(self.key,ImagerClueTime.value + random,kImagerClueStart)
-                    ImagerClueState = kImagerClueOff
+            if self.clueHandler:
+                # let the clue handler have priority to deal with its own state first
+                self.clueHandler.UpdateClueState()
+
+            if not self.clueHandler or not self.clueHandler.isShowing:
                 if len(ImagerContents) > 0:
                     CurrentContentIdx += 1
                     if CurrentContentIdx >= len(ImagerContents):
                         CurrentContentIdx = 0
                 self.IChangeCurrentContent()
+
+            # set the timer for the next flip
             PtAtTimeCallback(self.key,ImagerTime.value,kFlipImagesTimerCurrent)
-        elif id == kImagerClueStart:
-            ImagerClueState = kImagerClueOn
 
     def OnVaultEvent(self,event,tupdata):
         "An AgeKI event received"
@@ -357,6 +340,9 @@ class xSimpleImager(ptModifier):
                     elif event[1][:9] == "Uploaded=":
                         newID = int(event[1][9:])
                         if newID == CurrentDisplayedElementID:
+                            if self.clueHandler:
+                                # force the clue imager to turn off so the new upload is visible
+                                self.clueHandler.UpdateClueState(forceOff=True)
                             self.IShowCurrentContent()
                     elif event[1][:7] == "Upload=":
                         deviceName = event[1][7:]
