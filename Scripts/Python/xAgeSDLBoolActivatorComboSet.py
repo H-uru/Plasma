@@ -52,12 +52,15 @@ resetOnEmpty = ptAttribBoolean(5, "Reset when the Age shuts down", default=False
 disableOnSolve = ptAttribBoolean(6, "Disable activators on solve", default=True)
 actButtons = ptAttribActivatorList(7, "Act: Buttons")
 respButtonPush = ptAttribResponder(8, "Resp: Button Push")
+allowSlidingSolution = ptAttribBoolean(9, "Allow solving by sliding solution rather than needing feedback on failure", default=False)
 
 class xAgeSDLBoolActivatorComboSet(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.version = 1
         self.id = 719
+
+        self._attempt = []
 
         # Defer setting up the handlers until PFM is initialized by the engine
         self._NotifyHandlers = {}
@@ -194,9 +197,17 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
         self._HitActId = None
 
     def _TriggerButton(self, actId):
+        self._AddToAttempt(actId)
+
         if self._solved:
             PtDebugPrint("xAgeSDLBoolActComboSet._TriggerButton():\tYou just unsolved it, moron.", level=kWarningLevel)
             self._solved = False
+            return
+
+        if allowSlidingSolution.value:
+            self._numCorrect = next((len(self._attempt) - i for i in range(len(self._attempt)) if self._IsAttemptCorrectAtIndex(i)), 0)
+            PtDebugPrint(f"xAgeSDLBoolActComboSet._TriggerButton():\t Sliding attempt {self._attempt} has {self._numCorrect} correct.", level=kWarningLevel)
+            self._CheckSolved()
             return
 
         try:
@@ -208,11 +219,7 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
         if desiredActId == actId:
             PtDebugPrint("xAgeSDLBoolActComboSet._TriggerButton():\tThat's right!", level=kWarningLevel)
             self._numCorrect += 1
-            if self._numCorrect == len(self._combination):
-                PtDebugPrint("xAgeSDLBoolActComboSet._TriggerButton():\tWoohoo! You have solved the puzzle!", level=kWarningLevel)
-                self._solved = True
-                if disableOnSolve.value:
-                    self._butsInUse = True
+            self._CheckSolved()
         else:
             PtDebugPrint("xAgeSDLBoolActComboSet._TriggerButton():\tWRONG! THAT'S ***WRONG***!", level=kWarningLevel)
             self._solved = False
@@ -224,3 +231,18 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
         if ',' not in combination.value:
             PtDebugPrint("xAgeSDLBoolActComboSet._ValidateCombination():\tCombination does not have separation delimiters")
         self._combination = [int(i) for i in combination.value.split(',')]
+
+    def _CheckSolved(self):
+        if self._numCorrect == len(self._combination):
+            PtDebugPrint("xAgeSDLBoolActComboSet._CheckSolved():\tWoohoo! You have solved the puzzle!", level=kWarningLevel)
+            self._solved = True
+            if disableOnSolve.value:
+                self._butsInUse = True
+
+    def _AddToAttempt(self, actId):
+        self._attempt.append(actId)
+        if len(self._attempt) > len(self._combination):
+            self._attempt = self._attempt[1:]
+
+    def _IsAttemptCorrectAtIndex(self, i):
+        return self._attempt[i:] == self._combination[0:len(self._attempt)-i]
