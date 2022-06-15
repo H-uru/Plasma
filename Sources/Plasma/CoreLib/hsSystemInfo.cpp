@@ -109,7 +109,7 @@ static inline void ICPUID(cpuid_t* info, int function_id)
 #elif defined(GCC_COMPATIBLE)
     __get_cpuid(function_id, &info[0], &info[1], &info[2], &info[3]);
 #elif !defined(HAVE_CPUID)
-    memset(info, 0, sizeof(info));
+    memset(info, 0, sizeof(*info));
 #endif
 }
 
@@ -143,9 +143,12 @@ static inline bool IGetAppleVersion(ST::string& system)
         dict = _CFCopySystemVersionDictionary();
 
     if (dict != nullptr) {
-        CFStringRef name = (CFStringRef)CFDictionaryGetValue(dict, _kCFSystemVersionProductNameKey);
-        CFStringRef version = (CFStringRef)CFDictionaryGetValue(dict, _kCFSystemVersionProductVersionKey);
+        CFStringRef name = (CFStringRef)CFRetain(CFDictionaryGetValue(dict, _kCFSystemVersionProductNameKey));
+        CFStringRef version = (CFStringRef)CFRetain(CFDictionaryGetValue(dict, _kCFSystemVersionProductVersionKey));
         CFStringRef info = CFStringCreateWithFormat(nullptr, nullptr, CFSTR("%@ %@"), name, version);
+        CFRelease(version);
+        CFRelease(name);
+        CFRelease(dict);
 
         CFIndex infoLen = CFStringGetLength(info);
         CFIndex infoBufSz = 0;
@@ -156,9 +159,6 @@ static inline bool IGetAppleVersion(ST::string& system)
         system = ST::string(systemBuf);
 
         CFRelease(info);
-        CFRelease(version);
-        CFRelease(name);
-        CFRelease(dict);
 
         return true;
     }
