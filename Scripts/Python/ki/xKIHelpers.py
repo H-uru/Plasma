@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 import re
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 # Plasma engine.
 from Plasma import *
@@ -225,6 +225,11 @@ def CMPNodeDate(nodeA, nodeB):
             return -1
         else:
             return 1
+    return 0
+
+def GetSaverID(ref: Optional[ptVaultNodeRef]) -> int:
+    if ref and ref.getSaver():
+        return ref.getSaverID()
     return 0
 
 ## Replace the Age's name as is appropriate.
