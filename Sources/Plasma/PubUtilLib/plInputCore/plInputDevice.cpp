@@ -230,6 +230,7 @@ bool plMouseDevice::bCursorOverride = false;
 bool plMouseDevice::bInverted = false;
 float plMouseDevice::fWidth = BASE_WIDTH;
 float plMouseDevice::fHeight = BASE_HEIGHT;
+float plMouseDevice::fScale = 1.0f;
 plMouseDevice* plMouseDevice::fInstance = nullptr;
 
 plMouseDevice::plMouseDevice()
@@ -256,6 +257,12 @@ void plMouseDevice::SetDisplayResolution(float Width, float Height)
     IUpdateCursorSize();
 }
 
+void plMouseDevice::SetScale(float Scale)
+{
+    fScale = Scale;
+    IUpdateCursorSize();
+}
+
 void    plMouseDevice::CreateCursor(const ST::string& cursor)
 {
     if (fCursor == nullptr)
@@ -279,7 +286,7 @@ void plMouseDevice::IUpdateCursorSize()
     if(fCursor)
     {
         // set the size of the cursor based on resolution.
-        fCursor->SetSize( 2*fCursor->GetMipmap()->GetWidth()/fWidth, 2*fCursor->GetMipmap()->GetHeight()/fHeight );
+        fCursor->SetSize( fScale * 2*fCursor->GetMipmap()->GetWidth()/fWidth, fScale * 2*fCursor->GetMipmap()->GetHeight()/fHeight );
     }
 }
 
