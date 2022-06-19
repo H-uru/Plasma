@@ -4314,12 +4314,11 @@ class xKI(ptModifier):
             del self.BKContentList[removeidx]
 
         if self.BKFolderListOrder[self.BKFolderSelected] == xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kInboxFolder):
-            PIKAFolder = ptVault().getPeopleIKnowAboutFolder()
-            if PIKAFolder and kLimits.MaxRecentPlayerListSize - len(PIKAFolder.getChildNodeRefList()) > 0:
-                PtDebugPrint(f"xKI.BigKIProcessContentList(): {kLimits.MaxRecentPlayerListSize - len(PIKAFolder.getChildNodeRefList())} remaining recents slots.", level=kWarningLevel)
+            recentsList = ptVault().getPeopleIKnowAboutFolder()
+            if recentsList and (remRecents := kLimits.MaxRecentPlayerListSize - len(recentsList.getChildNodeRefList())) > 0:
+                PtDebugPrint(f"xKI.BigKIProcessContentList(): {remRecents} remaining recents slots.", level=kWarningLevel)
                 # add Inbox senders (sorted by most recent) to Recents folder
                 # but don't overload Recents or refresh triggers infinitely due to Recents node additions/removals
-                recentsList = PIKAFolder.upcastToPlayerInfoListNode()
                 cannotAdd = lambda ref: not (s := xKIHelpers.GetSaverID(ref)) or recentsList.playerlistHasPlayer(s) or not self.chatMgr.AddPlayerToRecents(s)
                 # add only one then stop because addition triggers BK refresh again that will add next one, etc.
                 inboxRef = next(itertools.dropwhile(cannotAdd, self.BKContentList), None)

@@ -228,9 +228,7 @@ def CMPNodeDate(nodeA, nodeB):
     return 0
 
 def GetSaverID(ref: Optional[ptVaultNodeRef]) -> int:
-    if ref and ref.getSaver():
-        return ref.getSaverID()
-    return 0
+    return ref.getSaverID() if ref else 0
 
 ## Replace the Age's name as is appropriate.
 # It accepts as a parameter a name, unlike GetAgeName.

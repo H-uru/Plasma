@@ -707,14 +707,12 @@ class xKIChat(object):
     ## Adds a player to the recent players folder.
     def AddPlayerToRecents(self, playerID):
 
-        isAdded = False
         PIKAFolder = ptVault().getPeopleIKnowAboutFolder()
         if PIKAFolder:
             PIKA = PIKAFolder.upcastToPlayerInfoListNode()
             if PIKA is not None:
                 if not PIKA.playerlistHasPlayer(playerID):
                     PIKA.playerlistAddPlayer(playerID)
-                    isAdded = True
                     childRefList = PIKAFolder.getChildNodeRefList()
                     numPeople = len(childRefList)
                     if numPeople > kLimits.MaxRecentPlayerListSize:
@@ -724,7 +722,8 @@ class xKIChat(object):
                             peopleToRemove.append(childRefList[i].getChild())
                         for person in peopleToRemove:
                             PIKAFolder.removeNode(person)
-        return isAdded
+                    return True
+        return False
 
     ## Returns a list of players within chat distance.
     def GetPlayersInChatDistance(self, minPlayers=8):
