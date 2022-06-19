@@ -52,10 +52,10 @@ TEST(endianSwap, detection_accuracy)
     std::fill_n(c, sizeof(c), 0);
     memcpy(c, &i, sizeof(i));
 
-#if LITTLE_ENDIAN
-    EXPECT_EQ(c[0], 0x04);
-#else
+#ifdef HS_BIG_ENDIAN
     EXPECT_EQ(c[0], 0x01);
+#else
+    EXPECT_EQ(c[0], 0x04);
 #endif
 }
 

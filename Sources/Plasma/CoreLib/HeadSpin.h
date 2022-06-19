@@ -196,18 +196,7 @@ inline double hsSwapEndianDouble(double dvalue)
     return value.f;
 }
 
-#if LITTLE_ENDIAN
-    #define hsToBE16(n)         hsSwapEndian16(n)
-    #define hsToBE32(n)         hsSwapEndian32(n)
-    #define hsToBE64(n)         hsSwapEndian64(n)
-    #define hsToBEFloat(n)      hsSwapEndianFloat(n)
-    #define hsToBEDouble(n)     hsSwapEndianDouble(n)
-    #define hsToLE16(n)         (n)
-    #define hsToLE32(n)         (n)
-    #define hsToLE64(n)         (n)
-    #define hsToLEFloat(n)      (n)
-    #define hsToLEDouble(n)     (n)
-#else
+#ifdef HS_BIG_ENDIAN
     #define hsToBE16(n)         (n)
     #define hsToBE32(n)         (n)
     #define hsToBE64(n)         (n)
@@ -218,6 +207,17 @@ inline double hsSwapEndianDouble(double dvalue)
     #define hsToLE64(n)         hsSwapEndian64(n)
     #define hsToLEFloat(n)      hsSwapEndianFloat(n)
     #define hsToLEDouble(n)     hsSwapEndianDouble(n)
+#else
+    #define hsToBE16(n)         hsSwapEndian16(n)
+    #define hsToBE32(n)         hsSwapEndian32(n)
+    #define hsToBE64(n)         hsSwapEndian64(n)
+    #define hsToBEFloat(n)      hsSwapEndianFloat(n)
+    #define hsToBEDouble(n)     hsSwapEndianDouble(n)
+    #define hsToLE16(n)         (n)
+    #define hsToLE32(n)         (n)
+    #define hsToLE64(n)         (n)
+    #define hsToLEFloat(n)      (n)
+    #define hsToLEDouble(n)     (n)
 #endif
 
 // Generic versions for use in templates
