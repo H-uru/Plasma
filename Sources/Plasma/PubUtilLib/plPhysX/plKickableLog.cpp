@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plKickableLog.h"
 
-#if !defined(USE_KICKABLE_LOG) || defined(PLASMA_EXTERNAL_RELEASE)
+#if !defined(USE_KICKABLE_LOG) && !defined(PLASMA_EXTERNAL_RELEASE)
     plStatusLog* plKickableLog::sLog = nullptr;
 #else
     plStatusLog* plKickableLog::sLog = plStatusLogMgr::GetInstance().CreateStatusLog(

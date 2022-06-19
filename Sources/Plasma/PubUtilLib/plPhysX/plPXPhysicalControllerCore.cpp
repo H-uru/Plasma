@@ -135,11 +135,11 @@ protected:
         physx::PxVec3 torque = (physx::toVec3(worldPos) - centerOfMass).cross(force);
         body->addForce(force, physx::PxForceMode::eVELOCITY_CHANGE);
         body->addTorque(torque, physx::PxForceMode::eVELOCITY_CHANGE);
-        plKickableLog::Green(
+        plKickableLog_Green(
             "Applying force ({.2f}, {.2f}, {.2f})",
             force.x, force.y, force.z
         );
-        plKickableLog::Green(
+        plKickableLog_Green(
             "Applying torque ({.2f}, {.2f}, {.2f})",
             torque.x, torque.y, torque.z
         );
@@ -165,8 +165,8 @@ public:
         // so we fake it using some back-of-napkin math here.
         if (actor->GetPhysical()->IsDynamic()) {
             physx::PxRigidDynamic* dynamic = static_cast<physx::PxRigidDynamic*>(hit.actor);
-            plKickableLog::White("-----");
-            plKickableLog::Yellow(
+            plKickableLog_White("-----");
+            plKickableLog_Yellow(
                 "Controller '{}' hit dynamic '{}'\nDirection: ({.2f}, {.2f}, {.2f}), Length: {.2f}",
                 controller->str(), actor->str(), hit.dir.x, hit.dir.y, hit.dir.z, hit.length
             );
@@ -209,7 +209,7 @@ public:
             const hsVector3& avLinVel = controller->GetController()->GetLinearVelocity();
             float hitUpComponent = std::fabs(hitDir.dot(hit.controller->getUpDirection()));
             if (onGround && hitUpComponent >= .2f) {
-                plKickableLog::Blue(
+                plKickableLog_Blue(
                     "The kickable is on '{}' and we have a upward magnitude of {.2f}",
                     sweepHit.actor->getName(), hitUpComponent
                 );
@@ -218,10 +218,10 @@ public:
                 float zext = bbox.getExtents(2);
                 // Tiny kickable, so shoot it off into the distance.
                 if (zext <= kSmallKickableThreshold) {
-                    plKickableLog::Blue("Standing on top of tiny kickable with Z-extent {.2f}", zext);
+                    plKickableLog_Blue("Standing on top of tiny kickable with Z-extent {.2f}", zext);
                     physx::PxVec3 force(avLinVel.fX, avLinVel.fY, 0.f);
                     force.normalize();
-                    plKickableLog::Green(
+                    plKickableLog_Green(
                         "Using renormalized avatar velocity as direction: ({.2f}, {.2f}, {.2f})",
                         force.x, force.y, force.z
                     );
@@ -231,10 +231,10 @@ public:
                     force *= std::max(3.f, avLinVel.Magnitude()) * hitTime;
                     IApplyHitForce(dynamic, hit.worldPos, force);
                 } else {
-                    plKickableLog::Red("Standing on top of tall kickable with Z-extent {.2f} - no force will be applied.", zext);
+                    plKickableLog_Red("Standing on top of tall kickable with Z-extent {.2f} - no force will be applied.", zext);
                 }
             } else {
-                plKickableLog::Green(
+                plKickableLog_Green(
                     "Ground: [{}], using PhysX hit direction: ({.2f}, {.2f}, {.2f})",
                     onGround, hitDir.x, hitDir.y, hitDir.z
                 );

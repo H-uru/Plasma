@@ -47,6 +47,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Define this to get extremely spammy logging about kickable forces and such.
 //#define USE_KICKABLE_LOG
 
+// Calls to plKickableLog don't get optimized out correctly if the function
+// body is empty due to preprocessing. So, use these macros to output to the
+// kickable log to ensure proper optimization.
+#ifdef USE_KICKABLE_LOG
+#   define plKickableLog_Blue(...) plKickableLog::Blue(__VA_ARGS__)
+#   define plKickableLog_Green(...) plKickableLog::Green(__VA_ARGS__)
+#   define plKickableLog_Red(...) plKickableLog::Red(__VA_ARGS__)
+#   define plKickableLog_White(...) plKickableLog::White(__VA_ARGS__)
+#   define plKickableLog_Yellow(...) plKickableLog::Yellow(__VA_ARGS__)
+#else
+#   define plKickableLog_Blue(...) NULL_STMT
+#   define plKickableLog_Green(...) NULL_STMT
+#   define plKickableLog_Red(...) NULL_STMT
+#   define plKickableLog_White(...) NULL_STMT
+#   define plKickableLog_Yellow(...) NULL_STMT
+#endif
+
 class plKickableLog
 {
     static plStatusLog* sLog;
@@ -54,76 +71,86 @@ class plKickableLog
 public:
     static void Blue(const char* line)
     {
-#if defined(USE_KICKABLE_LOG) && !defined(PLASMA_EXTERNAL_RELEASE)
-        sLog->AddLine(plStatusLog::kBlue, line);
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (sLog)
+            sLog->AddLine(plStatusLog::kBlue, line);
 #endif
     }
 
     template<typename... _Args>
     static void Blue(const char* fmt, _Args&&... args)
     {
-#if defined(USE_KICKABLE_LOG) && !defined(PLASMA_EXTERNAL_RELEASE)
-        sLog->AddLineF(plStatusLog::kBlue, fmt, std::forward<_Args>(args)...);
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (sLog)
+            sLog->AddLineF(plStatusLog::kBlue, fmt, std::forward<_Args>(args)...);
 #endif
     }
 
     static void Green(const char* line)
     {
-#if defined(USE_KICKABLE_LOG) && !defined(PLASMA_EXTERNAL_RELEASE)
-        sLog->AddLine(plStatusLog::kGreen, line);
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (sLog)
+            sLog->AddLine(plStatusLog::kGreen, line);
 #endif
     }
 
     template<typename... _Args>
     static void Green(const char* fmt, _Args&&... args)
     {
-#if defined(USE_KICKABLE_LOG) && !defined(PLASMA_EXTERNAL_RELEASE)
-        sLog->AddLineF(plStatusLog::kGreen, fmt, std::forward<_Args>(args)...);
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (sLog)
+            sLog->AddLineF(plStatusLog::kGreen, fmt, std::forward<_Args>(args)...);
 #endif
     }
 
     static void Red(const char* line)
     {
-#if defined(USE_KICKABLE_LOG) && !defined(PLASMA_EXTERNAL_RELEASE)
-        sLog->AddLine(plStatusLog::kRed, line);
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (sLog)
+            sLog->AddLine(plStatusLog::kRed, line);
 #endif
     }
 
     template<typename... _Args>
     static void Red(const char* fmt, _Args&&... args)
     {
-#if defined(USE_KICKABLE_LOG) && !defined(PLASMA_EXTERNAL_RELEASE)
-        sLog->AddLineF(plStatusLog::kRed, fmt, std::forward<_Args>(args)...);
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (sLog)
+            sLog->AddLineF(plStatusLog::kRed, fmt, std::forward<_Args>(args)...);
 #endif
     }
 
     static void White(const char* line)
     {
-#if defined(USE_KICKABLE_LOG) && !defined(PLASMA_EXTERNAL_RELEASE)
-        sLog->AddLine(plStatusLog::kWhite, line);
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (sLog)
+            sLog->AddLine(plStatusLog::kWhite, line);
 #endif
     }
 
     template<typename... _Args>
     static void White(const char* fmt, _Args&&... args)
     {
-#if defined(USE_KICKABLE_LOG) && !defined(PLASMA_EXTERNAL_RELEASE)
-        sLog->AddLineF(plStatusLog::kWhite, fmt, std::forward<_Args>(args)...);
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (sLog)
+            sLog->AddLineF(plStatusLog::kWhite, fmt, std::forward<_Args>(args)...);
 #endif
     }
 
     static void Yellow(const char* line)
     {
-#if defined(USE_KICKABLE_LOG) && !defined(PLASMA_EXTERNAL_RELEASE)
-        sLog->AddLine(plStatusLog::kYellow, line);
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (sLog)
+            sLog->AddLine(plStatusLog::kYellow, line);
 #endif
     }
 
     template<typename... _Args>
     static void Yellow(const char* fmt, _Args&&... args)
     {
-#if defined(USE_KICKABLE_LOG) && !defined(PLASMA_EXTERNAL_RELEASE)
-        sLog->AddLineF(plStatusLog::kYellow, fmt, std::forward<_Args>(args)...);
+#ifndef PLASMA_EXTERNAL_RELEASE
+        if (sLog)
+            sLog->AddLineF(plStatusLog::kYellow, fmt, std::forward<_Args>(args)...);
 #endif
     }
 };
