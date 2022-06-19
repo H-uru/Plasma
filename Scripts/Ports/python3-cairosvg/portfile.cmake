@@ -111,6 +111,15 @@ if(VCPKG_TARGET_IS_WINDOWS)
     endforeach()
 endif()
 
+# vcpkg may or may not have pip available. Bootstrap it.
+message(STATUS "Bootstrapping pip")
+vcpkg_execute_required_process(
+    COMMAND "${PYTHON_EXECUTABLE}" -m ensurepip
+    ALLOW_IN_DOWNLOAD_MODE
+    WORKING_DIRECTORY "${CURRENT_PYTHON_PREFIX}"
+    LOGNAME ensurepip
+)
+
 # Use pip to install cairosvg into the staging dir.
 message(STATUS "Installing cairosvg from pip")
 file(TO_NATIVE_PATH "${CURRENT_PYTHON_PREFIX}" _PIP_PREFIX)
