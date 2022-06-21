@@ -1,4 +1,5 @@
 set(CoreLibTest_SOURCES
+    test_endianSwap.cpp
     test_plCmdParser.cpp
 )
 
