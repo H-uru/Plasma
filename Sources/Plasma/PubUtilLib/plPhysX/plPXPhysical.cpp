@@ -188,6 +188,11 @@ void plPXPhysical::DirtyRecipe()
                                        "supported in PhysX 4... forcing to convex hull, sorry.",
                                        GetKeyName());
             fBounds = plSimDefs::kHullBounds;
+        } else if (IsTrigger()) {
+            plSimulationMgr::LogYellow("WARNING: '{}' is a detector region triangle mesh; this is not "
+                                       "supported in PhysX 4... forcing to convex hull, sorry.",
+                                       GetKeyName());
+            fBounds = plSimDefs::kHullBounds;
         }
         break;
 
