@@ -219,6 +219,9 @@ def GetChildNodeModifyTime(ref: Optional[ptVaultNodeRef]) -> int:
         return node.getModifyTime()
     return 0
 
+def GetSaverID(ref: Optional[ptVaultNodeRef]) -> int:
+    return ref.getSaverID() if ref else 0
+
 ## Replace the Age's name as is appropriate.
 # It accepts as a parameter a name, unlike GetAgeName.
 def FilterAgeName(ageName):

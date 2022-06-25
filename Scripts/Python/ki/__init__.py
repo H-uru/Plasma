@@ -64,6 +64,7 @@ import os    # Used for saving pictures locally.
 import glob  # Used for saving pictures locally.
 import math
 import functools
+import itertools
 
 from xGUILinkHandler import xGUILinkHandler
 import xLocTools
@@ -4286,9 +4287,6 @@ class xKI(ptModifier):
                             # Remove from inbox (how will this work?).
                             element = ref.getChild()
                             inbox.removeNode(element)
-                    else:
-                        # add non-blocked senders to Recents folder so they can be added to buddies or ignore lists
-                        self.chatMgr.AddPlayerToRecents(ref.getSaverID())
 
         if removeList:
             PtDebugPrint("xKI.BigKIProcessContentList(): Removing {} contents from being displayed.".format(len(removeList)), level=kWarningLevel)
@@ -4315,6 +4313,17 @@ class xKI(ptModifier):
                         removeList.insert(0, contentidx)
         for removeidx in removeList:
             del self.BKContentList[removeidx]
+
+        if self.BKFolderListOrder[self.BKFolderSelected] == xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kInboxFolder):
+            recentsList = ptVault().getPeopleIKnowAboutFolder()
+            if recentsList and (remRecents := kLimits.MaxRecentPlayerListSize - len(recentsList.getChildNodeRefList())) > 0:
+                PtDebugPrint(f"xKI.BigKIProcessContentList(): {remRecents} remaining recents slots.", level=kWarningLevel)
+                # add Inbox senders (sorted by most recent) to Recents folder
+                # but don't overload Recents or refresh triggers infinitely due to Recents node additions/removals
+                cannotAdd = lambda ref: not (s := xKIHelpers.GetSaverID(ref)) or recentsList.playerlistHasPlayer(s) or not self.chatMgr.AddPlayerToRecents(s)
+                # add only one then stop because addition triggers BK refresh again that will add next one, etc.
+                inboxRef = next(itertools.dropwhile(cannotAdd, self.BKContentList), None)
+                PtDebugPrint(f"xKI.BigKIProcessContentList(): Added {xKIHelpers.GetSaverID(inboxRef)} ({inboxRef}) to recents.", level=kWarningLevel)
 
     ## Refresh the display of the selected content list.
     def BigKIRefreshContentListDisplay(self):
