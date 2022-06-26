@@ -515,7 +515,10 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
             half4 color = fragmentShaderArgs.sampleLayer(layer, in.vtxColor, sourceTypes[layer], sampleCoord);
             
             if(layer==0) {
-                blendFirst(color, currentColor, blendModes[layer]);
+                //only blend if there is a texture to blend into
+                if(sourceTypes[0] != PassTypeColor) {
+                    blendFirst(color, currentColor, blendModes[layer]);
+                }
             } else {
                 blend(color, currentColor, blendModes[layer]);
             }
