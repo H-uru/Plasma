@@ -174,16 +174,11 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
                 if (blendMode & hsGMatState::kBlendAlphaPremultiplied) {
                     //printf("glBlendFunc(GL_ONE, GL_SRC_ALPHA);\n");
                     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
-                    descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
-                    descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorSourceAlpha);
-                    descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorSourceAlpha);
                 } else {
                     //printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);\n");
-                    descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-                    descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-                    descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorSourceAlpha);
-                    descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorSourceAlpha);
+                    descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);;
                 }
+                descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorSourceAlpha);
             } else {
                 if (blendMode & hsGMatState::kBlendAlphaPremultiplied) {
                     //printf("glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);\n");
@@ -249,11 +244,12 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
         case 0:
             //printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
             descriptor->setRgbBlendOperation(MTL::BlendOperationAdd);
+            descriptor->setAlphaBlendOperation(MTL::BlendOperationAdd);
             //printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
             descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
             descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
-            descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
-            descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
+            descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
+            descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);
             
             /*descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOne);
             descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);

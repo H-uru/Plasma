@@ -2338,6 +2338,11 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
             fCurrentRenderPassUniforms->fogColor = { 0.0, 0.0, 0.0 };
             break;
     }
+    
+    
+    if( currLayer->GetBlendFlags() & (hsGMatState::kBlendAdd | hsGMatState::kBlendMADD | hsGMatState::kBlendAddColorTimesAlpha) ) {
+        fCurrentRenderPassUniforms->fogColor = { 0.0, 0.0, 0.0 };
+    }
 }
 
 void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj)
