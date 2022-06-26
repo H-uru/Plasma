@@ -60,8 +60,6 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
         self.version = 1
         self.id = 719
 
-        self._attempt = []
-
         # Defer setting up the handlers until PFM is initialized by the engine
         self._NotifyHandlers = {}
         self._HitActId = None
@@ -84,6 +82,8 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
         ageSDL.setNotify(self.key, butsInUseVariableName.value, 0.0)
         ageSDL.setFlags(numCorrectVariableName.value, True, True)
         ageSDL.sendToClients(numCorrectVariableName.value)
+        self.SDL.setDefault("attemptCombo", ())
+        self.SDL.sendToClients("attemptCombo")
 
         if not PtGetPlayerList():
             self._butsInUse = False
@@ -128,6 +128,11 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
         ageSDL.setTagString(attr.value, hint)
         ageSDL.setIndexNow(attr.value, 0, state)
 
+    def _GetScriptSDL(self, name):
+        return self.SDL[name]
+    def _SetScriptSDL(self, name, value):
+        self.SDL[name] = tuple(value)
+
     @property
     def _butsInUse(self):
         return self._GetAgeSDL(butsInUseVariableName)
@@ -151,6 +156,14 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
     @_numCorrect.setter
     def _numCorrect(self, value):
         self._SetAgeSDL(numCorrectVariableName, value)
+
+    @property
+    def _attemptCombo(self):
+        return list(self._GetScriptSDL("attemptCombo"))
+
+    @_attemptCombo.setter
+    def _attemptCombo(self, value):
+        self._SetScriptSDL("attemptCombo", value)
 
     # ======================================================================
 
@@ -202,11 +215,14 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
         if self._solved:
             PtDebugPrint("xAgeSDLBoolActComboSet._TriggerButton():\tYou just unsolved it, moron.", level=kWarningLevel)
             self._solved = False
+            self._numCorrect = 0
+            self._attemptCombo = [actId]
             return
 
         if allowSlidingSolution.value:
-            self._numCorrect = next((len(self._attempt) - i for i in range(len(self._attempt)) if self._IsAttemptCorrectAtIndex(i)), 0)
-            PtDebugPrint(f"xAgeSDLBoolActComboSet._TriggerButton():\t Sliding attempt {self._attempt} has {self._numCorrect} correct.", level=kWarningLevel)
+            attempt = self._attemptCombo
+            self._numCorrect = next((len(attempt) - i for i in range(len(attempt)) if self._IsAttemptCorrectAtIndex(i)), 0)
+            PtDebugPrint(f"xAgeSDLBoolActComboSet._TriggerButton():\t Sliding attempt {attempt} has {self._numCorrect} correct.", level=kWarningLevel)
             self._CheckSolved()
             return
 
@@ -240,9 +256,13 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
                 self._butsInUse = True
 
     def _AddToAttempt(self, actId):
-        self._attempt.append(actId)
-        if len(self._attempt) > len(self._combination):
-            self._attempt = self._attempt[1:]
+        attempt = self._attemptCombo
+        attempt.append(actId)
+        if len(attempt) > len(self._combination):
+            attempt = attempt[1:]
+        PtDebugPrint(f"xAgeSDLBoolActComboSet._AddToAttempt():\t New attempt value: {attempt}", level=kWarningLevel)
+        self._attemptCombo = attempt
 
     def _IsAttemptCorrectAtIndex(self, i):
-        return self._attempt[i:] == self._combination[0:len(self._attempt)-i]
+        attempt = self._attemptCombo
+        return attempt[i:] == self._combination[0:len(attempt)-i]
