@@ -937,6 +937,11 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
             depthTextureDescriptor->setSampleCount(fSampleCount);
             depthTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
             depthTextureDescriptor->setTextureType(MTL::TextureType2DMultisample);
+            if (fMetalDevice->supportsFamily(MTL::GPUFamilyApple1) && fSampleCount == 1) {
+                depthTextureDescriptor->setStorageMode(MTL::StorageModeMemoryless);
+            }   else {
+                depthTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
+            }
             fCurrentDrawableDepthTexture = fMetalDevice->newTexture(depthTextureDescriptor);
             
             MTL::TextureDescriptor *msaaColorTextureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(),
