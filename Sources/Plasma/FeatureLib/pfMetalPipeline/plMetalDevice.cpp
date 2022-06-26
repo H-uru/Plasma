@@ -769,13 +769,36 @@ uint plMetalDevice::ConfigureAllowedLevels(plMetalDevice::TextureRef *tRef, plMi
 void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef *tRef, plMipmap *img, uint slice)
 {
     if (img->IsCompressed()) {
+        /*
+         Some cubic assets have inconsistant mipmap sizes between their faces.
+         The DX pipeline maintains seperate structures noting the expected
+         mipmap sizes, and ignores the actual face sizes. This hack
+         makes the Metal pipeline ignore the actual face sizes and behave
+         as if all face sizes are equivelent to the first face. It does this
+         by computing the expected mipmap sizes on the fly.
+         This hack could be disabled if cube maps in the assets were
+         fixed to be consistant.
+         */
+#define HACK_LEVEL_SIZE 1
+        
+#if HACK_LEVEL_SIZE
+        uint width = tRef->fTexture->width();
+        uint height = tRef->fTexture->height();
+#endif
         
         for (int lvl = 0; lvl <= tRef->fLevels; lvl++) {
             img->SetCurrLevel(lvl);
+#if HACK_LEVEL_SIZE
+            uint levelWidth = (width / exp2(lvl));
+            uint levelHeight = (height / exp2(lvl));
+#else
+            uint levelWidth = img->GetCurrWidth();
+            uint levelHeight = img->GetCurrHeight();
+#endif
             
-                switch (img->fDirectXInfo.fCompressionType) {
+            switch (img->fDirectXInfo.fCompressionType) {
                 case plBitmap::DirectXInfo::kDXT1:
-                        tRef->fTexture->replaceRegion(MTL::Region::Make2D(0, 0, img->GetCurrWidth(), img->GetCurrHeight()), img->GetCurrLevel(), slice, img->GetCurrLevelPtr(), img->GetCurrWidth() * 2, 0);
+                        tRef->fTexture->replaceRegion(MTL::Region::Make2D(0, 0, levelWidth, levelHeight), img->GetCurrLevel(), slice, img->GetCurrLevelPtr(), levelWidth * 2, 0);
                     break;
                 case plBitmap::DirectXInfo::kDXT5:
                         tRef->fTexture->replaceRegion(MTL::Region::Make2D(0, 0, img->GetCurrWidth(), img->GetCurrHeight()), img->GetCurrLevel(), slice, img->GetCurrLevelPtr(), img->GetCurrWidth() * 4, 0);
