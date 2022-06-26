@@ -1458,7 +1458,6 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
     //plLayerInterface* lay = material->GetLayer(mRef->GetPassIndex(pass));
     plLayerInterface *lay = material->GetLayer(mRef->GetPassIndex(pass));
 
-    ICalcLighting(mRef, lay, currSpan);
 
     hsGMatState s;
     s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
@@ -1491,6 +1490,10 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
     
     //Some build passes don't allow shaders. Render the geometry and the provided material, but don't allow the shader path if instructed to. In the DX source, this would be done by the render phase setting the shaders to null after calling this. That won't work here in since our pipeline state has to know the shaders.
     if(lay->GetVertexShader() && allowShaders) {
+        
+        lay = IPushOverBaseLayer(lay);
+        lay = IPushOverAllLayer(lay);
+        
         //pure shader path
         plShader *vertexShader = lay->GetVertexShader();
         plShader *fragShader = lay->GetPixelShader();
@@ -1544,11 +1547,21 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
             }
             
             fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(texRef->fTexture, i + idOffset);
+            
         }
+        lay = IPopOverAllLayer(lay);
+        lay = IPopOverBaseLayer(lay);
     } else {
         //"Fixed" path
         
+        /*
+         To compute correct lighting we need to add the pushover layers.
+         The actual renderer will do it's own add and remove, so remove the
+         pushover layer before we get to the actual layer loop.
+         */
         lay = IPushOverBaseLayer(lay);
+        lay = IPushOverAllLayer(lay);
+        ICalcLighting(mRef, lay, currSpan);
         
         s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
         
@@ -1579,6 +1592,7 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
         memset(miscFlags, 0, sizeof(miscFlags));
         memset(sampleTypes, 0, sizeof(sampleTypes));
         
+        lay = IPopOverAllLayer(lay);
         lay = IPopOverBaseLayer(lay);
         
         if(numActivePiggyBacks==0 && fOverBaseLayer == nullptr && fOverAllLayer == nullptr) {
