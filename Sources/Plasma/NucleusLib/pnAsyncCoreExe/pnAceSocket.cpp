@@ -192,7 +192,19 @@ static void SocketStartAsyncRead(AsyncSocket sock)
     sock->fSock.async_read_some(asio::buffer(start, count),
                                 [sock](const asio::error_code& err, size_t bytes) {
         if (err) {
-            LogMsg(kLogError, "Failed to read from socket: {}", err.message());
+            if(err.value() == asio::error::operation_aborted) {
+                if (sock->fNotifyProc) {
+                    // We have to be extremely careful from this point because
+                    // sockets can be deleted during the notification callback.
+                    // After this call, the application becomes responsible for
+                    // calling AsyncSocketDelete at some later point in time.
+                    FAsyncNotifySocketProc notifyProc  = sock->fNotifyProc;
+                    sock->fNotifyProc                = nullptr;
+                    notifyProc((AsyncSocket) sock, kNotifySocketDisconnect, nullptr, &sock->fUserState);
+                }
+            } else {
+                LogMsg(kLogError, "Failed to read from socket: {}", err.message());
+            }
             return;
         }
 
