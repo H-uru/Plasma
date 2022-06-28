@@ -311,7 +311,7 @@ bool plCmdParserImpl::ProcessValue(plCmdTokenState* state, size_t index, const S
 bool plCmdParserImpl::TokenizeFlags(plCmdTokenState* state, const ST::string& str)
 {
     bool result = true;
-    std::vector<ST::string> tokens = str.tokenize(ALL);
+    std::vector<ST::string> tokens = str.tokenize(WHITESPACE SEPARATORS);
 
     for (auto it = tokens.begin(); result && it != tokens.end(); ++it) {
         size_t lastIndex = size_t(-1);
@@ -320,6 +320,8 @@ bool plCmdParserImpl::TokenizeFlags(plCmdTokenState* state, const ST::string& st
         if (buffer.empty()) {
             continue;
         }
+        
+        buffer = buffer.trim_left(FLAGS);
 
         while (result) {
             // Lookup the argument name
