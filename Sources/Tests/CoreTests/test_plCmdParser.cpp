@@ -548,7 +548,7 @@ TEST(plCmdParser, case_sensitive_match)
     EXPECT_EQ(specified, true);
 }
 
-TEST(plCmdParser, seperator_in_value)
+TEST(plCmdParser, separator_in_value)
 {
     const plCmdArgDef cmds[] = {
         { kCmdTypeString, "color", 0}
