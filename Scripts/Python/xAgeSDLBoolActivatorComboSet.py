@@ -215,12 +215,13 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
         if self._solved:
             PtDebugPrint("xAgeSDLBoolActComboSet._TriggerButton():\tYou just unsolved it, moron.", level=kWarningLevel)
             self._solved = False
-            self._numCorrect = 0
             self._attemptCombo = [actId]
             return
 
         if allowSlidingSolution.value:
             attempt = self._attemptCombo
+            # find the subset of the attempt array that matches the start of the combination, if it exists.
+            # the length of this matching attempt subset is the current number of correct values, otherwise 0 are correct.
             self._numCorrect = next((len(attempt) - i for i in range(len(attempt)) if self._IsAttemptCorrectAtIndex(i)), 0)
             PtDebugPrint(f"xAgeSDLBoolActComboSet._TriggerButton():\t Sliding attempt {attempt} has {self._numCorrect} correct.", level=kWarningLevel)
             self._CheckSolved()
@@ -258,11 +259,9 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
     def _AddToAttempt(self, actId):
         attempt = self._attemptCombo
         attempt.append(actId)
-        if len(attempt) > len(self._combination):
-            attempt = attempt[1:]
-        PtDebugPrint(f"xAgeSDLBoolActComboSet._AddToAttempt():\t New attempt value: {attempt}", level=kWarningLevel)
+        attempt = attempt[-len(self._combination):]
         self._attemptCombo = attempt
 
     def _IsAttemptCorrectAtIndex(self, i):
         attempt = self._attemptCombo
-        return attempt[i:] == self._combination[0:len(attempt)-i]
+        return attempt[i:] == self._combination[:len(attempt)-i]
