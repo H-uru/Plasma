@@ -547,3 +547,17 @@ TEST(plCmdParser, case_sensitive_match)
 
     EXPECT_EQ(specified, true);
 }
+
+TEST(plCmdParser, seperator_in_value)
+{
+    const plCmdArgDef cmds[] = {
+        { kCmdTypeString, "color", 0}
+    };
+
+    plCmdParser parser(cmds, std::size(cmds));
+    parser.Parse("plCmdParser --color=reddish-blue");
+
+    ST::string value = parser.GetString("color");
+
+    EXPECT_EQ(value, "reddish-blue");
+}
