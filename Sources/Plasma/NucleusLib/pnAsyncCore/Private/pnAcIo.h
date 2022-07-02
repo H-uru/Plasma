@@ -134,12 +134,16 @@ struct AsyncNotifySocketRead : AsyncNotifySocket {
     uint8_t *       buffer;
     unsigned        bytes;
     unsigned        bytesProcessed;
-    unsigned        bytesCommitted;
 
-    AsyncNotifySocketRead() : buffer(), bytes(), bytesProcessed(), bytesCommitted() { }
+    AsyncNotifySocketRead() : buffer(), bytes(), bytesProcessed() { }
 };
 
-typedef AsyncNotifySocketRead AsyncNotifySocketWrite;
+
+struct AsyncNotifySocketWrite : AsyncNotifySocketRead {
+    unsigned        bytesCommitted;
+    
+    AsyncNotifySocketWrite() : AsyncNotifySocketRead(), bytesCommitted() { }
+};
 
 // return false to disconnect
 typedef std::function<bool (AsyncSocket /* sock */,
