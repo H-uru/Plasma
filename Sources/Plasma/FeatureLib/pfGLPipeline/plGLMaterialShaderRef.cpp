@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plGLMaterialShaderRef.h"
 #include "plGLDevice.h"
+#include "plGLPipeline.h"
 
 #include <epoxy/gl.h>
 
@@ -49,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 
 #include "hsGMatState.inl"
-#include "plPipeline.h"
 #include "plPipeDebugFlags.h"
 
 #include "plDrawable/plGBufferGroup.h"
@@ -230,7 +230,7 @@ void main() {
     fragColor = vec4(currColor, currAlpha);
 })";
 
-plGLMaterialShaderRef::plGLMaterialShaderRef(hsGMaterial* mat, plPipeline* pipe)
+plGLMaterialShaderRef::plGLMaterialShaderRef(hsGMaterial* mat, plGLPipeline* pipe)
     : plGLDeviceRef(), fMaterial(mat), fPipeline(pipe), fVertShaderRef(0), fFragShaderRef(0)
 {
     ISetupShaderContexts();
@@ -274,16 +274,22 @@ void plGLMaterialShaderRef::SetupTextureRefs()
         if (!layer)
             continue;
 
+        layer = fPipeline->IPushOverAllLayer(layer);
+
         // Load the image
         plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
-        if (!img)
+        if (!img) {
+            layer = fPipeline->IPopOverAllLayer(layer);
             continue;
+        }
 
         plGLTextureRef* texRef = static_cast<plGLTextureRef*>(img->GetDeviceRef());
 
-        if (!texRef->fRef)
+        if (!texRef->fRef) {
+            layer = fPipeline->IPopOverAllLayer(layer);
             continue;
+        }
 
         fPipeline->CheckTextureRef(layer);
 
@@ -325,6 +331,7 @@ void plGLMaterialShaderRef::SetupTextureRefs()
             glUniform1i(this->uTexture[i], numTextures);
         LOG_GL_ERROR_CHECK("Uniform Texture failed")
 
+        layer = fPipeline->IPopOverAllLayer(layer);
         numTextures++;
     }
 }
@@ -580,12 +587,12 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
 
     // Ignoring the bit about self-rendering cube maps
 
-    plLayerInterface* currLay = /*IPushOverBaseLayer*/ fMaterial->GetLayer(layer);
+    plLayerInterface* currLay = fPipeline->IPushOverBaseLayer(fMaterial->GetLayer(layer));
 
     if (fPipeline->IsDebugFlagSet(plPipeDbg::kFlagBumpW) && (currLay->GetMiscFlags() & hsGMatState::kMiscBumpDu))
         currLay = fMaterial->GetLayer(++layer);
 
-    //currLay = IPushOverAllLayer(currLay);
+    currLay = fPipeline->IPushOverAllLayer(currLay);
 
     hsGMatState state = ICompositeLayerState(currLay);
 
@@ -626,6 +633,9 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
     if (state.fMiscFlags & (hsGMatState::kMiscBumpDu | hsGMatState::kMiscBumpDw)) {
         //ISetBumpMatrices(currLay);
     }
+
+    currLay = fPipeline->IPopOverAllLayer(currLay);
+    currLay = fPipeline->IPopOverBaseLayer(currLay);
 
     std::shared_ptr<plVaryingNode> vVtxColor = IFindVariable<plVaryingNode>("vVtxColor", "vec4");
 

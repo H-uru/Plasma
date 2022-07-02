@@ -66,6 +66,7 @@ class plGLPipeline : public pl3DPipeline<plGLDevice>
 {
     friend class plGLPlateManager;
     friend class plGLDevice;
+    friend class plGLMaterialShaderRef;
 
 protected:
     typedef void(*blend_vert_buffer_ptr)(plSpan*, hsMatrix44*, int, const uint8_t*, uint8_t , uint32_t, uint8_t*, uint32_t, uint32_t, uint16_t);
