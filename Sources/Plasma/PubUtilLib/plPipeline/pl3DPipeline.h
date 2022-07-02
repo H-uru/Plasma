@@ -212,6 +212,17 @@ protected:
     std::vector<plLayerInterface*>          fOverLayerStack;
     plLayerInterface*                       fOverBaseLayer;
     plLayerInterface*                       fOverAllLayer;
+
+    // PiggyBacks - used in techniques like projective lighting.
+    // PiggyBacks are layers appended to each drawprimitive pass.
+    // For example, if a material has 3 layers which will be drawn
+    // in 2 passes,
+    //      pass0: layer0+layer1
+    //      pass1: layer2
+    // Then if a piggyback layer layerPB is active, the actual rendering would be
+    //      pass0: layer0+layer1+layerPB
+    //      pass1: layer2 + layerPB
+
     std::vector<plLayerInterface*>          fPiggyBackStack;
     int32_t                                 fMatPiggyBacks;
     int32_t                                 fActivePiggyBacks;
@@ -862,6 +873,69 @@ protected:
     plRenderTarget* IGetNextAvRT();
     void IFreeAvRT(plRenderTarget* tex);
 
+    /**
+     * Sets fOverBaseLayer (if any) as a wrapper on top of input layer.
+     * This allows the OverBaseLayer to intercept and modify queries of
+     * the real current layer's properties (e.g. color or state).
+     * fOverBaseLayer is set to only get applied to the base layer during
+     * multitexturing.
+     *
+     * Must be matched with call to IPopOverBaseLayer.
+     */
+    plLayerInterface* IPushOverBaseLayer(plLayerInterface* li);
+
+    /**
+     * Removes fOverBaseLayer as wrapper on top of input layer.
+     *
+     * Should match calls to IPushOverBaseLayer.
+     */
+    plLayerInterface* IPopOverBaseLayer(plLayerInterface* li);
+
+    /**
+     * Push fOverAllLayer (if any) as wrapper around the input layer.
+     *
+     * fOverAllLayer is set to be applied to each layer during multitexturing.
+     *
+     * Must be matched by call to IPopOverAllLayer
+     */
+    plLayerInterface* IPushOverAllLayer(plLayerInterface* li);
+
+    /**
+     * Remove fOverAllLayer as wrapper on top of input layer.
+     *
+     * Should match calls to IPushOverAllLayer.
+     */
+    plLayerInterface* IPopOverAllLayer(plLayerInterface* li);
+
+    /**
+     * Calculate the number of active piggy backs.
+     */
+    int ISetNumActivePiggyBacks();
+
+    /**
+     * Push any piggy backs associated with a material, presumed to be a light
+     * map because that's all they are used for.
+     *
+     * Matched with IPopPiggyBacks.
+     */
+    void IPushPiggyBacks(hsGMaterial* mat);
+
+    /**
+     * Pop any current piggy backs set from IPushPiggyBacks.
+     *
+     * Matches IPushPiggyBacks.
+     */
+    void IPopPiggyBacks();
+
+    /**
+     * Push a projected texture on as a piggy back.
+     */
+    void IPushProjPiggyBack(plLayerInterface* li);
+
+    /**
+     * Remove a projected texture from use as a piggy back.
+     */
+    void IPopProjPiggyBacks();
 
     /**
      * For every span in the list of visible span indices, find the list of
@@ -1725,6 +1799,147 @@ void pl3DPipeline<DeviceType>::IFreeAvRT(plRenderTarget* tex)
         fAvRTPool[fAvNextFreeRT - 1] = tex;
         fAvNextFreeRT--;
     }
+}
+
+
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPushOverBaseLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fOverLayerStack.push_back(li);
+
+    if (!fOverBaseLayer)
+        return fOverBaseLayer = li;
+
+    fForceMatHandle = true;
+    fOverBaseLayer = fOverBaseLayer->Attach(li);
+    fOverBaseLayer->Eval(fTime, fFrame, 0);
+    return fOverBaseLayer;
+}
+
+
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPopOverBaseLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fForceMatHandle = true;
+
+    plLayerInterface* pop = fOverLayerStack.back();
+    fOverLayerStack.pop_back();
+    fOverBaseLayer = fOverBaseLayer->Detach(pop);
+
+    return pop;
+}
+
+
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPushOverAllLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fOverLayerStack.push_back(li);
+
+    if (!fOverAllLayer) {
+        fOverAllLayer = li;
+        fOverAllLayer->Eval(fTime, fFrame, 0);
+        return fOverAllLayer;
+    }
+
+    fForceMatHandle = true;
+    fOverAllLayer = fOverAllLayer->Attach(li);
+    fOverAllLayer->Eval(fTime, fFrame, 0);
+
+    return fOverAllLayer;
+}
+
+
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPopOverAllLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fForceMatHandle = true;
+
+    plLayerInterface* pop = fOverLayerStack.back();
+    fOverLayerStack.pop_back();
+    fOverAllLayer = fOverAllLayer->Detach(pop);
+
+    return pop;
+}
+
+
+template<class DeviceType>
+int pl3DPipeline<DeviceType>::ISetNumActivePiggyBacks()
+{
+    return fActivePiggyBacks = std::min(static_cast<size_t>(fMaxPiggyBacks), fPiggyBackStack.size());
+}
+
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::IPushPiggyBacks(hsGMaterial* mat)
+{
+    hsAssert(!fMatPiggyBacks, "Push/Pop Piggy mismatch");
+
+    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
+        return;
+
+    for (size_t i = 0; i < mat->GetNumPiggyBacks(); i++) {
+        if (!mat->GetPiggyBack(i))
+            continue;
+
+        if ((mat->GetPiggyBack(i)->GetMiscFlags() & hsGMatState::kMiscLightMap)
+            && IsDebugFlagSet(plPipeDbg::kFlagNoLightmaps))
+            continue;
+
+        fPiggyBackStack.push_back(mat->GetPiggyBack(i));
+        fMatPiggyBacks++;
+    }
+    ISetNumActivePiggyBacks();
+    fForceMatHandle = true;
+}
+
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::IPopPiggyBacks()
+{
+    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
+        return;
+
+    fPiggyBackStack.resize(fPiggyBackStack.size() - fMatPiggyBacks);
+    fMatPiggyBacks = 0;
+
+    ISetNumActivePiggyBacks();
+    fForceMatHandle = true;
+}
+
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::IPushProjPiggyBack(plLayerInterface* li)
+{
+    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
+        return;
+
+    fPiggyBackStack.push_back(li);
+    fActivePiggyBacks = fPiggyBackStack.size() - fMatPiggyBacks;
+    fForceMatHandle = true;
+}
+
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::IPopProjPiggyBacks()
+{
+    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
+        return;
+
+    fPiggyBackStack.resize(fMatPiggyBacks);
+    ISetNumActivePiggyBacks();
+    fForceMatHandle = true;
 }
 
 

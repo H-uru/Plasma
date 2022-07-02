@@ -353,18 +353,6 @@ protected:
     void        ISetLayer(uint32_t lay);
     void        IBottomLayer();
 
-    // Push special effects
-    plLayerInterface*   IPushOverBaseLayer(plLayerInterface* li);
-    plLayerInterface*   IPopOverBaseLayer(plLayerInterface* li);
-    plLayerInterface*   IPushOverAllLayer(plLayerInterface* li);
-    plLayerInterface*   IPopOverAllLayer(plLayerInterface* li);
-
-    int                 ISetNumActivePiggyBacks();
-    void                IPushPiggyBacks(hsGMaterial* mat);
-    void                IPopPiggyBacks();
-    void                IPushProjPiggyBack(plLayerInterface* li);
-    void                IPopProjPiggyBacks();
-
     void                ISetPipeConsts(plShader* shader);
     HRESULT             ISetShaders(plShader* vShader, plShader* pShader);
 
