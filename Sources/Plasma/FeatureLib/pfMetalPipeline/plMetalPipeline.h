@@ -180,11 +180,6 @@ private:
 
     void ISetCullMode(bool flip = false);
 
-    plLayerInterface* IPushOverBaseLayer(plLayerInterface* li);
-    plLayerInterface* IPopOverBaseLayer(plLayerInterface* li);
-    plLayerInterface* IPushOverAllLayer(plLayerInterface* li);
-    plLayerInterface* IPopOverAllLayer(plLayerInterface* li);
-
     void IPushPiggyBacks(hsGMaterial* mat);
     void IPopPiggyBacks();
     void IPushProjPiggyBack(plLayerInterface* li);

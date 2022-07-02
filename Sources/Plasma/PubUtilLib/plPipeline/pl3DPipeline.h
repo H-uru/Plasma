@@ -694,7 +694,6 @@ public:
     /** Removes a layer wrapper installed by AppendLayerInterface. */
     plLayerInterface* RemoveLayerInterface(plLayerInterface* li, bool onAllLayers = false) override;
 
-
     /**
      * Return the current bits set to be always on for the given category
      * (e.g. ZFlags).
@@ -866,6 +865,39 @@ protected:
     plRenderTarget* IGetNextAvRT();
     void IFreeAvRT(plRenderTarget* tex);
 
+    /**
+     * Sets fOverBaseLayer (if any) as a wrapper on top of input layer.
+     * This allows the OverBaseLayer to intercept and modify queries of
+     * the real current layer's properties (e.g. color or state).
+     * fOverBaseLayer is set to only get applied to the base layer during
+     * multitexturing.
+     *
+     * Must be matched with call to IPopOverBaseLayer.
+     */
+    plLayerInterface* IPushOverBaseLayer(plLayerInterface* li);
+
+    /**
+     * Removes fOverBaseLayer as wrapper on top of input layer.
+     *
+     * Should match calls to IPushOverBaseLayer.
+     */
+    plLayerInterface* IPopOverBaseLayer(plLayerInterface* li);
+
+    /**
+     * Push fOverAllLayer (if any) as wrapper around the input layer.
+     *
+     * fOverAllLayer is set to be applied to each layer during multitexturing.
+     *
+     * Must be matched by call to IPopOverAllLayer
+     */
+    plLayerInterface* IPushOverAllLayer(plLayerInterface* li);
+
+    /**
+     * Remove fOverAllLayer as wrapper on top of input layer.
+     *
+     * Should match calls to IPushOverAllLayer.
+     */
+    plLayerInterface* IPopOverAllLayer(plLayerInterface* li);
 
     /**
      * For every span in the list of visible span indices, find the list of
@@ -1757,6 +1789,78 @@ void pl3DPipeline<DeviceType>::IFreeAvRT(plRenderTarget* tex)
         fAvRTPool[fAvNextFreeRT - 1] = tex;
         fAvNextFreeRT--;
     }
+}
+
+
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPushOverBaseLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fOverLayerStack.push_back(li);
+
+    if (!fOverBaseLayer)
+        return fOverBaseLayer = li;
+
+    fForceMatHandle = true;
+    fOverBaseLayer = fOverBaseLayer->Attach(li);
+    fOverBaseLayer->Eval(fTime, fFrame, 0);
+    return fOverBaseLayer;
+}
+
+
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPopOverBaseLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fForceMatHandle = true;
+
+    plLayerInterface* pop = fOverLayerStack.back();
+    fOverLayerStack.pop_back();
+    fOverBaseLayer = fOverBaseLayer->Detach(pop);
+
+    return pop;
+}
+
+
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPushOverAllLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fOverLayerStack.push_back(li);
+
+    if (!fOverAllLayer) {
+        fOverAllLayer = li;
+        fOverAllLayer->Eval(fTime, fFrame, 0);
+        return fOverAllLayer;
+    }
+
+    fForceMatHandle = true;
+    fOverAllLayer = fOverAllLayer->Attach(li);
+    fOverAllLayer->Eval(fTime, fFrame, 0);
+
+    return fOverAllLayer;
+}
+
+
+template<class DeviceType>
+plLayerInterface* pl3DPipeline<DeviceType>::IPopOverAllLayer(plLayerInterface* li)
+{
+    if (!li)
+        return nullptr;
+
+    fForceMatHandle = true;
+
+    plLayerInterface* pop = fOverLayerStack.back();
+    fOverLayerStack.pop_back();
+    fOverAllLayer = fOverAllLayer->Detach(pop);
+
+    return pop;
 }
 
 
