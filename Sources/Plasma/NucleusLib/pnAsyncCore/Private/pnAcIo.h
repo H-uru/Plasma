@@ -134,8 +134,9 @@ struct AsyncNotifySocketRead : AsyncNotifySocket {
     uint8_t *       buffer;
     unsigned        bytes;
     unsigned        bytesProcessed;
+    unsigned        bytesCommitted;
 
-    AsyncNotifySocketRead() : buffer(), bytes(), bytesProcessed() { }
+    AsyncNotifySocketRead() : buffer(), bytes(), bytesProcessed(), bytesCommitted() { }
 };
 
 typedef AsyncNotifySocketRead AsyncNotifySocketWrite;

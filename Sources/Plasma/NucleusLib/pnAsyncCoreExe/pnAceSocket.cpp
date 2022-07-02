@@ -125,7 +125,7 @@ struct WriteOperation
 
     asio::const_buffer AsBuffer() const
     {
-        return asio::buffer(fNotify.buffer, fNotify.bytes);
+        return asio::buffer(fNotify.buffer + fNotify.bytesCommitted, fNotify.bytes - fNotify.bytesCommitted);
     }
 };
 
@@ -445,6 +445,7 @@ void AsyncSocketDisconnect(AsyncSocket conn, bool hardClose)
 static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned bytes)
 {
     // TODO: Backlog shit
+    hsLockGuard(s_connectCrit);
 
     // If the last buffer still has space available then add data to it
     if (!conn->fWriteOps.empty()) {
@@ -471,7 +472,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
         op->fNotify.asyncId = /* TODO */nullptr;
         op->fNotify.buffer = membuf + sizeof(WriteOperation);
         op->fNotify.bytes = bytes;
-        op->fNotify.bytesProcessed = bytes;
+        op->fNotify.bytesProcessed = 0;
         memcpy(op->fNotify.buffer, data, bytes);
 
         PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytes);
@@ -479,10 +480,23 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
 
     std::vector<asio::const_buffer> allWrites;
     allWrites.reserve(conn->fWriteOps.size());
-    for (const WriteOperation* op : conn->fWriteOps)
+    for (WriteOperation* op : conn->fWriteOps) {
         allWrites.emplace_back(op->AsBuffer());
-    conn->fSock.async_write_some(allWrites, [conn](const asio::error_code& err, size_t bytes) {
-        //...
+        op->fNotify.bytesCommitted = op->fNotify.bytes;
+    }
+    async_write(conn->fSock, allWrites, [conn, allWrites](const asio::error_code& err, size_t bytes) {
+        hsLockGuard(s_connectCrit);
+        while(bytes != 0) {
+            hsAssert(conn->fWriteOps.size() > 0, "buffer mismatch");
+            WriteOperation *op = conn->fWriteOps.front();
+            
+            size_t opBytesWritten = std::min(bytes, (size_t) op->fNotify.bytes - op->fNotify.bytesProcessed);
+            op->fNotify.bytesProcessed += opBytesWritten;
+            bytes -= opBytesWritten;
+            if  (op->fNotify.bytes == op->fNotify.bytesProcessed) {
+                conn->fWriteOps.pop_front();
+            }
+        }
     });
 
     return true;
