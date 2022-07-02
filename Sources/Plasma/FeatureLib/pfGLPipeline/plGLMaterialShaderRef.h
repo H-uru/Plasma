@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGMatState.h"
 
 class hsGMaterial;
-class plPipeline;
+class plGLPipeline;
 class plLayerInterface;
 
 enum plGLShaderConstants : GLuint {
@@ -100,7 +100,7 @@ class plGLMaterialShaderRef : public plGLDeviceRef
 
 protected:
     hsGMaterial*                        fMaterial;
-    plPipeline*                         fPipeline;
+    plGLPipeline*                       fPipeline;
     GLuint                              fVertShaderRef;
     GLuint                              fFragShaderRef;
 
@@ -142,7 +142,7 @@ public:
     void                    Link(plGLMaterialShaderRef** back) { plGLDeviceRef::Link((plGLDeviceRef**)back); }
     plGLMaterialShaderRef*  GetNext() { return (plGLMaterialShaderRef*)fNext; }
 
-    plGLMaterialShaderRef(hsGMaterial* mat, plPipeline* pipe);
+    plGLMaterialShaderRef(hsGMaterial* mat, plGLPipeline* pipe);
     virtual ~plGLMaterialShaderRef();
 
     void Release();
