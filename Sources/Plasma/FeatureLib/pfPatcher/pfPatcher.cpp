@@ -550,11 +550,11 @@ void pfPatcherWorker::Run()
 void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
 {
     // Check to see if ours matches
-    plFileInfo mine(file.fClientPath);
+    plFileInfo mine(file.fClientPath.Normalize());
     if (mine.FileSize() == file.fFileSize) {
-        plMD5Checksum cliMD5(file.fClientPath);
+        plMD5Checksum cliMD5(file.fClientPath.Normalize());
         if (cliMD5 == file.fChecksum) {
-            WhitelistFile(file.fClientPath, false);
+            WhitelistFile(file.fClientPath.Normalize(), false);
             return;
         }
     }
@@ -569,12 +569,12 @@ void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
 
     // If you got here, they're different and we want it.
     PatcherLogYellow("\tEnqueuing '{}'", file.fServerPath);
-    plFileSystem::CreateDir(file.fClientPath.StripFileName());
+    plFileSystem::CreateDir(file.fClientPath.Normalize().StripFileName());
 
     // If someone registered for SelfPatch notifications, then we should probably
     // let them handle the gruntwork... Otherwise, go nuts!
     if (fSelfPatch) {
-        if (file.fClientPath == plFileSystem::GetCurrentAppPath().GetFileName()) {
+        if (file.fClientPath.Normalize() == plFileSystem::GetCurrentAppPath().GetFileName()) {
             file.fClientPath += ".tmp"; // don't overwrite myself!
             file.fFlags |= kSelfPatch;
         }
