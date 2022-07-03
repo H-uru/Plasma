@@ -151,12 +151,12 @@ static const NetMsgField kAcctActivateRequestFields[] = {
 static const NetMsgField kFileListRequestFields[] = {
     kNetMsgFieldTransId,                                // transId
     NET_MSG_FIELD_STRING(kCli2File_FilenameSize),       // directory
-    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),       // ext
+    NET_MSG_FIELD_STRING(MAX_EXT),                      // ext
 };
 
 static const NetMsgField kFileDownloadRequestFields[] = {
-    kNetMsgFieldTransId,                // transId
-    NET_MSG_FIELD_STRING(MAX_PATH),     // filename
+    kNetMsgFieldTransId,                            // transId
+    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // filename
 };
 
 static const NetMsgField kFileDownloadChunkAckFields[] = {
