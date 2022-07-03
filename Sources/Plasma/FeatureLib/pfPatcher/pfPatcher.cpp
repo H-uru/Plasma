@@ -124,7 +124,7 @@ struct pfPatcherQueuedFile
     uint32_t fFlags;
 
     pfPatcherQueuedFile(Type t, const NetCliFileManifestEntry& file)
-        : fType(t), fClientPath(ST::string::from_utf16(file.clientName)),
+    : fType(t), fClientPath(plFileName(ST::string::from_utf16(file.clientName)).Normalize()),
           fServerPath(ST::string::from_utf16(file.downloadName)), fChecksum(),
           fFileSize(file.fileSize), fZipSize(file.zipSize), fFlags(file.flags)
     {
@@ -550,11 +550,11 @@ void pfPatcherWorker::Run()
 void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
 {
     // Check to see if ours matches
-    plFileInfo mine(file.fClientPath.Normalize());
+    plFileInfo mine(file.fClientPath);
     if (mine.FileSize() == file.fFileSize) {
-        plMD5Checksum cliMD5(file.fClientPath.Normalize());
+        plMD5Checksum cliMD5(file.fClientPath);
         if (cliMD5 == file.fChecksum) {
-            WhitelistFile(file.fClientPath.Normalize(), false);
+            WhitelistFile(file.fClientPath, false);
             return;
         }
     }
@@ -569,12 +569,12 @@ void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
 
     // If you got here, they're different and we want it.
     PatcherLogYellow("\tEnqueuing '{}'", file.fServerPath);
-    plFileSystem::CreateDir(file.fClientPath.Normalize().StripFileName());
+    plFileSystem::CreateDir(file.fClientPath.StripFileName());
 
     // If someone registered for SelfPatch notifications, then we should probably
     // let them handle the gruntwork... Otherwise, go nuts!
     if (fSelfPatch) {
-        if (file.fClientPath.Normalize() == plFileSystem::GetCurrentAppPath().GetFileName()) {
+        if (file.fClientPath == plFileSystem::GetCurrentAppPath().GetFileName()) {
             file.fClientPath += ".tmp"; // don't overwrite myself!
             file.fFlags |= kSelfPatch;
         }
