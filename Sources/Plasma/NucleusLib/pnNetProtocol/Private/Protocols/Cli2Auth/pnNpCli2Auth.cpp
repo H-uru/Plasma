@@ -106,8 +106,8 @@ static const NetMsgField kAcctCreateFromKeyRequestFields[] = {
 static const NetMsgField kPlayerCreateRequestFields[] = {
     kNetMsgFieldTransId,                            // transId
     NET_MSG_FIELD_STRING(kMaxPlayerNameLength),     // playerName
-    NET_MSG_FIELD_STRING(MAX_PATH),                 // avatarShape
-    NET_MSG_FIELD_STRING(MAX_PATH),                 // friendInvite
+    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // avatarShape
+    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // friendInvite
 };
 
 static const NetMsgField kPlayerDeleteRequestFields[] = {
@@ -149,9 +149,9 @@ static const NetMsgField kAcctActivateRequestFields[] = {
 };
 
 static const NetMsgField kFileListRequestFields[] = {
-    kNetMsgFieldTransId,                // transId
-    NET_MSG_FIELD_STRING(MAX_PATH),     // directory
-    NET_MSG_FIELD_STRING(MAX_EXT),      // ext
+    kNetMsgFieldTransId,                                // transId
+    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),       // directory
+    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),       // ext
 };
 
 static const NetMsgField kFileDownloadRequestFields[] = {
@@ -201,15 +201,15 @@ static const NetMsgField kVaultNodeFetchFields[] = {
 };
 
 static const NetMsgField kVaultInitAgeRequestFields[] = {
-    kNetMsgFieldTransId,                        // transId
-    kNetMsgFieldUuid,                           // ageInstId
-    kNetMsgFieldUuid,                           // parentAgeInstId
-    NET_MSG_FIELD_STRING(MAX_PATH),             // ageFilename
-    NET_MSG_FIELD_STRING(MAX_PATH),             // ageInstName
-    NET_MSG_FIELD_STRING(MAX_PATH),             // ageUserName
-    NET_MSG_FIELD_STRING(1024),                 // ageDesc
-    NET_MSG_FIELD_DWORD(),                      // ageSequenceNumber
-    NET_MSG_FIELD_DWORD(),                      // ageLanguage
+    kNetMsgFieldTransId,                            // transId
+    kNetMsgFieldUuid,                               // ageInstId
+    kNetMsgFieldUuid,                               // parentAgeInstId
+    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // ageFilename
+    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // ageInstName
+    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // ageUserName
+    NET_MSG_FIELD_STRING(1024),                     // ageDesc
+    NET_MSG_FIELD_DWORD(),                          // ageSequenceNumber
+    NET_MSG_FIELD_DWORD(),                          // ageLanguage
 };
 
 static const NetMsgField kVaultNodeFindFields[] = {

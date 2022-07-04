@@ -144,7 +144,7 @@ struct BuildIdRequestTrans : NetFileTrans {
 struct ManifestRequestTrans : NetFileTrans {
     FNetCliFileManifestRequestCallback  m_callback;
     void *                              m_param;
-    char16_t                            m_group[MAX_PATH];
+    char16_t                            m_group[kCli2File_FilenameSize];
     unsigned                            m_buildId;
 
     std::vector<NetCliFileManifestEntry>  m_manifest;
@@ -909,7 +909,7 @@ inline size_t FIXME_u16snlen(const char16_t* str, size_t maxlen)
 //============================================================================
 void ReadStringFromMsg(const char16_t* curMsgPtr, char16_t* destPtr, unsigned* length) {
     if (!(*length)) {
-        size_t maxlen = FIXME_u16snlen(curMsgPtr, MAX_PATH - 1);   // Hacky sack
+        size_t maxlen = FIXME_u16snlen(curMsgPtr, kCli2File_FilenameSize - 1);   // Hacky sack
         (*length) = maxlen;
         destPtr[maxlen] = 0;    // Don't do this on fixed length, because there's no room for it
     }

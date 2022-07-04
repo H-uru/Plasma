@@ -91,8 +91,8 @@ void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback)
 // Manifest
 //============================================================================
 struct NetCliFileManifestEntry {
-    char16_t    clientName[MAX_PATH]; // path and file on client side (for comparison)
-    char16_t    downloadName[MAX_PATH]; // path and file on server side (for download)
+    char16_t    clientName[kCli2File_FilenameSize]; // path and file on client side (for comparison)
+    char16_t    downloadName[kCli2File_FilenameSize]; // path and file on server side (for download)
     char16_t    md5[32];
     char16_t    md5compressed[32]; // md5 for the compressed file
     unsigned    fileSize;

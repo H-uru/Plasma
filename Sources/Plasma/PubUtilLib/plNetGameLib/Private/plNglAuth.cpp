@@ -530,7 +530,7 @@ struct FileListRequestTrans : NetAuthTrans {
     FNetCliAuthFileListRequestCallback  m_callback;
     void *                              m_param;
 
-    char16_t                            m_directory[MAX_PATH];
+    char16_t                            m_directory[kCli2File_FilenameSize];
     char16_t                            m_ext[MAX_EXT];
 
     std::vector<NetCliAuthFileInfo>       m_fileInfoArray;
@@ -3040,7 +3040,7 @@ bool FileListRequestTrans::Recv (
             }
 
             // read in the filename
-            char16_t filename[MAX_PATH];
+            char16_t filename[kCli2File_FilenameSize];
             StrCopy(filename, curChar, std::size(filename));
             filename[std::size(filename) - 1] = L'\0'; // make sure it's terminated
 
@@ -3114,7 +3114,7 @@ bool FileDownloadRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    char16_t filename[MAX_PATH] {};
+    char16_t filename[kCli2File_FilenameSize] {};
     const ST::utf16_buffer buffer = m_filename.AsString().to_utf16();
     memcpy(filename, buffer.data(), std::min(sizeof(filename), buffer.size() * sizeof(char16_t)));
 
