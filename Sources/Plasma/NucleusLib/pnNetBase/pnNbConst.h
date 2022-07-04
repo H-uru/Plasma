@@ -49,15 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-// FIXME: Remove all Windows assumptions in the net code
-#ifndef MAX_PATH
-#   define MAX_PATH 260
-#endif
-
 //============================================================================
 // Network constants
 //============================================================================
 const unsigned kMaxTcpPacketSize                = 1460;
+const unsigned kNetDefaultStringSize            = 260;
 
 //============================================================================
 // Crypto constants

@@ -124,7 +124,7 @@ struct pfPatcherQueuedFile
     uint32_t fFlags;
 
     pfPatcherQueuedFile(Type t, const NetCliFileManifestEntry& file)
-        : fType(t), fClientPath(ST::string::from_utf16(file.clientName)),
+    : fType(t), fClientPath(plFileName(ST::string::from_utf16(file.clientName)).Normalize()),
           fServerPath(ST::string::from_utf16(file.downloadName)), fChecksum(),
           fFileSize(file.fileSize), fZipSize(file.zipSize), fFlags(file.flags)
     {

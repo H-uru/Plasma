@@ -355,7 +355,7 @@ void NetCliAuthGetEncryptionKey (
 // File List
 //============================================================================
 struct NetCliAuthFileInfo {
-    char16_t    filename[MAX_PATH];
+    char16_t    filename[kNetDefaultStringSize];
     unsigned    filesize;
 };
 typedef void (*FNetCliAuthFileListRequestCallback)(

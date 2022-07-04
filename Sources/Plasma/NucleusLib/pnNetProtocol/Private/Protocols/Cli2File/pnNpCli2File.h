@@ -141,7 +141,7 @@ struct Cli2File_BuildIdRequest : Cli2File_MsgHeader {
 // ManifestRequest
 struct Cli2File_ManifestRequest : Cli2File_MsgHeader {
     uint32_t       transId;
-    char16_t       group[MAX_PATH];
+    char16_t       group[kNetDefaultStringSize];
     unsigned    buildId; // 0 = newest
 };
 struct Cli2File_ManifestEntryAck : Cli2File_MsgHeader {
@@ -152,7 +152,7 @@ struct Cli2File_ManifestEntryAck : Cli2File_MsgHeader {
 // FileDownloadRequest
 struct Cli2File_FileDownloadRequest : Cli2File_MsgHeader {
     uint32_t    transId;
-    char16_t    filename[MAX_PATH];
+    char16_t    filename[kNetDefaultStringSize];
     unsigned    buildId; // 0 = newest
 };
 struct Cli2File_FileDownloadChunkAck : Cli2File_MsgHeader {
