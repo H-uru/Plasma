@@ -377,12 +377,6 @@ constexpr float hsDegreesToRadians(float deg) { return deg * (hsConstants::pi<fl
 constexpr float hsRadiansToDegrees(float rad) { return rad * (180.f / hsConstants::pi<float>); }
 constexpr float hsInvert(float a) { return 1.f / a; }
 
-#ifdef _MSC_VER
-#   define ALIGN(n) __declspec(align(n))
-#else
-#   define ALIGN(n) __attribute__((aligned(n)))
-#endif
-
 /************************ Debug/Error Macros **************************/
 
 typedef void (*hsDebugMessageProc)(const char message[]);

@@ -8840,8 +8840,8 @@ static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMat
                              uint8_t* dest, uint32_t destStride, uint32_t count,
                              uint16_t localUVWChans)
 {
-    ALIGN(16) float pt_buf[] = { 0.f, 0.f, 0.f, 1.f };
-    ALIGN(16) float vec_buf[] = { 0.f, 0.f, 0.f, 0.f };
+    alignas(16) float pt_buf[] = { 0.f, 0.f, 0.f, 1.f };
+    alignas(16) float vec_buf[] = { 0.f, 0.f, 0.f, 0.f };
     hsPoint3*       pt = reinterpret_cast<hsPoint3*>(pt_buf);
     hsVector3*      vec = reinterpret_cast<hsVector3*>(vec_buf);
 
@@ -8871,8 +8871,8 @@ static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMat
         src = inlExtract<hsVector3>(src, vec);
 
         // Destination buffers (float4 for SSE alignment)
-        ALIGN(16) float destNorm_buf[] = { 0.f, 0.f, 0.f, 0.f };
-        ALIGN(16) float destPt_buf[] = { 0.f, 0.f, 0.f, 1.f };
+        alignas(16) float destNorm_buf[] = { 0.f, 0.f, 0.f, 0.f };
+        alignas(16) float destPt_buf[] = { 0.f, 0.f, 0.f, 1.f };
 
         // Blend
         for (uint32_t j = 0; j < numWeights + 1; ++j) {
