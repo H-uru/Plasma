@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFontFreeType.h"
 
+#include <memory>
+
 #include "ft2build.h"
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
@@ -101,9 +103,9 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
         FT_ULong        ftChar;
         FT_UInt         ftIndex;
         uint32_t        numGlyphs = 0, totalHeight = 0, maxChar = 0, i;
-        FT_Glyph        ftGlyphs[ kMaxGlyphs ];
-        uint16_t        glyphChars[ kMaxGlyphs ];
-        FT_Vector       ftAdvances[ kMaxGlyphs ];
+        auto            ftGlyphs = std::make_unique<FT_Glyph[]>(kMaxGlyphs);
+        auto            glyphChars = std::make_unique<uint16_t[]>(kMaxGlyphs);
+        auto            ftAdvances = std::make_unique<FT_Vector[]>(kMaxGlyphs);
         FT_BBox         ftGlyphBox, ftFontBox;
 
 
@@ -226,12 +228,11 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
             ch->fHeight = ftBitmap->bitmap.rows;
 
             // Copy data straight through to our bitmap
-            int y;
             uint8_t *srcData = (uint8_t *)ftBitmap->bitmap.buffer;
 
             uint32_t bytesWide = ( fBPP == 1 ) ? ( ( ftBitmap->bitmap.width + 7 ) >> 3 ) : ftBitmap->bitmap.width;
 
-            for( y = 0; y < ch->fHeight; y++ )
+            for (uint32_t y = 0; y < ch->fHeight; y++)
             {
                 memcpy( ourBitmap, srcData, bytesWide );
                 srcData += ftBitmap->bitmap.pitch;
