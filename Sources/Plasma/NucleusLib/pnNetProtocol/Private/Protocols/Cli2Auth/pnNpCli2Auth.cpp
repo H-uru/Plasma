@@ -106,8 +106,8 @@ static const NetMsgField kAcctCreateFromKeyRequestFields[] = {
 static const NetMsgField kPlayerCreateRequestFields[] = {
     kNetMsgFieldTransId,                            // transId
     NET_MSG_FIELD_STRING(kMaxPlayerNameLength),     // playerName
-    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // avatarShape
-    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // friendInvite
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // avatarShape
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // friendInvite
 };
 
 static const NetMsgField kPlayerDeleteRequestFields[] = {
@@ -150,13 +150,13 @@ static const NetMsgField kAcctActivateRequestFields[] = {
 
 static const NetMsgField kFileListRequestFields[] = {
     kNetMsgFieldTransId,                                // transId
-    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),       // directory
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),       // directory
     NET_MSG_FIELD_STRING(MAX_EXT),                      // ext
 };
 
 static const NetMsgField kFileDownloadRequestFields[] = {
     kNetMsgFieldTransId,                            // transId
-    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // filename
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // filename
 };
 
 static const NetMsgField kFileDownloadChunkAckFields[] = {
@@ -204,9 +204,9 @@ static const NetMsgField kVaultInitAgeRequestFields[] = {
     kNetMsgFieldTransId,                            // transId
     kNetMsgFieldUuid,                               // ageInstId
     kNetMsgFieldUuid,                               // parentAgeInstId
-    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // ageFilename
-    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // ageInstName
-    NET_MSG_FIELD_STRING(kCli2File_FilenameSize),   // ageUserName
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // ageFilename
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // ageInstName
+    NET_MSG_FIELD_STRING(kNetDefaultStringSize),    // ageUserName
     NET_MSG_FIELD_STRING(1024),                     // ageDesc
     NET_MSG_FIELD_DWORD(),                          // ageSequenceNumber
     NET_MSG_FIELD_DWORD(),                          // ageLanguage

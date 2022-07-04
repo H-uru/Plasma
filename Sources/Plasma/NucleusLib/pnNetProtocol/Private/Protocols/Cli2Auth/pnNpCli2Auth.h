@@ -326,8 +326,8 @@ struct Cli2Auth_PlayerCreateRequest {
     uint32_t       messageId;
     uint32_t       transId;
     char16_t       playerName[kMaxPlayerNameLength];
-    char16_t       avatarShape[kCli2File_FilenameSize];
-    char16_t       friendInvite[kCli2File_FilenameSize];
+    char16_t       avatarShape[kNetDefaultStringSize];
+    char16_t       friendInvite[kNetDefaultStringSize];
 };
 
 extern const NetMsg kNetMsg_Cli2Auth_PlayerDeleteRequest;
@@ -392,7 +392,7 @@ extern const NetMsg kNetMsg_Cli2Auth_FileListRequest;
 struct Cli2Auth_FileListRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    char16_t       directory[kCli2File_FilenameSize];
+    char16_t       directory[kNetDefaultStringSize];
     char16_t       ext[MAX_EXT];
 };
 
@@ -401,7 +401,7 @@ extern const NetMsg kNetMsg_Cli2Auth_FileDownloadRequest;
 struct Cli2Auth_FileDownloadRequest {
     uint32_t       messageId;
     uint32_t       transId;
-    char16_t       filename[kCli2File_FilenameSize];
+    char16_t       filename[kNetDefaultStringSize];
 };
 
 // FileDownloadChunkAck
@@ -473,9 +473,9 @@ struct Cli2Auth_VaultInitAgeRequest {
     uint32_t       transId;
     plUUID      ageInstId;
     plUUID      parentAgeInstId;
-    char16_t       ageFilename[kCli2File_FilenameSize];
-    char16_t       ageInstName[kCli2File_FilenameSize];
-    char16_t       ageUserName[kCli2File_FilenameSize];
+    char16_t       ageFilename[kNetDefaultStringSize];
+    char16_t       ageInstName[kNetDefaultStringSize];
+    char16_t       ageUserName[kNetDefaultStringSize];
     char16_t       ageDesc[1024];
     uint32_t       ageSequenceNumber;
     uint32_t       ageLanguage;

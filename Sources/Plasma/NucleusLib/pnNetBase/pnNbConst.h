@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Network constants
 //============================================================================
 const unsigned kMaxTcpPacketSize                = 1460;
-const unsigned kCli2File_FilenameSize           = 260;
+const unsigned kNetDefaultStringSize            = 260;
 
 //============================================================================
 // Crypto constants
