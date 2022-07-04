@@ -50,6 +50,12 @@ static constexpr unsigned int   kMaxWorkerThreads   = 32;
 static constexpr int            kTcpSndBufSize      = 64*1024-1;
 static constexpr int            kTcpRcvBufSize      = 64*1024-1;
 
+// wait before checking for backlog problems
+static const unsigned   kBacklogInitMs      = 3*60*1000;
+
+// destroy a connection if it has a backlog "problem"
+static const unsigned   kBacklogFailMs      = 2*60*1000;
+
 static constexpr unsigned int   kMinBacklogBytes    = 4 * 1024;
 
 struct AsyncIoPool
@@ -120,6 +126,7 @@ struct WriteOperation
 {
     unsigned int            fAllocSize;
     AsyncNotifySocketWrite  fNotify;
+    unsigned                queueTimeMs;
 
     WriteOperation() : fAllocSize() { }
 
@@ -140,11 +147,12 @@ struct AsyncSocketStruct
     uint8_t                     fBuffer[kAsyncSocketBufferSize];
     size_t                      fBytesLeft;
     std::list<WriteOperation *> fWriteOps;
+    unsigned                    initTimeMs;
 
     AsyncSocketStruct(ConnectOperation* op)
         : fSock(std::move(op->fSock)), fNotifyProc(op->fNotifyProc),
           fParam(op->fParam), fConnectionType(op->fConnectionType),
-          fUserState(), fBuffer(), fBytesLeft()
+          fUserState(), fBuffer(), fBytesLeft(), initTimeMs()
     { }
 };
 
@@ -280,6 +288,8 @@ static bool SocketInitConnect(ConnectOperation* op)
 {
     // This steals ownership of op->fSock
     auto sock = std::make_unique<AsyncSocketStruct>(op);
+    
+    sock->initTimeMs    = TimeGetMs();
 
     asio::error_code err;
     sock->fSock.non_blocking(true, err);
@@ -444,8 +454,30 @@ void AsyncSocketDisconnect(AsyncSocket conn, bool hardClose)
 
 static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned bytes)
 {
-    // TODO: Backlog shit
     hsLockGuard(s_connectCrit);
+    
+    // check for data backlog
+    WriteOperation * firstQueuedWrite = conn->fWriteOps.front();
+    if  (firstQueuedWrite) {
+        unsigned currTimeMs = TimeGetMs();
+        if (((long) (currTimeMs - firstQueuedWrite->queueTimeMs) >= (long) kBacklogFailMs)
+        &&  ((long) (currTimeMs - conn->initTimeMs) >= (long) kBacklogInitMs)
+        ) {
+            PerfAddCounter(kAsyncPerfSocketDisconnectBacklog, 1);
+
+            if (firstQueuedWrite->fNotify.bytes) {
+                LogMsg(
+                    kLogPerf,
+                    "Backlog, c:{} q:{}, i:{}",
+                       firstQueuedWrite->fNotify.buffer[0],
+                    currTimeMs - firstQueuedWrite->queueTimeMs,
+                    currTimeMs - conn->initTimeMs
+                );
+            }
+            AsyncSocketDisconnect((AsyncSocket) conn, true);
+            return false;
+        }
+    }
 
     // If the last buffer still has space available then add data to it
     if (!conn->fWriteOps.empty()) {
@@ -473,6 +505,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
         op->fNotify.buffer = membuf + sizeof(WriteOperation);
         op->fNotify.bytes = bytes;
         op->fNotify.bytesProcessed = 0;
+        op->queueTimeMs = TimeGetMs();
         memcpy(op->fNotify.buffer, data, bytes);
 
         PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytes);
@@ -481,8 +514,10 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
     std::vector<asio::const_buffer> allWrites;
     allWrites.reserve(conn->fWriteOps.size());
     for (WriteOperation* op : conn->fWriteOps) {
-        allWrites.emplace_back(op->AsBuffer());
-        op->fNotify.bytesCommitted = op->fNotify.bytes;
+        if (op->fNotify.bytes - op->fNotify.bytesCommitted > 0) {
+            allWrites.emplace_back(op->AsBuffer());
+            op->fNotify.bytesCommitted = op->fNotify.bytes;
+        }
     }
     async_write(conn->fSock, allWrites, [conn, allWrites](const asio::error_code& err, size_t bytes) {
         hsLockGuard(s_connectCrit);
