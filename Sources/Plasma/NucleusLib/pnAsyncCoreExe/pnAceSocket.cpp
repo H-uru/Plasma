@@ -116,6 +116,7 @@ struct ConnectOperation
     void*                   fParam;
     std::vector<uint8_t>    fConnectBuffer;
     unsigned int            fConnectionType;
+    std::recursive_mutex    critsect;
 
     ConnectOperation(asio::io_context& context)
         : fSock(context), fCancelId(), fParam(), fConnectionType()
@@ -148,11 +149,12 @@ struct AsyncSocketStruct
     size_t                      fBytesLeft;
     std::list<WriteOperation *> fWriteOps;
     unsigned                    initTimeMs;
+    unsigned                    closeTimeMs;
 
     AsyncSocketStruct(ConnectOperation* op)
         : fSock(std::move(op->fSock)), fNotifyProc(op->fNotifyProc),
           fParam(op->fParam), fConnectionType(op->fConnectionType),
-          fUserState(), fBuffer(), fBytesLeft(), initTimeMs()
+          fUserState(), fBuffer(), fBytesLeft(), initTimeMs(), closeTimeMs()
     { }
 };
 
@@ -162,6 +164,13 @@ static std::recursive_mutex         s_connectCrit;
 static std::list<ConnectOperation*> s_connectList;
 static unsigned                     s_nextConnectCancelId = 1;
 
+const unsigned kCloseTimeoutMs = 8*1000;
+static std::recursive_mutex         s_socketCrit;
+static AsyncTimer *                 s_socketTimer;
+static std::list<AsyncSocket>       s_socketList;
+
+static unsigned SocketCloseTimerCallback (void *);
+
 void SocketInitialize()
 {
     if (s_ioPool)
@@ -169,7 +178,10 @@ void SocketInitialize()
 
     s_ioPool = new AsyncIoPool;
 
-    // TODO: Start Socket Close Timer...
+    s_socketTimer = AsyncTimerCreate(
+        SocketCloseTimerCallback,
+        kAsyncTimeInfinite
+    );
 }
 
 void SocketDestroy(unsigned exitThreadWaitMs)
@@ -430,6 +442,46 @@ static void HardCloseSocket(AsyncSocket conn)
         LogMsg(kLogError, "Failed to close socket: {}", err.message());
 }
 
+//===========================================================================
+static unsigned SocketCloseTimerCallback (void *) {
+    std::vector<AsyncSocket> sockets;
+
+    unsigned sleepMs;
+    unsigned currTimeMs = TimeGetMs();
+    {
+        hsLockGuard(s_connectCrit);
+
+        for (;;) {
+            // If there are no more sockets pending destruction then
+            // wait forever; the timer will be restarted when the
+            // next socket is queued onto the list.
+            AsyncSocket sock = s_socketList.front();
+            if (!sock) {
+                sleepMs = kAsyncTimeInfinite;
+                break;
+            }
+
+            // Wait until the socket close timer expires
+            if (0 < (signed) (sleepMs = sock->closeTimeMs - currTimeMs))
+                break;
+
+            if (sock->fSock.is_open())
+                sockets.push_back(sock);
+
+            // To avoid a race condition, this unlink must occur
+            // after the socket handle has been cleared
+            s_socketList.pop_front();
+        }
+    }
+
+    // Abortive close all open sockets; any unsent data is lost
+    for (AsyncSocket cur : sockets)
+        HardCloseSocket(cur);
+
+    // Don't run too frequently
+    return std::max(sleepMs, 2000u);
+}
+
 void AsyncSocketDisconnect(AsyncSocket conn, bool hardClose)
 {
     if (!conn->fSock.is_open())
@@ -445,10 +497,30 @@ void AsyncSocketDisconnect(AsyncSocket conn, bool hardClose)
     // TODO: Force hard close if graceful shutdown was already attempted...
     if (hardClose) {
         HardCloseSocket(conn);
-    } else {
+        conn->closeTimeMs |= 1;
+    }
+    else if (!conn->closeTimeMs) {
+        // The socket hasn't been closed previously; perform shutdown,
+        // and mark the socket closed with a time value that indicates
+        // its ordering in s_socketList;
         conn->fSock.shutdown(asio::socket_base::shutdown_send, err);
         if (err)
             LogMsg(kLogError, "Failed to shutdown socket: {}", err.message());
+        
+        // Add the socket to the close list in sorted order by close time;
+        // if this socket is the first on the list then start the timer
+        bool startTimer;
+        {
+            hsLockGuard(s_socketCrit);
+            s_socketList.push_back(conn);
+            startTimer = s_socketList.front() == conn;
+        }
+        
+        // If this is the first item queued in the socket list then start timer.
+        // This operation should be safe to perform outside the critical section
+        // because s_socketTimer should not be deleted before application shutdown
+        if (startTimer)
+            AsyncTimerUpdate(s_socketTimer, kCloseTimeoutMs);
     }
 }
 
@@ -465,11 +537,11 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
         ) {
             PerfAddCounter(kAsyncPerfSocketDisconnectBacklog, 1);
 
-            if (firstQueuedWrite->fNotify.bytes) {
+            if (conn->fConnectionType) {
                 LogMsg(
                     kLogPerf,
                     "Backlog, c:{} q:{}, i:{}",
-                       firstQueuedWrite->fNotify.buffer[0],
+                    conn->fConnectionType,
                     currTimeMs - firstQueuedWrite->queueTimeMs,
                     currTimeMs - conn->initTimeMs
                 );
@@ -530,6 +602,12 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
             bytes -= opBytesWritten;
             if  (op->fNotify.bytes == op->fNotify.bytesProcessed) {
                 conn->fWriteOps.pop_front();
+                
+                // callback notification procedure if requested
+                if (0) {
+                    if (!conn->fNotifyProc((AsyncSocket) conn, kNotifySocketWrite, &op->fNotify, &conn->fUserState))
+                        AsyncSocketDisconnect((AsyncSocket) conn, false);
+                }
             }
         }
     });
