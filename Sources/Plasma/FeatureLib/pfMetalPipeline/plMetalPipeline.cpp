@@ -1562,6 +1562,11 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
            &&lay->GetOpacity() <= 0
            &&(fCurrLightingMethod != plSpan::kLiteVtxPreshaded) ) {
             
+            //FIXME: All these popping of layers in the return sections is getting ugly
+            
+            lay = IPopOverAllLayer(lay);
+            lay = IPopOverBaseLayer(lay);
+            
             return false;
         }
         
