@@ -1461,19 +1461,6 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
 
     hsGMatState s;
     s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
-    
-    /*
-     If the layer opacity is 0, don't draw it. This prevents it from contributing to the Z buffer.
-     This can happen with some models like the fire marbles in the neighborhood that have some models
-     for physics only, and then can block other rendering in the Z buffer.
-     DX pipeline does this in ILoopOverLayers.
-     */
-    if( (s.fBlendFlags & hsGMatState::kBlendAlpha)
-       &&lay->GetOpacity() <= 0
-       &&(fCurrLightingMethod != plSpan::kLiteVtxPreshaded) ) {
-        
-        return false;
-    }
 
     IHandleZMode(s);
     IHandleBlendMode(s);
@@ -1564,6 +1551,19 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
         ICalcLighting(mRef, lay, currSpan);
         
         s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
+        
+        /*
+         If the layer opacity is 0, don't draw it. This prevents it from contributing to the Z buffer.
+         This can happen with some models like the fire marbles in the neighborhood that have some models
+         for physics only, and then can block other rendering in the Z buffer.
+         DX pipeline does this in ILoopOverLayers.
+         */
+        if( (s.fBlendFlags & hsGMatState::kBlendAlpha)
+           &&lay->GetOpacity() <= 0
+           &&(fCurrLightingMethod != plSpan::kLiteVtxPreshaded) ) {
+            
+            return false;
+        }
         
         if (s.fBlendFlags & hsGMatState::kBlendInvertVtxAlpha)
             fCurrentRenderPassUniforms->invVtxAlpha = true;
