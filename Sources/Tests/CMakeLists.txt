@@ -10,7 +10,7 @@ set(gtest_build_tests OFF CACHE INTERNAL "Override gtest default")
 set(gtest_disable_pthreads OFF CACHE INTERNAL "Override gtest default")
 set(gtest_hide_internal_symbols ON CACHE INTERNAL "Override gtest default")
 
-set(GOOGLETEST_VERSION 1.10.0)
+set(GOOGLETEST_VERSION 1.12.1)
 set(INSTALL_GTEST OFF CACHE INTERNAL "Override gtest default" FORCE)
 add_subdirectory(gtest EXCLUDE_FROM_ALL)
 
