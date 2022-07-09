@@ -231,6 +231,7 @@ jobs:
       - name: Configure
         run: |
           cmake \
+            -G Xcode \
             -DCMAKE_BUILD_TYPE=${{ matrix.cfg.type }} \
             -DCMAKE_FIND_FRAMEWORK=LAST \
             -DPLASMA_BUILD_TESTS=ON \
