@@ -423,6 +423,8 @@ PyModule_AddObject(m, #pythonClassName, (PyObject*)&pythonClassName##_type)
     static PyObject *pythonClassName##_##methodName(PyObject*, PyObject *argsVar)
 #define PYTHON_METHOD_DEFINITION_STATIC_WKEY(pythonClassName, methodName, argsVar, keywordsVar) \
     static PyObject *pythonClassName##_##methodName(PyObject*, PyObject *argsVar, PyObject *keywordsVar)
+#define PYTHON_METHOD_DEFINITION_STATIC_NOARGS(pythonClassName, methodName) \
+    static PyObject *pythonClassName##_##methodName(pythonClassName *self)
 #define PYTHON_METHOD_DEFINITION_WKEY(pythonClassName, methodName, argsVar, keywordsVar) \
     static PyObject *pythonClassName##_##methodName(pythonClassName *self, PyObject *argsVar, PyObject *keywordsVar)
 
@@ -467,6 +469,10 @@ static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 #define PYTHON_METHOD_STATIC_WKEY(pythonClassName, methodName, docString) \
     {#methodName, (PyCFunction)pythonClassName##_##methodName, METH_STATIC | METH_VARARGS | METH_KEYWORDS, docString}
 
+// static method with no arguments
+#define PYTHON_METHOD_STATIC_NOARGS(pythonClassName, methodName, docString) \
+    {#methodName, (PyCFunction)pythonClassName##_##methodName, METH_STATIC | METH_NOARGS, docString}
+
 // method with keywords
 #define PYTHON_METHOD_WKEY(pythonClassName, methodName, docString) \
     {#methodName, (PyCFunction)pythonClassName##_##methodName, METH_VARARGS | METH_KEYWORDS, docString}
@@ -486,6 +492,12 @@ static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 // getter function definition
 #define PYTHON_GET_DEFINITION(pythonClassName, attribName) \
     static PyObject *pythonClassName##_get##attribName(pythonClassName *self, void *closure)
+
+#define PYTHON_GET_DEFINITION_PROXY(pythonClassName, attribName, getterFunction) \
+static PyObject* pythonClassName##_get##attribName(pythonClassName* self, void*) \
+{                                                                                \
+    return plPython::ConvertFrom(self->fThis->getterFunction());                 \
+}                                                                                //
 
 // setter function definition
 #define PYTHON_SET_DEFINITION(pythonClassName, attribName, valueVarName) \
