@@ -74,7 +74,7 @@ protected:
 
 public:
     pfMarkerInfo(const hsPoint3& pos, bool isNew);
-    ~pfMarkerInfo() {}
+    ~pfMarkerInfo() { Remove(); }
 
     static void Init();
 
