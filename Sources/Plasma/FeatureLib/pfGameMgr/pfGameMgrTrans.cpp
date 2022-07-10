@@ -39,23 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// These take a long time to compile so I'm putting them here so they won't be
-// rebuilt unless completely necessary -Colin
 
-#include "HeadSpin.h"
+#include "pfGameMgrTrans.h"
 
-#include "pnNucleusCreatables.h"
-#include "plAllCreatables.h"
+#include "pnGameMgr/pnGameMgr.h"
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+#include "plNetGameLib/plNetGameLib.h"
+
+// ===========================================================================
+
+void pfGameMgrTrans::ISend(GameMsgHeader* msg, size_t bufsz)
+{
+    msg->messageBytes = bufsz;
+    msg->transId = fTransId;
+    msg->recvGameId = fGameId;
+    NetCliGameSendGameMgrMsg(msg);
+}

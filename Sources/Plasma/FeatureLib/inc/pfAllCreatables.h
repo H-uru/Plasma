@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
+#include "pfGameMgr/pfGameMgrCreatable.h"
 
 #ifdef PLASMA_PIPELINE_GL
     #include "pfGLPipeline/pfGLPipelineCreatable.h"

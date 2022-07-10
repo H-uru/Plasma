@@ -34,6 +34,7 @@ target_link_libraries(
         pnNetBase
     PRIVATE
         pnAsyncCore
+        pnGameMgr
         pnNetBase
         pnNetCli
         pnNetCommon

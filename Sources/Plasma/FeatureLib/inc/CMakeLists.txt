@@ -12,6 +12,7 @@ target_link_libraries(pfFeatureInc
         pfConditional
         pfConsole
         pfGameGUIMgr
+        pfGameMgr
         pfJournalBook
         pfMessage
         pfPython

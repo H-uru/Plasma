@@ -150,6 +150,12 @@ enum EScoreTimePeriods {
 
 enum EServerCaps {
     kCapsScoreLeaderBoards = 0,
+    kCapsGameMgrBlueSpiral,
+    kCapsGameMgrClimbingWall,
+    kCapsGameMgrHeek,
+    kCapsGameMgrMarker,
+    kCapsGameMgrTTT,
+    kCapsGameMgrVarSync,
 };
 
 

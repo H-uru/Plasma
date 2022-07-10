@@ -39,23 +39,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// These take a long time to compile so I'm putting them here so they won't be
-// rebuilt unless completely necessary -Colin
 
-#include "HeadSpin.h"
+#include "pyGameMgr.h"
 
-#include "pnNucleusCreatables.h"
-#include "plAllCreatables.h"
+#include "pyEnum.h"
+#include "plPythonConvert.h"
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+#include <string_theory/string>
+
+#include "pnGameMgr/pnGameMgrConst.h"
+
+// ===========================================================================
+
+void pyGameMgr::AddPlasmaGameConstantsClasses(PyObject* m)
+{
+    PYTHON_ENUM_START(PtGameJoinError)
+    PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinSuccess, EGameJoinError::kGameJoinSuccess)
+    PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinErrNotExist, EGameJoinError::kGameJoinErrNotExist)
+    PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinErrInitFailed, EGameJoinError::kGameJoinErrInitFailed)
+    PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinErrGameStarted, EGameJoinError::kGameJoinErrGameStarted)
+    PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinErrGameOver, EGameJoinError::kGameJoinErrGameOver)
+    PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinErrMaxPlayers, EGameJoinError::kGameJoinErrMaxPlayers)
+    PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinErrAlreadyJoined, EGameJoinError::kGameJoinErrAlreadyJoined)
+    PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinErrNoInvite, EGameJoinError::kGameJoinErrNoInvite)
+    PYTHON_ENUM_ELEMENT(PtGameJoinError, kNumGameJoinErrors, EGameJoinError::kNumGameJoinErrors)
+    PYTHON_ENUM_ELEMENT(PtGameJoinError, kGameJoinPending, EGameJoinError::kGameJoinPending)
+    PYTHON_ENUM_END(m, PtGameJoinError)
+}

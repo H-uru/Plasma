@@ -39,23 +39,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// These take a long time to compile so I'm putting them here so they won't be
-// rebuilt unless completely necessary -Colin
 
-#include "HeadSpin.h"
+#include "pyGameCli.h"
 
-#include "pnNucleusCreatables.h"
-#include "plAllCreatables.h"
+#include <Python.h>
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+#include "pfGameMgr/pfGameCli.h"
+
+// ===========================================================================
+
+uint32_t pyGameCli::GetGameID() const
+{
+    return fCli->GetGameID();
+}
+
+PyObject* pyGameCli::GetHandler() const
+{
+    Py_RETURN_NONE;
+}
+
+uint32_t pyGameCli::GetOwnerID() const
+{
+    return fCli->GetOwnerID();
+}
+
+bool pyGameCli::IsLocallyOwned() const
+{
+    return fCli->IsLocallyOwned();
+}
+
+void pyGameCli::LeaveGame()
+{
+    fCli->LeaveGame();
+}

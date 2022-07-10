@@ -39,23 +39,64 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// These take a long time to compile so I'm putting them here so they won't be
-// rebuilt unless completely necessary -Colin
+
+#ifndef _pfGameMgr_h_
+#define _pfGameMgr_h_
 
 #include "HeadSpin.h"
+#include "hsRefCnt.h"
 
-#include "pnNucleusCreatables.h"
-#include "plAllCreatables.h"
+#include <atomic>
+#include <map>
+#include <memory>
+#include <type_traits>
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+#include "pfGameMgrTrans.h"
+
+class pfGameMgr
+{
+    std::atomic<uint32_t> fTransId;
+    std::map<uint32_t, std::unique_ptr<pfGameMgrTrans>> fTransactions;
+    std::map<uint32_t, hsRef<pfGameCli>> fGameClis;
+
+    template<typename _MsgT>
+    void Recv(const _MsgT& msg) = delete;
+
+    static void RecvGameMgrMsg(struct GameMsgHeader* msg);
+
+protected:
+    friend class pfGameCli;
+
+    template<typename _TransT, typename... _ArgsT>
+    _TransT* CreateTransaction(_ArgsT&&... args)
+    {
+        uint32_t transId = fTransId++;
+        auto [transIt, happned] = fTransactions.try_emplace(
+            transId,
+            std::make_unique<_TransT>(std::forward<_ArgsT>(args)...)
+        );
+        transIt->second->fTransId = transId;
+        return (_TransT*)transIt->second.get();
+    }
+
+    template<typename _TransT, typename... _ArgsT>
+    void SendTransaction(_ArgsT&&... args)
+    {
+        static_assert(std::is_base_of_v<pfGameMgrTrans, _TransT>, "Transactions must be subclasses of pfGameMgrTrans");
+
+        _TransT* trans = CreateTransaction<_TransT>(std::forward<_ArgsT>(args)...);
+        trans->Send();
+    }
+
+public:
+    pfGameMgr();
+    pfGameMgr(const pfGameMgr&) = delete;
+    pfGameMgr(pfGameMgr&&) = delete;
+    ~pfGameMgr();
+
+public:
+    static pfGameMgr* GetInstance();
+    static void Shutdown();
+};
+
+#endif

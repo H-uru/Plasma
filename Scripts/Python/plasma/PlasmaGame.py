@@ -1,4 +1,5 @@
-/*==LICENSE==*
+# -*- coding: utf-8 -*-
+""" *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
 Copyright (C) 2011  Cyan Worlds, Inc.
@@ -38,24 +39,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       14617 N Newport Hwy
       Mead, WA   99021
 
-*==LICENSE==*/
-// These take a long time to compile so I'm putting them here so they won't be
-// rebuilt unless completely necessary -Colin
+ *==LICENSE==* """
 
-#include "HeadSpin.h"
+from __future__ import annotations
+from typing import *
 
-#include "pnNucleusCreatables.h"
-#include "plAllCreatables.h"
+class ptGameCli:
+    """Abstract bass class for legacy game clients."""
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+    gameID: int = ...
+    """The ID of the game instance on the server."""
+
+    handler: Any = ...
+    """The game event handler."""
+
+    isLocallyOwned: bool = ...
+    """Whether or not we are the owner of this game instance."""
+
+    ownerID: int = ...
+    """The ID of the player who owns this game instance."""
+
+    def leaveGame(self) -> None:
+        """Explicitly ask the server to allow us to leave the game."""
+        ...

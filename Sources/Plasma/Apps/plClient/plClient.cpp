@@ -139,6 +139,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #include "pfDXPipeline/plDXPipeline.h"
 #endif
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
+#include "pfGameMgr/pfGameMgr.h"
 #ifdef PLASMA_PIPELINE_GL
     #include "pfGLPipeline/plGLPipeline.h"
 #endif
@@ -244,6 +245,9 @@ bool plClient::Shutdown()
 
     // This guy may send callbacks that release resources
     pfConfirmationMgr::Shutdown();
+
+    // Same as above
+    pfGameMgr::Shutdown();
 
     // Must kill off all movies before shutting down audio.
     IKillMovies();
