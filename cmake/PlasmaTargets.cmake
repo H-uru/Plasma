@@ -89,13 +89,19 @@ endfunction()
 
 function(plasma_library TARGET)
     cmake_parse_arguments(PARSE_ARGV 1 _plib
-        "UNITY_BUILD;SHARED;NO_SANITIZE"
+        "UNITY_BUILD;OBJECT;SHARED;NO_SANITIZE"
         ""
         "PRECOMPILED_HEADERS;SOURCES"
     )
 
+    if(_plib_SHARED AND _plib_OBJECT)
+        message(AUTHOR_WARNING "Library ${TARGET} is both an OBJECT and SHARED library. These options are mutually exclusive.")
+    endif()
+
     if(_plib_SHARED)
         set(libtype SHARED)
+    elseif(_plib_OBJECT)
+        set(libtype OBJECT)
     else()
         set(libtype STATIC)
     endif()
