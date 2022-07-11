@@ -156,7 +156,7 @@ bool plRenderTriListFunc::RenderPrims() const
 
 
 
-plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode) :   pl3DPipeline(devMode), fRenderTargetRefList(), fMatRefList(), fPipelineState(nullptr), fCurrentRenderPassUniforms(nullptr), currentDrawableCallback(nullptr), fFragFunction(nullptr), fVShaderRefList(nullptr), fPShaderRefList(nullptr), fULutTextureRef(nullptr)
+plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode) :   pl3DPipeline(devMode), fRenderTargetRefList(), fMatRefList(), fPipelineState(nullptr), fCurrentRenderPassUniforms(nullptr), currentDrawableCallback(nullptr), fFragFunction(nullptr), fVShaderRefList(nullptr), fPShaderRefList(nullptr), fULutTextureRef(nullptr), fCurrRenderLayer()
 {
     fTextureRefList = nullptr;
     fVtxBuffRefList = nullptr;
@@ -1455,12 +1455,16 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
     plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
     
     fCurrLayerIdx = mRef->GetPassIndex(pass);
-    //plLayerInterface* lay = material->GetLayer(mRef->GetPassIndex(pass));
     plLayerInterface *lay = material->GetLayer(mRef->GetPassIndex(pass));
 
 
     hsGMatState s;
     s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
+    
+    if( s.fZFlags & hsGMatState::kZIncLayer )
+        ISetLayer(1);
+    else
+        ISetLayer(0);
 
     IHandleZMode(s);
     IHandleBlendMode(s);
@@ -1474,6 +1478,7 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
         ISetCullMode();
     }
     
+    s = 0;
     
     //Some build passes don't allow shaders. Render the geometry and the provided material, but don't allow the shader path if instructed to. In the DX source, this would be done by the render phase setting the shaders to null after calling this. That won't work here in since our pipeline state has to know the shaders.
     if(lay->GetVertexShader() && allowShaders) {
@@ -2066,8 +2071,7 @@ void plMetalPipeline::IHandleZMode(hsGMatState flags)
     switch (flags.fZFlags & hsGMatState::kZMask)
     {
         case hsGMatState::kZClearZ:
-            //FIXME: Clear should actually clear the Z target
-            newDepthState = fDevice.fNoZReadStencilState;
+            fDevice.Clear(false, {0.0f, 0.0f, 0.0f, 0.0f}, true, 0.0);
             break;
         case hsGMatState::kZNoZRead:
             newDepthState = fDevice.fNoZReadStencilState;
@@ -2094,10 +2098,26 @@ void plMetalPipeline::IHandleZMode(hsGMatState flags)
         fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(newDepthState);
         fCurrentDepthStencilState = newDepthState;
     }
+}
 
-    if (flags.fZFlags & hsGMatState::kZIncLayer) {
-        fDevice.CurrentRenderCommandEncoder()->setDepthBias(0.0, -2.0, -2.0);
-    } else {
+//// ISetLayer ////////////////////////////////////////////////////////////////
+// Sets whether we're rendering a base layer or upper layer. Upper layer has
+// a Z bias to avoid Z fighting.
+void plMetalPipeline::ISetLayer( uint32_t lay )
+{
+    if( lay )
+    {
+        if( fCurrRenderLayer != lay )
+        {
+            fCurrRenderLayer = lay;
+
+            plCONST(int) kBiasMult = 8;
+            fDevice.CurrentRenderCommandEncoder()->setDepthBias(0.0, -kBiasMult, -kBiasMult);
+        }
+    }
+    else if( fCurrRenderLayer != 0 )
+    {
+        fCurrRenderLayer = 0;
         fDevice.CurrentRenderCommandEncoder()->setDepthBias(0.0, 0.0, 0.0);
     }
 }
@@ -4158,8 +4178,10 @@ bool plMetalPipeline::IIsViewLeftHanded()
 void plMetalPipeline::ISetCullMode(bool flip)
 {
     MTL::CullMode newCullMode = !IIsViewLeftHanded() ^ !flip ? MTL::CullModeFront : MTL::CullModeBack;
-    fDevice.CurrentRenderCommandEncoder()->setCullMode(newCullMode);
-    fCurrentCullMode = newCullMode;
+    if (fCurrentCullMode != newCullMode) {
+        fDevice.CurrentRenderCommandEncoder()->setCullMode(newCullMode);
+        fCurrentCullMode = newCullMode;
+    }
 }
 
 plMetalDevice* plMetalPipeline::GetMetalDevice()

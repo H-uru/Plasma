@@ -241,6 +241,8 @@ private:
     
     void ResetMetalStateTracking();
     
+    void ISetLayer( uint32_t lay );
+    
     // Shadows
     std::vector<plRenderTarget*>       fRenderTargetPool512;
     std::vector<plRenderTarget*>       fRenderTargetPool256;
@@ -252,6 +254,8 @@ private:
     
     std::vector<plLightInfo*>  fProjEach;
     std::vector<plLightInfo*>  fProjAll;
+    
+    uint32_t fCurrRenderLayer;
     
     void PushCurrentLightSources();
     void PopCurrentLightSources();
