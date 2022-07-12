@@ -197,7 +197,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     DeleteObject( hFont );
 
     return data;
-#elif defined(HS_BUILD_FOR_MACOS)
+#elif defined(HS_BUILD_FOR_APPLE)
     int     nHeight, x, y, c;
     char    myChar[ 2 ] = "x";
     uint16_t  *tBits;
@@ -217,7 +217,7 @@ uint16_t  *plTextFont::IInitFontTexture()
 
     // Create a new DC and bitmap that we can draw characters to
     CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-    CGContextRef bitmapContext = CGBitmapContextCreate(NULL,
+    CGContextRef bitmapContext = CGBitmapContextCreate(nullptr,
                                                 fTextureWidth,
                                                 fTextureHeight,
                                                 8,
