@@ -231,6 +231,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     
     bitmapBits = (uint32_t *)CGBitmapContextGetData(bitmapContext);
 
+    //TEMPORARY: Mac client should vend through better data to make this decision
     nHeight = (fSize * 192.0f) / 72.0f;
     fFontHeight = nHeight;
 
