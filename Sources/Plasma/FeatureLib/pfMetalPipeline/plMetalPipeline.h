@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Metal/Metal.hpp>
 #include "ShaderTypes.h"
 
+#include <optional>
+
 class plIcicle;
 class plPlate;
 class plMetalMaterialShaderRef;
@@ -164,11 +166,6 @@ private:
     MTL::RenderPipelineState*       fPipelineState;
     VertexUniforms*                 fCurrentRenderPassUniforms;
     
-    //cache to prevent oversetting, Metal won't catch this for us and will encode extra work
-    const MTL::RenderPipelineState*       fCurrentPipelineState;
-    MTL::Buffer*                          fCurrentVertexBuffer;
-    MTL::DepthStencilState*         fCurrentDepthStencilState;
-    
     void FindFragFunction();
     
     void ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj = false);
@@ -217,8 +214,6 @@ private:
     
     plMetalVertexShader*       fVShaderRefList;
     plMetalFragmentShader*       fPShaderRefList;
-    MTL::CullMode               fCurrentCullMode;
-    
     bool IPrepShadowCaster(const plShadowCaster* caster);
     bool IRenderShadowCaster(plShadowSlave* slave);
     void IPreprocessShadows();
@@ -238,8 +233,6 @@ private:
     void IDisableLightsForShadow();
     void IReleaseRenderTargetPools();
     void IRenderProjectionEach(const plRenderPrimFunc& render, hsGMaterial* material, int iPass, const plSpan& span, const plMetalVertexBufferRef* vRef);
-    
-    void ResetMetalStateTracking();
     
     void ISetLayer( uint32_t lay );
     
@@ -264,6 +257,15 @@ private:
     static plMetalEnumerate enumerator;
     
     NS::AutoreleasePool* fCurrentPool;
+    
+    struct plMetalPipelineCurrentState {
+        std::optional<MTL::CullMode>            fCurrentCullMode;
+        const MTL::RenderPipelineState*         fCurrentPipelineState;
+        MTL::Buffer*                            fCurrentVertexBuffer;
+        MTL::DepthStencilState*                 fCurrentDepthStencilState;
+        
+        void Reset();
+    } fState;
 };
 
 #endif // _plGLPipeline_inc_
