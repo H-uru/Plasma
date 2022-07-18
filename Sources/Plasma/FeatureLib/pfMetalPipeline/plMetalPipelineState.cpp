@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plCubicRenderTarget.h"
 #include "plPipeline/plRenderTarget.h"
 #include "plMetalDevice.h"
+#include "plMetalMaterialShaderRef.h"
 
 size_t plMetalPipelineState::GetHash() const {
     return std::hash<uint8_t>()(GetID());
@@ -92,24 +93,25 @@ void plMetalPipelineState::PrewarmRenderPipelineState() {
 }
 
 
-plMetalMaterialPassPipelineState::plMetalMaterialPassPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef, const plMetalMaterialPassDescription &description)
+plMetalMaterialPassPipelineState::plMetalMaterialPassPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef, const plMetalFragmentShaderDescription &description)
 :   plMetalRenderSpanPipelineState(device, vRef) {
-    fPassDescription = description;
+    fFragmentShaderDescription = description;
+    fFragmentShaderDescription.CacheHash();
 }
 
 void plMetalMaterialPassPipelineState::GetFunctionConstants(MTL::FunctionConstantValues* constants) const
 {
     plMetalRenderSpanPipelineState::GetFunctionConstants(constants);
-    constants->setConstantValue(&fPassDescription.numLayers, MTL::DataTypeUChar, FunctionConstantNumLayers);
-    constants->setConstantValues(&fPassDescription.passTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSources, 8));
-    constants->setConstantValues(&fPassDescription.blendModes, MTL::DataTypeUInt, NS::Range(FunctionConstantBlendModes, 8));
-    constants->setConstantValues(&fPassDescription.miscFlags, MTL::DataTypeUInt, NS::Range(FunctionConstantLayerFlags, 8));
-    constants->setConstantValues(&fPassDescription.sampleTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSampleTypes, 8));
+    constants->setConstantValue(&fFragmentShaderDescription.numLayers, MTL::DataTypeUChar, FunctionConstantNumLayers);
+    constants->setConstantValues(&fFragmentShaderDescription.passTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSources, 8));
+    constants->setConstantValues(&fFragmentShaderDescription.blendModes, MTL::DataTypeUInt, NS::Range(FunctionConstantBlendModes, 8));
+    constants->setConstantValues(&fFragmentShaderDescription.miscFlags, MTL::DataTypeUInt, NS::Range(FunctionConstantLayerFlags, 8));
+    constants->setConstantValues(&fFragmentShaderDescription.sampleTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSampleTypes, 8));
 }
 
 size_t plMetalMaterialPassPipelineState::GetHash() const {
     std::size_t value = plMetalRenderSpanPipelineState::GetHash();
-    value ^= fPassDescription.GetHash();
+    value ^= fFragmentShaderDescription.GetHash();
 
     return value;
 }
@@ -305,33 +307,22 @@ const NS::String* plMetalMaterialPassPipelineState::GetDescription() {
 }
 
 void plMetalMaterialPassPipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) {
-    uint32_t blendMode = fPassDescription.blendModes[0];
+    uint32_t blendMode = fFragmentShaderDescription.blendModes[0];
     ConfigureBlendMode(blendMode, descriptor);
 }
 
-void plMetalMaterialPassDescription::Populate(plLayerInterface* layPtr, uint8_t index) {
-    if (layPtr == nullptr) {
-        blendModes[index] = 0;
-        miscFlags[index] = 0;
-        passTypes[index] = 0;
-    }
-    
+void plMetalFragmentShaderDescription::Populate(plLayerInterface* layPtr, uint8_t index) {
     blendModes[index] = layPtr->GetBlendFlags();
     miscFlags[index] = layPtr->GetMiscFlags();
     
     plBitmap* texture = layPtr->GetTexture();
     if (texture != nullptr) {
-        plMetalTextureRef* texRef = (plMetalTextureRef*)texture->GetDeviceRef();
-        if(texRef->fTexture) {
-        
-        plMetalTextureRef *deviceTexture = (plMetalTextureRef *)texture->GetDeviceRef();
         if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
             passTypes[index] = PassTypeCubicTexture;
         } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
             passTypes[index] = PassTypeTexture;
         } else {
             passTypes[index] = PassTypeColor;
-        }
         }
         
     } else {
@@ -356,7 +347,7 @@ void plMetalMaterialPassDescription::Populate(plLayerInterface* layPtr, uint8_t 
 }
 
 bool plMetalMaterialPassPipelineState::IsEqual(const plMetalPipelineState &p) const {
-    return plMetalRenderSpanPipelineState::IsEqual(p) && static_cast<const plMetalMaterialPassPipelineState*>(&p)->fPassDescription == this->fPassDescription;
+    return plMetalRenderSpanPipelineState::IsEqual(p) && static_cast<const plMetalMaterialPassPipelineState*>(&p)->fFragmentShaderDescription == this->fFragmentShaderDescription;
 }
 
 

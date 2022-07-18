@@ -45,8 +45,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGMatState.h"
 #include "plMetalDeviceRef.h"
 #include "ShaderTypes.h"
+#include "plMetalPipelineState.h"
 
 #include <map>
+#include <vector>
 
 class hsGMaterial;
 class plMetalPipeline;
@@ -76,9 +78,11 @@ public:
     void CheckMateralRef();
     
     size_t GetNumPasses() const { return fNumPasses; }
-    size_t GetPassIndex(size_t which) const { return fPassIndices[which]; }
     
-    void EncodeArguments(MTL::RenderCommandEncoder *encoder, VertexUniforms *vertexUniforms, uint pass, std::vector<plLayerInterface*> *piggyBacks, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform);
+    size_t GetPassIndex(size_t which) const { return fPassIndices[which]; }
+    const std::vector<plLayerInterface *> GetLayersForPass(size_t pass) { return fPasses[pass]; }
+    
+    void EncodeArguments(MTL::RenderCommandEncoder *encoder, VertexUniforms *vertexUniforms, uint pass, plMetalFragmentShaderDescription *passDescription, std::vector<plLayerInterface*> *piggyBacks, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform);
     void FastEncodeArguments(MTL::RenderCommandEncoder *encoder, VertexUniforms *vertexUniforms, uint pass);
     //probably not a good idea to call prepareTextures directly
     //mostly just a hack to keep plates working for now
@@ -90,23 +94,21 @@ public:
     // fMatOverOff overrides to clear a state bit whether it is set in the layer or not.s
     const hsGMatState ICompositeLayerState(const plLayerInterface* layer);
     
-    static plLayerInterface* Passthrough(plLayerInterface* layer, uint32_t index) {
-        return layer;
+    const struct plMetalFragmentShaderDescription GetFragmentShaderDescription(size_t which) {
+        return fFragmentShaderDescriptions[which];
     }
-    void GetSourceArray(uint8_t *array, uint8_t pass);
-    void GetBlendFlagArray(uint32_t *array, uint8_t pass);
-    void GetMiscFlagArray(uint32_t *array, uint8_t pass);
-    void GetSampleTypeArray(uint8_t *array, uint8_t pass);
 private:
     void ILoopOverLayers();
     
     uint32_t fNumPasses;
-    uint32_t IHandleMaterial(uint32_t layer, plMetalFragmentShaderArgumentBuffer *uniforms, std::vector<plLayerInterface*> *piggybacks, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform);
+    uint32_t IHandleMaterial(uint32_t layer, plMetalFragmentShaderDescription *passDescription, plMetalFragmentShaderArgumentBuffer *uniforms, std::vector<plLayerInterface*> *piggybacks, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform);
     bool ICanEatLayer(plLayerInterface* lay);
     uint32_t ILayersAtOnce(uint32_t which);
     
     void IBuildLayerTexture(MTL::RenderCommandEncoder *encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer);
     void EncodeTransform(plLayerInterface* layer, UVOutDescriptor *transform);
+    std::vector<const std::vector<plLayerInterface *>> fPasses;
+    std::vector<struct plMetalFragmentShaderDescription> fFragmentShaderDescriptions;
 };
 
 #endif

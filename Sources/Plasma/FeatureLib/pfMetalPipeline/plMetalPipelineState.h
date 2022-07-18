@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Metal/Metal.hpp>
 
 #include "plMetalDevice.h"
-#include "plMetalMaterialShaderRef.h"
 #include "plSurface/plShaderTable.h"
 
 class plMetalPipelineState {
@@ -112,19 +111,29 @@ protected:
     }
 };
 
-struct plMetalMaterialPassDescription {
+struct plMetalFragmentShaderDescription {
     uint8_t     passTypes[8];
     uint32_t    blendModes[8];
     uint32_t    miscFlags[8];
     uint8_t     sampleTypes[8];
     uint8_t     numLayers;
     
-    bool operator==(const plMetalMaterialPassDescription &p) const {
+    size_t      hash;
+    
+    bool operator==(const plMetalFragmentShaderDescription &p) const {
         bool match = numLayers == p.numLayers && memcmp(passTypes, p.passTypes, sizeof(passTypes)) == 0 && memcmp(blendModes, p.blendModes, sizeof(blendModes)) == 0 && memcmp(miscFlags, p.miscFlags, sizeof(miscFlags)) == 0 && memcmp(sampleTypes, p.sampleTypes, sizeof(sampleTypes)) == 0;
         return match;
     }
     
-    virtual size_t GetHash() const {
+    void CacheHash() {
+        if(!hash)
+            hash = GetHash();
+    }
+    
+    size_t GetHash() const {
+        if(hash)
+            return hash;
+        
         std::size_t value = std::hash<uint8_t>()(numLayers);
         value ^= std::hash<uint8_t>()(numLayers);
         
@@ -151,9 +160,9 @@ struct plMetalMaterialPassDescription {
 };
 
 template<>
-struct std::hash<plMetalMaterialPassDescription>
+struct std::hash<plMetalFragmentShaderDescription>
 {
-    std::size_t operator()(plMetalMaterialPassDescription const& s) const noexcept
+    std::size_t operator()(plMetalFragmentShaderDescription const& s) const noexcept
     {
         return s.GetHash();
     }
@@ -161,7 +170,7 @@ struct std::hash<plMetalMaterialPassDescription>
 
 class plMetalMaterialPassPipelineState: public plMetalRenderSpanPipelineState {
 public:
-    plMetalMaterialPassPipelineState(plMetalDevice* device, const plMetalVertexBufferRef *vRef, const plMetalMaterialPassDescription &description);
+    plMetalMaterialPassPipelineState(plMetalDevice* device, const plMetalVertexBufferRef *vRef, const plMetalFragmentShaderDescription &description);
     virtual size_t GetHash() const override;
     MTL::Function*  GetVertexFunction(MTL::Library* library) override;
     MTL::Function*  GetFragmentFunction(MTL::Library* library) override;
@@ -180,7 +189,7 @@ public:
     ~plMetalMaterialPassPipelineState();
     virtual void GetFunctionConstants(MTL::FunctionConstantValues*) const override;
 protected:
-    plMetalMaterialPassDescription fPassDescription;
+    plMetalFragmentShaderDescription fFragmentShaderDescription;
 };
 
 class plMetalRenderShadowCasterPipelineState: public plMetalRenderSpanPipelineState {
@@ -211,7 +220,7 @@ public:
 
 class plMetalRenderShadowPipelineState: public plMetalMaterialPassPipelineState {
 public:
-    plMetalRenderShadowPipelineState(plMetalDevice* device, plMetalVertexBufferRef *vRef, const plMetalMaterialPassDescription &description)
+    plMetalRenderShadowPipelineState(plMetalDevice* device, plMetalVertexBufferRef *vRef, const plMetalFragmentShaderDescription &description)
     : plMetalMaterialPassPipelineState(device, vRef, description) {
     }
     

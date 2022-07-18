@@ -1180,7 +1180,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
     size_t pass;
     for (pass = 0; pass < mRef->GetNumPasses(); pass++) {
         
-        if ( IHandleMaterial(material, pass, &span, vRef) ) {
+        if ( IHandleMaterialPass(material, pass, &span, vRef) ) {
             render.RenderPrims();
         }
         
@@ -1279,7 +1279,7 @@ void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGM
 
         AppendLayerInterface(&layLightBase, false);
 
-        IHandleMaterial( material, iPass, &span, vRef, false );
+        IHandleMaterialPass( material, iPass, &span, vRef, false );
         
         //FIXME: Hard setting of light
         IScaleLight(mRef, 7, true);
@@ -1394,7 +1394,7 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     
     size_t pass;
     for (pass = 0; pass < mRef->GetNumPasses(); pass++) {
-        IHandleMaterial(material, pass, &span, vRef);
+        IHandleMaterialPass(material, pass, &span, vRef);
         if( aux->fFlags & plAuxSpan::kOverrideLiteModel )
         {
             fCurrentRenderPassUniforms->ambientCol = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -1448,7 +1448,7 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
 
 }
 
-bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, const plSpan *currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders)
+bool plMetalPipeline::IHandleMaterialPass(hsGMaterial *material, uint32_t pass, const plSpan *currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders)
 {
     plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
     
@@ -1579,24 +1579,14 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
         std::vector<plLightInfo*>& spanLights = currSpan->GetLightList(false);
         
         int numActivePiggyBacks = 0;
-        //FIXME: In the DX source, this check was done on the first layer. Does that mean the first layer of the material or the first layer of the pass?
         if( !(s.fMiscFlags & hsGMatState::kMiscBumpChans) && !(s.fShadeFlags & hsGMatState::kShadeEmissive) )
         {
             /// Tack lightmap onto last stage if we have one
             numActivePiggyBacks = fActivePiggyBacks;
-            //if( numActivePiggyBacks > fMaxLayersAtOnce - fCurrNumLayers )
-            //    numActivePiggyBacks = fMaxLayersAtOnce - fCurrNumLayers;
             
         }
         
-        uint8_t sources[8];
-        uint32_t blendModes[8];
-        uint32_t miscFlags[8];
-        uint8_t sampleTypes[8];
-        memset(sources, 0, sizeof(sources));
-        memset(blendModes, 0, sizeof(blendModes));
-        memset(miscFlags, 0, sizeof(miscFlags));
-        memset(sampleTypes, 0, sizeof(sampleTypes));
+        struct plMetalFragmentShaderDescription fragmentShaderDescription;
         
         lay = IPopOverAllLayer(lay);
         lay = IPopOverBaseLayer(lay);
@@ -1604,52 +1594,19 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
         if(numActivePiggyBacks==0 && fOverBaseLayer == nullptr && fOverAllLayer == nullptr) {
             mRef->FastEncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass);
             
-            mRef->GetSourceArray(sources, pass);
-            mRef->GetBlendFlagArray(blendModes, pass);
-            mRef->GetMiscFlagArray(miscFlags, pass);
-            mRef->GetSampleTypeArray(sampleTypes, pass);
+            fragmentShaderDescription = mRef->GetFragmentShaderDescription(pass);
         } else {
         
             //Plasma pulls piggybacks from the rear first, pull the number of active piggybacks
             auto firstPiggyback = fPiggyBackStack.end() - numActivePiggyBacks;
             auto lastPiggyback = fPiggyBackStack.end();
             std::vector<plLayerInterface*> subPiggybacks(firstPiggyback, lastPiggyback);
-            mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &subPiggybacks,
+            mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &fragmentShaderDescription, &subPiggybacks,
                                   [&](plLayerInterface* layer, uint32_t index){
                 if(index==0) {
                     layer = IPushOverBaseLayer(layer);
                 }
                 layer = IPushOverAllLayer(layer);
-                
-                plBitmap* texture = layer->GetTexture();
-                if (texture != nullptr) {
-                    plMetalTextureRef *deviceTexture = (plMetalTextureRef *)texture->GetDeviceRef();
-                    if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
-                        sources[index] = PassTypeCubicTexture;
-                    } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
-                        sources[index] = PassTypeTexture;
-                    }
-                    
-                } else {
-                    sources[index] = PassTypeColor;
-                }
-                blendModes[index] = layer->GetBlendFlags();
-                miscFlags[index] = layer->GetMiscFlags();
-                
-                switch (layer->GetClampFlags()) {
-                case hsGMatState::kClampTextureU:
-                        sampleTypes[index] = 1;
-                    break;
-                case hsGMatState::kClampTextureV:
-                        sampleTypes[index] = 2;
-                    break;
-                case hsGMatState::kClampTexture:
-                        sampleTypes[index] = 3;
-                    break;
-                default:
-                        sampleTypes[index] = 0;
-                        break;
-                }
                 
                 return layer;
             },
@@ -1660,15 +1617,8 @@ bool plMetalPipeline::IHandleMaterial(hsGMaterial *material, uint32_t pass, cons
                 return layer;
             });
         }
-        
-         struct plMetalMaterialPassDescription passDescription;
-         memcpy(passDescription.passTypes, sources, sizeof(sources));
-         memcpy(passDescription.blendModes, blendModes, sizeof(blendModes));
-         memcpy(passDescription.miscFlags, miscFlags, sizeof(miscFlags));
-         memcpy(passDescription.sampleTypes, sampleTypes, sizeof(sampleTypes));
-         passDescription.numLayers = numActivePiggyBacks + mRef->fPassLengths[pass];
          
-         plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalMaterialPassPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();
+         plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalMaterialPassPipelineState(&fDevice, vRef, fragmentShaderDescription).GetRenderPipelineState();
          const MTL::RenderPipelineState *pipelineState = linkedPipeline->pipelineState;
         
         /*plMetalDevice::plMetalLinkedPipeline *pipeline = fDevice.pipelineStateFor(vRef, s.fBlendFlags, numActivePiggyBacks + mRef->fPassLengths[pass], plShaderID::Unregistered, plShaderID::Unregistered, sources, blendModes, miscFlags);
@@ -2108,7 +2058,7 @@ void plMetalPipeline::ISetLayer( uint32_t lay )
             fCurrRenderLayer = lay;
 
             plCONST(int) kBiasMult = 8;
-            fDevice.CurrentRenderCommandEncoder()->setDepthBias(0.0, -kBiasMult, -kBiasMult);
+            fDevice.CurrentRenderCommandEncoder()->setDepthBias(-kBiasMult, -kBiasMult/2, -kBiasMult);
         }
     }
     else if( fCurrRenderLayer != 0 )
@@ -3940,7 +3890,7 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             // in projecting the shadow map onto the scene.
             ISetupShadowLight(fShadows[i]);
             
-            struct plMetalMaterialPassDescription passDescription;
+            struct plMetalFragmentShaderDescription passDescription;
             memset(&passDescription, 0, sizeof(passDescription));
             passDescription.Populate(mat->GetLayer(0), 2);
             passDescription.numLayers = 3;
