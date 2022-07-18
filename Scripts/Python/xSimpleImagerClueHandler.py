@@ -78,9 +78,13 @@ class xSimpleImagerClueHandler:
             if self.baseImager.isLocallyOwned():
                 # if clue currently being shown, turn it off and flip the regularly scheduled imager back on
                 PtDebugPrint("xSimpleImagerClueHandler.UpdateClueState: Turning the clue off now...", level=kWarningLevel)
+                self.clueImager.draw.netForce(True)
                 self.clueImager.draw.disable()
+                self.clueImager.physics.netForce(True)
                 self.clueImager.physics.suppress(True)
+                self.baseImager.draw.netForce(True)
                 self.baseImager.draw.enable()
+                self.baseImager.physics.netForce(True)
                 self.baseImager.physics.suppress(False)
 
             # set alarm to show the clue again if it was on before we turned it off (versus forcing while already off)
@@ -95,9 +99,13 @@ class xSimpleImagerClueHandler:
             if self.baseImager.isLocallyOwned():
                 # it is time for the clue imager to shine!
                 PtDebugPrint("xSimpleImagerClueHandler.UpdateClueState: Turn the clue on now!", level=kWarningLevel)
+                self.clueImager.draw.netForce(True)
                 self.clueImager.draw.enable()
+                self.clueImager.physics.netForce(True)
                 self.clueImager.physics.suppress(False)
+                self.baseImager.draw.netForce(True)
                 self.baseImager.draw.disable()
+                self.baseImager.physics.netForce(True)
                 self.baseImager.physics.suppress(True)
 
             self.isShowing = True

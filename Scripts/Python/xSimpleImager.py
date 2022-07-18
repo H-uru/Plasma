@@ -339,11 +339,11 @@ class xSimpleImager(ptModifier):
                             self.IShowCurrentContent()
                     elif event[1][:9] == "Uploaded=":
                         newID = int(event[1][9:])
-                        if newID == CurrentDisplayedElementID:
-                            if self.clueHandler:
-                                # force the clue imager to turn off so the new upload is visible
-                                self.clueHandler.UpdateClueState(forceOff=True)
-                            self.IShowCurrentContent()
+                        if self.clueHandler:
+                            # force the clue imager to turn off so the new upload is visible
+                            self.clueHandler.UpdateClueState(forceOff=True)
+                        CurrentDisplayedElementID = newID
+                        self.IShowCurrentContent()
                     elif event[1][:7] == "Upload=":
                         deviceName = event[1][7:]
                         nodeId = int(event[3])
