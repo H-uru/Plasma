@@ -57,6 +57,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDebugText.h"
 
+#if defined(HS_BUILD_FOR_APPLE)
+#import <CoreGraphics/CoreGraphics.h>
+#import <CoreText/CoreText.h>
+#endif
+
 #define DisplayableChar(c) (c >= 0 && c <= 128)
 
 //// Constructor & Destructor /////////////////////////////////////////////////
@@ -190,6 +195,118 @@ uint16_t  *plTextFont::IInitFontTexture()
     DeleteObject( hBitmap );
     DeleteDC( hDC );
     DeleteObject( hFont );
+
+    return data;
+#elif defined(HS_BUILD_FOR_APPLE)
+    int     nHeight, x, y, c;
+    char    myChar[ 2 ] = "x";
+    uint16_t  *tBits;
+
+    uint32_t       *bitmapBits;
+    uint32_t        bAlpha;
+
+    
+    // Figure out our texture size
+    if( fSize > 40 )
+        fTextureWidth = fTextureHeight = 1024;
+    else if( fSize > 20 )
+        fTextureWidth = fTextureHeight = 512;
+    else
+        fTextureWidth = fTextureHeight = 256;
+
+
+    // Create a new DC and bitmap that we can draw characters to
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+    CGContextRef bitmapContext = CGBitmapContextCreate(nullptr,
+                                                fTextureWidth,
+                                                fTextureHeight,
+                                                8,
+                                                4 * fTextureWidth,
+                                                colorSpace,
+                                                kCGImageAlphaPremultipliedLast);
+    CFRelease(colorSpace);
+    CGContextSetTextMatrix(bitmapContext, CGAffineTransformMakeScale(1, -1));
+    CGContextTranslateCTM(bitmapContext, 0, fTextureHeight);
+    CGContextScaleCTM(bitmapContext, 1, -1);
+    
+    bitmapBits = (uint32_t *)CGBitmapContextGetData(bitmapContext);
+
+    //TEMPORARY: Mac client should vend through better data to make this decision
+    nHeight = (fSize * 192.0f) / 72.0f;
+    fFontHeight = nHeight;
+
+    CFStringRef fontName = CFStringCreateWithCString(nullptr, fFace, kCFStringEncodingUTF8);
+    CTFontRef font = CTFontCreateWithName(fontName, nHeight, nullptr);
+    hsAssert(font != nullptr, "Cannot create Mac font");
+    CFRelease(fontName);
+
+    // Set text colors
+    CGFloat color[4] = { 255.0f, 255.0f, 255.0f, 255.0f };
+    CGContextSetFillColor(bitmapContext, color);
+
+    // Loop through characters, drawing them one at a time
+    CGRect    r = CGRectMake(0, 0, 10, 10);
+
+    // (Make first character a black dot, for filling rectangles)
+    bitmapBits[0] = UINT32_MAX;
+    for( c = 32, x = 1, y = 0; c < 127; c++ )
+    {
+        myChar[ 0 ] = c;
+        CGGlyph glpyh;
+        CTFontGetGlyphsForCharacters(font, (UniChar *)myChar, &glpyh, 1);
+        CGRect rect;
+        CTFontGetOpticalBoundsForGlyphs(font, &glpyh, &rect, 1, 0);
+        CGSize size = rect.size;
+
+        if( (uint32_t)( x + size.width + 1 ) > fTextureWidth )
+        {
+            x = 0;
+            y += size.height + 1;
+        }
+
+        CGPoint position = CGPointMake(x, -y - size.height - rect.origin.y);
+        CTFontDrawGlyphs(font, &glpyh, &position, 1, bitmapContext);
+
+        fCharInfo[ c ].fW = (uint16_t)size.width;
+        fCharInfo[ c ].fH = (uint16_t)size.height;
+        fCharInfo[ c ].fUVs[ 0 ].fX = (float)x / (float)fTextureWidth;
+        fCharInfo[ c ].fUVs[ 0 ].fY = (float)y / (float)fTextureHeight;
+        fCharInfo[ c ].fUVs[ 1 ].fX = (float)( x + size.width ) / (float)fTextureWidth;
+        fCharInfo[ c ].fUVs[ 1 ].fY = (float)( y + size.height ) / (float)fTextureHeight;
+        fCharInfo[ c ].fUVs[ 0 ].fZ = fCharInfo[ c ].fUVs[ 1 ].fZ = 0;
+
+        x += ceil(size.width) + 1;
+    }
+    fCharInfo[ 32 ].fUVs[ 1 ].fX = fCharInfo[ 32 ].fUVs[ 0 ].fX;
+
+    // Special case the tab key
+    fCharInfo[ '\t' ].fUVs[ 1 ].fX = fCharInfo[ '\t' ].fUVs[ 0 ].fX = fCharInfo[ 32 ].fUVs[ 0 ].fX;
+    fCharInfo[ '\t' ].fUVs[ 1 ].fY = fCharInfo[ '\t' ].fUVs[ 0 ].fY = 0;
+    fCharInfo[ '\t' ].fUVs[ 0 ].fZ = fCharInfo[ '\t' ].fUVs[ 1 ].fZ = 0;
+    fCharInfo[ '\t' ].fW = fCharInfo[ 32 ].fW * 4;
+    fCharInfo[ '\t' ].fH = fCharInfo[ 32 ].fH;
+
+    /// Now create the data block
+    uint16_t  *data = new uint16_t[ fTextureWidth * fTextureHeight ];
+    tBits = data;
+    for( y = 0; y < fTextureHeight; y++ )
+    {
+        for( x = 0; x < fTextureWidth; x++ )
+        {
+            bAlpha = (char)( ( bitmapBits[ fTextureWidth * y + x ] & 0xff ) >> 4 );
+
+            if( bitmapBits[ fTextureWidth * y + x ] )
+                *tBits = 0xffff;
+            else
+                *tBits = 0;
+
+            tBits++;
+        }
+    }
+
+    // Cleanup and return
+    CFRelease(font);
+    CFRelease(bitmapContext);
 
     return data;
 #else
