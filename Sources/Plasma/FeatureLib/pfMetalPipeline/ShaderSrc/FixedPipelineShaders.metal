@@ -733,7 +733,7 @@ fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
     currentColor.rgb *= in.vtxColor.rgb;
     
     const float2 LUTCoords = in.texCoord2.xy;
-    const half4 LUTColor = half4(LUTCoords.x);
+    const half4 LUTColor = clamp(half4(LUTCoords.x), 0.0h, 1.0h);;
     
     currentColor.rgb = (1.0h - LUTColor.rgb) * currentColor.rgb;
     currentColor.a = LUTColor.a - currentColor.a;
