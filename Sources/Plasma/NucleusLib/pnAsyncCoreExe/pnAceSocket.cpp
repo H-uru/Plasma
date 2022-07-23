@@ -116,7 +116,6 @@ struct ConnectOperation
     void*                   fParam;
     std::vector<uint8_t>    fConnectBuffer;
     unsigned int            fConnectionType;
-    std::recursive_mutex    critsect;
 
     ConnectOperation(asio::io_context& context)
         : fSock(context), fCancelId(), fParam(), fConnectionType()
