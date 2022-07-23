@@ -164,8 +164,6 @@ static std::recursive_mutex         s_connectCrit;
 static std::list<ConnectOperation*> s_connectList;
 static unsigned                     s_nextConnectCancelId = 1;
 
-static unsigned SocketCloseTimerCallback (void *);
-
 void SocketInitialize()
 {
     if (s_ioPool)
