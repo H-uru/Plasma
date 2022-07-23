@@ -817,7 +817,7 @@ void plPXPhysicalControllerCore::ICreateController(const hsPoint3& pos)
 
     IDeleteController();
     fController = sim->CreateCharacterController(desc, fWorldKey);
-    plPXFilterData::Initialize(fController->getActor(), plSimDefs::kGroupAvatar, 0, fLOSDB);
+    plPXFilterData::Initialize(fController->getActor(), plSimDefs::kGroupAvatar, 0, fLOSDB, fFlags);
     fController->getActor()->userData = desc.userData;
 
     fFlags &= ~kSeeking;
