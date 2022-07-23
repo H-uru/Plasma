@@ -511,7 +511,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
             op->fNotify.bytesCommitted = op->fNotify.bytes;
         }
     }
-    async_write(conn->fSock, allWrites, [conn, allWrites](const asio::error_code& err, size_t bytes) {
+    async_write(conn->fSock, allWrites, [conn](const asio::error_code& err, size_t bytes) {
         hsLockGuard(s_connectCrit);
         while(bytes != 0) {
             hsAssert(conn->fWriteOps.size() > 0, "buffer mismatch");
