@@ -97,6 +97,7 @@ protected:
     friend class plMetalPlateManager;
     friend class plMetalMaterialShaderRef;
     friend class plRenderTriListFunc;
+    friend class plMetalTextFont;
 
     plMetalMaterialShaderRef*  fMatRefList;
     plMetalRenderTargetRef*    fRenderTargetRefList;
