@@ -51,10 +51,10 @@ static constexpr int            kTcpSndBufSize      = 64*1024-1;
 static constexpr int            kTcpRcvBufSize      = 64*1024-1;
 
 // wait before checking for backlog problems
-static const unsigned   kBacklogInitMs      = 3*60*1000;
+static constexpr unsigned   kBacklogInitMs      = 3*60*1000;
 
 // destroy a connection if it has a backlog "problem"
-static const unsigned   kBacklogFailMs      = 2*60*1000;
+static constexpr unsigned   kBacklogFailMs      = 2*60*1000;
 
 static constexpr unsigned int   kMinBacklogBytes    = 4 * 1024;
 
@@ -202,7 +202,7 @@ static void SocketStartAsyncRead(AsyncSocket sock)
     sock->fSock.async_read_some(asio::buffer(start, count),
                                 [sock](const asio::error_code& err, size_t bytes) {
         if (err) {
-            if(err.value() == asio::error::operation_aborted) {
+            if (err.value() == asio::error::operation_aborted) {
                 if (sock->fNotifyProc) {
                     // We have to be extremely careful from this point because
                     // sockets can be deleted during the notification callback.
@@ -518,12 +518,12 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
         hsLockGuard(s_connectCrit);
         while(bytes != 0) {
             hsAssert(conn->fWriteOps.size() > 0, "buffer mismatch");
-            WriteOperation *op = conn->fWriteOps.front();
+            WriteOperation* op = conn->fWriteOps.front();
             
             size_t opBytesWritten = std::min(bytes, (size_t) op->fNotify.bytes - op->fNotify.bytesProcessed);
             op->fNotify.bytesProcessed += opBytesWritten;
             bytes -= opBytesWritten;
-            if  (op->fNotify.bytes == op->fNotify.bytesProcessed) {
+            if (op->fNotify.bytes == op->fNotify.bytesProcessed) {
                 conn->fWriteOps.pop_front();
             }
         }
