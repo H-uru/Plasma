@@ -247,7 +247,7 @@ class plMetalTextureRef : public plMetalDeviceRef
 public:
     plBitmap*       fOwner;
     
-    uint32_t        fLevels;
+    int32_t        fLevels;
     MTL::Texture*   fTexture;
     MTL::PixelFormat fFormat;
     

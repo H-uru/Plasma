@@ -761,6 +761,10 @@ uint plMetalDevice::ConfigureAllowedLevels(plMetalDevice::TextureRef *tRef, plMi
         while ((mipmap->GetCurrWidth() | mipmap->GetCurrHeight()) & 0x03) {
             tRef->fLevels--;
             hsAssert(tRef->fLevels >= 0, "How was this ever compressed?" );
+            if(tRef->fLevels < 0) {
+                tRef->fLevels = -1;
+                break;
+            }
             mipmap->SetCurrLevel(tRef->fLevels);
         }
     }
@@ -785,6 +789,11 @@ void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef *tRef, plMipmap *i
         uint width = tRef->fTexture->width();
         uint height = tRef->fTexture->height();
 #endif
+        
+        if (tRef->fLevels == -1) {
+            hsAssert(1, "Bad texture found");
+            return;
+        }
         
         for (int lvl = 0; lvl <= tRef->fLevels; lvl++) {
             img->SetCurrLevel(lvl);
@@ -857,8 +866,11 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* im
     tRef->fLevels = img->GetNumLevels() - 1;
     //if(!tRef->fTexture) {
         ConfigureAllowedLevels(tRef, img);
+        
+        bool textureIsValid = tRef->fLevels > 0;
+        
         //texture doesn't exist yet, create it
-        bool supportsMipMap = tRef->fLevels;
+        bool supportsMipMap = tRef->fLevels && textureIsValid;
         MTL::TextureDescriptor *descriptor = MTL::TextureDescriptor::texture2DDescriptor(tRef->fFormat, img->GetWidth(), img->GetHeight(), supportsMipMap);
         descriptor->setUsage(MTL::TextureUsageShaderRead);
         //if device has unified memory, set storage mode to shared

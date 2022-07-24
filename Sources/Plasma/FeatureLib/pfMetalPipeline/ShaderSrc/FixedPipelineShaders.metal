@@ -448,7 +448,12 @@ float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, co
     default:
         {
             const int index = UVWSrc & 0x0F;
-            sampleCoord = matrix * float4(texCoords[index], 1.0);
+            if (index < num_uvs) {
+                sampleCoord = matrix * float4(texCoords[index], 1.0);
+            } else {
+                //The DX engine will use a UV co-ord of 0,0 if the index is out of range
+                sampleCoord = float4(0.0);
+            }
         }
         break;
     }
