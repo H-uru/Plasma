@@ -220,7 +220,7 @@ public:
     void AddToWorld(physx::PxActor* actor, const plKey& world={});
 
     /**
-     * Creates and adds a PhysX Character Controller to a specific wubworld.
+     * Creates and adds a PhysX Character Controller to a specific subworld.
      */
     physx::PxController* CreateCharacterController(physx::PxControllerDesc& desc, const plKey& world={});
 

@@ -176,7 +176,7 @@ public:
             // there are no opposite forces, so continued downward force can cause kickables to be killed through
             // the floor. This is bad news for Eder Gira. But, wait! We would prefer to not be able to ride a
             // kickable rocket up into the sky because of a log bouncing off the ground. Further complicating matters,
-            // small kickables like said logs will pretty much always be considered hit from amove. So that means
+            // small kickables like said logs will pretty much always be considered hit from above. So that means
             //     - Only apply downward forces if we detect the kickable is not already close to the ground.
             //     - If the kickable is flat-ish, we need a fake force based on the avatar's direction of
             //       travel; otherwise, it's simply stuck underneath us.
@@ -192,7 +192,7 @@ public:
             physx::PxSweepHit sweepHit;
             plPXControllerFilterCallback filterCallback;
             bool onGround = physx::PxSceneQueryExt::sweepSingle(
-                *hit.actor->getScene(),
+                *(hit.actor->getScene()),
                 hit.shape->getGeometry().any(),
                 hit.actor->getGlobalPose(),
                 hitDir,
