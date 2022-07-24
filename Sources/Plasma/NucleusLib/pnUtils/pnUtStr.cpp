@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //===========================================================================
 template<class chartype>
-static void IStrCopy (chartype * dest, const chartype source[], unsigned chars) {
+static void IStrCopy (chartype * dest, const chartype source[], size_t chars) {
     while ((chars > 1) && ((*dest = *source++) != 0)) {
         --chars;
         ++dest;
@@ -80,11 +80,11 @@ static void IStrCopy (chartype * dest, const chartype source[], unsigned chars) 
 ***/
 
 //===========================================================================
-void StrCopy (char * dest, const char source[], unsigned chars) {
+void StrCopy (char * dest, const char source[], size_t chars) {
     IStrCopy(dest, source, chars);
 }
 
 //===========================================================================
-void StrCopy (char16_t * dest, const char16_t source[], unsigned chars) {
+void StrCopy (char16_t * dest, const char16_t source[], size_t chars) {
     IStrCopy(dest, source, chars);
 }

@@ -55,6 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-void StrCopy (char * dest, const char source[], unsigned chars);
-void StrCopy (char16_t * dest, const char16_t source[], unsigned chars);
+void StrCopy (char * dest, const char source[], size_t chars);
+void StrCopy (char16_t * dest, const char16_t source[], size_t chars);
 #endif
