@@ -55,6 +55,7 @@ from PlasmaKITypes import *
 from PlasmaVaultConstants import *
 
 import xCensor
+from xSimpleImagerClueHandler import *
 
 # vault callback contexts
 kAddingDevice           = 1
@@ -73,6 +74,9 @@ ImagerMax = ptAttribInt( 7, "Maximum number of images",default=5)
 ImagerButtonResp = ptAttribResponder(8,"start or stop the button animation",['buttonOn','buttonOff'])
 ImagerInboxVariable = ptAttribString(9,"Inbox SDL variable (optional)")
 ImagerPelletUpload = ptAttribBoolean(10, "Pellet Score Imager?", 0)
+ImagerClueObject = ptAttribSceneobject(11, "Imager Object (for puzzle clue)")
+ImagerClueTime = ptAttribInt(12, "Number of seconds until clue image shows",default=870)
+ImagerRandomTime = ptAttribInt(13, "Random number added to make timer more variable",default=0)
 #----------
 # globals
 #----------
@@ -113,6 +117,8 @@ class xSimpleImager(ptModifier):
         self.version = 3
         PtDebugPrint("xSimpleImager: init  version=%d.%d"%(self.version,2),level=kWarningLevel)
 
+        self.clueHandler = None
+
     def vaultOperationStarted(self,context):
         PtDebugPrint("xSimpleImager: vaultOperationStarted(%s)"%(context),level=kDebugDumpLevel)
 
@@ -151,7 +157,7 @@ class xSimpleImager(ptModifier):
                 Instance.IRefreshImagerFolder()
                 Instance.IChangeCurrentContent()
                 # set up our timer callback
-                # set the current timer value to 
+                # set the current timer value to flip to the next image
                 kFlipImagesTimerCurrent = (kFlipImagesTimerCurrent + 1) % kFlipImagesTimerStates
                 PtAtTimeCallback(Instance.key,ImagerTime.value,kFlipImagesTimerCurrent)
                 # turn button animation off
@@ -177,7 +183,10 @@ class xSimpleImager(ptModifier):
             ageVault.addDevice(ImagerName.value, self, kAddingDevice)
         else:
             PtDebugPrint("xSimpleImager: There was no imager name!",level=kErrorLevel)
-    
+
+        if ImagerClueObject.sceneobject is not None:
+            self.clueHandler = xSimpleImagerClueHandler(ImagerObject.sceneobject, ImagerMax.value, ImagerClueObject.sceneobject, ImagerClueTime.value, ImagerRandomTime.value)
+
     def OnServerInitComplete(self):
         if AgeStartedIn == PtGetAgeName():
             if ImagerInboxVariable.value:
@@ -218,13 +227,20 @@ class xSimpleImager(ptModifier):
         global ImagerContents
         global CurrentContentIdx
         global kFlipImagesTimerCurrent
-        
+
         if id == kFlipImagesTimerCurrent:
-            if len(ImagerContents) > 0:
-                CurrentContentIdx += 1
-                if CurrentContentIdx >= len(ImagerContents):
-                    CurrentContentIdx = 0
-            self.IChangeCurrentContent()
+            if self.clueHandler:
+                # let the clue handler have priority to deal with its own state first
+                self.clueHandler.UpdateClueState()
+
+            if not self.clueHandler or not self.clueHandler.isShowing:
+                if len(ImagerContents) > 0:
+                    CurrentContentIdx += 1
+                    if CurrentContentIdx >= len(ImagerContents):
+                        CurrentContentIdx = 0
+                self.IChangeCurrentContent()
+
+            # set the timer for the next flip
             PtAtTimeCallback(self.key,ImagerTime.value,kFlipImagesTimerCurrent)
 
     def OnVaultEvent(self,event,tupdata):
@@ -323,8 +339,11 @@ class xSimpleImager(ptModifier):
                             self.IShowCurrentContent()
                     elif event[1][:9] == "Uploaded=":
                         newID = int(event[1][9:])
-                        if newID == CurrentDisplayedElementID:
-                            self.IShowCurrentContent()
+                        if self.clueHandler:
+                            # force the clue imager to turn off so the new upload is visible
+                            self.clueHandler.UpdateClueState(forceOff=True)
+                        CurrentDisplayedElementID = newID
+                        self.IShowCurrentContent()
                     elif event[1][:7] == "Upload=":
                         deviceName = event[1][7:]
                         nodeId = int(event[3])
