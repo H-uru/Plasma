@@ -321,7 +321,8 @@ bool pfMarkerMgr::MsgReceive(plMessage* msg)
         {
             uint32_t id;
             pfMarkerInfo* marker = IFindMarker(cloneKey, id);
-            marker->InitSpawned(cloneKey);
+            if (marker)
+                marker->InitSpawned(cloneKey);
         }
 
         return true;
