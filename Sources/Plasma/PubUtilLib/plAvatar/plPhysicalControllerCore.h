@@ -66,13 +66,14 @@ struct plControllerHitRecord
     plKey PhysHit;
     hsPoint3 Point;
     hsVector3 Normal;
+    hsVector3 Direction;
     float Displacement;
 
     plControllerHitRecord()
-        : Point(), Normal(), Displacement()
+        : Point(), Normal(), Direction(), Displacement()
     { }
-    plControllerHitRecord(plKey physHit, const hsPoint3& p, const hsVector3& n, float d=0.f)
-        : PhysHit(std::move(physHit)), Point(p), Normal(n), Displacement(d)
+    plControllerHitRecord(plKey physHit, const hsPoint3& p, const hsVector3& n, const hsVector3& d={}, float l = 0.f)
+        : PhysHit(std::move(physHit)), Point(p), Normal(n), Direction(d), Displacement(l)
     {
     }
 
@@ -101,6 +102,13 @@ public:
          * The character's brain is seeking or otherwise moving on autopilot to a specific point.
          */
         kSeeking = (1<<1),
+    };
+
+    enum Collisions
+    {
+        kBottom = (1<<0),
+        kTop = (1<<1),
+        kSides = (1<<2),
     };
 
 public:
@@ -138,8 +146,8 @@ public:
     virtual void GetPositionSim(hsPoint3& pos) = 0;
     virtual void SetPositionSim(const hsPoint3& pos) = 0;
 
-    /** Sets the linear velocity in simulation space. */
-    virtual void SetLinearVelocitySim(const hsVector3& velocity) = 0;
+    /** Moves the controller using a collide and slide algorithm. */
+    virtual Collisions Move(const hsVector3& velocity, float delSecs, plSimDefs::Group colGroups) = 0;
 
     /**
      * Sweeps the character's capsule from startPos through endPos and reports all hits
@@ -232,6 +240,11 @@ public:
     bool GetFacingPushingPhysical() const { return fFacingPushingPhysical; }
     void SetFacingPushingPhysical(bool facing) { fFacingPushingPhysical = facing; }
 
+    /**
+     * Gets the key of the physical representing the ground collision.
+     */
+    virtual plKey GetGround() const = 0;
+
     // Controller dimensions
     float GetRadius() const { return fRadius; }
     float GetHeight() const { return fHeight; }
@@ -287,6 +300,9 @@ public:
     virtual void AddContact(plPhysical* phys, const hsPoint3& pos, const hsVector3& normal) { }
     virtual void Reset(bool newAge);
 
+    virtual bool IsRiding() const { return false; }
+    virtual bool AllowSliding() const { return true; }
+
 protected:
     plPhysicalControllerCore* fController;
 };
@@ -312,23 +328,6 @@ private:
 
 class plWalkingStrategy : public plAnimatedMovementStrategy
 {
-protected:
-    std::optional<plControllerHitRecord> IFindGroundCandidate() const;
-
-    /**
-     * Checks the ground's steepness and trigger character falling, if needed.
-     */
-    void ICheckGroundSteepness(const plControllerHitRecord& ground);
-
-    /**
-     * Steps the character up due to poorly modelled collision, if needed.
-     */
-    void IStepUp(const plControllerHitRecord& ground, float delSecs);
-
-    float GetFallStopThreshold() const { return std::cos(hsDegreesToRadians(40.f)); }
-
-    float GetFallStartThreshold() const { return std::cos(hsDegreesToRadians(57.f)); }
-
 public:
     plWalkingStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller);
 
@@ -344,7 +343,7 @@ public:
     bool HitGroundInThisAge() const { return fFlags & kHitGroundInThisAge; }
     bool IsOnGround() const
     {
-        if ((fFlags & kGroundContact) && !(fFlags & kFallingNormal))
+        if (fFlags & kGroundContact)
             return true;
         return fTimeInAir < kAirTimeThreshold;
     }
@@ -364,25 +363,29 @@ public:
     plPhysical* GetPushingPhysical() const;
     bool GetFacingPushingPhysical() const;
 
+    bool IsRiding() const override { return fFlags & kRidePlatform; }
+
+    /**
+     * Disallow PhysX's built-in sliding algorithm.
+     * Empirical results show that PhysX's built-in sliding along
+     * non-walkable surfaces will trigger getting stuck on some
+     * slightly smaller than 90 degree colliders.
+     */
+    bool AllowSliding() const override { return false; }
+
 protected:
     enum
     {
         /** Indicates that the character is standing on a valid platform. */
         kGroundContact = (1<<0),
 
-        /**
-         * Indicates that the character's platform is too steep to remain on and we should
-         * fall along it.
-         */
-        kFallingNormal = (1<<1),
-
-        kHitGroundInThisAge = (1<<2),
-        kClearImpact = (1<<3),
+        kHitGroundInThisAge = (1<<1),
+        kClearImpact = (1<<2),
 
         /**
          * Indicates the character should inherit the X/Y velocity of any platform it stands on.
          */
-        kRidePlatform = (1<<4),
+        kRidePlatform = (1<<3),
 
         kResetMask = kGroundContact,
     };

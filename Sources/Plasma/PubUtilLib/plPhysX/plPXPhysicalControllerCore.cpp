@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plPXPhysicalControllerCore.h"
+#include "plKickableLog.h"
 #include "plPXConvert.h"
 #include "plPhysXAPI.h"
 #include "plPXPhysical.h"
@@ -47,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPXSimulation.h"
 #include "plPXSubWorld.h"
 #include "plSimulationMgr.h"
+
+#include <cmath>
 
 #include "pnMessage/plSetNetGroupIDMsg.h"
 #include "pnSceneObject/plCoordinateInterface.h"
@@ -58,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plCollideMsg.h"
 #include "plModifier/plDetectorLog.h"
 #include "plPhysical/plPhysicalProxy.h"
+#include "plStatusLog/plStatusLog.h"
 #include "plSurface/hsGMaterial.h"      // For our proxy
 #include "plSurface/plLayerInterface.h" // For our proxy
 
@@ -68,6 +72,19 @@ static std::vector<plPXPhysicalControllerCore*> gControllers;
 #ifndef PLASMA_EXTERNAL_RELEASE
 bool plPXPhysicalControllerCore::fDebugDisplay = false;
 #endif // PLASMA_EXTERNAL_RELEASE
+
+constexpr float kSlopeLimit = 55.f;
+constexpr float kContactOffset = 0.1f;
+constexpr float kStepOffset = 0.4f;
+
+/**
+ * The expected maximum height of a "small" kickable.
+ * Small kickables are things like firemarbles, sticks, rocks, and leaves that
+ * we could simply run over without kicking. Small kickables use a less accurate
+ * but more likely to succeed direction vector to allow them to be kicked.
+ * \note The fish baskets in Eder Gira are 2.4ft tall.
+ */
+constexpr float kSmallKickableThreshold = 1.5f;
 
 // ==========================================================================
 
@@ -101,17 +118,217 @@ public:
 
 // ==========================================================================
 
+class plPXControllerHitReport : public physx::PxUserControllerHitReport
+{
+protected:
+    void IApplyHitForce(physx::PxRigidBody* body, const physx::PxExtendedVec3& worldPos, physx::PxVec3 force) const
+    {
+        // This is (supposedly) the avatar's mass. I intended for this to be the mass unit
+        // for an eIMPULSE force, but the results of that suck. It works great as a scale
+        // for eVELOCITY_CHANGE, however.
+        force *= 120.f;
+
+        // Nuts, eVELOCITY_CHANGE forces are banned in PxRigidBodyExt::addForceAtPos().
+        // So, do it manually here so we can use any mode we want.
+        physx::PxTransform globalPose = body->getGlobalPose();
+        physx::PxVec3 centerOfMass = globalPose.transform(body->getCMassLocalPose().p);
+        physx::PxVec3 torque = (physx::toVec3(worldPos) - centerOfMass).cross(force);
+        body->addForce(force, physx::PxForceMode::eVELOCITY_CHANGE);
+        body->addTorque(torque, physx::PxForceMode::eVELOCITY_CHANGE);
+        plKickableLog_Green(
+            "Applying force ({.2f}, {.2f}, {.2f})",
+            force.x, force.y, force.z
+        );
+        plKickableLog_Green(
+            "Applying torque ({.2f}, {.2f}, {.2f})",
+            torque.x, torque.y, torque.z
+        );
+    }
+
+public:
+    void onShapeHit(const physx::PxControllerShapeHit& hit) override
+    {
+        plPXActorData* controller = static_cast<plPXActorData*>(hit.controller->getUserData());
+        plPXActorData* actor = static_cast<plPXActorData*>(hit.actor->userData);
+        if (controller == nullptr || actor == nullptr)
+            return;
+
+        controller->GetController()->AddContact(
+            actor->GetPhysical(),
+            plPXConvert::ExtPoint(hit.worldPos),
+            plPXConvert::Vector(hit.worldNormal),
+            plPXConvert::Vector(hit.dir),
+            hit.length
+        );
+
+        // Apply some hit force to kickables - the avatar is not actually a simulated body,
+        // so we fake it using some back-of-napkin math here.
+        if (actor->GetPhysical()->IsDynamic()) {
+            physx::PxRigidDynamic* dynamic = static_cast<physx::PxRigidDynamic*>(hit.actor);
+            plKickableLog_White("-----");
+            plKickableLog_Yellow(
+                "Controller '{}' hit dynamic '{}'\nDirection: ({.2f}, {.2f}, {.2f}), Length: {.2f}",
+                controller->str(), actor->str(), hit.dir.x, hit.dir.y, hit.dir.z, hit.length
+            );
+
+            // We need to be careful about when we apply vertical force. In the real world, if you stand
+            // on the ground, you push down on it, and the ground pushes back up on you. In the simulation,
+            // there are no opposite forces, so continued downward force can cause kickables to be killed through
+            // the floor. This is bad news for Eder Gira. But, wait! We would prefer to not be able to ride a
+            // kickable rocket up into the sky because of a log bouncing off the ground. Further complicating matters,
+            // small kickables like said logs will pretty much always be considered hit from above. So that means
+            //     - Only apply downward forces if we detect the kickable is not already close to the ground.
+            //     - If the kickable is flat-ish, we need a fake force based on the avatar's direction of
+            //       travel; otherwise, it's simply stuck underneath us.
+            physx::PxVec3 hitDir = hit.dir;
+
+            plPXFilterData filterData;
+            filterData.SetGroups((1 << plSimDefs::kGroupStatic) |
+                                 (1 << plSimDefs::kGroupDynamicBlocker));
+            physx::PxQueryFilterData queryFilter(filterData, physx::PxQueryFlag::eSTATIC |
+                                                             physx::PxQueryFlag::eDYNAMIC |
+                                                             physx::PxQueryFlag::ePREFILTER);
+            physx::PxSceneQueryFlags outputFlags;
+            physx::PxSweepHit sweepHit;
+            plPXControllerFilterCallback filterCallback;
+            bool onGround = physx::PxSceneQueryExt::sweepSingle(
+                *(hit.actor->getScene()),
+                hit.shape->getGeometry().any(),
+                hit.actor->getGlobalPose(),
+                hitDir,
+                0.1f,
+                outputFlags,
+                sweepHit,
+                queryFilter,
+                &filterCallback
+            );
+
+            // `hit.length` is is the fraction of the movement delta we were in contact.
+            float hitTime = controller->GetController()->fSimLength * hit.length;
+
+            const hsVector3& avLinVel = controller->GetController()->GetLinearVelocity();
+            float hitUpComponent = std::fabs(hitDir.dot(hit.controller->getUpDirection()));
+            if (onGround && hitUpComponent >= .2f) {
+                plKickableLog_Blue(
+                    "The kickable is on '{}' and we have a upward magnitude of {.2f}",
+                    sweepHit.actor->getName(), hitUpComponent
+                );
+                physx::PxGeometryHolder geom = hit.shape->getGeometry();
+                physx::PxBounds3 bbox = physx::PxGeometryQuery::getWorldBounds(geom.any(), hit.shape->getLocalPose());
+                float zext = bbox.getExtents(2);
+                // Tiny kickable, so shoot it off into the distance.
+                if (zext <= kSmallKickableThreshold) {
+                    plKickableLog_Blue("Standing on top of tiny kickable with Z-extent {.2f}", zext);
+                    physx::PxVec3 force(avLinVel.fX, avLinVel.fY, 0.f);
+                    force.normalize();
+                    plKickableLog_Green(
+                        "Using renormalized avatar velocity as direction: ({.2f}, {.2f}, {.2f})",
+                        force.x, force.y, force.z
+                    );
+                    // This calculation has been fairly carefully empirically scienced to produce a good
+                    // result. We need to give this force a slight boost to ensure that we don't get on
+                    // top of some tiny kickable and start blasting off to the moon.
+                    force *= std::max(3.f, avLinVel.Magnitude()) * hitTime;
+                    IApplyHitForce(dynamic, hit.worldPos, force);
+                } else {
+                    plKickableLog_Red("Standing on top of tall kickable with Z-extent {.2f} - no force will be applied.", zext);
+                }
+            } else {
+                plKickableLog_Green(
+                    "Ground: [{}], using PhysX hit direction: ({.2f}, {.2f}, {.2f})",
+                    onGround, hitDir.x, hitDir.y, hitDir.z
+                );
+                // This calculation has been fairly carefully empirically scienced to produce a good
+                // result. The length value here is generally trustworthy, especially when running,
+                // but walking into the object can result in tiny lengths that result in poor
+                // object displacement, resulting in stuttering movement because the kickable moves
+                // slightly, then we move forward the same distance and are blocked, the kickable moves
+                // forward, then we move forward the same distance and are blocked... ad nauseum
+                physx::PxVec3 force = hitDir * std::max(3.f, avLinVel.Magnitude()) * hitTime;
+                IApplyHitForce(dynamic, hit.worldPos, force);
+            }
+        }
+    }
+
+    void onControllerHit(const physx::PxControllersHit& hit) override
+    {
+        // Right now, these are just avatars and quabs. So, we don't care.
+    }
+
+    void onObstacleHit(const physx::PxControllerObstacleHit& hit) override
+    {
+        // Obstacles are currently unused by Plasma.
+        hsAssert(0, "How did we get here?");
+    }
+} static s_HitReport;
+
+// ==========================================================================
+
+class plPXControllerBehaviorCallback : public physx::PxControllerBehaviorCallback
+{
+    plPXPhysicalControllerCore* fController;
+
+public:
+    plPXControllerBehaviorCallback(plPXPhysicalControllerCore* controller)
+        : fController(controller)
+    { }
+
+    physx::PxControllerBehaviorFlags getBehaviorFlags(const physx::PxShape& shape, const physx::PxActor& actor) override
+    {
+        physx::PxControllerBehaviorFlags flags;
+        if (fController->fMovementStrategy->IsRiding())
+            flags.set(physx::PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT);
+        if (fController->fMovementStrategy->AllowSliding())
+            flags.set(physx::PxControllerBehaviorFlag::eCCT_SLIDE);
+
+        plPXActorData* data = static_cast<plPXActorData*>(actor.userData);
+        if (data == nullptr || data->GetPhysical() == nullptr)
+            return flags;
+
+        if (data->GetPhysical()->IsDynamic()) {
+            physx::PxGeometryHolder geom = shape.getGeometry();
+            physx::PxBounds3 bbox = physx::PxGeometryQuery::getWorldBounds(geom.any(), shape.getLocalPose());
+            if (bbox.getExtents(2) < kSmallKickableThreshold) {
+                // Slide off of small kickables. Don't ride them.
+                flags.clear(physx::PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT);
+                flags.set(physx::PxControllerBehaviorFlag::eCCT_SLIDE);
+                flags.set(physx::PxControllerBehaviorFlag::eCCT_USER_DEFINED_RIDE);
+            } else {
+                flags.clear(physx::PxControllerBehaviorFlag::eCCT_SLIDE);
+            }
+        } else if (data->GetPhysical()->IsInLOSDB(plSimDefs::kLOSDBAvatarWalkable)) {
+            // Don't slide down walkable surfaces.
+            flags.clear(physx::PxControllerBehaviorFlag::eCCT_SLIDE);
+        }
+
+        return flags;
+    }
+
+    physx::PxControllerBehaviorFlags getBehaviorFlags(const physx::PxController& controller) override
+    {
+        return physx::PxControllerBehaviorFlag::eCCT_USER_DEFINED_RIDE;
+    }
+
+    physx::PxControllerBehaviorFlags getBehaviorFlags(const physx::PxObstacle& obstacle) override
+    {
+        return physx::PxControllerBehaviorFlag::eCCT_USER_DEFINED_RIDE;
+    }
+};
+
+// ==========================================================================
+
 plPhysicalControllerCore* plPhysicalControllerCore::Create(plKey ownerSO, float height, float width)
 {
-    float radius = width / 2.0f - .2f;
-    float realHeight = height - width;
+    float radius = width / 2.0f;
+    float realHeight = (height - width) + .8f;
     return new plPXPhysicalControllerCore(std::move(ownerSO), realHeight, radius);
 }
 
 plPXPhysicalControllerCore::plPXPhysicalControllerCore(plKey ownerSO, float height, float radius)
-    : fActor(),
-      fProxyGen(),
-      plPhysicalControllerCore(std::move(ownerSO), height, radius)
+    : plPhysicalControllerCore(std::move(ownerSO), height, radius),
+      fController(),
+      fBehaviorCallback(std::make_unique<plPXControllerBehaviorCallback>(this)),
+      fProxyGen()
 {
     ICreateController(fLocalPosition);
     gControllers.push_back(this);
@@ -126,9 +343,8 @@ plPXPhysicalControllerCore::~plPXPhysicalControllerCore()
 void plPXPhysicalControllerCore::Enable(bool enable)
 {
     if (IsEnabled() != enable) {
-        fActor->setLinearVelocity({ 0.f, 0.f, 0.f });
         hsChangeBits(fFlags, kDisableCollision, !enable);
-        plPXFilterData::SetActorFlags(fActor, fFlags);
+        plPXFilterData::SetActorFlags(fController->getActor(), fFlags);
     }
 }
 
@@ -174,10 +390,7 @@ void plPXPhysicalControllerCore::SetSubworld(const plKey& world)
         fLastLocalPosition = fLocalPosition;
 
         // Move into the doggone new world.
-        plSimulationMgr::GetInstance()->GetPhysX()->AddToWorld(fActor, world);
-        physx::PxTransform globalPose(plPXConvert::Point(IGetCapsulePos(fLocalPosition)),
-                                      physx::PxIdentity);
-        fActor->setGlobalPose(globalPose);
+        ICreateController(fLocalPosition);
     }
 }
 
@@ -221,8 +434,8 @@ void plPXPhysicalControllerCore::SetState(const hsPoint3& pos, float zRot)
 void plPXPhysicalControllerCore::SetLOSDB(plSimDefs::plLOSDB losDB)
 {
     plPhysicalControllerCore::SetLOSDB(losDB);
-    if (fActor)
-        plPXFilterData::Initialize(fActor, plSimDefs::kGroupAvatar, 0, losDB);
+    if (fController)
+        plPXFilterData::Initialize(fController->getActor(), plSimDefs::kGroupAvatar, 0, losDB);
 }
 
 void plPXPhysicalControllerCore::SetMovementStrategy(plMovementStrategy* strategy)
@@ -247,26 +460,88 @@ void plPXPhysicalControllerCore::SetGlobalLoc(const hsMatrix44& l2w)
     }
     fLastLocalPosition = fLocalPosition;
 
-    physx::PxTransform globalPose(plPXConvert::Point(IGetCapsulePos(fLocalPosition)),
-                                  physx::PxIdentity);
-    fActor->setGlobalPose(globalPose);
+    fController->setFootPosition(plPXConvert::ExtPoint(fLocalPosition));
 }
 
 void plPXPhysicalControllerCore::GetPositionSim(hsPoint3& pos)
 {
-    pos = IGetCapsuleFoot(plPXConvert::Point(fActor->getGlobalPose().p));
+    pos = plPXConvert::ExtPoint(fController->getFootPosition());
 }
 
 void plPXPhysicalControllerCore::SetPositionSim(const hsPoint3& pos)
 {
-    physx::PxTransform globalPose(plPXConvert::Point(IGetCapsulePos(pos)),
-                                  physx::PxIdentity);
-    fActor->setGlobalPose(globalPose);
+    fController->setFootPosition(plPXConvert::ExtPoint(pos));
 }
 
-void plPXPhysicalControllerCore::SetLinearVelocitySim(const hsVector3& velocity)
+plPhysicalControllerCore::Collisions plPXPhysicalControllerCore::Move(const hsVector3& velocity,
+                                                                      float delSecs,
+                                                                      plSimDefs::Group simGroups)
 {
-    fActor->setLinearVelocity(plPXConvert::Vector(velocity));
+    class plPXControllerFilterCallback : public physx::PxControllerFilterCallback
+    {
+    public:
+        bool filter(const physx::PxController& a, const physx::PxController& b) override
+        {
+            // Characters never collide with one another.
+            return false;
+        }
+    } controllerCallback;
+
+    class plPXControllerQueryFilterCallback : public physx::PxQueryFilterCallback
+    {
+    public:
+        physx::PxQueryHitType::Enum preFilter(const physx::PxFilterData& filterData,
+                                              const physx::PxShape* shape,
+                                              const physx::PxRigidActor* actor,
+                                              physx::PxHitFlags& queryFlags) override
+        {
+            auto data = static_cast<plPXActorData*>(actor->userData);
+            if (!data)
+                return physx::PxQueryHitType::eNONE;
+
+            // Disabled physicals aren't hit.
+            if (data->GetPhysical() && data->GetPhysical()->GetProperty(plSimulationInterface::kDisable))
+                return physx::PxQueryHitType::eNONE;
+            // should never happen
+            if (data->GetController())
+                return physx::PxQueryHitType::eNONE;
+
+            return physx::PxQueryHitType::eBLOCK;
+        }
+
+        physx::PxQueryHitType::Enum postFilter(const physx::PxFilterData& filterData,
+                                               const physx::PxQueryHit& hit) override
+        {
+            return physx::PxQueryHitType::eBLOCK;
+        }
+    } queryCallback;
+
+    // Stash this velocity for use in the hit report callback
+    SetLinearVelocity(velocity);
+
+    plPXFilterData filterData;
+    // Always collide with detectors - they'll be converted into touches.
+    filterData.SetGroups(simGroups);
+    filterData.ToggleReportOn(plSimDefs::kGroupAvatar);
+    physx::PxControllerFilters filters(&filterData, &queryCallback, &controllerCallback);
+
+    hsVector3 displacement = velocity * delSecs;
+    physx::PxControllerCollisionFlags result = fController->move(
+        plPXConvert::Vector(displacement),
+        0.001f,
+        fSimLength,
+        filters,
+        nullptr
+    );
+
+    uint32_t col = 0;
+    if (result.isSet(physx::PxControllerCollisionFlag::eCOLLISION_UP))
+        col |= plPhysicalControllerCore::kTop;
+    if (result.isSet(physx::PxControllerCollisionFlag::eCOLLISION_SIDES))
+        col |= plPhysicalControllerCore::kSides;
+    if (result.isSet(physx::PxControllerCollisionFlag::eCOLLISION_DOWN))
+        col |= plPhysicalControllerCore::kBottom;
+    return (Collisions)col;
 }
 
 // ==========================================================================
@@ -276,13 +551,7 @@ std::vector<plControllerHitRecord> plPXPhysicalControllerCore::ISweepMulti(const
                                                                            float distance,
                                                                            plSimDefs::Group simGroups) const
 {
-    physx::PxShape* shape;
-    fActor->getShapes(&shape, 1);
-    physx::PxCapsuleGeometry capsule;
-    shape->getCapsuleGeometry(capsule);
-    physx::PxTransform pose(plPXConvert::Point(IGetCapsulePos(origin)),
-                            shape->getLocalPose().q);
-
+    auto [capsule, pose] = IGetCapsule(origin);
     plPXFilterData filterData;
     filterData.SetGroups(simGroups);
     physx::PxQueryFilterData queryFilter(filterData, physx::PxQueryFlag::eSTATIC |
@@ -310,6 +579,7 @@ std::vector<plControllerHitRecord> plPXPhysicalControllerCore::ISweepMulti(const
                 fHits.emplace_back(hitActor->GetPhysical()->GetKey(),
                                    plPXConvert::Point(hit.position),
                                    plPXConvert::Vector(hit.normal),
+                                   plPXConvert::Vector(hit.normal),
                                    hit.distance);
             }
             return true;
@@ -317,11 +587,11 @@ std::vector<plControllerHitRecord> plPXPhysicalControllerCore::ISweepMulti(const
     } hitCallback(results);
 
     plPXControllerFilterCallback filterCallback;
-    fActor->getScene()->sweep(capsule, pose, plPXConvert::Vector(dir), distance, hitCallback,
-                              (physx::PxHitFlag::ePOSITION |
-                               physx::PxHitFlag::eNORMAL |
-                               physx::PxHitFlag::eASSUME_NO_INITIAL_OVERLAP),
-                              queryFilter, &filterCallback);
+    fController->getScene()->sweep(capsule, pose, plPXConvert::Vector(dir), distance, hitCallback,
+                                   (physx::PxHitFlag::ePOSITION |
+                                    physx::PxHitFlag::eNORMAL |
+                                    physx::PxHitFlag::eASSUME_NO_INITIAL_OVERLAP),
+                                   queryFilter, &filterCallback);
     return results;
 }
 
@@ -330,13 +600,7 @@ std::optional<plControllerHitRecord> plPXPhysicalControllerCore::ISweepSingle(co
                                                                               float distance,
                                                                               plSimDefs::Group simGroups) const
 {
-    physx::PxShape* shape;
-    fActor->getShapes(&shape, 1);
-    physx::PxCapsuleGeometry capsule;
-    shape->getCapsuleGeometry(capsule);
-    physx::PxTransform pose(plPXConvert::Point(IGetCapsulePos(origin)),
-                            shape->getLocalPose().q);
-
+    auto [capsule, pose] = IGetCapsule(origin);
     plPXFilterData filterData;
     filterData.SetGroups(simGroups);
     physx::PxQueryFilterData queryFilter(filterData, physx::PxQueryFlag::eSTATIC |
@@ -345,16 +609,17 @@ std::optional<plControllerHitRecord> plPXPhysicalControllerCore::ISweepSingle(co
 
     physx::PxSweepBuffer buf(nullptr, 0);
     plPXControllerFilterCallback filterCallback;
-    fActor->getScene()->sweep(capsule, pose, plPXConvert::Vector(dir), distance, buf,
-                              (physx::PxHitFlag::ePOSITION |
-                               physx::PxHitFlag::eNORMAL |
-                               physx::PxHitFlag::eASSUME_NO_INITIAL_OVERLAP),
-                              queryFilter, &filterCallback);
+    fController->getScene()->sweep(capsule, pose, plPXConvert::Vector(dir), distance, buf,
+                                   (physx::PxHitFlag::ePOSITION |
+                                    physx::PxHitFlag::eNORMAL |
+                                    physx::PxHitFlag::eASSUME_NO_INITIAL_OVERLAP),
+                                   queryFilter, &filterCallback);
 
     std::optional<plControllerHitRecord> retval;
     if (buf.hasBlock) {
         retval.emplace(static_cast<plPXActorData*>(buf.block.actor->userData)->GetPhysical()->GetKey(),
                        plPXConvert::Point(buf.block.position),
+                       plPXConvert::Vector(buf.block.normal),
                        plPXConvert::Vector(buf.block.normal),
                        buf.block.distance);
     }
@@ -492,64 +757,69 @@ void plPXPhysicalControllerCore::IChangePhysicalOwnership()
 hsPoint3 plPXPhysicalControllerCore::IGetCapsulePos(const hsPoint3& footPos,
                                                     const hsVector3& upDir) const
 {
-    float halfHeight, radius;
-    std::tie(halfHeight, radius) = IGetCapsuleDimensions();
-    return footPos + (upDir * (radius + halfHeight));
+    return footPos + (upDir * (kContactOffset + fRadius + fHeight * 0.5f));
 }
 
 hsPoint3 plPXPhysicalControllerCore::IGetCapsuleFoot(const hsPoint3& capPos,
                                                      const hsVector3& upDir) const
 {
-    float halfHeight, radius;
-    std::tie(halfHeight, radius) = IGetCapsuleDimensions();
-    return capPos - (upDir * (radius + halfHeight));
+    return capPos - (upDir * (kContactOffset + fRadius + fHeight * 0.5f));
 }
 
-std::tuple<float, float> plPXPhysicalControllerCore::IGetCapsuleDimensions() const
-{
-    float halfHeight = fHeight / 2.f;
-    halfHeight += fRadius * 0.4f;
-    return std::make_tuple(halfHeight, fRadius);
-}
-
-physx::PxTransform plPXPhysicalControllerCore::IGetCapsulePose(const hsVector3& upDir) const
+physx::PxTransform plPXPhysicalControllerCore::IGetCapsulePose(const hsPoint3& pos, const hsVector3& upDir) const
 {
     // Just want to rotate the capsule 90deg along a non-Z axis so it stands up.
     // Gravity/up should be fixed using the body's global pose.
-    return physx::PxTransform(physx::PxShortestRotation(physx::PxVec3(1.f, 0.f, 0.f),
-                                                        plPXConvert::Vector(upDir)));
+    return physx::PxTransform(
+        plPXConvert::Point(IGetCapsulePos(pos, upDir)),
+        physx::PxShortestRotation(
+            physx::PxVec3(1.f, 0.f, 0.f),
+            plPXConvert::Vector(upDir)
+        )
+    );
+}
+
+std::tuple<physx::PxCapsuleGeometry, physx::PxTransform> plPXPhysicalControllerCore::IGetCapsule(const hsPoint3& pos) const
+{
+    physx::PxShape* shape;
+    fController->getActor()->getShapes(&shape, 1);
+    physx::PxCapsuleGeometry capsule;
+    shape->getCapsuleGeometry(capsule);
+    capsule.radius += kContactOffset;
+    return std::make_tuple(
+        capsule,
+        IGetCapsulePose(
+            pos,
+            plPXConvert::Vector(fController->getUpDirection())
+        )
+    );
 }
 
 // ==========================================================================
 
-void plPXPhysicalControllerCore::ICreateController(hsPoint3 pos)
+void plPXPhysicalControllerCore::ICreateController(const hsPoint3& pos)
 {
     plPXSimulation* sim = plSimulationMgr::GetInstance()->GetPhysX();
 
-    physx::PxCapsuleGeometry capsule;
-    std::tie(capsule.halfHeight, capsule.radius) = IGetCapsuleDimensions();
-    physx::PxTransform localPose = IGetCapsulePose();
-    physx::PxTransform globalPose(plPXConvert::Point(IGetCapsulePos(pos)));
+    physx::PxCapsuleControllerDesc desc;
+    desc.position = plPXConvert::ExtPoint(IGetCapsulePos(pos));
+    desc.upDirection = { 0.f, 0.f, 1.f };
+    desc.slopeLimit = std::cos(hsDegreesToRadians(kSlopeLimit));
+    desc.contactOffset = kContactOffset;
+    desc.stepOffset = kStepOffset;
+    desc.reportCallback = &s_HitReport;
+    desc.behaviorCallback = fBehaviorCallback.get();
+    desc.nonWalkableMode = physx::PxControllerNonWalkableMode::ePREVENT_CLIMBING;
+    desc.userData = new plPXActorData(this);
+    desc.height = fHeight;
+    desc.radius = fRadius;
+    desc.climbingMode = physx::PxCapsuleClimbingMode::eCONSTRAINED;
 
-    fActor = (physx::PxRigidDynamic*)sim->CreateRigidActor(capsule, globalPose, localPose,
-                                                           1.f, 0.f, 0.f,
-                                                           plPXActorType::kDynamicActor);
-    fActor->userData = new plPXActorData(this);
-    plPXFilterData::Initialize(fActor, plSimDefs::kGroupAvatar, 0, fLOSDB);
+    IDeleteController();
+    fController = sim->CreateCharacterController(desc, fWorldKey);
+    plPXFilterData::Initialize(fController->getActor(), plSimDefs::kGroupAvatar, 0, fLOSDB, fFlags);
+    fController->getActor()->userData = desc.userData;
 
-    // Gravity is baked into the character movement code, so there is no need for it to
-    // be applied by the simulation.
-    fActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
-
-    // Initialize avatar mass such that the center of mass is at the capsule's foot and lock
-    // the rotation to prevent tipping over during simulation.
-    physx::PxVec3 cmass = plPXConvert::Point(IGetCapsuleFoot(pos));
-    physx::PxRigidBodyExt::setMassAndUpdateInertia(*fActor, GetMass(), &cmass);
-    fActor->setRigidDynamicLockFlags(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X |
-                                     physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y |
-                                     physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z);
-
-    sim->AddToWorld(fActor, fWorldKey);
     fFlags &= ~kSeeking;
 
     // Create proxy for the debug display
@@ -563,21 +833,36 @@ void plPXPhysicalControllerCore::IDeleteController()
     delete fProxyGen;
     fProxyGen = nullptr;
 
-    delete static_cast<plPXActorData*>(fActor->userData);
-    fActor->userData = nullptr;
-    plSimulationMgr::GetInstance()->GetPhysX()->RemoveFromWorld(fActor);
-    fActor = nullptr;
+    if (fController) {
+        plPXActorData* actor = static_cast<plPXActorData*>(fController->getUserData());
+        plSimulationMgr::GetInstance()->GetPhysX()->RemoveFromWorld(fController);
+        fController = nullptr;
+        delete actor;
+    }
 }
 
 // ==========================================================================
 
+plKey plPXPhysicalControllerCore::GetGround() const
+{
+    physx::PxControllerState state;
+    fController->getState(state);
+    if (state.touchedActor != nullptr) {
+        plPXActorData* actor = static_cast<plPXActorData*>(state.touchedActor->userData);
+        if (actor)
+            return actor->GetPhysical()->GetKey();
+    }
+    return {};
+}
+
 void plPXPhysicalControllerCore::AddContact(plPXPhysical* phys, const hsPoint3& pos,
-                                            const hsVector3& normal)
+                                            const hsVector3& normal, const hsVector3& dir,
+                                            float length)
 {
     fMovementStrategy->AddContact(phys, pos, normal);
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    fDbgCollisionInfo.emplace_back(phys->GetKey(), pos, normal);
+    fDbgCollisionInfo.emplace_back(phys->GetKey(), pos, normal, dir, length);
 #endif
 
     // If this is a Plasma dynamic, we may need to take ownership of it.
@@ -609,9 +894,10 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
     const auto& controller = gControllers[controllerIdx];
     ST::string playerName = plNetClientApp::GetInstance()->GetPlayerName(controller->fOwner);
 
-    debugString = ST::format("Controller #{} [Name: {}] [Subworld: {}] [Enabled: {}]",
+    debugString = ST::format("Controller #{} [Name: {}] [Ground: {}] [Subworld: {}] [Enabled: {}]",
                              controllerIdx + 1,
                              playerName.empty() ? controller->fOwner->GetName() : playerName,
+                             controller->GetGround() ? controller->GetGround()->GetName() : "(none)",
                              controller->fWorldKey ? controller->fWorldKey->GetName() : "(main world)",
                              IsEnabled());
     debugTxt.DrawString(x, y, debugString);
@@ -619,9 +905,14 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
 
     for (const auto& i : fDbgCollisionInfo) {
         float angle = hsRadiansToDegrees(acos(i.Normal * hsVector3(0.f, 0.f, 1.f)));
-        debugString = ST::format("\tCollision: {}, Normal: ({.2f}, {.2f}, {.2f}), Angle({.1f})",
-                i.PhysHit->GetName(),
-                i.Normal.fX, i.Normal.fY, i.Normal.fZ, angle);
+        debugString = ST::format(
+            "\tCollision: {}, Normal: ({.2f}, {.2f}, {.2f}), Angle({.1f}), "
+            "Direction: ({.2f}, {.2f}, {.2f}), Length({.2f})",
+            i.PhysHit->GetName(),
+            i.Normal.fX, i.Normal.fY, i.Normal.fZ, angle,
+            i.Direction.fX, i.Direction.fY, i.Direction.fZ,
+            i.Displacement
+        );
         debugTxt.DrawString(x, y, debugString);
         y += lineHeight;
     }

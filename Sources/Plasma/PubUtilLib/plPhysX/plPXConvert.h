@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "hsQuat.h"
 
+#include <characterkinematic/PxExtended.h>
 #include <foundation/PxQuat.h>
 #include <foundation/PxTransform.h>
 #include <foundation/PxVec3.h>
@@ -67,6 +68,16 @@ namespace plPXConvert
 
     inline const physx::PxQuat& Quat(const hsQuat& quat) { return *((physx::PxQuat*)&quat); }
     inline const hsQuat& Quat(const physx::PxQuat& quat) { return *((hsQuat*)&quat); }
+
+    inline physx::PxExtendedVec3 ExtPoint(const hsPoint3& vec)
+    {
+        return { vec.fX, vec.fY, vec.fZ };
+    }
+
+    inline hsPoint3 ExtPoint(const physx::PxExtendedVec3& vec)
+    {
+        return { (float)vec.x, (float)vec.y, (float)vec.z };
+    }
 
     inline physx::PxTransform Transform(const hsPoint3& p, hsQuat q)
     {
