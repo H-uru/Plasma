@@ -2547,7 +2547,6 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     matrix_float4x4 modelMatrix;
     uniforms.worldToCameraMatrix = modelMatrix;
     uniforms.uvTransforms[0].UVWSrc = 0;
-    uniforms.numUVSrcs = 1;
     //uniforms.worldToLocalMatrix = fDevice.fMatrixW2L;
     
     //flip world to camera, it's upside down

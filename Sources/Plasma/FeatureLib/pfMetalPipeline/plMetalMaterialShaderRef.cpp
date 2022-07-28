@@ -148,8 +148,6 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder *encode
         layers.insert(layers.end(), piggyBacks->begin(), piggyBacks->end());
     }
     
-    vertexUniforms->numUVSrcs = layers.size();
-    
     plMetalFragmentShaderArgumentBuffer uniforms;
     
     IHandleMaterial(GetPassIndex(pass), passDescription, &uniforms, piggyBacks,

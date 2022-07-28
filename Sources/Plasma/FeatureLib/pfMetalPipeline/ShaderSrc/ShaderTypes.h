@@ -158,7 +158,6 @@ typedef struct
     
     plMetalShaderLightSource lampSources[8];
     
-    uint8_t numUVSrcs;
     UVOutDescriptor uvTransforms[8];
 #ifdef __METAL_VERSION__
     float3 sampleLocation(size_t index, thread float3 *texCoords, const float4 normal, const float4 camPosition) constant;
