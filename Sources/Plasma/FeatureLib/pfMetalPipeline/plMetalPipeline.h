@@ -170,9 +170,9 @@ private:
     void FindFragFunction();
     
     void ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj = false);
-    void IEnableLight(plMetalMaterialShaderRef* mRef, size_t i, plLightInfo* light);
-    void IDisableLight(plMetalMaterialShaderRef* mRef, size_t i);
-    void IScaleLight(plMetalMaterialShaderRef* mRef, size_t i, float scale);
+    void IEnableLight(size_t i, plLightInfo* light);
+    void IDisableLight(size_t i);
+    void IScaleLight(size_t i, float scale);
     void ICalcLighting(plMetalMaterialShaderRef* mRef, const plLayerInterface* currLayer, const plSpan* currSpan);
     void IHandleBlendMode(hsGMatState flags);
     void IHandleZMode(hsGMatState flags);
@@ -234,6 +234,8 @@ private:
     void IDisableLightsForShadow();
     void IReleaseRenderTargetPools();
     void IRenderProjectionEach(const plRenderPrimFunc& render, hsGMaterial* material, int iPass, const plSpan& span, const plMetalVertexBufferRef* vRef);
+    void IRenderProjections(const plRenderPrimFunc& render, const plMetalVertexBufferRef* vRef);
+    void IRenderProjection(const plRenderPrimFunc& render, plLightInfo* li, const plMetalVertexBufferRef* vRef);
     
     void ISetLayer( uint32_t lay );
     
