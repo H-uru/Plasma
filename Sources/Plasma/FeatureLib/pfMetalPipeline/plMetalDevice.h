@@ -181,6 +181,8 @@ public:
         }
     }
     
+    void BlitTexture(MTL::Texture* src, MTL::Texture* dst);
+    
     void EncodeBlur(MTL::CommandBuffer* commandBuffer, MTL::Texture* texture, float sigma);
     
 private:
@@ -235,6 +237,9 @@ private:
     float                       fClearDrawableDepth;
     plRenderTarget*             fCurrentRenderTarget;
     MTL::SamplerState*          fSamplerStates[4];
+    
+    MTL::CommandBuffer*         fBlitCommandBuffer;
+    MTL::BlitCommandEncoder*    fBlitCommandEncoder;
     
     bool NeedsPostprocessing() {
         return fGammaLUTTexture != nullptr;

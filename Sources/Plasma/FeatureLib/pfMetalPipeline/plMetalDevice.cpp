@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifndef plMetalDevice_hpp
+#define plMetalDevice_hpp
+
 //We need to define these once for Metal somewhere in a cpp file
 #define NS_PRIVATE_IMPLEMENTATION
 #define CA_PRIVATE_IMPLEMENTATION
@@ -344,7 +347,6 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
             blitEncoder->synchronizeResource(fCurrentFragmentOutputTexture);
             blitEncoder->endEncoding();
         }
-        fCurrentOffscreenCommandBuffer->enqueue();
         fCurrentOffscreenCommandBuffer->commit();
         if (fCurrentRenderTarget && fCurrentRenderTarget->GetFlags() & plRenderTarget::kIsOffscreen) {
             //if it's an offscreen buffer, wait for completion
@@ -399,7 +401,9 @@ plMetalDevice::plMetalDevice()
     fCurrentFragmentMSAAOutputTexture(nullptr),
     fCurrentUnprocessedOutputTexture(nullptr),
     fGammaLUTTexture(nullptr),
-    fGammaAdjustState(nullptr)
+    fGammaAdjustState(nullptr),
+    fBlitCommandBuffer(nullptr),
+    fBlitCommandEncoder(nullptr)
     {
     fClearRenderTargetColor = {0.0, 0.0, 0.0, 1.0};
     fClearDrawableColor = {0.0, 0.0, 0.0, 1.0};
@@ -873,17 +877,31 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* im
         bool supportsMipMap = tRef->fLevels && textureIsValid;
         MTL::TextureDescriptor *descriptor = MTL::TextureDescriptor::texture2DDescriptor(tRef->fFormat, img->GetWidth(), img->GetHeight(), supportsMipMap);
         descriptor->setUsage(MTL::TextureUsageShaderRead);
-        //if device has unified memory, set storage mode to shared
-        if(fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
-            descriptor->setStorageMode(MTL::StorageModeShared);
-        }
-        //Metal gets mad if we set this with 0, only set it if we know there are mipmaps
-        if(supportsMipMap) {
-            descriptor->setMipmapLevelCount(tRef->fLevels + 1);
-        }
-        tRef->fTexture = fMetalDevice->newTexture(descriptor);
-    //}
+
+    //Metal gets mad if we set this with 0, only set it if we know there are mipmaps
+    if(supportsMipMap) {
+        descriptor->setMipmapLevelCount(tRef->fLevels + 1);
+    }
+
+    //if device has unified memory, set storage mode to shared
+    if(fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
+        descriptor->setStorageMode(MTL::StorageModeShared);
+    } else {
+        descriptor->setStorageMode(MTL::StorageModeManaged);
+    }
+    
+    
+    tRef->fTexture = fMetalDevice->newTexture(descriptor);
     PopulateTexture( tRef, img, 0);
+    if(!fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
+        descriptor->setStorageMode(MTL::StorageModePrivate);
+        MTL::Texture* privateTexture = fMetalDevice->newTexture(descriptor);
+        BlitTexture(tRef->fTexture, privateTexture);
+        tRef->fTexture->autorelease();
+        tRef->fTexture = privateTexture;
+    }
+    //}
+    
     
     tRef->SetDirty(false);
 }
@@ -1152,6 +1170,17 @@ MTL::CommandBuffer* plMetalDevice::GetCurrentCommandBuffer()
 
 void plMetalDevice::SubmitCommandBuffer()
 {
+    if (fBlitCommandEncoder) {
+        fBlitCommandEncoder->endEncoding();
+        fBlitCommandBuffer->commit();
+        
+        fBlitCommandBuffer->release();
+        fBlitCommandEncoder->release();
+        
+        fBlitCommandBuffer = nullptr;
+        fBlitCommandEncoder = nullptr;
+    }
+    
     fCurrentRenderTargetCommandEncoder->endEncoding();
     fCurrentRenderTargetCommandEncoder->release();
     fCurrentRenderTargetCommandEncoder = nil;
@@ -1161,7 +1190,6 @@ void plMetalDevice::SubmitCommandBuffer()
     }
     
     fCurrentCommandBuffer->presentDrawable(fCurrentDrawable);
-    fCurrentCommandBuffer->enqueue();
     fCurrentCommandBuffer->commit();
     //as we more tightly manage resource sync we may be able to avoid waiting for the frame to complete
     //fCurrentCommandBuffer->waitUntilCompleted();
@@ -1259,3 +1287,17 @@ CA::MetalDrawable* plMetalDevice::GetCurrentDrawable()
 {
     return fCurrentDrawable;
 }
+
+void plMetalDevice::BlitTexture(MTL::Texture* src, MTL::Texture* dst)
+{
+    if (fBlitCommandEncoder == nullptr) {
+        fBlitCommandBuffer = fCommandQueue->commandBuffer()->retain();
+        //enqueue so we go to the front of the line before render
+        fBlitCommandBuffer->enqueue();
+        fBlitCommandEncoder = fBlitCommandBuffer->blitCommandEncoder()->retain();
+    }
+    
+    fBlitCommandEncoder->copyFromTexture(src, dst);
+}
+
+#endif
