@@ -65,9 +65,8 @@ vertex GammaVertexOut gammaCorrectVertex(constant GammaVertexIn *in [[ buffer(0)
     return out;
 }
 
-const constant sampler sourceSampler = sampler();
 const constant sampler lutSampler = sampler(
-                                            filter::nearest
+                                            filter::linear
                                             );
 
 fragment half4 gammaCorrectFragment(
@@ -76,10 +75,11 @@ fragment half4 gammaCorrectFragment(
                                                texture1d_array<ushort> LUT [[texture(1)]]
                                         )
 {
-    float4 color = inputTexture.sample(sourceSampler, in.texturePosition);
-    half4 out = half(1);
-    out.r = half(float(LUT.sample(lutSampler, color.r, 0).x)/USHRT_MAX);
-    out.g = half(float(LUT.sample(lutSampler, color.g, 1).x)/USHRT_MAX);
-    out.b = half(float(LUT.sample(lutSampler, color.b, 2).x)/USHRT_MAX);
-    return out;
+    float4 color = inputTexture.read(ushort2(in.position.xy));
+    return {
+        half(float(LUT.sample(lutSampler, color.r, 0).x)/USHRT_MAX),
+        half(float(LUT.sample(lutSampler, color.g, 1).x)/USHRT_MAX),
+        half(float(LUT.sample(lutSampler, color.b, 2).x)/USHRT_MAX),
+        1.0
+    };
 }
