@@ -525,7 +525,7 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
         textureDescriptor->setWidth(owner->GetWidth());
         textureDescriptor->setHeight(owner->GetHeight());
         textureDescriptor->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
-        textureDescriptor->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead);
+        textureDescriptor->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead | MTL::TextureUsageShaderWrite);
         textureDescriptor->setStorageMode(MTL::StorageModePrivate);
         
         plMetalDeviceRef *device = (plMetalDeviceRef *)owner->GetDeviceRef();
@@ -3206,10 +3206,9 @@ bool plMetalPipeline::IRenderShadowCaster(plShadowSlave* slave)
         slave->fBlurScale = blurScale;
 
     // If this shadow requests being blurred, do it.
-    //TODO: Shadow blurring
-    //if( slave->fBlurScale > 0.f )
-        //IBlurShadowMap(slave);
-
+    if( slave->fBlurScale > 0.f )
+        fDevice.EncodeBlur(fDevice.GetCurrentCommandBuffer(), fDevice.fCurrentFragmentOutputTexture, slave->fBlurScale);
+        
     // Finished up, restore previous state.
     IPopShadowCastState(slave);
 
@@ -3637,7 +3636,8 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
         }
         
         MTL::TextureDescriptor* textureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatBGRA8Unorm, owner->GetWidth(), owner->GetHeight(), false);
-        textureDescriptor->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead);
+        //Give compute shader write access
+        textureDescriptor->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead | MTL::TextureUsageShaderWrite);
         MTL::Texture* texture = fDevice.fMetalDevice->newTexture(textureDescriptor);
         if( texture )
         {
@@ -3993,8 +3993,6 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
         fState.fCurrentDepthStencilState = fDevice.fNoZWriteStencilState;
     }
     
-    int numUVSrcs = 2;
-    
     int layerIndex = -1;
     // If mat's base layer is alpha'd, and we have > 3 TMU's factor
     // in the base layer's alpha.
@@ -4026,13 +4024,9 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
         matrix_float4x4 tXfm;
         hsMatrix2SIMD(layer->GetTransform(), &tXfm);
         fCurrentRenderPassUniforms->uvTransforms[2].transform = tXfm;
-        
-        numUVSrcs++;
     }
     
     fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&layerIndex, sizeof(int), FragmentShaderArgumentShadowAlphaSrc);
-    
-    fCurrentRenderPassUniforms->numUVSrcs = numUVSrcs;
 }
 
 // ISetShadowLightState //////////////////////////////////////////////////////////////////

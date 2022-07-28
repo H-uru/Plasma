@@ -242,6 +242,9 @@ private:
     
     void BeginNewRenderPass();
     void ReleaseSamplerStates();
+    
+    //Blur states
+    std::unordered_map<float, NS::Object*> fBlurShaders;
 };
 
 #endif

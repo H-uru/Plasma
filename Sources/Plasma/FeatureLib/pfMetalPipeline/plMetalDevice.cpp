@@ -1144,6 +1144,9 @@ bool plMetalDevice::plMetalPipelineRecord::operator==(const plMetalPipelineRecor
 
 MTL::CommandBuffer* plMetalDevice::GetCurrentCommandBuffer()
 {
+    if(fCurrentOffscreenCommandBuffer) {
+        return fCurrentOffscreenCommandBuffer;
+    }
     return fCurrentCommandBuffer;
 }
 
