@@ -180,6 +180,9 @@ public:
             return fSampleCount;
         }
     }
+    
+    void EncodeBlur(MTL::CommandBuffer* commandBuffer, MTL::Texture* texture, float sigma);
+    
 private:
     
     struct plMetalPipelineRecord {
