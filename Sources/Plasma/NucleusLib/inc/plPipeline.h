@@ -327,7 +327,7 @@ public:
     virtual bool                        SetGamma(const uint16_t* const table) { return SetGamma(table, table, table); }
     virtual bool                        SetGamma10(const uint16_t* const table) { return SetGamma10(table, table, table); }
     virtual bool                        SetGamma10(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) { return false; };
-    virtual bool                        Supports10BitGamma() { return 0; };
+    virtual bool                        Supports10BitGamma() { return false; };
 
     // flipVertical is for the AVI writer, which wants it's frames upside down
     virtual bool                        CaptureScreen( plMipmap *dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0 ) = 0;
