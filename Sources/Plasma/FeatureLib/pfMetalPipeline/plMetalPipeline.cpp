@@ -157,7 +157,7 @@ bool plRenderTriListFunc::RenderPrims() const
 
 
 
-plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode) :   pl3DPipeline(devMode), fRenderTargetRefList(), fMatRefList(), fPipelineState(nullptr), fCurrentRenderPassUniforms(nullptr), currentDrawableCallback(nullptr), fFragFunction(nullptr), fVShaderRefList(nullptr), fPShaderRefList(nullptr), fULutTextureRef(nullptr), fCurrRenderLayer()
+plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode) :   pl3DPipeline(devMode), fRenderTargetRefList(), fMatRefList(), fCurrentRenderPassUniforms(nullptr), currentDrawableCallback(nullptr), fFragFunction(nullptr), fVShaderRefList(nullptr), fPShaderRefList(nullptr), fULutTextureRef(nullptr), fCurrRenderLayer()
 {
     fTextureRefList = nullptr;
     fVtxBuffRefList = nullptr;
@@ -167,26 +167,6 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     
     fCurrLayerIdx = 0;
     fDevice.fPipeline = this;
-    
-    //Compile the shaders and link our pipeline
-    MTL::Library *library = fDevice.fMetalDevice->newDefaultLibrary();
-    MTL::Function *fragFunction = library->newFunction(
-                                                    NS::String::string("fragmentShader", NS::ASCIIStringEncoding)
-                                                    );
-    MTL::Function *vertFunction = library->newFunction(
-                                                    NS::String::string("plateVertexShader", NS::ASCIIStringEncoding)
-                                                    );
-    MTL::RenderPipelineDescriptor *descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
-    descriptor->setFragmentFunction(fragFunction);
-    descriptor->setVertexFunction(vertFunction);
-    descriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
-    
-    NS::Error *error;
-    fPipelineState = fDevice.fMetalDevice->newRenderPipelineState(descriptor, &error);
-    library->release();
-    fragFunction->release();
-    vertFunction->release();
-    descriptor->release();
     
     fMaxLayersAtOnce = 8;
     
