@@ -83,7 +83,7 @@ public:
     uint32_t        WriteString(const ST::string & string) { return Write(string.size(), string.c_str()); }
 
     template        <typename... _Args>
-    uint32_t        WriteFmt(const char * fmt, _Args ... args) { return WriteString(ST::format(fmt, args...)); }
+    uint32_t        WriteFmt(const char * fmt, _Args&&... args) { return WriteString(ST::format(fmt, std::forward<_Args>(args)...)); }
 
     uint32_t        WriteSafeStringLong(const ST::string &string);  // uses 4 bytes for length
     uint32_t        WriteSafeWStringLong(const ST::string &string);
