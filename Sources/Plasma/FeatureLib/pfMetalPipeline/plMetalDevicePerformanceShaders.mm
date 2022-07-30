@@ -61,6 +61,8 @@ void plMetalDevice::EncodeBlur(MTL::CommandBuffer* commandBuffer, MTL::Texture* 
         fBlurShaders[sigma] = (NS::Object*)blur;
     }
     [blur encodeToCommandBuffer:(id<MTLCommandBuffer>)commandBuffer inPlaceTexture:(id<MTLTexture>*)&texture fallbackCopyAllocator:^ id<MTLTexture> (MPSKernel * kernel, id<MTLCommandBuffer> commandBuffer, id<MTLTexture> texture) {
-        return (id<MTLTexture>)fMetalDevice->newTexture((MTL::TextureDescriptor*)texture.description);
+        MTL::TextureDescriptor* descriptor = MTL::TextureDescriptor::texture2DDescriptor((MTL::PixelFormat)texture.pixelFormat, texture.width, texture.height, false);
+        descriptor->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageShaderWrite);
+        return (id<MTLTexture>)fMetalDevice->newTexture(descriptor);
     }];
 }
