@@ -1,9 +1,10 @@
-# Because there are no CPP sources, this needs to be an interface library. Change to
-# a static library if you ever add any real C++ code.
-add_library(plPubUtilInc INTERFACE)
-set_property(
-    TARGET plPubUtilInc
-    PROPERTY INTERFACE_LINK_LIBRARIES
+set(plPubUtilInc_HEADERS
+    plAllCreatables.h
+)
+
+plasma_library(plPubUtilInc OBJECT SOURCES ${plPubUtilInc_HEADERS})
+target_link_libraries(plPubUtilInc
+    PUBLIC
         plAgeLoader
         plAnimation
         plAudible
@@ -33,7 +34,4 @@ set_property(
         plSurface
         plVault
 )
-set_property(
-    TARGET plPubUtilInc
-    PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_LIST_DIR}"
-)
+target_include_directories(plPubUtilInc INTERFACE "${CMAKE_CURRENT_LIST_DIR}")

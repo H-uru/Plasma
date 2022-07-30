@@ -1,9 +1,9 @@
-# Because there are no CPP sources, this needs to be an interface library. Change to
-# a static library if you ever add any real C++ code.
-add_library(pfFeatureInc INTERFACE)
-set_property(
-    TARGET pfFeatureInc
-    PROPERTY INTERFACE_LINK_LIBRARIES
+set(pfFeatureInc_HEADERS
+    pfAllCreatables.h
+)
+plasma_library(pfFeatureInc OBJECT SOURCES ${pfFeatureInc_HEADERS})
+target_link_libraries(pfFeatureInc
+    PUBLIC
         pfAnimation
         pfAudio
         pfCamera
@@ -17,7 +17,4 @@ set_property(
         pfPython
         pfSurface
 )
-set_property(
-    TARGET pfFeatureInc
-    PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_LIST_DIR}"
-)
+target_include_directories(pfFeatureInc INTERFACE "${CMAKE_CURRENT_LIST_DIR}")
