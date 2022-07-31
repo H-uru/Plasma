@@ -61,8 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMetalDevice.h"
 #include "plMetalPipeline.h"
 
-#include <ranges>
-
 plMetalMaterialShaderRef::plMetalMaterialShaderRef(hsGMaterial* mat, plMetalPipeline *pipe) :
 fPipeline { pipe },
 fMaterial { mat },
