@@ -185,6 +185,11 @@ if(APPLE)
     set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
          MACOSX_PACKAGE_LOCATION Resources
     )
+    target_link_libraries(plClient PRIVATE "-framework MetalPerformanceShaders")
+    install(
+        TARGETS plClient
+        DESTINATION client
+    )
 
     if(PLASMA_APPLE_DEVELOPMENT_TEAM_ID)
             set_target_properties(plClient PROPERTIES
