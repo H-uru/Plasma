@@ -82,11 +82,13 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
         ageSDL.setNotify(self.key, butsInUseVariableName.value, 0.0)
         ageSDL.setFlags(numCorrectVariableName.value, True, True)
         ageSDL.sendToClients(numCorrectVariableName.value)
-        self.SDL.setDefault("attemptCombo", ())
         self.SDL.sendToClients("attemptCombo")
+        self.SDL.setFlags("attemptCombo", True, True)
 
         if not PtGetPlayerList():
             self._butsInUse = False
+            if allowSlidingSolution.value:
+                self._attemptCombo = []
             if resetOnEmpty.value:
                 self._solved = (False, "fastforward")
                 self._numCorrect = (0, "fastforward")
