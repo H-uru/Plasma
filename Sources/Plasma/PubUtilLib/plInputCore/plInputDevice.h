@@ -175,7 +175,7 @@ public:
     uint32_t  GetButtonState() { return fButtonState; }
     float GetCursorOpacity() { return fOpacity; }
     void SetDisplayResolution(float Width, float Height);
-    void SetScale(float Scale);
+    void SetDisplayScale(float Scale);
     
     bool MsgReceive(plMessage* msg) override;
     

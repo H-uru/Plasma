@@ -254,7 +254,7 @@ void plMouseDevice::SetDisplayResolution(float Width, float Height)
     IUpdateCursorSize();
 }
 
-void plMouseDevice::SetScale(float Scale)
+void plMouseDevice::SetDisplayScale(float Scale)
 {
     fScale = Scale;
     IUpdateCursorSize();
@@ -292,7 +292,7 @@ void plMouseDevice::AddNameToCursor(const ST::string& name)
     if (fInstance && !name.empty())
     {
         plDebugText     &txt = plDebugText::Instance();
-        txt.DrawString(fInstance->fWXPos + 12 ,fInstance->fWYPos - 7,name);
+        txt.DrawString(fInstance->fWXPos + 12 * fScale, fInstance->fWYPos - txt.GetFontHeight() / 2,name);
     }
 }
 void plMouseDevice::AddCCRToCursor()
@@ -300,7 +300,7 @@ void plMouseDevice::AddCCRToCursor()
     if (fInstance)
     {
         plDebugText     &txt = plDebugText::Instance();
-        txt.DrawString(fInstance->fWXPos + 12, fInstance->fWYPos - 17, "CCR");
+        txt.DrawString(fInstance->fWXPos + 12 * fScale, fInstance->fWYPos - 17, "CCR");
     }
 }
 void plMouseDevice::AddIDNumToCursor(uint32_t idNum)
@@ -310,7 +310,7 @@ void plMouseDevice::AddIDNumToCursor(uint32_t idNum)
         plDebugText     &txt = plDebugText::Instance();
         char str[256];
         sprintf(str, "%d",idNum);
-        txt.DrawString(fInstance->fWXPos + 12 ,fInstance->fWYPos + 3,str);
+        txt.DrawString(fInstance->fWXPos + 12 * fScale,fInstance->fWYPos + 3,str);
     }
 }
         
@@ -490,7 +490,7 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
             fXPos = pXMsg->fX;
 
         SetCursorX(fXPos);
-        fWXPos = pXMsg->fWx;
+        fWXPos = pXMsg->fWx * fScale;
         return true;
     }
 
@@ -527,7 +527,7 @@ bool plMouseDevice::MsgReceive(plMessage* msg)
         else
             fYPos = pYMsg->fY;
 
-        fWYPos = pYMsg->fWy;
+        fWYPos = pYMsg->fWy * fScale;
         SetCursorY(fYPos);
         
         return true;
