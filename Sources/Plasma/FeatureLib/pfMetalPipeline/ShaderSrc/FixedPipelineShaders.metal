@@ -678,42 +678,6 @@ fragment half4 shadowFragmentShader(ShadowCasterInOut in [[stage_in]])
 
     return half4(1.0h, 1.0h, 1.0h, currentAlpha);
 }
-
-    
-    constant float2 poissonDisk[16] = {
-                                           float2( -0.94201624, -0.39906216 ),
-                                           float2( 0.94558609, -0.76890725 ),
-                                           float2( -0.094184101, -0.92938870 ),
-                                           float2( 0.34495938, 0.29387760 ),
-                                           float2( -0.91588581, 0.45771432 ),
-                                           float2( -0.81544232, -0.87912464 ),
-                                           float2( -0.38277543, 0.27676845 ),
-                                           float2( 0.97484398, 0.75648379 ),
-                                           float2( 0.44323325, -0.97511554 ),
-                                           float2( 0.53742981, -0.47373420 ),
-                                           float2( -0.26496911, -0.41893023 ),
-                                           float2( 0.79197514, 0.19090188 ),
-                                           float2( -0.24188840, 0.99706507 ),
-                                           float2( -0.81409955, 0.91437590 ),
-                                           float2( 0.19984126, 0.78641367 ),
-                                           float2( 0.14383161, -0.14100790 )
-    };
-    
-    
-    const float rand(float3 co){
-      //since opengl es only garantees that mediump will be 10 bits, we need to try and
-      //keep the numbers low. The actual constants are mostly arbilitary chosen with the
-      //goal to give different weightings to the first or seccond element
-
-      float3 product = float3(  sin( dot(co, float3(0.129898,0.78233, 0.129898))),
-                            sin( dot(co, float3(0.689898,0.23233, 0.689898))),
-                            sin( dot(co, float3(0.434198,0.51833, 0.434198))) );
-                            
-                            
-        float3 weighting = float3(4.37585453723, 2.465973, 3.18438);
-
-      return fract(dot(weighting, product));
-    }
     
 fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
                                         texture2d<half> texture     [[ texture(16) ]],
@@ -729,12 +693,7 @@ fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
                                            min_filter::linear,
                                            address::clamp_to_edge);
     
-    half4 currentColor = 0.0;
-    for (int i=0;i<4;i++){
-        int index = int(16.0*rand(floor(in.position.xyz*1000.0) + i))%16;
-        currentColor += 0.25 * texture.sample(colorSample, sampleCoords.xy + poissonDisk[index]/700.0);
-    }
-    //half4 currentColor = texture.sample(colorSample, sampleCoords.xy);
+    half4 currentColor = texture.sample(colorSample, sampleCoords.xy);
     currentColor.rgb *= in.vtxColor.rgb;
     
     const float2 LUTCoords = in.texCoord2.xy;
