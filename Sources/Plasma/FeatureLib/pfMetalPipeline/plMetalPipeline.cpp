@@ -150,7 +150,7 @@ bool plRenderTriListFunc::RenderPrims() const
     plProfile_IncCount(DrawTriangles, fNumTris);
     plProfile_Inc(DrawPrimStatic);
     
-    
+    size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
     fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), BufferIndexState);
     
     plMetalLights* lights = &fDevice->fPipeline->fLights;
@@ -1326,7 +1326,7 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
     //This is a bit weird - in since this isn't a material we need to build a query for the right Metal program ourselves
     plMetalFragmentShaderDescription description;
     memset(&description, 0, sizeof(description));
-    description.numLayers = 1;
+    description.numLayers = fCurrNumLayers = 1;
     
     description.Populate(proj, 0);
     //DX sets the color invert when the final color should be inverted. Not sure why!
@@ -1499,45 +1499,6 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
         
         render.RenderPrims();
     }
-
-    /*HRESULT     r;
-
-    r = fD3DDevice->SetStreamSource( 0, vRef->fD3DBuffer, 0, vRef->fVertexSize );
-    hsAssert( r == D3D_OK, "Error trying to set the stream source!" );
-    plProfile_Inc(VertexChange);
-
-    fD3DDevice->SetFVF(fSettings.fCurrFVFFormat = IGetBufferD3DFormat(vRef->fFormat));
-    
-    r = fD3DDevice->SetIndices( iRef->fD3DBuffer );
-    hsAssert( r == D3D_OK, "Error trying to set the indices!" );
-
-    plRenderTriListFunc render(fD3DDevice, iRef->fOffset, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength/3);
-    int j;
-    for( j = 0; j < material->GetNumLayers(); )
-    {
-        int iCurrMat = j;
-        j = IHandleMaterial( material, iCurrMat, &span );
-        if (j == -1)
-            break;
-
-        ISetShaders(material->GetLayer(iCurrMat)->GetVertexShader(), material->GetLayer(iCurrMat)->GetPixelShader());
-
-        if( aux->fFlags & plAuxSpan::kOverrideLiteModel )
-        {
-            static D3DMATERIAL9 mat;
-            fD3DDevice->SetRenderState(D3DRS_AMBIENT, 0xffffffff);
-
-            fD3DDevice->SetRenderState( D3DRS_DIFFUSEMATERIALSOURCE, D3DMCS_MATERIAL );
-            fD3DDevice->SetRenderState( D3DRS_AMBIENTMATERIALSOURCE, D3DMCS_COLOR1 );
-            fD3DDevice->SetRenderState( D3DRS_EMISSIVEMATERIALSOURCE, D3DMCS_MATERIAL );
-            fD3DDevice->SetRenderState( D3DRS_SPECULARMATERIALSOURCE, D3DMCS_MATERIAL );
-
-            fD3DDevice->SetMaterial( &mat );
-        }
-
-        render.RenderPrims();
-    }*/
-
 }
 
 bool plMetalPipeline::IHandleMaterialPass(hsGMaterial *material, uint32_t pass, const plSpan *currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders)
@@ -3044,6 +3005,7 @@ void plMetalPipeline::FindFragFunction() {
                                                     );
     fFragFunction = fragFunction;
     
+    functionContents->release();
     library->release();
 }
 
@@ -3992,7 +3954,7 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             struct plMetalFragmentShaderDescription passDescription;
             memset(&passDescription, 0, sizeof(passDescription));
             passDescription.Populate(mat->GetLayer(0), 2);
-            passDescription.numLayers = 3;
+            passDescription.numLayers = fCurrNumLayers = 3;
             if (mat->GetNumLayers()>1) {
                 passDescription.Populate(mat->GetLayer(1), 2);
             }
@@ -4574,44 +4536,6 @@ void plMetalPipeline::CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx)
             fDevice.FillVolatileVertexBufferRef(vRef, owner, idx);
         }
     }
-}
-
-// ISetupVertexBufferRef /////////////////////////////////////////////////////////
-// Initialize input vertex buffer ref according to source.
-void plMetalPipeline::ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, plMetalVertexBufferRef* vRef)
-{
-
-    uint8_t format = owner->GetVertexFormat();
-
-    // All indexed skinning is currently done on CPU, so the source data
-    // will have indices, but we strip them out for the D3D buffer.
-    if( format & plGBufferGroup::kSkinIndices )
-    {
-        format &= ~(plGBufferGroup::kSkinWeightMask | plGBufferGroup::kSkinIndices);
-        format |= plGBufferGroup::kSkinNoWeights;       // Should do nothing, but just in case...
-        vRef->SetSkinned(true);
-        vRef->SetVolatile(true);
-    }
-
-    uint32_t vertSize = IGetBufferFormatSize(format); // vertex stride
-    uint32_t numVerts = owner->GetVertBufferCount(idx);
-
-    vRef->fOwner = owner;
-    vRef->fCount = numVerts;
-    vRef->fVertexSize = vertSize;
-    vRef->fFormat = format;
-    vRef->fRefTime = 0;
-
-    vRef->SetDirty(true);
-    vRef->SetRebuiltSinceUsed(true);
-    vRef->fData = nullptr;
-
-    vRef->SetVolatile(vRef->Volatile() || owner->AreVertsVolatile());
-
-    vRef->fIndex = idx;
-
-    owner->SetVertexBufferRef(idx, vRef);
-    hsRefCnt_SafeUnRef(vRef);
 }
 
 // CheckIndexBufferRef /////////////////////////////////////////////////////

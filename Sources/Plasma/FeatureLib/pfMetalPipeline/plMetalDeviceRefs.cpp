@@ -98,6 +98,8 @@ void plMetalDeviceRef::Link(plMetalDeviceRef **back) {
 
 plMetalVertexBufferRef::~plMetalVertexBufferRef()
 {
+    if (fData)
+        delete fData;
     Release();
 }
 

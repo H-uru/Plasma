@@ -50,6 +50,7 @@ void plMetalDevice::EncodeBlur(MTL::CommandBuffer* commandBuffer, MTL::Texture* 
     //FIXME: Blurring currently ends a pass - and restarting a pass will possibly clear one or more buffers
     //Technically shadow blurring only happens at the end of the render pass though...
     CurrentRenderCommandEncoder()->endEncoding();
+    fCurrentRenderTargetCommandEncoder->release();
     fCurrentRenderTargetCommandEncoder = nil;
     
     //look up the shader by sigma value
@@ -60,9 +61,25 @@ void plMetalDevice::EncodeBlur(MTL::CommandBuffer* commandBuffer, MTL::Texture* 
         blur = [[MPSImageGaussianBlur alloc] initWithDevice:(id<MTLDevice>)fMetalDevice sigma:sigma];
         fBlurShaders[sigma] = (NS::Object*)blur;
     }
-    [blur encodeToCommandBuffer:(id<MTLCommandBuffer>)commandBuffer inPlaceTexture:(id<MTLTexture>*)&texture fallbackCopyAllocator:^ id<MTLTexture> (MPSKernel * kernel, id<MTLCommandBuffer> commandBuffer, id<MTLTexture> texture) {
+    
+    //we'd like to do the blur in place, but Metal might not let us.
+    //if it allocates a new texture, we'll have to glit that data back to the original
+    id<MTLTexture> destTexture = (id<MTLTexture>)texture;
+    bool result = [blur encodeToCommandBuffer:(id<MTLCommandBuffer>)commandBuffer inPlaceTexture:(id<MTLTexture>*)&destTexture fallbackCopyAllocator:^ id<MTLTexture> (MPSKernel * kernel, id<MTLCommandBuffer> commandBuffer, id<MTLTexture> texture) {
+        //this copy allocator will release the original texture - that texture is important, don't let it
+        [texture retain];
         MTL::TextureDescriptor* descriptor = MTL::TextureDescriptor::texture2DDescriptor((MTL::PixelFormat)texture.pixelFormat, texture.width, texture.height, false);
         descriptor->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageShaderWrite);
-        return (id<MTLTexture>)fMetalDevice->newTexture(descriptor);
+        return (id<MTLTexture>)fMetalDevice->newTexture(descriptor)->autorelease();
     }];
+    
+    //did Metal change our original texture?
+    if (destTexture != (id<MTLTexture>)texture) {
+        //we'll need to blit the dest texture back to the source
+        //we just committed a compute pass, buffer should be free for us to create
+        //a blit encoder
+        id<MTLBlitCommandEncoder> blitEncoder = [(id<MTLCommandBuffer>)GetCurrentCommandBuffer() blitCommandEncoder];
+        [blitEncoder copyFromTexture:destTexture sourceSlice:0 sourceLevel:0 sourceOrigin:MTLOriginMake(0, 0, 0) sourceSize:MTLSizeMake(destTexture.width, destTexture.height, 0) toTexture:(id<MTLTexture>)texture destinationSlice:0 destinationLevel:0 destinationOrigin:MTLOriginMake(0, 0, 0)];
+        [blitEncoder endEncoding];
+    }
 }

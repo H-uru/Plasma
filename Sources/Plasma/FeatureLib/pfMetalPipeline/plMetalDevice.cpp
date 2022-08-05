@@ -147,6 +147,7 @@ void plMetalDevice::SetMaxAnsiotropy(uint8_t maxAnsiotropy)
     samplerDescriptor->setSAddressMode(MTL::SamplerAddressModeClampToEdge);
     samplerDescriptor->setTAddressMode(MTL::SamplerAddressModeClampToEdge);
     fSamplerStates[3] = fMetalDevice->newSamplerState(samplerDescriptor);
+    samplerDescriptor->release();
 }
 
 void plMetalDevice::SetMSAASampleCount(uint8_t sampleCount)
@@ -1224,6 +1225,7 @@ void plMetalDevice::CreateGammaAdjustState() {
     NS::Error *error;
     fGammaAdjustState->release();
     fGammaAdjustState = fMetalDevice->newRenderPipelineState(gammaDescriptor, &error);
+    gammaDescriptor->release();
 }
 
 void plMetalDevice::PostprocessIntoDrawable() {
@@ -1304,7 +1306,7 @@ void plMetalDevice::BlitTexture(MTL::Texture* src, MTL::Texture* dst)
         fBlitCommandEncoder = fBlitCommandBuffer->blitCommandEncoder()->retain();
     }
     
-    fBlitCommandEncoder->copyFromTexture(src, dst);
+    fBlitCommandEncoder->copyFromTexture(src, 0, 0, MTL::Origin(0, 0, 0), MTL::Size(src->width(), src->height(), 0), dst, 0, 0, MTL::Origin(0, 0, 0));
 }
 
 #endif
