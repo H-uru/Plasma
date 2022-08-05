@@ -900,23 +900,11 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* im
         descriptor->setMipmapLevelCount(tRef->fLevels + 1);
     }
 
-    //if device has unified memory, set storage mode to shared
-    if(fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
-        descriptor->setStorageMode(MTL::StorageModeShared);
-    } else {
-        descriptor->setStorageMode(MTL::StorageModeManaged);
-    }
+    descriptor->setStorageMode(MTL::StorageModeManaged);
     
     
     tRef->fTexture = fMetalDevice->newTexture(descriptor);
     PopulateTexture( tRef, img, 0);
-    if(!fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
-        descriptor->setStorageMode(MTL::StorageModePrivate);
-        MTL::Texture* privateTexture = fMetalDevice->newTexture(descriptor);
-        BlitTexture(tRef->fTexture, privateTexture);
-        tRef->fTexture->autorelease();
-        tRef->fTexture = privateTexture;
-    }
     //}
     
     
@@ -931,10 +919,6 @@ void plMetalDevice::MakeCubicTextureRef(plMetalDevice::TextureRef *tRef, plCubic
         descriptor->setMipmapLevelCount(tRef->fLevels + 1);
     }
     descriptor->setUsage(MTL::TextureUsageShaderRead);
-    //if device has unified memory, set storage mode to shared
-    if(fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
-        descriptor->setStorageMode(MTL::StorageModeShared);
-    }
     
     tRef->fTexture = fMetalDevice->newTexture(descriptor);
     
