@@ -237,24 +237,25 @@ typedef struct
 
 vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                                        constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
+                                       constant plMetalLights & lights [[ buffer(BufferIndexLights) ]],
                                        constant float4x4 & blendMatrix1 [[ buffer(BufferIndexBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
 {
     ColorInOut out;
     //we should have been able to swizzle, but it didn't work in Xcode beta? Try again later.
     const half4 inColor = half4(in.color.b, in.color.g, in.color.r, in.color.a) / half4(255.0f);
     
-    const half4 MAmbient = half4(mix(inColor, uniforms.ambientCol, uniforms.ambientSrc));
-    const half4 MDiffuse = half4(mix(inColor, uniforms.diffuseCol, uniforms.diffuseSrc));
-    const half4 MEmissive = half4(mix(inColor, uniforms.emissiveCol, uniforms.emissiveSrc));
+    const half3 MAmbient = mix(inColor.rgb, uniforms.ambientCol, uniforms.ambientSrc);
+    const half4 MDiffuse = mix(inColor, uniforms.diffuseCol, uniforms.diffuseSrc);
+    const half3 MEmissive = mix(inColor.rgb, uniforms.emissiveCol, uniforms.emissiveSrc);
     //const half4 MSpecular = half4(mix(inColor, uniforms.specularCol, uniforms.specularSrc));
 
-    half4 LAmbient = half4(0.0, 0.0, 0.0, 0.0);
-    half4 LDiffuse = half4(0.0, 0.0, 0.0, 0.0);
+    half3 LAmbient = half3(0.0, 0.0, 0.0);
+    half3 LDiffuse = half3(0.0, 0.0, 0.0);
 
-    float3 Ndirection = normalize(uniforms.localToWorldMatrix * float4(in.normal, 0.0)).xyz;
+    const float3 Ndirection = normalize(uniforms.localToWorldMatrix * float4(in.normal, 0.0)).xyz;
 
-    for (size_t i = 0; i < 8; i++) {
-        constant plMetalShaderLightSource *lightSource = &uniforms.lampSources[i];
+    for (size_t i = 0; i < lights.count; i++) {
+        constant const plMetalShaderLightSource *lightSource = &lights.lampSources[i];
         if(lightSource->scale == 0.0h)
             continue;
         
@@ -273,7 +274,7 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
 
             attenuation = 1.0 / (lightSource->constAtten + lightSource->linAtten * distance + lightSource->quadAtten * pow(distance, 2.0));
 
-            if (uniforms.lampSources[i].spotProps.x > 0.0) {
+            if (lightSource->spotProps.x > 0.0) {
                 // Spot Light with cone falloff
                 const float a = dot(direction.xyz, normalize(-lightSource->direction).xyz);
                 const float theta = lightSource->spotProps.y;
@@ -284,14 +285,15 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
             }
         }
 
-        LAmbient.rgb = LAmbient.rgb + half3(attenuation * (uniforms.lampSources[i].ambient.rgb * uniforms.lampSources[i].scale));
+        LAmbient.rgb = LAmbient.rgb + half3(attenuation * (lightSource->ambient.rgb * lightSource->scale));
         float3 dotResult = dot(Ndirection, direction);
-        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (uniforms.lampSources[i].diffuse.rgb * uniforms.lampSources[i].scale) * half3(max(0.0, dotResult) * attenuation);
+        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (lightSource->diffuse.rgb * lightSource->scale) * half3(max(0.0, dotResult) * attenuation);
     }
 
-    const half4 ambient = clamp((MAmbient) * (half4(uniforms.globalAmb) + LAmbient), 0.0, 1.0);
-    const half4 diffuse = clamp(LDiffuse, 0.0, 1.0);
-    const half4 material = clamp(ambient + diffuse + half4(MEmissive), 0.0, 1.0);
+    const half3 ambient = clamp((MAmbient.rgb) * (uniforms.globalAmb.rgb + LAmbient.rgb), 0.0, 1.0);
+    const half3 diffuse = clamp(LDiffuse.rgb, 0.0, 1.0);
+    const half4 material = half4(clamp(ambient + diffuse + MEmissive.rgb, 0.0, 1.0),
+                                 abs(uniforms.invVtxAlpha - MDiffuse.a));
 
     out.vtxColor = half4(material.rgb, abs(uniforms.invVtxAlpha - MDiffuse.a));
     
@@ -318,22 +320,9 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
     
     const float4 normal = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.normal, 0.0));
     
-    if(hasLayer1)
-        out.texCoord1 = uniforms.sampleLocation(0, &in.texCoord1, normal, vCamPosition);
-    if(hasLayer2)
-        out.texCoord2 = uniforms.sampleLocation(1, &in.texCoord1, normal, vCamPosition);
-    if(hasLayer3)
-        out.texCoord3 = uniforms.sampleLocation(2, &in.texCoord1, normal, vCamPosition);
-    if(hasLayer4)
-        out.texCoord4 = uniforms.sampleLocation(3, &in.texCoord1, normal, vCamPosition);
-    if(hasLayer5)
-        out.texCoord5 = uniforms.sampleLocation(4, &in.texCoord1, normal, vCamPosition);
-    if(hasLayer6)
-        out.texCoord5 = uniforms.sampleLocation(5, &in.texCoord1, normal, vCamPosition);
-    if(hasLayer7)
-        out.texCoord7 = uniforms.sampleLocation(6, &in.texCoord1, normal, vCamPosition);
-    if(hasLayer8)
-        out.texCoord8 = uniforms.sampleLocation(7, &in.texCoord1, normal, vCamPosition);
+    for(size_t layer=0; layer<num_layers; layer++) {
+        (&out.texCoord1)[layer] = uniforms.sampleLocation(layer, &in.texCoord1, normal, vCamPosition);
+    }
     
     out.position = uniforms.projectionMatrix * vCamPosition;
 

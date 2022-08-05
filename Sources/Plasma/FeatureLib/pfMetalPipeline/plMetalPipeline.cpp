@@ -152,6 +152,11 @@ bool plRenderTriListFunc::RenderPrims() const
     
     
     fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), BufferIndexState);
+    
+    plMetalLights* lights = &fDevice->fPipeline->fLights;
+    size_t lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * lights->count);
+    
+    fDevice->CurrentRenderCommandEncoder()->setVertexBytes(lights, sizeof(plMetalLights), BufferIndexLights);
     fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
 }
 
@@ -1290,21 +1295,22 @@ void plMetalPipeline::IRenderProjections(const plRenderPrimFunc& render, const p
 void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightInfo* li, const plMetalVertexBufferRef* vRef)
 {
     // Enable the projecting light only.
-    IEnableLight(7, li);
+    IEnableLight(0, li);
+    fLights.count = 1;
 
     plLayerInterface* proj = li->GetProjection();
     CheckTextureRef(proj);
     plMetalTextureRef* tex = (plMetalTextureRef*)proj->GetTexture()->GetDeviceRef();
     
-    IScaleLight(7, true);
+    IScaleLight(0, true);
     
-    fCurrentRenderPassUniforms->ambientCol = half4(0.0);
+    fCurrentRenderPassUniforms->ambientCol = half3(0.0);
     fCurrentRenderPassUniforms->ambientSrc = 1.0;
     fCurrentRenderPassUniforms->diffuseSrc = 1.0;
     fCurrentRenderPassUniforms->emissiveSrc = 1.0;
     fCurrentRenderPassUniforms->specularSrc = 1.0;
     fCurrentRenderPassUniforms->fogValues = {0.0, 0.0f};
-    fCurrentRenderPassUniforms->ambientCol = {1.0, 1.0, 1.0, 1.0};
+    fCurrentRenderPassUniforms->ambientCol = {1.0, 1.0, 1.0};
     fCurrentRenderPassUniforms->diffuseCol = {1.0, 1.0, 1.0, 1.0};
     
     
@@ -1365,22 +1371,19 @@ void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGM
         IPushProjPiggyBack(proj);
 
         // Enable the projecting light only.
-        IEnableLight(7, li);
+        IEnableLight(0, li);
+        fLights.count = 1;
 
         AppendLayerInterface(&layLightBase, false);
 
         IHandleMaterialPass( material, iPass, &span, vRef, false );
         
-        //FIXME: Hard setting of light
-        IScaleLight(7, true);
+        IScaleLight(0, true);
 
         // Do the render with projection.
         render.RenderPrims();
 
         RemoveLayerInterface(&layLightBase, false);
-
-        // Disable the projecting light
-        IDisableLight(7);
 
         // Pop it's projected texture off piggyback
         IPopProjPiggyBacks();
@@ -1486,7 +1489,7 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
         IHandleMaterialPass(material, pass, &span, vRef);
         if( aux->fFlags & plAuxSpan::kOverrideLiteModel )
         {
-            fCurrentRenderPassUniforms->ambientCol = {1.0f, 1.0f, 1.0f, 1.0f};
+            fCurrentRenderPassUniforms->ambientCol = {1.0f, 1.0f, 1.0f};
             
             fCurrentRenderPassUniforms->diffuseSrc = 1.0;
             fCurrentRenderPassUniforms->ambientSrc = 1.0;
@@ -2250,11 +2253,11 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
     {
         fCurrentRenderPassUniforms->globalAmb = { 1.0, 1.0, 1.0, 1.0 };
 
-        fCurrentRenderPassUniforms->ambientCol = { 1.0, 1.0, 1.0, 1.0 };
+        fCurrentRenderPassUniforms->ambientCol = { 1.0, 1.0, 1.0 };
         fCurrentRenderPassUniforms->diffuseCol = { 1.0, 1.0, 1.0, 1.0 };
-        fCurrentRenderPassUniforms->emissiveCol = { 1.0, 1.0, 1.0, 1.0 };
-        fCurrentRenderPassUniforms->emissiveCol = { 1.0, 1.0, 1.0, 1.0 };
-        fCurrentRenderPassUniforms->specularCol = { 1.0, 1.0, 1.0, 1.0 };
+        fCurrentRenderPassUniforms->emissiveCol = { 1.0, 1.0, 1.0 };
+        fCurrentRenderPassUniforms->emissiveCol = { 1.0, 1.0, 1.0 };
+        fCurrentRenderPassUniforms->specularCol = { 1.0, 1.0, 1.0 };
 
         fCurrentRenderPassUniforms->ambientSrc =  1.0;
         fCurrentRenderPassUniforms->diffuseSrc =  1.0;
@@ -2280,31 +2283,31 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
         {
             if (state.fShadeFlags & hsGMatState::kShadeWhite) {
                 fCurrentRenderPassUniforms->globalAmb = { 1.0, 1.0, 1.0, 1.0 };
-                fCurrentRenderPassUniforms->ambientCol = { 1.0, 1.0, 1.0, 1.0 };
+                fCurrentRenderPassUniforms->ambientCol = { 1.0, 1.0, 1.0 };
             } else if (IsDebugFlagSet(plPipeDbg::kFlagNoPreShade)) {
                 fCurrentRenderPassUniforms->globalAmb = { 0.0, 0.0, 0.0, 1.0 };
-                fCurrentRenderPassUniforms->ambientCol = { 0.0, 0.0, 0.0, 1.0 };
+                fCurrentRenderPassUniforms->ambientCol = { 0.0, 0.0, 0.0 };
             } else {
                 hsColorRGBA amb = currLayer->GetPreshadeColor();
                 fCurrentRenderPassUniforms->globalAmb = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), 1.0 };
-                fCurrentRenderPassUniforms->ambientCol = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), 1.0 };
+                fCurrentRenderPassUniforms->ambientCol = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b) };
             }
 
             hsColorRGBA dif = currLayer->GetRuntimeColor();
             fCurrentRenderPassUniforms->diffuseCol = { static_cast<half>(dif.r), static_cast<half>(dif.g), static_cast<half>(dif.b), static_cast<half>(currLayer->GetOpacity()) };
 
             hsColorRGBA em = currLayer->GetAmbientColor();
-            fCurrentRenderPassUniforms->emissiveCol = { static_cast<half>(em.r), static_cast<half>(em.g), static_cast<half>(em.b), 1.0 };
+            fCurrentRenderPassUniforms->emissiveCol = { static_cast<half>(em.r), static_cast<half>(em.g), static_cast<half>(em.b) };
 
             // Set specular properties
             if (state.fShadeFlags & hsGMatState::kShadeSpecular) {
                 hsColorRGBA spec = currLayer->GetSpecularColor();
-                fCurrentRenderPassUniforms->specularCol = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b), 1.0 };
+                fCurrentRenderPassUniforms->specularCol = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b) };
 #if 0
                 mat.Power = currLayer->GetSpecularPower();
 #endif
             } else {
-                fCurrentRenderPassUniforms->specularCol = { 0.0, 0.0, 0.0, 0.0 };
+                fCurrentRenderPassUniforms->specularCol = { 0.0, 0.0, 0.0 };
             }
 
             fCurrentRenderPassUniforms->diffuseSrc = 1.0;
@@ -2323,11 +2326,11 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 
         case plSpan::kLiteVtxPreshaded:  // Vtx preshaded
         {
-            fCurrentRenderPassUniforms->globalAmb = { 0.0, 0.0, 0.0, 0.0 };
-            fCurrentRenderPassUniforms->ambientCol = { 0.0, 0.0, 0.0, 0.0 };
+            fCurrentRenderPassUniforms->globalAmb = { 0.0, 0.0, 0.0 };
+            fCurrentRenderPassUniforms->ambientCol = { 0.0, 0.0, 0.0 };
             fCurrentRenderPassUniforms->diffuseCol = { 0.0, 0.0, 0.0, 0.0 };
-            fCurrentRenderPassUniforms->emissiveCol = { 0.0, 0.0, 0.0, 0.0 };
-            fCurrentRenderPassUniforms->specularCol = { 0.0, 0.0, 0.0, 0.0 };
+            fCurrentRenderPassUniforms->emissiveCol = { 0.0, 0.0, 0.0 };
+            fCurrentRenderPassUniforms->specularCol = { 0.0, 0.0, 0.0 };
 
             fCurrentRenderPassUniforms->diffuseSrc = 0.0;
             fCurrentRenderPassUniforms->ambientSrc = 1.0;
@@ -2345,21 +2348,21 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 
         case plSpan::kLiteVtxNonPreshaded:      // Vtx non-preshaded
         {
-            fCurrentRenderPassUniforms->ambientCol = { 0.0, 0.0, 0.0, 0.0 };
+            fCurrentRenderPassUniforms->ambientCol = { 0.0, 0.0, 0.0 };
             fCurrentRenderPassUniforms->diffuseCol = { 0.0, 0.0, 0.0, 0.0 };
 
             hsColorRGBA em = currLayer->GetAmbientColor();
-            fCurrentRenderPassUniforms->emissiveCol = { static_cast<half>(em.r), static_cast<half>(em.g), static_cast<half>(em.b), 1.0 };
+            fCurrentRenderPassUniforms->emissiveCol = { static_cast<half>(em.r), static_cast<half>(em.g), static_cast<half>(em.b) };
 
             // Set specular properties
             if (state.fShadeFlags & hsGMatState::kShadeSpecular) {
                 hsColorRGBA spec = currLayer->GetSpecularColor();
-                fCurrentRenderPassUniforms->specularCol = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b), 1.0 };
+                fCurrentRenderPassUniforms->specularCol = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b) };
 #if 0
                 mat.Power = currLayer->GetSpecularPower();
 #endif
             } else {
-                fCurrentRenderPassUniforms->specularCol = { 0.0, 0.0, 0.0, 0.0 };
+                fCurrentRenderPassUniforms->specularCol = { 0.0, 0.0, 0.0 };
             }
 
             hsColorRGBA amb = currLayer->GetPreshadeColor();
@@ -2491,6 +2494,7 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
         }
         onLights.clear();
     }
+    fLights.count = i;
 
     for (; i < numLights; i++) {
         IDisableLight(i);
@@ -2500,13 +2504,13 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
 void plMetalPipeline::IEnableLight(size_t i, plLightInfo* light)
 {
     hsColorRGBA amb = light->GetAmbient();
-    fCurrentRenderPassUniforms->lampSources[i].ambient = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), static_cast<half>(amb.a) };
+    fLights.lampSources[i].ambient = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), static_cast<half>(amb.a) };
 
     hsColorRGBA diff = light->GetDiffuse();
-    fCurrentRenderPassUniforms->lampSources[i].diffuse = { static_cast<half>(diff.r), static_cast<half>(diff.g), static_cast<half>(diff.b), static_cast<half>(diff.a) };
+    fLights.lampSources[i].diffuse = { static_cast<half>(diff.r), static_cast<half>(diff.g), static_cast<half>(diff.b), static_cast<half>(diff.a) };
 
     hsColorRGBA spec = light->GetSpecular();
-    fCurrentRenderPassUniforms->lampSources[i].specular = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b), static_cast<half>(spec.a) };
+    fLights.lampSources[i].specular = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b), static_cast<half>(spec.a) };
 
     plDirectionalLightInfo* dirLight = nullptr;
     plOmniLightInfo* omniLight = nullptr;
@@ -2515,35 +2519,35 @@ void plMetalPipeline::IEnableLight(size_t i, plLightInfo* light)
     if ((dirLight = plDirectionalLightInfo::ConvertNoRef(light)) != nullptr)
     {
         hsVector3 lightDir = dirLight->GetWorldDirection();
-        fCurrentRenderPassUniforms->lampSources[i].position = { lightDir.fX, lightDir.fY, lightDir.fZ, 0.0 };
-        fCurrentRenderPassUniforms->lampSources[i].direction = { lightDir.fX, lightDir.fY, lightDir.fZ };
+        fLights.lampSources[i].position = { lightDir.fX, lightDir.fY, lightDir.fZ, 0.0 };
+        fLights.lampSources[i].direction = { lightDir.fX, lightDir.fY, lightDir.fZ };
 
-        fCurrentRenderPassUniforms->lampSources[i].constAtten = 1.0f;
-        fCurrentRenderPassUniforms->lampSources[i].linAtten = 0.0f;
-        fCurrentRenderPassUniforms->lampSources[i].quadAtten = 0.0f;
+        fLights.lampSources[i].constAtten = 1.0f;
+        fLights.lampSources[i].linAtten = 0.0f;
+        fLights.lampSources[i].quadAtten = 0.0f;
     }
     else if ((omniLight = plOmniLightInfo::ConvertNoRef(light)) != nullptr)
     {
         hsPoint3 pos = omniLight->GetWorldPosition();
-        fCurrentRenderPassUniforms->lampSources[i].position = { pos.fX, pos.fY, pos.fZ, 1.0 };
+        fLights.lampSources[i].position = { pos.fX, pos.fY, pos.fZ, 1.0 };
 
         // TODO: Maximum Range
         
-        fCurrentRenderPassUniforms->lampSources[i].constAtten = omniLight->GetConstantAttenuation();
-        fCurrentRenderPassUniforms->lampSources[i].linAtten = omniLight->GetLinearAttenuation();
-        fCurrentRenderPassUniforms->lampSources[i].quadAtten = omniLight->GetQuadraticAttenuation();
+        fLights.lampSources[i].constAtten = omniLight->GetConstantAttenuation();
+        fLights.lampSources[i].linAtten = omniLight->GetLinearAttenuation();
+        fLights.lampSources[i].quadAtten = omniLight->GetQuadraticAttenuation();
 
         if (!omniLight->GetProjection() && (spotLight = plSpotLightInfo::ConvertNoRef(omniLight)) != nullptr) {
             hsVector3 lightDir = spotLight->GetWorldDirection();
-            fCurrentRenderPassUniforms->lampSources[i].direction = { lightDir.fX, lightDir.fY, lightDir.fZ };
+            fLights.lampSources[i].direction = { lightDir.fX, lightDir.fY, lightDir.fZ };
 
             float falloff = spotLight->GetFalloff();
             float theta = cosf(spotLight->GetSpotInner());
             float phi = cosf(spotLight->GetProjection() ? hsConstants::half_pi<float> : spotLight->GetSpotOuter());
 
-            fCurrentRenderPassUniforms->lampSources[i].spotProps = { falloff, theta, phi };
+            fLights.lampSources[i].spotProps = { falloff, theta, phi };
         } else {
-            fCurrentRenderPassUniforms->lampSources[i].spotProps = { 0.0, 0.0, 0.0 };
+            fLights.lampSources[i].spotProps = { 0.0, 0.0, 0.0 };
         }
     }
     else {
@@ -2553,20 +2557,20 @@ void plMetalPipeline::IEnableLight(size_t i, plLightInfo* light)
 
 void plMetalPipeline::IDisableLight(size_t i)
 {
-    fCurrentRenderPassUniforms->lampSources[i].position = { 0.0f, 0.0f, 0.0f, 0.0f };
-    fCurrentRenderPassUniforms->lampSources[i].ambient = { 0.0f, 0.0f, 0.0f, 0.0f };
-    fCurrentRenderPassUniforms->lampSources[i].diffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
-    fCurrentRenderPassUniforms->lampSources[i].specular = { 0.0f, 0.0f, 0.0f, 0.0f };
-    fCurrentRenderPassUniforms->lampSources[i].constAtten = { 1.0f };
-    fCurrentRenderPassUniforms->lampSources[i].linAtten = { 0.0f };
-    fCurrentRenderPassUniforms->lampSources[i].quadAtten = { 0.0f };
-    fCurrentRenderPassUniforms->lampSources[i].scale = { 0.0f };
+    fLights.lampSources[i].position = { 0.0f, 0.0f, 0.0f, 0.0f };
+    fLights.lampSources[i].ambient = { 0.0f, 0.0f, 0.0f, 0.0f };
+    fLights.lampSources[i].diffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
+    fLights.lampSources[i].specular = { 0.0f, 0.0f, 0.0f, 0.0f };
+    fLights.lampSources[i].constAtten = { 1.0f };
+    fLights.lampSources[i].linAtten = { 0.0f };
+    fLights.lampSources[i].quadAtten = { 0.0f };
+    fLights.lampSources[i].scale = { 0.0f };
 }
 
 void plMetalPipeline::IScaleLight(size_t i, float scale)
 {
     scale = int(scale * 1.e1f) * 1.e-1f;
-    fCurrentRenderPassUniforms->lampSources[i].scale = scale;
+    fLights.lampSources[i].scale = scale;
 }
 
 void plMetalPipeline::IDrawPlate(plPlate* plate)
@@ -2660,17 +2664,17 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
 //we'll just let them push/pop the current state.
 void plMetalPipeline::PushCurrentLightSources()
 {
-    plMetalShaderLightSource *lightSources = new plMetalShaderLightSource[8]();
-    memcpy(lightSources, fCurrentRenderPassUniforms->lampSources, sizeof(plMetalShaderLightSource[8]));
+    plMetalLights *lightSources = new plMetalLights();
+    memcpy(lightSources, &fLights, sizeof(plMetalLights));
     fLightSourceStack.emplace_back(lightSources);
 }
 
 void plMetalPipeline::PopCurrentLightSources()
 {
     hsAssert(fLightSourceStack.size() > 0, "Asked to pop light sources but none on stack");
-    plMetalShaderLightSource *lightSources = fLightSourceStack.back();
+    plMetalLights *lightSources = fLightSourceStack.back();
     fLightSourceStack.pop_back();
-    memcpy(fCurrentRenderPassUniforms->lampSources, lightSources, sizeof(plMetalShaderLightSource[8]));
+    memcpy(&fLights, lightSources, sizeof(plMetalLights));
     delete lightSources;
 }
 
@@ -3499,10 +3503,7 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
 // to fade out a shadow as it gets too far in the distance to matter.
 void plMetalPipeline::ISetupShadowLight(plShadowSlave* slave)
 {
-    //FIXME: Do we need to clear the fCurrentRenderPassUniforms->lampSources array?
-    //Feels like we could catch lights from a previous pass
-    plMetalShaderLightSource lRef = fCurrentRenderPassUniforms->lampSources[0];
-    memset(&lRef, 0, sizeof(lRef));
+    plMetalShaderLightSource lRef = fLights.lampSources[0];
 
     lRef.diffuse.r
         = lRef.diffuse.g
@@ -3538,7 +3539,8 @@ void plMetalPipeline::ISetupShadowLight(plShadowSlave* slave)
     }
 
     //fD3DDevice->SetLight( lRef->fD3DIndex, &lRef->fD3DInfo );
-    fCurrentRenderPassUniforms->lampSources[0] = lRef;
+        fLights.lampSources[0] = lRef;
+    fLights.count = 1;
 
     //Not sure hot to link lights in Metal. Do we even need to?
     //slave->fLightIndex = lRef->fD3DIndex;
@@ -4009,7 +4011,7 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             // than what we're currently set for, set it again.
             //if( selfShadowNow != fShadows[i]->fSelfShadowOn )
             //{
-                plMetalShaderLightSource lRef = fCurrentRenderPassUniforms->lampSources[0];
+                plMetalShaderLightSource lRef = fLights.lampSources[0];
 
                 // We lower the power on self shadowing, because the artists like to
                 // crank up the shadow strength to huge values to get a darker shadow
@@ -4028,7 +4030,8 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
                     lRef.diffuse.r = lRef.diffuse.b = lRef.diffuse.g = fShadows[i]->fPower;
                 }
                 lRef.scale = 1.0;
-                fCurrentRenderPassUniforms->lampSources[0] = lRef;
+                fLights.lampSources[0] = lRef;
+            fLights.count = 1;
 
                 // record which our intensity is now set for.
                 fShadows[i]->fSelfShadowOn = selfShadowNow;
@@ -4149,6 +4152,7 @@ void plMetalPipeline::IDisableLightsForShadow()
     {
         IDisableLight(i);
     }
+    fLights.count = 0;
 }
 
 // ISetupShadowSlaveTextures //////////////////////////////////////////////

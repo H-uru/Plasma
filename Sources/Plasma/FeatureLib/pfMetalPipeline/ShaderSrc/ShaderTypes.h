@@ -58,6 +58,7 @@ enum plMetalShaderArgumentIndex
     Texture    = 1,
     BufferIndexState      = 2,
     BufferIndexUniforms      = 3,
+    BufferIndexLights        = 4,
     BufferIndexFragArgBuffer  = 5,
     BufferIndexShadowCastFragArgBuffer  = 4,
     BufferIndexBlendMatrix1      = 6
@@ -142,13 +143,13 @@ typedef struct
     
     //lighting
     half4 globalAmb;
-    half4 ambientCol;
+    half3 ambientCol;
     uint8_t ambientSrc;
     half4 diffuseCol;
     uint8_t diffuseSrc;
-    half4 emissiveCol;
+    half3 emissiveCol;
     uint8_t emissiveSrc;
-    half4 specularCol;
+    half3 specularCol;
     uint8_t specularSrc;
     bool invVtxAlpha;
     
@@ -156,13 +157,16 @@ typedef struct
     simd::float2 fogValues;
     half3 fogColor;
     
-    plMetalShaderLightSource lampSources[8];
-    
     UVOutDescriptor uvTransforms[8];
 #ifdef __METAL_VERSION__
     float3 sampleLocation(size_t index, thread float3 *texCoords, const float4 normal, const float4 camPosition) constant;
 #endif
 } VertexUniforms;
+
+typedef struct {
+    uint8_t count;
+    plMetalShaderLightSource lampSources[8];
+} plMetalLights;
 
 #endif /* ShaderTypes_h */
 

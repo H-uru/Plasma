@@ -261,7 +261,8 @@ private:
     
     void PushCurrentLightSources();
     void PopCurrentLightSources();
-    std::vector<plMetalShaderLightSource *> fLightSourceStack;
+    plMetalLights fLights;
+    std::vector<plMetalLights *> fLightSourceStack;
     
     static plMetalEnumerate enumerator;
     
