@@ -717,7 +717,7 @@ void plMetalPipeline::RenderScreenElements() {
     plProfile_EndTiming(Reset);
 }
 
-bool plMetalPipeline::IsFullScreen() const { return fDefaultPipeParams.Windowed; }
+bool plMetalPipeline::IsFullScreen() const { return !fDefaultPipeParams.Windowed; }
 
 void plMetalPipeline::Resize(uint32_t width, uint32_t height)
 {
