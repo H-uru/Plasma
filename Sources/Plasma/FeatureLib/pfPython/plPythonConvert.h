@@ -164,29 +164,6 @@ namespace plPython
         return value.Release();
     }
 
-    namespace _detail
-    {
-        template<size_t _IdxT, typename... _TupleArgsT>
-        inline void ConvertToTuple(PyObject* result, std::tuple<_TupleArgsT...>&& tuple)
-        {
-            using _TupleT = std::decay_t<decltype(tuple)>;
-
-            if constexpr (_IdxT < std::tuple_size_v<_TupleT>) {
-                using _ElementT = std::tuple_element_t<_IdxT, _TupleT>;
-                PyTuple_SET_ITEM(
-                    result,
-                    _IdxT,
-                    plPython::ConvertFrom(
-                        std::forward<_ElementT>(
-                            std::get<_IdxT>(tuple)
-                        )
-                    )
-                );
-                ConvertToTuple<_IdxT + 1, _TupleArgsT...>(result, std::forward<_TupleT>(tuple));
-            }
-        }
-    };
-
     struct ToTuple_Type {};
     constexpr ToTuple_Type ToTuple;
 
@@ -194,10 +171,8 @@ namespace plPython
     inline PyObject* ConvertFrom(ToTuple_Type, _TupleArgsT... args)
     {
         PyObject* tuple = PyTuple_New(sizeof...(args));
-        _detail::ConvertToTuple<0>(
-            tuple,
-            std::make_tuple<_TupleArgsT...>(std::forward<_TupleArgsT>(args)...)
-        );
+        Py_ssize_t i = 0;
+        (PyTuple_SET_ITEM(tuple, i++, ConvertFrom(std::forward<_TupleArgsT>(args))), ...);
         return tuple;
     }
 };
