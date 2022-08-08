@@ -259,20 +259,19 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         if(lightSource->scale == 0.0h)
             continue;
         
-        float attenuation;
-        float3 direction;
+        //w is attenation
+        float4 direction;
 
         if (lightSource->position.w == 0.0) {
             // Directional Light with no attenuation
-            direction = -(lightSource->direction).xyz;
-            attenuation = 1.0;
+            direction = float4(-(lightSource->direction).xyz, 1.0);
         } else {
             // Omni Light in all directions
             const float3 v2l = lightSource->position.xyz - float3(uniforms.localToWorldMatrix * float4(in.position, 1.0));
             const float distance = length(v2l);
-            direction = normalize(v2l);
+            direction.xyz = normalize(v2l);
 
-            attenuation = 1.0 / (lightSource->constAtten + lightSource->linAtten * distance + lightSource->quadAtten * pow(distance, 2.0));
+            direction.w = 1.0 / (lightSource->constAtten + lightSource->linAtten * distance + lightSource->quadAtten * pow(distance, 2.0));
 
             if (lightSource->spotProps.x > 0.0) {
                 // Spot Light with cone falloff
@@ -281,13 +280,13 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                 const float phi = lightSource->spotProps.z;
                 const float result = pow((a - phi) / (theta - phi), lightSource->spotProps.x);
 
-                attenuation *= clamp(result, 0.0, 1.0);
+                direction.w *= clamp(result, 0.0, 1.0);
             }
         }
 
-        LAmbient.rgb = LAmbient.rgb + half3(attenuation * (lightSource->ambient.rgb * lightSource->scale));
-        float3 dotResult = dot(Ndirection, direction);
-        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (lightSource->diffuse.rgb * lightSource->scale) * half3(max(0.0, dotResult) * attenuation);
+        LAmbient.rgb = LAmbient.rgb + half3(direction.w * (lightSource->ambient.rgb * lightSource->scale));
+        const float3 dotResult = dot(Ndirection, direction.xyz);
+        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (lightSource->diffuse.rgb * lightSource->scale) * half3(max(0.0, dotResult) * direction.w);
     }
 
     const half3 ambient = clamp((MAmbient.rgb) * (uniforms.globalAmb.rgb + LAmbient.rgb), 0.0, 1.0);
