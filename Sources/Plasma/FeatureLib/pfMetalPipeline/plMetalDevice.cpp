@@ -1028,6 +1028,7 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
     if ((fCurrentUnprocessedOutputTexture && depthNeedsRebuild) || (fCurrentUnprocessedOutputTexture == nullptr && NeedsPostprocessing())) {
         MTL::TextureDescriptor* mainPassDescriptor = MTL::TextureDescriptor::texture2DDescriptor(drawable->texture()->pixelFormat(), drawable->texture()->width(), drawable->texture()->height(), false);
         mainPassDescriptor->setStorageMode(MTL::StorageModePrivate);
+        mainPassDescriptor->setUsage(MTL::TextureUsageShaderRead || MTL::TextureUsageRenderTarget);
         fCurrentUnprocessedOutputTexture->release();
         fCurrentUnprocessedOutputTexture = fMetalDevice->newTexture(mainPassDescriptor);
     }
