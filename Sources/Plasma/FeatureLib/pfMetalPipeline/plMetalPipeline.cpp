@@ -638,7 +638,7 @@ bool plMetalPipeline::BeginRender()
         drawable->release();
         
         /// If we have a renderTarget active, use its viewport
-        fDevice.SetViewport();
+        //fDevice.SetViewport();
     }
 
     fRenderCnt++;
