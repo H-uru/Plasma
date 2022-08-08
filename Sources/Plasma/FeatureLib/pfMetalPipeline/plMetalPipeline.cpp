@@ -620,9 +620,6 @@ bool plMetalPipeline::BeginRender()
 
     // If this is the primary BeginRender, make sure we're really ready.
     if (fInSceneDepth++ == 0) {
-        /// If we have a renderTarget active, use its viewport
-        fDevice.SetViewport();
-        
         fDevice.BeginRender();
 
         fVtxRefTime++;
@@ -639,6 +636,9 @@ bool plMetalPipeline::BeginRender()
         }
         fDevice.CreateNewCommandBuffer(drawable);
         drawable->release();
+        
+        /// If we have a renderTarget active, use its viewport
+        fDevice.SetViewport();
     }
 
     fRenderCnt++;

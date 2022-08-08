@@ -300,7 +300,11 @@ void plMetalDevice::BeginNewRenderPass() {
         
         
         if (fSampleCount == 1) {
-            renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
+            if (NeedsPostprocessing()) {
+                renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentUnprocessedOutputTexture);
+            } else {
+                renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentOutputTexture);
+            }
         } else {
             renderPassDescriptor->colorAttachments()->object(0)->setTexture(fCurrentFragmentMSAAOutputTexture);
             
