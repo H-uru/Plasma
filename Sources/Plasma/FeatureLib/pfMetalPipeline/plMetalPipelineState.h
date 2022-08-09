@@ -115,13 +115,12 @@ struct plMetalFragmentShaderDescription {
     uint8_t     passTypes[8];
     uint32_t    blendModes[8];
     uint32_t    miscFlags[8];
-    uint8_t     sampleTypes[8];
     uint8_t     numLayers;
     
     size_t      hash;
     
     bool operator==(const plMetalFragmentShaderDescription &p) const {
-        bool match = numLayers == p.numLayers && memcmp(passTypes, p.passTypes, sizeof(passTypes)) == 0 && memcmp(blendModes, p.blendModes, sizeof(blendModes)) == 0 && memcmp(miscFlags, p.miscFlags, sizeof(miscFlags)) == 0 && memcmp(sampleTypes, p.sampleTypes, sizeof(sampleTypes)) == 0;
+        bool match = numLayers == p.numLayers && memcmp(passTypes, p.passTypes, sizeof(passTypes)) == 0 && memcmp(blendModes, p.blendModes, sizeof(blendModes)) == 0 && memcmp(miscFlags, p.miscFlags, sizeof(miscFlags)) == 0;
         return match;
     }
     
@@ -147,10 +146,6 @@ struct plMetalFragmentShaderDescription {
         
         for(int i=0;i<8;i++){
             value ^= std::hash<uint8_t>()( passTypes[i] );
-        }
-        
-        for(int i=0;i<8;i++){
-            value ^= std::hash<size_t>()( sampleTypes[i] );
         }
         
         return value;

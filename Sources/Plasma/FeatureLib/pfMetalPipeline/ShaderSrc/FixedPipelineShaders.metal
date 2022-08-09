@@ -169,21 +169,11 @@ constant const uint32_t miscFlags5 [[ function_constant(FunctionConstantLayerFla
 constant const uint32_t miscFlags6 [[ function_constant(FunctionConstantLayerFlags + 5)    ]];
 constant const uint32_t miscFlags7 [[ function_constant(FunctionConstantLayerFlags + 6)    ]];
 constant const uint32_t miscFlags8 [[ function_constant(FunctionConstantLayerFlags + 7)    ]];
-    
-constant const uint8_t sampleType1 [[ function_constant(FunctionConstantSampleTypes + 0)    ]];
-constant const uint8_t sampleType2 [[ function_constant(FunctionConstantSampleTypes + 1)    ]];
-constant const uint8_t sampleType3 [[ function_constant(FunctionConstantSampleTypes + 2)    ]];
-constant const uint8_t sampleType4 [[ function_constant(FunctionConstantSampleTypes + 3)    ]];
-constant const uint8_t sampleType5 [[ function_constant(FunctionConstantSampleTypes + 4)    ]];
-constant const uint8_t sampleType6 [[ function_constant(FunctionConstantSampleTypes + 5)    ]];
-constant const uint8_t sampleType7 [[ function_constant(FunctionConstantSampleTypes + 6)    ]];
-constant const uint8_t sampleType8 [[ function_constant(FunctionConstantSampleTypes + 7)    ]];
 
 #define MAX_BLEND_PASSES 8
 constant const uint8_t sourceTypes[MAX_BLEND_PASSES] = { sourceType1, sourceType2, sourceType3, sourceType4, sourceType5, sourceType6, sourceType7, sourceType8};
 constant const uint32_t blendModes[MAX_BLEND_PASSES] = { blendModes1, blendModes2, blendModes3, blendModes4, blendModes5, blendModes6, blendModes7, blendModes8};
 constant const uint32_t miscFlags[MAX_BLEND_PASSES] = { miscFlags1, miscFlags2, miscFlags3, miscFlags4, miscFlags5, miscFlags6, miscFlags7, miscFlags8};
-constant const uint8_t sampleTypes[MAX_BLEND_PASSES] = { sampleType1, sampleType2, sampleType3, sampleType4, sampleType5, sampleType6, sampleType7, sampleType8};
 constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
     
 typedef struct  {
@@ -204,11 +194,16 @@ typedef struct  {
     texturecube<half> cubicTexture7  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 6), function_constant(hasLayer7)  ]];
     texturecube<half> cubicTexture8  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 7), function_constant(hasLayer8)  ]];
     const constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(BufferIndexFragArgBuffer)   ]];
-    sampler repeatSampler [[ sampler(0)   ]];
-    sampler clampRepeatSampler [[ sampler(1)   ]];
-    sampler repeatClampSampler [[ sampler(2)   ]];
-    sampler clampSampler [[ sampler(3)   ]];
     half4 sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const;
+    //number of layers is variable, so have to declare these samplers the ugly way
+    sampler samplers  [[ sampler(0), function_constant(hasLayer1)    ]];
+    sampler sampler2  [[ sampler(1), function_constant(hasLayer2)  ]];
+    sampler sampler3  [[ sampler(2), function_constant(hasLayer3)  ]];
+    sampler sampler4  [[ sampler(3), function_constant(hasLayer4)  ]];
+    sampler sampler5  [[ sampler(4), function_constant(hasLayer5)  ]];
+    sampler sampler6  [[ sampler(5), function_constant(hasLayer6)  ]];
+    sampler sampler7  [[ sampler(6), function_constant(hasLayer7)  ]];
+    sampler sampler8  [[ sampler(7), function_constant(hasLayer8)  ]];
 } FragmentShaderArguments;
 
 typedef struct
@@ -453,21 +448,6 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 verte
     if(passType == PassTypeColor) {
         return vertexColor;
     } else {
-        /*
-         Not using array based lookup here because the compiler
-         seems to have an easier time unrolling this if each lookup is done
-         with a constant. Using an array based lookup was hurting performance by
-         about 1/3rd on Apple Silicon.
-         */
-        const uint8_t sampleType = sampleTypes[index];
-        sampler colorSampler = repeatSampler;
-        if(sampleType == 1) {
-            colorSampler = clampRepeatSampler;
-        } else if(sampleType == 2) {
-            colorSampler = repeatClampSampler;
-        } else if(sampleType == 3) {
-            colorSampler = clampSampler;
-        }
         
         if (miscFlags[index] & kMiscPerspProjection) {
             sampleCoord.xy /= sampleCoord.z;
@@ -475,9 +455,9 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 verte
         
         //do the actual sample
         if(passType == PassTypeTexture) {
-            return (&textures)[index].sample(colorSampler, sampleCoord.xy);
+            return (&textures)[index].sample((&samplers)[index], sampleCoord.xy);
         } else if(passType == PassTypeCubicTexture) {
-            return (&cubicTextures)[index].sample(colorSampler, sampleCoord.xyz);
+            return (&cubicTextures)[index].sample((&samplers)[index], sampleCoord.xyz);
         } else {
             return half4(0);
         }

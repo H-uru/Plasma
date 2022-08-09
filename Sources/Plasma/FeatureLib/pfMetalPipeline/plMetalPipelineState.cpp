@@ -106,7 +106,6 @@ void plMetalMaterialPassPipelineState::GetFunctionConstants(MTL::FunctionConstan
     constants->setConstantValues(&fFragmentShaderDescription.passTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSources, 8));
     constants->setConstantValues(&fFragmentShaderDescription.blendModes, MTL::DataTypeUInt, NS::Range(FunctionConstantBlendModes, 8));
     constants->setConstantValues(&fFragmentShaderDescription.miscFlags, MTL::DataTypeUInt, NS::Range(FunctionConstantLayerFlags, 8));
-    constants->setConstantValues(&fFragmentShaderDescription.sampleTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSampleTypes, 8));
 }
 
 size_t plMetalMaterialPassPipelineState::GetHash() const {
@@ -327,22 +326,6 @@ void plMetalFragmentShaderDescription::Populate(plLayerInterface* layPtr, uint8_
         
     } else {
         passTypes[index] = PassTypeColor;
-    }
-    
-    
-    switch (layPtr->GetClampFlags()) {
-    case hsGMatState::kClampTextureU:
-            sampleTypes[index] = 1;
-        break;
-    case hsGMatState::kClampTextureV:
-            sampleTypes[index] = 2;
-        break;
-    case hsGMatState::kClampTexture:
-            sampleTypes[index] = 3;
-        break;
-    default:
-            sampleTypes[index] = 0;
-            break;
     }
 }
 
