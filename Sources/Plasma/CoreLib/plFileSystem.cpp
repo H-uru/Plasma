@@ -68,6 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   endif
 #
 #   include <NSSystemDirectories.h>
+#   include <CoreFoundation/CoreFoundation.h>
 #endif
 
 #include <sys/stat.h>
@@ -566,6 +567,18 @@ plFileName plFileSystem::GetCurrentAppPath()
         appPath = ST::string::from_wchar(path);
     }
 
+    return appPath;
+#elif HS_BUILD_FOR_MACOS
+    //Not sure how we'd ever patch the executable on iOS,
+    //this is really Mac specific
+    //This will only work if this is an app bundle
+    CFBundleRef myBundle = CFBundleGetMainBundle();
+    hsAssert(myBundle != nullptr, "Plasma is not in a bundle on Mac - did not plan for that.");
+    CFURLRef url = CFBundleCopyBundleURL(myBundle);
+    CFStringRef path = CFURLCopyPath(url);
+    appPath = ST::string::from_utf8(CFStringGetCStringPtr(path, kCFStringEncodingUTF8));
+    CFRelease(path);
+    CFRelease(url);
     return appPath;
 #else
     // Look for /proc/self/exe (Linux), /proc/curproc/file (FreeBSD / Mac),
