@@ -237,12 +237,13 @@ jobs:
             -DPLASMA_BUILD_TESTS=ON \
             -DPLASMA_BUILD_TOOLS=ON \
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
-            -DQt5_ROOT=$(brew --prefix qt@5) \
             -DCURL_ROOT=$(brew --prefix curl) \
             -Dexpat_ROOT=$(brew --prefix expat) \
-            -DOpenSSL_ROOT=$(brew --prefix openssl@1.1) \
+            -DJPEG_ROOT=$(brew --prefix jpeg-turbo) \
             -DOpenAL_ROOT=$(brew --prefix openal-soft) \
+            -DOpenSSL_ROOT=$(brew --prefix openssl@1.1) \
             -DPython3_ROOT=$(brew --prefix python@3.10) \
+            -DQt5_ROOT=$(brew --prefix qt@5) \
             -DZLIB_ROOT=$(brew --prefix zlib) \
             -S . -B build
 
