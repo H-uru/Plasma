@@ -248,6 +248,12 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
     half3 LDiffuse = half3(0.0, 0.0, 0.0);
 
     const float3 Ndirection = normalize(uniforms.localToWorldMatrix * float4(in.normal, 0.0)).xyz;
+    
+    float4 position = (uniforms.localToWorldMatrix * float4(in.position, 1.0));
+    if(temp_hasOnlyWeight1) {
+        const float4 position2 = blendMatrix1 * float4(in.position, 1.0);
+        position = (in.weight1 * position) + ((1.0f - in.weight1) * position2);
+    }
 
     for (size_t i = 0; i < lights.count; i++) {
         constant const plMetalShaderLightSource *lightSource = &lights.lampSources[i];
@@ -262,7 +268,7 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
             direction = float4(-(lightSource->direction).xyz, 1.0);
         } else {
             // Omni Light in all directions
-            const float3 v2l = lightSource->position.xyz - float3(uniforms.localToWorldMatrix * float4(in.position, 1.0));
+            const float3 v2l = lightSource->position.xyz - position.xyz;
             const float distance = length(v2l);
             direction.xyz = normalize(v2l);
 
