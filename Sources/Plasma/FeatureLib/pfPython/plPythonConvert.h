@@ -168,7 +168,7 @@ namespace plPython
     constexpr ToTuple_Type ToTuple;
 
     template<typename... _TupleArgsT>
-    inline PyObject* ConvertFrom(ToTuple_Type, _TupleArgsT... args)
+    inline PyObject* ConvertFrom(ToTuple_Type, _TupleArgsT&&... args)
     {
         PyObject* tuple = PyTuple_New(sizeof...(args));
         Py_ssize_t i = 0;
