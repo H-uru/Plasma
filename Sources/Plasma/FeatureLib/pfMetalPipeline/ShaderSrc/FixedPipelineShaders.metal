@@ -270,12 +270,13 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
 
             if (lightSource->spotProps.x > 0.0) {
                 // Spot Light with cone falloff
-                const float a = dot(direction.xyz, normalize(-lightSource->direction).xyz);
-                const float theta = lightSource->spotProps.y;
+                const float theta = dot(direction.xyz, normalize(-lightSource->direction).xyz);
+                const float gamma = lightSource->spotProps.y;
                 const float phi = lightSource->spotProps.z;
-                const float result = pow((a - phi) / (theta - phi), lightSource->spotProps.x);
+                const float epsilon = (gamma - phi);
+                const float intensity = clamp((theta - phi) / epsilon, 0.0, 1.0);
 
-                direction.w *= clamp(result, 0.0, 1.0);
+                direction.w *= pow(intensity, lightSource->spotProps.x);
             }
         }
 
@@ -290,12 +291,6 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                                  abs(uniforms.invVtxAlpha - MDiffuse.a));
 
     out.vtxColor = half4(material.rgb, abs(uniforms.invVtxAlpha - MDiffuse.a));
-    
-    float4 position = (uniforms.localToWorldMatrix * float4(in.position, 1.0));
-    if(temp_hasOnlyWeight1) {
-        const float4 position2 = blendMatrix1 * float4(in.position, 1.0);
-        position = (in.weight1 * position) + ((1.0f - in.weight1) * position2);
-    }
     const float4 vCamPosition = uniforms.worldToCameraMatrix * position;
     //out.vCamNormal = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 0.0));
     

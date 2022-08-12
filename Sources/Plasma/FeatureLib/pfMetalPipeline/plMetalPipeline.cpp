@@ -2505,10 +2505,10 @@ void plMetalPipeline::IEnableLight(size_t i, plLightInfo* light)
             fLights.lampSources[i].direction = { lightDir.fX, lightDir.fY, lightDir.fZ };
 
             float falloff = spotLight->GetFalloff();
-            float theta = cosf(spotLight->GetSpotInner());
+            float gamma = cosf(spotLight->GetSpotInner());
             float phi = cosf(spotLight->GetProjection() ? hsConstants::half_pi<float> : spotLight->GetSpotOuter());
 
-            fLights.lampSources[i].spotProps = { falloff, theta, phi };
+            fLights.lampSources[i].spotProps = { falloff, gamma, phi };
         } else {
             fLights.lampSources[i].spotProps = { 0.0, 0.0, 0.0 };
         }
