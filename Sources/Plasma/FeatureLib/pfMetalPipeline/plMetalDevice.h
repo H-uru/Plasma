@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include "hsGMatState.h"
+
 #include "plMetalDeviceRef.h"
 #include "hsMatrix44.h"
 
@@ -172,6 +174,8 @@ public:
     
     void SetMaxAnsiotropy(uint8_t maxAnsiotropy);
     void SetMSAASampleCount(uint8_t sampleCount);
+    
+    MTL::SamplerState* SampleStateForClampFlags(hsGMatState::hsGMatClampFlags sampleState);
     
     NS::UInteger CurrentTargetSampleCount() {
         if (fCurrentRenderTarget) {

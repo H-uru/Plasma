@@ -1216,6 +1216,11 @@ void plMetalDevice::SubmitCommandBuffer()
     fClearDrawableDepth = 1.0;
 }
 
+MTL::SamplerState* plMetalDevice::SampleStateForClampFlags(hsGMatState::hsGMatClampFlags sampleState)
+{
+    return fSamplerStates[sampleState];
+}
+
 void plMetalDevice::CreateGammaAdjustState() {
     MTL::RenderPipelineDescriptor *gammaDescriptor = MTL::RenderPipelineDescriptor::alloc()->init();
     MTL::Library* library = fMetalDevice->newDefaultLibrary();
