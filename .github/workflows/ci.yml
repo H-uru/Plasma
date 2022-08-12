@@ -232,31 +232,31 @@ jobs:
         run: |
           cmake \
             -G Xcode \
-            -DCMAKE_BUILD_TYPE=${{ matrix.cfg.type }} \
             -DCMAKE_FIND_FRAMEWORK=LAST \
             -DPLASMA_BUILD_TESTS=ON \
             -DPLASMA_BUILD_TOOLS=ON \
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
-            -DQt5_ROOT=$(brew --prefix qt@5) \
             -DCURL_ROOT=$(brew --prefix curl) \
             -Dexpat_ROOT=$(brew --prefix expat) \
-            -DOpenSSL_ROOT=$(brew --prefix openssl@1.1) \
+            -DJPEG_ROOT=$(brew --prefix jpeg-turbo) \
             -DOpenAL_ROOT=$(brew --prefix openal-soft) \
+            -DOpenSSL_ROOT=$(brew --prefix openssl@1.1) \
             -DPython3_ROOT=$(brew --prefix python@3.10) \
+            -DQt5_ROOT=$(brew --prefix qt@5) \
             -DZLIB_ROOT=$(brew --prefix zlib) \
             -S . -B build
 
       - name: Build
         run: |
-          cmake --build build -j 2
+          cmake --build build --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Test
         run: |
-          cmake --build build --target check -j 2
+          cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Install
         run: |
-          cmake --build build --target install -j 2
+          cmake --build build --target install --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
