@@ -291,7 +291,7 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (lightSource->diffuse.rgb * lightSource->scale) * half3(max(0.0, dotResult) * direction.w);
     }
 
-    const half3 ambient = clamp((MAmbient.rgb) * (uniforms.globalAmb.rgb + LAmbient.rgb), 0.0, 1.0);
+    const half3 ambient = (MAmbient.rgb) * clamp(uniforms.globalAmb.rgb + LAmbient.rgb, 0.0, 1.0);
     const half3 diffuse = clamp(LDiffuse.rgb, 0.0, 1.0);
     const half4 material = half4(clamp(ambient + diffuse + MEmissive.rgb, 0.0, 1.0),
                                  abs(uniforms.invVtxAlpha - MDiffuse.a));

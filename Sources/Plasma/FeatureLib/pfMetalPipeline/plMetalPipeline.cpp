@@ -1304,13 +1304,15 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
     
     IScaleLight(0, true);
     
-    fCurrentRenderPassUniforms->ambientCol = half3(0.0);
     fCurrentRenderPassUniforms->ambientSrc = 1.0;
     fCurrentRenderPassUniforms->diffuseSrc = 1.0;
     fCurrentRenderPassUniforms->emissiveSrc = 1.0;
     fCurrentRenderPassUniforms->specularSrc = 1.0;
-    fCurrentRenderPassUniforms->fogValues = {0.0, 0.0f};
-    fCurrentRenderPassUniforms->ambientCol = {1.0, 1.0, 1.0};
+    fCurrentRenderPassUniforms->globalAmb = {1.0, 1.0, 1.0};
+    fCurrentRenderPassUniforms->ambientCol = {0.0, 0.0, 0.0};
+    fCurrentRenderPassUniforms->emissiveCol = {0.0, 0.0, 0.0};
+    fCurrentRenderPassUniforms->specularCol = {0.0, 0.0, 0.0};
+    fCurrentRenderPassUniforms->fogColor = {0.0, 0.0, 0.0};
     fCurrentRenderPassUniforms->diffuseCol = {1.0, 1.0, 1.0, 1.0};
     
     
