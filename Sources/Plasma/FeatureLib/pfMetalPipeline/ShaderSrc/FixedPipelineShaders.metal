@@ -277,7 +277,9 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
             if (lightSource->spotProps.x > 0.0) {
                 // Spot Light with cone falloff
                 const float theta = dot(direction.xyz, normalize(-lightSource->direction).xyz);
+                //inner cutoff
                 const float gamma = lightSource->spotProps.y;
+                //outer cutoff
                 const float phi = lightSource->spotProps.z;
                 const float epsilon = (gamma - phi);
                 const float intensity = clamp((theta - phi) / epsilon, 0.0, 1.0);

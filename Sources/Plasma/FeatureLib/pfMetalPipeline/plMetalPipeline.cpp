@@ -3469,7 +3469,7 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
 // to fade out a shadow as it gets too far in the distance to matter.
 void plMetalPipeline::ISetupShadowLight(plShadowSlave* slave)
 {
-    plMetalShaderLightSource lRef = fLights.lampSources[0];
+    plMetalShaderLightSource lRef = {};
 
     lRef.diffuse.r
         = lRef.diffuse.g
@@ -3997,7 +3997,6 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
                 }
                 lRef.scale = 1.0;
                 fLights.lampSources[0] = lRef;
-            fLights.count = 1;
 
                 // record which our intensity is now set for.
                 fShadows[i]->fSelfShadowOn = selfShadowNow;
