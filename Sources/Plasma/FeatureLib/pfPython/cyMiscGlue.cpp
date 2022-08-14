@@ -232,10 +232,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendRTChat, args, "Params: fromPlayer,toPlayer
     PyObject* fromPlayerObj = nullptr;
     PyObject* toPlayerListObj = nullptr;
     ST::string message;
-    long msgFlags = 0;
+    unsigned int msgFlags = 0;
     const char* err = "PtSendRTChat expects a ptPlayer, a sequence of ptPlayers, a string, and an optional long";
 
-    if (!PyArg_ParseTuple(args, "OOO&|l", &fromPlayerObj, &toPlayerListObj,
+    if (!PyArg_ParseTuple(args, "OOO&|I", &fromPlayerObj, &toPlayerListObj,
                           PyUnicode_STStringConverter, &message, &msgFlags))
     {
         PyErr_SetString(PyExc_TypeError, err);
