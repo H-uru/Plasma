@@ -90,6 +90,21 @@ void plMetalMaterialShaderRef::Release()
 
 void plMetalMaterialShaderRef::CheckMateralRef()
 {
+    if(IsDirty()) {
+        /*
+         Something (like avatars) might have modified our textures.
+         If we're dirty - clear all cached state.
+         */
+        fNumPasses = 0;
+        fPassIndices.clear();
+        fPassLengths.clear();
+        fFragmentShaderDescriptions.clear();
+        
+        for(MTL::Buffer* buffer: fPassArgumentBuffers) {
+            buffer->release();
+        }
+        fPassArgumentBuffers.clear();
+    }
     if(fNumPasses == 0) {
         ILoopOverLayers();
         
@@ -102,6 +117,7 @@ void plMetalMaterialShaderRef::CheckMateralRef()
             fPipeline->CheckTextureRef(layer);
         }
     }
+    SetDirty(false);
 }
 
 //fast encode doesn't support piggybacks or push over layers, but it does use preloaded data on the GPU so it's much faster. Use this encoder if there are no piggybacks or pushover layers

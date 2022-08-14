@@ -2843,6 +2843,12 @@ void plMetalPipeline::IPreprocessAvatarTextures()
 
         if (rt == nullptr) {
             rt = IGetNextAvRT();
+            //we're about to add a texture that wasn't there before
+            //mark the material as dirty
+            plMetalMaterialShaderRef* ref = static_cast<plMetalMaterialShaderRef*>(co->fMaterial->GetDeviceRef());
+            if (ref) {
+                ref->SetDirty(true);
+            }
             co->fTargetLayer->SetTexture(rt);
         }
 
