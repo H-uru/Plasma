@@ -835,6 +835,8 @@ void plPXPhysicalControllerCore::IDeleteController()
 
     if (fController) {
         plPXActorData* actor = static_cast<plPXActorData*>(fController->getUserData());
+        fController->setUserData(nullptr);
+        fController->getActor()->userData = nullptr;
         plSimulationMgr::GetInstance()->GetPhysX()->RemoveFromWorld(fController);
         fController = nullptr;
         delete actor;
