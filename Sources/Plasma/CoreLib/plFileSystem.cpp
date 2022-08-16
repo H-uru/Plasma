@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <dirent.h>
 #   include <limits.h>
 #   include <sys/types.h>
+#   include <sys/param.h>
 #   include <unistd.h>
 #endif
 
@@ -69,6 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #
 #   include <NSSystemDirectories.h>
 #   include <CoreFoundation/CoreFoundation.h>
+#   include <mach-o/dyld.h>
 #endif
 
 #include <sys/stat.h>
@@ -573,12 +575,18 @@ plFileName plFileSystem::GetCurrentAppPath()
     //this is really Mac specific
     //This will only work if this is an app bundle
     CFBundleRef myBundle = CFBundleGetMainBundle();
-    hsAssert(myBundle != nullptr, "Plasma is not in a bundle on Mac - did not plan for that.");
-    CFURLRef url = CFBundleCopyBundleURL(myBundle);
-    CFStringRef path = CFURLCopyPath(url);
-    appPath = ST::string::from_utf8(CFStringGetCStringPtr(path, kCFStringEncodingUTF8));
-    CFRelease(path);
-    CFRelease(url);
+    if(!myBundle) {
+        char path[MAXPATHLEN];
+        uint32_t pathLen = MAXPATHLEN;
+        _NSGetExecutablePath(path, &pathLen);
+        appPath = ST::string::from_utf8(path);
+    } else {
+        CFURLRef url = CFBundleCopyBundleURL(myBundle);
+        CFStringRef path = CFURLCopyPath(url);
+        appPath = ST::string::from_utf8(CFStringGetCStringPtr(path, kCFStringEncodingUTF8));
+        CFRelease(path);
+        CFRelease(url);
+    }
     return appPath;
 #else
     // Look for /proc/self/exe (Linux), /proc/curproc/file (FreeBSD / Mac),
