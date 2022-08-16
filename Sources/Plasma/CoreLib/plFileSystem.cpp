@@ -571,9 +571,6 @@ plFileName plFileSystem::GetCurrentAppPath()
 
     return appPath;
 #elif HS_BUILD_FOR_MACOS
-    //Not sure how we'd ever patch the executable on iOS,
-    //this is really Mac specific
-    //This will only work if this is an app bundle
     CFBundleRef myBundle = CFBundleGetMainBundle();
     if(!myBundle) {
         char path[MAXPATHLEN];
