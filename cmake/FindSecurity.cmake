@@ -8,9 +8,9 @@ find_library(
 find_package_handle_standard_args(Security REQUIRED_VARS Security_LIBRARY)
 
 if(Security_FOUND AND NOT TARGET Security::Security)
-    add_library(Security::Security UNKNOWN IMPORTED)
+    add_library(Security::Security INTERFACE IMPORTED)
     set_target_properties(
         Security::Security PROPERTIES
-        IMPORTED_LOCATION ${Security_LIBRARY}
+        INTERFACE_LINK_LIBRARIES ${Security_LIBRARY}
     )
 endif()
