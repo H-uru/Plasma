@@ -56,8 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <fnmatch.h>
 #   include <dirent.h>
 #   include <limits.h>
-#   include <sys/types.h>
 #   include <sys/param.h>
+#   include <sys/types.h>
 #   include <unistd.h>
 #endif
 
@@ -68,9 +68,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #     endif
 #   endif
 #
-#   include <NSSystemDirectories.h>
 #   include <CoreFoundation/CoreFoundation.h>
 #   include <mach-o/dyld.h>
+#   include <NSSystemDirectories.h>
 #endif
 
 #include <sys/stat.h>
@@ -572,11 +572,11 @@ plFileName plFileSystem::GetCurrentAppPath()
     return appPath;
 #elif HS_BUILD_FOR_MACOS
     CFBundleRef myBundle = CFBundleGetMainBundle();
-    if(!myBundle) {
+    if (!myBundle) {
         char path[MAXPATHLEN];
         uint32_t pathLen = MAXPATHLEN;
         _NSGetExecutablePath(path, &pathLen);
-        appPath = ST::string::from_utf8(path);
+        appPath = ST::string::from_utf8(path, pathLen);
     } else {
         CFURLRef url = CFBundleCopyBundleURL(myBundle);
         CFStringRef path = CFURLCopyPath(url);
