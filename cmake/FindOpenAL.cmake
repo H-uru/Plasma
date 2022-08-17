@@ -42,4 +42,10 @@ if(TARGET OpenAL::OpenAL)
             MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
         )
     endif()
+
+    get_target_property(_INCLUDE_DIRS OpenAL::OpenAL INTERFACE_INCLUDE_DIRECTORIES)
+    find_file(_EFX_H NAMES efx.h PATHS ${_INCLUDE_DIRS} NO_CACHE NO_DEFAULT_PATH)
+    if(_EFX_H)
+        set(OPENAL_HAS_EFX TRUE CACHE BOOL "Whether OpenAL includes EFX support")
+    endif()
 endif()
