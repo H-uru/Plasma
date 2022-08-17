@@ -9,12 +9,21 @@ if(NOT TARGET OpenAL::OpenAL)
 
     if(OPENAL_FOUND)
         if(NOT TARGET OpenAL::OpenAL)
-            add_library(OpenAL::OpenAL UNKNOWN IMPORTED)
-            set_target_properties(
-                OpenAL::OpenAL PROPERTIES
-                INTERFACE_INCLUDE_DIRECTORIES ${OPENAL_INCLUDE_DIR}
-                IMPORTED_LOCATION ${OPENAL_LIBRARY}
-            )
+            if(OPENAL_LIBRARY MATCHES "/([^/]+)\\.framework$")
+                add_library(OpenAL::OpenAL INTERFACE IMPORTED)
+                set_target_properties(
+                    OpenAL::OpenAL PROPERTIES
+                    INTERFACE_INCLUDE_DIRECTORIES ${OPENAL_INCLUDE_DIR}
+                    INTERFACE_LINK_LIBRARIES ${OPENAL_LIBRARY}
+                )
+            else()
+                add_library(OpenAL::OpenAL UNKNOWN IMPORTED)
+                set_target_properties(
+                    OpenAL::OpenAL PROPERTIES
+                    INTERFACE_INCLUDE_DIRECTORIES ${OPENAL_INCLUDE_DIR}
+                    IMPORTED_LOCATION ${OPENAL_LIBRARY}
+                )
+            endif()
         endif()
     elseif(OpenAL_FIND_REQUIRED)
         message(FATAL_ERROR "Could NOT find OpenAL")
