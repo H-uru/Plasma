@@ -64,6 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   if defined(__has_include)
 #     if __has_include(<sysdir.h>)
 #       include <sysdir.h>
+#       define HAS_SYSDIR
 #     endif
 #   endif
 #
@@ -472,11 +473,15 @@ plFileName plFileSystem::GetUserDataPath()
         _userData = plFileName::Join(ST::string::from_wchar(path), plProduct::LongName());
 #elif HS_BUILD_FOR_APPLE
         char path[PATH_MAX] {};
+#ifdef HAS_SYSDIR
         if (__builtin_available(macOS 10.12, *)) {
             sysdir_search_path_enumeration_state state;
             state = sysdir_start_search_path_enumeration(SYSDIR_DIRECTORY_APPLICATION_SUPPORT, SYSDIR_DOMAIN_MASK_USER);
             state = sysdir_get_next_search_path_enumeration(state, path);
-        } else {
+        }
+        else
+#endif
+        {
             IGNORE_WARNINGS_BEGIN("deprecated-declarations")
 
             NSSearchPathEnumerationState state;
