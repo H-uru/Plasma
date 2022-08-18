@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <fnmatch.h>
 #   include <dirent.h>
 #   include <limits.h>
+#   include <sys/param.h>
 #   include <sys/types.h>
 #   include <unistd.h>
 #endif
@@ -67,6 +68,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #     endif
 #   endif
 #
+#   include <CoreFoundation/CoreFoundation.h>
+#   include <mach-o/dyld.h>
 #   include <NSSystemDirectories.h>
 #endif
 
@@ -566,6 +569,21 @@ plFileName plFileSystem::GetCurrentAppPath()
         appPath = ST::string::from_wchar(path);
     }
 
+    return appPath;
+#elif HS_BUILD_FOR_MACOS
+    CFBundleRef myBundle = CFBundleGetMainBundle();
+    if (!myBundle) {
+        char path[MAXPATHLEN];
+        uint32_t pathLen = MAXPATHLEN;
+        _NSGetExecutablePath(path, &pathLen);
+        appPath = ST::string::from_utf8(path, pathLen);
+    } else {
+        CFURLRef url = CFBundleCopyBundleURL(myBundle);
+        CFStringRef path = CFURLCopyPath(url);
+        appPath = ST::string::from_utf8(CFStringGetCStringPtr(path, kCFStringEncodingUTF8));
+        CFRelease(path);
+        CFRelease(url);
+    }
     return appPath;
 #else
     // Look for /proc/self/exe (Linux), /proc/curproc/file (FreeBSD / Mac),
