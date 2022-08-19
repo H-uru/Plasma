@@ -153,6 +153,7 @@ option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
 option(PLASMA_STACK_WALKER "Do we want to use the stack walker for crash handling?" ON)
 
+cmake_dependent_option(USE_EFX "Use EFX for environmental audio effects" ON "OPENAL_HAS_EFX" OFF)
 cmake_dependent_option(USE_EGL "Use EGL for OpenGL rendering" ON "epoxy_HAS_EGL" OFF)
 cmake_dependent_option(USE_OPUS "Use Opus audio for voice chat" ON "TARGET Opus::opus" OFF)
 cmake_dependent_option(USE_SPEEX "Use Speex audio for voice chat" ON "TARGET Speex::speex" OFF)

@@ -42,4 +42,11 @@ if(TARGET OpenAL::OpenAL)
             MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
         )
     endif()
+
+    include(CheckIncludeFile)
+    include(CMakePushCheckState)
+    cmake_push_check_state()
+    set(CMAKE_REQUIRED_LIBRARIES OpenAL::OpenAL)
+    check_include_file(efx.h OPENAL_HAS_EFX)
+    cmake_pop_check_state()
 endif()
