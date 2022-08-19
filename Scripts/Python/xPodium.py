@@ -53,7 +53,7 @@ class xPodium(ptResponder):
 
     def __init__(self):
         ptResponder.__init__(self)
-        self.id = 5245
+        self.id = 6245
         version = 3
         self.version = version
         PtDebugPrint("__init__xPodium v.", version, ".0")
@@ -89,7 +89,7 @@ class xPodium(ptResponder):
             if respName in respList.byObject:
                 ageSDL[stringVarName.value] = (xPodiumSpeech,)
             else:
-                PtDebugPrint("ERROR: chisoPodium Invalid speech %d selected!" % xPodiumSpeech)
+                PtDebugPrint("ERROR: xPodium Invalid speech %d selected!" % xPodiumSpeech)
                 ageSDL[stringVarName.value] = (0,)
 
     def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
