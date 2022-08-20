@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
-Copyright (C) 2011 Cyan Worlds, Inc.
+Copyright (C) 2011  Cyan Worlds, Inc.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -10,11 +11,11 @@ the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Additional permissions under GNU GPL version 3 section 7
 
@@ -53,7 +54,7 @@ class xPodium(ptResponder):
 
     def __init__(self):
         ptResponder.__init__(self)
-        self.id = 6245
+        self.id = 5245
         version = 3
         self.version = version
         PtDebugPrint("__init__xPodium v.", version, ".0")
