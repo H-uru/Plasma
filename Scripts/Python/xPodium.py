@@ -55,7 +55,7 @@ class xPodium(ptResponder):
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5245
-        version = 3
+        version = 2
         self.version = version
         PtDebugPrint("__init__xPodium v.", version, ".0")
 
