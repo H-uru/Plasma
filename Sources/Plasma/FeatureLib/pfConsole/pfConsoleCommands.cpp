@@ -1342,25 +1342,38 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternat
     hsAssert(pfConsole::GetPipeline() != nullptr, "Cannot use this command before pipeline initialization");
 
     std::vector<uint16_t> ramp;
-    ramp.resize(256);
 
     float g = params[0];
 
-    for (int i = 0; i < 256; i++)
-    {
-        float t = float(i) / 255.f;
-        float sinT = std::sin(t * hsConstants::pi<float> / 2.f);
+    if (pfConsole::GetPipeline()->Supports10BitGamma()) {
+        ramp.resize(1024);
+        
+        for (int i = 0; i < 1024; i++)
+        {
+            float t = float(i) / 1023.f;
+            float sinT = std::sin(t * hsConstants::pi<float> / 2.f);
 
-        float remap = t + (sinT - t) * g;
-        if( remap < 0 )
-            remap = 0;
-        else if( remap > 1.f )
-            remap = 1.f;
+            float remap = std::clamp(t + (sinT - t) * g, 0.f, 1.f);
 
-        ramp[i] = uint16_t(remap * float(uint16_t(-1)) + 0.5f);
+            ramp[i] = uint16_t(remap * float(uint16_t(-1)) + 0.5f);
+        }
+        
+        pfConsole::GetPipeline()->SetGamma10(ramp.data());
+    } else {
+        ramp.resize(256);
+        
+        for (int i = 0; i < 256; i++)
+        {
+            float t = float(i) / 255.f;
+            float sinT = std::sin(t * hsConstants::pi<float> / 2.f);
+
+            float remap = std::clamp(t + (sinT - t) * g, 0.f, 1.f);
+
+            ramp[i] = uint16_t(remap * float(uint16_t(-1)) + 0.5f);
+        }
+        
+        pfConsole::GetPipeline()->SetGamma(ramp.data());
     }
-
-    pfConsole::GetPipeline()->SetGamma(ramp.data());
 
 //  pfConsolePrintF(PrintString, "Gamma set to <alt> {}.", g);
 }

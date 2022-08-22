@@ -324,7 +324,10 @@ public:
     virtual bool                        SetGamma(float eR, float eG, float eB) = 0;
     virtual bool                        SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) = 0; // len table = 256.
     virtual bool                        SetGamma(float e) { return SetGamma(e, e, e); }
-    virtual bool                        SetGamma(const uint16_t* const table) { return SetGamma(table, table, table); } 
+    virtual bool                        SetGamma(const uint16_t* const table) { return SetGamma(table, table, table); }
+    virtual bool                        SetGamma10(const uint16_t* const table) { return SetGamma10(table, table, table); }
+    virtual bool                        SetGamma10(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) { return false; }
+    virtual bool                        Supports10BitGamma() const { return false; }
 
     // flipVertical is for the AVI writer, which wants it's frames upside down
     virtual bool                        CaptureScreen( plMipmap *dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0 ) = 0;
