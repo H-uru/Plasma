@@ -2407,11 +2407,13 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
     {
         std::vector<plLightInfo*>& spanLights = span->GetLightList(proj);
 
+        fLights.count = 0;
         for (i = 0; i < spanLights.size() && i < numLights; i++) {
             // If these are non-projected lights, go ahead and enable them.
             if( !proj )
             {
-                IEnableLight(i, spanLights[i]);
+                IEnableLight(fLights.count, spanLights[i]);
+                fLights.count++;
             }
             onLights.emplace_back(spanLights[i]);
         }
@@ -2421,7 +2423,8 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
         /// fade them out to nothing as they get closer to the bottom. This way, they fade
         /// out of existence instead of pop out.
 
-        if (i < spanLights.size() - 1 && i > 0) {
+        //FIXME: In Metal, I'm not sure what this is doing. These lights won't be visible, and visible lights are always fully scaled.
+        /*if (i < spanLights.size() - 1 && i > 0) {
             threshhold = span->GetLightStrength(i, proj);
             i--;
             overHold = threshhold * 1.5f;
@@ -2436,7 +2439,7 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
                 IScaleLight(i, (1 - scale) * span->GetLightScale(i, proj));
             }
             startScale = i + 1;
-        }
+        }*/
 
 
         /// Make sure those lights that aren't scaled....aren't
@@ -2458,11 +2461,6 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
                 fProjEach.emplace_back(onLights[i]);
         }
         onLights.clear();
-    }
-    fLights.count = i;
-
-    for (; i < numLights; i++) {
-        IDisableLight(i);
     }
 }
 
