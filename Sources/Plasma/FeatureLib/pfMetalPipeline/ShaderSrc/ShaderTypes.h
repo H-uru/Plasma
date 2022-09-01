@@ -163,9 +163,11 @@ typedef struct
 #endif
 } VertexUniforms;
 
+#define kMetalMaxLightCount 32
+
 typedef struct {
     uint8_t count;
-    plMetalShaderLightSource lampSources[8];
+    plMetalShaderLightSource lampSources[kMetalMaxLightCount];
 } plMetalLights;
 
 #endif /* ShaderTypes_h */

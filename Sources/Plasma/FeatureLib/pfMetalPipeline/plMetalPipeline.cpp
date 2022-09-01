@@ -2392,7 +2392,7 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 
 void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj)
 {
-    const size_t numLights = 8;
+    const size_t numLights = kMetalMaxLightCount;
     size_t i = 0;
     int32_t startScale;
     float threshhold;
