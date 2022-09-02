@@ -39,36 +39,68 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglCore.h
-*   
-***/
-
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLCORE_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglCore.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLCORE_H
-
-#include <functional>
 
 
-/*****************************************************************************
-*
-*   Core functions
-*
-***/
+#ifndef _plFilePatcher_inc_
+#define _plFilePatcher_inc_
 
-void NetClientInitialize ();
-// void NetClientCancelAllTrans ();
-void NetClientDestroy (bool wait = true);
+#include <string_theory/string>
 
-void NetClientUpdate ();
+#include "plFileSystem.h"
+#include "pnNetBase/pnNbProtocol.h"
+#include "pfPatcher/pfPatcher.h"
 
-void NetClientSetTransTimeoutMs (unsigned ms);
-void NetClientPingEnable (bool enable);
+class plFilePatcher
+{
+public:
+    enum
+    {
+        kPatchData          = 0x1,
+        kPatchClient        = 0x2,
+        kPatchEverything    = kPatchData | kPatchClient
+    };
 
+private:
+    enum NetCoreState
+    {
+        kNetCoreInactive,
+        kNetCoreActive,
+        kNetCoreShutdown,
+    };
 
-typedef std::function<void(ENetProtocol, ENetError)> NetClientErrorFunc;
+    uint32_t fFlags;
+    plFileName fServerIni;
+    ST::string fError;
+    NetCoreState fNetCoreState;
 
-void NetClientSetErrorHandler(NetClientErrorFunc errorFunc);
+    pfPatcher::ProgressTickFunc fProgressFunc;
+    pfPatcher::FileDownloadFunc fDownloadFunc;
+
+    bool ILoadServerIni();
+
+    void IInitNetCore();
+    bool IRunNetCore();
+    void ISignalNetCoreShutdown() { fNetCoreState = kNetCoreShutdown; }
+    void IFiniNetCore();
+    void ISetNetError(const ST::string& err) { fError = err; }
+
+    void IHandleNetError(ENetProtocol protocol, ENetError error);
+    void IRequestFileSrvInfo();
+    void IHandleFileSrvInfo(ENetError result, const ST::string& addr);
+    void IRunPatcher();
+    bool IApproveDownload(const plFileName& file);
+    void IOnPatchComplete(ENetError result, const ST::string& msg);
+
+public:
+    plFilePatcher(plFileName serverIni = ST_LITERAL("server.ini"));
+
+    bool Patch();
+    const ST::string& GetError() const { return fError; }
+
+    void SetPatcherFlags(uint32_t flags) { fFlags = flags; }
+
+    void SetProgressCallback(pfPatcher::ProgressTickFunc cb) { fProgressFunc = std::move(cb); }
+    void SetDownloadBeginCallback(pfPatcher::FileDownloadFunc cb) { fDownloadFunc = std::move(cb); }
+};
+
+#endif //_plFilePatcher_inc_

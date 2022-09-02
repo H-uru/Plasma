@@ -39,36 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglCore.h
-*   
-***/
+#include "HeadSpin.h"
 
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLCORE_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglCore.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLCORE_H
+#include "pnFactory/plCreator.h"
 
-#include <functional>
-
-
-/*****************************************************************************
-*
-*   Core functions
-*
-***/
-
-void NetClientInitialize ();
-// void NetClientCancelAllTrans ();
-void NetClientDestroy (bool wait = true);
-
-void NetClientUpdate ();
-
-void NetClientSetTransTimeoutMs (unsigned ms);
-void NetClientPingEnable (bool enable);
-
-
-typedef std::function<void(ENetProtocol, ENetError)> NetClientErrorFunc;
-
-void NetClientSetErrorHandler(NetClientErrorFunc errorFunc);
+#include "pnKeyedObject/pnKeyedObjectCreatable.h"
+#include "pnMessage/pnMessageCreatable.h"
+#include "pnNetCommon/pnNetCommonCreatable.h"
