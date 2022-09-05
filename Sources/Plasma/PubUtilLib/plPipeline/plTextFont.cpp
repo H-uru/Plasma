@@ -207,9 +207,9 @@ uint16_t  *plTextFont::IInitFontTexture()
 
     
     // Figure out our texture size
-    if( fSize > 40 )
+    if( fSize * 2 > 40 )
         fTextureWidth = fTextureHeight = 1024;
-    else if( fSize > 20 )
+    else if( fSize * 2 > 20 )
         fTextureWidth = fTextureHeight = 512;
     else
         fTextureWidth = fTextureHeight = 256;
@@ -228,12 +228,13 @@ uint16_t  *plTextFont::IInitFontTexture()
     CGContextSetTextMatrix(bitmapContext, CGAffineTransformMakeScale(1, -1));
     CGContextTranslateCTM(bitmapContext, 0, fTextureHeight);
     CGContextScaleCTM(bitmapContext, 1, -1);
+    CGContextScaleCTM(bitmapContext, 2.0, 2.0);
     
     bitmapBits = (uint32_t *)CGBitmapContextGetData(bitmapContext);
 
     //TEMPORARY: Mac client should vend through better data to make this decision
-    nHeight = (fSize * 192.0f) / 72.0f;
-    fFontHeight = nHeight;
+    nHeight = fSize;
+    fFontHeight = (fSize * 144.0f) / 72.0f;
 
     CFStringRef fontName = CFStringCreateWithCString(nullptr, fFace, kCFStringEncodingUTF8);
     CTFontRef font = CTFontCreateWithName(fontName, nHeight, nullptr);
@@ -243,10 +244,14 @@ uint16_t  *plTextFont::IInitFontTexture()
     // Set text colors
     CGFloat color[4] = { 255.0f, 255.0f, 255.0f, 255.0f };
     CGContextSetFillColor(bitmapContext, color);
+    CGContextSetShouldAntialias(bitmapContext, false);
 
     // Loop through characters, drawing them one at a time
     CGRect    r = CGRectMake(0, 0, 10, 10);
 
+    fTextureWidth /= 2;
+    fTextureHeight /= 2;
+    
     // (Make first character a black dot, for filling rectangles)
     bitmapBits[0] = UINT32_MAX;
     for( c = 32, x = 1, y = 0; c < 127; c++ )
@@ -267,8 +272,8 @@ uint16_t  *plTextFont::IInitFontTexture()
         CGPoint position = CGPointMake(x, -y - size.height - rect.origin.y);
         CTFontDrawGlyphs(font, &glpyh, &position, 1, bitmapContext);
 
-        fCharInfo[ c ].fW = (uint16_t)size.width;
-        fCharInfo[ c ].fH = (uint16_t)size.height;
+        fCharInfo[ c ].fW = (uint16_t)size.width * 2.0f;
+        fCharInfo[ c ].fH = (uint16_t)size.height * 2.0f;
         fCharInfo[ c ].fUVs[ 0 ].fX = (float)x / (float)fTextureWidth;
         fCharInfo[ c ].fUVs[ 0 ].fY = (float)y / (float)fTextureHeight;
         fCharInfo[ c ].fUVs[ 1 ].fX = (float)( x + size.width ) / (float)fTextureWidth;
@@ -285,6 +290,9 @@ uint16_t  *plTextFont::IInitFontTexture()
     fCharInfo[ '\t' ].fUVs[ 0 ].fZ = fCharInfo[ '\t' ].fUVs[ 1 ].fZ = 0;
     fCharInfo[ '\t' ].fW = fCharInfo[ 32 ].fW * 4;
     fCharInfo[ '\t' ].fH = fCharInfo[ 32 ].fH;
+    
+    fTextureWidth *= 2;
+    fTextureHeight *= 2;
 
     /// Now create the data block
     uint16_t  *data = new uint16_t[ fTextureWidth * fTextureHeight ];
