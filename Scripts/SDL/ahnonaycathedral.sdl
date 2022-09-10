@@ -54,7 +54,7 @@ STATEDESC AhnonayCathedral
 
 STATEDESC AhnonayCathedral
 {
-	VERSION 1
+	VERSION 2
 	#current sphere for linking in from temple
 	VAR BYTE	ahnyCurrentSphere[1]        DEFAULT=0 
 	VAR BYTE	ahnyCurrentSaveCloth[2]     DEFAULT=0
