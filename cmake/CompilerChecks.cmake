@@ -35,6 +35,13 @@ check_cxx_symbol_exists("sysinfo" "sys/sysinfo.h" HAVE_SYSINFO)
 try_compile(HAVE_SYSCTL ${PROJECT_BINARY_DIR}
             ${PROJECT_SOURCE_DIR}/cmake/check_sysctl.cpp)
 
+# Check for Apple sysdir header.
+CHECK_INCLUDE_FILE("sysdir.h" HAVE_SYSDIR)
+
+# Check for `__builtin_available()` Apple extension
+try_compile(HAVE_BUILTIN_AVAILABLE ${PROJECT_BINARY_DIR}
+            ${PROJECT_SOURCE_DIR}/cmake/check_builtin_available.cpp)
+
 # Check for CPUID headers
 try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
             ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp)

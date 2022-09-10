@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define HeadSpinConfigHDefined
 
 /* Compiler settings */
+#cmakedefine HAVE_BUILTIN_AVAILABLE
 #cmakedefine HAVE_CPUID
 #cmakedefine HAVE_AVX2
 #cmakedefine HAVE_AVX
@@ -64,6 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #cmakedefine HAVE_PTHREAD_TIMEDJOIN_NP
 #cmakedefine HAVE_SYSCTL
+#cmakedefine HAVE_SYSDIR
 #cmakedefine HAVE_SYSINFO
 
 #endif

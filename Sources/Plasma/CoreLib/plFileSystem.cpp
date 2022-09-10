@@ -60,12 +60,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <unistd.h>
 #endif
 
-#if HS_BUILD_FOR_APPLE
-#   if defined(__has_include)
-#     if __has_include(<sysdir.h>)
+#ifdef HS_BUILD_FOR_APPLE
+#   ifdef HAVE_SYSDIR
 #       include <sysdir.h>
-#       define HAS_SYSDIR
-#     endif
 #   endif
 #
 #   include <NSSystemDirectories.h>
@@ -473,7 +470,7 @@ plFileName plFileSystem::GetUserDataPath()
         _userData = plFileName::Join(ST::string::from_wchar(path), plProduct::LongName());
 #elif HS_BUILD_FOR_APPLE
         char path[PATH_MAX] {};
-#ifdef HAS_SYSDIR
+#if defined(HAVE_BUILTIN_AVAILABLE) && defined(HAVE_SYSDIR)
         if (__builtin_available(macOS 10.12, *)) {
             sysdir_search_path_enumeration_state state;
             state = sysdir_start_search_path_enumeration(SYSDIR_DIRECTORY_APPLICATION_SUPPORT, SYSDIR_DOMAIN_MASK_USER);
