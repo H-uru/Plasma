@@ -52,18 +52,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "pyPlayer.h"
 #include "plPythonCallable.h"
+#include "plPythonConvert.h"
 
 #include "plMessage/plConfirmationMsg.h"
 #include "plNetCommon/plNetCommon.h"
 #include "plResMgr/plLocalization.h"
 #include "plMessage/plLOSRequestMsg.h"
 
-namespace plPythonCallable
+namespace plPython
 {
     template<>
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, plConfirmationMsg::Result value)
+    inline PyObject* ConvertFrom(plConfirmationMsg::Result&& value)
     {
-        PyTuple_SET_ITEM(tuple, idx, PyLong_FromSsize_t((Py_ssize_t)value));
+        return PyLong_FromSsize_t((Py_ssize_t)value);
     }
 };
 
@@ -93,7 +94,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtYesNoDialog, args, kwargs,
     if (pyKey::Check(cbObj)) {
         cb = pyKey::ConvertFrom(cbObj)->getKey();
     } else if (PyCallable_Check(cbObj)) {
-        plPythonCallable::BuildCallback<1>("PtYesNoDialog", cbObj, cb);
+        plPython::BuildCallback<1>("PtYesNoDialog", cbObj, cb);
     } else if (cbObj != Py_None) {
         PyErr_SetString(PyExc_TypeError, kErrorMsg.data());
         PYTHON_RETURN_ERROR;
@@ -129,7 +130,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtLocalizedYesNoDialog, args, kwargs,
     if (pyKey::Check(cbObj)) {
         cb = pyKey::ConvertFrom(cbObj)->getKey();
     } else if (PyCallable_Check(cbObj)) {
-        plPythonCallable::BuildCallback<1>("PtLocalizedYesNoDialog", cbObj, cb);
+        plPython::BuildCallback<1>("PtLocalizedYesNoDialog", cbObj, cb);
     } else if (cbObj != Py_None) {
         PyErr_SetString(PyExc_TypeError, kErrorMsg.data());
         PYTHON_RETURN_ERROR;

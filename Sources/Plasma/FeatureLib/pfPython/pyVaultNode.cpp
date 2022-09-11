@@ -103,7 +103,7 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( uint32_t 
         if (PyObject_HasAttrString(fCbObject.Get(), "vaultOperationStarted")) {
             pyObjectRef func = PyObject_GetAttrString(fCbObject.Get(), "vaultOperationStarted");
             if (func && PyCallable_Check(func.Get()))
-                plPythonCallable::CallObject(func, context);
+                plPython::CallObject(func, context);
         }
     }
 }
@@ -119,7 +119,7 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete( uint32_t
                 pyObjectRef tup = PyTuple_New(2);
                 PyTuple_SET_ITEM(tup.Get(), 0, pyVaultNode::New(fNode));
                 PyTuple_SET_ITEM(tup.Get(), 1, fPyNodeRef.Release());
-                plPythonCallable::CallObject(func, context, tup, resultCode);
+                plPython::CallObject(func, context, std::move(tup), resultCode);
             }
         }
     }

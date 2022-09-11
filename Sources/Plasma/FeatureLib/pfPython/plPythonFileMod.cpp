@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "pyObjectRef.h"
 #include "plPythonCallable.h"
+#include "plPythonConvert.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 
@@ -301,7 +302,7 @@ plPythonFileMod::~plPythonFileMod()
             //  then have the glue delete the instance of class
             PyObject* delInst = PythonInterface::GetModuleItem("glue_delInst", fModule);
             if (delInst && PyCallable_Check(delInst)) {
-                pyObjectRef retVal = PyObject_CallFunction(delInst, nullptr);
+                pyObjectRef retVal = plPython::CallObject(delInst);
                 if (!retVal)
                     ReportError();
                 DisplayPythonOutput();
@@ -352,12 +353,12 @@ T* plPythonFileMod::IScriptWantsMsg(func_num methodId, plMessage* msg) const
 //  PURPOSE    : Builds Python argument tuple for method calling.
 //
 
-namespace plPythonCallable
+namespace plPython
 {
     template<>
-    inline void IBuildTupleArg(PyObject* tuple, size_t idx, ControlEventCode value)
+    inline PyObject* ConvertFrom(ControlEventCode&& value)
     {
-        PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong((long)value));
+        return PyLong_FromLong((long)value);
     }
 };
 
@@ -368,26 +369,7 @@ void plPythonFileMod::ICallScriptMethod(func_num methodId, Args&&... args)
     if (!callable)
         return;
 
-    pyObjectRef tuple = PyTuple_New(sizeof...(args));
-    plPythonCallable::BuildTupleArgs<sizeof...(args)>(tuple.Get(), std::forward<Args>(args)...);
-
-    plProfile_BeginTiming(PythonUpdate);
-    pyObjectRef retVal = PyObject_CallObject(callable, tuple.Get());
-    plProfile_EndTiming(PythonUpdate);
-    if (!retVal)
-        ReportError();
-    DisplayPythonOutput();
-}
-
-void plPythonFileMod::ICallScriptMethod(func_num methodId)
-{
-    PyObject* callable = fPyFunctionInstances[methodId];
-    if (!callable)
-        return;
-
-    plProfile_BeginTiming(PythonUpdate);
-    pyObjectRef retVal = PyObject_CallObject(callable, nullptr);
-    plProfile_EndTiming(PythonUpdate);
+    pyObjectRef retVal = plPython::CallObject(callable, std::forward<Args>(args)...);
     if (!retVal)
         ReportError();
     DisplayPythonOutput();
@@ -477,7 +459,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
             PyObject* getInst = PythonInterface::GetModuleItem("glue_getInst",fModule);
             fInstance = nullptr;
             if (getInst && PyCallable_Check(getInst)) {
-                fInstance = PyObject_CallFunction(getInst, nullptr);
+                fInstance = plPython::CallObject(getInst).Release();
                 if (!fInstance)
                     ReportError();
             }
@@ -545,7 +527,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                         case plPythonParameter::kAnimationName:
                             isNamedAttr = 0;
                             if (check_isNamed && PyCallable_Check(check_isNamed)) {
-                                retvalue = PyObject_CallFunction(check_isNamed, _pycs("l"), parameter.fID);
+                                retvalue = plPython::CallObject(check_isNamed, parameter.fID);
                                 if (!retvalue ) {
                                     ReportError();
                                     DisplayPythonOutput();
@@ -597,8 +579,11 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                     }
                     // if there is a value that was converted then tell the Python code
                     if (value) {
-                        pyObjectRef retVal = PyObject_CallFunction(setParams, _pycs("lO"),
-                                                                   parameter.fID, value.Get());
+                        pyObjectRef retVal = plPython::CallObject(
+                            setParams,
+                            parameter.fID,
+                            std::move(value)
+                        );
                         if (!retVal)
                             ReportError();
                     }
@@ -792,7 +777,11 @@ void plPythonFileMod::ISetKeyValue(const plKey& key, int32_t id)
             pyObjectRef value = pyKey::New(key);
 
             if (value) {
-                pyObjectRef retVal = PyObject_CallFunction(setParams, _pycs("lO"), id, value.Get());
+                pyObjectRef retVal = plPython::CallObject(
+                    setParams,
+                    id,
+                    std::move(value)
+                );
                 if (!retVal)
                     ReportError();
             }
@@ -1259,7 +1248,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             pyControl.SetPyNone();
 
         // call their OnGUINotify method
-        ICallScriptMethod(kfunc_GUINotify, id, pyControl, pGUIMsg->GetEvent());
+        ICallScriptMethod(kfunc_GUINotify, id, std::move(pyControl), pGUIMsg->GetEvent());
         return true;
     }
 
@@ -1338,7 +1327,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 break;
         }
 
-        ICallScriptMethod(kfunc_KIMsg, pkimsg->GetCommand(), value);
+        ICallScriptMethod(kfunc_KIMsg, pkimsg->GetCommand(), std::move(value));
         return true;
     }
 
@@ -1352,7 +1341,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     // are they looking for a RemoteAvatar Info message?
     auto pramsg = IScriptWantsMsg<plRemoteAvatarInfoMsg>(kfunc_RemoteAvatarInfo, msg);
     if (pramsg) {
-        PyObject* player = nullptr;
+        pyObjectRef player;
         if (pramsg->GetAvatarKey()) {
             // try to create the pyPlayer for where this message came from
             plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMemberByKey(pramsg->GetAvatarKey());
@@ -1361,7 +1350,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         }
         if (!player)
             player = PyLong_FromLong(0);
-        ICallScriptMethod(kfunc_RemoteAvatarInfo, player);
+        ICallScriptMethod(kfunc_RemoteAvatarInfo, std::move(player));
         return true;
     }
 
@@ -1410,7 +1399,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     break;
             }
 
-            ICallScriptMethod(kfunc_OnVaultNotify, vaultNotifyMsg->GetType(), ptuple);
+            ICallScriptMethod(kfunc_OnVaultNotify, vaultNotifyMsg->GetType(), std::move(ptuple));
         }
         return true;
     }
@@ -1437,17 +1426,17 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
 
     auto ppMsg = IScriptWantsMsg<plPlayerPageMsg>(kfunc_AvatarPage, msg);
     if (ppMsg) {
-        PyObject* pSobj = pySceneObject::New(ppMsg->fPlayer, fSelfKey);
+        pyObjectRef pSobj = pySceneObject::New(ppMsg->fPlayer, fSelfKey);
         plSynchEnabler ps(true);    // enable dirty state tracking during shutdown
-        ICallScriptMethod(kfunc_AvatarPage, pSobj, !ppMsg->fUnload, ppMsg->fLastOut);
+        ICallScriptMethod(kfunc_AvatarPage, std::move(pSobj), !ppMsg->fUnload, ppMsg->fLastOut);
         return true;
     }
 
     auto pABLMsg = IScriptWantsMsg<plAgeBeginLoadingMsg>(kfunc_OnBeginAgeLoad, msg);
     if (pABLMsg) {
-        PyObject* pSobj = pySceneObject::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fSelfKey);
+        pyObjectRef pSobj = pySceneObject::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fSelfKey);
         plSynchEnabler ps(true);    // enable dirty state tracking during shutdowny
-        ICallScriptMethod(kfunc_OnBeginAgeLoad, pSobj);
+        ICallScriptMethod(kfunc_OnBeginAgeLoad, std::move(pSobj));
         return true;
     }
 
@@ -1493,7 +1482,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 break;
         }
 
-        ICallScriptMethod(kfunc_OnMarkerMsg, (int)markermsg->fType, ptuple);
+        ICallScriptMethod(kfunc_OnMarkerMsg, (int)markermsg->fType, std::move(ptuple));
         return true;
     }
 
@@ -1519,8 +1508,14 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             hitpoint.SetPyNone();
         }
 
-        ICallScriptMethod(kfunc_OnLOSNotify, pLOSMsg->fRequestID, pLOSMsg->fNoHit, scobj,
-                          hitpoint, pLOSMsg->fDistance);
+        ICallScriptMethod(
+            kfunc_OnLOSNotify,
+            pLOSMsg->fRequestID,
+            pLOSMsg->fNoHit,
+            std::move(scobj),
+            std::move(hitpoint),
+            pLOSMsg->fDistance
+        );
         return true;
     }
 
@@ -1536,7 +1531,12 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         else
             pSobj.SetPyNone();
 
-        ICallScriptMethod(kfunc_OnBehaviorNotify, behNotifymsg->fType, pSobj, behNotifymsg->state);
+        ICallScriptMethod(
+            kfunc_OnBehaviorNotify,
+            behNotifymsg->fType,
+            std::move(pSobj),
+            behNotifymsg->state
+        );
         return true;
     }
 
@@ -1556,14 +1556,14 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             pSobj = pyImage::New(capturemsg->GetMipmap());
         else
             pSobj.SetPyNone();
-        ICallScriptMethod(kfunc_OnScreenCaptureDone, pSobj);
+        ICallScriptMethod(kfunc_OnScreenCaptureDone, std::move(pSobj));
         return true;
     }
 
     auto pEvent = IScriptWantsMsg<plClimbEventMsg>(kfunc_OnClimbBlockerEvent, msg);
     if (pEvent) {
-        PyObject* pSobj = pySceneObject::New(pEvent->GetSender(), fSelfKey);
-        ICallScriptMethod(kfunc_OnClimbBlockerEvent, pSobj);
+        pyObjectRef pSobj = pySceneObject::New(pEvent->GetSender(), fSelfKey);
+        ICallScriptMethod(kfunc_OnClimbBlockerEvent, std::move(pSobj));
         return true;
     }
 
@@ -1631,13 +1631,23 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         if (!args)
             args.SetPyNone();
 
-        ICallScriptMethod(kfunc_OnAIMsg, brainObj, msgType, aiMsg->BrainUserString().c_str(), args);
+        ICallScriptMethod(
+            kfunc_OnAIMsg,
+            std::move(brainObj),
+            msgType,
+            aiMsg->BrainUserString().c_str(),
+            std::move(args)
+        );
         return true;
     }
 
     auto pScoreMsg = IScriptWantsMsg<pfGameScoreMsg>(kfunc_OnGameScoreMsg, msg);
     if (pScoreMsg) {
-        ICallScriptMethod(kfunc_OnGameScoreMsg, pyGameScoreMsg::CreateFinal(pScoreMsg));
+        pyObjectRef score = pyGameScoreMsg::CreateFinal(pScoreMsg);
+        ICallScriptMethod(
+            kfunc_OnGameScoreMsg,
+            std::move(score)
+        );
         return true;
     }
 
