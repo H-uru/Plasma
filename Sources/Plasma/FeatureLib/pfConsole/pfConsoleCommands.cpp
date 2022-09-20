@@ -2069,6 +2069,11 @@ PF_CONSOLE_CMD( Graphics, EnableVSync, "bool b", "Init VerticalSync" )
     plPipeline::fInitialPipeParams.VSync = (bool) params[0];
 }
 
+PF_CONSOLE_CMD( Graphics, OutputScale, "int s", "Init OutputScale" )
+{
+    //plPipeline::fInitialPipeParams.VSync = (bool) params[0];
+}
+
 PF_CONSOLE_CMD( Graphics, EnablePlanarReflections, "bool", "Enable the draw and update of planar reflections" )
 {
     bool enable = (bool)params[0];

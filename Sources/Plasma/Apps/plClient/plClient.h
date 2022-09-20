@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsBitVector.h"
+#include "hsIniHelper.h"
 #include "plFileSystem.h"
 
 #include <list>
@@ -157,6 +158,8 @@ protected:
 
     plMessagePumpProc       fMessagePumpProc;
     
+    hsIniFile               *fGraphicsIni;
+    
 #ifndef PLASMA_EXTERNAL_RELEASE
     bool                    bPythonDebugConnected;
 #endif
@@ -223,6 +226,7 @@ protected:
     void IResizeNativeDisplayDevice(int width, int height, bool windowed);
     void IChangeResolution(int width, int height);
     void IUpdateProgressIndicator(plOperationProgress* progress);
+    void FlushGraphicsOptions();
 
 public:
 
@@ -310,6 +314,7 @@ public:
     void SetMessagePumpProc(plMessagePumpProc proc) { fMessagePumpProc = proc; }
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool VSync = false);
     void ResizeDisplayDevice(int Width, int Height, bool Windowed);
+    void SetDisplayOptions(int Width, int Height, bool Windowed);
 
     plAnimDebugList *fAnimDebugList;
 };
