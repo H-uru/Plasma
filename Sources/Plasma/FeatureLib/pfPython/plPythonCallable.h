@@ -93,6 +93,9 @@ namespace plPython
     };
 
     template<typename... Args>
+    inline pyObjectRef CallObject(PyObject* callable, Args&&... args);
+
+    template<typename... Args>
     inline pyObjectRef CallObject(const pyObjectRef& callable, Args&&... args)
     {
         return CallObject(callable.Get(), std::forward<Args>(args)...);
