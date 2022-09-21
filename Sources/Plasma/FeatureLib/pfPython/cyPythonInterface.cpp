@@ -88,6 +88,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // GameMgr
 #include "pyGameCli.h"
 #include "pyGameMgr.h"
+#include "pyGmBlueSpiral.h"
 
 // GUIDialog and its controls
 #include "pyGUIDialog.h"
@@ -1201,6 +1202,7 @@ void PythonInterface::AddPlasmaConstantsClasses(PyObject* plasmaConstantsMod)
 void PythonInterface::AddPlasmaGameClasses(PyObject* plasmaGameMod)
 {
     pyGameCli::AddPlasmaGameClasses(plasmaGameMod);
+    pyGmBlueSpiral::AddPlasmaGameClasses(plasmaGameMod);
 }
 
 /////////////////////////////////////////////////////////////////////////////

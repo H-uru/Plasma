@@ -3,12 +3,14 @@ set(pfGameMgr_HEADERS
     pfGameMgr.h
     pfGameMgrCreatable.h
     pfGameMgrTrans.h
+    pfGmBlueSpiral.h
 )
 
 set(pfGameMgr_SOURCES
     pfGameCli.cpp
     pfGameMgr.cpp
     pfGameMgrTrans.cpp
+    pfGmBlueSpiral.cpp
 )
 
 plasma_library(pfGameMgr SOURCES ${pfGameMgr_HEADERS} ${pfGameMgr_SOURCES})

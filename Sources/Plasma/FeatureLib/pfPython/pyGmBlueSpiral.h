@@ -40,15 +40,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef _pfGameMgrCreatable_h_
-#define _pfGameMgrCreatable_h_
+#ifndef _pyGmBlueSpiral_h_
+#define _pyGmBlueSpiral_h_
 
-#include "pnFactory/plCreator.h"
+#include "pyGameCli.h"
 
-#include "pfGameCli.h"
-REGISTER_NONCREATABLE(pfGameCli);
+class pfGmBlueSpiral;
+class pyGmBlueSpiralHandler;
 
-#include "pfGmBlueSpiral.h"
-REGISTER_NONCREATABLE(pfGmBlueSpiral);
+class pyGmBlueSpiral : public pyGameCli
+{
+public:
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGmBlueSpiral);
+    PYTHON_CLASS_GMCLI_NEW_DEFINITION(pfGmBlueSpiral);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGmBlueSpiral object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGmBlueSpiral); // converts a PyObject to a pyGmBlueSpiral (throws error if not correct type)
+
+protected:
+    pfGmBlueSpiral* GetGameCli() const { return (pfGmBlueSpiral*)fCli; }
+
+public:
+    void StartGame() const;
+    void HitCloth(uint8_t cloth) const;
+
+public:
+    static void Join(
+        PyObject* handler,
+        uint32_t tableID
+    );
+
+    static bool IsSupported();
+
+public:
+    static void AddPlasmaGameClasses(PyObject* m);
+};
 
 #endif
