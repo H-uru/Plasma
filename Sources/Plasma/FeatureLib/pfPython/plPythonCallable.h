@@ -93,12 +93,6 @@ namespace plPython
     };
 
     template<typename... Args>
-    inline pyObjectRef CallObject(const pyObjectRef& callable, Args&&... args)
-    {
-        return CallObject(callable.Get(), std::forward<Args>(args)...);
-    }
-
-    template<typename... Args>
     inline pyObjectRef CallObject(PyObject* callable, Args&&... args)
     {
         hsAssert(PyCallable_Check(callable), "Trying to call a non-callable, eh?");
@@ -139,6 +133,12 @@ namespace plPython
             auto argsObjs = std::make_unique<PyObject* []>(nargs);
             return _detail::VectorcallObject<nargs>(callable, argsObjs.get(), std::forward<Args>(args)...);
         }
+    }
+    
+    template<typename... Args>
+    inline pyObjectRef CallObject(const pyObjectRef& callable, Args&&... args)
+    {
+        return CallObject(callable.Get(), std::forward<Args>(args)...);
     }
 
     template<typename... _CBArgsT>
