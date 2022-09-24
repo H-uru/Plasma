@@ -48,27 +48,32 @@ actSwitch01 = ptAttribActivator(1, "act: Podium Button")
 respButtonOneshot = ptAttribResponder(2, "resp: Push Podium oneshot")
 respList = ptAttribResponderList(3, "ResponderList", byObject=1)
 stringFormat = ptAttribString(4, "Responder name format string")
+stringVarName = ptAttribString(5, "Age SDL variable name")
 
-class krelPodium(ptResponder):
+class xPodium(ptResponder):
 
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 5245
         version = 2
         self.version = version
-        PtDebugPrint("__init__krelPodium v.", version, ".0")
+        PtDebugPrint(f"__init__xPodium v.{version}.0")
+
+    def OnFirstUpdate(self):
+        if not stringVarName.value:
+            PtDebugPrint("ERROR: xPodium.OnFirstUpdate():\tERROR: missing SDL var name")
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
         if not PtGetPlayerList():
-            ageSDL["nb01CmnRmSpeech"] = (0,)
-        ageSDL.setNotify(self.key, "nb01CmnRmSpeech", 0.0)
-        ageSDL.sendToClients("nb01CmnRmSpeech")
-        ageSDL.setFlags("nb01CmnRmSpeech", 1, 1)
+            ageSDL[stringVarName.value] = (0,)
+        ageSDL.setNotify(self.key, stringVarName.value, 0.0)
+        ageSDL.sendToClients(stringVarName.value)
+        ageSDL.setFlags(stringVarName.value, 1, 1)
 
     def OnNotify(self, state, id, events):
         ageSDL = PtGetAgeSDL()
-        nb01CmnRmSpeech = ageSDL["nb01CmnRmSpeech"][0]
+        xPodiumSpeech = ageSDL[stringVarName.value][0]
 
         if not state:
             return
@@ -78,24 +83,24 @@ class krelPodium(ptResponder):
             return
 
         elif id == respButtonOneshot.id and self.sceneobject.isLocallyOwned():
-            nb01CmnRmSpeech -= 1
-            if nb01CmnRmSpeech < 0:
-                nb01CmnRmSpeech = len(respList.byObject) - 1
-            respName = (stringFormat.value % nb01CmnRmSpeech)
+            xPodiumSpeech -= 1
+            if xPodiumSpeech < 0:
+                xPodiumSpeech = len(respList.byObject) - 1
+            respName = (stringFormat.value % xPodiumSpeech)
             if respName in respList.byObject:
-                ageSDL["nb01CmnRmSpeech"] = (nb01CmnRmSpeech,)
+                ageSDL[stringVarName.value] = (xPodiumSpeech,)
             else:
-                PtDebugPrint(f"ERROR: krelPodium Invalid speech {nb01CmnRmSpeech} selected!")
-                ageSDL["nb01CmnRmSpeech"] = (0,)
+                PtDebugPrint(f"ERROR: xPodium Invalid speech {xPodiumSpeech} selected!")
+                ageSDL[stringVarName.value] = (0,)
 
     def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
-        if VARname != "nb01CmnRmSpeech":
+        if VARname != stringVarName.value:
             return
 
         ageSDL = PtGetAgeSDL()
-        nb01CmnRmSpeech = ageSDL["nb01CmnRmSpeech"][0]
-        respName = (stringFormat.value % nb01CmnRmSpeech)
+        xPodiumSpeech = ageSDL[stringVarName.value][0]
+        respName = (stringFormat.value % xPodiumSpeech)
 
-        if nb01CmnRmSpeech >= 0 and respName in respList.byObject:
-            PtDebugPrint("krelPodium: Playing speech", respName)
+        if xPodiumSpeech >= 0 and respName in respList.byObject:
+            PtDebugPrint(f"xPodium: Playing speech {respName=}")
             respList.run(self.key, objectName=respName)
