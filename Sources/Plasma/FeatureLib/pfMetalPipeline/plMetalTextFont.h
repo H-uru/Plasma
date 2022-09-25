@@ -44,18 +44,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPipeline/plTextFont.h"
 #include "plMetalPipeline.h"
+#include "plMetalPipelineState.h"
 #include <Metal/Metal.hpp>
 
 
 //// plDXTextFont Class Definition ///////////////////////////////////////////
 
 class plPipeline;
+class plMetalDevice;
+
+class plMetalTextFontPipelineState : public plMetalPipelineState
+{
+public:
+    plMetalTextFontPipelineState(plMetalDevice* device): plMetalPipelineState(device) { };
+    virtual bool IsEqual(const plMetalPipelineState &p) const override;
+    virtual uint16_t GetID() const override { return 6; };
+    virtual plMetalPipelineState* Clone() override;
+    virtual const MTL::Function*  GetVertexFunction(MTL::Library* library) override;
+    virtual const MTL::Function*  GetFragmentFunction(MTL::Library* library) override;
+    virtual const NS::String*     GetDescription() override;
+    
+    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) override;
+    
+    void ConfigureVertexDescriptor(MTL::VertexDescriptor *vertexDescriptor) override;
+    
+    void GetFunctionConstants(MTL::FunctionConstantValues *) const override;
+    
+};
 
 class plMetalTextFont : public plTextFont
 {
 protected:
     static uint32_t                       fBufferCursor;
-    static MTL::RenderPipelineState*         fRenderState;
 
     void    ICreateTexture(uint16_t *data) override;
     void    IInitStateBlocks() override;
@@ -63,12 +83,12 @@ protected:
     void    IDrawLines(uint32_t count, plFontVertex *array) override;
     
     MTL::Texture*   fTexture;
-    MTL::Device*    fDevice;
+    plMetalDevice*    fDevice;
     
     plMetalPipeline* fPipeline;
 
 public:
-    plMetalTextFont( plPipeline *pipe, MTL::Device *device );
+    plMetalTextFont( plPipeline *pipe, plMetalDevice *device );
     ~plMetalTextFont();
 
     static  void CreateShared(plMetalDevice* device);

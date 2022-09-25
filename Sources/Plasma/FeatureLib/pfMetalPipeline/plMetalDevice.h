@@ -185,6 +185,8 @@ public:
     
     void EncodeBlur(MTL::CommandBuffer* commandBuffer, MTL::Texture* texture, float sigma);
     
+    MTL::PixelFormat GetFramebufferFormat() { return fFramebufferFormat; };
+    
 private:
     
     struct plMetalPipelineRecord {
@@ -214,7 +216,11 @@ protected:
     
     MTL::Texture* fGammaLUTTexture;
     
+    void SetFramebufferFormat(MTL::PixelFormat format);
+    
 private:
+    MTL::PixelFormat            fFramebufferFormat;
+    
     //these are internal bits for backing the current render pass
     //private because the functions should be used to keep a consistant
     //render pass state
@@ -250,6 +256,7 @@ private:
     
     void BeginNewRenderPass();
     void ReleaseSamplerStates();
+    void ReleaseFramebufferObjects();
     
     //Blur states
     std::unordered_map<float, NS::Object*> fBlurShaders;

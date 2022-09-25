@@ -71,7 +71,7 @@ public:
     virtual const MTL::Function*  GetFragmentFunction(MTL::Library* library) = 0;
     virtual const NS::String*     GetDescription() = 0;
     
-    virtual void            ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) = 0;
+    virtual void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) = 0;
     virtual void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) = 0;
 protected:
     plMetalDevice* fDevice;

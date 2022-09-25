@@ -48,8 +48,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Metal/Metal.hpp>
 #include <simd/simd.h>
 #include "hsPoint2.h"
+#include "plMetalPipelineState.h"
 
 class plMetalPipeline;
+class plMetalDevice;
+
+class plMetalPlatePipelineState : public plMetalPipelineState
+{
+public:
+    plMetalPlatePipelineState(plMetalDevice* device): plMetalPipelineState(device) { };
+    virtual bool IsEqual(const plMetalPipelineState &p) const override;
+    virtual uint16_t GetID() const override { return 5; };
+    virtual plMetalPipelineState* Clone() override;
+    virtual const MTL::Function*  GetVertexFunction(MTL::Library* library) override;
+    virtual const MTL::Function*  GetFragmentFunction(MTL::Library* library) override;
+    virtual const NS::String*     GetDescription() override;
+    
+    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) override;
+    
+    void ConfigureVertexDescriptor(MTL::VertexDescriptor *vertexDescriptor) override;
+    
+    void GetFunctionConstants(MTL::FunctionConstantValues *) const override;
+    
+};
 
 class plMetalPlateManager : public plPlateManager
 {
@@ -59,8 +80,7 @@ public:
     void IDrawToDevice(plPipeline *pipe) override;
     void ICreateGeometry();
     void IReleaseGeometry();
-    MTL::RenderPipelineState *fPlateRenderPipelineState;
-    void encodeVertexBuffer(MTL::RenderCommandEncoder *encoder);
+    void EncodeDraw(MTL::RenderCommandEncoder *encoder);
     ~plMetalPlateManager();
 private:
     struct plateVertexBuffer {

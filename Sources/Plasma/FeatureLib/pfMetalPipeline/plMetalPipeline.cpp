@@ -170,6 +170,10 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     
     fMaxLayersAtOnce = 8;
     
+    // Default our output format to 8 bit BGRA. Client may immediately change this to
+    // the actual framebuffer format.
+    SetFramebufferFormat(MTL::PixelFormatBGRA8Unorm);
+    
     // Alloc half our simultaneous textures to piggybacks.
     // Won't hurt us unless we try to many things at once.
     fMaxPiggyBacks = fMaxLayersAtOnce >> 1;
@@ -263,7 +267,7 @@ plTextFont *plMetalPipeline::MakeTextFont(ST::string face, uint16_t size) {
     plTextFont  *font;
 
 
-    font = new plMetalTextFont( this, fDevice.fMetalDevice );
+    font = new plMetalTextFont( this, &fDevice );
     if (font == nullptr)
         return nullptr;
     font->Create( face, size );
@@ -874,6 +878,29 @@ bool plMetalPipeline::SetGamma(const uint16_t *const tabR, const uint16_t *const
     fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 0, tabR, 256 * sizeof(uint16_t), 0);
     fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 1, tabG, 256 * sizeof(uint16_t), 0);
     fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 2, tabB, 256 * sizeof(uint16_t), 0);
+    
+    return true;
+}
+
+bool plMetalPipeline::SetGamma10(const uint16_t *const tabR, const uint16_t *const tabG, const uint16_t *const tabB)
+{
+    //allocate a new buffer every time so we don't cause problems with a running render pass
+    if(fDevice.fGammaLUTTexture) {
+        fDevice.fGammaLUTTexture->release();
+        fDevice.fGammaLUTTexture = nullptr;
+    }
+    
+    MTL::TextureDescriptor* texDescriptor = MTL::TextureDescriptor::alloc()->init()->autorelease();
+    texDescriptor->setTextureType(MTL::TextureType1DArray);
+    texDescriptor->setWidth(1024);
+    texDescriptor->setPixelFormat(MTL::PixelFormatR16Uint);
+    texDescriptor->setArrayLength(3);
+    
+    fDevice.fGammaLUTTexture = fDevice.fMetalDevice->newTexture(texDescriptor);
+    
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 1024), 0, 0, tabR, 1024 * sizeof(uint16_t), 0);
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 1024), 0, 1, tabG, 1024 * sizeof(uint16_t), 0);
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 1024), 0, 2, tabB, 1024 * sizeof(uint16_t), 0);
     
     return true;
 }
@@ -2586,9 +2613,12 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     
     plMetalPlateManager *pm = (plMetalPlateManager *)fPlateMgr;
     
-    if(fState.fCurrentPipelineState != pm->fPlateRenderPipelineState) {
-        fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pm->fPlateRenderPipelineState);
-        fState.fCurrentPipelineState = pm->fPlateRenderPipelineState;
+    plMetalPlatePipelineState state(&fDevice);
+    plMetalDevice::plMetalLinkedPipeline* linkedPipeline = state.GetRenderPipelineState();
+    
+    if(fState.fCurrentPipelineState != linkedPipeline->pipelineState) {
+        fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
+        fState.fCurrentPipelineState = linkedPipeline->pipelineState;
     }
     float alpha = material->GetLayer(0)->GetOpacity();
     fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&alpha, sizeof(float), 6);
@@ -2618,7 +2648,7 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     
     fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&uniforms, sizeof(VertexUniforms), BufferIndexState);
     
-    pm->encodeVertexBuffer(fDevice.CurrentRenderCommandEncoder());
+    pm->EncodeDraw(fDevice.CurrentRenderCommandEncoder());
     
     IPopPiggyBacks();
 }

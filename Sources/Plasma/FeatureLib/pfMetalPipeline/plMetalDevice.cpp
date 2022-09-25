@@ -441,8 +441,6 @@ plMetalDevice::plMetalDevice()
     fReverseZStencilState = fMetalDevice->newDepthStencilState(depthDescriptor);
         
     depthDescriptor->release();
-        
-    CreateGammaAdjustState();
 }
 
 void plMetalDevice::SetViewport() {
@@ -750,6 +748,25 @@ void plMetalDevice::SetupTextureRef(plBitmap *img, plMetalDevice::TextureRef *tR
     hsRefCnt_SafeUnRef(tRef);
 }
 
+void plMetalDevice::ReleaseFramebufferObjects()
+{
+    if (fCurrentUnprocessedOutputTexture)
+        fCurrentUnprocessedOutputTexture->release();
+    fCurrentFragmentOutputTexture = nil;
+    
+    if (fGammaAdjustState)
+        fGammaAdjustState->release();
+    fGammaAdjustState = nil;
+}
+
+void plMetalDevice::SetFramebufferFormat(MTL::PixelFormat format)
+{
+    if (fFramebufferFormat != format) {
+        ReleaseFramebufferObjects();
+        fFramebufferFormat = format;
+    }
+}
+
 void plMetalDevice::CheckTexture(plMetalDevice::TextureRef *tRef)
 {
     if (!tRef->fTexture)
@@ -963,6 +980,8 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
 {
     fCurrentCommandBuffer = fCommandQueue->commandBuffer();
     fCurrentCommandBuffer->retain();
+    
+    SetFramebufferFormat(drawable->texture()->pixelFormat());
     
     bool depthNeedsRebuild = fCurrentDrawableDepthTexture == nullptr;
     depthNeedsRebuild |= drawable->texture()->width() != fCurrentDrawableDepthTexture->width() || drawable->texture()->height() != fCurrentDrawableDepthTexture->height();
@@ -1216,7 +1235,7 @@ void plMetalDevice::CreateGammaAdjustState() {
     
     library->release();
     
-    gammaDescriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
+    gammaDescriptor->colorAttachments()->object(0)->setPixelFormat(fFramebufferFormat);
     
     NS::Error *error;
     fGammaAdjustState->release();
@@ -1224,6 +1243,10 @@ void plMetalDevice::CreateGammaAdjustState() {
 }
 
 void plMetalDevice::PostprocessIntoDrawable() {
+    
+    if (!fGammaAdjustState) {
+        CreateGammaAdjustState();
+    }
     
     //Gamma adjust
     MTL::RenderPassDescriptor* gammaPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();

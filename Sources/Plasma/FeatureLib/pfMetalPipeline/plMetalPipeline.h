@@ -132,6 +132,8 @@ public:
     void LoadResources() override;
     bool SetGamma(float eR, float eG, float eB) override;
     bool SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) override;
+    bool SetGamma10(const uint16_t *const tabR, const uint16_t *const tabG, const uint16_t *const tabB) override;
+    bool Supports10BitGamma() const override { return true; };
     bool CaptureScreen(plMipmap* dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0) override;
     plMipmap* ExtractMipMap(plRenderTarget* targ) override;
     void GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32 ) override;
@@ -163,8 +165,12 @@ public:
     uint32_t  IGetBufferFormatSize( uint8_t format ) const;
     
     plRenderTarget* PopRenderTarget() override;
+    
+    MTL::PixelFormat    GetFramebufferFormat() { return fDevice.GetFramebufferFormat(); };
+    void                SetFramebufferFormat(MTL::PixelFormat format) { fDevice.SetFramebufferFormat(format); };
+    
 private:
-    MTL::RenderPipelineState*       fPipelineState;
+    
     VertexUniforms*                 fCurrentRenderPassUniforms;
     
     void FindFragFunction();

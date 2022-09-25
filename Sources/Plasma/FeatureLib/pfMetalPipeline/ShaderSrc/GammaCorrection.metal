@@ -66,7 +66,7 @@ vertex GammaVertexOut gammaCorrectVertex(constant GammaVertexIn *in [[ buffer(0)
 }
 
 const constant sampler lutSampler = sampler(
-                                            filter::linear
+                                            filter::nearest
                                             );
 
 fragment half4 gammaCorrectFragment(

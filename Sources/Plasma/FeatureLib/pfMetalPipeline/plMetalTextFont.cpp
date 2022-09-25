@@ -67,11 +67,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 const uint32_t    kNumVertsInBuffer(4608);
 
 uint32_t                  plMetalTextFont::fBufferCursor = 0;
-MTL::RenderPipelineState*                  plMetalTextFont::fRenderState = nullptr;
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
-plMetalTextFont::plMetalTextFont( plPipeline *pipe, MTL::Device *device ) : plTextFont( pipe ), fTexture()
+plMetalTextFont::plMetalTextFont( plPipeline *pipe, plMetalDevice* device ) : plTextFont( pipe ), fTexture()
 {
     fDevice = device;
     fPipeline = (plMetalPipeline *)pipe;
@@ -92,7 +91,7 @@ void    plMetalTextFont::ICreateTexture( uint16_t *data )
     MTL::TextureDescriptor *descriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatRGBA8Unorm, fTextureWidth, fTextureHeight, false);
     
     fTexture->release();
-    fTexture = fDevice->newTexture(descriptor);
+    fTexture = fDevice->fMetalDevice->newTexture(descriptor);
     fTexture->setLabel(NS::MakeConstantString("Font texture"));
     
     struct InDataValues {
@@ -145,24 +144,6 @@ void    plMetalTextFont::ICreateTexture( uint16_t *data )
 
 void plMetalTextFont::CreateShared(plMetalDevice* device)
 {
-    MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init()->autorelease();
-    MTL::Library* library = device->fMetalDevice->newDefaultLibrary();
-    
-    MTL::Function* vertFunction = library->newFunction(NS::MakeConstantString("textFontVertexShader"));
-    MTL::Function* fragFunction = library->newFunction(NS::MakeConstantString("textFontFragmentShader"));
-    
-    descriptor->setVertexFunction(vertFunction);
-    descriptor->setFragmentFunction(fragFunction);
-    descriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
-    descriptor->colorAttachments()->object(0)->setBlendingEnabled(true);
-    descriptor->setSampleCount(device->fSampleCount);
-    descriptor->setDepthAttachmentPixelFormat(MTL::PixelFormatDepth32Float_Stencil8);
-    
-    descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
-    descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-    
-    NS::Error* error;
-    fRenderState = device->fMetalDevice->newRenderPipelineState(descriptor, &error);
 }
 
 void plMetalTextFont::ReleaseShared(MTL::Device* device)
@@ -233,7 +214,9 @@ void    plMetalTextFont::IDrawPrimitive( uint32_t count, plFontVertex *array )
 {
     plFontVertex        *v;
     
-    fPipeline->fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(fRenderState);
+    plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalTextFontPipelineState(fDevice).GetRenderPipelineState();
+    
+    fPipeline->fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
     const uint maxCount = 4096/(sizeof(plFontVertex) * 3);
     uint drawm = 0;
     while(count > 0) {
@@ -289,8 +272,9 @@ void    plMetalTextFont::IDrawPrimitive( uint32_t count, plFontVertex *array )
 
 void    plMetalTextFont::IDrawLines( uint32_t count, plFontVertex *array )
 {
+    plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalTextFontPipelineState(fDevice).GetRenderPipelineState();
     
-    fPipeline->fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(fRenderState);
+    fPipeline->fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
     fPipeline->fDevice.CurrentRenderCommandEncoder()->setVertexBytes(array, count * 2 * sizeof( plFontVertex ), 0);
     
     matrix_float4x4 mat = matrix_identity_float4x4;
@@ -378,3 +362,38 @@ void    plMetalTextFont::RestoreStates()
     fDevice->SetTransform( D3DTS_TEXTURE0, &d3dIdentityMatrix );*/
 }
 
+
+
+bool plMetalTextFontPipelineState::IsEqual(const plMetalPipelineState &p) const {
+    return true;
+}
+
+plMetalPipelineState *plMetalTextFontPipelineState::Clone() {
+    return new plMetalTextFontPipelineState(fDevice);
+}
+
+const MTL::Function *plMetalTextFontPipelineState::GetVertexFunction(MTL::Library *library) {
+    return library->newFunction(NS::MakeConstantString("textFontVertexShader"));
+}
+
+const MTL::Function *plMetalTextFontPipelineState::GetFragmentFunction(MTL::Library *library) {
+    return library->newFunction(NS::MakeConstantString("textFontFragmentShader"));
+}
+
+const NS::String *plMetalTextFontPipelineState::GetDescription() {
+    return NS::MakeConstantString("Font Rendering");
+}
+
+void plMetalTextFontPipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) {
+    
+    descriptor->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
+    descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
+}
+
+void plMetalTextFontPipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor *vertexDescriptor) {
+    return;
+}
+
+void plMetalTextFontPipelineState::GetFunctionConstants(MTL::FunctionConstantValues *) const {
+    return;
+}

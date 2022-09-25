@@ -49,52 +49,12 @@ plMetalPlateManager::plMetalPlateManager(plMetalPipeline* pipe)
     : plPlateManager(pipe),
     fVtxBuffer(0)
 {
-    //Compile the shaders and link our pipeline for plates
-    MTL::Library *library = pipe->fDevice.fMetalDevice->newDefaultLibrary();
-    MTL::Function *fragFunction = library->newFunction(
-                                                    NS::String::string("fragmentShader", NS::ASCIIStringEncoding)
-                                                    );
-    MTL::Function *vertFunction = library->newFunction(
-                                                    NS::String::string("plateVertexShader", NS::ASCIIStringEncoding)
-                                                    );
-    MTL::RenderPipelineDescriptor *descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
-    descriptor->setFragmentFunction(fragFunction);
-    descriptor->setVertexFunction(vertFunction);
-    descriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
-    descriptor->colorAttachments()->object(0)->setBlendingEnabled(true);
-    descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
-    descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-    descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
-    descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-    descriptor->setDepthAttachmentPixelFormat(MTL::PixelFormatDepth32Float_Stencil8);
-    descriptor->setSampleCount(pipe->fDevice.fSampleCount);
-    
-    //create the descriptor of the vertex array
-    MTL::VertexDescriptor *vertexDescriptor = MTL::VertexDescriptor::vertexDescriptor();
-    vertexDescriptor->attributes()->object(0)->setFormat(MTL::VertexFormatFloat2);
-    vertexDescriptor->attributes()->object(0)->setBufferIndex(VertexAttributePosition);
-    vertexDescriptor->attributes()->object(0)->setOffset(0);
-    vertexDescriptor->attributes()->object(1)->setFormat(MTL::VertexFormatFloat2);
-    vertexDescriptor->attributes()->object(1)->setBufferIndex(VertexAttributeTexcoord);
-    vertexDescriptor->attributes()->object(1)->setOffset(0);
-    
-    vertexDescriptor->layouts()->object(0)->setStride(sizeof(float) * 2);
-    vertexDescriptor->layouts()->object(1)->setStride(sizeof(float) * 2);
-    
-    descriptor->setVertexDescriptor(vertexDescriptor);
     
     MTL::DepthStencilDescriptor *depthDescriptor = MTL::DepthStencilDescriptor::alloc()->init();
     depthDescriptor->setDepthCompareFunction(MTL::CompareFunctionAlways);
     depthDescriptor->setDepthWriteEnabled(false);
     fDepthState = pipe->fDevice.fMetalDevice->newDepthStencilState(depthDescriptor);
     depthDescriptor->release();
-    
-    NS::Error *error;
-    fPlateRenderPipelineState = pipe->fDevice.fMetalDevice->newRenderPipelineState(descriptor, &error);
-    library->release();
-    fragFunction->release();
-    vertFunction->release();
-    descriptor->release();
 }
 
 void plMetalPlateManager::ICreateGeometry()
@@ -122,7 +82,7 @@ void plMetalPlateManager::ICreateGeometry()
     }
 }
 
-void plMetalPlateManager::encodeVertexBuffer(MTL::RenderCommandEncoder *encoder) {
+void plMetalPlateManager::EncodeDraw(MTL::RenderCommandEncoder *encoder) {
     encoder->setVertexBuffer(fVtxBuffer, 0, VertexAttributePosition);
     encoder->setVertexBuffer(fVtxBuffer, offsetof(plateVertexBuffer, uv), VertexAttributeTexcoord);
     
@@ -154,3 +114,46 @@ plMetalPlateManager::~plMetalPlateManager()
     IReleaseGeometry();
 }
 
+
+
+bool plMetalPlatePipelineState::IsEqual(const plMetalPipelineState &p) const { 
+    return true;
+}
+
+plMetalPipelineState *plMetalPlatePipelineState::Clone() { 
+    return new plMetalPlatePipelineState(fDevice);
+}
+
+const MTL::Function *plMetalPlatePipelineState::GetVertexFunction(MTL::Library *library) { 
+    return library->newFunction(NS::MakeConstantString("plateVertexShader"));
+}
+
+const MTL::Function *plMetalPlatePipelineState::GetFragmentFunction(MTL::Library *library) {
+    return library->newFunction(NS::MakeConstantString("fragmentShader"));
+}
+
+const NS::String *plMetalPlatePipelineState::GetDescription() { 
+    return NS::MakeConstantString("Plate Pipeline State");
+}
+
+void plMetalPlatePipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) {
+    descriptor->setBlendingEnabled(true);
+    descriptor->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
+    descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
+}
+
+void plMetalPlatePipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor *vertexDescriptor) {
+    vertexDescriptor->attributes()->object(0)->setFormat(MTL::VertexFormatFloat2);
+    vertexDescriptor->attributes()->object(0)->setBufferIndex(VertexAttributePosition);
+    vertexDescriptor->attributes()->object(0)->setOffset(0);
+    vertexDescriptor->attributes()->object(1)->setFormat(MTL::VertexFormatFloat2);
+    vertexDescriptor->attributes()->object(1)->setBufferIndex(VertexAttributeTexcoord);
+    vertexDescriptor->attributes()->object(1)->setOffset(0);
+    
+    vertexDescriptor->layouts()->object(0)->setStride(sizeof(float) * 2);
+    vertexDescriptor->layouts()->object(1)->setStride(sizeof(float) * 2);
+}
+
+void plMetalPlatePipelineState::GetFunctionConstants(MTL::FunctionConstantValues *) const {
+    
+}
