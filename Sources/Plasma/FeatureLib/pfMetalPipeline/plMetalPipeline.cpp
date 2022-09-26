@@ -2204,6 +2204,8 @@ void plMetalPipeline::IHandleBlendMode(hsGMatState flags)
                             lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAdd);
                         }
                     }
+                    //layer state needs to be syncronized to the GPU
+                    static_cast<plMetalMaterialShaderRef *>(fCurrMaterial->GetDeviceRef())->SetDirty(true);
                 }
                 break;
         }
