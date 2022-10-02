@@ -288,7 +288,7 @@ public:
 
     bool Matches(const NetVaultNode* rhs) const;
 
-    void Read(const uint8_t* buf, size_t size);
+    bool Read(const uint8_t* buf, size_t bufsz);
     void Write(std::vector<uint8_t>* buf, uint32_t ioFlags=0);
 
 protected:

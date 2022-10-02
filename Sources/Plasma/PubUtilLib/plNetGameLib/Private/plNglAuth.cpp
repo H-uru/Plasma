@@ -3479,7 +3479,12 @@ bool VaultFetchNodeTrans::Recv (
     
     if (IS_NET_SUCCESS(reply.result)) {
         m_node.Steal(new NetVaultNode);
-        m_node->Read(reply.nodeBuffer, reply.nodeBytes);
+        if (!m_node->Read(reply.nodeBuffer, reply.nodeBytes)) {
+            LogMsg(kLogError, "VaultFetchNodeTrans::Recv: Invalid vault node data - most likely a length field is incorrect");
+            m_result = kNetErrBadServerData;
+            m_state = kTransStateComplete;
+            return true;
+        }
     }
 
     m_result = reply.result;
