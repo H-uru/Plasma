@@ -389,7 +389,7 @@ void    plGraphPlate::AddData( int32_t value, int32_t value2, int32_t value3, in
         values.push_back(value3);
     if (value4 != -1)
         values.push_back(value4);
-    AddData(values);
+    AddData(std::move(values));
 }
 
 void    plGraphPlate::AddData( std::vector<int32_t> values )
@@ -558,11 +558,6 @@ void    plGraphPlate::SetLabelText(const char *text1, const char *text2, const c
     else
         strings.push_back("");
     SetLabelText(strings);
-}
-
-void    plGraphPlate::SetLabelText( const std::vector<std::string> & text )
-{
-    fLabelText = text;
 }
 
 //// IDrawNumber /////////////////////////////////////////////////////////////

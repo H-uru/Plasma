@@ -381,7 +381,7 @@ void plProfileManagerFull::Update()
             value = scale*value-fDetailVars[i].min;
             values.push_back((int32_t)value);
         }
-        fDetailGraph->AddData(values);
+        fDetailGraph->AddData(std::move(values));
         fDetailGraph->SetVisible(true);
     }
 }
