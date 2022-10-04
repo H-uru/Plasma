@@ -273,7 +273,7 @@ struct NetCliQueue;
 *
 ***/
 
-#define NET_MSG(msgId, msgFields)               { #msgId, msgId, msgFields, std::size(msgFields) }
+#define NET_MSG(msgId, msgFields)               { #msgId, msgId, msgFields, (unsigned)std::size(msgFields) }
 
 #define NET_MSG_FIELD(type, count, size)        { type, count, size }
 

@@ -401,7 +401,7 @@ void    plGraphPlate::AddData( std::vector<int32_t> values )
     uint32_t  *bits = (uint32_t *)fMipmap->GetImage(), *ptr;
     uint32_t  *minDPos = fMipmap->GetAddr32( 3, fMipmap->GetHeight() - 3 - 10 );
     uint32_t  *maxDPos = fMipmap->GetAddr32( 3, 2 );
-    int     i, j;
+    size_t    i, j;
     std::vector<int> lows, his;
     float   lineCtr, lineInc;
     int     lastLineInt, lineInt, bumpCtr;

@@ -330,7 +330,7 @@ uint32_t plEncryptedStream::Read(uint32_t bytes, void* buffer)
     if (numMidChunks != 0)
     {
         uint32_t* bufferPos = (uint32_t*)(((char*)buffer)+startAmt);
-        for (int i = 0; i < numMidChunks; i++)
+        for (uint32_t i = 0; i < numMidChunks; i++)
         {
             // Decrypt chunk
             IDecipher(bufferPos);
