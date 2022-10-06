@@ -201,30 +201,7 @@ protected:
                         kIString64_2 | kText_1 | kText_2 | kBlob_1 | kBlob_2)
     };
 
-public:
-    /**
-     * This is public only so that it may be referenced by anonymous functions.
-     * Should not be used outside NetVaultNode.
-     */
-    struct Blob
-    {
-        size_t size;
-        uint8_t* buffer;
-
-        Blob() : size(0), buffer(nullptr) { }
-        Blob(const Blob &rhs);
-        Blob(Blob &&rhs);
-        ~Blob() { delete[] buffer; }
-
-        void operator =(const Blob& rhs);
-        void operator =(Blob&& rhs);
-
-        bool operator ==(const Blob& rhs) const;
-        bool operator !=(const Blob& rhs) const { return !operator==(rhs); }
-    };
-
 private:
-
     uint64_t fUsedFields;
     uint64_t fDirtyFields;
     plUUID fRevision;
@@ -259,8 +236,8 @@ private:
     ST::string fIString64_2;
     ST::string fText_1;
     ST::string fText_2;
-    Blob     fBlob_1;
-    Blob     fBlob_2;
+    std::vector<uint8_t> fBlob_1;
+    std::vector<uint8_t> fBlob_2;
 
     template<typename T>
     inline void ISetVaultField(uint64_t bits, T& field, T value)
@@ -277,7 +254,8 @@ private:
         fUsedFields |= bits;
     }
 
-    void ISetVaultBlob(uint64_t bits, Blob& blob, const uint8_t* buf, size_t size);
+    void ISetVaultBlob(uint64_t bits, std::vector<uint8_t>& blob,
+                       const uint8_t* buf, size_t size);
 
 public:
     enum IOFlags
@@ -354,11 +332,11 @@ public:
     ST::string GetText_1() const { return fText_1; }
     ST::string GetText_2() const { return fText_2; }
 
-    const uint8_t* GetBlob_1() const { return fBlob_1.buffer; }
-    size_t GetBlob_1Length() const { return fBlob_1.size; }
+    const uint8_t* GetBlob_1() const { return fBlob_1.data(); }
+    size_t GetBlob_1Length() const { return fBlob_1.size(); }
 
-    const uint8_t* GetBlob_2() const { return fBlob_2.buffer; }
-    size_t GetBlob_2Length() const { return fBlob_2.size; }
+    const uint8_t* GetBlob_2() const { return fBlob_2.data(); }
+    size_t GetBlob_2Length() const { return fBlob_2.size(); }
 
 public:
     void SetNodeId(uint32_t value) { ISetVaultField(kNodeId, fNodeId, value); }
