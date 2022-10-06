@@ -792,9 +792,9 @@ bool plClothingOutfit::IReadFromVault()
 
     for (const hsRef<RelVaultNode> &node : nodes) {
         VaultSDLNode sdl(node);
-        if (sdl.GetSDLDataLength()) {
+        if (!sdl.GetSDLData().empty()) {
             hsRAMStream ram;
-            ram.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
+            ram.Write(sdl.GetSDLData().size(), sdl.GetSDLData().data());
             ram.Rewind();
 
             ST::string sdlRecName;
@@ -1463,9 +1463,9 @@ bool plClothingOutfit::WriteToFile(const plFileName &filename)
     S.WriteLE32((uint32_t)nodes.size());
     for (const hsRef<RelVaultNode> &node : nodes) {
         VaultSDLNode sdl(node);
-        S.WriteLE32((uint32_t)sdl.GetSDLDataLength());
-        if (sdl.GetSDLDataLength())
-            S.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
+        S.WriteLE32((uint32_t)sdl.GetSDLData().size());
+        if (!sdl.GetSDLData().empty())
+            S.Write(sdl.GetSDLData().size(), sdl.GetSDLData().data());
     }
 
     S.Close();

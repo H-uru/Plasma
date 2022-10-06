@@ -331,12 +331,8 @@ public:
     ST::string GetIString64_2() const { return fIString64_2; }
     ST::string GetText_1() const { return fText_1; }
     ST::string GetText_2() const { return fText_2; }
-
-    const uint8_t* GetBlob_1() const { return fBlob_1.data(); }
-    size_t GetBlob_1Length() const { return fBlob_1.size(); }
-
-    const uint8_t* GetBlob_2() const { return fBlob_2.data(); }
-    size_t GetBlob_2Length() const { return fBlob_2.size(); }
+    const std::vector<uint8_t>& GetBlob_1() const { return fBlob_1; }
+    const std::vector<uint8_t>& GetBlob_2() const { return fBlob_2; }
 
 public:
     void SetNodeId(uint32_t value) { ISetVaultField(kNodeId, fNodeId, value); }

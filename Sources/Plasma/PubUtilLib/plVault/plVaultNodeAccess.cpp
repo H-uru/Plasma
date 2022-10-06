@@ -137,11 +137,11 @@ bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
 
 //============================================================================
 bool VaultSDLNode::GetStateDataRecord (plStateDataRecord * rec, unsigned readOptions) {
-    if (!GetSDLDataLength() || !GetSDLData())
+    if (GetSDLData().empty())
         return false;
 
     hsRAMStream ram;
-    ram.Write(GetSDLDataLength(), GetSDLData());
+    ram.Write(GetSDLData().size(), GetSDLData().data());
     ram.Rewind();
 
     ST::string sdlRecName;
@@ -239,7 +239,7 @@ void VaultImageNode::StuffImage (plMipmap * src, int dstType) {
 //============================================================================
 bool VaultImageNode::ExtractImage (plMipmap ** dst) {
     hsRAMStream ramStream;
-    ramStream.Write(GetImageDataLength(), GetImageData());
+    ramStream.Write(GetImageData().size(), GetImageData().data());
     ramStream.Rewind();
 
     switch (GetImageType()) {
@@ -340,7 +340,8 @@ bool VaultAgeLinkNode::HasSpawnPoint (const plSpawnPointInfo & point) const {
 //============================================================================
 void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
 
-    ST::string str = ST::string::from_utf8(reinterpret_cast<const char*>(GetSpawnPoints()), GetSpawnPointsLength());
+    ST::string str = ST::string::from_utf8(reinterpret_cast<const char*>(GetSpawnPoints().data()),
+                                           GetSpawnPoints().size());
     std::vector<ST::string> izer = str.tokenize(";");
     for (auto token1 = izer.begin(); token1 != izer.end(); ++token1)
     {
@@ -435,10 +436,10 @@ void VaultAgeInfoNode::CopyTo (plAgeInfoStruct * info) const {
 //============================================================================
 void VaultMarkerGameNode::GetMarkerData(std::vector<VaultMarker>& data) const
 {
-    if (base->GetBlob_1Length() < sizeof(uint32_t))
+    if (base->GetBlob_1().size() < sizeof(uint32_t))
         return;
 
-    hsReadOnlyStream stream(base->GetBlob_1Length(), base->GetBlob_1());
+    hsReadOnlyStream stream(base->GetBlob_1().size(), base->GetBlob_1().data());
     uint32_t size = stream.ReadLE32();
     data.reserve(size);
 

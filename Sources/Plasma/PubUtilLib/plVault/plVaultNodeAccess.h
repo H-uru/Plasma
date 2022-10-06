@@ -87,8 +87,7 @@ private:
     void Set##name (type v) { base->Set##basename(v); }
 
 #define VNODE_BLOB(name, basename) \
-    const uint8_t * Get##name () const { return base->Get##basename(); } \
-    size_t Get##name##Length () const { return base->Get##basename##Length(); } \
+    const std::vector<uint8_t>& Get##name() const { return base->Get##basename(); } \
     void Set##name (const uint8_t data[], size_t length) { base->Set##basename(data, length); }
 
 #define VNODE_STRING(name, basename) \
