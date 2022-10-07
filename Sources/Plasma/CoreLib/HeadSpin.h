@@ -427,8 +427,10 @@ void DebugMsg(const char* fmt, ...);
 #endif  // HS_DEBUGGING
 
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); __assume(0); break;
+#elif defined(__GNUC__)
+#define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); __builtin_unreachable(); break;
 #else
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); break;
 #endif
