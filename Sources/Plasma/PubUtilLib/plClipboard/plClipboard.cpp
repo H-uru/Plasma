@@ -119,6 +119,15 @@ void plClipboard::SetClipboardText(const ST::string& text)
     target[len] = L'\0';
     GlobalUnlock(copy.get());
 
+    // If someone else has non-text data on the clipboard, copying will silently
+    // fail if we don't explicitly clear the content. Worse, if we clear with
+    // a null window, then, per MSDN, the clipboard is owned by null, which causes
+    // SetClipboardData() to fail.
+    if (hWnd != nullptr) {
+        BOOL result = EmptyClipboard();
+        hsAssert(result == 0, ST::format("EmptyClipboard() failed:\n{}", hsCOMError(hsLastWin32Error, GetLastError())).c_str());
+    }
+
     if (SetClipboardData(CF_UNICODETEXT, copy.get()) != nullptr) {
         // copy is now owned by the clipboard, do not destroy it.
         // if we don't release it, then subsequent copies will crash.
