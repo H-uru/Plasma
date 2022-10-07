@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetObjectDebugger.h"
 
-#include <string>
+#include <string_theory/string_stream>
 
 #include "hsResMgr.h"
 
@@ -243,31 +243,27 @@ void plNetObjectDebugger::ClearAllDebugObjects()
 //
 // write to status log if there's a string match
 //
-void plNetObjectDebugger::LogMsgIfMatch(const char* msg) const
+void plNetObjectDebugger::LogMsgIfMatch(const ST::string& msg) const
 {
-    if (GetNumDebugObjects()==0 || !msg)
+    if (GetNumDebugObjects() == 0 || msg.empty())
         return;
 
     // extract object name from msg, expects '...object:foo,...'
-    std::string tmp = msg;
-    hsStrLower((char*)tmp.c_str());
-    std::string objTag="object";
-    const char* c=strstr(tmp.c_str(), objTag.c_str());
-    if (c && c != tmp.c_str())
+    const auto objTag = ST_LITERAL("object");
+    ST_ssize_t pos = msg.find(objTag, ST::case_insensitive);
+    if (pos > 0)
     {
-        c+=objTag.size();
+        const char* c = &msg[pos] + objTag.size();
 
         // move past spaces
         while ( *c || *c==' ' )
             c++;
 
-        char objName[128];
-        int i=0;
-
         // copy objName token
-        while(*c && *c != ',' && *c != ' ' && i<127)
-            objName[i++] = *c++;
-        objName[i]=0;
+        ST::string_stream buildName;
+        while (*c && *c != ',' && *c != ' ')
+            buildName.append_char(*c++);
+        ST::string objName = buildName.to_string(true, ST::substitute_invalid);
 
         DebugObjectList::const_iterator it = fDebugObjects.begin();
         for(; it != fDebugObjects.end(); it++)

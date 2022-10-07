@@ -438,16 +438,6 @@ char* hsStrcpy(char* dst, const char* src)
     return dst;
 }
 
-void hsStrLower(char *s)
-{
-    if (s)
-    {
-        size_t len = strlen(s);
-        for (size_t i = 0; i < len; i++)
-            s[i] = tolower(s[i]);
-    }
-}
-
 //// IStringToWString /////////////////////////////////////////////////////////
 // Converts a char * string to a wchar_t * string
 

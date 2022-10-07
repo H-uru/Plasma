@@ -94,7 +94,7 @@ public:
     int GetNumDebugObjects() const { return fDebugObjects.size(); }
     bool IsDebugObject(const hsKeyedObject* obj) const override;
 
-    void LogMsgIfMatch(const char* msg) const override;      // write to status log if there's a string match
+    void LogMsgIfMatch(const ST::string& msg) const override;      // write to status log if there's a string match
     void LogMsg(const char* msg) const override;
 };
 

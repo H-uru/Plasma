@@ -265,7 +265,7 @@ bool plNetClientMgr::Log(const ST::string& str) const
 
     GetLog();
 
-    plNetObjectDebugger::GetInstance()->LogMsgIfMatch(buf2.c_str());
+    plNetObjectDebugger::GetInstance()->LogMsgIfMatch(buf2);
 
     if (fStatusLog) {
         return fStatusLog->AddLine(buf2);
