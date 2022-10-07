@@ -52,48 +52,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plKeyFinder.h"
 #include "plStatusLog/plStatusLog.h"
 
-plNetObjectDebugger::DebugObject::DebugObject(const char* objName, plLocation& loc, uint32_t flags) :
-fLoc(loc),
-fFlags(flags)
+plNetObjectDebugger::DebugObject::DebugObject(const ST::string& objName, plLocation& loc, uint32_t flags)
+    : fObjName(objName.to_lower()), fLoc(loc), fFlags(flags)
 {
-    std::string tmp = objName;
-    hsStrLower((char*)tmp.c_str());
-    fObjName = tmp;
 }
 
 //
 // return true if string matches objName according to flags
 //
-bool plNetObjectDebugger::DebugObject::StringMatches(const char* str) const
+bool plNetObjectDebugger::DebugObject::StringMatches(const ST::string& str) const
 {
-    if (!str)
+    if (str.empty())
         return false;
 
     if (fFlags & kExactStringMatch)
-        return !stricmp(str, fObjName.c_str());
+        return str.compare(fObjName, ST::case_insensitive) == 0;
 
     if (fFlags & kEndStringMatch)
-    {
-        int len=strlen(str);
-        if (len>fObjName.size())
-            return false;
-        return !stricmp(str, fObjName.c_str()+fObjName.size()-len);
-    }
+        return str.ends_with(fObjName, ST::case_insensitive);
 
     if (fFlags & kStartStringMatch)
-    {
-        int len=strlen(str);
-        if (len>fObjName.size())
-            return false;
-        return !strnicmp(str, fObjName.c_str(), strlen(str));
-    }
+        return str.starts_with(fObjName, ST::case_insensitive);
 
     if (fFlags & kSubStringMatch)
-    {
-        std::string tmp = str;
-        hsStrLower((char*)tmp.c_str());
-        return (strstr(tmp.c_str(), fObjName.c_str()) != nullptr);
-    }
+        return str.contains(fObjName, ST::case_insensitive);
 
     hsAssert(false, "missing flags");
     return false;
@@ -104,12 +86,12 @@ bool plNetObjectDebugger::DebugObject::StringMatches(const char* str) const
 //      return true if object matches both string and location.
 // else just return true if object matches string
 //
-bool plNetObjectDebugger::DebugObject::ObjectMatches(const char* objName, const char* pageName)
+bool plNetObjectDebugger::DebugObject::ObjectMatches(const ST::string& objName, const ST::string& pageName)
 {
-    if (!objName)
+    if (objName.empty())
         return false;
 
-    if (!pageName || (fFlags & kPageMatch)==0)
+    if (pageName.empty() || (fFlags & kPageMatch)==0)
     {
         // only have enough info to match by objName
         return StringMatches(objName);
@@ -131,7 +113,7 @@ bool plNetObjectDebugger::DebugObject::ObjectMatches(const hsKeyedObject* obj)
     if ((fFlags & kPageMatch)==0)
     {
         // match based on object name only
-        return StringMatches(obj->GetKeyName().c_str());
+        return StringMatches(obj->GetKeyName());
     }
 
     return (obj->GetKey()->GetUoid().GetLocation()==fLoc);
@@ -175,65 +157,61 @@ void plNetObjectDebugger::ICreateStatusLog() const
     }
 }
 
-bool plNetObjectDebugger::AddDebugObject(const char* objName, const char* pageName)
+bool plNetObjectDebugger::AddDebugObject(ST::string objName, const ST::string& pageName)
 {
-    if (!objName)
+    if (objName.empty())
         return false;
-
-    std::string tmpObjName(strlen(objName), char(0));
 
     //
     // set string matching flags
     //
-    int len = strlen(objName);
     uint32_t flags=0;
-    if (objName[0]=='*')
+    if (objName.front() == '*')
     {
-        if (objName[len-1]=='*')
+        if (objName.back() == '*')
         {
             flags = kSubStringMatch;    // *foo*
-            strncpy(tmpObjName.data(), objName+1, strlen(objName)-2);
+            objName = objName.substr(1, objName.size() - 2);
         }
         else
         {
             flags = kEndStringMatch;    // *foo
-            strncpy(tmpObjName.data(), objName+1, strlen(objName)-1);
+            objName = objName.substr(1, objName.size() - 1);
         }
     }
 
-    if (!flags && objName[len-1]=='*')
+    if (!flags && objName.back() == '*')
     {
         flags = kStartStringMatch;      // foo*
-        strncpy(tmpObjName.data(), objName, strlen(objName)-1);
+        objName = objName.substr(0, objName.size() - 1);
     }
 
     if (!flags)
     {
         flags = kExactStringMatch;
-        strcpy(tmpObjName.data(), objName);
     }
 
     //
     // set plLocation
     //
     plLocation loc;
-    if (pageName)
+    if (!pageName.empty())
     {
         loc = plKeyFinder::Instance().FindLocation(NetCommGetAge()->ageDatasetName, pageName);
         flags |= kPageMatch;
     }
 
-    fDebugObjects.push_back(new DebugObject(tmpObjName.c_str(), loc, flags));
+    fDebugObjects.push_back(new DebugObject(objName, loc, flags));
 
     ICreateStatusLog();
 
     return true;
 }
 
-bool plNetObjectDebugger::RemoveDebugObject(const char* objName, const char* pageName)
+bool plNetObjectDebugger::RemoveDebugObject(const ST::string& objName, const ST::string& pageName)
 {
     bool didIt=false;
-    if (!pageName)
+    if (pageName.empty())
     {
         DebugObjectList::iterator it =fDebugObjects.begin();
         for( ; it != fDebugObjects.end(); )
