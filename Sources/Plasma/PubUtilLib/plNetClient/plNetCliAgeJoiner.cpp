@@ -460,7 +460,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
     //========================================================================
     plInitialAgeStateLoadedMsg * stateMsg = plInitialAgeStateLoadedMsg::ConvertNoRef(msg);
     if(stateMsg) {
-        plNetObjectDebugger::GetInstance()->LogMsg("OnServerInitComplete");
+        plNetObjectDebugger::GetInstance()->LogMsg(ST_LITERAL("OnServerInitComplete"));
         nc->SetFlagsBit(plNetClientApp::kLoadingInitialAgeState, false);
 
         const plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();

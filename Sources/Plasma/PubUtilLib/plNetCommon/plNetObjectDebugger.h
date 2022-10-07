@@ -95,7 +95,7 @@ public:
     bool IsDebugObject(const hsKeyedObject* obj) const override;
 
     void LogMsgIfMatch(const ST::string& msg) const override;      // write to status log if there's a string match
-    void LogMsg(const char* msg) const override;
+    void LogMsg(const ST::string& msg) const override;
 };
 
 #endif      // plNetObjectDebugger_inc

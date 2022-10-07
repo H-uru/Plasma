@@ -277,11 +277,11 @@ void plNetObjectDebugger::LogMsgIfMatch(const ST::string& msg) const
     }
 }
 
-void plNetObjectDebugger::LogMsg(const char* msg) const
+void plNetObjectDebugger::LogMsg(const ST::string& msg) const
 {
-    DEBUG_MSG(msg);
+    DEBUG_MSG(msg.c_str());
 }
-    
+
 bool plNetObjectDebugger::IsDebugObject(const hsKeyedObject* obj) const
 {
     DebugObjectList::const_iterator it =fDebugObjects.begin();
