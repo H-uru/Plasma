@@ -52,11 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plKeyFinder.h"
 #include "plStatusLog/plStatusLog.h"
 
-plNetObjectDebugger::DebugObject::DebugObject(const ST::string& objName, plLocation& loc, uint32_t flags)
-    : fObjName(objName.to_lower()), fLoc(loc), fFlags(flags)
-{
-}
-
 //
 // return true if string matches objName according to flags
 //
@@ -201,7 +196,7 @@ bool plNetObjectDebugger::AddDebugObject(ST::string objName, const ST::string& p
         flags |= kPageMatch;
     }
 
-    fDebugObjects.push_back(new DebugObject(objName, loc, flags));
+    fDebugObjects.push_back(new DebugObject(std::move(objName), loc, flags));
 
     ICreateStatusLog();
 

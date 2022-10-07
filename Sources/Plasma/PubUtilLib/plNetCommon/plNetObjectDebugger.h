@@ -70,7 +70,8 @@ private:
         bool StringMatches(const ST::string& str) const;  // return true if string matches objName according to flags
         bool ObjectMatches(const hsKeyedObject* obj);
         bool ObjectMatches(const ST::string& objName, const ST::string& pageName);
-        DebugObject(const ST::string& objName, plLocation& loc, uint32_t flags);
+        DebugObject(ST::string objName, plLocation& loc, uint32_t flags)
+            : fObjName(std::move(objName)), fLoc(loc), fFlags(flags) { }
     };
     typedef std::vector<DebugObject*> DebugObjectList;
     DebugObjectList fDebugObjects;
