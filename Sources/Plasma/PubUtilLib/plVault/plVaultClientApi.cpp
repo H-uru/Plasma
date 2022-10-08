@@ -429,7 +429,7 @@ static void InitFetchedNode(hsWeakRef<RelVaultNode> rvn) {
     switch (rvn->GetNodeType()) {
         case plVault::kNodeType_SDL: {
             VaultSDLNode access(rvn);
-            if (!access.GetSDLData() || !access.GetSDLDataLength())
+            if (access.GetSDLData().empty())
                 access.InitStateDataRecord(access.GetSDLName());
         }
         break;

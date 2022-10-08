@@ -243,52 +243,6 @@ void NetGameRank::CopyFrom(const NetGameRank & fromRank) {
 ***/
 
 //============================================================================
-NetVaultNode::Blob::Blob(const Blob& rhs)
-{
-    buffer = new uint8_t[rhs.size];
-    size = rhs.size;
-    memcpy(buffer, rhs.buffer, rhs.size);
-}
-
-//============================================================================
-NetVaultNode::Blob::Blob(Blob&& rhs)
-{
-    size = rhs.size;
-    buffer = rhs.buffer;
-    rhs.size = 0;
-    rhs.buffer = nullptr;
-}
-
-//============================================================================
-void NetVaultNode::Blob::operator=(const Blob& rhs)
-{
-    if (size != rhs.size) {
-        delete[] buffer;
-        buffer = new uint8_t[rhs.size];
-        size = rhs.size;
-    }
-    memcpy(buffer, rhs.buffer, rhs.size);
-}
-
-//============================================================================
-void NetVaultNode::Blob::operator=(Blob&& rhs)
-{
-    delete[] buffer;
-    size = rhs.size;
-    buffer = rhs.buffer;
-    rhs.size = 0;
-    rhs.buffer = nullptr;
-}
-
-//============================================================================
-bool NetVaultNode::Blob::operator==(const Blob& rhs) const
-{
-    if (size == rhs.size)
-        return memcmp(buffer, rhs.buffer, size) == 0;
-    return false;
-}
-
-//============================================================================
 void NetVaultNode::Clear()
 {
     // Sneaky -- we're just going to set the fields to empty.
@@ -318,11 +272,9 @@ inline void IZero<plUUID>(plUUID& dest)
 }
 
 template<>
-inline void IZero<NetVaultNode::Blob>(NetVaultNode::Blob& blob)
+inline void IZero<std::vector<uint8_t>>(std::vector<uint8_t>& blob)
 {
-    delete[] blob.buffer;
-    blob.buffer = nullptr;
-    blob.size = 0;
+    blob.clear();
 }
 
 void NetVaultNode::CopyFrom(const NetVaultNode* node)
@@ -455,15 +407,14 @@ inline void IRead<ST::string>(const uint8_t*& buf, ST::string& dest)
 }
 
 template<>
-inline void IRead<NetVaultNode::Blob>(const uint8_t*& buf, NetVaultNode::Blob& blob)
+inline void IRead<std::vector<uint8_t>>(const uint8_t*& buf, std::vector<uint8_t>& blob)
 {
-    blob.size = *(reinterpret_cast<const uint32_t*>(buf));
+    uint32_t size = *(reinterpret_cast<const uint32_t*>(buf));
     buf += sizeof(uint32_t);
 
-    delete[] blob.buffer;
-    blob.buffer = new uint8_t[blob.size];
-    memcpy(blob.buffer, buf, blob.size);
-    buf += blob.size;
+    blob.resize(size);
+    memcpy(blob.data(), buf, size);
+    buf += size;
 }
 
 void NetVaultNode::Read(const uint8_t* buf, size_t size)
@@ -533,14 +484,15 @@ inline void IWrite<ST::string>(std::vector<uint8_t>* buffer, const ST::string& v
 }
 
 template<>
-inline void IWrite<NetVaultNode::Blob>(std::vector<uint8_t>* buffer, const NetVaultNode::Blob& blob)
+inline void IWrite<std::vector<uint8_t>>(std::vector<uint8_t>* buffer,
+                                         const std::vector<uint8_t>& blob)
 {
-    IWrite(buffer, static_cast<uint32_t>(blob.size));
+    IWrite(buffer, static_cast<uint32_t>(blob.size()));
 
-    if (blob.size > 0) {
+    if (!blob.empty()) {
         const size_t oldSize = buffer->size();
-        buffer->resize(oldSize + blob.size);
-        memcpy(buffer->data() + oldSize, blob.buffer, blob.size);
+        buffer->resize(oldSize + blob.size());
+        memcpy(buffer->data() + oldSize, blob.data(), blob.size());
     }
 }
 
@@ -595,12 +547,11 @@ void NetVaultNode::Write(std::vector<uint8_t>* buf, uint32_t ioFlags)
 }
 
 //============================================================================
-void NetVaultNode::ISetVaultBlob(uint64_t bits, NetVaultNode::Blob& blob, const uint8_t* buf, size_t size)
+void NetVaultNode::ISetVaultBlob(uint64_t bits, std::vector<uint8_t>& blob,
+                                 const uint8_t* buf, size_t size)
 {
-    delete[] blob.buffer;
-    blob.buffer = new uint8_t[size];
-    blob.size = size;
-    memcpy(blob.buffer, buf, size);
+    blob.resize(size);
+    memcpy(blob.data(), buf, size);
 
     fUsedFields |= bits;
     fDirtyFields |= bits;
