@@ -394,7 +394,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
             ST::format("<SND> object:{}, rcvr {} {}",
             msg->GetSender().GetKeyName(),
             msg->GetNumReceivers() ? msg->GetReceiver(0)->GetName() : "?",
-            netMsgWrap->AsStdString()).c_str()));
+            netMsgWrap->AsStdString())));
     #endif
     }
 

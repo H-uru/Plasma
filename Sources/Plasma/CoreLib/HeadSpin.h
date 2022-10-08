@@ -276,7 +276,6 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 #endif // PLASMA_EXTERNAL_RELEASE
 
 char*   hsStrcpy(char* dstOrNil, const char* src);
-void    hsStrLower(char *s);
 
 inline char* hsStrcpy(const char* src)
 {

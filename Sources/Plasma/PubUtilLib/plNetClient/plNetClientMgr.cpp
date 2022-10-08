@@ -265,7 +265,7 @@ bool plNetClientMgr::Log(const ST::string& str) const
 
     GetLog();
 
-    plNetObjectDebugger::GetInstance()->LogMsgIfMatch(buf2.c_str());
+    plNetObjectDebugger::GetInstance()->LogMsgIfMatch(buf2);
 
     if (fStatusLog) {
         return fStatusLog->AddLine(buf2);
@@ -970,8 +970,8 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
         // add 1 debug object for age sdl
         if (plNetObjectDebugger::GetInstance())
         {
-            plNetObjectDebugger::GetInstance()->RemoveDebugObject("AgeSDLHook");    
-            plNetObjectDebugger::GetInstance()->AddDebugObject("AgeSDLHook");
+            plNetObjectDebugger::GetInstance()->RemoveDebugObject(ST_LITERAL("AgeSDLHook"));
+            plNetObjectDebugger::GetInstance()->AddDebugObject(ST_LITERAL("AgeSDLHook"));
         }
 
         // if we're linking to startup we don't need (or want) a player set

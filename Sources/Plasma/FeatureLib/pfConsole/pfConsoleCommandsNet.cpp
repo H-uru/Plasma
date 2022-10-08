@@ -599,8 +599,9 @@ PF_CONSOLE_CMD( Net_DebugObject,        // groupName
                "string objName, ...", // paramList
                "Create a debug log about the specified object. AddObject objName [pageName], wildcards allowed" )   // helpString
 {
-    char* objName = params[0];  
-    char* pageName = numParams>1 ? (char*)params[1] : nullptr;
+    ST::string objName = ST::string::from_utf8(params[0], ST_AUTO_SIZE, ST::substitute_invalid);
+    ST::string pageName = (numParams > 1) ? ST::string::from_utf8(params[1], ST_AUTO_SIZE, ST::substitute_invalid)
+                                          : ST::string();
     if (plNetObjectDebugger::GetInstance())
         plNetObjectDebugger::GetInstance()->AddDebugObject(objName, pageName);
 }
@@ -610,8 +611,9 @@ PF_CONSOLE_CMD( Net_DebugObject,        // groupName
                "string objName, ...", // paramList
                "Stop focused debugging about the specified object. RemoveObject objName [pageName], wildcards allowed" )    // helpString
 {
-    char* objName = params[0];  
-    char* pageName = numParams>1 ? (char*)params[1] : nullptr;
+    ST::string objName = ST::string::from_utf8(params[0], ST_AUTO_SIZE, ST::substitute_invalid);
+    ST::string pageName = (numParams > 1) ? ST::string::from_utf8(params[1], ST_AUTO_SIZE, ST::substitute_invalid)
+                                          : ST::string();
     if (plNetObjectDebugger::GetInstance())
         plNetObjectDebugger::GetInstance()->RemoveDebugObject(objName, pageName);
 }

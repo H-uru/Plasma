@@ -291,8 +291,8 @@ public:
     static plNetObjectDebuggerBase* GetInstance() { return fInstance;   }
     static void SetInstance(plNetObjectDebuggerBase* i) { fInstance=i;  }
     virtual bool IsDebugObject(const hsKeyedObject* obj) const = 0;
-    virtual void LogMsgIfMatch(const char* msg) const = 0;      // write to status log if there's a string match    
-    virtual void LogMsg(const char* msg) const = 0;
+    virtual void LogMsgIfMatch(const ST::string& msg) const = 0;      // write to status log if there's a string match
+    virtual void LogMsg(const ST::string& msg) const = 0;
     
     virtual bool GetDebugging() const = 0;
     virtual void SetDebugging(bool b) = 0;

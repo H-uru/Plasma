@@ -335,7 +335,7 @@ void plDispatch::IMsgDispatch()
                             hsLogEntry(plNetObjectDebuggerBase::GetInstance()->LogMsg(
                                 ST::format("<RCV> object:{}, GameMessage {} st={.3f} rt={.3f}",
                                 ko->GetKeyName(), msg->ClassName(), hsTimer::GetSysSeconds(),
-                                hsTimer::GetSeconds()).c_str()));
+                                hsTimer::GetSeconds())));
                         }
                     }
                 }

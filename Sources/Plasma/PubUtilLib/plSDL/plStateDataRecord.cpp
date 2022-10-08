@@ -754,12 +754,12 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
     int numVars = dirtyOnly ? GetNumDirtyVars() : GetNumUsedVars();
     int numSDVars = dirtyOnly ? GetNumDirtySDVars() : GetNumUsedSDVars();
 
-    dbg->LogMsg(fAssocObject.IsValid() ? fAssocObject.GetObjectName().c_str() : " ");
+    dbg->LogMsg(fAssocObject.IsValid() ? fAssocObject.GetObjectName() : ST_LITERAL(" "));
     if (msg)
-        dbg->LogMsg(ST::format("{}{}", pad, msg).c_str());
+        dbg->LogMsg(ST::format("{}{}", pad, msg));
 
     dbg->LogMsg(ST::format("{}SDR({#x}), desc={}, showDirty={}, numVars={}, vol={}",
-        pad, (uintptr_t)this, fDescriptor->GetName(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile).c_str());
+        pad, (uintptr_t)this, fDescriptor->GetName(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile));
 
     // dump simple vars
     for (size_t i=0; i<fVarsList.size(); i++)

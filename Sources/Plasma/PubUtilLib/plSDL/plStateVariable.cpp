@@ -2170,7 +2170,7 @@ void plSimpleStateVariable::NotifyStateChange(const plSimpleStateVariable* other
     {
         plNetObjectDebuggerBase::GetInstance()->LogMsg(
             ST::format("Var {} did {} send notification difference. Has {} notifiers with {} recipients.",
-                       GetName(), !notify ? "NOT" : "", fChangeNotifiers.size(), numNotifiers).c_str());
+                       GetName(), !notify ? "NOT" : "", fChangeNotifiers.size(), numNotifiers));
     }
 
 }
@@ -2292,7 +2292,7 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
 
     if (GetCount()>1)
     {
-        dbg->LogMsg(logMsg.to_string().c_str());    // it's going to be a long msg, so print it on its own line
+        dbg->LogMsg(logMsg.to_string());    // it's going to be a long msg, so print it on its own line
         logMsg.truncate();
     }
 
@@ -2321,7 +2321,7 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
             logMsg << (IsDirty() ? 0 : 1);
         }
 
-        dbg->LogMsg(logMsg.to_string().c_str());
+        dbg->LogMsg(logMsg.to_string());
         logMsg.truncate();
     }
 }
@@ -2693,7 +2693,7 @@ void plSDStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) const
 
     int cnt = dirtyOnly ? GetDirtyCount() : GetUsedCount();
     dbg->LogMsg(ST::format("{}SDVar, name:{} dirtyOnly:{} count:{}",
-                           pad, GetName(), dirtyOnly, cnt).c_str());
+                           pad, GetName(), dirtyOnly, cnt));
 
     for (size_t i=0; i<GetCount(); i++)
     {
