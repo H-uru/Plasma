@@ -57,11 +57,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define plKickableLog_White(...) plKickableLog::White(__VA_ARGS__)
 #   define plKickableLog_Yellow(...) plKickableLog::Yellow(__VA_ARGS__)
 #else
-#   define plKickableLog_Blue(...) NULL_STMT
-#   define plKickableLog_Green(...) NULL_STMT
-#   define plKickableLog_Red(...) NULL_STMT
-#   define plKickableLog_White(...) NULL_STMT
-#   define plKickableLog_Yellow(...) NULL_STMT
+#   define plKickableLog_Blue(...) ((void)0)
+#   define plKickableLog_Green(...) ((void)0)
+#   define plKickableLog_Red(...) ((void)0)
+#   define plKickableLog_White(...) ((void)0)
+#   define plKickableLog_Yellow(...) ((void)0)
 #endif
 
 class plKickableLog
