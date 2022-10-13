@@ -234,15 +234,6 @@ template <> inline uint64_t hsToLE(uint64_t value) { return hsToLE64(value); }
 template <> inline float hsToLE(float value) { return hsToLEFloat(value); }
 template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 
-//===========================================================================
-// Define a NOOP (null) statement
-//===========================================================================
-#ifdef _MSC_VER
-# define  NULL_STMT  __noop
-#else
-# define  NULL_STMT  ((void)0)
-#endif
-
 
 /****************************************************************************
 *
@@ -268,8 +259,8 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
 #define IS_POW2(val) (!((val) & ((val) - 1)))
 
 #ifdef PLASMA_EXTERNAL_RELEASE
-#   define hsStatusMessage(x)                  NULL_STMT
-#   define hsStatusMessageF(x, ...)            NULL_STMT
+#   define hsStatusMessage(x)                  ((void)0)
+#   define hsStatusMessageF(x, ...)            ((void)0)
 #else
     void    hsStatusMessage(const char* message);
     void    hsStatusMessageF(const char * fmt, ...);
@@ -299,7 +290,6 @@ char    *hsWStringToString( const wchar_t *str );
 #    define strnicmp    _strnicmp
 #    define wcsicmp     _wcsicmp
 #    define wcsnicmp    _wcsnicmp
-#    define strlwr      _strlwr
 #    define strdup      _strdup
 #    define wcsdup      _wcsdup
 #else
@@ -307,7 +297,6 @@ char    *hsWStringToString( const wchar_t *str );
 #    define strnicmp    strncasecmp
 #    define wcsicmp     wcscasecmp
 #    define wcsnicmp    wcsncasecmp
-#    define strlwr      hsStrLower
 #endif
 
 enum {              // Kind of MessageBox...passed to hsMessageBox
@@ -412,16 +401,15 @@ void DebugMsg(const char* fmt, ...);
     
 #else   /* Not debugging */
 
-    #define hsDebugMessage(message, refcon)     NULL_STMT
+    #define hsDebugMessage(message, refcon)     ((void)0)
     #define hsDebugCode(code)                   /* empty */
-    #define hsIfDebugMessage(expr, msg, ref)    NULL_STMT
-    #define hsAssert(expr, ...)                 NULL_STMT
-    #define ASSERT(expr)                        NULL_STMT
-    #define ASSERTMSG(expr, ...)                NULL_STMT
-    #define FATAL(...)                          NULL_STMT
+    #define hsIfDebugMessage(expr, msg, ref)    ((void)0)
+    #define hsAssert(expr, ...)                 ((void)0)
+    #define ASSERT(expr)                        ((void)0)
+    #define ASSERTMSG(expr, ...)                ((void)0)
+    #define FATAL(...)                          ((void)0)
     #define DEBUG_MSG                           (void)
-    #define DEBUG_MSGV                          NULL_STMT
-    #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     NULL_STMT
+    #define DEBUG_BREAK_IF_DEBUGGER_PRESENT()   ((void)0)
 
 #endif  // HS_DEBUGGING
 
