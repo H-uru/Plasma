@@ -299,7 +299,6 @@ char    *hsWStringToString( const wchar_t *str );
 #    define strnicmp    _strnicmp
 #    define wcsicmp     _wcsicmp
 #    define wcsnicmp    _wcsnicmp
-#    define strlwr      _strlwr
 #    define strdup      _strdup
 #    define wcsdup      _wcsdup
 #else
@@ -307,7 +306,6 @@ char    *hsWStringToString( const wchar_t *str );
 #    define strnicmp    strncasecmp
 #    define wcsicmp     wcscasecmp
 #    define wcsnicmp    wcsncasecmp
-#    define strlwr      hsStrLower
 #endif
 
 enum {              // Kind of MessageBox...passed to hsMessageBox
@@ -420,7 +418,6 @@ void DebugMsg(const char* fmt, ...);
     #define ASSERTMSG(expr, ...)                NULL_STMT
     #define FATAL(...)                          NULL_STMT
     #define DEBUG_MSG                           (void)
-    #define DEBUG_MSGV                          NULL_STMT
     #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     NULL_STMT
 
 #endif  // HS_DEBUGGING
