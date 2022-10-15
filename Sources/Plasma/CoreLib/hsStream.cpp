@@ -109,83 +109,10 @@ void hsStream::CopyToMem(void* mem)
 
 //////////////////////////////////////////////////////////////////////////////////
 
-uint32_t hsStream::WriteSafeStringLong(const ST::string &string)
-{
-    uint32_t len = string.size();
-    WriteLE32(len);
-    if (len > 0)
-    {   
-        const char *buffp = string.c_str();
-        uint32_t i;
-        for (i = 0; i < len; i++)
-        {
-            WriteByte(static_cast<uint8_t>(~buffp[i]));
-        }
-        return i;
-    }
-    else
-        return 0;
-}
-
-uint32_t hsStream::WriteSafeWStringLong(const ST::string &string)
-{
-    ST::utf16_buffer wbuff = string.to_utf16();
-    uint32_t len = wbuff.size();
-    WriteLE32(len);
-    if (len > 0)
-    {
-        const char16_t *buffp = wbuff.data();
-        for (uint32_t i=0; i<len; i++)
-        {
-            WriteLE16(static_cast<uint16_t>(~buffp[i]));
-        }
-        WriteLE16(static_cast<uint16_t>(0));
-    }
-    return 0;
-}
-
-ST::string hsStream::ReadSafeStringLong()
-{
-    ST::char_buffer name;
-    uint32_t numChars = ReadLE32();
-    if (numChars > 0 && numChars <= GetSizeLeft())
-    {
-        name.allocate(numChars);
-        Read(numChars, name.data());
-
-        // if the high bit is set, flip the bits. Otherwise it's a normal string, do nothing.
-        if (name[0] & 0x80)
-        {
-            for (int i = 0; i < numChars; i++)
-                name[i] = ~name[i];
-        }
-    }
-
-    return name;
-}
-
-ST::string hsStream::ReadSafeWStringLong()
-{
-    ST::utf16_buffer retVal;
-    uint32_t numChars = ReadLE32();
-    if (numChars > 0 && numChars <= (GetSizeLeft()/2)) // divide by two because each char is two bytes
-    {
-        retVal.allocate(numChars);
-        for (int i=0; i<numChars; i++)
-            retVal[i] = ReadLE16();
-        (void)ReadLE16(); // we wrote the null out, read it back in
-
-        for (int i=0; i<numChars; i++)
-            retVal[i] = ~retVal[i];
-    }
-
-    return ST::string::from_utf16(retVal);
-}
-
 uint32_t hsStream::WriteSafeString(const ST::string &string)
 {
     size_t len = string.size();
-    hsAssert(len<0xf000, ST::format("string len of {} is too long for WriteSafeString {}, use WriteSafeStringLong",
+    hsAssert(len<0xf000, ST::format("string len of {} is too long for WriteSafeString {}",
         len, string).c_str() );
 
     WriteLE16(static_cast<uint16_t>(len | 0xf000));
@@ -207,7 +134,7 @@ uint32_t hsStream::WriteSafeWString(const ST::string &string)
 {
     ST::utf16_buffer wbuff = string.to_utf16();
     size_t len = wbuff.size();
-    hsAssert(len<0xf000, ST::format("string len of {} is too long for WriteSafeWString, use WriteSafeWStringLong",
+    hsAssert(len<0xf000, ST::format("string len of {} is too long for WriteSafeWString",
         len).c_str() );
 
     WriteLE16(static_cast<uint16_t>(len | 0xf000));

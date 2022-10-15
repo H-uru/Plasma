@@ -87,7 +87,10 @@ void plClientResMgr::ILoadResources(const plFileName& resfile)
                 for (int i = 0; i < num_resources; i++) {
                     plMipmap* res_data = nullptr;
                     uint32_t res_size = 0;
-                    ST::string res_name = in.ReadSafeStringLong();
+                    ST::char_buffer res_name;
+                    uint32_t numChars = in.ReadLE32();
+                    res_name.allocate(numChars);
+                    in.Read(numChars, res_name.data());
                     ST::string extension = plFileName(res_name).GetFileExt();
 
                     // Version 1 doesn't encode format, so we'll try some simple
