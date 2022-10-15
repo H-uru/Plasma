@@ -405,7 +405,6 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                     ST::wchar_buffer tmp = contents.to_wchar();
                     size_t len = tmp.size();
                     if (len > 0) {
-                        --len; //skip \0 on end
                         wchar_t* insertTarget = fBuffer + fCursorPos;
                         size_t bufferTailLen = wcslen(insertTarget);
                         if (fCursorPos + len + bufferTailLen < fBufferSize) {
