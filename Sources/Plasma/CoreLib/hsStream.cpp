@@ -112,7 +112,7 @@ void hsStream::CopyToMem(void* mem)
 uint32_t hsStream::WriteSafeString(const ST::string &string)
 {
     size_t len = string.size();
-    hsAssert(len<0xf000, ST::format("string len of {} is too long for WriteSafeString {}",
+    hsAssert(len < 0x1000, ST::format("string len of {} is too long for WriteSafeString {}",
         len, string).c_str() );
 
     WriteLE16(static_cast<uint16_t>(len | 0xf000));
@@ -134,7 +134,7 @@ uint32_t hsStream::WriteSafeWString(const ST::string &string)
 {
     ST::utf16_buffer wbuff = string.to_utf16();
     size_t len = wbuff.size();
-    hsAssert(len<0xf000, ST::format("string len of {} is too long for WriteSafeWString",
+    hsAssert(len < 0x1000, ST::format("string len of {} is too long for WriteSafeWString",
         len).c_str() );
 
     WriteLE16(static_cast<uint16_t>(len | 0xf000));
