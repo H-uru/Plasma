@@ -175,11 +175,8 @@ ST::string hsStream::ReadSafeWStringLong()
             retVal[i] = ReadLE16();
         (void)ReadLE16(); // we wrote the null out, read it back in
 
-        if (retVal[0] & 0x80)
-        {
-            for (int i=0; i<numChars; i++)
-                retVal[i] = ~retVal[i];
-        }
+        for (int i=0; i<numChars; i++)
+            retVal[i] = ~retVal[i];
     }
 
     return ST::string::from_utf16(retVal);
@@ -271,11 +268,8 @@ ST::string hsStream::ReadSafeWString()
             retVal[i] = ReadLE16();
         (void)ReadLE16(); // we wrote the null out, read it back in
 
-        if (retVal[0] & 0x80)
-        {
-            for (int i=0; i<numChars; i++)
-                retVal[i] = ~retVal[i];
-        }
+        for (int i=0; i<numChars; i++)
+            retVal[i] = ~retVal[i];
     }
 
     return ST::string::from_utf16(retVal);
