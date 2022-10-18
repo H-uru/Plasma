@@ -109,7 +109,7 @@ void plWin32Sound::Update()
             uint32_t currentTimeMs = (uint32_t)(GetActualTimeSec() * 1000.0f);
             if (currentTimeMs <= srtReader->GetLastEntryEndTime()) {
                 while (plSrtEntry* nextEntry = srtReader->GetNextEntryStartingBeforeTime(currentTimeMs)) {
-                    float currVol = plSound::QueryCurrVolume();
+                    float currVol = QueryCurrVolume();
                     if (plgAudioSys::AreSubtitlesEnabled() && currVol > 0.01f) {
                         // add a plSubtitleMsg to go... to whoever is listening (probably the KI)
                         plSubtitleMsg* msg = new plSubtitleMsg(nextEntry->GetSubtitleText(), nextEntry->GetSpeakerName());
