@@ -97,11 +97,9 @@ class ahnyTrees(ptModifier):
             objTreeList.append(thisObj)
 
         ageSDL = PtGetAgeSDL()
-        idx = 0
-        for visible in ageSDL[SDLTrees.value]:
+        for index, visible in enumerate(ageSDL[SDLTrees.value]):
             if not visible:
-                respTreeAnims.run(self.key, objectName=respTreeAnimsList[idx], fastforward=1)
-            idx += 1
+                respTreeAnims.run(self.key, objectName=respTreeAnimsList[index], fastforward=1)
 
     ###########################
     def OnNotify(self,state,id,events):

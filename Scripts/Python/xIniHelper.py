@@ -153,40 +153,32 @@ class iniFile:
         except IndexError:
             pass
 
-    def findByCommand(self,cmd,idx=0):
-        idx = 0
-        for entry in self.entries[idx:]:
+    def findByCommand(self, cmd, idx=0):
+        for index, entry in enumerate(self.entries):
             if entry.command == cmd:
-                return entry,idx
-            idx += 1
-        return None,-1
+                return entry, index
+        return None, -1
 
-    def findByFirstValue(self,value,idx=0):
-        idx = 0
-        for entry in self.entries[idx:]:
+    def findByFirstValue(self, value, idx=0):
+        for index, entry in enumerate(self.entries):
             if len(entry.values) > 0 and entry.values[0] == value:
-                return entry,idx
-            idx += 1
-        return None,-1
+                return entry, index
+        return None, -1
 
-    def findByLastValue(self,value,idx=0):
-        idx = 0
-        for entry in self.entries[idx:]:
+    def findByLastValue(self, value, idx=0):
+        for index, entry in enumerate(self.entries):
             vlist = entry.values[-1:]
             if len(vlist) > 0:
                 if entry.values[-1:][0] == value:
-                    return entry,idx
-            idx += 1
-        return None,-1
+                    return entry, index
+        return None, -1
 
-    def findByAnyValue(self,value,idx=0):
-        idx = 0
-        for entry in self.entries[idx:]:
+    def findByAnyValue(self, value, idx=0):
+        for index, entry in enumerate(self.entries):
             for v in entry.values:
                 if v == value:
-                    return entry,idx
-            idx += 1
-        return None,-1
+                    return entry, index
+        return None, -1
 
     def writeFile(self,filename):
         f = ptStream()

@@ -118,11 +118,10 @@ class ahnyPressurePlates(ptModifier):
             objZoneList.append(thisZone)
 
         if respLightList != []:
-            idx = 0
-            for occupants in ageSDL[SDLOccupied.value]:
+            for index, occupants in enumerate(ageSDL[SDLOccupied.value]):
                 if occupants:
-                    respClockLights.run(self.key, state='on', objectName=respLightList[idx])
-                idx += 1
+                    respClockLights.run(self.key, state='on', objectName=respLightList[index])
+
         if Sphere.value == "Sphere02":
             try:
                 ageSDL[SDLTrees.value][0]
