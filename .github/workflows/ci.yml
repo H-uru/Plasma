@@ -6,9 +6,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # HACK to enable/disable the max CI based on presence/absence of secret. See also:
+  # https://github.com/actions/runner/issues/1138
+  max-secrets:
+    runs-on: ubuntu-latest
+    name: Check for Max SDK
+    outputs:
+      HAS_MACHINE_USER_TOKEN: ${{ steps.check.outputs.MACHINE_USER_TOKEN }}
+    steps:
+      - name: Check for Secret
+        id: check
+        run: echo "MACHINE_USER_TOKEN=${{ env.MACHINE_USER_TOKEN != ''}}" >> $GITHUB_OUTPUT
+        env:
+          MACHINE_USER_TOKEN: ${{ secrets.MACHINE_USER_REPO_READ }}
+
   windows:
     runs-on: windows-2019
     name: ${{ matrix.platform.str }}-${{ matrix.cfg.str }}
+    needs: ["max-secrets"]
     strategy:
       matrix:
         platform:
@@ -27,6 +42,7 @@ jobs:
 
       - name: Checkout MaxSDK
         continue-on-error: true
+        if: needs.max-secrets.outputs.HAS_MACHINE_USER_TOKEN == 'true'
         uses: actions/checkout@v3
         with:
           repository: H-uruMachineUser/3dsMaxSDK
@@ -74,25 +90,10 @@ jobs:
         run: |
           cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 2
 
-  # HACK to enable/disable the max CI based on presence/absence of secret. See also:
-  # https://github.com/actions/runner/issues/1138
-  max-secrets:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    name: Check for Max SDK
-    outputs:
-      HAS_MACHINE_USER_TOKEN: ${{ steps.check.outputs.MACHINE_USER_TOKEN }}
-    steps:
-      - name: Check for Secret
-        id: check
-        run: echo "MACHINE_USER_TOKEN=${{ env.MACHINE_USER_TOKEN != ''}}" >> $GITHUB_OUTPUT
-        env:
-          MACHINE_USER_TOKEN: ${{ secrets.MACHINE_USER_REPO_READ }}
-
   max:
     # Can only run if we have a token for our super seekrit Max SDK repo. Sad.
     needs: ["max-secrets"]
-    if: needs.max-secrets.outputs.HAS_MACHINE_USER_TOKEN == 'true'
+    if: github.event_name == 'push' && needs.max-secrets.outputs.HAS_MACHINE_USER_TOKEN == 'true'
 
     runs-on: windows-2019
     name: maxplugin-${{ matrix.cfg.str }}
