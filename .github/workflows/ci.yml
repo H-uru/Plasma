@@ -84,9 +84,8 @@ jobs:
       HAS_MACHINE_USER_TOKEN: ${{ steps.check.outputs.MACHINE_USER_TOKEN }}
     steps:
       - name: Check for Secret
-        run: >
-          echo "::set-output name=MACHINE_USER_TOKEN::${{ env.MACHINE_USER_TOKEN != '' }}";
         id: check
+        run: echo "MACHINE_USER_TOKEN=${{ env.MACHINE_USER_TOKEN != ''}}" >> $GITHUB_OUTPUT
         env:
           MACHINE_USER_TOKEN: ${{ secrets.MACHINE_USER_REPO_READ }}
 
