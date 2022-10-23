@@ -167,10 +167,8 @@ class iniFile:
 
     def findByLastValue(self, value, idx=0):
         for index, entry in enumerate(self.entries):
-            vlist = entry.values[-1:]
-            if len(vlist) > 0:
-                if entry.values[-1:][0] == value:
-                    return entry, index
+            if entry.values and entry.values[-1] == value:
+                return entry, index
         return None, -1
 
     def findByAnyValue(self, value, idx=0):
