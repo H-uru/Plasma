@@ -161,7 +161,7 @@ class iniFile:
 
     def findByFirstValue(self, value, idx=0):
         for index, entry in enumerate(self.entries):
-            if len(entry.values) > 0 and entry.values[0] == value:
+            if entry.values and entry.values[0] == value:
                 return entry, index
         return None, -1
 
