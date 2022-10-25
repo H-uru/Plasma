@@ -269,8 +269,7 @@ class tldnBucketBrain(ptResponder):
             
             riders = ageSDL[kStringAgeSDLRiders]
             PtDebugPrint("tldnBucketBrain.OnServerInitComplete()\t Current bucket rider list: ", riders,level=kDebugDumpLevel)
-            index = 0
-            for rider in riders:
+            for index, rider in enumerate(riders):
                 if rider != -1:
                     avatarKey = PtGetAvatarKeyFromClientID(rider)
                     avatarObj = avatarKey.getSceneObject()
@@ -278,7 +277,6 @@ class tldnBucketBrain(ptResponder):
                     avatarObj.physics.disable()
                     avatarObj.draw.disable()
                     #avatarObj.warpObj(buckets[index].getKey())
-                index = index + 1
 
             
             #Setup bucket enter activators
@@ -402,8 +400,7 @@ class tldnBucketBrain(ptResponder):
 
 
         riders = ageSDL[kStringAgeSDLRiders]
-        index = 0
-        for rider in riders:
+        for index, rider in enumerate(riders):
             if rider == avaID:
                 avaIDAtEntry = -1
                 PtDebugPrint("Tye: Resetting avatar at entry!")
@@ -447,7 +444,6 @@ class tldnBucketBrain(ptResponder):
                     actBktEnter2.disable()
                     
                 break
-            index = index + 1
 
         #I wish I could get only one person to update this, but unfortunately it's not possible here as 
         #it's possible the person linking out is the owner of the objects in the age (i.e. sceneobject ownership testing)
@@ -528,8 +524,7 @@ class tldnBucketBrain(ptResponder):
                 if event[1] == 1: # a bucket entered rngBucketSnsEntryPoint
                     riders = ageSDL[kStringAgeSDLRiders]
                     avaID = PtGetClientIDFromAvatarKey(PtGetLocalAvatar().getKey())
-                    index = 0
-                    for bucket in buckets:
+                    for index, bucket in enumerate(buckets):
                         if bucket == objTrigger and riders[index] == avaID:  #if local avatar is in the bucket
                             if id == rgnSensor01.id:
                                 cam = ptCamera()
@@ -543,7 +538,6 @@ class tldnBucketBrain(ptResponder):
                                 cam = ptCamera()
                                 cam.save(Camera03.sceneobject.getKey())
                                 return
-                        index = index + 1
                 else:
                     PtDebugPrint("ERROR: tldnBucketBrain.OnNotify():\t Encountered unknown camera event.",level=kErrorLevel)
                     return
@@ -1436,15 +1430,10 @@ class tldnBucketBrain(ptResponder):
         "Finds the index for a given bucket object"
         global buckets
 
-        index = 0
-        for bucket in buckets:
-            if bucket == objBucket:
-                return index
-            index = index + 1
-
-        #Didn't find the corresponding bucket
-        return -1
-        
+        try:
+            return buckets.index(objBucket)
+        except ValueError:
+            return -1
 
     def getAvatarFromBucketAtEntry(self):
         "Returns the avatar object of a rider inside the bucket at the entry!"
