@@ -1422,7 +1422,7 @@ bool plClient::StartInit()
 bool plClient::BeginGame()
 {
     plNetClientMgr::GetInstance()->Init();
-    IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
+    IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, fPipeline->fBackingScale, fPipeline->fBackingScale, 0.75);
     if (GetDone()) return false;
     if (NetCommGetStartupAge()->ageDatasetName.compare_i("StartUp") == 0) {
         // This is needed because there is no auth step in this case

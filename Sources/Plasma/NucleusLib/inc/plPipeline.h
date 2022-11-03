@@ -353,6 +353,9 @@ public:
     plDisplayMode fDesktopParams;
 
     virtual size_t GetViewStackSize() const = 0;
+    
+    float fBackingScale = 1.0f;
+    void SetBackingScale(float scale) { fBackingScale = scale; };
 };
 
 #endif // plPipeline_inc
