@@ -344,7 +344,6 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wcha
      // This is for Windows
 #    define snprintf        _snprintf
 #    define swprintf        _snwprintf
-#    define vsnprintf       _vsnprintf
 
 #    ifndef fileno
 #        define fileno(__F)       _fileno(__F)
