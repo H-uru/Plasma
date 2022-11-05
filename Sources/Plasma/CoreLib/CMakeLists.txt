@@ -28,10 +28,10 @@ set(CoreLib_SOURCES
     hsWindows.cpp
 )
 
-if(CMAKE_USE_PTHREADS_INIT)
-    list(APPEND CoreLib_SOURCES hsThread_Unix.cpp)
-elseif(CMAKE_USE_WIN32_THREADS_INIT)
+if(CMAKE_USE_WIN32_THREADS_INIT)
     list(APPEND CoreLib_SOURCES hsThread_Win.cpp)
+elseif(CMAKE_USE_PTHREADS_INIT)
+    list(APPEND CoreLib_SOURCES hsThread_Unix.cpp)
 else()
     message(FATAL_ERROR "The thread library CMake provided for your platform is not supported.")
 endif()
