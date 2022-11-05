@@ -185,7 +185,7 @@ static inline const uint8_t* inlExtract(const uint8_t* src, T* val)
 }
 
 template<>
-static inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
+inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
 {
     const float* src_ptr = reinterpret_cast<const float*>(src);
     float* dst_ptr = reinterpret_cast<float*>(val);
@@ -197,7 +197,7 @@ static inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* 
 }
 
 template<>
-static inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
+inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
 {
     const float* src_ptr = reinterpret_cast<const float*>(src);
     float* dst_ptr = reinterpret_cast<float*>(val);
