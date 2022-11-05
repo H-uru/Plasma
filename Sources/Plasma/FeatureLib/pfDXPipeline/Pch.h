@@ -63,4 +63,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <d3d9.h>
 #include <ddraw.h>
-#include <DirectXMath.h>
+#include <directxmath.h>
