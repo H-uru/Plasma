@@ -36,7 +36,7 @@ target_link_libraries(
         plGImage
         plMessage
         plScene
-        $<$<PLATFORM_ID:Windows>:Vfw32>
+        $<$<PLATFORM_ID:Windows>:vfw32>
     INTERFACE
         pnFactory
 )

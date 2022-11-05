@@ -52,7 +52,7 @@ target_link_libraries(
         plResMgr
         JPEG::JPEG
         PNG::PNG
-        $<$<PLATFORM_ID:Windows>:Vfw32>
+        $<$<PLATFORM_ID:Windows>:vfw32>
     INTERFACE
         pnFactory
 )
