@@ -111,7 +111,7 @@ namespace plPython
             plProfile_BeginTiming(PythonUpdate);
 #if PY_VERSION_HEX >= 0x03090000
             // Use Python's built-in vectorcall optimization for no argument.
-            pyObjectRef result = _PyObject_CallNoArg(callable);
+            pyObjectRef result = PyObject_CallNoArgs(callable);
 #else
             // This is basically the same idea.
             pyObjectRef result = _PyObject_Vectorcall(

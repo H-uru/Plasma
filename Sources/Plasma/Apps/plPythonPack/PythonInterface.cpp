@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "PythonInterface.h"
 
-#include <compile.h>
-#include <eval.h>
 #include <cpython/initconfig.h>
 #include <marshal.h>
 #include <pylifecycle.h>
