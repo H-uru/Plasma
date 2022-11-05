@@ -31,6 +31,7 @@ plasma_library(pfDXPipeline
     SOURCES ${pfDXPipeline_SOURCES} ${pfDXPipeline_HEADERS}
     PRECOMPILED_HEADERS Pch.h
 )
+plasma_target_simd_sources(pfDXPipeline SSE3 SSE41 plDXPipeline.cpp)
 target_link_libraries(pfDXPipeline
     PUBLIC
         CoreLib
