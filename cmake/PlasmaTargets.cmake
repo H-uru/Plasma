@@ -67,7 +67,7 @@ function(plasma_executable TARGET)
 
     if(DEFINED install_destination)
         install(TARGETS ${TARGET} DESTINATION ${install_destination})
-        if(_pex_INSTALL_PDB AND WIN32)
+        if(_pex_INSTALL_PDB AND WIN32 AND NOT MINGW)
             if(MSVC)
                 set(stripped_pdb_path "$<TARGET_PDB_FILE_DIR:${TARGET}>/${TARGET}.stripped.pdb")
                 target_link_options(${TARGET} PRIVATE "/PDBSTRIPPED:${stripped_pdb_path}")
