@@ -417,11 +417,11 @@ protected:
     inline D3DCOLORVALUE    inlPlToD3DColor(const hsColorRGBA& c, float a) const;
 
     // Error handling
-    void    IAddErrorMessage( char *errStr );
-    void    ISetErrorMessage(char *errStr = nullptr);
+    void    IAddErrorMessage(const char* errStr);
+    void    ISetErrorMessage(const char* errStr = nullptr);
     void    IGetD3DError();
-    void    IShowErrorMessage(char *errStr = nullptr);
-    bool    ICreateFail( char *errStr );
+    void    IShowErrorMessage(const char* errStr = nullptr);
+    bool    ICreateFail(const char* errStr);
 
     // Device initialization
     void    IInvalidateState();
