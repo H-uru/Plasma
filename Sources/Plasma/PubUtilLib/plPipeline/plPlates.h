@@ -185,8 +185,8 @@ class plGraphPlate : public plPlate
 
         const char      *GetLabelText( int i ) { return fLabelText[ i ].c_str(); }
         uint32_t        GetDataColor( int i ) { return fDataHexColors[ i ]; }
-        uint32_t        GetNumLabels() { return fLabelText.size(); }
-        uint32_t        GetNumColors() { return fDataHexColors.size(); }
+        uint32_t        GetNumLabels() { return (uint32_t)fLabelText.size(); }
+        uint32_t        GetNumColors() { return (uint32_t)fDataHexColors.size(); }
 };
 
 //// plPlateManager Class Definition /////////////////////////////////////////
