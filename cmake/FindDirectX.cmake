@@ -1,7 +1,7 @@
 if(WIN32)
     set(DirectX_LIBRARIES
         d3d9
-        D3Dcompiler
+        d3dcompiler
     )
 
     set(DirectX_FOUND TRUE)

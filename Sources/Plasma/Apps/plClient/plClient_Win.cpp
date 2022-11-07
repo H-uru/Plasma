@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plTimerCallbackManager.h"
 
-#include <Shlobj.h>
+#include <shlobj.h>
 #include <shellapi.h>
 
 #include "plClient.h"

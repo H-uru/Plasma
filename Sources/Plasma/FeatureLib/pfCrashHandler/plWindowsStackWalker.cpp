@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStackWalker.h"
 
 #include "hsWindows.h"
-#include <DbgHelp.h>
+#include <dbghelp.h>
 
 #include <string_theory/stdio>
 #include <tuple>

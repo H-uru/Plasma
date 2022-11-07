@@ -285,7 +285,7 @@ char    *hsWStringToString( const wchar_t *str );
 
 // Use "correct" non-standard string functions based on the
 // selected compiler / library
-#if _MSC_VER
+#if HS_BUILD_FOR_WIN32
 #    define stricmp     _stricmp
 #    define strnicmp    _strnicmp
 #    define wcsicmp     _wcsicmp
@@ -344,7 +344,6 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wcha
      // This is for Windows
 #    define snprintf        _snprintf
 #    define swprintf        _snwprintf
-#    define vsnprintf       _vsnprintf
 
 #    ifndef fileno
 #        define fileno(__F)       _fileno(__F)

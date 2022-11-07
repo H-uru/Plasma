@@ -71,7 +71,7 @@ void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
 {
     // HACK: No cross-platform way to perform a timed join :(
 #if defined(HS_BUILD_FOR_WIN32)
-    DWORD rc = WaitForSingleObject(thread.native_handle(), timeoutMs);
+    DWORD rc = WaitForSingleObject((HANDLE)thread.native_handle(), timeoutMs);
     if (rc == WAIT_TIMEOUT)
         LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
     thread.detach();

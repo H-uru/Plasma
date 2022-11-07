@@ -29,7 +29,7 @@ target_link_libraries(
     PUBLIC
         CoreLib
     PRIVATE
-        $<$<PLATFORM_ID:Windows>:Dbghelp>
+        $<$<PLATFORM_ID:Windows>:dbghelp>
 )
 
 source_group("Source Files" FILES ${pfCrashHandler_SOURCES})

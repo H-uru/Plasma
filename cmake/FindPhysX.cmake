@@ -204,6 +204,7 @@ macro(_find_physx_library SUFFIX)
         if(EXISTS "${${VAR_NAME}_LIBRARY_DEBUG}" AND EXISTS "${${VAR_NAME}_LIBRARY_RELEASE}")
             set_target_properties(
                 ${TARGET} PROPERTIES
+                IMPORTED_LOCATION ${${VAR_NAME}_LIBRARY_RELEASE}
                 IMPORTED_LOCATION_DEBUG ${${VAR_NAME}_LIBRARY_DEBUG}
                 IMPORTED_LOCATION_RELEASE ${${VAR_NAME}_LIBRARY_RELEASE}
                 MAP_IMPORTED_CONFIG_MINSIZEREL Release

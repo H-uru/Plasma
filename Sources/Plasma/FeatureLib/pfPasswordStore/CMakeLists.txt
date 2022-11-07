@@ -26,7 +26,7 @@ target_link_libraries(
 )
 
 if(WIN32 AND NOT CYGWIN)
-    target_link_libraries(pfPasswordStore PRIVATE Advapi32)
+    target_link_libraries(pfPasswordStore PRIVATE advapi32)
 elseif(TARGET PkgConfig::LIBSECRET AND NOT TARGET Security::Security)
     target_compile_definitions(pfPasswordStore PRIVATE HAVE_LIBSECRET)
     target_link_libraries(pfPasswordStore PRIVATE PkgConfig::LIBSECRET)

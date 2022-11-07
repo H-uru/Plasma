@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsWindows.h"
 #include <d3d9.h>
-#include <DirectXMath.h>
+#include <directxmath.h>
 
 #include "plDXBufferRefs.h"
 #include "plDXEnumerate.h"
@@ -185,7 +185,7 @@ static inline const uint8_t* inlExtract(const uint8_t* src, T* val)
 }
 
 template<>
-static inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
+inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
 {
     const float* src_ptr = reinterpret_cast<const float*>(src);
     float* dst_ptr = reinterpret_cast<float*>(val);
@@ -197,7 +197,7 @@ static inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* 
 }
 
 template<>
-static inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
+inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
 {
     const float* src_ptr = reinterpret_cast<const float*>(src);
     float* dst_ptr = reinterpret_cast<float*>(val);
@@ -9912,7 +9912,7 @@ void    plDXPipeline::IDrawPlate( plPlate *plate )
 
 // IAddErrorMessage ////////////////////////////////////////////////////
 // Append the error string to the current error string.
-void    plDXPipeline::IAddErrorMessage( char *errStr )
+void plDXPipeline::IAddErrorMessage(const char* errStr)
 {
     static char str[ 512 ];
     if( errStr && strlen( errStr ) + strlen( fSettings.fErrorStr ) < sizeof( fSettings.fErrorStr ) - 4 )
@@ -9925,7 +9925,7 @@ void    plDXPipeline::IAddErrorMessage( char *errStr )
 
 // ISetErrorMessage //////////////////////////////////////////////////////////
 // Clear the current error string to the input string.
-void    plDXPipeline::ISetErrorMessage( char *errStr )
+void plDXPipeline::ISetErrorMessage(const char* errStr)
 {
     if( errStr )
     {
@@ -9945,7 +9945,7 @@ void    plDXPipeline::IGetD3DError()
 
 // IShowErrorMessage /////////////////////////////////////////////////////////////
 // Append the string to the running error string.
-void    plDXPipeline::IShowErrorMessage( char *errStr )
+void plDXPipeline::IShowErrorMessage(const char* errStr)
 {
     if (errStr != nullptr)
         IAddErrorMessage( errStr );
@@ -9956,7 +9956,7 @@ void    plDXPipeline::IShowErrorMessage( char *errStr )
 // ICreateFail ////////////////////////////////////////////////////////////////////
 // Called on unrecoverable error during device creation. Frees up anything 
 // allocated so far, sets the error string, and returns true.
-bool  plDXPipeline::ICreateFail( char *errStr )
+bool plDXPipeline::ICreateFail(const char* errStr)
 {
     // Don't overwrite any error string we already had
     if( fSettings.fErrorStr[ 0 ] == 0 )
@@ -9975,7 +9975,7 @@ bool  plDXPipeline::ICreateFail( char *errStr )
 
 // GetErrorString ///////////////////////////////////////////////////////////////////////////
 // Return the current error string.
-const char  *plDXPipeline::GetErrorString()
+const char* plDXPipeline::GetErrorString()
 {
     if( fSettings.fErrorStr[ 0 ] == 0 )
         return nullptr;
