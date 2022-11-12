@@ -102,8 +102,6 @@ struct AsyncIoPool
         // Ensure the event loop exits without processing any more tasks,
         // in case the threads take more than exitThreadWaitMs to finish
         fContext.stop();
-
-        //...
     }
 };
 
