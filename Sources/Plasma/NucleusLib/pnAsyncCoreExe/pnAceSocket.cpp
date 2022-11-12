@@ -453,8 +453,9 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
     if  (firstQueuedWrite) {
         unsigned currTimeMs = TimeGetMs();
         if (((long) (currTimeMs - firstQueuedWrite->queueTimeMs) >= (long) kBacklogFailMs)
-        &&  ((long) (currTimeMs - conn->initTimeMs) >= (long) kBacklogInitMs)
-        ) {
+            && ((long) (currTimeMs - conn->initTimeMs) >= (long) kBacklogInitMs))
+        {
+
             PerfAddCounter(kAsyncPerfSocketDisconnectBacklog, 1);
 
             if (conn->fConnectionType) {
@@ -513,7 +514,8 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
     }
     async_write(conn->fSock, allWrites, [conn](const asio::error_code& err, size_t bytes) {
         hsLockGuard(s_connectCrit);
-        while(bytes != 0) {
+        while (bytes != 0) {
+
             hsAssert(conn->fWriteOps.size() > 0, "buffer mismatch");
             WriteOperation* op = conn->fWriteOps.front();
             
