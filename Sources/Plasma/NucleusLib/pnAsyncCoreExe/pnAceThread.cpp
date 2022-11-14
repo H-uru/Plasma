@@ -47,9 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 
-#if defined(HAVE_PTHREAD_TIMEDJOIN_NP)
-#include <pthread.h>
-#include <time.h>
+#if HS_BUILD_FOR_UNIX
+#   include <future>
 #endif
 
 /*****************************************************************************
@@ -69,28 +68,16 @@ void ThreadDestroy (unsigned exitThreadWaitMs) {
 //============================================================================
 void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
 {
-    // HACK: No cross-platform way to perform a timed join :(
 #if defined(HS_BUILD_FOR_WIN32)
     DWORD rc = WaitForSingleObject((HANDLE)thread.native_handle(), timeoutMs);
     if (rc == WAIT_TIMEOUT)
         LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
     thread.detach();
-#elif defined(HAVE_PTHREAD_TIMEDJOIN_NP)
-    struct timespec deadline;
-    if (clock_gettime(CLOCK_REALTIME, &deadline) < 0)
-        hsAssert(false, "Could not get the realtime clock");
-    deadline.tv_sec += timeoutMs / 1000;
-    deadline.tv_nsec += (timeoutMs % 1000) * 1'000'000;
-    if (deadline.tv_nsec > 1'000'000'000) {
-        deadline.tv_nsec -= 1'000'000'000;
-        deadline.tv_sec += 1;
-    }
-    if (pthread_timedjoin_np(thread.native_handle(), nullptr, &deadline) != 0)
-        LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
-    thread.detach();
 #else
-    LogMsg(kLogDebug, "No timed thread join support for this system... "
-                      "Performing a blocking join instead.");
-    thread.join();
+    auto future = std::async(std::launch::async, &std::thread::join, &thread);
+    if (future.wait_for(std::chrono::milliseconds(timeoutMs)) == std::future_status::timeout) {
+        LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
+        thread.detach();
+    }
 #endif
 }
