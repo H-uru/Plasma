@@ -174,25 +174,43 @@ constant const uint32_t miscFlags8 [[ function_constant(FunctionConstantLayerFla
 constant const uint8_t sourceTypes[MAX_BLEND_PASSES] = { sourceType1, sourceType2, sourceType3, sourceType4, sourceType5, sourceType6, sourceType7, sourceType8};
 constant const uint32_t blendModes[MAX_BLEND_PASSES] = { blendModes1, blendModes2, blendModes3, blendModes4, blendModes5, blendModes6, blendModes7, blendModes8};
 constant const uint32_t miscFlags[MAX_BLEND_PASSES] = { miscFlags1, miscFlags2, miscFlags3, miscFlags4, miscFlags5, miscFlags6, miscFlags7, miscFlags8};
-constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
+    constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
     
+constant const bool has2DTexture1 = (sourceType1 == PassTypeTexture && hasLayer1);
+constant const bool has2DTexture2 = (sourceType2 == PassTypeTexture && hasLayer2);
+constant const bool has2DTexture3 = (sourceType3 == PassTypeTexture && hasLayer3);
+constant const bool has2DTexture4 = (sourceType4 == PassTypeTexture && hasLayer4);
+constant const bool has2DTexture5 = (sourceType5 == PassTypeTexture && hasLayer5);
+constant const bool has2DTexture6 = (sourceType6 == PassTypeTexture && hasLayer6);
+constant const bool has2DTexture7 = (sourceType7 == PassTypeTexture && hasLayer7);
+constant const bool has2DTexture8 = (sourceType8 == PassTypeTexture && hasLayer8);
+
+constant const bool hasCubicTexture1 = (sourceType1 == PassTypeCubicTexture && hasLayer1);
+constant const bool hasCubicTexture2 = (sourceType2 == PassTypeCubicTexture && hasLayer2);
+constant const bool hasCubicTexture3 = (sourceType3 == PassTypeCubicTexture && hasLayer3);
+constant const bool hasCubicTexture4 = (sourceType4 == PassTypeCubicTexture && hasLayer4);
+constant const bool hasCubicTexture5 = (sourceType5 == PassTypeCubicTexture && hasLayer5);
+constant const bool hasCubicTexture6 = (sourceType6 == PassTypeCubicTexture && hasLayer6);
+constant const bool hasCubicTexture7 = (sourceType7 == PassTypeCubicTexture && hasLayer7);
+constant const bool hasCubicTexture8 = (sourceType8 == PassTypeCubicTexture && hasLayer8);
+
 typedef struct  {
-    texture2d<half> textures  [[ texture(FragmentShaderArgumentAttributeTextures), function_constant(hasLayer1)  ]];
-    texture2d<half> texture2  [[ texture(FragmentShaderArgumentAttributeTextures + 1), function_constant(hasLayer2)    ]];
-    texture2d<half> texture3  [[ texture(FragmentShaderArgumentAttributeTextures + 2), function_constant(hasLayer3)    ]];
-    texture2d<half> texture4  [[ texture(FragmentShaderArgumentAttributeTextures + 3), function_constant(hasLayer4)    ]];
-    texture2d<half> texture5  [[ texture(FragmentShaderArgumentAttributeTextures + 4), function_constant(hasLayer5)    ]];
-    texture2d<half> texture6  [[ texture(FragmentShaderArgumentAttributeTextures + 5), function_constant(hasLayer6)    ]];
-    texture2d<half> texture7  [[ texture(FragmentShaderArgumentAttributeTextures + 6), function_constant(hasLayer7)    ]];
-    texture2d<half> texture8  [[ texture(FragmentShaderArgumentAttributeTextures + 7), function_constant(hasLayer8)    ]];
-    texturecube<half> cubicTextures  [[ texture(FragmentShaderArgumentAttributeCubicTextures), function_constant(hasLayer1)    ]];
-    texturecube<half> cubicTexture2  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 1), function_constant(hasLayer2)  ]];
-    texturecube<half> cubicTexture3  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 2), function_constant(hasLayer3)  ]];
-    texturecube<half> cubicTexture4  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 3), function_constant(hasLayer4)  ]];
-    texturecube<half> cubicTexture5  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 4), function_constant(hasLayer5)  ]];
-    texturecube<half> cubicTexture6  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 5), function_constant(hasLayer6)  ]];
-    texturecube<half> cubicTexture7  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 6), function_constant(hasLayer7)  ]];
-    texturecube<half> cubicTexture8  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 7), function_constant(hasLayer8)  ]];
+    texture2d<half> textures  [[ texture(FragmentShaderArgumentAttributeTextures), function_constant(has2DTexture1)  ]];
+    texture2d<half> texture2  [[ texture(FragmentShaderArgumentAttributeTextures + 1), function_constant(has2DTexture2)    ]];
+    texture2d<half> texture3  [[ texture(FragmentShaderArgumentAttributeTextures + 2), function_constant(has2DTexture3)    ]];
+    texture2d<half> texture4  [[ texture(FragmentShaderArgumentAttributeTextures + 3), function_constant(has2DTexture4)    ]];
+    texture2d<half> texture5  [[ texture(FragmentShaderArgumentAttributeTextures + 4), function_constant(has2DTexture5)    ]];
+    texture2d<half> texture6  [[ texture(FragmentShaderArgumentAttributeTextures + 5), function_constant(has2DTexture6)    ]];
+    texture2d<half> texture7  [[ texture(FragmentShaderArgumentAttributeTextures + 6), function_constant(has2DTexture7)    ]];
+    texture2d<half> texture8  [[ texture(FragmentShaderArgumentAttributeTextures + 7), function_constant(has2DTexture8)    ]];
+    texturecube<half> cubicTextures  [[ texture(FragmentShaderArgumentAttributeCubicTextures), function_constant(hasCubicTexture1)    ]];
+    texturecube<half> cubicTexture2  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 1), function_constant(hasCubicTexture2)  ]];
+    texturecube<half> cubicTexture3  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 2), function_constant(hasCubicTexture3)  ]];
+    texturecube<half> cubicTexture4  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 3), function_constant(hasCubicTexture4)  ]];
+    texturecube<half> cubicTexture5  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 4), function_constant(hasCubicTexture5)  ]];
+    texturecube<half> cubicTexture6  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 5), function_constant(hasCubicTexture6)  ]];
+    texturecube<half> cubicTexture7  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 6), function_constant(hasCubicTexture7)  ]];
+    texturecube<half> cubicTexture8  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 7), function_constant(hasCubicTexture8)  ]];
     const constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(BufferIndexFragArgBuffer)   ]];
     half4 sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const;
     //number of layers is variable, so have to declare these samplers the ugly way
