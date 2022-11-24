@@ -75,7 +75,7 @@ void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
     if (rc == WAIT_TIMEOUT)
         LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
     thread.detach();
-#elif defined(HAVE_PTHREAD_TIMEDJOIN_NP)
+/*#elif defined(HAVE_PTHREAD_TIMEDJOIN_NP)
     struct timespec deadline;
     if (clock_gettime(CLOCK_REALTIME, &deadline) < 0)
         hsAssert(false, "Could not get the realtime clock");
@@ -88,7 +88,7 @@ void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
     if (pthread_timedjoin_np(thread.native_handle(), nullptr, &deadline) != 0) {
         LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
         thread.detach();
-    }
+    }*/
 #else
     LogMsg(kLogDebug, "No timed thread join support for this system... "
                       "Performing a blocking join instead.");
