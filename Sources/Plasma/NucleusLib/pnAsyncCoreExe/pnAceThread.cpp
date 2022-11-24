@@ -85,9 +85,10 @@ void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
         deadline.tv_nsec -= 1'000'000'000;
         deadline.tv_sec += 1;
     }
-    if (pthread_timedjoin_np(thread.native_handle(), nullptr, &deadline) != 0)
+    if (pthread_timedjoin_np(thread.native_handle(), nullptr, &deadline) != 0) {
         LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
-    thread.detach();
+        thread.detach();
+    }
 #else
     LogMsg(kLogDebug, "No timed thread join support for this system... "
                       "Performing a blocking join instead.");
