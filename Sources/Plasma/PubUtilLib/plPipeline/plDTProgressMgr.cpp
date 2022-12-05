@@ -132,6 +132,7 @@ void    plDTProgressMgr::Draw( plPipeline *p )
 {
     uint16_t      scrnWidth, scrnHeight, width, height, x, y;
     plDebugText &text = plDebugText::Instance();
+    float drawScale = p->fBackingScale;
 
     plOperationProgress *prog;
 
@@ -143,7 +144,7 @@ void    plDTProgressMgr::Draw( plPipeline *p )
     scrnHeight = (uint16_t)p->Height();
 
     width = scrnWidth - 64;
-    height = 16;
+    height = 16 * drawScale;
     x = ( scrnWidth - width ) >> 1;
     y = scrnHeight - 44 - (2 * height) - text.GetFontSize();
 
@@ -171,8 +172,8 @@ void    plDTProgressMgr::Draw( plPipeline *p )
 
     for (prog = fOperations; prog != nullptr; prog = prog->GetNext())
     {
-        if (IDrawTheStupidThing(p, prog, x, y, width, height))
-            y -= text.GetFontSize() + 8 + height + 4;
+        if (IDrawTheStupidThing(p, prog, x, y, width, height, drawScale))
+            y -= text.GetFontSize() + (8 * drawScale) + height + (4 * drawScale);
     }
 
     text.SetDrawOnTopMode( false );
@@ -181,11 +182,11 @@ void    plDTProgressMgr::Draw( plPipeline *p )
 //// IDrawTheStupidThing /////////////////////////////////////////////////////
 
 bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress *prog,
-                                             uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+                                             uint16_t x, uint16_t y, uint16_t width, uint16_t height, float scale)
 {
     plDebugText &text = plDebugText::Instance();
     bool drew_something = false;
-    uint16_t downsz = (text.GetFontSize() << 1) + 4;
+    uint16_t downsz = (text.GetFontHeight() << 1) + (4 * scale);
 
     // draw the title
     if (!prog->GetTitle().empty()) {
@@ -199,10 +200,10 @@ bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress 
     if (prog->GetMax() > 0.f) {
         text.Draw3DBorder(x, y, x + width - 1, y + height - 1, kProgressBarColor, kProgressBarColor);
 
-        x += 2;
-        y += 2;
-        width -= 4;
-        height -= 4;
+        x += (2 * scale);
+        y += (2 * scale);
+        width -= (4 * scale);
+        height -= (4 * scale);
 
         uint16_t drawWidth = width;
         int16_t drawX = x;
@@ -214,7 +215,7 @@ bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress 
         rightX = drawX + drawWidth;
         if (drawWidth > 0)
             text.DrawRect(drawX, y, rightX, y + height, kProgressBarColor);
-        y += height + 2;
+        y += height + (2 * scale);
 
         drew_something = true;
     }
