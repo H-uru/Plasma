@@ -420,6 +420,12 @@ void plPythonSDLModifier::IPythonVarToSDL(plStateDataRecord* state, const ST::st
         Py_ssize_t count = PyTuple_Size(pyVar);
         plSimpleVarDescriptor::Type type = var->GetSimpleVarDescriptor()->GetType();
 
+        // Ensure that variable length arrays match.
+        if (var->GetSimpleVarDescriptor()->IsVariableLength()) {
+            if (var->GetCount() != count)
+                var->Alloc(count);
+        }
+
         for (Py_ssize_t i = 0; i < count; i++) {
             PyObject* pyVarItem = PyTuple_GetItem(pyVar, i);
             if (pyVarItem)
