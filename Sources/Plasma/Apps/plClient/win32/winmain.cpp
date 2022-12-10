@@ -347,6 +347,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 RECT r;
                 ::GetClientRect(hWnd, &r);
                 gClient->GetPipeline()->Resize(r.right - r.left, r.bottom - r.top);
+
+                HDC hDC = CreateCompatibleDC(nullptr);
+                gClient->GetPipeline()->SetBackingScale(GetDeviceCaps(hDC, LOGPIXELSY) / 96.0f);
             }
             break;
 
@@ -1246,6 +1249,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         ::DestroyWindow(splashDialog);
     }
 
+    HDC hDC = CreateCompatibleDC(nullptr);
+    float scale = GetDeviceCaps(hDC, LOGPIXELSY) / 96.0f;
+    gClient->GetPipeline()->SetBackingScale(scale);
+    plMouseDevice::Instance()->SetDisplayScale(scale);
+
     // Main loop
     if (gClient && !gClient->GetDone()) {
         // Must be done here due to the plClient* dereference.
@@ -1264,6 +1272,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
         MSG msg;
         do {
+
+            //set the current cursor scale for each loop
+
             gClient->MainLoop();
             if (gClient->GetDone())
                 break;
