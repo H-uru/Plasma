@@ -186,7 +186,17 @@ bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress 
 {
     plDebugText &text = plDebugText::Instance();
     bool drew_something = false;
-    uint16_t downsz = (text.GetFontHeight() << 1) + (4 * scale);
+    /*
+    * downsz used to be set to double the font size, plus the margin
+    * This was refactored to use font height instead, which accurately
+    * accounts for display DPI. However - the font spacing became too large.
+    * Instead of doubling, the margin is now the font height * 1.5.
+    * Font size is at 72 DPI, but Windows renders at 96 DPI by default.
+    * Therefor to infer the original spacing ratio, we can take:
+    * (72 * 2) / 96 to translate the intended line spacing out of font
+    * space and into device render space.
+    */
+    uint16_t downsz = (text.GetFontHeight() * 1.50f) + (4 * scale);
 
     // draw the title
     if (!prog->GetTitle().empty()) {
