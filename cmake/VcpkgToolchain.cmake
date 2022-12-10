@@ -42,6 +42,11 @@ endfunction()
 function(_plasma_vcpkg_setup_binarycache)
     cmake_parse_arguments(_pvsb "" "NAME;PREFIX" "" ${ARGN})
 
+    # We don't want to use our own NuGet config when running in GitHub Actions
+    if(DEFINED ENV{CI})
+        return()
+    endif()
+
     if(NOT ${_pvsb_PREFIX}_SOURCE OR NOT ${_pvsb_PREFIX}_OWNER OR NOT ${_pvsb_PREFIX}_TOKEN)
         return()
     endif()
