@@ -47,9 +47,6 @@ using tcp = asio::ip::tcp;
 // handles 8 CPU computer w/hyperthreading (we use 2 threads per logical CPU)
 static constexpr unsigned int   kMaxWorkerThreads   = 32;
 
-static constexpr int            kTcpSndBufSize      = 64*1024-1;
-static constexpr int            kTcpRcvBufSize      = 64*1024-1;
-
 // wait before checking for backlog problems
 static constexpr unsigned   kBacklogInitMs      = 3*60*1000;
 
@@ -292,14 +289,6 @@ static bool SocketInitConnect(ConnectOperation* op)
     sock->fSock.non_blocking(true, err);
     if (err)
         LogMsg(kLogError, "Failed to set socket to non-blocking: {}", err.message());
-
-    sock->fSock.set_option(asio::socket_base::send_buffer_size(kTcpSndBufSize), err);
-    if (err)
-        LogMsg(kLogError, "Failed to set socket send buffer size: {}", err.message());
-
-    sock->fSock.set_option(asio::socket_base::receive_buffer_size(kTcpRcvBufSize), err);
-    if (err)
-        LogMsg(kLogError, "Failed to set socket recv buffer size: {}", err.message());
 
     // Send initial data
     if (!op->fConnectBuffer.empty()) {
