@@ -798,9 +798,9 @@ class xLinkingBookGUIPopup(ptModifier):
         agePanel = TargetAge.value
         # share book image is on the "first" page while the linking panel is on the "second" page
         if PtIsSinglePlayerMode() or OfferedBookMode:
-            bookdef = '<font size=10>' + getattr(xLinkingBookDefs,shareName+'NoShare') +'<pb>' + xLinkingBookDefs.TransLinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
+            bookdef = '<font size=10>' + getattr(xLinkingBookDefs, f'{shareName}NoShare') +'<pb>' + xLinkingBookDefs.TransLinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
         else:
-            bookdef = '<font size=10>' + getattr(xLinkingBookDefs,shareName+'Share') +'<pb>' + xLinkingBookDefs.TransLinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
+            bookdef = '<font size=10>' + getattr(xLinkingBookDefs, f'{shareName}Share')  +'<pb>' + xLinkingBookDefs.TransLinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
         SpawnPointName_Dict[0] = "LinkInPointDefault"
         SpawnPointTitle_Dict[0] = agePanel
         PtSendKIMessage(kDisableKIandBB,0)
