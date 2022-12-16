@@ -2,17 +2,11 @@
 # unless you're doing something really special. Note that GitHub's package server requires an
 # access token with scope package:read for this to work... To make matters worse, if GitHub sees
 # the token in-repo, it will automatically revoke it... Grrr...
-set(_NUGET_SOURCE "https://nuget.pkg.github.com/H-uru/index.json")
-set(_NUGET_OWNER "H-uruMachineUser")
+set(PLASMA_NUGET_SOURCE "https://nuget.pkg.github.com/H-uru/index.json")
+set(PLASMA_NUGET_OWNER "H-uruMachineUser")
 # Python: print(*(ord(i) for i in token), sep=";")
-set(_NUGET_TOKEN_ASCII 103;104;112;95;100;111;87;99;122;56;49;97;76;101;110;122;82;116;119;112;80;49;97;87;72;107;71;57;103;51;110;100;100;112;52;69;57;88;73;48)
-string(ASCII ${_NUGET_TOKEN_ASCII} _NUGET_TOKEN)
-
-# You're not crazy. This is so we can read from the main package source and write to another one.
-set(PLASMA_VCPKG_NUGET_SOURCE "" CACHE INTERNAL "")
-set(PLASMA_VCPKG_NUGET_OWNER "" CACHE INTERNAL "")
-set(PLASMA_VCPKG_NUGET_TOKEN "" CACHE INTERNAL "")
-set(PLASMA_VCPKG_NUGET_RW FALSE CACHE INTERNAL "")
+set(_PLASMA_NUGET_TOKEN_ASCII 103;104;112;95;100;111;87;99;122;56;49;97;76;101;110;122;82;116;119;112;80;49;97;87;72;107;71;57;103;51;110;100;100;112;52;69;57;88;73;48)
+string(ASCII ${_PLASMA_NUGET_TOKEN_ASCII} PLASMA_NUGET_TOKEN)
 
 # Welcome to vcpkg-land. Population: Hoikas.
 # The goal here is that if cmake is being invoked with no arguments, we want to force usage of
@@ -30,42 +24,18 @@ endif()
 
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "" FORCE)
 
-function(_plasma_vcpkg_generate_nuget_config)
-    cmake_parse_arguments(_pvgnc "" "OUT_FILE;NUGET_NAME;NUGET_SOURCE;NUGET_OWNER;NUGET_TOKEN" "" ${ARGN})
-    configure_file(
-        "${CMAKE_SOURCE_DIR}/NuGet.Config.in"
-        "${_pvgnc_OUT_FILE}"
-        @ONLY
-    )
-endfunction()
-
-function(_plasma_vcpkg_setup_binarycache)
-    cmake_parse_arguments(_pvsb "" "NAME;PREFIX" "" ${ARGN})
-
-    if(NOT ${_pvsb_PREFIX}_SOURCE OR NOT ${_pvsb_PREFIX}_OWNER OR NOT ${_pvsb_PREFIX}_TOKEN)
-        return()
-    endif()
-
-    set(_CONFIG_PATH "${CMAKE_BINARY_DIR}/${_pvsb_NAME}-NuGet.Config")
-    _plasma_vcpkg_generate_nuget_config(
-        OUT_FILE ${_CONFIG_PATH}
-        NUGET_SOURCE ${${_pvsb_PREFIX}_SOURCE}
-        NUGET_OWNER ${${_pvsb_PREFIX}_OWNER}
-        NUGET_TOKEN ${${_pvsb_PREFIX}_TOKEN}
-    )
-
-    file(TO_NATIVE_PATH "${_CONFIG_PATH}" _CONFIG_PATH_NATIVE)
-    set(ENV{VCPKG_BINARY_SOURCES} "$ENV{VCPKG_BINARY_SOURCES};nugetconfig,${_CONFIG_PATH_NATIVE}")
-    if(${_pvsb_PREFIX}_RW)
-        set(ENV{VCPKG_BINARY_SOURCES} "$ENV{VCPKG_BINARY_SOURCES},readwrite")
-    endif()
-endfunction()
-
 # Binarycache can only be used on Windows or if mono is available.
 find_program(_VCPKG_MONO mono)
 if(_HOST_IS_WINDOWS OR EXISTS "${_VCPKG_MONO}")
-    _plasma_vcpkg_setup_binarycache(NAME mainline PREFIX _NUGET)
-    _plasma_vcpkg_setup_binarycache(NAME fork PREFIX PLASMA_VCPKG_NUGET)
+    set(_NUGET_CONFIG_PATH "${CMAKE_BINARY_DIR}/NuGet.Config")
+    configure_file(
+        "${CMAKE_SOURCE_DIR}/NuGet.Config.in"
+        "${_NUGET_CONFIG_PATH}"
+        @ONLY
+    )
+
+    file(TO_NATIVE_PATH "${_NUGET_CONFIG_PATH}" _NUGET_CONFIG_PATH_NATIVE)
+    set(ENV{VCPKG_BINARY_SOURCES} "$ENV{VCPKG_BINARY_SOURCES};nugetconfig,${_NUGET_CONFIG_PATH_NATIVE},read")
 endif()
 
 list(APPEND VCPKG_OVERLAY_PORTS "${CMAKE_SOURCE_DIR}/Scripts/Ports")
