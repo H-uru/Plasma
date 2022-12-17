@@ -113,14 +113,6 @@ public:
         *remainder = (uint32_t)BN_div_word(m_number, b);
     }
 
-    void Div(const plBigNum& a, const plBigNum& b, plBigNum* remainder)
-    {
-        // this = a / b, remainder = a % b
-        // either this or remainder may be nullptr
-        BN_div(this ? m_number : nullptr, remainder ? remainder->m_number : nullptr,
-               a.m_number, b.m_number, GetContext());
-    }
-
     void FromData_BE(uint32_t bytess, const void* data)
     {
         BN_bin2bn((const uint8_t*)data, bytess, m_number);
@@ -133,9 +125,13 @@ public:
 
     bool IsPrime() const
     {
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
         // Cyan's code uses 3 checks, so we'll follow suit.
         // This provides an accurate answer to p < 0.015625
         return BN_is_prime_fasttest_ex(m_number, 3, GetContext(), 1, nullptr) > 0;
+#else
+        return BN_check_prime(m_number, GetContext(), nullptr) > 0;
+#endif
     }
 
     void Mod(const plBigNum& a, const plBigNum& b)
