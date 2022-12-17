@@ -567,14 +567,14 @@ class xLinkingBookGUIPopup(ptModifier):
                     sharable,width,height,stampdef,bookdef = params
                     gui = "BkBook"
                 else:
+                    linkingPanel,gui,shareName = params
                     if not fromBookshelf:
                         # this is a treasure book
-                        linkingPanel,gui,shareName = params
                         self.IShowBahroBook(linkingPanel,gui,shareName)
                         return
                     else:
                         sharable, width, height, stampdef, gui = (0, 1.0, 1.0, xLinkingBookDefs.NoDRCStamp, "BkBook")
-                        bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + params + xLinkingBookDefs.LinkEnd
+                        bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
 
                 if 'NotPossible' in SpawnPointTitle_Dict.values():
                    bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + 'xLinkPanelBlackVoid' + xLinkingBookDefs.LinkEndNoLink
