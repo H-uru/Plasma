@@ -156,7 +156,7 @@ static AsyncIoPool*                 s_ioPool;
 
 static std::recursive_mutex         s_connectCrit;
 static std::list<ConnectOperation*> s_connectList;
-static unsigned                     s_nextConnectCancelId = 1;
+static uintptr_t                    s_nextConnectCancelId = 1;
 
 void SocketInitialize()
 {
