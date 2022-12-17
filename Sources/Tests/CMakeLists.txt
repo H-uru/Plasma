@@ -1,3 +1,9 @@
+include(SubmoduleUtils)
+plasma_init_git_submodule("Sources/Tests/gtest" RESULT has_gtest_module)
+if(NOT has_gtest_module)
+    return()
+endif()
+
 # Why is this OFF by default?  It doesn't work with CMake's defaults, and
 # should really only be off if the project has specifically been set up to
 # use the static MSVC CRT
