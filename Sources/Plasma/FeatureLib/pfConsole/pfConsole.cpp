@@ -854,7 +854,7 @@ void    pfConsole::Draw( plPipeline *p )
             memset( tmpSrc, 0, sizeof( tmpSrc ) );
             // Our concession to windows
 #ifdef HS_BUILD_FOR_WIN32
-            #include "../../Apps/plClient/res/resource.h"
+            #include "../../Apps/plClient/win32/res/resource.h"
             HRSRC rsrc = FindResource(nullptr, MAKEINTRESOURCE(IDR_CNSL1), "CNSL");
             if (rsrc != nullptr)
             {
