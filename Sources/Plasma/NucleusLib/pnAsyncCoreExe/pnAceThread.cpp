@@ -104,8 +104,9 @@ AsyncThreadRef AsyncThreadCreate (
 
 void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
 {
-    bool joined = ref.impl->completion->try_lock_for(std::chrono::milliseconds(timeoutMs));
-    if (joined) {
+    bool threadFinished = ref.impl->completion->try_lock_for(std::chrono::milliseconds(timeoutMs));
+    if (threadFinished) {
+        //thread is finished, safe to join with no deadlock risk
         ref.impl->completion->unlock();
         ref.impl->handle->join();
     } else {
