@@ -110,6 +110,7 @@ void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
         ref.impl->completion->unlock();
         ref.impl->handle->join();
     } else {
+        LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
         ref.impl->handle->detach();
     }
 }
