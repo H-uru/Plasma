@@ -59,7 +59,7 @@ struct AsyncIoPool
 {
     asio::io_context    fContext;
     asio::executor_work_guard<asio::io_context::executor_type> fWorkGuard;
-    std::array<std::thread, kMaxWorkerThreads> fThreadHandles;
+    std::array<AsyncThreadRef, kMaxWorkerThreads> fThreadHandles;
 
     AsyncIoPool() : fWorkGuard(fContext.get_executor())
     {
@@ -72,17 +72,9 @@ struct AsyncIoPool
 
         // create IO worker threads
         for (unsigned int thread = 0; thread < threadCount; thread++) {
-            fThreadHandles[thread] = std::thread([this] {
-#ifdef USE_VLD
-                VLDEnable();
-#endif
-                PerfAddCounter(kAsyncPerfThreadsTotal, 1);
-                PerfAddCounter(kAsyncPerfThreadsCurr, 1);
-
+            fThreadHandles[thread] = AsyncThreadCreate([this] {
                 // This can be run concurrently from several threads
                 fContext.run();
-
-                PerfSubCounter(kAsyncPerfThreadsCurr, 1);
             });
         }
     }
@@ -91,7 +83,7 @@ struct AsyncIoPool
     {
         fWorkGuard.reset();
 
-        for (std::thread& thread : fThreadHandles) {
+        for (AsyncThreadRef& thread : fThreadHandles) {
             if (thread.joinable())
                 AsyncThreadTimedJoin(thread, exitThreadWaitMs);
         }

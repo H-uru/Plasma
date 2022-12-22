@@ -52,6 +52,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <time.h>
 #endif
 
+static void CreateThreadProc(AsyncThreadRef thread)
+{
+#ifdef USE_VLD
+    VLDEnable();
+#endif
+
+    PerfAddCounter(kAsyncPerfThreadsTotal, 1);
+    PerfAddCounter(kAsyncPerfThreadsCurr, 1);
+
+    // Call thread procedure
+    thread.impl->proc();
+
+    PerfSubCounter(kAsyncPerfThreadsCurr, 1);
+    
+    thread.impl->completion->unlock();
+}
+
 /*****************************************************************************
 *
 *   Module functions
@@ -67,6 +84,35 @@ void ThreadDestroy (unsigned exitThreadWaitMs) {
 }
 
 //============================================================================
+AsyncThreadRef AsyncThreadCreate (
+    std::function<void()>    threadProc
+                               ) {
+    AsyncThreadRef ref;
+    ref.impl                  = std::make_shared<AsyncThread>();
+    ref.impl->proc            = threadProc;
+    ref.impl->handle          = nullptr;
+    ref.impl->workTimeMs      = kAsyncTimeInfinite;
+    
+    auto completion = std::make_shared<std::timed_mutex>();
+    completion->lock();
+    ref.impl->completion = completion;
+    
+    auto handle = std::make_shared<std::thread>(&CreateThreadProc, ref);
+    ref.impl->handle = handle;
+    return ref;
+}
+
+void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
+{
+    bool joined = ref.impl->completion->try_lock_for(std::chrono::milliseconds(timeoutMs));
+    if (joined) {
+        ref.impl->completion->unlock();
+        ref.impl->handle->join();
+    } else {
+        ref.impl->handle->detach();
+    }
+}
+
 void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
 {
     // HACK: No cross-platform way to perform a timed join :(
@@ -94,4 +140,16 @@ void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
                       "Performing a blocking join instead.");
     thread.join();
 #endif
+}
+
+std::shared_ptr<std::thread> AsyncThreadRef::thread() {
+    return impl->handle;
+}
+
+bool AsyncThreadRef::joinable() {
+    if (!impl) {
+        return false;
+    } else {
+        return impl->handle->joinable();
+    }
 }

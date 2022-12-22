@@ -65,10 +65,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // for IoWaitId/TimerCreate/TimerUpdate
 constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
 
+struct AsyncThread;
+
+struct AsyncThreadRef {
+    std::shared_ptr<AsyncThread> impl;
+    std::shared_ptr<std::thread> thread();
+    bool joinable();
+};
+
+
+// Threads are also allowed to set the workTimeMs field of their
+// structure to a nonzero value for "on", and IO_TIME_INFINITE for
+// "off" to avoid the overhead of calling these functions. Note
+// that this function may not be called for the main thread. I
+// suggest that application code not worry that timeMs might
+// "accidentally" equal the IO_TIME_INFINITE value, as it only
+// happens for one millisecond every 49 days.
+struct AsyncThread {
+    LINK(AsyncThread)                    link;
+    std::function<void()>    proc;
+    std::shared_ptr<std::thread>         handle;
+    unsigned                             workTimeMs;
+    std::shared_ptr<std::timed_mutex>          completion;
+};
+
+
 /*****************************************************************************
 *
 *   Thread functions
 *
 ***/
 
+AsyncThreadRef AsyncThreadCreate (
+    std::function<void()>    procs
+);
+
+void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs);
 void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs);
