@@ -1250,6 +1250,11 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
     // j == -1 means we aborted render.
     if( pass >= 0 )
     {
+        //if we had to render aux spans, we probably changed the vertex and index buffer
+        //reset those
+        fState.fCurrentVertexBuffer = vRef->GetBuffer();
+        fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
+        
         // Projections that get applied to the frame buffer (after all passes).
         if( fProjAll.size() && !(fView.fRenderState & kRenderNoProjection) ) {
             fDevice.CurrentRenderCommandEncoder()->pushDebugGroup(NS::MakeConstantString("Render All Projections"));
@@ -1259,11 +1264,6 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 
         // Handle render of shadows onto geometry.
         if( fShadows.size() ) {
-            //if we had to render aux spans, we probably changed the vertex and index buffer
-            //reset those
-            fState.fCurrentVertexBuffer = vRef->GetBuffer();
-            fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
-            
             IRenderShadowsOntoSpan(render, &span, material, vRef);
         }
     }
