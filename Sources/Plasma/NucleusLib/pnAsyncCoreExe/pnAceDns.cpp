@@ -49,21 +49,13 @@ struct DnsResolver
     asio::io_context fContext;
     asio::executor_work_guard<asio::io_context::executor_type> fWorkGuard;
     tcp::resolver fResolver;
-    std::thread fLookupThread;
+    AsyncThreadRef fLookupThread;
 
     DnsResolver() : fResolver(fContext), fWorkGuard(fContext.get_executor())
     {
         // Start the resolver thread
-        fLookupThread = std::thread([this] {
-#ifdef USE_VLD
-            VLDEnable();
-#endif
-            PerfAddCounter(kAsyncPerfThreadsTotal, 1);
-            PerfAddCounter(kAsyncPerfThreadsCurr, 1);
-
+        fLookupThread = AsyncThreadCreate([this] {
             fContext.run();
-
-            PerfSubCounter(kAsyncPerfThreadsCurr, 1);
         });
     }
 

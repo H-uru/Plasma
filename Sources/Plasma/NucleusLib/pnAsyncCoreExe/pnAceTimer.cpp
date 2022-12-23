@@ -63,20 +63,12 @@ struct AsyncTimerManager
     asio::io_context fContext;
     asio::executor_work_guard<asio::io_context::executor_type> fWorkGuard;
     std::list<AsyncTimer> fTimers;
-    std::thread fTimerThread;
+    AsyncThreadRef fTimerThread;
 
     AsyncTimerManager() : fWorkGuard(fContext.get_executor())
     {
-        fTimerThread = std::thread([this] {
-#ifdef USE_VLD
-            VLDEnable();
-#endif
-            PerfAddCounter(kAsyncPerfThreadsTotal, 1);
-            PerfAddCounter(kAsyncPerfThreadsCurr, 1);
-
+        fTimerThread = AsyncThreadCreate([this] {
             fContext.run();
-
-            PerfSubCounter(kAsyncPerfThreadsCurr, 1);
         });
     }
 
