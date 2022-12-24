@@ -71,7 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     {
         struct winsize w;
         ioctl(fileno(stdout), TIOCGWINSZ, &w);
-        if(w.ws_col == 0) {
+        if (w.ws_col == 0) {
             w.ws_col = 80;
         }
         width = size_t(w.ws_col) - 1;
