@@ -468,8 +468,8 @@ class xLinkingBookGUIPopup(ptModifier):
                     gui = "BkBook"
                 else:
                     # this is a treasure book
-                    linkingPanel = params
-                    self.IShowBahroBook(linkingPanel)
+                    linkingPanel,gui,shareName = params
+                    self.IShowBahroBook(linkingPanel,gui,shareName)
                     return
                 if not IsDRCStamped.value:
                     stampdef = xLinkingBookDefs.NoDRCStamp
@@ -567,14 +567,14 @@ class xLinkingBookGUIPopup(ptModifier):
                     sharable,width,height,stampdef,bookdef = params
                     gui = "BkBook"
                 else:
+                    linkingPanel,gui,shareName = params
                     if not fromBookshelf:
                         # this is a treasure book
-                        linkingPanel = params
-                        self.IShowBahroBook(linkingPanel)
+                        self.IShowBahroBook(linkingPanel,gui,shareName)
                         return
                     else:
                         sharable, width, height, stampdef, gui = (0, 1.0, 1.0, xLinkingBookDefs.NoDRCStamp, "BkBook")
-                        bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + params + xLinkingBookDefs.LinkEnd
+                        bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
 
                 if 'NotPossible' in SpawnPointTitle_Dict.values():
                    bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + 'xLinkPanelBlackVoid' + xLinkingBookDefs.LinkEndNoLink
@@ -789,7 +789,7 @@ class xLinkingBookGUIPopup(ptModifier):
         return CityLinks	
 
 
-    def IShowBahroBook(self,linkingPanel):
+    def IShowBahroBook(self,linkingPanel,gui,shareName):
         global gLinkingBook
         global SpawnPointName_Dict
         global SpawnPointTitle_Dict
@@ -798,15 +798,15 @@ class xLinkingBookGUIPopup(ptModifier):
         agePanel = TargetAge.value
         # share book image is on the "first" page while the linking panel is on the "second" page
         if PtIsSinglePlayerMode() or OfferedBookMode:
-            bookdef = '<font size=10>' + xLinkingBookDefs.BahroNoShare +'<pb>' + xLinkingBookDefs.TransLinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
+            bookdef = '<font size=10>' + getattr(xLinkingBookDefs, f'{shareName}NoShare') +'<pb>' + xLinkingBookDefs.TransLinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
         else:
-            bookdef = '<font size=10>' + xLinkingBookDefs.BahroShare +'<pb>' + xLinkingBookDefs.TransLinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
+            bookdef = '<font size=10>' + getattr(xLinkingBookDefs, f'{shareName}Share')  +'<pb>' + xLinkingBookDefs.TransLinkStart + linkingPanel + xLinkingBookDefs.LinkEnd
         SpawnPointName_Dict[0] = "LinkInPointDefault"
         SpawnPointTitle_Dict[0] = agePanel
         PtSendKIMessage(kDisableKIandBB,0)
         gLinkingBook = ptBook(bookdef,self.key)
         gLinkingBook.setSize( 1, 1 )
-        gLinkingBook.setGUI("bkBahroRockBook")
+        gLinkingBook.setGUI(gui)
         gLinkingBook.show(1) # this book is always open
 
     def IAddShare(self):
