@@ -107,6 +107,7 @@ static void FileDownloadBegin(const plFileName& file)
 
     size_t fill = consoleWidth - file.GetSize();
     ST::printf("\r{}{}\n{}", file, ST::string::fill(fill, ' '), lastProgress);
+    fflush(stdout);
 }
 
 static void FileDownloadProgress(uint64_t bytesDown, uint64_t bytesTotal, const ST::string& stats)
@@ -116,6 +117,7 @@ static void FileDownloadProgress(uint64_t bytesDown, uint64_t bytesTotal, const 
 
     lastProgress = ST::format("|{}{}| {}", ST::string::fill(progWidth, '='), ST::string::fill(availWidth - progWidth, ' '), stats);
     ST::printf("\r{}", lastProgress);
+    fflush(stdout);
 }
 
 int main(int argc, char* argv[])
@@ -181,6 +183,7 @@ int main(int argc, char* argv[])
 
     if (!cmdParser.GetBool(kArgQuiet) && isatty(fileno(stdout))) {
         ST::printf("\r{}\r", ST::string::fill(consoleWidth, ' '));
+        fflush(stdout);
     }
     return 0;
 }
