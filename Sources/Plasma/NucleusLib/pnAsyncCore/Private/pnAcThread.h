@@ -70,7 +70,7 @@ struct AsyncThread;
 
 struct AsyncThreadRef {
     std::shared_ptr<AsyncThread> impl;
-    std::shared_ptr<std::thread> thread();
+    std::thread&                 thread();
     bool joinable();
 };
 
@@ -84,10 +84,10 @@ struct AsyncThreadRef {
 // happens for one millisecond every 49 days.
 struct AsyncThread {
     LINK(AsyncThread)                    link;
-    std::function<void()>    proc;
-    std::shared_ptr<std::thread>         handle;
+    std::function<void()>                proc;
+    std::thread                          handle;
     unsigned                             workTimeMs;
-    std::shared_ptr<std::timed_mutex>          completion;
+    std::timed_mutex                     completion;
 };
 
 
@@ -102,4 +102,3 @@ AsyncThreadRef AsyncThreadCreate (
 );
 
 void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs);
-void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs);

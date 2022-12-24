@@ -66,7 +66,7 @@ static void CreateThreadProc(AsyncThreadRef thread)
 
     PerfSubCounter(kAsyncPerfThreadsCurr, 1);
     
-    thread.impl->completion->unlock();
+    thread.impl->completion.unlock();
 }
 
 /*****************************************************************************
@@ -90,61 +90,28 @@ AsyncThreadRef AsyncThreadCreate (
     AsyncThreadRef ref;
     ref.impl                  = std::make_shared<AsyncThread>();
     ref.impl->proc            = threadProc;
-    ref.impl->handle          = nullptr;
     ref.impl->workTimeMs      = kAsyncTimeInfinite;
     
-    auto completion = std::make_shared<std::timed_mutex>();
-    completion->lock();
-    ref.impl->completion = completion;
+    ref.impl->completion.lock();
     
-    auto handle = std::make_shared<std::thread>(&CreateThreadProc, ref);
-    ref.impl->handle = handle;
+    ref.impl->handle = std::thread(&CreateThreadProc, ref);
     return ref;
 }
 
 void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
 {
-    bool threadFinished = ref.impl->completion->try_lock_for(std::chrono::milliseconds(timeoutMs));
+    bool threadFinished = ref.impl->completion.try_lock_for(std::chrono::milliseconds(timeoutMs));
     if (threadFinished) {
         //thread is finished, safe to join with no deadlock risk
-        ref.impl->completion->unlock();
-        ref.impl->handle->join();
+        ref.impl->completion.unlock();
+        ref.impl->handle.join();
     } else {
         LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
-        ref.impl->handle->detach();
+        ref.impl->handle.detach();
     }
 }
 
-void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs)
-{
-    // HACK: No cross-platform way to perform a timed join :(
-#if defined(HS_BUILD_FOR_WIN32)
-    DWORD rc = WaitForSingleObject((HANDLE)thread.native_handle(), timeoutMs);
-    if (rc == WAIT_TIMEOUT)
-        LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
-    thread.detach();
-/*#elif defined(HAVE_PTHREAD_TIMEDJOIN_NP)
-    struct timespec deadline;
-    if (clock_gettime(CLOCK_REALTIME, &deadline) < 0)
-        hsAssert(false, "Could not get the realtime clock");
-    deadline.tv_sec += timeoutMs / 1000;
-    deadline.tv_nsec += (timeoutMs % 1000) * 1'000'000;
-    if (deadline.tv_nsec > 1'000'000'000) {
-        deadline.tv_nsec -= 1'000'000'000;
-        deadline.tv_sec += 1;
-    }
-    if (pthread_timedjoin_np(thread.native_handle(), nullptr, &deadline) != 0) {
-        LogMsg(kLogDebug, "Thread did not terminate after {} ms", timeoutMs);
-        thread.detach();
-    }*/
-#else
-    LogMsg(kLogDebug, "No timed thread join support for this system... "
-                      "Performing a blocking join instead.");
-    thread.join();
-#endif
-}
-
-std::shared_ptr<std::thread> AsyncThreadRef::thread() {
+std::thread& AsyncThreadRef::thread() {
     return impl->handle;
 }
 
@@ -152,6 +119,6 @@ bool AsyncThreadRef::joinable() {
     if (!impl) {
         return false;
     } else {
-        return impl->handle->joinable();
+        return impl->handle.joinable();
     }
 }
