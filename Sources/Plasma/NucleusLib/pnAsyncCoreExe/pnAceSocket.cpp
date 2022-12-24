@@ -71,8 +71,8 @@ struct AsyncIoPool
         }
 
         // create IO worker threads
-        for (unsigned int thread = 0; thread < threadCount; thread++) {
-            fThreadHandles[thread] = AsyncThreadCreate([this] {
+        for (auto& threadHandle : fThreadHandles) {
+            threadHandle = AsyncThreadCreate([this] {
                 // This can be run concurrently from several threads
                 fContext.run();
             });
