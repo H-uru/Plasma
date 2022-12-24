@@ -68,30 +68,33 @@ set(plClient_SOURCES
     pnAllCreatables.cpp
 )
 
+set(plClient_RESOURCES
+)
+
+set(plClient_TEXT
+    ${Plasma_SOURCE_DIR}/Docs/ReleaseNotes/ReleaseNotes.txt
+)
+
 if(WIN32)
     list(APPEND plClient_SOURCES
-        plClient_Win.cpp
-        winmain.cpp
+        win32/plClient_Win.cpp
+        win32/winmain.cpp
+    )
+
+    list(APPEND plClient_RESOURCES
+        win32/res/plClient.exe.manifest
+        win32/res/plClient.rc
+        win32/res/resource.h
+        win32/res/banner.bmp
+        win32/res/cnsl1.bin
+        win32/res/Dirt.ICO
+        win32/res/headspin.ico
     )
 else()
     list(APPEND plClient_SOURCES
         main.cpp
     )
 endif()
-
-set(plClient_TEXT
-    ${Plasma_SOURCE_DIR}/Docs/ReleaseNotes/ReleaseNotes.txt
-)
-
-set(plClient_RESOURCES
-    res/plClient.exe.manifest
-    res/plClient.rc
-    res/resource.h
-    res/banner.bmp
-    res/cnsl1.bin
-    res/Dirt.ICO
-    res/headspin.ico
-)
 
 plasma_executable(plClient WIN32 CLIENT INSTALL_PDB
     SOURCES
@@ -160,6 +163,7 @@ target_link_libraries(
         $<$<BOOL:${PLASMA_PIPELINE_GL}>:pfGLPipeline>
         CURL::libcurl
 )
+target_include_directories(plClient PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 
 if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
