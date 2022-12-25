@@ -284,6 +284,7 @@ static void CheckedReconnect (CliGkConn * conn, ENetError error) {
         // Cancel all transactions in progress on this connection.
         NetTransCancelByConnId(conn->seq, kNetErrTimeout);
         // conn is dead.
+        conn->StopAutoReconnect();
         conn->UnRef("Lifetime");
         ReportNetError(kNetProtocolCli2GateKeeper, error);
     }
