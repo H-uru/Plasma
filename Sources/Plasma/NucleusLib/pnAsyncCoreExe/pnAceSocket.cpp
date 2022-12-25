@@ -59,7 +59,7 @@ struct AsyncIoPool
 {
     asio::io_context    fContext;
     asio::executor_work_guard<asio::io_context::executor_type> fWorkGuard;
-    std::array<AsyncThreadRef, kMaxWorkerThreads> fThreadHandles;
+    AsyncThreadRef fThreadHandles[kMaxWorkerThreads];
 
     AsyncIoPool() : fWorkGuard(fContext.get_executor())
     {
