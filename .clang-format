@@ -1,0 +1,8 @@
+---
+BasedOnStyle: Google
+---
+Language: Cpp
+# Modifications to the style for Plasma go here
+IndentWidth: 4
+ColumnLimit: 0
+---
