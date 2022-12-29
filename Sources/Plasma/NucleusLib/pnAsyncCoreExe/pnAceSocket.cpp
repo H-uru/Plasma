@@ -107,6 +107,7 @@ struct ConnectOperation
     ConnectOperation(asio::io_context& context)
         : fSock(context), fCancelId(), fParam(), fConnectionType()
     { }
+    ConnectOperation(const ConnectOperation&) = delete;
 };
 
 struct WriteOperation
@@ -137,9 +138,9 @@ struct AsyncSocketStruct
     unsigned                    initTimeMs;
     unsigned                    closeTimeMs;
 
-    AsyncSocketStruct(ConnectOperation* op)
-        : fSock(std::move(op->fSock)), fNotifyProc(op->fNotifyProc),
-          fParam(op->fParam), fConnectionType(op->fConnectionType),
+    AsyncSocketStruct(ConnectOperation& op)
+        : fSock(std::move(op.fSock)), fNotifyProc(op.fNotifyProc),
+          fParam(op.fParam), fConnectionType(op.fConnectionType),
           fUserState(), fBuffer(), fBytesLeft(), initTimeMs(), closeTimeMs()
     { }
 };
@@ -147,7 +148,7 @@ struct AsyncSocketStruct
 static AsyncIoPool*                 s_ioPool;
 
 static std::recursive_mutex         s_connectCrit;
-static std::list<ConnectOperation*> s_connectList;
+static std::list<ConnectOperation>  s_connectList;
 static uintptr_t                    s_nextConnectCancelId = 1;
 
 void SocketInitialize()
@@ -163,9 +164,9 @@ void SocketDestroy(unsigned exitThreadWaitMs)
     // Cancel any pending connect requests
     {
         hsLockGuard(s_connectCrit);
-        for (ConnectOperation* op : s_connectList) {
+        for (ConnectOperation& op : s_connectList) {
             asio::error_code err;
-            op->fSock.cancel(err);   // This will wake up async_connect()
+            op.fSock.cancel(err);   // This will wake up async_connect()
             if (err)
                 LogMsg(kLogError, "Failed to cancel socket connect operation: {}", err.message());
         }
@@ -270,7 +271,7 @@ static void SocketGetAddresses(AsyncSocket sock, plNetAddress* localAddr,
     }
 }
 
-static bool SocketInitConnect(ConnectOperation* op)
+static bool SocketInitConnect(ConnectOperation& op)
 {
     // This steals ownership of op->fSock
     auto sock = std::make_unique<AsyncSocketStruct>(op);
@@ -283,13 +284,13 @@ static bool SocketInitConnect(ConnectOperation* op)
         LogMsg(kLogError, "Failed to set socket to non-blocking: {}", err.message());
 
     // Send initial data
-    if (!op->fConnectBuffer.empty()) {
-        if (!AsyncSocketSend(sock.get(), op->fConnectBuffer.data(), op->fConnectBuffer.size()))
+    if (!op.fConnectBuffer.empty()) {
+        if (!AsyncSocketSend(sock.get(), op.fConnectBuffer.data(), op.fConnectBuffer.size()))
             return false;
     }
 
-    if (!IS_TEXT_CONNTYPE(op->fConnectionType)
-        && op->fConnectBuffer.size() < sizeof(AsyncSocketConnectPacket))
+    if (!IS_TEXT_CONNTYPE(op.fConnectionType)
+        && op.fConnectBuffer.size() < sizeof(AsyncSocketConnectPacket))
     {
         return false;
     }
@@ -318,7 +319,10 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
     PerfAddCounter(kAsyncPerfSocketConnAttemptsOutCurr, 1);
     PerfAddCounter(kAsyncPerfSocketConnAttemptsOutTotal, 1);
 
-    auto op = new ConnectOperation(s_ioPool->fContext);
+    // Locking the critical section here will not deadlock because `asio::basic_socket::async_connect`
+    // will return immediately. Therefore, the lock in the callback cannot deadlock us.
+    hsLockGuard(s_connectCrit);
+    auto op = s_connectList.emplace(s_connectList.end(), s_ioPool->fContext);
     op->fRemoteAddr = netAddr;
     op->fNotifyProc = std::move(notifyProc);
     op->fParam = param;
@@ -330,8 +334,6 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
         op->fConnectionType = kConnTypeNil;
     }
 
-    hsLockGuard(s_connectCrit);
-
     if (cancelId) {
         // get cancel id; we can avoid checking for zero by always using an odd number
         ASSERT(s_nextConnectCancelId & 1);
@@ -340,26 +342,17 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
         *cancelId = op->fCancelId = (AsyncCancelId)s_nextConnectCancelId;
     }
 
-    s_connectList.emplace_back(op);
-
     tcp::endpoint remoteAddr(asio::ip::address_v4(netAddr.GetHostBytes()),
                              netAddr.GetPort());
     op->fSock.async_connect(remoteAddr, [op](const asio::error_code& connError) {
         // This operation is no longer a candidate for cleanup or cancellation
         // by the time we get a callback from async_connect
-        {
-            hsLockGuard(s_connectCrit);
-            auto iter = std::find(s_connectList.cbegin(), s_connectList.cend(), op);
-            if (iter != s_connectList.cend())
-                s_connectList.erase(iter);
-        }
-
         bool success;
         if (connError) {
             LogMsg(kLogError, "Failed to connect: {}", connError.message());
             success = false;
         } else {
-            success = SocketInitConnect(op);
+            success = SocketInitConnect(*op);
         }
 
         if (!success) {
@@ -371,7 +364,10 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
             op->fNotifyProc(nullptr, kNotifySocketConnectFailed, &failed, nullptr);
         }
 
-        delete op;
+        {
+            hsLockGuard(s_connectCrit);
+            s_connectList.erase(op);
+        }
 
         PerfSubCounter(kAsyncPerfSocketConnAttemptsOutCurr, 1);
     });
@@ -380,12 +376,12 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
 void AsyncSocketConnectCancel(AsyncCancelId cancelId)
 {
     hsLockGuard(s_connectCrit);
-    for (ConnectOperation* op : s_connectList) {
-        if (op->fCancelId != cancelId)
+    for (ConnectOperation& op : s_connectList) {
+        if (op.fCancelId != cancelId)
             continue;
 
         asio::error_code err;
-        op->fSock.cancel(err);   // This will wake up async_connect()
+        op.fSock.cancel(err);   // This will wake up async_connect()
         if (err)
             LogMsg(kLogError, "Failed to cancel socket connect operation: {}", err.message());
     }
