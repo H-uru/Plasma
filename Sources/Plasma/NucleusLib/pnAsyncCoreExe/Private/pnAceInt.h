@@ -60,9 +60,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 // Performance counter functions
-long PerfAddCounter (unsigned id, unsigned n);
-long PerfSubCounter (unsigned id, unsigned n);
-long PerfSetCounter (unsigned id, unsigned n);
+long PerfAddCounter (unsigned id, long n);
+long PerfSubCounter (unsigned id, long n);
+long PerfSetCounter (unsigned id, long n);
 
 
 /*****************************************************************************

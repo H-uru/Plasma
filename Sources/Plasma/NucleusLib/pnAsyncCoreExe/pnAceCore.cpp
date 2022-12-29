@@ -65,19 +65,19 @@ static std::atomic<long> s_perf[kNumAsyncPerfCounters];
 ***/
 
 //============================================================================
-long PerfAddCounter (unsigned id, unsigned n) {
+long PerfAddCounter (unsigned id, long n) {
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id].fetch_add(n);
 }
 
 //============================================================================
-long PerfSubCounter (unsigned id, unsigned n) {
+long PerfSubCounter (unsigned id, long n) {
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id].fetch_sub(n);
 }
 
 //============================================================================
-long PerfSetCounter (unsigned id, unsigned n) {
+long PerfSetCounter (unsigned id, long n) {
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id].exchange(n);
 }

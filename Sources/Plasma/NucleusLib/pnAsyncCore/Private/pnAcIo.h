@@ -132,15 +132,15 @@ struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
 
 struct AsyncNotifySocketRead : AsyncNotifySocket {
     uint8_t *       buffer;
-    unsigned        bytes;
-    unsigned        bytesProcessed;
+    size_t          bytes;
+    size_t          bytesProcessed;
 
     AsyncNotifySocketRead() : buffer(), bytes(), bytesProcessed() { }
 };
 
 
 struct AsyncNotifySocketWrite : AsyncNotifySocketRead {
-    unsigned        bytesCommitted;
+    size_t          bytesCommitted;
     
     AsyncNotifySocketWrite() : AsyncNotifySocketRead(), bytesCommitted() { }
 };
@@ -223,7 +223,7 @@ void AsyncSocketDelete (AsyncSocket sock);
 bool AsyncSocketSend (
     AsyncSocket             sock,
     const void *            data,
-    unsigned                bytes
+    size_t                  bytes
 );
 
 void AsyncSocketEnableNagling (

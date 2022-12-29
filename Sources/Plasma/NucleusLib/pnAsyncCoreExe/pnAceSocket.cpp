@@ -53,7 +53,7 @@ static constexpr unsigned   kBacklogInitMs      = 3*60*1000;
 // destroy a connection if it has a backlog "problem"
 static constexpr unsigned   kBacklogFailMs      = 2*60*1000;
 
-static constexpr unsigned int   kMinBacklogBytes    = 4 * 1024;
+static constexpr size_t     kMinBacklogBytes    = 4 * 1024;
 
 struct AsyncIoPool
 {
@@ -112,7 +112,7 @@ struct ConnectOperation
 
 struct WriteOperation
 {
-    unsigned int            fAllocSize;
+    size_t                  fAllocSize;
     AsyncNotifySocketWrite  fNotify;
     unsigned                queueTimeMs;
 
@@ -419,7 +419,7 @@ void AsyncSocketDisconnect(AsyncSocket conn, bool hardClose)
     conn->closeTimeMs |= 1;
 }
 
-static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned bytes)
+static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t bytes)
 {
     hsLockGuard(s_connectCrit);
     
@@ -450,7 +450,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
     // If the last buffer still has space available then add data to it
     if (!conn->fWriteOps.empty()) {
         WriteOperation* op = conn->fWriteOps.back();
-        unsigned bytesLeft = std::min(op->fAllocSize - op->fNotify.bytes, bytes);
+        size_t bytesLeft = std::min(op->fAllocSize - op->fNotify.bytes, bytes);
         if (bytesLeft) {
             PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytesLeft);
             memcpy(op->fNotify.buffer + op->fNotify.bytes, data, bytesLeft);
@@ -462,7 +462,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
 
     if (bytes) {
         // Allocate storage alongside the operation structure itself
-        unsigned bytesAlloc = std::max(bytes, kMinBacklogBytes);
+        size_t bytesAlloc = std::max(bytes, kMinBacklogBytes);
         auto membuf = new uint8_t[sizeof(WriteOperation) + bytesAlloc];
         WriteOperation* op = new (membuf) WriteOperation;
         conn->fWriteOps.emplace_back(op);
@@ -506,7 +506,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, unsigned b
     return true;
 }
 
-bool AsyncSocketSend(AsyncSocket conn, const void* data, unsigned bytes)
+bool AsyncSocketSend(AsyncSocket conn, const void* data, size_t bytes)
 {
     ASSERT(conn);
     ASSERT(data);
