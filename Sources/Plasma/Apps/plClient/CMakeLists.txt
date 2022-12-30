@@ -116,6 +116,10 @@ elseif(APPLE)
         Mac-Cocoa/PLSLoginWindowController.xib
         Mac-Cocoa/PLSPatcherWindowController.xib
     )
+elseif(UNIX AND NOT APPLE)
+    list(APPEND plClient_SOURCES
+        linux/main.cpp
+    )
 else()
     list(APPEND plClient_SOURCES
         main.cpp
@@ -244,6 +248,16 @@ target_link_libraries(
         $<$<PLATFORM_ID:Darwin>:${LibArchive_LIBRARIES}>
 )
 target_include_directories(plClient PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+
+if(UNIX AND NOT APPLE)
+    target_link_libraries(
+        plClient
+        PRIVATE
+            xcb
+            xcb-xfixes
+            X11
+    )
+endif()
 
 if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
