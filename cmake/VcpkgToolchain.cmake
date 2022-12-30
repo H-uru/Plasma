@@ -22,6 +22,12 @@ if(NOT USE_VCPKG)
     return()
 endif()
 
+include(SubmoduleUtils)
+plasma_init_git_submodule("vcpkg" RESULT has_vcpkg_module)
+if(NOT has_vcpkg_module)
+    return()
+endif()
+
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "" FORCE)
 
 # Binarycache can only be used on Windows or if mono is available.
