@@ -74,19 +74,20 @@ public:
 
 protected:
     // Global clamp on shadow map size and stuff
-    static uint32_t                   fGlobalMaxSize;
-    static float                 fGlobalMaxDist;
-    static float                 fGlobalVisParm;
+    static uint32_t             fGlobalMaxSize;
+    static float                fGlobalMaxDist;
+    static float                fGlobalVisParm;
+    static float                fGlobalMaxBlur;
 
     // Constant parameter(s) for this master.
-    float                        fAttenDist;
-    float                        fMaxDist;
-    float                        fMinDist;
+    float                       fAttenDist;
+    float                       fMaxDist;
+    float                       fMinDist;
 
-    uint32_t                          fMaxSize;
-    uint32_t                          fMinSize;
+    uint32_t                    fMaxSize;
+    uint32_t                    fMinSize;
 
-    float                        fPower;
+    float                       fPower;
 
     // Temp data used for one frame and recycled.
     hsPoolVector<std::unique_ptr<plShadowSlave>> fSlavePool;
@@ -166,6 +167,9 @@ public:
 
     static void SetGlobalShadowQuality(float s);
     static float GetGlobalShadowQuality() { return fGlobalVisParm; }
+
+    static void SetGlobalMaxBlur(float s) { fGlobalMaxBlur = s; }
+    static float GetGlobalMaxBlur() { return fGlobalMaxBlur; }
 };
 
 

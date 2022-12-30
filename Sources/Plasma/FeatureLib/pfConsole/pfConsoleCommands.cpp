@@ -1240,10 +1240,12 @@ PF_CONSOLE_CMD( Graphics_Shadow,
                "...", 
                "Max shadowmap blur size." )
 {
-    extern float blurScale;
-    if( numParams > 0 )
-    {
-        blurScale = (float)atof( params[ 0 ] );
+    float blurScale;
+    if (numParams > 0) {
+        blurScale = strtof(params[0], nullptr);
+        plShadowMaster::SetGlobalMaxBlur(blurScale);
+    } else {
+        blurScale = plShadowMaster::GetGlobalMaxBlur();
     }
     pfConsolePrintF(PrintString, "Max shadowmap Blur {f}", blurScale);
 }
