@@ -1089,7 +1089,7 @@ PF_CONSOLE_CMD( Graphics, BumpW, "", "Set bump mapping method to cheapest availa
     pfConsole::GetPipeline()->SetDebugFlag(plPipeDbg::kFlagBumpW, true);
 }
 
-
+#ifdef PLASMA_PIPELINE_DX
 PF_CONSOLE_CMD( Graphics, AllowWBuffering, "", "Enables the use of w-buffering\n(w-buffering is disabled by default)." )
 {
     PF_SANITY_CHECK(pfConsole::GetPipeline() == nullptr, "This command MUST be used in an .ini file (before pipeline initialization)");
@@ -1111,6 +1111,7 @@ PF_CONSOLE_CMD( Graphics, ForceGeForce2Quality, "", "Forces higher-level hardwar
     fDbgSetupInitFlags |= 0x00000004;
     PrintString( "Hardware caps forced down to GeForce 2 level." );
 }
+#endif // PLASMA_PIPELINE_DX
 
 #endif // LIMIT_CONSOLE_COMMANDS
 
