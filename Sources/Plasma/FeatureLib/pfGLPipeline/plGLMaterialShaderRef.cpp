@@ -286,14 +286,14 @@ void plGLMaterialShaderRef::SetupTextureRefs()
             continue;
         }
 
+        fPipeline->CheckTextureRef(layer);
+
         plGLTextureRef* texRef = static_cast<plGLTextureRef*>(img->GetDeviceRef());
 
         if (!texRef->fRef) {
             layer = fPipeline->IPopOverAllLayer(layer);
             continue;
         }
-
-        fPipeline->CheckTextureRef(layer);
 
         LOG_GL_ERROR_CHECK("PRE-Active Texture failed")
 
