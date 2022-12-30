@@ -3,20 +3,17 @@ include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
 include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
 include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
+if(PLASMA_BUILD_CLIENT)
+    add_subdirectory(plClient)
+endif()
+
 if(WIN32)
     if(PLASMA_BUILD_CLIENT)
-        add_subdirectory(plClient)
         add_subdirectory(plCrashHandler)
     endif()
 
     if(PLASMA_BUILD_LAUNCHER)
         add_subdirectory(plUruLauncher)
-    endif()
-endif()
-
-if(APPLE)
-    if(PLASMA_BUILD_CLIENT)
-        add_subdirectory(plClient)
     endif()
 endif()
 
