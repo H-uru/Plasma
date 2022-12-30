@@ -3963,10 +3963,10 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             
             struct plMetalFragmentShaderDescription passDescription;
             memset(&passDescription, 0, sizeof(passDescription));
-            passDescription.Populate(mat->GetLayer(0), 2);
+            passDescription.Populate(mat->GetLayer(0), 0);
             passDescription.numLayers = fCurrNumLayers = 3;
             if (mat->GetNumLayers()>1) {
-                passDescription.Populate(mat->GetLayer(1), 2);
+                passDescription.Populate(mat->GetLayer(1), 1);
             }
             
             plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalRenderShadowPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();

@@ -694,13 +694,13 @@ fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
     //only possible alpha sources are layers 0 or 1
     if(alphaSrc == 0 && passCount > 0) {
         
-        half4 layerColor = layers.sampleLayer(0, in.vtxColor,sourceTypes[2], in.texCoord3);
+        half4 layerColor = layers.sampleLayer(0, in.vtxColor,sourceTypes[0], in.texCoord3);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;
     } else if(alphaSrc == 1 && passCount > 1) {
         
-        half4 layerColor = layers.sampleLayer(1, in.vtxColor, sourceTypes[2], in.texCoord3);
+        half4 layerColor = layers.sampleLayer(1, in.vtxColor, sourceTypes[1], in.texCoord3);
         
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;
