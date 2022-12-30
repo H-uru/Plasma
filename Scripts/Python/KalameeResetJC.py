@@ -45,42 +45,34 @@ from PlasmaTypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 import xRandom
-import xEnum
 from xPsnlVaultSDL import *
+
 Activator = ptAttribActivator(1, 'Activator: JC Reset Clickable')
 
 class KalameeResetJC(ptResponder):
     __module__ = __name__
-    __module__ = __name__
-    
+
     def __init__(self):
         ptResponder.__init__(self)
         self.id = 22100002
         self.version = 1
         PtDebugPrint('KalameeResetJC: initialised successfully!')
 
-    
     def OnFirstUpdate(self):
         pass
 
-    
     def OnServerInitComplete(self):
         pass
 
-    
     def OnNotify(self, state, id, events):
         if not state:
             return None
-        
         if id == Activator.id:
             self.ResetAgeJourneyCloth()
-        
 
-    
     def OnSDLNotify(self, VARname, SDLname, playerID, tag):
         pass
 
-    
     def ResetAgeJourneyCloth(self):
         ageChronNode = None
         ageName = PtGetAgeName()
@@ -93,12 +85,10 @@ class KalameeResetJC(ptResponder):
             if ageChild.chronicleGetName() == ageName:
                 ageChronNode = ageChild
                 break
-            
-        
+
         if type(ageChronNode) != type(None):
             PtDebugPrint('KalameeResetJC: resetting JourneyClothProgress')
             ageChronNode.chronicleSetValue('')
             ageChronNode.save()
         else:
             PtDebugPrint('KalameeResetJC: unable to find JourneyClothProgress for age!')
-
