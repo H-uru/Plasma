@@ -778,6 +778,7 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
 
     LOG_GL_ERROR_CHECK("PRE Render failed");
 
+    hsRefCnt_SafeAssign(fCurrMaterial, material);
     mRef->SetupTextureRefs();
 
     /* Vertex Buffer stuff */
@@ -837,7 +838,8 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
         if (mRef->uPassNumber != -1)
             glUniform1i(mRef->uPassNumber, pass);
 
-        plLayerInterface* lay = material->GetLayer(mRef->GetPassIndex(pass));
+        fCurrLayerIdx = mRef->GetPassIndex(pass);
+        plLayerInterface* lay = material->GetLayer(fCurrLayerIdx);
 
         ICalcLighting(mRef, lay, &span);
 
@@ -1055,7 +1057,7 @@ void plGLPipeline::IHandleBlendMode(hsGMatState flags)
 
             default:
                 {
-                    hsAssert(false, "Too many blend modes specified in material");
+                    hsAssert(false, ST::format("Too many blend modes specified in material {}", fCurrMaterial->GetKeyName()).c_str());
 
                     plLayer* lay = plLayer::ConvertNoRef(fCurrMaterial->GetLayer(fCurrLayerIdx)->BottomOfStack());
                     if (lay) {
