@@ -296,7 +296,13 @@ class xLinkingBookGUIPopup(ptModifier):
                                 PtSetShareAgeInstanceGuid(pelletCaveGUID)
                             ClosedBookToShare = 1
                             self.HideBook()
-
+                        elif event[2] == xLinkingBookDefs.kShareBookDeleteID:
+                            ageName = self.IGetAgeFilename()
+                            PtDebugPrint("xLinkingBookGUIPopup:Book: hit delete bookmark for age '%s'" % (ageName))
+                            if ageName == "Neighborhood":
+                                PtYesNoDialog(self.key, PtGetLocalizedString("Personal.Bookshelf.DeleteNeighborhoodBook"))
+                            else:
+                                PtYesNoDialog(self.key, PtGetLocalizedString("Personal.Bookshelf.DeleteBook"))
                         elif event[2] >= xLinkingBookDefs.kFirstLinkPanelID or event[2] == xLinkingBookDefs.kBookMarkID:
                             PtDebugPrint("xLinkingBookGUIPopup:Book: hit linking panel %s" % (event[2]))
 
@@ -409,6 +415,48 @@ class xLinkingBookGUIPopup(ptModifier):
                     elif event[1] == PtBookEventTypes.kNotifyCheckUnchecked:
                         PtDebugPrint("xLinkingBookGUIPopup:Book: NotifyCheckUncheck",level=kDebugDumpLevel)
                         pass
+                elif event[0] == kVariableEvent:
+                    if event[1] == "YesNo" and event[3] == 1:
+                        ageName = self.IGetAgeFilename()
+                        vault = ptVault()
+                        ageStruct = ptAgeInfoStruct()
+                        ageStruct.setAgeFilename(ageName)
+                        link = vault.getOwnedAgeLink(ageStruct)
+
+                        if link is not None:
+                            PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tfound Owned link", ageName)                            
+                            if ageName == "Ahnonay" or ageName == "AhnonayCathedral":
+                                ahnonayAgeStruct = ptAgeInfoStruct()
+                                ahnonayAgeStruct.setAgeFilename("Personal")
+
+                                ageLinkNode = vault.getOwnedAgeLink(ahnonayAgeStruct)
+                                if ageLinkNode:
+                                    ageInfoNode = ageLinkNode.getAgeInfo()
+                                    ageInfoChildren = ageInfoNode.getChildNodeRefList()
+                                    for ageInfoChildRef in ageInfoChildren:
+                                        ageInfoChild = ageInfoChildRef.getChild()
+                                        folder = ageInfoChild.upcastToFolderNode()
+                                        if folder and folder.folderGetName() == "AgeData":
+                                            ageDataFolder = folder
+                                            ageDataChildren = folder.getChildNodeRefList()
+                                            for ageDataChildRef in ageDataChildren:
+                                                ageDataChild = ageDataChildRef.getChild()
+                                                chron = ageDataChild.upcastToChronicleNode()
+                                                if chron and chron.getName() == "AhnonayVolatile":
+                                                    if ( vault.inMyPersonalAge() ):
+                                                        chron.setValue("1")
+                                            break
+                                if ageName == "AhnonayCathedral":
+                                    PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tSet Age to Volatile", ageName)
+                                    link.setVolatile(True)
+                                    link.save()
+                                
+                            else:
+                                PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tSet Age to Volatile", ageName)
+                                link.setVolatile(True)
+                                link.save()
+                        else:
+                            PtDebugPrint("xLinkingBookGUIPopup:Book:\tunable to find Owned link", ageName)
 
 
     def IShowBookNoTreasure(self):

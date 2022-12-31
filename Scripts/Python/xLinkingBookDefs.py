@@ -131,9 +131,12 @@ SCBookMark = '<img src="xBookSaveClothBookmark*1#0.hsm" pos=120,0 resize=yes ble
 #BookMark = '<img src="xLinkPanelBlackVoid*1#0.hsm" align=center blend=alpha link=%d>' % kBookMarkID
 
 kShareBookLinkID = 1
+kShareBookDeleteID = 2
 NoShare = '<pb>'
 ShareHolder = '%s<pb>'
-ShareBook = '<img src="xBookSharePage512*1#0.hsm" pos=0,0 link=%d>' % kShareBookLinkID
+ShareBook = '<img src="xBookSharePage512*1#0.hsm" pos=0,0 blend=alpha><img src="xBookShareSymbolOnly*1#0.hsm" pos=128,128 blend=alpha link=%d>' % kShareBookLinkID
+ShareBookDelete = '<img src="xBookmarkDniZero*1#0.hsm" pos=20,0 blend=alpha link=%d><pb>' % kShareBookDeleteID
+ShareBookDelete2 = '<img src="xBookmarkDniZero2*1#0.hsm" pos=20,0 blend=alpha link=%d><pb>' % kShareBookDeleteID
 BahroShare = '<img src="xBahroYeeshaShare*1#0.hsm" pos=0,0 blend=alpha link=%d>' % kShareBookLinkID
 BahroNoShare = ''
 
@@ -269,8 +272,8 @@ else:
         "ChisoPreniv":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
         "ChisoPrenivNote":      ( 0, 1.0, 1.0, FanAgeStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
         "Serene":               ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelserene' + LinkEnd ),
-        "Tiam":                 ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xlinkpaneltiam' + LinkEnd ),
-        "Elonin":               ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xlinkpanelelonin' + LinkEnd ),
+        "Tiam":                 ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + DRCStampHolder + ShareBookDelete2 + LinkStart + 'xlinkpaneltiam' + LinkEnd ),
+        "Elonin":               ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + DRCStampHolder + ShareBookDelete2 + LinkStart + 'xlinkpanelelonin' + LinkEnd ),
         "EderNaybree":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpaneledernaybree' + LinkEnd ),
         "FahetsHighgarden":     ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelhighgarden' + LinkEnd ),
 }
