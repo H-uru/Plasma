@@ -61,13 +61,13 @@ ST::string pfApplePasswordStore::GetPassword(const ST::string& username)
     CFAutorelease(accountName);
     CFAutorelease(serviceName);
     
-    const void *keys[] = { kSecClass, kSecAttrAccount, kSecAttrService, kSecReturnData };
-    const void *values[] = { kSecClassGenericPassword, accountName, serviceName, kCFBooleanTrue };
+    const void* keys[] = { kSecClass, kSecAttrAccount, kSecAttrService, kSecReturnData };
+    const void* values[] = { kSecClassGenericPassword, accountName, serviceName, kCFBooleanTrue };
     
     CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 4, nullptr, nullptr);
     CFDataRef result;
 
-    if (SecItemCopyMatching(query, (CFTypeRef *) &result) != errSecSuccess)
+    if (SecItemCopyMatching(query, (CFTypeRef*)&result) != errSecSuccess)
     {
         return ST::string();
     }
@@ -89,8 +89,8 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
     CFAutorelease(accountName);
     CFAutorelease(serviceName);
     
-    const void *keys[] = { kSecClass, kSecAttrService, kSecReturnData };
-    const void *values[] = { kSecClassGenericPassword, serviceName, kCFBooleanTrue };
+    const void* keys[] = { kSecClass, kSecAttrService, kSecReturnData };
+    const void* values[] = { kSecClassGenericPassword, serviceName, kCFBooleanTrue };
     
     CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 3, nullptr, nullptr);
     SecItemAdd(query, nullptr);
