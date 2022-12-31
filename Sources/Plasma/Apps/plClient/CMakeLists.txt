@@ -271,6 +271,7 @@ if(UNIX AND NOT APPLE)
         PRIVATE
             xcb
             xcb-xfixes
+            xcb-keysyms
             X11
     )
 endif()
