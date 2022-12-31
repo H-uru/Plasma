@@ -123,9 +123,7 @@ class clftYeeshaPage08(ptModifier):
         global isOpen
         
         if id == actClickableBook.id and state and PtWasLocallyNotified(self.key):
-            #if not PtIsDialogLoaded(DialogName):
-            #    PtLoadDialog(DialogName,self.key)
-
+            PtLoadDialog(DialogName,self.key)
             self.SetStdGUIVisibility(0)
             PtShowDialog(DialogName)
             RespOpen.run(self.key)
