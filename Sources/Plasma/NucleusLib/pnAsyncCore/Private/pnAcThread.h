@@ -83,7 +83,6 @@ struct AsyncThreadRef {
 // "accidentally" equal the IO_TIME_INFINITE value, as it only
 // happens for one millisecond every 49 days.
 struct AsyncThread {
-    LINK(AsyncThread)                    link;
     std::function<void()>                proc;
     std::thread                          handle;
     unsigned                             workTimeMs;
