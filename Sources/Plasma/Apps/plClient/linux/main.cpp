@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <termios.h>
 #include <unistd.h>
 #include <xcb/xcb.h>
+#include <xcb/xcb_keysyms.h>
 #include <xcb/xfixes.h>
 #include <xcb/xproto.h>
 #include <X11/Xlib-xcb.h>
@@ -84,6 +85,7 @@ extern bool gSDLLocal;
 
 static plClientLoader gClient;
 static xcb_connection_t* gXConn;
+static xcb_key_symbols_t* keysyms;
 static pcSmallRect gWindowSize;
 static hsSemaphore statusFlag;
 
@@ -338,6 +340,9 @@ static bool XInit(xcb_connection_t* connection)
 {
     gWindowSize.Set(0, 0, 800, 600);
 
+    /* Get the X11 key mappings */
+    keysyms = xcb_key_symbols_alloc(connection);
+
     /* Get the first screen */
     const xcb_setup_t* setup = xcb_get_setup(connection);
     xcb_screen_iterator_t iter = xcb_setup_roots_iterator(setup);
@@ -433,7 +438,15 @@ static void PumpMessageQueueProc()
                 if (down)
                     gClient->SetQuitIntro(true);
 
-                gClient->GetInputManager()->HandleKeyEvent(key, down, false);
+                wchar_t c = 0;
+                xcb_keysym_t sym = xcb_key_press_lookup_keysym(keysyms, kbe, (kbe->state & XCB_MOD_MASK_SHIFT));
+
+                gClient->GetInputManager()->HandleKeyEvent(key, down, false, c);
+
+                if (down && !xcb_is_cursor_key(sym) && !xcb_is_modifier_key(sym) && !xcb_is_function_key(sym) && !std::iscntrl((wchar_t)sym)) {
+                    c = wchar_t(sym);
+                    gClient->GetInputManager()->HandleKeyEvent(key, down, false, c);
+                }
             }
             break;
 
@@ -502,6 +515,7 @@ static void PumpMessageQueueProc()
                     break;
                 }
 
+                gClient->SetQuitIntro(true);
                 gClient->GetInputManager()->MsgReceive(pXMsg);
                 gClient->GetInputManager()->MsgReceive(pYMsg);
                 gClient->GetInputManager()->MsgReceive(pBMsg);
