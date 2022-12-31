@@ -55,8 +55,11 @@ ST::string pfApplePasswordStore::GetPassword(const ST::string& username)
 {
     ST::string service = GetServerDisplayName();
     
-    CFStringRef accountName = CFStringCreateWithCString(nullptr, username.c_str(), kCFStringEncodingUTF8);
-    CFStringRef serviceName = CFStringCreateWithCString(nullptr, service.c_str(), kCFStringEncodingUTF8);
+    CFStringRef accountName = CFStringCreateWithCStringNoCopy(nullptr, username.c_str(), kCFStringEncodingUTF8, nullptr);
+    CFStringRef serviceName = CFStringCreateWithCStringNoCopy(nullptr, service.c_str(), kCFStringEncodingUTF8, nullptr);
+    
+    CFAutorelease(accountName);
+    CFAutorelease(serviceName);
     
     const void *keys[] = { kSecClass, kSecAttrAccount, kSecAttrService, kSecReturnData };
     const void *values[] = { kSecClassGenericPassword, accountName, serviceName, kCFBooleanTrue };
@@ -80,8 +83,11 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
 {
     ST::string service = GetServerDisplayName();
     
-    CFStringRef accountName = CFStringCreateWithCString(nullptr, username.c_str(), kCFStringEncodingUTF8);
-    CFStringRef serviceName = CFStringCreateWithCString(nullptr, service.c_str(), kCFStringEncodingUTF8);
+    CFStringRef accountName = CFStringCreateWithCStringNoCopy(nullptr, username.c_str(), kCFStringEncodingUTF8, nullptr);
+    CFStringRef serviceName = CFStringCreateWithCStringNoCopy(nullptr, service.c_str(), kCFStringEncodingUTF8, nullptr);
+    
+    CFAutorelease(accountName);
+    CFAutorelease(serviceName);
     
     const void *keys[] = { kSecClass, kSecAttrService, kSecReturnData };
     const void *values[] = { kSecClassGenericPassword, serviceName, kCFBooleanTrue };
