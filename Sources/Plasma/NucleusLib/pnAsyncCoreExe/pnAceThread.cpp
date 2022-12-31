@@ -89,7 +89,7 @@ AsyncThreadRef AsyncThreadCreate (
                                ) {
     AsyncThreadRef ref;
     ref.impl                  = std::make_shared<AsyncThread>();
-    ref.impl->proc            = threadProc;
+    ref.impl->proc            = std::move(threadProc);
     ref.impl->workTimeMs      = kAsyncTimeInfinite;
     
     ref.impl->completion.lock();
