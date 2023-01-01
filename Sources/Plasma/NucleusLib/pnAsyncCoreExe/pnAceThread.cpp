@@ -65,7 +65,7 @@ static void CreateThreadProc(AsyncThreadRef thread)
     thread.impl->proc();
 
     PerfSubCounter(kAsyncPerfThreadsCurr, 1);
-    
+
     thread.impl->completion.unlock();
 }
 
@@ -76,24 +76,24 @@ static void CreateThreadProc(AsyncThreadRef thread)
 ***/
 
 //============================================================================
-void ThreadDestroy (unsigned exitThreadWaitMs) {
-
+void ThreadDestroy(unsigned exitThreadWaitMs)
+{
     unsigned bailAt = TimeGetMs() + exitThreadWaitMs;
     while (AsyncPerfGetCounter(kAsyncPerfThreadsCurr) && signed(bailAt - TimeGetMs()) > 0)
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 //============================================================================
-AsyncThreadRef AsyncThreadCreate (
-    std::function<void()>    threadProc
-                               ) {
+AsyncThreadRef AsyncThreadCreate(
+    std::function<void()> threadProc)
+{
     AsyncThreadRef ref;
-    ref.impl                  = std::make_shared<AsyncThread>();
-    ref.impl->proc            = std::move(threadProc);
-    ref.impl->workTimeMs      = kAsyncTimeInfinite;
-    
+    ref.impl = std::make_shared<AsyncThread>();
+    ref.impl->proc = std::move(threadProc);
+    ref.impl->workTimeMs = kAsyncTimeInfinite;
+
     ref.impl->completion.lock();
-    
+
     ref.impl->handle = std::thread(&CreateThreadProc, ref);
     return ref;
 }
@@ -111,11 +111,13 @@ void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs)
     }
 }
 
-std::thread& AsyncThreadRef::thread() const {
+std::thread& AsyncThreadRef::thread() const
+{
     return impl->handle;
 }
 
-bool AsyncThreadRef::joinable() const {
+bool AsyncThreadRef::joinable() const
+{
     if (!impl) {
         return false;
     } else {

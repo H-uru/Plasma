@@ -44,14 +44,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct AsyncTimer
 {
-    asio::steady_timer  fTimer;
-    FAsyncTimerProc     fTimerProc;
-    FAsyncTimerProc     fDestroyProc;
-    void*               fParam;
+    asio::steady_timer fTimer;
+    FAsyncTimerProc    fTimerProc;
+    FAsyncTimerProc    fDestroyProc;
+    void*              fParam;
 
     AsyncTimer(asio::io_context& context, FAsyncTimerProc&& timerProc, void* param)
-        : fTimer(context), fTimerProc(std::move(timerProc)), fParam(param)
-    { }
+        : fTimer(context),
+          fTimerProc(std::move(timerProc)),
+          fParam(param)
+    {
+    }
 
     void Start(unsigned callbackMs);
 };
@@ -60,10 +63,10 @@ static std::recursive_mutex s_timerCrit;
 
 struct AsyncTimerManager
 {
-    asio::io_context fContext;
+    asio::io_context                                           fContext;
     asio::executor_work_guard<asio::io_context::executor_type> fWorkGuard;
-    std::list<AsyncTimer> fTimers;
-    AsyncThreadRef fTimerThread;
+    std::list<AsyncTimer>                                      fTimers;
+    AsyncThreadRef                                             fTimerThread;
 
     AsyncTimerManager() : fWorkGuard(fContext.get_executor())
     {
@@ -72,7 +75,7 @@ struct AsyncTimerManager
         });
     }
 
-    AsyncTimer* AddTimer(FAsyncTimerProc &&timerProc, void* param)
+    AsyncTimer* AddTimer(FAsyncTimerProc&& timerProc, void* param)
     {
         return &fTimers.emplace_back(fContext, std::move(timerProc), param);
     }
@@ -120,7 +123,7 @@ void AsyncTimer::Start(unsigned callbackMs)
         return;
 
     fTimer.expires_after(std::chrono::milliseconds(callbackMs));
-    fTimer.async_wait([this](const asio::error_code &err) {
+    fTimer.async_wait([this](const asio::error_code& err) {
         if (err == asio::error::operation_aborted)
             return;
 

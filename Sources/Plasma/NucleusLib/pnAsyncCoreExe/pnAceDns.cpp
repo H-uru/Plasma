@@ -46,12 +46,13 @@ using tcp = asio::ip::tcp;
 
 struct DnsResolver
 {
-    asio::io_context fContext;
+    asio::io_context                                           fContext;
     asio::executor_work_guard<asio::io_context::executor_type> fWorkGuard;
-    tcp::resolver fResolver;
-    AsyncThreadRef fLookupThread;
+    tcp::resolver                                              fResolver;
+    AsyncThreadRef                                             fLookupThread;
 
-    DnsResolver() : fResolver(fContext), fWorkGuard(fContext.get_executor())
+    DnsResolver() : fResolver(fContext),
+                    fWorkGuard(fContext.get_executor())
     {
         // Start the resolver thread
         fLookupThread = AsyncThreadCreate([this] {
@@ -69,13 +70,13 @@ struct DnsResolver
 
 struct DnsResolveData
 {
-    ST::string          fName;
-    FAsyncLookupProc    fLookupProc;
-    void*               fParam;
+    ST::string       fName;
+    FAsyncLookupProc fLookupProc;
+    void*            fParam;
 };
 
-static std::recursive_mutex     s_critsect;
-static DnsResolver*             s_resolver = nullptr;
+static std::recursive_mutex s_critsect;
+static DnsResolver*         s_resolver = nullptr;
 
 void DnsDestroy(unsigned exitThreadWaitMs)
 {
@@ -86,9 +87,9 @@ void DnsDestroy(unsigned exitThreadWaitMs)
     }
 }
 
-static void AddressResolved(const asio::error_code& err,
+static void AddressResolved(const asio::error_code&            err,
                             const tcp::resolver::results_type& results,
-                            const DnsResolveData& data)
+                            const DnsResolveData&              data)
 {
     if (err || results.empty()) {
         if (err)
@@ -116,7 +117,7 @@ static void AddressResolved(const asio::error_code& err,
     PerfSubCounter(kAsyncPerfNameLookupAttemptsCurr, 1);
 }
 
-void AsyncAddressLookupName(FAsyncLookupProc lookupProc,
+void AsyncAddressLookupName(FAsyncLookupProc  lookupProc,
                             const ST::string& name, unsigned port, void* param)
 {
     ASSERT(lookupProc);
@@ -125,8 +126,8 @@ void AsyncAddressLookupName(FAsyncLookupProc lookupProc,
     PerfAddCounter(kAsyncPerfNameLookupAttemptsTotal, 1);
 
     std::string_view hostStr, portStr;
-    char portBuffer[12];
-    ST_ssize_t colon = name.find(':');
+    char             portBuffer[12];
+    ST_ssize_t       colon = name.find(':');
     if (colon >= 0) {
         hostStr = name.view(0, colon);
         portStr = name.view(colon + 1);

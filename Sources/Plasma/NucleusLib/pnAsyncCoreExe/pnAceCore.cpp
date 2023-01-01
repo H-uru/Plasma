@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static std::atomic<long> s_perf[kNumAsyncPerfCounters];
 
-
 /*****************************************************************************
 *
 *   Module exports
@@ -65,23 +64,25 @@ static std::atomic<long> s_perf[kNumAsyncPerfCounters];
 ***/
 
 //============================================================================
-long PerfAddCounter (unsigned id, long n) {
+long PerfAddCounter(unsigned id, long n)
+{
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id].fetch_add(n);
 }
 
 //============================================================================
-long PerfSubCounter (unsigned id, long n) {
+long PerfSubCounter(unsigned id, long n)
+{
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id].fetch_sub(n);
 }
 
 //============================================================================
-long PerfSetCounter (unsigned id, long n) {
+long PerfSetCounter(unsigned id, long n)
+{
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id].exchange(n);
 }
-
 
 /*****************************************************************************
 *
@@ -105,7 +106,8 @@ void AsyncCoreDestroy(unsigned waitMs)
 }
 
 //============================================================================
-long AsyncPerfGetCounter (unsigned id) {
+long AsyncPerfGetCounter(unsigned id)
+{
     static_assert(std::size(s_perf) == kNumAsyncPerfCounters, "Max async counters and array size do not match.");
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id];

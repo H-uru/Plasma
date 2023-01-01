@@ -45,21 +45,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 using tcp = asio::ip::tcp;
 
 // handles 8 CPU computer w/hyperthreading (we use 2 threads per logical CPU)
-static constexpr unsigned int   kMaxWorkerThreads   = 32;
+static constexpr unsigned int kMaxWorkerThreads = 32;
 
 // wait before checking for backlog problems
-static constexpr unsigned   kBacklogInitMs      = 3*60*1000;
+static constexpr unsigned kBacklogInitMs = 3 * 60 * 1000;
 
 // destroy a connection if it has a backlog "problem"
-static constexpr unsigned   kBacklogFailMs      = 2*60*1000;
+static constexpr unsigned kBacklogFailMs = 2 * 60 * 1000;
 
-static constexpr size_t     kMinBacklogBytes    = 4 * 1024;
+static constexpr size_t kMinBacklogBytes = 4 * 1024;
 
 struct AsyncIoPool
 {
-    asio::io_context    fContext;
+    asio::io_context                                           fContext;
     asio::executor_work_guard<asio::io_context::executor_type> fWorkGuard;
-    AsyncThreadRef fThreadHandles[kMaxWorkerThreads];
+    AsyncThreadRef                                             fThreadHandles[kMaxWorkerThreads];
 
     AsyncIoPool() : fWorkGuard(fContext.get_executor())
     {
@@ -166,7 +166,7 @@ void SocketDestroy(unsigned exitThreadWaitMs)
         hsLockGuard(s_connectCrit);
         for (ConnectOperation& op : s_connectList) {
             asio::error_code err;
-            op.fSock.cancel(err);   // This will wake up async_connect()
+            op.fSock.cancel(err);  // This will wake up async_connect()
             if (err)
                 LogMsg(kLogError, "Failed to cancel socket connect operation: {}", err.message());
         }
@@ -183,7 +183,7 @@ static void SocketStartAsyncRead(AsyncSocket sock)
 {
     hsLockGuard(sock->fCritsect);
     uint8_t* start = sock->fBuffer + sock->fBytesLeft;
-    size_t count = sizeof(sock->fBuffer) - sock->fBytesLeft;
+    size_t   count = sizeof(sock->fBuffer) - sock->fBytesLeft;
     sock->fSock.async_read_some(asio::buffer(start, count),
                                 [sock](const asio::error_code& err, size_t bytes) {
         if (err) {
@@ -193,9 +193,9 @@ static void SocketStartAsyncRead(AsyncSocket sock)
                     // sockets can be deleted during the notification callback.
                     // After this call, the application becomes responsible for
                     // calling AsyncSocketDelete at some later point in time.
-                    FAsyncNotifySocketProc notifyProc  = sock->fNotifyProc;
-                    sock->fNotifyProc                = nullptr;
-                    notifyProc((AsyncSocket) sock, kNotifySocketDisconnect, nullptr, &sock->fUserState);
+                    FAsyncNotifySocketProc notifyProc = sock->fNotifyProc;
+                    sock->fNotifyProc = nullptr;
+                    notifyProc((AsyncSocket)sock, kNotifySocketDisconnect, nullptr, &sock->fUserState);
                 }
             } else {
                 LogMsg(kLogError, "Failed to read from socket: {}", err.message());
@@ -212,8 +212,7 @@ static void SocketStartAsyncRead(AsyncSocket sock)
         notifyRead.buffer = sock->fBuffer;
         notifyRead.bytes = sock->fBytesLeft;
 
-        if (!sock->fNotifyProc
-            || !sock->fNotifyProc(sock, kNotifySocketRead, &notifyRead, &sock->fUserState))
+        if (!sock->fNotifyProc || !sock->fNotifyProc(sock, kNotifySocketRead, &notifyRead, &sock->fUserState))
         {
             // No callback, or the callback told us to stop reading
             return;
@@ -223,8 +222,7 @@ static void SocketStartAsyncRead(AsyncSocket sock)
         // remaining bytes down.  Otherwise, clear the buffer.
         sock->fBytesLeft -= notifyRead.bytesProcessed;
         if (sock->fBytesLeft != 0) {
-            if ((sock->fBytesLeft > sizeof(sock->fBuffer))
-                || ((notifyRead.bytesProcessed + sock->fBytesLeft) > sizeof(sock->fBuffer)))
+            if ((sock->fBytesLeft > sizeof(sock->fBuffer)) || ((notifyRead.bytesProcessed + sock->fBytesLeft) > sizeof(sock->fBuffer)))
             {
                 LogMsg(kLogError, "SocketDispatchRead error: {} {} {}",
                        sock->fBytesLeft, notifyRead.bytes, notifyRead.bytesProcessed);
@@ -248,7 +246,7 @@ static void SocketGetAddresses(AsyncSocket sock, plNetAddress* localAddr,
     // because this routine is called before the user has a chance to close it
 
     asio::error_code err;
-    tcp::endpoint localEndpoint = sock->fSock.local_endpoint(err);
+    tcp::endpoint    localEndpoint = sock->fSock.local_endpoint(err);
     if (err) {
         LogMsg(kLogError, "Failed to get local socket endpoint: {}", err.message());
     } else if (localEndpoint.address().is_v4()) {
@@ -275,8 +273,8 @@ static bool SocketInitConnect(ConnectOperation& op)
 {
     // This steals ownership of op->fSock
     auto sock = std::make_unique<AsyncSocketStruct>(op);
-    
-    sock->initTimeMs    = TimeGetMs();
+
+    sock->initTimeMs = TimeGetMs();
 
     asio::error_code err;
     sock->fSock.non_blocking(true, err);
@@ -357,8 +355,8 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
 
         if (!success) {
             AsyncNotifySocketConnect failed;
-            failed.param      = op->fParam;
-            failed.connType   = op->fConnectBuffer[0];
+            failed.param = op->fParam;
+            failed.connType = op->fConnectBuffer[0];
             failed.remoteAddr = op->fRemoteAddr;
             failed.localAddr.Clear();
             op->fNotifyProc(nullptr, kNotifySocketConnectFailed, &failed, nullptr);
@@ -381,7 +379,7 @@ void AsyncSocketConnectCancel(AsyncCancelId cancelId)
             continue;
 
         asio::error_code err;
-        op.fSock.cancel(err);   // This will wake up async_connect()
+        op.fSock.cancel(err);  // This will wake up async_connect()
         if (err)
             LogMsg(kLogError, "Failed to cancel socket connect operation: {}", err.message());
     }
@@ -422,15 +420,13 @@ void AsyncSocketDisconnect(AsyncSocket conn, bool hardClose)
 static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t bytes)
 {
     hsLockGuard(s_connectCrit);
-    
-    // check for data backlog
-    WriteOperation * firstQueuedWrite = conn->fWriteOps.front();
-    if  (firstQueuedWrite) {
-        unsigned currTimeMs = TimeGetMs();
-        if (((long) (currTimeMs - firstQueuedWrite->queueTimeMs) >= (long) kBacklogFailMs)
-            && ((long) (currTimeMs - conn->initTimeMs) >= (long) kBacklogInitMs))
-        {
 
+    // check for data backlog
+    WriteOperation* firstQueuedWrite = conn->fWriteOps.front();
+    if (firstQueuedWrite) {
+        unsigned currTimeMs = TimeGetMs();
+        if (((long)(currTimeMs - firstQueuedWrite->queueTimeMs) >= (long)kBacklogFailMs) && ((long)(currTimeMs - conn->initTimeMs) >= (long)kBacklogInitMs))
+        {
             PerfAddCounter(kAsyncPerfSocketDisconnectBacklog, 1);
 
             if (conn->fConnectionType) {
@@ -439,10 +435,9 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
                     "Backlog, c:{} q:{}, i:{}",
                     conn->fConnectionType,
                     currTimeMs - firstQueuedWrite->queueTimeMs,
-                    currTimeMs - conn->initTimeMs
-                );
+                    currTimeMs - conn->initTimeMs);
             }
-            AsyncSocketDisconnect((AsyncSocket) conn, true);
+            AsyncSocketDisconnect((AsyncSocket)conn, true);
             return false;
         }
     }
@@ -450,26 +445,26 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
     // If the last buffer still has space available then add data to it
     if (!conn->fWriteOps.empty()) {
         WriteOperation* op = conn->fWriteOps.back();
-        size_t bytesLeft = std::min(op->fAllocSize - op->fNotify.bytes, bytes);
+        size_t          bytesLeft = std::min(op->fAllocSize - op->fNotify.bytes, bytes);
         if (bytesLeft) {
             PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytesLeft);
             memcpy(op->fNotify.buffer + op->fNotify.bytes, data, bytesLeft);
             op->fNotify.bytes += bytesLeft;
-            data = (const uint8_t *)data + bytesLeft;
+            data = (const uint8_t*)data + bytesLeft;
             bytes -= bytesLeft;
         }
     }
 
     if (bytes) {
         // Allocate storage alongside the operation structure itself
-        size_t bytesAlloc = std::max(bytes, kMinBacklogBytes);
-        auto membuf = new uint8_t[sizeof(WriteOperation) + bytesAlloc];
+        size_t          bytesAlloc = std::max(bytes, kMinBacklogBytes);
+        auto            membuf = new uint8_t[sizeof(WriteOperation) + bytesAlloc];
         WriteOperation* op = new (membuf) WriteOperation;
         conn->fWriteOps.emplace_back(op);
 
         // TODO: asyncId
         op->fAllocSize = bytesAlloc;
-        op->fNotify.asyncId = /* TODO */nullptr;
+        op->fNotify.asyncId = /* TODO */ nullptr;
         op->fNotify.buffer = membuf + sizeof(WriteOperation);
         op->fNotify.bytes = bytes;
         op->fNotify.bytesProcessed = 0;
@@ -490,11 +485,10 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
     async_write(conn->fSock, allWrites, [conn](const asio::error_code& err, size_t bytes) {
         hsLockGuard(s_connectCrit);
         while (bytes != 0) {
-
             hsAssert(conn->fWriteOps.size() > 0, "buffer mismatch");
             WriteOperation* op = conn->fWriteOps.front();
-            
-            size_t opBytesWritten = std::min(bytes, (size_t) op->fNotify.bytes - op->fNotify.bytesProcessed);
+
+            size_t opBytesWritten = std::min(bytes, (size_t)op->fNotify.bytes - op->fNotify.bytesProcessed);
             op->fNotify.bytesProcessed += opBytesWritten;
             bytes -= opBytesWritten;
             if (op->fNotify.bytes == op->fNotify.bytesProcessed) {
@@ -519,14 +513,14 @@ bool AsyncSocketSend(AsyncSocket conn, const void* data, size_t bytes)
     // write buffer.  Otherwise, we must queue it for an async write below.
     if (conn->fWriteOps.empty()) {
         asio::error_code err;
-        size_t bytesSent = conn->fSock.write_some(asio::buffer(data, bytes), err);
+        size_t           bytesSent = conn->fSock.write_some(asio::buffer(data, bytes), err);
         if (!err) {
             // All data was written, nothing left to do!
             if (bytesSent >= bytes)
                 return true;
 
             // Skip the data we already sent, in order to queue it below
-            data = (const uint8_t *)data + bytesSent;
+            data = (const uint8_t*)data + bytesSent;
             bytes -= bytesSent;
         } else if (err != asio::error::would_block) {
             LogMsg(kLogError, "Failed to write data to socket: {}", err.message());
