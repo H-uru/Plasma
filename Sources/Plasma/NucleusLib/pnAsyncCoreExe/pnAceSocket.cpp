@@ -187,7 +187,9 @@ static void SocketStartAsyncRead(AsyncSocket sock)
     sock->fSock.async_read_some(asio::buffer(start, count),
                                 [sock](const asio::error_code& err, size_t bytes) {
         if (err) {
-            if (err.value() == asio::error::operation_aborted) {
+            bool isEOFError     = (err.category() == asio::error::get_misc_category() && err.value() == asio::error::eof);
+            bool isAbortedError = (err.category() == asio::error::get_system_category() && err.value() == asio::error::operation_aborted);
+            if (isEOFError || isAbortedError) {
                 if (sock->fNotifyProc) {
                     // We have to be extremely careful from this point because
                     // sockets can be deleted during the notification callback.
