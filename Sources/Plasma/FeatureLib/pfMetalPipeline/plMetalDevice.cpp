@@ -683,6 +683,7 @@ void plMetalDevice::CheckIndexBuffer(plMetalDevice::IndexBufferRef *iRef)
 void plMetalDevice::FillIndexBufferRef(plMetalDevice::IndexBufferRef *iRef, plGBufferGroup *owner, uint32_t idx)
 {
     uint32_t startIdx = owner->GetIndexBufferStart(idx);
+    uint32_t fullSize = owner->GetIndexBufferCount(idx) * sizeof(uint16_t);
     uint32_t size = (owner->GetIndexBufferEnd(idx) - startIdx) * sizeof(uint16_t);
 
     if (!size)
@@ -692,14 +693,14 @@ void plMetalDevice::FillIndexBufferRef(plMetalDevice::IndexBufferRef *iRef, plGB
     
     iRef->PrepareForWrite();
     MTL::Buffer* indexBuffer = iRef->GetBuffer();
-    if(!indexBuffer || indexBuffer->length() < size) {
-        indexBuffer = fMetalDevice->newBuffer(size, MTL::ResourceStorageModeManaged);
+    if(!indexBuffer || indexBuffer->length() < fullSize) {
+        indexBuffer = fMetalDevice->newBuffer(fullSize, MTL::ResourceStorageModeManaged);
         iRef->SetBuffer(indexBuffer);
         indexBuffer->release();
     }
     
-    memcpy(indexBuffer->contents(), owner->GetIndexBufferData(idx), size);
-    indexBuffer->didModifyRange(NS::Range(0, size));
+    memcpy(((uint16_t*)indexBuffer->contents()) + startIdx, owner->GetIndexBufferData(idx) + startIdx, size);
+    indexBuffer->didModifyRange(NS::Range(startIdx, size));
 
     iRef->SetDirty(false);
 }

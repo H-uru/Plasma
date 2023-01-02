@@ -68,10 +68,10 @@ typedef struct {
     float4 Tex1_Row0;
     float4 Tex1_Row1;
     float4 Tex1_Row2;
-    float4 LocalToWorld;
     float4 L2WRow0;
     float4 L2WRow1;
     float4 L2WRow2;
+    float4 L2WRow3;
     float4 Lengths;
     float4 WaterLevel;
     float4 DepthFalloff;
@@ -83,8 +83,8 @@ typedef struct {
 
 typedef struct {
     float4 position [[position]];
-    float4 c1;
-    float4 texCoord0;
+    half4 c1;
+    float2 texCoord0;
     float fog;
 } waveRipInOut;
 
@@ -197,8 +197,7 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
     // Calc our filter (see above).
     float4 inColor = float4(in.color) / 255.0f;
     float4 filter = inColor.wwww * uniforms.Lengths;
-    filter = max(filter, uniforms.NumericConsts.xxxx);
-    filter = min(filter, uniforms.NumericConsts.zzzz);
+    filter = clamp(filter, 0.0f, 1.0f);
     
     //mov    r2, r1;
     // r2 == sinDist
@@ -251,15 +250,6 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
     out.position = worldPosition * uniforms.WorldToNDC;
     out.fog = (out.position.w + uniforms.FogSet.x) * uniforms.FogSet.y;
     
-    // Now onto texture coordinate generation.
-    //
-    // First is the usual texture transform
-    out.texCoord0 = float4(
-                           dot(float4(in.texCoord1, 1.0), uniforms.Tex0_Row0),
-                           dot(float4(in.texCoord1, 1.0), uniforms.Tex0_Row1),
-                           uniforms.NumericConsts.zz
-                           );
-    
     // Dyna Stuff
     // Constants
     // c33 = fC1U, fC2U, fC1V, fC2V
@@ -271,38 +261,30 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
     //
     // Initialize r1.zw to 0,1
     
-    float4 r1 = float4(0,0,0,1);
     // Calc r1.x = age, r1.y = atten
     // age = t - birth.
-    r1.x = uniforms.LifeConsts.y - in.position.z;
+    const float age = uniforms.LifeConsts.y - in.texCoord1.z;
     // atten = clamp0_1(age / ramp) * clamp0_1((life-age) / (life-decay));
     // first clamp0_1(age/ramp)
-    r1.y = r1.x - uniforms.RampBias.y;
-    r1.y = min(r1.y, 1.0f);
-    // now clamp0_1((life-age) / (life-decay));
-    r1.z = uniforms.LifeConsts.z - in.position.x;
-    r1.z *= uniforms.LifeConsts.w;
-    r1.z = clamp(r1.z, 0.0f, 1.0f);
-    r1.y *= r1.z;
+    const float atten = clamp(age * uniforms.RampBias.y, 0.0f, 1.0f)
+        * clamp((uniforms.LifeConsts.z - age) * uniforms.LifeConsts.w, 0.0f, 1.0f);
     
     // color is (atten, atten, atten, 1.f)
     // Need to calculate opacity we would have had from vs_WaveFixedFin7.inl
     // Right now that's just modulating by r4.y.
     
-    out.c1 = (depth * uniforms.LifeConsts.x) * r1.yyyw;
+    out.c1 = (depth.y * uniforms.LifeConsts.x) * half4(atten, atten, atten, 1.0h);
     
     // UVW = (inUVW - 0.5) * scale + 0.5
     // where:
     // scale = (fC1U / (age * fC2U + 1.f)), fC1V / (age * fC2U + 1.f), 1.f, 1.f
-    float4 r2 = float4(0,0,0,1);
-    r2.xy = r1.xx * uniforms.TexConsts.yw;
-    r2.xy += 1.0f;
-    r2.xy = (1.0f/r2.xy);
-    r2.xy *= uniforms.TexConsts.xz;
-    r1.xy = in.position.xy - 0.5f;
-    r1.xy *= r2.xy;
-    r1.xy += 0.5f;
-    out.texCoord0 = r1;
+    float2 scale = age * uniforms.TexConsts.yw;
+    scale += 1.0f;
+    scale = (1.0f/scale);
+    scale *= uniforms.TexConsts.xz;
+    out.texCoord0 = in.texCoord1.xy - 0.5f;
+    out.texCoord0 *= scale.xy;
+    out.texCoord0 += 0.5f;
     
     return out;
 }
@@ -312,8 +294,8 @@ fragment half4 ps_WaveRip(waveRipInOut in [[stage_in]],
     constexpr sampler colorSampler = sampler(mip_filter::linear,
                               mag_filter::linear,
                               min_filter::linear,
-                              address::repeat);
+                              address::clamp_to_edge);
     half4 t0 = texture.sample(colorSampler, in.texCoord0.xy);
     
-    return t0 * half4(in.c1);
+    return t0 * in.c1;
 }
