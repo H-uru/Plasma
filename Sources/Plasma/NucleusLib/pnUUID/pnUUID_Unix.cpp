@@ -50,16 +50,41 @@ static_assert(sizeof(plUUID) == sizeof(uuid_t), "plUUID and uuid_t types differ 
 
 struct plUUIDHelper
 {
+    typedef struct _GUID {
+      uint32_t Data1;
+      uint16_t Data2;
+      uint16_t Data3;
+      uint8_t  Data4[8];
+    } GUID;
+    
     static inline void CopyToPlasma( plUUID * dst, const uuid_t & src )
     {
         hsAssert( sizeof(uuid_t)==sizeof(dst->fData), "sizeof(uuid_t)!=sizeof(plUUID)" );
         memcpy( (void*)dst->fData, (const void *)src, sizeof( plUUID ) );
+        
+        /*
+         GUIDs are always internally encoded in little endian,
+         while the uuid_t structure is big endian.
+         */
+        GUID* guid = reinterpret_cast<GUID*>(dst->fData);
+        guid->Data1 = hsSwapEndian32(guid->Data1);
+        guid->Data2 = hsSwapEndian16(guid->Data2);
+        guid->Data3 = hsSwapEndian16(guid->Data3);
     }
 
     static inline void CopyToNative( uuid_t & dst, const plUUID * src )
     {
         hsAssert( sizeof(uuid_t)==sizeof(src->fData), "sizeof(uuid_t)!=sizeof(plUUID)" );
         memcpy( (void*)dst, (const void *)src->fData, sizeof( plUUID ) );
+        
+        /*
+         GUIDs are always internally encoded in little endian,
+         while the uuid_t structure is big endian.
+         */
+        GUID* guid = reinterpret_cast<GUID*>(dst);
+        guid->Data1 = hsSwapEndian32(guid->Data1);
+        guid->Data2 = hsSwapEndian16(guid->Data2);
+        guid->Data3 = hsSwapEndian16(guid->Data3);
     }
 };
 
