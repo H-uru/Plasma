@@ -65,6 +65,8 @@ ST::string pfApplePasswordStore::GetPassword(const ST::string& username)
     const void* values[] = { kSecClassGenericPassword, accountName, serviceName, kCFBooleanTrue };
     
     CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 4, nullptr, nullptr);
+    CFAutorelease(query);
+    
     CFDataRef result;
 
     if (SecItemCopyMatching(query, (CFTypeRef*)&result) != errSecSuccess)
@@ -93,8 +95,10 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
     const void* values[] = { kSecClassGenericPassword, serviceName, kCFBooleanTrue };
     
     CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 3, nullptr, nullptr);
-    SecItemAdd(query, nullptr);
+    CFAutorelease(query);
+    
     OSStatus err = SecItemAdd(query, nullptr);
+    
     if (err == errSecDuplicateItem) {
         // the keychain item already exists, update it
         CFStringRef cfUsername = CFStringCreateWithCString(nullptr, username.c_str(), kCFStringEncodingUTF8);
@@ -115,7 +119,6 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
         err = SecItemUpdate(query, attributes);
         
         CFRelease(attributes);
-        CFRelease(query);
     }
 
     return err == errSecSuccess;
