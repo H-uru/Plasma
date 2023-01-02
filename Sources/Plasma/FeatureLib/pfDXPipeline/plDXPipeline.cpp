@@ -110,6 +110,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plMipmap.h"
 #include "plGLight/plLightInfo.h"
 #include "plGLight/plShadowCaster.h"
+#include "plGLight/plShadowMaster.h"
 #include "plGLight/plShadowSlave.h"
 #include "plMessage/plDeviceRecreateMsg.h"
 #include "plResMgr/plLocalization.h"
@@ -10133,7 +10134,6 @@ const char  *plDXPipeline::IGetDXFormatName( D3DFORMAT format )
 
 
 
-float blurScale = -1.f;
 static  const int kL2NumSamples = 3; // Log2(4)
 
 // IBlurShadowMap //////////////////////////////////////////////////////////////////
@@ -11402,7 +11402,8 @@ bool plDXPipeline::IRenderShadowCaster(plShadowSlave* slave)
     }
 
     // Debug only.
-    if( blurScale >= 0.f )
+    float blurScale = plShadowMaster::GetGlobalMaxBlur();
+    if (blurScale >= 0.f)
         slave->fBlurScale = blurScale;
 
     // If this shadow requests being blurred, do it.

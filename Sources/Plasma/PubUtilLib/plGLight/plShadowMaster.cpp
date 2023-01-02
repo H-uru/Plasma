@@ -66,6 +66,7 @@ uint32_t plShadowMaster::fGlobalMaxSize = 512;
 float plShadowMaster::fGlobalMaxDist = 160.f; // PERSPTEST
 // float plShadowMaster::fGlobalMaxDist = 100000.f; // PERSPTEST
 float plShadowMaster::fGlobalVisParm = 1.f;
+float plShadowMaster::fGlobalMaxBlur = -1.f;
 
 void plShadowMaster::SetGlobalShadowQuality(float s) 
 { 
