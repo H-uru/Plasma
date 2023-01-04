@@ -1165,7 +1165,7 @@ class psnlBookshelf(ptModifier):
             return "Ahnonay"
 
         hoodInfo = self.IGetHoodInfoNode()
-        if hoodInfo and not ageName in kHardcodedInstances.keys():
+        if hoodInfo and not ageName in kHardcodedInstances:
             childAgeFolder = hoodInfo.getChildAgesFolder()
             contents = childAgeFolder.getChildNodeRefList()
             for content in contents:
@@ -1176,7 +1176,7 @@ class psnlBookshelf(ptModifier):
                 
                 info = link.getAgeInfo()
                 if info and info.getAgeFilename() == ageName:
-                    if ageName == "Garrison" or ageName == "city":
+                    if ageName in {"city", "Garrison"}:
                         continue
                     else:
                         # found our link
@@ -1204,8 +1204,7 @@ class psnlBookshelf(ptModifier):
             
             return ageLink
             
-        if ageName in kHardcodedInstances.keys():
-            hardcoded = kHardcodedInstances.get(ageName)
+        if hardcoded := kHardcodedInstances.get(ageName):
             ageInfo = ptAgeInfoStruct()
             ageInfo.setAgeFilename(ageName)
             ageInfo.setAgeInstanceName(ageName)
@@ -1736,7 +1735,7 @@ class psnlBookshelf(ptModifier):
         # If in my personal age, link with kOwnedBook rules.
         #   This will startup a new, private age instance for me.
         if (vault.inMyPersonalAge()):
-            if ageName == "Ahnonay" or ageName == "city" or ageName in CityBookAges.keys() or ageName in kHardcodedInstances.keys():
+            if ageName in {"Ahnonay", "city"} or ageName in CityBookAges or ageName in kHardcodedInstances:
                 als.setLinkingRules( PtLinkingRules.kBasicLink )
             elif IsChildLink:
                 PtDebugPrint("psnlBookshelf.ILink(): using kChildAgeBook rules for link to: ",ageName)
