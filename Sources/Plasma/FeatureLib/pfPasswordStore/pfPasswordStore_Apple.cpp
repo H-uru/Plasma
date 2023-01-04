@@ -54,26 +54,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ST::string pfApplePasswordStore::GetPassword(const ST::string& username)
 {
     ST::string service = GetServerDisplayName();
+    
+    CFStringRef accountName = CFStringCreateWithCStringNoCopy(nullptr, username.c_str(), kCFStringEncodingUTF8, nullptr);
+    CFStringRef serviceName = CFStringCreateWithCStringNoCopy(nullptr, service.c_str(), kCFStringEncodingUTF8, nullptr);
+    
+    CFAutorelease(accountName);
+    CFAutorelease(serviceName);
+    
+    const void* keys[] = { kSecClass, kSecAttrAccount, kSecAttrService, kSecReturnData };
+    const void* values[] = { kSecClassGenericPassword, accountName, serviceName, kCFBooleanTrue };
+    
+    CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 4, nullptr, nullptr);
+    CFAutorelease(query);
+    
+    CFDataRef result;
 
-    void* passwd = nullptr;
-    uint32_t passwd_len = 0;
-
-    if (SecKeychainFindGenericPassword(nullptr,
-                                       service.size(),
-                                       service.c_str(),
-                                       username.size(),
-                                       username.c_str(),
-                                       &passwd_len,
-                                       &passwd,
-                                       nullptr) != errSecSuccess)
+    if (SecItemCopyMatching(query, (CFTypeRef*)&result) != errSecSuccess)
     {
         return ST::string();
     }
-
-    ST::string ret(reinterpret_cast<const char*>(passwd), size_t(passwd_len));
-
-    SecKeychainItemFreeContent(nullptr, passwd);
-
+    
+    ST::string ret(reinterpret_cast<const char*>(CFDataGetBytePtr(result)), size_t(CFDataGetLength(result)));
+    
+    CFRelease(result);
+    
     return ret;
 }
 
@@ -81,14 +85,20 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
 {
     ST::string service = GetServerDisplayName();
     
-    OSStatus err = SecKeychainAddGenericPassword(nullptr,
-                                                service.size(),
-                                                service.c_str(),
-                                                username.size(),
-                                                username.c_str(),
-                                                password.size(),
-                                                password.c_str(),
-                                                nullptr);
+    CFStringRef accountName = CFStringCreateWithCStringNoCopy(nullptr, username.c_str(), kCFStringEncodingUTF8, nullptr);
+    CFStringRef serviceName = CFStringCreateWithCStringNoCopy(nullptr, service.c_str(), kCFStringEncodingUTF8, nullptr);
+    
+    CFAutorelease(accountName);
+    CFAutorelease(serviceName);
+    
+    const void* keys[] = { kSecClass, kSecAttrService, kSecReturnData };
+    const void* values[] = { kSecClassGenericPassword, serviceName, kCFBooleanTrue };
+    
+    CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 3, nullptr, nullptr);
+    CFAutorelease(query);
+    
+    OSStatus err = SecItemAdd(query, nullptr);
+    
     if (err == errSecDuplicateItem) {
         // the keychain item already exists, update it
         CFStringRef cfUsername = CFStringCreateWithCString(nullptr, username.c_str(), kCFStringEncodingUTF8);
@@ -109,7 +119,6 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
         err = SecItemUpdate(query, attributes);
         
         CFRelease(attributes);
-        CFRelease(query);
     }
 
     return err == errSecSuccess;
