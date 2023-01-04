@@ -96,7 +96,7 @@ actBookshelfExit = ptAttribActivator(25, "Actvr: Exit bookshelf")
 # this array defines which age books are on this shelf and where on the shelf they appear
 # to add a book, replace an element with the name of the age, for instance: change Link11 to BillsSuperCoolAge
 # to change where a book appears on the shelf, change it's position in the array
-linkLibrary = ["Neighborhood","Nexus","city","Link03","Link04","Cleft","Garrison","Teledahn","Kadish","Gira","Garden","Negilahn","Dereno","Payiferen","Tetsonot","Ercana","AhnonayCathedral","Ahnonay","Minkata","Jalak","Link21","Link22","Link23","Link24","Link25","Link26","Link27","Link28","Link29","Link30","Link31","Link32","Link33","Link34","Link35","Myst"]
+linkLibrary = ["Neighborhood","Nexus","city","ChisoPreniv","Link04","Cleft","Garrison","Teledahn","Kadish","Gira","Garden","Negilahn","Dereno","Payiferen","Tetsonot","Ercana","AhnonayCathedral","Ahnonay","Minkata","Jalak","Link21","Link22","Link23","Link24","Link25","Link26","Link27","Link28","Link29","Link30","Link31","Link32","Link33","Link34","Link35","Myst"]
 
 objBookPicked = None
 objLockPicked = None
@@ -115,11 +115,23 @@ IsChildLink = 0
 
 stupidHackForLock = None
 
-kPublicBooks = ("Nexus", "Cleft", "City") #These books cannot be linked to by guests, and cannot be deleted by the owner
+kPublicBooks = ("Nexus", "Cleft", "City", "ChisoPreniv") #These books cannot be linked to by guests, and cannot be deleted by the owner
 
 # list of ages that show up in the city book
 CityBookAges = { "BaronCityOffice": ["BaronCityOffice", "Default"], "Descent": ["dsntShaftFall"], "GreatZero": ["grtzGrtZeroLinkRm"], "spyroom": ["Spyroom", "Default"], "Kveer": ["Kveer", "Default"]}
 
+kHardcodedInstances = {"GuildPub-Cartographers" : "35624301-841e-4a07-8db6-b735cf8f1f53",
+                      "GuildPub-Greeters" : "381fb1ba-20a0-45fd-9bcb-fd5922439d05",
+                      "GuildPub-Maintainers" : "e8306311-56d3-4954-a32d-3da01712e9b5",
+                      "GuildPub-Messengers" : "9420324e-11f8-41f9-b30b-c896171a8712",
+                      "GuildPub-Writers" : "5cf4f457-d546-47dc-80eb-a07cdfefa95d",
+                      "Kveer" : "68e219e0-ee25-4df0-b855-0435584e29e2",
+                      "GoMePubNew" : "d002da26-db26-53f1-bdc0-a05a84274d5c", 
+                      "BaronCityOffice" : "f6c54066-1290-508c-ac12-3b1efb2d8981",
+                      "Descent" : "ed66c477-9a8d-5c56-ac37-40a4d7772210",
+                      "GreatZero" : "3cbb0950-ee01-53d1-8f83-fd24f44e9c9c",
+                      "spyroom" : "8ea6e154-819c-5c25-b9c0-ad4ba25832ec",
+                      "ChisoPreniv" : "0b4f5ad9-d93d-52e3-83e4-9364c2149ae4"}
 
 class psnlBookshelf(ptModifier):
     def __init__(self):
@@ -1153,7 +1165,7 @@ class psnlBookshelf(ptModifier):
             return "Ahnonay"
 
         hoodInfo = self.IGetHoodInfoNode()
-        if hoodInfo:
+        if hoodInfo and not ageName in kHardcodedInstances.keys():
             childAgeFolder = hoodInfo.getChildAgesFolder()
             contents = childAgeFolder.getChildNodeRefList()
             for content in contents:
@@ -1164,7 +1176,7 @@ class psnlBookshelf(ptModifier):
                 
                 info = link.getAgeInfo()
                 if info and info.getAgeFilename() == ageName:
-                    if ageName == "Garrison":
+                    if ageName == "Garrison" or ageName == "city":
                         continue
                     else:
                         # found our link
@@ -1175,11 +1187,29 @@ class psnlBookshelf(ptModifier):
         if isCityLink:
             # if we got here then we're a city link but we couldn't find the child age
             # so we're going to hack it a little bit and force it
-            IsChildLink = 1
 
+            hardcoded = kHardcodedInstances.get(ageName)
             ageInfo = ptAgeInfoStruct()
             ageInfo.setAgeFilename(ageName)
             ageInfo.setAgeInstanceName("Ae'gura")
+            if ageName == "city":
+                hardcoded = ptVault().getLinkToCity().getAgeInfo().getAgeInstanceGuid()
+            if hardcoded is not None:
+                ageInfo.setAgeInstanceGuid(hardcoded)
+            else:
+                IsChildLink = 1
+
+            ageLink = ptAgeLinkStruct()
+            ageLink.setAgeInfo(ageInfo)
+            
+            return ageLink
+            
+        if ageName in kHardcodedInstances.keys():
+            hardcoded = kHardcodedInstances.get(ageName)
+            ageInfo = ptAgeInfoStruct()
+            ageInfo.setAgeFilename(ageName)
+            ageInfo.setAgeInstanceName(ageName)
+            ageInfo.setAgeInstanceGuid(hardcoded)
 
             ageLink = ptAgeLinkStruct()
             ageLink.setAgeInfo(ageInfo)
@@ -1706,7 +1736,7 @@ class psnlBookshelf(ptModifier):
         # If in my personal age, link with kOwnedBook rules.
         #   This will startup a new, private age instance for me.
         if (vault.inMyPersonalAge()):
-            if ageName == "Ahnonay":
+            if ageName == "Ahnonay" or ageName == "city" or ageName in CityBookAges.keys() or ageName in kHardcodedInstances.keys():
                 als.setLinkingRules( PtLinkingRules.kBasicLink )
             elif IsChildLink:
                 PtDebugPrint("psnlBookshelf.ILink(): using kChildAgeBook rules for link to: ",ageName)
