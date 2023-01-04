@@ -580,6 +580,7 @@ class psnlBookshelf(ptModifier):
                 if event[0]==kPickedEvent:
                     objBookPicked = event[3]
                     bookName = objBookPicked.getName()
+                    ageName = self.IGetAgeFromBook()
                     PtDebugPrint("psnlBookshelf.OnNotify():\tplayer picked book named ", bookName)
                     try:
                         index = objLibrary.value.index(objBookPicked)
@@ -587,7 +588,7 @@ class psnlBookshelf(ptModifier):
                         PtDebugPrint("psnlBookshelf.OnNotify():\tERROR -- couldn't find ", objBookPicked, " in objLibrary")
                         return
 
-                    if self.IGetAgeFromBook() == "city" and PtIsSinglePlayerMode():
+                    if ageName == "city" and PtIsSinglePlayerMode():
                         ageVault = ptAgeVault()
                         citylink = self.GetOwnedAgeLink(ageVault, "city")
                         bcolink = self.GetOwnedAgeLink(ageVault, "BaronCityOffice")
@@ -626,7 +627,7 @@ class psnlBookshelf(ptModifier):
                         actBookshelfExit.disable()
                         return
                     
-                    elif self.IGetAgeFromBook() == "Ahnonay":
+                    elif ageName == "Ahnonay":
                         locked = 0
                         ageVault = ptAgeVault()
                         ageInfoNode = ageVault.getAgeInfo()
@@ -676,8 +677,8 @@ class psnlBookshelf(ptModifier):
                     
                     link = self.IGetLinkFromBook()
                     # Do not use the age link node of a Hood child age for the city book clasp!
-                    if IsChildLink:
-                        link = self.GetOwnedAgeLink(ptAgeVault(), "city")
+                    if IsChildLink or ageName == "city" or ageName in kHardcodedInstances:
+                        link = self.GetOwnedAgeLink(ptAgeVault(), ageName)
                     if link is None:
                         return
                     if not isinstance(link, ptVaultAgeLinkNode) or link.getLocked():
@@ -725,7 +726,8 @@ class psnlBookshelf(ptModifier):
             return
             
         if id==respShelveBook.id:
-            if self.IGetAgeFromBook() == "city" and PtIsSinglePlayerMode():
+            ageName = self.IGetAgeFromBook()
+            if ageName == "city" and PtIsSinglePlayerMode():
                 ageVault = ptAgeVault()
                 citylink = self.GetOwnedAgeLink(ageVault, "city")
                 bcolink = self.GetOwnedAgeLink(ageVault, "BaronCityOffice")
@@ -756,8 +758,8 @@ class psnlBookshelf(ptModifier):
                 return
             link = self.IGetLinkFromBook()
             # Do not use the age link node of a Hood child age for the city book clasp!
-            if IsChildLink:
-                link = self.GetOwnedAgeLink(ptAgeVault(), "city")
+            if IsChildLink or ageName == "city" or ageName in kHardcodedInstances:
+                link = self.GetOwnedAgeLink(ptAgeVault(), ageName)
             if link is None:
                 return
                 
@@ -873,8 +875,8 @@ class psnlBookshelf(ptModifier):
                         
                     link = self.IGetLinkFromBook()
                     # Do not use the age link node of a Hood child age for the city book clasp!
-                    if IsChildLink:
-                        link = self.GetOwnedAgeLink(ptAgeVault(), "city")
+                    if IsChildLink or agename == "city" or agename in kHardcodedInstances:
+                        link = self.GetOwnedAgeLink(ptAgeVault(), agename)
                     if link is None:
                         return
                     lockName = objLockPicked.getName()
@@ -1447,6 +1449,26 @@ class psnlBookshelf(ptModifier):
                         actBook.enable(objectName=key)
                         break
 
+        for ageName in kHardcodedInstances:
+            ageVault = ptAgeVault()
+            hardlink = self.GetOwnedAgeLink(ageVault, ageName)
+            if hardlink:
+                hardlinklocked = hardlink and hardlink.getLocked()
+                try:
+                    index = linkLibrary.index(hardlink.getAgeInfo().getAgeInstanceName())
+                except:
+                    continue
+                objBook = objLibrary.value[index]
+                objBook.draw.enable()
+
+                bookName = objBook.getName()
+                for key,value in actBook.byObject.items():
+                    parent = value.getParentKey()
+                    if parent:
+                        if bookName == parent.getName():
+                            actBook.enable(objectName=key)
+                            break
+
             # find and enable the corresponding clickable modifier for the book's tray and lock if owner
             objTray = objTrays.value[index]
             trayName = objTray.getName()
@@ -1473,7 +1495,7 @@ class psnlBookshelf(ptModifier):
                     continue
                 ageName = info.getAgeFilename()
 
-                if (ageName == "city" or ageName == "BaronCityOffice") or (ageName in CityBookAges.keys()):
+                if ageName in {"city", "BaronCityOffice"} or ageName in CityBookAges.keys() or ageName in kHardcodedInstances:
                     continue
             
 #                if (ageName == "Garrison"):
