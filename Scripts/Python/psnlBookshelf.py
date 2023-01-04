@@ -2005,7 +2005,7 @@ class psnlBookshelf(ptModifier):
                 if not info:
                     continue
                 ageName = info.getAgeFilename()
-                PtDebugPrint("found %s, looking for %s" % (ageName, age))
+                PtDebugPrint("found %s, looking for %s" % (ageName, age), level=kDebugDumpLevel)
                 if ageName == age:
                     return link
 
