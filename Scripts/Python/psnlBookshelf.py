@@ -1422,16 +1422,18 @@ class psnlBookshelf(ptModifier):
         if self.HasCityBook():
             index = linkLibrary.index("city")
             objBook = objLibrary.value[index]
+            bookName = objBook.getName()
             objBook.draw.enable()
 
-            if boolInMyAge:
-                bookName = objBook.getName()
-                for key,value in actBook.byObject.items():
-                    parent = value.getParentKey()
-                    if parent:
-                        if bookName == parent.getName():
+            for key,value in actBook.byObject.items():
+                parent = value.getParentKey()
+                if parent:
+                    if bookName == parent.getName():
+                        if boolInMyAge:
                             actBook.enable(objectName=key)
-                            break
+                        else:
+                            actBook.disable(objectName=key)
+                        break
         
         ageVault = ptAgeVault()
         PAL = ageVault.getAgesIOwnFolder()
@@ -1466,10 +1468,12 @@ class psnlBookshelf(ptModifier):
                     if not boolCleftVisited:
                         continue
 
+                if ageName == "city":
+                    continue
+
                 # show the book
                 objBook = objLibrary.value[index]
-                if not ageName == "city":
-                    objBook.draw.enable()
+                objBook.draw.enable()
                 
                 if boolShelfBusy:
                     # not safe to enable clickables

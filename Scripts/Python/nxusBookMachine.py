@@ -204,13 +204,14 @@ kLinkPanels = {
 
 
 kHiddenPersonalAges = ["Personal", "Nexus", "Neighborhood", "city", "AvatarCustomization", "Cleft", "BaronCityOffice", "BahroCave", "PelletBahroCave", "Kveer", "Myst", "LiveBahroCaves", "LiveBahroCave", "Tiam"]
-kHiddenCityLinks = ["islmPalaceBalcony03", "KadishGallery", "islmPalaceBalcony02", "islmDakotahRoof", ]
+kHiddenCityLinks = ["islmPalaceBalcony03", "KadishGallery", "islmPalaceBalcony02", "islmDakotahRoof", "islmGreatTree"]
 kHiddenAgesIfInvited = ["BahroCave", "PelletBahroCave", "Pellet Cave", "LiveBahroCave", "LiveBahroCaves", "Myst", "Tiam"]
 
 #public ages SDL variables to be read from Vault on start (max. population, is link visible)
 kAgeSdlVariables = {
 'city' : ('MaxCityPop', 'nxusCityLinksVis'),
 'GreatTreePub' : ('MaxPubPop', 'nxusShowPub'),
+'GreatZero' : ('MaxCityPop', 'nxusShowGZ'),
 'guildPub' : ('MaxGuildPubPop', None),
 'Neighborhood02' : ('MaxKirelPop', 'nxusShowKirel'),
 'Kveer' : ('MaxKveerPublicPop', None),
@@ -226,12 +227,18 @@ kHardcodedInstances = {"GuildPub-Cartographers" : "35624301-841e-4a07-8db6-b735c
                       "GuildPub-Messengers" : "9420324e-11f8-41f9-b30b-c896171a8712",
                       "GuildPub-Writers" : "5cf4f457-d546-47dc-80eb-a07cdfefa95d",
                       "Kveer" : "68e219e0-ee25-4df0-b855-0435584e29e2",
-                      "GoMePubNew" : "d002da26-db26-53f1-bdc0-a05a84274d5c"}
+                      "GoMePubNew" : "d002da26-db26-53f1-bdc0-a05a84274d5c", 
+                      "BaronCityOffice" : "f6c54066-1290-508c-ac12-3b1efb2d8981",
+                      "Descent" : "ed66c477-9a8d-5c56-ac37-40a4d7772210",
+                      "GreatZero" : "3cbb0950-ee01-53d1-8f83-fd24f44e9c9c",
+                      "spyroom" : "8ea6e154-819c-5c25-b9c0-ad4ba25832ec",
+                      "ChisoPreniv" : "0b4f5ad9-d93d-52e3-83e4-9364c2149ae4"}
 
 #id for ages descriptions
 kPublicAgesDescription = {
      'city' : ("Nexus.Messages.CityFull", "Nexus.Messages.CityPopulation"),
      'GreatTreePub' : ("Nexus.Messages.PubFull", "Nexus.Messages.PubPopulation"),
+     'GreatZero' : ("Nexus.Messages.GreatZeroFull", "Nexus.Messages.GreatZeroPopulation"),
      'Neighborhood02' : ("Nexus.Messages.KirelFull", "Nexus.Messages.KirelPopulation"),
      'GuildPub-Cartographers' : ("Nexus.Messages.GuildPubFull", "Nexus.Messages.GuildPubPopulation"),
      'GuildPub-Greeters' : ("Nexus.Messages.GuildPubFull", "Nexus.Messages.GuildPubPopulation"),
@@ -344,6 +351,7 @@ class nxusBookMachine(ptModifier):
         self.publicAges = {
             'city' : AgeData(ageFilename = 'city', defaultMaxPop = 20, linkVisible = 1),
             'GreatTreePub' : AgeData(ageFilename = 'GreatTreePub', defaultMaxPop = 100, linkVisible = 0),
+            'GreatZero' : AgeData(ageFilename = 'GreatZero', defaultMaxPop = 100, linkVisible = 0),
             'guildPub' : AgeData(ageFilename = '', defaultMaxPop = 0, linkVisible = 0),
             'Neighborhood02' : AgeData(ageFilename = 'Neighborhood02', defaultMaxPop = 100, linkVisible = 0),
             'Kveer' : AgeData(ageFilename = 'Kveer', defaultMaxPop = 100, linkVisible = 0),
@@ -1301,6 +1309,13 @@ class nxusBookMachine(ptModifier):
                     cityLinks.append(entry)
                 continue
 
+            elif ageData.ageFilename == 'GreatZero':
+                for entry in self.IGetGZLinks(True):
+                    entry.description = description
+                    entry.isEnabled = entryEnabled
+                    cityLinks.append(entry)
+                continue
+
             #ptAgeInfoStruct for selected instance
             selectedInfo = ageData.selected.ageInfo
 
@@ -1355,12 +1370,13 @@ class nxusBookMachine(ptModifier):
                 return link
         return None # not found
 
-    def IGetGZLinks(self):
+    def IGetGZLinks(self, public = False):
         if PtDetermineKIMarkerLevel() <= kKIMarkerFirstLevel:
             # if our KI level is too low (we didn't grab markers), don't show anything
             PtDebugPrint("nxusBookMachine.IUpdateLinks:\tHiding all GZ spawn points because you haven't found the markers yet")
             return
 
+        publicGzData = self.publicAges['GreatZero'].selected
         GZLinkNode = self.IGetGZLinkNode()
         if GZLinkNode is None:
             PtDebugPrint("nxusBookMachine.IGetGZLinks:\tCouldn't find GZ link node, preventing it from showing")
@@ -1374,7 +1390,10 @@ class nxusBookMachine(ptModifier):
                     continue # we hide the default spawn point, since they don't want it showing in our list
                 else:
                     entry = LinkListEntry(displayName, stringLinkInfo)
-                    entry.setChildAgeLinkStruct(GZLinkNode.getAgeInfo(), 'Neighborhood', spawnPoint) #create link to child age
+                    if public:
+                        entry.setLinkStruct(publicGzData.ageInfo, spawnPoint)
+                    else:
+                        entry.setChildAgeLinkStruct(GZLinkNode.getAgeInfo(), 'Neighborhood', spawnPoint) #create link to child age
                     yield entry
 
     def IUpdatePrivateLinksList(self):
