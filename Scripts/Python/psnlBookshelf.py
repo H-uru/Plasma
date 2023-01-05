@@ -115,7 +115,7 @@ IsChildLink = 0
 
 stupidHackForLock = None
 
-kPublicBooks = ("Nexus", "Cleft", "City") #These books cannot be linked to by guests, and cannot be deleted by the owner
+kPublicBooks = ("Nexus", "Cleft", "city") #These books cannot be linked to by guests, and cannot be deleted by the owner
 
 # list of ages that show up in the city book
 CityBookAges = { "BaronCityOffice": ["BaronCityOffice", "Default"], "Descent": ["dsntShaftFall"], "GreatZero": ["grtzGrtZeroLinkRm"], "spyroom": ["Spyroom", "Default"], "Kveer": ["Kveer", "Default"]}
@@ -433,8 +433,10 @@ class psnlBookshelf(ptModifier):
                         PtDebugPrint(event[1], event[3])
                         if event[1] == "YesNo" and event[3] == 1:
                             link = self.IGetLinkFromBook()
-                            
                             bookAge = self.IGetAgeFromBook()
+                            if bookAge in kHardcodedInstances:
+                                link = self.GetOwnedAgeLink(ptAgeVault(), bookAge)
+
                             if bookAge == "Ahnonay" or bookAge == "AhnonayCathedral":
                                 ageVault = ptAgeVault()
                                 ageInfoNode = ageVault.getAgeInfo()
@@ -490,34 +492,6 @@ class psnlBookshelf(ptModifier):
                                                 PtDebugPrint("Setting CurrentPage var of book %s to 1" % BookNumber)
                                                 break
                                 objBookPicked = None
-                                return
-                            elif bookAge in kHardcodedInstances:
-                                link = self.GetOwnedAgeLink(ptAgeVault(), bookAge)
-                                BookNumber = linkLibrary.index(bookAge)
-                                for bookName in ["ShelfA_book04"]:
-                                    PtDebugPrint(bookName)
-                                    if link.getLocked():
-                                        objLock = objLocks.value[BookNumber]
-                                        lockName = objLock.getName()
-                                        # find the corresponding lock open responder modifier
-                                        for rkey,rvalue in respOpenLock.byObject.items():
-                                            parent = rvalue.getParentKey()
-                                            if parent:
-                                                if lockName == parent.getName():
-                                                    respOpenLock.run(self.key,objectName=rkey)
-                                                    break
-                                        boolPresentAfterLockOpen = True
-                                        break
-                                    else:
-                                        for rkey,rvalue in respPresentBook.byObject.items():
-                                            parent = rvalue.getParentKey()
-                                            if parent:
-                                                if bookName == parent.getName():
-                                                    respPresentBook.run(self.key,objectName=rkey)
-                                                    break
-                                ageSDL = PtGetAgeSDL()
-                                ageSDL.setIndex("CurrentPage",BookNumber,1)
-                                PtDebugPrint("Setting CurrentPage var of book %s to 1" % BookNumber)
                                 return
                             else:
                                 # volatile it
@@ -750,11 +724,6 @@ class psnlBookshelf(ptModifier):
                 note.setActivate(1.0)
                 note.addVarNumber(ageName + "," + str(objLibrary.value.index(objBookPicked)),ShelfAUserID)
                 note.send()
-            elif ageName in kHardcodedInstances:
-                BookNumber = linkLibrary.index(ageName)
-                objBook = objLibrary.value[BookNumber]
-                objBook.draw.disable()
-                PtAtTimeCallback(self.key, .5, 2)
 
             # for now, just shelve the book again
             #~ self.IShelveBook()
@@ -796,18 +765,6 @@ class psnlBookshelf(ptModifier):
             if IsChildLink or ageName == "city" or ageName in kHardcodedInstances:
                 link = self.GetOwnedAgeLink(ptAgeVault(), ageName)
             if link is None:
-                if ageName in kHardcodedInstances:
-                    index = linkLibrary.index(ageName)
-                    objLock = objLocks.value[index]
-                    lockName = objLock.getName()
-                    # find the corresponding responder modifier
-                    for rkey,rvalue in respCloseLock.byObject.items():
-                        parent = rvalue.getParentKey()
-                        if parent:
-                            if lockName == parent.getName():
-                                respCloseLock.run(self.key,objectName=rkey)
-                                objLockPicked = None
-                                break
                 return
                 
             if link == "Ahnonay":
@@ -1071,9 +1028,7 @@ class psnlBookshelf(ptModifier):
             bookAge = self.IGetAgeFromBook()
 
             if bookAge in kHardcodedInstances:
-                if vault.inMyPersonalAge():
-                    PtYesNoDialog(self.key, f'Are you sure you want to remove this book from the shelf?')
-                return
+                link = self.GetOwnedAgeLink(ptAgeVault(), bookAge)
 
             if bookAge == "Ahnonay" or bookAge == "AhnonayCathedral":
                 ageVault = ptAgeVault()
@@ -1526,9 +1481,6 @@ class psnlBookshelf(ptModifier):
                 if not info:
                     continue
                 ageName = info.getAgeFilename()
-
-                if ageName in {"city", "BaronCityOffice"} or ageName in CityBookAges.keys():
-                    continue
             
 #                if (ageName == "Garrison"):
 #                    parent = info.getParentAgeLink()
@@ -1903,11 +1855,6 @@ class psnlBookshelf(ptModifier):
         if id == 1:
             PtGetControlEvents(True,self.key)
             actBookshelfExit.enable()
-        elif id == 2:
-            self.IShelveBook()
-            bookAge = self.IGetAgeFromBook()
-            ptVault().unRegisterOwnedAge(bookAge)
-            objBookPicked = None
 
 
     def IGetHoodLinkNode(self):
