@@ -1262,32 +1262,16 @@ class psnlBookshelf(ptModifier):
 
         # check for the dang city book and do stuff
         if self.HasCityBook():
-            citylink = self.GetOwnedAgeLink(ageVault, "city")
-            #bcolink = self.GetOwnedAgeLink(ageVault, "BaronCityOffice")
-            bcolink = self.IGetHoodChildLink("BaronCityOffice")
-            
-            citylinklocked = citylink and citylink.getLocked()
-            bcolinklocked = bcolink and bcolink.getLocked()
-
             index = linkLibrary.index("city")
             objLock = objLocks.value[index]
             lockName = objLock.getName()
 
-            # show as locked if both are locked, or one is locked and the other doesn't exist
-            if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
-                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting city book clasp to locked: ",lockName)
-                for rkey,rvalue in respCloseLock.byObject.items():
-                    parent = rvalue.getParentKey()
-                    if parent:
-                        if lockName == parent.getName():
-                            respCloseLock.run(self.key,objectName=rkey,fastforward=1)
-            else:
-                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting city book clasp to unlocked: ",lockName)
-                for rkey,rvalue in respOpenLock.byObject.items():
-                    parent = rvalue.getParentKey()
-                    if parent:
-                        if lockName == parent.getName():
-                            respOpenLock.run(self.key,objectName=rkey,fastforward=1)
+            PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting city book clasp to locked: ",lockName)
+            for rkey,rvalue in respCloseLock.byObject.items():
+                parent = rvalue.getParentKey()
+                if parent:
+                    if lockName == parent.getName():
+                        respCloseLock.run(self.key,objectName=rkey,fastforward=1)
         
         for content in contents:
             link = content.getChild()
@@ -1305,7 +1289,7 @@ class psnlBookshelf(ptModifier):
             if ((ageName == "city" or ageName == "BaronCityOffice") and PtIsSinglePlayerMode()) or (ageName in CityBookAges.keys()):
                 continue
 
-            if ageName == "Cleft":
+            if ageName in kPublicBooks:
                 if not link.getLocked():
                     link.setLocked(True)
                     vault = ptVault()
@@ -1436,37 +1420,17 @@ class psnlBookshelf(ptModifier):
 
         # check for the dang city book and do stuff
         if self.HasCityBook():
-            ageVault = ptAgeVault()
-            citylink = self.GetOwnedAgeLink(ageVault, "city")
-            #bcolink = self.GetOwnedAgeLink(ageVault, "BaronCityOffice")
-            bcolink = self.IGetHoodChildLink("BaronCityOffice")
-
-            citylinklocked = citylink and citylink.getLocked()
-            bcolinklocked = bcolink and bcolink.getLocked()
-
             index = linkLibrary.index("city")
             objBook = objLibrary.value[index]
             objBook.draw.enable()
 
-            bookName = objBook.getName()
-            for key,value in actBook.byObject.items():
-                parent = value.getParentKey()
-                if parent:
-                    if bookName == parent.getName():
-                        actBook.enable(objectName=key)
-                        break
-
-            # find and enable the corresponding clickable modifier for the book's tray and lock if owner
-            objTray = objTrays.value[index]
-            trayName = objTray.getName()
-            objLock = objLocks.value[index]
-            lockName = objLock.getName()
-            if ( boolInMyAge ):
-                for key,value in actLock.byObject.items():
+            if boolInMyAge:
+                bookName = objBook.getName()
+                for key,value in actBook.byObject.items():
                     parent = value.getParentKey()
                     if parent:
-                        if lockName == parent.getName():
-                            actLock.enable(objectName=key)
+                        if bookName == parent.getName():
+                            actBook.enable(objectName=key)
                             break
         
         ageVault = ptAgeVault()
@@ -1504,7 +1468,8 @@ class psnlBookshelf(ptModifier):
 
                 # show the book
                 objBook = objLibrary.value[index]
-                objBook.draw.enable()
+                if not ageName == "city":
+                    objBook.draw.enable()
                 
                 if boolShelfBusy:
                     # not safe to enable clickables
@@ -1512,7 +1477,7 @@ class psnlBookshelf(ptModifier):
 
                 # find and enable the corresponding clickable modifier for the book
                 PtDebugPrint("psnlBookshelf.IUpdateLinks():\tageName: ",ageName," boolInMyAge: ",boolInMyAge," getLocked(): ",link.getLocked()," getVolatile(): ",link.getVolatile())
-                if link.getVolatile() or ((not boolInMyAge) and (link.getLocked() or ageName == "Cleft")):
+                if link.getVolatile() or ((not boolInMyAge) and (link.getLocked() or ageName in kPublicBooks)):
                     bookName = objBook.getName()
                     for key,value in actBook.byObject.items():
                         parent = value.getParentKey()
@@ -1521,7 +1486,7 @@ class psnlBookshelf(ptModifier):
                                 PtDebugPrint("%s book: DISABLED" % (bookName))
                                 actBook.disable(objectName=key)
                                 break
-                    if (not boolInMyAge) and (link.getLocked() or ageName == "Cleft"):
+                    if (not boolInMyAge) and (link.getLocked() or ageName in kPublicBooks):
                         # owner of book has locked this one -- go on to next link element
                         continue
                 
