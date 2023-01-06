@@ -45,10 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Ensure these get set consistently regardless of what module includes it
 #include "hsConfig.h"
 
-#if defined(_DEBUG)
-#   define HS_DEBUGGING
-#endif
-
 //======================================
 // Some standard includes
 //======================================

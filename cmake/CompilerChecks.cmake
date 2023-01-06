@@ -1,15 +1,3 @@
-# Detect Clang compiler
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES ".*Clang")
-    set(CMAKE_COMPILER_IS_CLANGXX 1)
-endif()
-
-# MSVC automatically defines -D_DEBUG when /MTd or /MDd is set, so we
-# need to make sure it gets added for other compilers too
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
-endif()
-
 # Use LTCG if available.
 cmake_policy(SET CMP0069 NEW)   # gtest projects use old cmake compatibility...
 if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
