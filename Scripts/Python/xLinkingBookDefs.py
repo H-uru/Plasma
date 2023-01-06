@@ -135,7 +135,7 @@ kShareBookDeleteID = 2
 NoShare = '<pb>'
 ShareHolder = '%s<pb>'
 ShareBook = '<img src="xBookSharePage512*1#0.hsm" pos=0,0 blend=alpha><img src="xBookShareSymbolOnly*1#0.hsm" pos=128,128 blend=alpha link=%d>' % kShareBookLinkID
-ShareBookDelete = '<img src="xBookmarkDniZero*1#0.hsm" pos=20,0 blend=alpha link=%d><pb>' % kShareBookDeleteID
+ShareBookDelete = '<img src="xBookmarkDniZero*1#0.hsm" pos=15,0 blend=alpha link=%d><pb>' % kShareBookDeleteID
 ShareBookDelete2 = '<img src="xBookmarkDniZero2*1#0.hsm" pos=20,0 blend=alpha link=%d><pb>' % kShareBookDeleteID
 BahroShare = '<img src="xBahroYeeshaShare*1#0.hsm" pos=0,0 blend=alpha link=%d>' % kShareBookLinkID
 BahroNoShare = ''
