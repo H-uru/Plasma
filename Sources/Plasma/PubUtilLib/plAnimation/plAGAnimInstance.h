@@ -253,7 +253,7 @@ protected:
 
 };
 
-//#ifdef _DEBUG
+//#ifdef HS_DEBUGGING
 //#define TRACK_AG_ALLOCS       // for now, automatically track AG allocations in debug
 //#endif
 #ifdef TRACK_AG_ALLOCS

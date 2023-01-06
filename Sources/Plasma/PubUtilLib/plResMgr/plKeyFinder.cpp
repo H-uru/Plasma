@@ -154,7 +154,7 @@ public:
 
     bool  EatPage(plRegistryPageNode *pageNode) override
     {
-#ifndef _DEBUG
+#ifndef HS_DEBUGGING
         try
         {
 #endif
@@ -170,7 +170,7 @@ public:
                 if( !pageNode->IterateKeys( this ) )
                     return false;
             }
-#ifndef _DEBUG
+#ifndef HS_DEBUGGING
         } catch (...)
         {
         }

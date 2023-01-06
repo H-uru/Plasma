@@ -145,7 +145,7 @@ plAvBrainHuman::plAvBrainHuman(bool isActor /* = false */) :
 
 bool plAvBrainHuman::Apply(double timeNow, float elapsed)
 {
-#ifndef _DEBUG
+#ifndef HS_DEBUGGING
     try
     {
 #endif
@@ -156,7 +156,7 @@ bool plAvBrainHuman::Apply(double timeNow, float elapsed)
         fWalkingStrategy->RecalcVelocity(timeNow, elapsed, (fPreconditions & plHBehavior::kBehaviorTypeNeedsRecalcMask));
 
         plArmatureBrain::Apply(timeNow, elapsed);
-#ifndef _DEBUG
+#ifndef HS_DEBUGGING
     } catch (std::exception &e) {
         plStatusLog *log = plAvatarMgr::GetInstance()->GetLog();
         log->AddLineF("plAvBrainHuman::Apply - exception caught: {}", e.what());
