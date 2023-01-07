@@ -34,6 +34,10 @@ option(PRODUCT_EMBED_BUILD_INFO "Embed build revision information into plProduct
 cmake_dependent_option(PRODUCT_EMBED_BUILD_TIME "Embed build time into plProduct" ON [[PRODUCT_EMBED_BUILD_INFO]] OFF)
 
 # HeadSpin Configuration
+
+# Define HS_DEBUGGING for debug builds
+add_compile_definitions($<$<CONFIG:Debug>:HS_DEBUGGING>)
+
 if(WIN32 AND NOT CYGWIN)
     add_definitions(-DHS_BUILD_FOR_WIN32)
 endif(WIN32 AND NOT CYGWIN)

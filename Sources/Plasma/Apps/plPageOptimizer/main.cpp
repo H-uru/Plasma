@@ -60,12 +60,12 @@ int main(int argc, char* argv[])
     plFileName filename = argv[1];
     ST::printf("Optimizing {}...", filename);
 
-#ifndef _DEBUG
+#ifndef HS_DEBUGGING
     try {
 #endif
         plResManager* resMgr = new plResManager;
         hsgResMgr::Init(resMgr);
-#ifndef _DEBUG
+#ifndef HS_DEBUGGING
     } catch (std::exception &e) {
         printf(" ***crashed on init: %s\n", e.what());
         return 2;
@@ -75,14 +75,14 @@ int main(int argc, char* argv[])
     }
 #endif
 
-#ifndef _DEBUG
+#ifndef HS_DEBUGGING
     try
 #endif
     {
         plPageOptimizer optimizer(argv[1]);
         optimizer.Optimize();
     }
-#ifndef _DEBUG
+#ifndef HS_DEBUGGING
     catch (std::exception &e) {
         printf(" ***crashed on optimizing: %s\n", e.what());
         return 2;
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
     }
 #endif
 
-#ifndef _DEBUG
+#ifndef HS_DEBUGGING
     try {
 #endif
         // Reading in objects may have generated dirty state which we're obviously
@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
         plSynchedObject::ClearDirtyState(carryOvers);
 
         hsgResMgr::Shutdown();
-#ifndef _DEBUG
+#ifndef HS_DEBUGGING
     } catch (std::exception &e) {
         printf(" ***crashed on shutdown: %s\n", e.what());
         return 2;
