@@ -156,40 +156,17 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
-    distance *= uniforms.Frequency;
-    distance += uniforms.Phase;
-    //
-    //    // Now we need dist mod'd into range [-Pi..Pi]
-    //    dist *= rcp(kTwoPi);
-    distance += M_PI_F;
-    distance /= (M_PI_F * 2.0f);
-    //    dist = frac(dist);
-    distance = fract(distance);
-    //    dist *= kTwoPi;
-    distance *= (M_PI_F * 2.0f);
-    //    dist += -kPi;
-    distance -= M_PI_F;
-
-    //Metals pow function does not like negative bases
-    //Doing the same thing as the DX assembly until I know more about why
-
-    float4 pow2 = distance * distance; // r0^2
-    float4 pow3 = pow2 * distance; // r0^3 - probably stall
-    float4 pow4 = pow2 * pow2; // r0^4
-    float4 pow5 = pow2 * pow3; // r0^5
-    float4 pow7 = pow2 * pow5; // r0^7
-
-    //
-    //    sincos(dist, sinDist, cosDist);
-    // sin = r0 + r0^3 * vSin.y + r0^5 * vSin.z
-    // cos = 1 + r0^2 * vCos.y + r0^4 * vCos.z
-    //r1
-    float4 cosDist = 1 + pow2 * uniforms.CosConsts.y + pow4 * uniforms.CosConsts.z;
-    //r2
-    float4 sinDist = distance + pow3 * uniforms.SinConsts.y + pow5 * uniforms.SinConsts.z;
-
-    cosDist = ((pow3 * pow3) * uniforms.CosConsts.w) + cosDist;
-    sinDist = (pow7 * uniforms.SinConsts.w) + sinDist;
+    distance = (distance * uniforms.Frequency) + uniforms.Phase;
+    
+    /*
+     Metal note: This section of the shader originally implemented a fast sin/cos
+     algorithm in HLSL - including the GPU Gems Ch 1 version. Metal has a built in
+     fast cos/sin algorithm. When porting this shader to a different shading language,
+     make sure fast math or a fast algorithm is available for best performance. Fast
+     math is on for the MSL compiler, but I'm making the fast version explicit here.
+     */
+    float4 cosDist = fast::cos(distance);
+    float4 sinDist = fast::sin(distance);
 
 
     // Calc our depth based filtering here into r4 (because we don't use it again
@@ -197,10 +174,9 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     float3 depthFilter = CalcDepthFilter(uniforms.WaterLevel, uniforms.DepthFalloff, worldPosition, uniforms.MinAtten);
 
     // Calc our filter (see above).
-    float4 inColor = float4(in.color) / 255.0f;
+    const float4 inColor = float4(in.color) / 255.0f;
     float4 filter = inColor.wwww * uniforms.Lengths;
-    filter = max(filter, uniforms.NumericConsts.xxxx);
-    filter = min(filter, uniforms.NumericConsts.zzzz);
+    filter = clamp(filter, 0.0f, 1.0f);
 
     //mov    r2, r1;
     // r2 == sinDist
@@ -214,7 +190,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     //    height = dp4(sinDist, kOne);
     //    accumPos.z += height; (but accumPos.z is currently 0).
     float4 accumPos = 0;
-    accumPos.x = dot(sinDist, uniforms.NumericConsts.zzzz);
+    accumPos.x = dot(sinDist, float4(1.0f));
     accumPos.y = accumPos.x * depthFilter.z;
     accumPos.z = accumPos.y + uniforms.WaterLevel.w;
     worldPosition.z = max(worldPosition.z, accumPos.z); // CLAMP
