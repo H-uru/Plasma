@@ -264,21 +264,6 @@ bool hsStream::GetToken(char *s, uint32_t maxLen, const char beginComment, const
     }
     s[k] = 0;
 
-
-    if( (k > 0)&&!stricmp(s, "skip") )
-    {
-        int depth = 1;
-        while( depth && GetToken(s, maxLen, beginComment, endCom) )
-        {
-            if( !stricmp(s, "skip") )
-                depth++;
-            else
-            if( !stricmp(s, "piks") )
-                depth--;
-        }
-        return GetToken(s, maxLen, beginComment, endCom);
-    }
-
     return true;
 }
 
@@ -313,62 +298,34 @@ bool hsStream::ReadLn(char *s, uint32_t maxLen, const char beginComment, const c
     }
     s[k] = 0;
 
-
-    if( (k > 0)&&!stricmp(s, "skip") )
-    {
-        int depth = 1;
-        while( depth && ReadLn(s, maxLen, beginComment, endCom) )
-        {
-            if( !stricmp(s, "skip") )
-                depth++;
-            else
-            if( !stricmp(s, "piks") )
-                depth--;
-        }
-        return ReadLn(s, maxLen, beginComment, endCom);
-    }
-
     return true;
 }
 
 bool hsStream::ReadLn(ST::string& s, const char beginComment, const char endComment)
 {
-    {
-        ST::string_stream ss;
-        char c;
-        char endCom = endComment;
+    ST::string_stream ss;
+    char c;
+    char endCom = endComment;
 
-        while (true) {
-            while (!AtEnd() && strchr("\r\n", c = ReadByte()))
-                /* empty */;
+    while (true) {
+        while (!AtEnd() && strchr("\r\n", c = ReadByte()))
+            /* empty */;
 
-            if (AtEnd())
-                return false;
+        if (AtEnd())
+            return false;
 
-            if (beginComment != c)
-                break;
+        if (beginComment != c)
+            break;
 
-            // skip to end of comment
-            while (!AtEnd() && (endCom != (c = ReadByte())))
-                /* empty */;
-        }
+        // skip to end of comment
+        while (!AtEnd() && (endCom != (c = ReadByte())))
+            /* empty */;
+    }
 
+    ss.append_char(c);
+    while (!AtEnd() && !strchr("\r\n", c = ReadByte()))
         ss.append_char(c);
-        while (!AtEnd() && !strchr("\r\n", c = ReadByte()))
-            ss.append_char(c);
-        s = ss.to_string();
-    }
-
-    if (s.compare_i("skip") == 0) {
-        int depth = 1;
-        while (depth && ReadLn(s, beginComment, endComment)) {
-            if (s.compare_i("skip") == 0)
-                depth++;
-            if (s.compare_i("piks") == 0)
-                depth--;
-        }
-        return ReadLn(s, beginComment, endComment);
-    }
+    s = ss.to_string();
 
     return true;
 }
