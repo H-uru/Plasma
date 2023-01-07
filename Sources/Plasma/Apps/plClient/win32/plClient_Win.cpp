@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <shellapi.h>
 
 #include "plClient.h"
+#include "win32/plWinDpi.h"
 
 #include "pnFactory/plFactory.h"
 #include "pnNetCommon/plNetApp.h"
@@ -72,17 +73,23 @@ void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
     SetWindowLongPtr(fWindowHndl, GWL_EXSTYLE, winExStyle);
 
     uint32_t flags = SWP_NOCOPYBITS | SWP_SHOWWINDOW | SWP_FRAMECHANGED;
-    uint32_t outsideWidth, outsideHeight;
+
+    // The window rect will be (left, top, width, height)
+    RECT winRect{ 0, 0, width, height };
     if (windowed) {
-        RECT winRect = { 0, 0, width, height };
-        AdjustWindowRectEx(&winRect, winStyle, false, winExStyle);
-        outsideWidth = winRect.right - winRect.left;
-        outsideHeight = winRect.bottom - winRect.top;
-    } else {
-        outsideWidth = width;
-        outsideHeight = height;
+        if (GetClientRect(fWindowHndl, &winRect) != FALSE) {
+            MapWindowPoints(fWindowHndl, nullptr, reinterpret_cast<LPPOINT>(&winRect), 2);
+            winRect.right = winRect.left + width;
+            winRect.bottom = winRect.top + height;
+        }
+
+        UINT dpi = plWinDpi::Instance().GetDpi(fWindowHndl);
+        plWinDpi::Instance().AdjustWindowRectEx(&winRect, winStyle, false, winExStyle, dpi);
+
+        winRect.right = winRect.right - winRect.left;
+        winRect.bottom = winRect.bottom - winRect.top;
     }
-    SetWindowPos(fWindowHndl, HWND_NOTOPMOST, 0, 0, outsideWidth, outsideHeight, flags);
+    SetWindowPos(fWindowHndl, HWND_NOTOPMOST, winRect.left, winRect.top, winRect.right, winRect.bottom, flags);
 }
 
 void plClient::IChangeResolution(int width, int height)

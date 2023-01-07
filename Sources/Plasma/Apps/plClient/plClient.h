@@ -224,6 +224,8 @@ protected:
     void IChangeResolution(int width, int height);
     void IUpdateProgressIndicator(plOperationProgress* progress);
 
+    void IResizeWindow(int width, int height);
+
 public:
 
     plClient();

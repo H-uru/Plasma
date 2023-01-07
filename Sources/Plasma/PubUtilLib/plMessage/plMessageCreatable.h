@@ -123,6 +123,9 @@ REGISTER_CREATABLE(plDampMsg);
 #include "plDeviceRecreateMsg.h"
 REGISTER_CREATABLE(plDeviceRecreateMsg);
 
+#include "plDisplayScaleChangedMsg.h"
+REGISTER_NONCREATABLE(plDisplayScaleChangedMsg);
+
 #include "plDynaDecalEnableMsg.h"
 REGISTER_CREATABLE(plDynaDecalEnableMsg);
 

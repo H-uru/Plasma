@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClient.h"
 #include "plClientLoader.h"
 #include "res/resource.h"
+#include "plWinDpi.h"
 
 #include "pnEncryption/plChallengeHash.h"
 
@@ -122,12 +123,6 @@ static const plCmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeString,     "Renderer",        kArgRenderer },
 };
 
-/// Made globals now, so we can set them to zero if we take the border and 
-/// caption styles out ala fullscreen (8.11.2000 mcn)
-int gWinBorderDX    = GetSystemMetrics( SM_CXSIZEFRAME );
-int gWinBorderDY    = GetSystemMetrics( SM_CYSIZEFRAME );
-int gWinMenuDY      = GetSystemMetrics( SM_CYCAPTION );
-
 plClientLoader  gClient;
 bool            gPendingActivate = false;
 bool            gPendingActivateFlag = false;
@@ -182,6 +177,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static bool gDragging = false;
     static uint8_t mouse_down = 0;
+
+    // DPI Helper can eat messages.
+    auto result = plWinDpi::Instance().WndProc(hWnd, message, wParam, lParam);
+    if (result.has_value())
+        return result.value();
 
     // Messages we registered for manually (no const value)
     if (message == s_WmTaskbarList)
@@ -347,9 +347,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 RECT r;
                 ::GetClientRect(hWnd, &r);
                 gClient->GetPipeline()->Resize(r.right - r.left, r.bottom - r.top);
-
-                HDC hDC = CreateCompatibleDC(nullptr);
-                gClient->GetPipeline()->SetBackingScale(GetDeviceCaps(hDC, LOGPIXELSY) / 96.0f);
+                gClient->GetPipeline()->SetBackingScale(plWinDpi::Instance().GetScale(hWnd));
             }
             break;
 
@@ -1012,6 +1010,9 @@ PF_CONSOLE_LINK_ALL()
 
 bool WinInit(HINSTANCE hInst)
 {
+    // Initialize the DPI helpers
+    plWinDpi::Instance();
+
     // Fill out WNDCLASS info
     WNDCLASS wndClass;
     wndClass.style = CS_DBLCLKS;   // CS_HREDRAW | CS_VREDRAW;
@@ -1030,13 +1031,17 @@ bool WinInit(HINSTANCE hInst)
     if (!RegisterClass(&wndClass))
         return false;
 
+    int winBorderDX = plWinDpi::Instance().GetSystemMetrics(SM_CXSIZEFRAME);
+    int winBorderDY = plWinDpi::Instance().GetSystemMetrics(SM_CYSIZEFRAME);
+    int winMenuDY = plWinDpi::Instance().GetSystemMetrics(SM_CYCAPTION);
+
     // Create a window
     HWND hWnd = CreateWindow(
         CLASSNAME, plProduct::LongName().c_str(),
         WS_OVERLAPPEDWINDOW,
         0, 0,
-        800 + gWinBorderDX * 2,
-        600 + gWinBorderDY * 2 + gWinMenuDY,
+        800 + winBorderDX * 2,
+        600 + winBorderDY * 2 + winMenuDY,
         nullptr, nullptr, hInst, nullptr
         );
     HDC hDC = GetDC(hWnd);
@@ -1249,10 +1254,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         ::DestroyWindow(splashDialog);
     }
 
-    HDC hDC = CreateCompatibleDC(nullptr);
-    float scale = GetDeviceCaps(hDC, LOGPIXELSY) / 96.0f;
-    gClient->GetPipeline()->SetBackingScale(scale);
-    plMouseDevice::Instance()->SetDisplayScale(scale);
+    // Tell everybody about the current display scaling
+    {
+        plDisplayScaleChangedMsg* msg = new plDisplayScaleChangedMsg(plWinDpi::Instance().GetScale());
+        msg->Send();
+    }
 
     // Main loop
     if (gClient && !gClient->GetDone()) {
@@ -1272,9 +1278,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
         MSG msg;
         do {
-
-            //set the current cursor scale for each loop
-
             gClient->MainLoop();
             if (gClient->GetDone())
                 break;

@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _hsWindows_inc_
 #define _hsWindows_inc_
 
+#include <optional>
 #include <string_theory/format>
 
 /** \file hsWindows.h
@@ -142,6 +143,55 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
             ST::format_type(format, output, hr.fResult);
         }
     }
+
+    template<class, class...>
+    class plOptionalWinCall;
+
+    template<
+        class _ReturnT,
+        class... _ArgsT
+    >
+    class plOptionalWinCall<_ReturnT(_ArgsT...)>
+    {
+        using _FuncPtrT = _ReturnT(*)(_ArgsT...);
+
+        HMODULE fHModule;
+        _FuncPtrT fProc;
+
+    public:
+        plOptionalWinCall(const wchar_t* mod, const char* func)
+            : fHModule(), fProc()
+        {
+            fHModule = LoadLibraryW(mod);
+            if (fHModule) {
+                fProc = (_FuncPtrT)GetProcAddress(fHModule, func);
+                if (!fProc) {
+                    FreeLibrary(fHModule);
+                    fHModule = nullptr;
+                }
+            }
+        }
+
+        ~plOptionalWinCall()
+        {
+            if (fHModule)
+                FreeLibrary(fHModule);
+        }
+
+        std::optional<_ReturnT> operator()(_ArgsT... args) const
+        {
+            if (fProc)
+                return (_ReturnT)fProc(std::forward<_ArgsT>(args)...);
+            return std::nullopt;
+        }
+
+        operator bool() const
+        {
+            return fProc != nullptr;
+        }
+
+        _FuncPtrT Get() const { return fProc; }
+    };
 #endif // HS_BUILD_FOR_WIN32
 
 #endif // _hsWindows_inc_

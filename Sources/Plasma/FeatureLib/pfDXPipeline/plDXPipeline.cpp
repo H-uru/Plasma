@@ -3337,6 +3337,7 @@ bool  plDXPipeline::CaptureScreen( plMipmap *dest, bool flipVertical, uint16_t d
     }
     else
     {
+        // FIXME: DPI awareness
         bigWidth = GetSystemMetrics( SM_CXSCREEN );
         bigHeight = GetSystemMetrics( SM_CYSCREEN );
 

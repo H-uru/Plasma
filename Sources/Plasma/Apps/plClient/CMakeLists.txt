@@ -76,8 +76,13 @@ set(plClient_TEXT
 )
 
 if(WIN32)
+    list(APPEND plClient_HEADERS
+        win32/plWinDpi.h
+    )
+
     list(APPEND plClient_SOURCES
         win32/plClient_Win.cpp
+        win32/plWinDpi.cpp
         win32/winmain.cpp
     )
 
