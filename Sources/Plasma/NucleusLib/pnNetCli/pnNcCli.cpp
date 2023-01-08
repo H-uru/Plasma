@@ -54,9 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <mutex>
 #include <string>
 
-//#define NCCLI_DEBUGGING
-#ifdef NCCLI_DEBUGGING
-# pragma message("Compiling pnNetCli with debugging on")
+#ifdef HS_DEBUGGING
 # define NCCLI_LOG  LogMsg
 #else
 # define NCCLI_LOG(...) ((void)0)
