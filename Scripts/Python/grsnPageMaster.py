@@ -98,16 +98,8 @@ class grsnPageMaster(ptResponder):
             pages += ["WallRoom","grsnWallRoomClimbingPhys"]
             pages += ["FemaleElevatorArrivingBottom","FemaleElevatorArrivingTop","FemaleElevatorLeavingBottom","FemaleElevatorLeavingTop"]
             pages += ["FemaleLandingRoll","FemaleReadyIdle","FemaleReadyJump","FemaleTubeFall"]
-            pages += ["FemaleWallClimbDismountDown","FemaleWallClimbDismountLeft","FemaleWallClimbDismountRight","FemaleWallClimbDismountUp"]
-            pages += ["FemaleWallClimbDown","FemaleWallClimbFallOff","FemaleWallClimbIdle","FemaleWallClimbLeft"]
-            pages += ["FemaleWallClimbMountDown","FemaleWallClimbMountLeft","FemaleWallClimbMountRight","FemaleWallClimbMountUp"]
-            pages += ["FemaleWallClimbRelease","FemaleWallClimbRight","FemaleWallClimbUp"]
             pages += ["MaleElevatorArrivingBottom","MaleElevatorArrivingTop","MaleElevatorLeavingBottom","MaleElevatorLeavingTop"]
             pages += ["MaleLandingRoll","MaleReadyIdle","MaleReadyJump","MaleTubeFall"]
-            pages += ["MaleWallClimbDismountDown","MaleWallClimbDismountLeft","MaleWallClimbDismountRight","MaleWallClimbDismountUp"]
-            pages += ["MaleWallClimbDown","MaleWallClimbFallOff","MaleWallClimbIdle","MaleWallClimbLeft"]
-            pages += ["MaleWallClimbMountDown","MaleWallClimbMountLeft","MaleWallClimbMountRight","MaleWallClimbMountUp"]
-            pages += ["MaleWallClimbRelease","MaleWallClimbRight","MaleWallClimbUp"]
             
         PtPageInNode(pages)
 
