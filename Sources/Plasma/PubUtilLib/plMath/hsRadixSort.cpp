@@ -41,13 +41,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsMemory.h"
 #include "hsRadixSort.h"
 
 hsRadixSort::hsRadixSort() : fList()
 {
-    HSMemory::Clear(fHeads, 256*sizeof(Elem*));
-    HSMemory::Clear(fTails, 256*sizeof(Elem*));
+    for (size_t i = 0; i < 256; i++) {
+        fHeads[i] = nullptr;
+        fTails[i] = nullptr;
+    }
 }
 
 void hsRadixSort::ILink(Elem*& head, Elem*& tail, int i)

@@ -531,7 +531,7 @@ plMipmap* plLightMapGen::IMakeAccumBitmap(plLayerInterface* lay) const
 
     // Temporary mipmap here, so we don't have to worry about using plBitmapCreator
     plMipmap* bitmap = new plMipmap( width, height, plMipmap::kRGB32Config, 1 );
-    HSMemory::Clear(bitmap->GetImage(), bitmap->GetHeight() * bitmap->GetRowBytes() );
+    memset(bitmap->GetImage(), 0, bitmap->GetHeight() * bitmap->GetRowBytes());
 
     return bitmap;
 }

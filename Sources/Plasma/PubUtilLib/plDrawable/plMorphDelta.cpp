@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMorphDelta.h"
 
 #include "hsStream.h"
-#include "hsMemory.h"
 
 #include "plAccessGeometry.h"
 #include "plAccessSpan.h"

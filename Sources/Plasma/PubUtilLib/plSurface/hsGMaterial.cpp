@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cmath>
 
 #include "HeadSpin.h"
-#include "hsMemory.h"
 #include "plProfile.h"
 #include "hsResMgr.h"
 

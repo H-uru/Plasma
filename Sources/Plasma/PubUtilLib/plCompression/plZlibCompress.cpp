@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plZlibCompress.h"
 #include "zlib.h"
-#include "hsMemory.h"
 #include "hsStream.h"
 
 #include <memory>
@@ -72,11 +71,11 @@ bool plZlibCompress::ICopyBuffers(uint8_t** bufIn, uint32_t* bufLenIn, char* buf
     if (ok)
     {
         *bufLenIn = bufLenOut+offset;
-        uint8_t* newBuf = new uint8_t[*bufLenIn];           // alloc new buffer
-        HSMemory::BlockMove(*bufIn, newBuf, offset);    // copy offset (uncompressed) part
-        delete [] *bufIn;                               // delete original buffer
+        uint8_t* newBuf = new uint8_t[*bufLenIn];   // alloc new buffer
+        memmove(newBuf, *bufIn, offset);            // copy offset (uncompressed) part
+        delete [] *bufIn;                           // delete original buffer
 
-        HSMemory::BlockMove(bufOut, newBuf+offset, bufLenOut);  // copy compressed part
+        memmove(newBuf+offset, bufOut, bufLenOut);  // copy compressed part
         delete [] bufOut;
         *bufIn = newBuf;
         return true;
