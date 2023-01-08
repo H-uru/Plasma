@@ -116,7 +116,7 @@ uint16_t plDebugText::GetFontHeight()
 
 plDebugTextManager::plDebugTextNode::plDebugTextNode( const char *s, uint32_t c, uint16_t x, uint16_t y, uint8_t style )
 {
-    HSMemory::Clear( fText, sizeof( fText ) );
+    memset( fText, 0, sizeof( fText ) );
     strncpy( fText, s, sizeof( fText ) - 1 );
     fColor = c;
     fX = x;

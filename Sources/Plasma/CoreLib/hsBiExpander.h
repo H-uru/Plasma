@@ -44,8 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsBiExpander_inc
 
 #include "hsExceptions.h"
-#include "hsMemory.h"
-#include "hsExceptions.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 ////////////// Expander ///////////////////////////////////////////////////////
@@ -344,7 +342,7 @@ void hsBiExpander<T>::IExpand(int newSize, bool towardEnd)
     int i;
     for( i = -fNumPre; i < fNumPost; i++ )
         newArray[i] = fArray[i];
-//  HSMemory::BlockMove(fArray-fNumPre, newArray-fNumPre, 
+//  memmove(newArray-fNumPre, fArray-fNumPre,
 //      (fNumPre+fNumPost)*sizeof(*fArray));
     delete [] (fArray-fNumPreAlloc);
     fArray = newArray;

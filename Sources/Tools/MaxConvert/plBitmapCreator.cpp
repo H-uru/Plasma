@@ -299,7 +299,7 @@ int plBitmapCreator::IResampBitmap(Bitmap *bm, plMipmap &hBitmap)
     hBitmap.fRowBytes   = hBitmap.fWidth * hBitmap.fPixelSize >> 3;
     hBitmap.fNumLevels = 1;
 
-    hBitmap.fImage      = HSMemory::New(hBitmap.fRowBytes * hBitmap.fHeight);
+    hBitmap.fImage      = new uint8_t[hBitmap.fRowBytes * hBitmap.fHeight];
 
 #ifdef COLOR_BLACK_WHITE
     hBitmap.fFlags |= plMipmap::kColorWhite | plMipmap::kColorBlack;
@@ -393,7 +393,7 @@ int plBitmapCreator::ICopyBitmap(Bitmap *bm, plMipmap &hBitmap)
     hBitmap.fRowBytes   = bm->Width()*hBitmap.fPixelSize/8;
     hBitmap.fNumLevels = 1;
 
-    hBitmap.fImage      = HSMemory::New(hBitmap.fRowBytes * hBitmap.fHeight);
+    hBitmap.fImage      = new uint8_t[hBitmap.fRowBytes * hBitmap.fHeight];
 
 #ifdef COLOR_BLACK_WHITE
     hBitmap.fFlags |= plMipmap::kColorWhite | plMipmap::kColorBlack;

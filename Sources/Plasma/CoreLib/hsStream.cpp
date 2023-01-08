@@ -792,7 +792,7 @@ uint32_t hsReadOnlyStream::Read(uint32_t byteCount, void* buffer)
         byteCount = GetSizeLeft();
     }
 
-    HSMemory::BlockMove(fData, buffer, byteCount);
+    memmove(buffer, fData, byteCount);
     fData += byteCount;
     fBytesRead += byteCount;
     fPosition += byteCount;
@@ -829,7 +829,7 @@ void hsReadOnlyStream::Truncate()
 void hsReadOnlyStream::CopyToMem(void* mem)
 {
     if (fData < fStop)
-        HSMemory::BlockMove(fData, mem, fStop-fData);
+        memmove(mem, fData, fStop-fData);
 }
 
 
@@ -844,7 +844,7 @@ uint32_t hsWriteOnlyStream::Write(uint32_t byteCount, const void* buffer)
 {
     if (fData + byteCount > fStop)
         hsThrow("Write past end of stream");
-    HSMemory::BlockMove(buffer, fData, byteCount);
+    memmove(fData, buffer, byteCount);
     fData += byteCount;
     fBytesRead += byteCount;
     fPosition += byteCount;
@@ -874,7 +874,7 @@ uint32_t hsQueueStream::Read(uint32_t byteCount, void * buffer)
     
     limit = fWriteCursor >= fReadCursor ? fWriteCursor : fSize;
     length = std::min(limit-fReadCursor, byteCount);
-    HSMemory::BlockMove(fQueue+fReadCursor,buffer,length);
+    memmove(buffer, fQueue+fReadCursor, length);
     fReadCursor += length;
     fReadCursor %= fSize;
     total = length;
@@ -883,7 +883,7 @@ uint32_t hsQueueStream::Read(uint32_t byteCount, void * buffer)
     {
         limit = fWriteCursor;
         length = std::min(limit, static_cast<int32_t>(byteCount)-length);
-        HSMemory::BlockMove(fQueue,static_cast<char*>(buffer)+total,length);
+        memmove(static_cast<char*>(buffer)+total, fQueue, length);
         fReadCursor = length;
         total += length;
     }
@@ -899,7 +899,7 @@ uint32_t hsQueueStream::Write(uint32_t byteCount, const void* buffer)
     int32_t length;
 
     length = std::min(fSize-fWriteCursor, byteCount);
-    HSMemory::BlockMove(buffer,fQueue+fWriteCursor,length);
+    memmove(fQueue+fWriteCursor, buffer, length);
     if (fReadCursor > fWriteCursor)
     {
 #if 0

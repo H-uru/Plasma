@@ -47,68 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define DO_MEMORY_REPORTS       // dumps memory reports upon start up of engine
 
-///////////////////////////////////////////////////////////////////////////////////////////
-
-void HSMemory::BlockMove(const void* src, void* dst, size_t length)
-{
-    memmove(dst, src, length);
-}
-
-bool HSMemory::EqualBlocks(const void* block1, const void* block2, size_t length)
-{
-    const uint8_t* byte1 = (uint8_t*)block1;
-    const uint8_t* byte2 = (uint8_t*)block2;
-
-    while (length--)
-        if (*byte1++ != *byte2++)
-            return false;
-    return true;
-}
-
-void* HSMemory::New(size_t size)
-{
-    return new uint32_t[(size + 3) >> 2];
-}
-
-void HSMemory::Delete(void* block)
-{
-    delete[] (uint32_t*)block;
-}
-
-void* HSMemory::Copy(size_t length, const void* source)
-{
-    void* destination = HSMemory::New(length);
-
-    HSMemory::BlockMove(source, destination, length);
-    return destination;
-}
-
-void HSMemory::Clear(void* m, size_t byteLen)
-{
-    uint8_t*  mem = (uint8_t*)m;
-    uint8_t*  memStop = mem + byteLen;
-
-    if (byteLen > 8)
-    {   while (uintptr_t(mem) & 3)
-            *mem++ = 0;
-        
-        uint32_t* mem32 = (uint32_t*)mem;
-        uint32_t* mem32Stop = (uint32_t*)(uintptr_t(memStop) & ~3);
-        do {
-            *mem32++ = 0;
-        } while (mem32 < mem32Stop);
-        
-        mem = (uint8_t*)mem32;
-        // fall through to finish any remaining bytes (0..3)
-    }
-    while (mem < memStop)
-        *mem++ = 0;
-
-    hsAssert(mem == memStop, "oops");
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-
 struct hsPrivateChunk {
     hsPrivateChunk* fNext;
     char*           fAvailableAddr;
@@ -122,7 +60,7 @@ struct hsPrivateChunk {
 
 hsPrivateChunk* hsPrivateChunk::NewPrivateChunk(hsPrivateChunk* next, size_t chunkSize)
 {
-    hsPrivateChunk* chunk = (hsPrivateChunk*)HSMemory::New(sizeof(hsPrivateChunk) + chunkSize);
+    hsPrivateChunk* chunk = (hsPrivateChunk*)malloc(sizeof(hsPrivateChunk) + chunkSize);
 
     chunk->fNext            = next;
     chunk->fAvailableAddr   = (char*)chunk + sizeof(hsPrivateChunk);
@@ -149,7 +87,7 @@ void hsChunkAllocator::Reset()
 
     while (chunk) {
         hsPrivateChunk* next = chunk->fNext;
-        HSMemory::Delete(chunk);
+        free(chunk);
         chunk = next;
     }
     fChunk = nullptr;
@@ -178,7 +116,7 @@ void* hsChunkAllocator::Allocate(size_t size, const void* data)
     hsDebugCode(fChunk->fCount += 1;)
 
     if (data)
-        HSMemory::BlockMove(data, addr, size);
+        memmove(addr, data, size);
 
     return addr;
 }
@@ -224,7 +162,7 @@ struct hsAppenderHead {
     {
         hsAssert(fFirst != fStop, "Empty");
         if (data)
-            HSMemory::BlockMove(fFirst, data, elemSize);
+            memmove(data, fFirst, elemSize);
         fFirst = (char*)fFirst + elemSize;
         return fFirst == fStop;
     }
@@ -233,14 +171,14 @@ struct hsAppenderHead {
         hsAssert(fFirst != fStop, "Empty");
         fStop = (char*)fStop - elemSize;
         if (data)
-            HSMemory::BlockMove(fStop, data, elemSize);
+            memmove(data, fStop, elemSize);
         return fFirst == fStop;
     }
 
     static hsAppenderHead* NewAppend(size_t elemSize, size_t elemCount, hsAppenderHead* prev)
     {
         size_t dataSize = elemSize * elemCount;
-        hsAppenderHead* head = (hsAppenderHead*)HSMemory::New(sizeof(hsAppenderHead) + dataSize);
+        hsAppenderHead* head = (hsAppenderHead*)malloc(sizeof(hsAppenderHead) + dataSize);
 
         head->fNext = nullptr;
         head->fPrev = prev;
@@ -252,7 +190,7 @@ struct hsAppenderHead {
     static hsAppenderHead* NewPrepend(size_t elemSize, size_t elemCount, hsAppenderHead* next)
     {
         size_t dataSize = elemSize * elemCount;
-        hsAppenderHead* head = (hsAppenderHead*)HSMemory::New(sizeof(hsAppenderHead) + dataSize);
+        hsAppenderHead* head = (hsAppenderHead*)malloc(sizeof(hsAppenderHead) + dataSize);
 
         head->fNext = next;
         head->fPrev = nullptr;
@@ -273,7 +211,7 @@ size_t hsAppender::CopyInto(void* data) const
 
         while (head != nullptr) {
             size_t size = head->GetSize();
-            HSMemory::BlockMove(head->GetFirst(), data, size);
+            memmove(data, head->GetFirst(), size);
             
             data = (char*)data + size;
             head = head->fNext;
@@ -290,7 +228,7 @@ void hsAppender::Reset()
 
     while (head != nullptr) {
         hsAppenderHead* next = head->fNext;
-        HSMemory::Delete(head);
+        free(head);
         head = next;
     }
 
@@ -316,7 +254,7 @@ void hsAppender::PushHead(const void* data)
 {
     void* addr = this->PushHead();
     if (data)
-        HSMemory::BlockMove(data, addr, fElemSize);
+        memmove(addr, data, fElemSize);
 }
 
 void* hsAppender::PeekHead() const
@@ -338,7 +276,7 @@ bool hsAppender::PopHead(void* data)
         hsAppenderHead* next = fFirstBlock->fNext;
         if (next)
             next->fPrev = nullptr;
-        HSMemory::Delete(fFirstBlock);
+        free(fFirstBlock);
         fFirstBlock = next;
         if (next == nullptr)
             fLastBlock = nullptr;
@@ -362,7 +300,7 @@ size_t hsAppender::PopHead(size_t count, void* data)
             hsAppenderHead* next = fFirstBlock->fNext;
             if (next)
                 next->fPrev = nullptr;
-            HSMemory::Delete(fFirstBlock);
+            free(fFirstBlock);
             fFirstBlock = next;
             if (next == nullptr)
                 fLastBlock = nullptr;
@@ -396,7 +334,7 @@ void hsAppender::PushTail(const void* data)
 {
     void*   addr = this->PushTail();
     if (data)
-        HSMemory::BlockMove(data, addr, fElemSize);
+        memmove(addr, data, fElemSize);
 }
 
 void hsAppender::PushTail(size_t count, const void* data)
@@ -423,7 +361,7 @@ void hsAppender::PushTail(size_t count, const void* data)
         void* dst = fLastBlock->Append(size);
 
         if (data) {
-            HSMemory::BlockMove(data, dst, size);
+            memmove(dst, data, size);
             data = (char*)data + size;
         }
         sizeNeeded -= size;
@@ -450,7 +388,7 @@ bool hsAppender::PopTail(void* data)
         hsAppenderHead* prev = fLastBlock->fPrev;
         if (prev)
             prev->fNext = nullptr;
-        HSMemory::Delete(fLastBlock);
+        free(fLastBlock);
         fLastBlock = prev;
         if (prev == nullptr)
             fFirstBlock = nullptr;
@@ -515,7 +453,7 @@ bool hsAppenderIterator::Next(void* data)
     void* addr = this->Next();
     if (addr) {
         if (data)
-            HSMemory::BlockMove(addr, data, fAppender->fElemSize);
+            memmove(data, addr, fAppender->fElemSize);
         return true;
     }
     return false;
@@ -558,7 +496,7 @@ bool hsAppenderIterator::Prev(void* data)
     void* addr = this->Prev();
     if (addr) {
         if (data)
-            HSMemory::BlockMove(addr, data, fAppender->fElemSize);
+            memmove(data, addr, fAppender->fElemSize);
         return true;
     }
     return false;

@@ -1448,8 +1448,8 @@ void plMipmap::Filter(float sig)
     {
         uint8_t *dst = (uint8_t *)(fImage);
 
-        uint8_t* src = (uint8_t*)HSMemory::New(fRowBytes * fHeight);
-        HSMemory::BlockMove(dst, src, fRowBytes * fHeight);
+        uint8_t* src = new uint8_t[fRowBytes * fHeight];
+        memmove(src, dst, fRowBytes * fHeight);
 
         if( sig <= 0 )
             sig = kDefaultSigma;
@@ -1491,7 +1491,7 @@ void plMipmap::Filter(float sig)
             }
         }
 
-        HSMemory::Delete(src);
+        delete[] src;
     }
 }
 

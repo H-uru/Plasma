@@ -44,21 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-class HSMemory {
-public:
-    static void BlockMove(const void* src, void* dst, size_t length);
-    static void Clear(void *m, size_t byteLen);
-    static void ClearMemory(void *m, size_t byteLen) { HSMemory::Clear(m, byteLen); }
-
-    static bool EqualBlocks(const void* block1, const void* block2, size_t length);
-
-    static void* New(size_t size);
-    static void  Delete(void* block);
-    static void* Copy(size_t length, const void* source);
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////
-
 class hsAllocator {
 public:
     virtual void*   Alloc(size_t size) = 0;
