@@ -298,7 +298,7 @@ class xLinkingBookGUIPopup(ptModifier):
                             self.HideBook()
                         elif event[2] == xLinkingBookDefs.kShareBookDeleteID:
                             ageName = self.IGetAgeFilename()
-                            PtDebugPrint("xLinkingBookGUIPopup:Book: hit delete bookmark for age '%s'" % (ageName))
+                            PtDebugPrint(f"xLinkingBookGUIPopup:Book: hit delete bookmark for age '{ageName}'")
                             if ageName == "Neighborhood":
                                 PtYesNoDialog(self.key, PtGetLocalizedString("Personal.Bookshelf.DeleteNeighborhoodBook"))
                             else:
@@ -421,42 +421,35 @@ class xLinkingBookGUIPopup(ptModifier):
                         vault = ptVault()
                         ageStruct = ptAgeInfoStruct()
                         ageStruct.setAgeFilename(ageName)
-                        link = vault.getOwnedAgeLink(ageStruct)
 
-                        if link is not None:
-                            PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tfound Owned link", ageName)                            
-                            if ageName == "Ahnonay" or ageName == "AhnonayCathedral":
+                        if link := vault.getOwnedAgeLink(ageStruct):
+                            PtDebugPrint(f"xLinkingBookGUIPopup.OnNotify():\tfound Owned link for deletion {ageName=}", level=kDebugDumpLevel)
+
+                            if ageName in {"Ahnonay", "AhnonayCathedral"}:
                                 ahnonayAgeStruct = ptAgeInfoStruct()
                                 ahnonayAgeStruct.setAgeFilename("Personal")
 
-                                ageLinkNode = vault.getOwnedAgeLink(ahnonayAgeStruct)
-                                if ageLinkNode:
-                                    ageInfoNode = ageLinkNode.getAgeInfo()
-                                    ageInfoChildren = ageInfoNode.getChildNodeRefList()
-                                    for ageInfoChildRef in ageInfoChildren:
-                                        ageInfoChild = ageInfoChildRef.getChild()
-                                        folder = ageInfoChild.upcastToFolderNode()
-                                        if folder and folder.folderGetName() == "AgeData":
-                                            ageDataFolder = folder
-                                            ageDataChildren = folder.getChildNodeRefList()
-                                            for ageDataChildRef in ageDataChildren:
-                                                ageDataChild = ageDataChildRef.getChild()
-                                                chron = ageDataChild.upcastToChronicleNode()
-                                                if chron and chron.getName() == "AhnonayVolatile":
-                                                    if ( vault.inMyPersonalAge() ):
-                                                        chron.setValue("1")
-                                            break
-                                if ageName == "AhnonayCathedral":
-                                    PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tSet Age to Volatile", ageName)
-                                    link.setVolatile(True)
-                                    link.save()
-                                
-                            else:
-                                PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tSet Age to Volatile", ageName)
+                                if ageLinkNode := vault.getOwnedAgeLink(ahnonayAgeStruct):
+                                    if ageInfoNode := ageLinkNode.getAgeInfo():
+                                        ageDataTemplate = ptVaultFolderNode()
+                                        ageDataTemplate.folderSetName("AgeData")
+                                        if ageDataFolder := ageInfoNode.findNode(ageDataTemplate):
+                                            chronTemplate = ptVaultChronicleNode()
+                                            chronTemplate.chronicleSetName("AhnonayVolatile")
+                                            if (chron := ageDataFolder.findNode(chronTemplate)) and (chron := chron.upcastToChronicleNode()):
+                                                chron.chronicleSetValue("1")
+                                            else:
+                                                PtDebugPrint(f"xLinkingBookGUIPopup.OnNotify():\tHmmm... The AhnonayVolatile chronicle is missing! This deletion may cause oddness.")
+                                        else:
+                                            PtDebugPrint(f"xLinkingBookGUIPopup.OnNotify():\tHmmm... The AgeData chronicle is missing! This deletion may cause oddness.")
+                                else:
+                                    PtDebugPrint("xLinkingBookGUIPopup.OnNotify():\tHmmm... The Relto AgeLink is missing!")
+                            if ageName != "Ahnonay":
+                                PtDebugPrint(f"xLinkingBookGUIPopup.OnNotify():\tMarking {ageName=} volatile.", level=kWarningLevel)
                                 link.setVolatile(True)
                                 link.save()
                         else:
-                            PtDebugPrint("xLinkingBookGUIPopup:Book:\tunable to find Owned link", ageName)
+                            PtDebugPrint(f"xLinkingBookGUIPopup.OnNotify():\tHmmm... The {ageName=} AgeLink is missing!")
 
 
     def IShowBookNoTreasure(self):
