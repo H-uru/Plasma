@@ -82,7 +82,7 @@ void plGLPlateManager::ICreateGeometry()
 
     GLuint vbo, ibo, vao = 0;
 
-    if (epoxy_gl_version() >= 45) {
+    if (plGLVersion() >= 45) {
         glCreateBuffers(1, &vbo);
         glObjectLabel(GL_BUFFER, vbo, -1, "plPlate/VBO");
         glNamedBufferStorage(vbo, sizeof(verts), verts, 0);
@@ -112,7 +112,7 @@ void plGLPlateManager::ICreateGeometry()
         glVertexArrayAttribBinding(vao, kVtxColor, 0);
         glVertexArrayAttribBinding(vao, kVtxUVWSrc, 0);
     } else {
-        if (epoxy_gl_version() >= 30) {
+        if (plGLVersion() >= 30) {
             glGenVertexArrays(1, &vao);
             glBindVertexArray(vao);
         }
@@ -125,9 +125,9 @@ void plGLPlateManager::ICreateGeometry()
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-        if (epoxy_gl_version() >= 30) {
+        if (plGLVersion() >= 30) {
             glEnableVertexAttribArray(kVtxPosition);
-            glVertexAttribPointer(kVtxPosition, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), 0);
+            glVertexAttribPointer(kVtxPosition, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)(sizeof(float) * 0));
 
             glEnableVertexAttribArray(kVtxNormal);
             glVertexAttribPointer(kVtxNormal, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)(sizeof(float) * 3));
@@ -147,8 +147,8 @@ void plGLPlateManager::ICreateGeometry()
 
 void plGLPlateManager::IReleaseGeometry()
 {
-    if (epoxy_gl_version() >= 30 && fBuffers.ARef) {
-        if (epoxy_gl_version() >= 45) {
+    if (plGLVersion() >= 30 && fBuffers.ARef) {
+        if (plGLVersion() >= 45) {
             glDisableVertexArrayAttrib(fBuffers.ARef, kVtxPosition);
             glDisableVertexArrayAttrib(fBuffers.ARef, kVtxNormal);
             glDisableVertexArrayAttrib(fBuffers.ARef, kVtxColor);
@@ -184,7 +184,7 @@ void plGLPlateManager::IDrawToDevice(plPipeline* pipe)
             return;
     }
 
-    if (epoxy_gl_version() >= 30) {
+    if (plGLVersion() >= 30) {
         if (fBuffers.ARef == 0)
             return;
 
@@ -192,7 +192,7 @@ void plGLPlateManager::IDrawToDevice(plPipeline* pipe)
     } else {
         glBindBuffer(GL_ARRAY_BUFFER, fBuffers.VRef);
 
-        glVertexAttribPointer(kVtxPosition, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), 0);
+        glVertexAttribPointer(kVtxPosition, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)(sizeof(float) * 0));
         glEnableVertexAttribArray(kVtxPosition);
 
         glVertexAttribPointer(kVtxNormal, 3, GL_FLOAT, GL_FALSE, sizeof(plPlateVertex), (void*)(sizeof(float) * 3));
@@ -221,6 +221,6 @@ void plGLPlateManager::IDrawToDevice(plPipeline* pipe)
     if (cull)
         glEnable(GL_CULL_FACE);
 
-    if (epoxy_gl_version() >= 30)
+    if (plGLVersion() >= 30)
         glBindVertexArray(0);
 }
