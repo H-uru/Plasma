@@ -370,7 +370,7 @@ bool plGLDevice::InitDevice()
     plStatusLog::AddLineSF("pipeline.log", "Initialized with OpenGL {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 
 #ifdef HS_DEBUGGING
-    if (epoxy_gl_version() >= 43) {
+    if (plGLVersion() >= 43) {
         glEnable(GL_DEBUG_OUTPUT);
 
         // Turn off low-severity messages
@@ -546,7 +546,7 @@ void plGLDevice::CheckStaticVertexBuffer(VertexBufferRef* vRef, plGBufferGroup* 
     hsAssert(!vRef->Volatile(), "Creating a managed vertex buffer for a volatile buffer ref");
 
     if (!vRef->fRef) {
-        if (epoxy_gl_version() >= 45) {
+        if (plGLVersion() >= 45) {
             glCreateBuffers(1, &vRef->fRef);
         } else {
             glGenBuffers(1, &vRef->fRef);
@@ -575,7 +575,7 @@ void plGLDevice::FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup*
 
 
     if (ref->fData) {
-        if (epoxy_gl_version() >= 45) {
+        if (plGLVersion() >= 45) {
             glNamedBufferData(ref->fRef, size, ref->fData + vertStart, GL_STATIC_DRAW);
         } else {
             glBindBuffer(GL_ARRAY_BUFFER, ref->fRef);
@@ -626,7 +626,7 @@ void plGLDevice::FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup*
         }
 
         hsAssert((ptr - buffer) == size, "Didn't fill the buffer?");
-        if (epoxy_gl_version() >= 45) {
+        if (plGLVersion() >= 45) {
             glNamedBufferData(ref->fRef, size, buffer, GL_STATIC_DRAW);
         } else {
             glBindBuffer(GL_ARRAY_BUFFER, ref->fRef);
@@ -696,7 +696,7 @@ void plGLDevice::CheckIndexBuffer(IndexBufferRef* iRef)
     if (!iRef->fRef && iRef->fCount) {
         iRef->SetVolatile(false);
 
-        if (epoxy_gl_version() >= 45) {
+        if (plGLVersion() >= 45) {
             glCreateBuffers(1, &iRef->fRef);
         } else {
             glGenBuffers(1, &iRef->fRef);
@@ -715,7 +715,7 @@ void plGLDevice::FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner,
     if (!size)
         return;
 
-    if (epoxy_gl_version() >= 45) {
+    if (plGLVersion() >= 45) {
         glNamedBufferData(iRef->fRef, size, owner->GetIndexBufferData(idx) + startIdx, GL_STATIC_DRAW);
     } else {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iRef->fRef);
@@ -826,7 +826,7 @@ void plGLDevice::MakeTextureRef(TextureRef* tRef, plLayerInterface* layer, plMip
     glBindTexture(tRef->fMapping, tRef->fRef);
     BindTexture(tRef, img, tRef->fMapping);
 
-    if (epoxy_gl_version() >= 43) {
+    if (plGLVersion() >= 43) {
         glObjectLabel(GL_TEXTURE, tRef->fRef, -1, img->GetKeyName().c_str());
     }
 
@@ -862,7 +862,7 @@ void plGLDevice::MakeCubicTextureRef(TextureRef* tRef, plLayerInterface* layer, 
         BindTexture(tRef, img->GetFace(i), kFaceMapping[i]);
     }
 
-    if (epoxy_gl_version() >= 43) {
+    if (plGLVersion() >= 43) {
         glObjectLabel(GL_TEXTURE, tRef->fRef, -1, img->GetKeyName().c_str());
     }
 
