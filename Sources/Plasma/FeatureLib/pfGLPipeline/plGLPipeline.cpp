@@ -374,7 +374,7 @@ hsGDeviceRef* plGLPipeline::MakeRenderTargetRef(plRenderTarget* owner)
     // since we only render one face at a time. If we were rendering part of face X, then part
     // of face Y, then more of face X, then they would all need their own depth buffers.
     if (owner->GetZDepth() && (owner->GetFlags() & (plRenderTarget::kIsTexture | plRenderTarget::kIsOffscreen))) {
-        if (epoxy_gl_version() >= 45) {
+        if (plGLVersion() >= 45) {
             glCreateRenderbuffers(1, &depthBuffer);
             glNamedRenderbufferStorage(depthBuffer, GL_DEPTH24_STENCIL8, owner->GetWidth(), owner->GetHeight());
         } else {
@@ -408,7 +408,7 @@ hsGDeviceRef* plGLPipeline::MakeRenderTargetRef(plRenderTarget* owner)
         ref->fDepthBuffer = depthBuffer;
         ref->fMapping = GL_TEXTURE_2D;
 
-        if (epoxy_gl_version() >= 45) {
+        if (plGLVersion() >= 45) {
             glCreateTextures(GL_TEXTURE_2D, 1, &ref->fRef);
             glTextureStorage2D(ref->fRef, 1, GL_RGBA8, owner->GetWidth(), owner->GetHeight());
             glTextureParameteri(ref->fRef, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -672,7 +672,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
             LOG_GL_ERROR_CHECK(ST::format("Use Program with material \"{}\" failed", material->GetKeyName()));
 
             GLuint vao = 0;
-            if (epoxy_gl_version() >= 30) {
+            if (plGLVersion() >= 30) {
                 // TODO: Figure out how to use VAOs properly :(
                 glGenVertexArrays(1, &vao);
                 glBindVertexArray(vao);
@@ -703,7 +703,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
                                 tempIce.fVStartIdx, tempIce.fVLength,   // These are used as our accumulated range
                                 tempIce.fIPackedIdx, tempIce.fILength );
 
-            if (epoxy_gl_version() >= 30)
+            if (plGLVersion() >= 30)
                 glDeleteVertexArrays(1, &vao);
         }
 
