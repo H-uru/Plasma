@@ -413,7 +413,7 @@ void plGLMaterialShaderRef::ICompile()
     fRef = glCreateProgram();
     LOG_GL_ERROR_CHECK("Create Program failed");
 
-    if (epoxy_gl_version() >= 43) {
+    if (plGLVersion() >= 43) {
         const char* name = ST::format("hsGMaterial::{}", fMaterial->GetKeyName()).c_str();
         glObjectLabel(GL_PROGRAM, fRef, strlen(name), name);
     }

@@ -47,6 +47,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <epoxy/gl.h>
 
+inline int plGLVersion()
+{
+    // This exists for testing purposes to force the pipeline to behave as if a
+    // specific version of OpenGL were present, mainly for ensuring
+    // compatibility with older GL API versions on machines where newer
+    // versions are available by default. To pretend to be limited to a
+    // specific version, just return the GL version with the decimal removed as
+    // an integer:
+
+    // return 42; // Pretend we only support OpenGL 4.2
+    return epoxy_gl_version();
+}
+
 // Helper macro for logging GL Errors
 #ifdef HS_DEBUGGING
 #   include "plStatusLog/plStatusLog.h"
