@@ -91,6 +91,7 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
     
     CFAutorelease(accountName);
     CFAutorelease(serviceName);
+    CFAutorelease(passwordData);
     
     const void* keys[] = { kSecClass, kSecAttrService, kSecReturnData, kSecValueData };
     const void* values[] = { kSecClassGenericPassword, serviceName, kCFBooleanTrue, passwordData };
