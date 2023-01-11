@@ -174,7 +174,7 @@ class xKIChat(object):
             if not KIMini.dialog.isEnabled():
                 self.ClearBBMini(0)
             if firstChar:
-                chatEdit.setString(firstChar)
+                chatEdit.setStringW(firstChar)
                 chatEdit.end()
             else:
                 chatEdit.clearString()
