@@ -50,6 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnMessage/plClientMsg.h"
 
+#ifndef WM_GETDPISCALEDSIZE
+#   define WM_GETDPISCALEDSIZE 0x02E4
+#endif
+
 static std::unique_ptr<plWinDpi> s_instance;
 
 plWinDpi& plWinDpi::Instance()
@@ -198,6 +202,27 @@ int plWinDpi::GetSystemMetrics(int nIndex, std::variant<UINT, HWND, std::monosta
     return MulDiv(metrics, dpi, 96);
 }
 
+BOOL plWinDpi::ICalcWinSize(HWND hWnd, UINT dpi, SIZE& hWndSize) const
+{
+    // Assumption: You only care about doing this on Windows 10 v1703.
+    auto* adjustWindowRect = fAdjustWindowRectExForDpi.Get();
+    if (adjustWindowRect) {
+        RECT rect{};
+        GetClientRect(hWnd, &rect);
+        MapWindowPoints(hWnd, nullptr, (LPPOINT)&rect, 2);
+
+        LONG_PTR dwStyle = GetWindowLongPtrW(hWnd, GWL_STYLE);
+        LONG_PTR dwExStyle = GetWindowLongPtrW(hWnd, GWL_EXSTYLE);
+        BOOL result = adjustWindowRect(&rect, (DWORD)dwStyle, FALSE, (DWORD)dwExStyle, dpi);
+        if (result != FALSE) {
+            hWndSize.cx = rect.right - rect.left;
+            hWndSize.cy = rect.bottom - rect.top;
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 void plWinDpi::IEnableNCScaling(HWND hWnd) const
 {
     // The code would be more complicated with std::optional, so just grab
@@ -244,9 +269,17 @@ std::optional<LRESULT> plWinDpi::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPA
         IEnableNCScaling(hWnd);
         break;
     case WM_DPICHANGED:
-        // The goal is for us to transparently handle DPI stuff, so eat this message.
+        // For Windows 8.1 and higher. Allows us to handle DPI changes while the game is running,
+        // eg by moving the game window to another monitor with a different scale factor or
+        // the user changed the scale factor while the game is running.
         IHandleDpiChange(hWnd, LOWORD(wParam), *((LPRECT)lParam));
         return 0;
+    case WM_GETDPISCALEDSIZE:
+        // For Windows 10 v1703 and higher. This window message allows us to tell the
+        // OS the desired size of the application window sent by WM_DPICHANGED. This
+        // does mean that on Windows 10 v1607 and lower that the game window itself
+        // will change size. These versions of Windows are all EOL, however.
+        return ICalcWinSize(hWnd, (UINT)wParam, *(SIZE*)lParam);
     }
 
     // Indicates that the user may process the window message.

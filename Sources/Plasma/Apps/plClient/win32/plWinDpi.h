@@ -125,6 +125,7 @@ public:
     }
 
 private:
+    BOOL ICalcWinSize(HWND hWnd, UINT dpi, SIZE& hWndSize) const;
     void IEnableNCScaling(HWND hWnd) const;
     void IHandleDpiChange(HWND hWnd, UINT dpi, const RECT& rect) const;
 
