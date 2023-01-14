@@ -385,44 +385,64 @@ bool NetVaultNode::Matches(const NetVaultNode* rhs) const
 
 //============================================================================
 template<typename T>
-inline void IRead(const uint8_t*& buf, T& dest)
+inline bool IRead(const uint8_t*& buf, size_t& bufsz, T& dest)
 {
+    if (bufsz < sizeof(T)) {
+        return false;
+    }
     const T* ptr = reinterpret_cast<const T*>(buf);
     dest = *ptr;
     buf += sizeof(T);
+    bufsz -= sizeof(T);
+    return true;
 }
 
 template<>
-inline void IRead<ST::string>(const uint8_t*& buf, ST::string& dest)
+inline bool IRead<ST::string>(const uint8_t*& buf, size_t& bufsz, ST::string& dest)
 {
-    uint32_t size = *(reinterpret_cast<const uint32_t*>(buf));
+    uint32_t size;
+    if (
+        !IRead(buf, bufsz, size) || bufsz < size
+        // Ensure even byte count
+        || size % sizeof(char16_t) != 0
+        // String must contain at least one character (the terminator)
+        || size < sizeof(char16_t)
+    ) {
+        return false;
+    }
     uint32_t nChars = (size / sizeof(char16_t)) - 1;
-    buf += sizeof(uint32_t);
 
     ST::utf16_buffer str;
     str.allocate(nChars);
     memcpy(str.data(), buf, nChars * sizeof(char16_t));
     dest = ST::string::from_utf16(str);
     buf += size;
+    bufsz -= size;
+    return true;
 }
 
 template<>
-inline void IRead<std::vector<uint8_t>>(const uint8_t*& buf, std::vector<uint8_t>& blob)
+inline bool IRead<std::vector<uint8_t>>(const uint8_t*& buf, size_t& bufsz, std::vector<uint8_t>& blob)
 {
-    uint32_t size = *(reinterpret_cast<const uint32_t*>(buf));
-    buf += sizeof(uint32_t);
+    uint32_t size;
+    if (!IRead(buf, bufsz, size) || bufsz < size) {
+        return false;
+    }
 
     blob.resize(size);
     memcpy(blob.data(), buf, size);
     buf += size;
+    bufsz -= size;
+    return true;
 }
 
-void NetVaultNode::Read(const uint8_t* buf, size_t size)
+bool NetVaultNode::Read(const uint8_t* buf, size_t bufsz)
 {
-    fUsedFields= *(reinterpret_cast<const uint64_t*>(buf));
-    buf += sizeof(uint64_t);
+    if (!IRead(buf, bufsz, fUsedFields)) {
+        return false;
+    }
 
-#define READ(field) if (fUsedFields & k##field) IRead(buf, f##field);
+#define READ(field) if (fUsedFields & k##field) if (!IRead(buf, bufsz, f##field)) {fDirtyFields = 0; return false;}
     READ(NodeId);
     READ(CreateTime);
     READ(ModifyTime);
@@ -458,6 +478,7 @@ void NetVaultNode::Read(const uint8_t* buf, size_t size)
 #undef READ
 
     fDirtyFields = 0;
+    return bufsz == 0;
 }
 
 //============================================================================
