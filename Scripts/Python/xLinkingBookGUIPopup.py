@@ -858,6 +858,8 @@ class xLinkingBookGUIPopup(ptModifier):
             if not OfferedBookMode:
                 # yes, then return the bookHTML for a share book icon
                 return xLinkingBookDefs.ShareBook
+            else:
+                return xLinkingBookDefs.ShareBookNoLink
         # otherwise return empty string
         return ""
 
