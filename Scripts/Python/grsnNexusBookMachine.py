@@ -202,7 +202,6 @@ class grsnNexusBookMachine(ptResponder):
         if (id == entryTrigger.id):
             if runOnce:
                 avatar.avatar.enterSubWorld(subworld.value)
-                camera.value.pushCameraCut(PtGetLocalAvatar().getKey())
                 PtAtTimeCallback(self.key, 3, kStartElevID)
                 runOnce = False
             PtDebugPrint(f"grsnNexusBookMachine.OnNotify:\tadding you to private chat channel {chatChannel.value}",level=kDebugDumpLevel)

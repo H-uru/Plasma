@@ -105,7 +105,7 @@ class grsnMainWallPython(ptResponder):
                 if(blocker == -1):
                     break
                 southWall.value[blocker].runAttachedResponder(kBlockerOn)
-        elif(nState == sState == kSelectCount):
+        elif(nState == sState == kSelectCount and ageSDL["NumBlockers"][0] == 0):
             for i in range(0,171):
                 northWall.value[i].runAttachedResponder(kBlockerOff)
                 southWall.value[i].runAttachedResponder(kBlockerOff)
