@@ -296,7 +296,7 @@ class xLinkingBookGUIPopup(ptModifier):
                                 PtSetShareAgeInstanceGuid(pelletCaveGUID)
                             ClosedBookToShare = 1
                             self.HideBook()
-                        elif event[2] == xLinkingBookDefs.kShareBookDeleteID:
+                        elif event[2] == xLinkingBookDefs.kShareBookDeleteID and not OfferedBookMode:
                             ageName = self.IGetAgeFilename()
                             PtDebugPrint(f"xLinkingBookGUIPopup:Book: hit delete bookmark for age '{ageName}'")
                             if ageName == "Neighborhood":
