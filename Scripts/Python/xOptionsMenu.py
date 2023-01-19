@@ -90,7 +90,9 @@ SupportDlg              = ptAttribGUIDialog(14, "Support dialog")
 #--------
 
 gLiveMovie = None
-kLiveMovieName = "avi/URULiveIntro.webm"
+gCurrentMovieName = None
+gLiveMovieList = []
+kLiveMovieDir = "avi"
 kDemoMovieName = "avi/UruPreview.webm"
 gPreviewStarted = 0
 prevAudioDeviceName = None
@@ -153,6 +155,9 @@ kSupportLiveHelp = 781
 kSupportTicket = 782
 
 kClickOnMeBtn = 99
+
+kTrailerPreviousButton = 98
+kTrailerNextButton = 97
 
 gJournalBook = None
 
@@ -980,13 +985,36 @@ class xOptionsMenu(ptModifier):
 ##
 ###############################################
         elif id == TrailerDlg.id:
+            global gLiveMovie
+            global gLiveMovieList
+            global gCurrentMovieName
             if event == kDialogLoaded:
                 pass
             elif event == kShowHide:
                 pass
             elif event == kAction or event == kValueChanged:
                 tpID = control.getTagID()
-                if tpID == kClickOnMeBtn:
+                if tpID == kTrailerPreviousButton:
+                    if gLiveMovie:
+                        gLiveMovie.pause()
+                        tempIndex = gLiveMovieList.index(gCurrentMovieName)-1
+                        if tempIndex < 0:
+                            gCurrentMovieName = gLiveMovieList[len(gLiveMovieList)-1]
+                        else:
+                            gCurrentMovieName = gLiveMovieList[tempIndex]
+                        gLiveMovie = ptMoviePlayer(f'{kLiveMovieDir}\{gCurrentMovieName}',self.key)
+                        gLiveMovie.play()
+                elif tpID == kTrailerNextButton:
+                    if gLiveMovie:
+                        gLiveMovie.pause()
+                        tempIndex = gLiveMovieList.index(gCurrentMovieName)+1
+                        if tempIndex >= len(gLiveMovieList):
+                            gCurrentMovieName = gLiveMovieList[0]
+                        else:
+                            gCurrentMovieName = gLiveMovieList[tempIndex]
+                        gLiveMovie = ptMoviePlayer(f'{kLiveMovieDir}\{gCurrentMovieName}',self.key)
+                        gLiveMovie.play()
+                elif tpID == kClickOnMeBtn:
                     if gLiveMovie:
                         gLiveMovie.pause()
                     gPreviewStarted = 0
@@ -1363,6 +1391,8 @@ class xOptionsMenu(ptModifier):
 
     def OnTimer(self,id):
         global gLiveMovie
+        global gLiveMovieList
+        global gCurrentMovieName
         global gOriginalSFXVolume
         global gOriginalAmbientVolume
         global gOriginalMusicVolume
@@ -1373,7 +1403,7 @@ class xOptionsMenu(ptModifier):
                 if PtIsDemoMode():
                     os.stat(kDemoMovieName)
                 else:
-                    os.stat(kLiveMovieName)
+                    os.listdir(kLiveMovieDir)[0]
                 # its there! show the background, which will start the movie
                 # just continue processing
             except:
@@ -1403,7 +1433,12 @@ class xOptionsMenu(ptModifier):
             if PtIsDemoMode():
                 gLiveMovie = ptMoviePlayer(kDemoMovieName,self.key)
             else:
-                gLiveMovie = ptMoviePlayer(kLiveMovieName,self.key)
+                gLiveMovieList = []
+                for file in os.listdir(kLiveMovieDir):
+                    if os.stat(f'{kLiveMovieDir}\{file}').st_size > 1000:
+                        gLiveMovieList.append(file)
+                gCurrentMovieName = gLiveMovieList[0]
+                gLiveMovie = ptMoviePlayer(f'{kLiveMovieDir}\{gCurrentMovieName}',self.key)
             gLiveMovie.playPaused()
         elif id == kTrailerFadeInID:
             PtDebugPrint("xLiveTrailer - roll the movie",level=kDebugDumpLevel)
@@ -1436,7 +1471,7 @@ class xOptionsMenu(ptModifier):
 
     def OnMovieEvent(self,movieName,reason):
         PtDebugPrint("xLiveTrailer: got movie done event on %s, reason=%d" % (movieName,reason),level=kDebugDumpLevel)
-        if gLiveMovie:
+        if gLiveMovie and movieName == f'{kLiveMovieDir}\{gCurrentMovieName}':
             PtFadeOut(kTrailerFadeOutSeconds,1)
             PtAtTimeCallback(self.key, kTrailerFadeOutSeconds, kTrailerFadeOutID)
 
