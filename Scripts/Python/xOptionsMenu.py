@@ -1403,7 +1403,13 @@ class xOptionsMenu(ptModifier):
                 if PtIsDemoMode():
                     os.stat(kDemoMovieName)
                 else:
-                    os.listdir(kLiveMovieDir)[0]
+                    gLiveMovieList = []
+                    for file in os.listdir(kLiveMovieDir):
+                        if os.stat(f'{kLiveMovieDir}\{file}').st_size > 1000 and os.path.splitext(f'{kLiveMovieDir}\{file}')[1] == ".webm":
+                            gLiveMovieList.append(file)
+                    else:
+                        if gLiveMovieList == []:
+                            raise TypeError('No webm found')
                 # its there! show the background, which will start the movie
                 # just continue processing
             except:
@@ -1433,10 +1439,6 @@ class xOptionsMenu(ptModifier):
             if PtIsDemoMode():
                 gLiveMovie = ptMoviePlayer(kDemoMovieName,self.key)
             else:
-                gLiveMovieList = []
-                for file in os.listdir(kLiveMovieDir):
-                    if os.stat(f'{kLiveMovieDir}\{file}').st_size > 1000:
-                        gLiveMovieList.append(file)
                 gCurrentMovieName = gLiveMovieList[0]
                 gLiveMovie = ptMoviePlayer(f'{kLiveMovieDir}\{gCurrentMovieName}',self.key)
             gLiveMovie.playPaused()
