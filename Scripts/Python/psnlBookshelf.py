@@ -1201,6 +1201,12 @@ class psnlBookshelf(ptModifier):
             ageInfo = ptAgeInfoStruct()
             ageInfo.setAgeFilename(ageName)
             ageInfo.setAgeInstanceName("Ae'gura")
+            if ageName in kHardcodedInstances:
+                link = self.IGetHoodChildLink(ageName)
+                if link is None:
+                    link = self.GetOwnedAgeLink(ptAgeVault(), ageName)
+                if link is not None:
+                    ageInfo = link.getAgeInfo().asAgeInfoStruct()
             if ageName == "city":
                 hardcoded = ptVault().getLinkToCity().getAgeInfo().getAgeInstanceGuid()
             if hardcoded is not None:
