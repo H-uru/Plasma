@@ -79,6 +79,7 @@ jobs:
             -DPLASMA_BUILD_TOOLS=ON `
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} `
             -D3dsm_PATH="${{ github.workspace }}/maxsdk/${{ matrix.platform.max-version }}" `
+            -DVCPKG_INSTALL_OPTIONS=--clean-after-build `
             -S . -B build
         env:
           VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
@@ -155,6 +156,7 @@ jobs:
             -DPLASMA_BUILD_TESTS=OFF `
             -DPLASMA_BUILD_TOOLS=OFF `
             -D3dsm_PATH="${{ github.workspace }}/maxsdk/${{ matrix.cfg.sdk-version }}" `
+            -DVCPKG_INSTALL_OPTIONS=--clean-after-build `
             -S . -B build
         env:
           VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
@@ -222,6 +224,7 @@ jobs:
             -DPLASMA_BUILD_TESTS=ON \
             -DPLASMA_BUILD_TOOLS=ON \
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
+            -DVCPKG_INSTALL_OPTIONS=--clean-after-build \
             -S . -B build
         env:
           VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
@@ -296,6 +299,7 @@ jobs:
             -DPLASMA_BUILD_TOOLS=ON \
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
             ${{ (matrix.platform.triplet == 'x64' && '-DQt5_ROOT=$(brew --prefix qt@5)') || '' }} \
+            -DVCPKG_INSTALL_OPTIONS=--clean-after-build \
             -S . -B build
         env:
           VCPKG_BINARY_SOURCES: "clear;nuget,GitHub,readwrite"
