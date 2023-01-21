@@ -96,7 +96,7 @@ actBookshelfExit = ptAttribActivator(25, "Actvr: Exit bookshelf")
 # this array defines which age books are on this shelf and where on the shelf they appear
 # to add a book, replace an element with the name of the age, for instance: change Link11 to BillsSuperCoolAge
 # to change where a book appears on the shelf, change it's position in the array
-linkLibrary = ["Neighborhood","Nexus","city","Link03","Link04","Cleft","Garrison","Teledahn","Kadish","Gira","Garden","Negilahn","Dereno","Payiferen","Tetsonot","Ercana","AhnonayCathedral","Ahnonay","Minkata","Jalak","Link21","Link22","Link23","Link24","Link25","Link26","Link27","Link28","Link29","Link30","Link31","Link32","Link33","Link34","Link35","Myst"]
+linkLibrary = ["Neighborhood","Nexus","city","ChisoPreniv","Link04","Cleft","Garrison","Teledahn","Kadish","Gira","Garden","Negilahn","Dereno","Payiferen","Tetsonot","Ercana","AhnonayCathedral","Ahnonay","Minkata","Jalak","Link21","Link22","Link23","Link24","Link25","Link26","Link27","Link28","Link29","Link30","Link31","Link32","Link33","Link34","Link35","Myst"]
 
 objBookPicked = None
 objLockPicked = None
@@ -120,6 +120,8 @@ kPublicBooks = ("Nexus", "Cleft", "City") #These books cannot be linked to by gu
 # list of ages that show up in the city book
 CityBookAges = { "BaronCityOffice": ["BaronCityOffice", "Default"], "Descent": ["dsntShaftFall"], "GreatZero": ["grtzGrtZeroLinkRm"], "spyroom": ["Spyroom", "Default"], "Kveer": ["Kveer", "Default"]}
 
+kHardcodedInstances = {"GoMePubNew" : "d002da26-db26-53f1-bdc0-a05a84274d5c", 
+                      "ChisoPreniv" : "0b4f5ad9-d93d-52e3-83e4-9364c2149ae4"}
 
 class psnlBookshelf(ptModifier):
     def __init__(self):
@@ -373,6 +375,7 @@ class psnlBookshelf(ptModifier):
                     PtDebugPrint("psnlBookshelf: Received a message from the Book GUI: ", event[1])
                     if event[1] == "IShelveBook" and objBookPicked is not None:
                         self.IShelveBook()
+                        boolLinkerIsMe = False
                         
                     if event[1].split(",")[0] == "ILink": # parse the spawn point info off the entire note (which comes through as "ILink, SpawnPointName,SpawnPointTitle")
                         if event[3] < 0: #legacy check (if > 0 then it's from old code and, therefore, not ours)
@@ -420,8 +423,10 @@ class psnlBookshelf(ptModifier):
                         PtDebugPrint(event[1], event[3])
                         if event[1] == "YesNo" and event[3] == 1:
                             link = self.IGetLinkFromBook()
-                            
                             bookAge = self.IGetAgeFromBook()
+                            if bookAge in kHardcodedInstances:
+                                link = self.GetOwnedAgeLink(ptAgeVault(), bookAge)
+
                             if bookAge == "Ahnonay" or bookAge == "AhnonayCathedral":
                                 ageVault = ptAgeVault()
                                 ageInfoNode = ageVault.getAgeInfo()
@@ -478,6 +483,8 @@ class psnlBookshelf(ptModifier):
                                                 break
                                 objBookPicked = None
                                 return
+                            elif bookAge in kHardcodedInstances:
+                                ptVault().unRegisterOwnedAge(bookAge)
                             else:
                                 # volatile it
                                 link.setVolatile(True)
@@ -568,6 +575,7 @@ class psnlBookshelf(ptModifier):
                 if event[0]==kPickedEvent:
                     objBookPicked = event[3]
                     bookName = objBookPicked.getName()
+                    ageName = self.IGetAgeFromBook()
                     PtDebugPrint("psnlBookshelf.OnNotify():\tplayer picked book named ", bookName)
                     try:
                         index = objLibrary.value.index(objBookPicked)
@@ -575,7 +583,7 @@ class psnlBookshelf(ptModifier):
                         PtDebugPrint("psnlBookshelf.OnNotify():\tERROR -- couldn't find ", objBookPicked, " in objLibrary")
                         return
 
-                    if self.IGetAgeFromBook() == "city" and PtIsSinglePlayerMode():
+                    if ageName == "city" and PtIsSinglePlayerMode():
                         ageVault = ptAgeVault()
                         citylink = self.GetOwnedAgeLink(ageVault, "city")
                         bcolink = self.GetOwnedAgeLink(ageVault, "BaronCityOffice")
@@ -614,7 +622,7 @@ class psnlBookshelf(ptModifier):
                         actBookshelfExit.disable()
                         return
                     
-                    elif self.IGetAgeFromBook() == "Ahnonay":
+                    elif ageName == "Ahnonay":
                         locked = 0
                         ageVault = ptAgeVault()
                         ageInfoNode = ageVault.getAgeInfo()
@@ -664,8 +672,8 @@ class psnlBookshelf(ptModifier):
                     
                     link = self.IGetLinkFromBook()
                     # Do not use the age link node of a Hood child age for the city book clasp!
-                    if IsChildLink:
-                        link = self.GetOwnedAgeLink(ptAgeVault(), "city")
+                    if IsChildLink or ageName in kHardcodedInstances:
+                        link = self.GetOwnedAgeLink(ptAgeVault(), ageName)
                     if link is None:
                         return
                     if not isinstance(link, ptVaultAgeLinkNode) or link.getLocked():
@@ -697,15 +705,16 @@ class psnlBookshelf(ptModifier):
         
         if id==respPresentBook.id and objBookPicked is not None:
             # book is finished presenting - now link
+            ageName = self.IGetAgeFromBook()
             if boolLinkerIsMe:
                 #~ self.ILink()
                 # tell linking book GUI which age to present
                 stringShowMeAge = self.IGetAgeFromBook()
-                PtDebugPrint("psnlBookshelf.OnNotify():\tsend message - show client %d age %s" % (ShelfAUserID,stringShowMeAge) )
+                PtDebugPrint("psnlBookshelf.OnNotify():\tsend message - show client %d age %s" % (ShelfAUserID,ageName) )
 
                 note = ptNotify(self.key)
                 note.setActivate(1.0)
-                note.addVarNumber(stringShowMeAge + "," + str(objLibrary.value.index(objBookPicked)),ShelfAUserID)
+                note.addVarNumber(ageName + "," + str(objLibrary.value.index(objBookPicked)),ShelfAUserID)
                 note.send()
 
             # for now, just shelve the book again
@@ -713,7 +722,8 @@ class psnlBookshelf(ptModifier):
             return
             
         if id==respShelveBook.id:
-            if self.IGetAgeFromBook() == "city" and PtIsSinglePlayerMode():
+            ageName = self.IGetAgeFromBook()
+            if ageName == "city" and PtIsSinglePlayerMode():
                 ageVault = ptAgeVault()
                 citylink = self.GetOwnedAgeLink(ageVault, "city")
                 bcolink = self.GetOwnedAgeLink(ageVault, "BaronCityOffice")
@@ -744,8 +754,8 @@ class psnlBookshelf(ptModifier):
                 return
             link = self.IGetLinkFromBook()
             # Do not use the age link node of a Hood child age for the city book clasp!
-            if IsChildLink:
-                link = self.GetOwnedAgeLink(ptAgeVault(), "city")
+            if IsChildLink or ageName in kHardcodedInstances:
+                link = self.GetOwnedAgeLink(ptAgeVault(), ageName)
             if link is None:
                 return
                 
@@ -861,8 +871,8 @@ class psnlBookshelf(ptModifier):
                         
                     link = self.IGetLinkFromBook()
                     # Do not use the age link node of a Hood child age for the city book clasp!
-                    if IsChildLink:
-                        link = self.GetOwnedAgeLink(ptAgeVault(), "city")
+                    if IsChildLink or agename in kHardcodedInstances:
+                        link = self.GetOwnedAgeLink(ptAgeVault(), agename)
                     if link is None:
                         return
                     lockName = objLockPicked.getName()
@@ -1009,6 +1019,9 @@ class psnlBookshelf(ptModifier):
 
             bookAge = self.IGetAgeFromBook()
 
+            if bookAge in kHardcodedInstances:
+                link = self.GetOwnedAgeLink(ptAgeVault(), bookAge)
+
             if bookAge == "Ahnonay" or bookAge == "AhnonayCathedral":
                 ageVault = ptAgeVault()
                 ageInfoNode = ageVault.getAgeInfo()
@@ -1095,6 +1108,8 @@ class psnlBookshelf(ptModifier):
             elif vault.inMyPersonalAge():
                 if bookAge == "Neighborhood":
                     PtYesNoDialog(self.key, PtGetLocalizedString("Personal.Bookshelf.DeleteNeighborhoodBook"))
+                elif bookAge in kHardcodedInstances:
+                    PtYesNoDialog(self.key, PtGetLocalizedString("Personal.Bookshelf.RemoveBook"))
                 else:
                     PtYesNoDialog(self.key, PtGetLocalizedString("Personal.Bookshelf.DeleteBook"))
 ##                # volatile it
@@ -1153,7 +1168,7 @@ class psnlBookshelf(ptModifier):
             return "Ahnonay"
 
         hoodInfo = self.IGetHoodInfoNode()
-        if hoodInfo:
+        if hoodInfo and not ageName in kHardcodedInstances:
             childAgeFolder = hoodInfo.getChildAgesFolder()
             contents = childAgeFolder.getChildNodeRefList()
             for content in contents:
@@ -1180,6 +1195,17 @@ class psnlBookshelf(ptModifier):
             ageInfo = ptAgeInfoStruct()
             ageInfo.setAgeFilename(ageName)
             ageInfo.setAgeInstanceName("Ae'gura")
+
+            ageLink = ptAgeLinkStruct()
+            ageLink.setAgeInfo(ageInfo)
+            
+            return ageLink
+            
+        if hardcoded := kHardcodedInstances.get(ageName):
+            ageInfo = ptAgeInfoStruct()
+            ageInfo.setAgeFilename(ageName)
+            ageInfo.setAgeInstanceName(ageName)
+            ageInfo.setAgeInstanceGuid(hardcoded)
 
             ageLink = ptAgeLinkStruct()
             ageLink.setAgeInfo(ageInfo)
@@ -1706,7 +1732,7 @@ class psnlBookshelf(ptModifier):
         # If in my personal age, link with kOwnedBook rules.
         #   This will startup a new, private age instance for me.
         if (vault.inMyPersonalAge()):
-            if ageName == "Ahnonay":
+            if ageName == "Ahnonay"or ageName in kHardcodedInstances:
                 als.setLinkingRules( PtLinkingRules.kBasicLink )
             elif IsChildLink:
                 PtDebugPrint("psnlBookshelf.ILink(): using kChildAgeBook rules for link to: ",ageName)
@@ -1954,7 +1980,7 @@ class psnlBookshelf(ptModifier):
                 if not info:
                     continue
                 ageName = info.getAgeFilename()
-                PtDebugPrint("found %s, looking for %s" % (ageName, age))
+                PtDebugPrint("found %s, looking for %s" % (ageName, age), level=kDebugDumpLevel)
                 if ageName == age:
                     return link
 
