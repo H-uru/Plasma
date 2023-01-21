@@ -268,7 +268,7 @@ else:
         "Vothol":               ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelvothol' + LinkEnd ),
         "ChisoPreniv":          ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
         "ChisoPrenivNote":      ( 0, 1.0, 1.0, FanAgeStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisopreniv' + LinkEnd ),
-        "ChisoPrenivLower":     ( 0, 1.0, 1.0, NoDRCStamp, BookStart + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisolower' + LinkEnd ),
+        "ChisoPrenivLower":     ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelchisolower' + LinkEnd ),
         "Serene":               ( 0, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + NoShare + LinkStart + 'xlinkpanelserene' + LinkEnd ),
         "Tiam":                 ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xlinkpaneltiam' + LinkEnd ),
         "Elonin":               ( 1, 1.0, 1.0, NoDRCStamp, BookStart1 + DRCStampHolder + ShareHolder + LinkStart + 'xlinkpanelelonin' + LinkEnd ),
