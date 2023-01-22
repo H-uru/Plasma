@@ -1002,7 +1002,7 @@ class xOptionsMenu(ptModifier):
                             gCurrentMovieName = gLiveMovieList[len(gLiveMovieList)-1]
                         else:
                             gCurrentMovieName = gLiveMovieList[tempIndex]
-                        gLiveMovie = ptMoviePlayer(f'{kLiveMovieDir}\{gCurrentMovieName}',self.key)
+                        gLiveMovie = ptMoviePlayer(os.path.join(kLiveMovieDir, gCurrentMovieName),self.key)
                         gLiveMovie.play()
                 elif tpID == kTrailerNextButton:
                     if gLiveMovie:
@@ -1012,7 +1012,7 @@ class xOptionsMenu(ptModifier):
                             gCurrentMovieName = gLiveMovieList[0]
                         else:
                             gCurrentMovieName = gLiveMovieList[tempIndex]
-                        gLiveMovie = ptMoviePlayer(f'{kLiveMovieDir}\{gCurrentMovieName}',self.key)
+                        gLiveMovie = ptMoviePlayer(os.path.join(kLiveMovieDir, gCurrentMovieName),self.key)
                         gLiveMovie.play()
                 elif tpID == kClickOnMeBtn:
                     if gLiveMovie:
@@ -1405,7 +1405,8 @@ class xOptionsMenu(ptModifier):
                 else:
                     gLiveMovieList = []
                     for file in os.listdir(kLiveMovieDir):
-                        if os.stat(f'{kLiveMovieDir}\{file}').st_size > 1000 and os.path.splitext(f'{kLiveMovieDir}\{file}')[1] == ".webm":
+                        tempfile = os.path.join(kLiveMovieDir, file)
+                        if os.stat(tempfile).st_size > 1000 and os.path.splitext(tempfile)[1] == ".webm":
                             gLiveMovieList.append(file)
                     else:
                         if gLiveMovieList == []:
@@ -1440,7 +1441,7 @@ class xOptionsMenu(ptModifier):
                 gLiveMovie = ptMoviePlayer(kDemoMovieName,self.key)
             else:
                 gCurrentMovieName = gLiveMovieList[0]
-                gLiveMovie = ptMoviePlayer(f'{kLiveMovieDir}\{gCurrentMovieName}',self.key)
+                gLiveMovie = ptMoviePlayer(os.path.join(kLiveMovieDir, gCurrentMovieName),self.key)
             gLiveMovie.playPaused()
         elif id == kTrailerFadeInID:
             PtDebugPrint("xLiveTrailer - roll the movie",level=kDebugDumpLevel)
@@ -1473,7 +1474,7 @@ class xOptionsMenu(ptModifier):
 
     def OnMovieEvent(self,movieName,reason):
         PtDebugPrint("xLiveTrailer: got movie done event on %s, reason=%d" % (movieName,reason),level=kDebugDumpLevel)
-        if gLiveMovie and movieName == f'{kLiveMovieDir}\{gCurrentMovieName}':
+        if gLiveMovie and movieName == os.path.join(kLiveMovieDir, gCurrentMovieName):
             PtFadeOut(kTrailerFadeOutSeconds,1)
             PtAtTimeCallback(self.key, kTrailerFadeOutSeconds, kTrailerFadeOutID)
 
