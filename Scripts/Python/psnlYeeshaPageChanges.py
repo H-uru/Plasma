@@ -144,7 +144,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                     MAX_SIZE = 10
                     size, state = divmod(CurrentValue, 10)
 
-                    if len(PtGetPlayerList()) == 0 and state != 0:
+                    if PtIsSolo() and state != 0:
                         growSizes = self.TimeToGrow()
                         PtDebugPrint("Growsizes: %d" % growSizes)
                         if growSizes and size < MAX_SIZE:
@@ -189,7 +189,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                             except:
                                 PtDebugPrint("ERROR: psnlYeeshaPageChanges.OnServerInitComplete():\tException occurred trying to access age SDL")
                         
-                    if len(PtGetPlayerList()) == 0:
+                    if PtIsSolo():
                         newstate = self.UpdateState(CurrentValue, 0, SDLVar, AgeVault, ageSDL, 0)
                     else:
                         newstate = CurrentValue

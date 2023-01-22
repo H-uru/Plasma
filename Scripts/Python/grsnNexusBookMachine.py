@@ -106,7 +106,7 @@ class grsnNexusBookMachine(ptResponder):
 
     def OnServerInitComplete(self):
         bookPillarSpinning.run(self.key,netPropagate=False)
-        if PtGetPlayerList():
+        if not PtIsSolo():
             return
         resetResponder.run(self.key,avatar=PtGetLocalAvatar())
 

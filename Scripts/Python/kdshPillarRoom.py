@@ -405,7 +405,7 @@ class kdshPillarRoom(ptResponder):
     def CleanUpLaddersIfImAlone(self):
         ageSDL = PtGetAgeSDL()    
         
-        if len(PtGetPlayerList()) == 0:
+        if PtIsSolo():
             ageSDL["PillarsOccupied"] = (0,)
             ageSDL["PillarsResetting"] = (0,)
         else:

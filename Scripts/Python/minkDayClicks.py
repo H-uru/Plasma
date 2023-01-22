@@ -99,7 +99,7 @@ class minkDayClicks(ptResponder):
     def OnFirstUpdate(self):
         ageSDL = PtGetAgeSDL()
 
-        if not len(PtGetPlayerList()) and ageSDL["minkIsDayTime"][0]:
+        if PtIsSolo() and ageSDL["minkIsDayTime"][0]:
             PtDebugPrint("minkDayClicks.OnFirstUpdate(): Resetting Show and Touch vars.")
             ageSDL["minkSymbolShow01"] = (0,)
             ageSDL["minkSymbolShow02"] = (0,)

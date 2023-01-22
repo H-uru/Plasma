@@ -320,7 +320,7 @@ class nb01RPSGame(ptResponder, object):
         self.SDL.setFlags(SDL_WINNING_SELECTION, True, True)
 
         # Make sure we start out sane
-        if not PtGetPlayerList():
+        if PtIsSolo():
             self._KillEverything()
             self.SDL[SDL_PLAYERS] = tuple([0] * NUM_SEATS)
             self.game_state = GAME_ATTRACT_PLAYERS

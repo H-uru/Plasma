@@ -268,7 +268,7 @@ class ercaHrvstr(ptResponder):
         
         
         ## if other players are already in the age, don't pre-set the Harvester
-        if len(PtGetPlayerList()):
+        if not PtIsSolo():
             if boolDrvLev:
                 RespDrvLevDwnOnInit.run(self.key,fastforward=1)
             if boolCarLev:

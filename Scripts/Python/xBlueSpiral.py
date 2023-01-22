@@ -207,7 +207,7 @@ class xBlueSpiral(ptResponder, object):
         # Nobody here? Close the door and reset everything.
         # Somebody here? Set everything to SDL state
         PtDebugPrint("xBlueSpiral.OnServerInitComplete():\tWhen I got here...", level=kDebugDumpLevel)
-        if len(PtGetPlayerList()):
+        if not PtIsSolo():
             if self.running:
                 PtDebugPrint("xBlueSpiral.OnServerInitComplete():\t... they were playing", level=kDebugDumpLevel)
                 clkBSDoor.disableActivator()

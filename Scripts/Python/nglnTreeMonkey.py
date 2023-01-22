@@ -109,7 +109,7 @@ class nglnTreeMonkey(ptResponder):
             PtDebugPrint("nglnTreeMonkey: It's been less than a day since the last update, doing nothing")
             self.SetMonkeyTimers()
 
-        if not len(PtGetPlayerList()):
+        if PtIsSolo():
             respMonkeyOff.run(self.key, fastforward=1)
 
     ###########################

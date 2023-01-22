@@ -290,7 +290,7 @@ class grsnWallPython(ptResponder):
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnWallPython::OnServerInitComplete")
-        solo = not PtGetPlayerList()
+        solo = PtIsSolo()
         ageSDL = PtGetAgeSDL()
 
         #Prepare SDLs (n-North, s-South)
@@ -390,7 +390,7 @@ class grsnWallPython(ptResponder):
                 else:
                     self.ChangeGameState(kNorth, kWait)
                     NorthPanelSound.run(self.key, state='gameStart')
-                    if not PtGetPlayerList():
+                    if PtIsSolo():
                         self.ChangeGameState(kSouth, kWait)
             return
         if (id == goButtonSouth.id and not state):
@@ -407,7 +407,7 @@ class grsnWallPython(ptResponder):
                 else:
                     self.ChangeGameState(kSouth, kWait)
                     SouthPanelSound.run(self.key, state='gameStart')
-                    if not PtGetPlayerList():
+                    if PtIsSolo():
                         self.ChangeGameState(kNorth, kWait)
             return
         ### Tube open Animation Finished ###
@@ -475,13 +475,13 @@ class grsnWallPython(ptResponder):
         if (id == readyButtonNorth.id and not state and ageSDL["nState"][0] == kSelectCount):
             self.ChangeGameState(kNorth, kSetBlocker)
             NorthPanelSound.run(self.key, state='up')
-            if not PtGetPlayerList():
+            if PtIsSolo():
                 self.ChangeGameState(kSouth, kSetBlocker)
             return
         if (id == readyButtonSouth.id and not state and ageSDL["sState"][0] == kSelectCount):
             self.ChangeGameState(kSouth, kSetBlocker)
             SouthPanelSound.run(self.key, state='up')
-            if not PtGetPlayerList():
+            if PtIsSolo():
                 self.ChangeGameState(kNorth, kSetBlocker)
             return
         ### Tube Entry trigger ###
@@ -576,7 +576,7 @@ class grsnWallPython(ptResponder):
         if (id == NorthTeamWin.id):
             if (PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtAtTimeCallback(self.key, 3.0, kLinkToNorthNexus)
-                if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["nState"][0] != kEnd and PtGetPlayerList()):
+                if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["nState"][0] != kEnd and not PtIsSolo()):
                     avatar = PtGetLocalAvatar()
                     currentgender = avatar.avatar.getAvatarClothingGroup()
                     if currentgender == kFemaleClothingGroup:
@@ -601,7 +601,7 @@ class grsnWallPython(ptResponder):
         if (id == SouthTeamWin.id):
             if (PtFindAvatar(events) == PtGetLocalAvatar()):
                 PtAtTimeCallback(self.key, 3.0, kLinkToSouthNexus)
-                if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["sState"][0] != kEnd and PtGetPlayerList()):
+                if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["sState"][0] != kEnd and not PtIsSolo()):
                     avatar = PtGetLocalAvatar()
                     currentgender = avatar.avatar.getAvatarClothingGroup()
                     if currentgender == kFemaleClothingGroup:
@@ -676,9 +676,9 @@ class grsnWallPython(ptResponder):
                     except:
                         PtDebugPrint("grsnWallPython::OnNotify: Blocker not found on either panel")
                         return
-                if ((team == kNorth or not PtGetPlayerList()) and ageSDL["nState"][0] == kSetBlocker):
+                if ((team == kNorth or PtIsSolo()) and ageSDL["nState"][0] == kSetBlocker):
                     self.SetPanelBlocker(kNorth, index, not self.FindBlocker(kNorth, index), eventAvatar=PtFindAvatar(events))
-                if ((team == kSouth or not PtGetPlayerList()) and ageSDL["sState"][0] == kSetBlocker):
+                if ((team == kSouth or PtIsSolo()) and ageSDL["sState"][0] == kSetBlocker):
                     self.SetPanelBlocker(kSouth, index, not self.FindBlocker(kSouth, index), eventAvatar=PtFindAvatar(events))
 
 
@@ -778,12 +778,12 @@ class grsnWallPython(ptResponder):
                 #South player is ready - transmit blockers to the wall
                 for blocker in ageSDL["southWall"]:
                     SouthWall.value[blocker].physics.enable()
-                if (ageSDL["nState"][0] >= kWait and eventHandler and PtGetPlayerList()):
+                if (ageSDL["nState"][0] >= kWait and eventHandler and not PtIsSolo()):
                     eventHandler.Handle(kEventEntry)
                 SouthTubeOpen.run(self.key)
 
         if (VARname == "nWallPlayer" and ageSDL["nWallPlayer"] != (-1,)):
-            if (ageSDL["sState"][0] == kEntry or not PtGetPlayerList()):
+            if (ageSDL["sState"][0] == kEntry or PtIsSolo()):
                 if (eventHandler):
                     eventHandler.Handle(kEventStart)
                 #both players are in the Tube - flush them down
@@ -796,7 +796,7 @@ class grsnWallPython(ptResponder):
                 PtGetLocalAvatar().avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
 
         if (VARname == "sWallPlayer" and ageSDL["sWallPlayer"] != (-1,)):
-            if (ageSDL["nState"][0] == kEntry or not PtGetPlayerList()):
+            if (ageSDL["nState"][0] == kEntry or PtIsSolo()):
                 if (eventHandler):
                     eventHandler.Handle(kEventStart)
                 #both players are in the Tube - flush them down

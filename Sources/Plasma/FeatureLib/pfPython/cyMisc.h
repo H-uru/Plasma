@@ -426,6 +426,15 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////
     //
+    //  Function   : IsSolo
+    //  PARAMETERS : 
+    //
+    //  PURPOSE    : Return if we are the only player in the Age
+    //
+    static bool IsSolo();
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
     //  Function   : GetPlayerList
     //  Function   : GetPlayerListDistanceSorted
     //  PARAMETERS : 

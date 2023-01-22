@@ -87,8 +87,7 @@ class grtzAccessDoors(ptResponder):
         PtDebugPrint("grtzAccessDoors: self.SDL = %d" % self.grtzDoorState)
         PtDebugPrint("grtzAccessDoors: Player List = %d" % len(PtGetPlayerList()))
 
-        if len(PtGetPlayerList()) > 0:
-            
+        if not PtIsSolo():
             PtDebugPrint("grtzAccessDoors: Somebody is already in the age. Attempting to sync states.")
 
             if self.grtzDoorState == doorSDLstates['open'] or self.grtzDoorState == doorSDLstates['opening']:
@@ -123,7 +122,7 @@ class grtzAccessDoors(ptResponder):
                 doorResponder.run(self.key,state='OpenTheDoor',fastforward=1,netPropagate=0)
 
 
-        elif len(PtGetPlayerList()) < 1:
+        else:
             # the door is really shut, someone left it open
             self.SDL['DoorOpen'] = (doorSDLstates['closed'],)
             self.grtzDoorState = self.SDL['DoorOpen'][0]

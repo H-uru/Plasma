@@ -85,7 +85,7 @@ class xAgeSDLBoolActivatorComboSet(ptResponder):
         self.SDL.sendToClients("attemptCombo")
         self.SDL.setFlags("attemptCombo", True, True)
 
-        if not PtGetPlayerList():
+        if PtIsSolo():
             self._butsInUse = False
             if allowSlidingSolution.value:
                 self._attemptCombo = []

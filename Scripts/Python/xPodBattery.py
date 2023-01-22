@@ -202,7 +202,7 @@ class xPodBattery(ptResponder):
         PtDebugPrint("xPodBattery: The Pod Battery has %s of a possible %s units." % (BatteryCharge, BatteryCapacity))
         CurrentTime = PtGetDniTime()
         
-        if not PtGetPlayerList():
+        if PtIsSolo():
             if BatteryLastUpdated == 0:
                 ageSDL[SDLBatteryLastUpdated.value] = (CurrentTime,)
                 PtDebugPrint("xPodBattery: This is your first time here. The Battery has never been updated.")

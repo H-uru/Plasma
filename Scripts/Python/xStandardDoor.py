@@ -146,7 +146,7 @@ class xStandardDoor(ptResponder):
                 PtDebugPrint("xStandardDoor.OnServerInitComplete():\tERROR: age sdl read failed, defaulting door enabled")
     
             # correct SDL state if necessary
-            if len(PtGetPlayerList()) == 0: # I'm the only person here
+            if PtIsSolo():  # I'm the only person here
                 if boolForceOpen.value and doorClosed:
                     doorClosed = 0
                     ageSDL.setTagString(stringSDLVarClosed.value,"ignore")

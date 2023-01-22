@@ -176,7 +176,7 @@ class kdshVault(ptResponder):
         global ButtonsPushed
         ageSDL = PtGetAgeSDL()     
         
-        solo = not PtGetPlayerList()
+        solo = PtIsSolo()
 
         VCPboolOperated = ageSDL["VCPboolOperated"][0]
         if VCPboolOperated:

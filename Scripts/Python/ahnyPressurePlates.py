@@ -105,7 +105,7 @@ class ahnyPressurePlates(ptModifier):
         ageSDL.sendToClients(SDLOccupied.value)
         ageSDL.setNotify(self.key,SDLOccupied.value,0.0)
 
-        if not len(PtGetPlayerList()):
+        if PtIsSolo():
             ageSDL[SDLOccupied.value] = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
 
 

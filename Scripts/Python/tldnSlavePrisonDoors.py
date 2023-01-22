@@ -151,9 +151,8 @@ class tldnSlavePrisonDoors(ptResponder):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
             # look at the SDL for the plates if we are NOT the first person in the Age
-            players = PtGetPlayerList()
-            if len(players) > 0:
-                PtDebugPrint("   - and the number of players is %d, so get plate states from SDL"%(len(players)),level=kDebugDumpLevel)
+            if not PtIsSolo():
+                PtDebugPrint("   - and this isn't solo mode, so get plate states from SDL",level=kDebugDumpLevel)
                 for platesdl,actid in PlateSDLs:
                     boolCurrentValue = ageSDL[platesdl][0]
                     if boolCurrentValue:

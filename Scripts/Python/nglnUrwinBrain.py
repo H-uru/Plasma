@@ -123,7 +123,7 @@ class nglnUrwinBrain(ptResponder):
             PtDebugPrint("nglnUrwinBrain: It's been less than a day since the last update, doing nothing")
             self.SetUrwinTimers()
 
-        if not len(PtGetPlayerList()):
+        if PtIsSolo():
             UrwinMasterAnim.animation.skipToBegin()
  
     ###########################

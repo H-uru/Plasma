@@ -138,7 +138,7 @@ class tldn3FloorElevator(ptResponder):
         PtDebugPrint("tldn3FloorElevator.OnServerInitComplete():\t%s=%d, %s=%d" % (kStringAgeSDLElvCurrFloor,elevCurrFloor,kStringAgeSDLElvIdle,elevIdle) )
 
         # correct state if necessary - workaround for elev subworld seeming to fastforward itself and break itself...hopefully removable in future
-        if len(PtGetPlayerList()) == 0: # I'm the only person here
+        if PtIsSolo():
             PtDebugPrint("tldn3FloorElevator.OnServerInitComplete():\tsolo player... initializing elevator state")
             if not elevIdle:
                 PtDebugPrint("\tmaking elevator idle")
