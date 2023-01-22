@@ -65,6 +65,7 @@ from PlasmaNetConstants import *
 import xLinkingBookDefs
 from xPsnlVaultSDL import *
 import time
+import re
 
 
 # define the attributes that will be entered in max
@@ -600,7 +601,11 @@ class xLinkingBookGUIPopup(ptModifier):
                     PtDebugPrint("xLinkingBookGUIPopup: sorry, don't recognize your bookmark spawn point title")
             else:
                 bookmark = ''
-            
+
+            if fromBookshelf and agePanel in xLinkingBookDefs.CityBookLinks:
+                PtDebugPrint("xLinkingBookGUIPopup: removing yeesha stamps from relto city links")
+                bookdef = re.sub('<img src="xYeeshaBookStampVSquish\*1#0\.hsm" pos=140,255 resize=no blend=alpha>', '', bookdef)
+
             if sharable:
                 try:
                     allPagesDef = bookdef % (bookmark, stampdef,self.IAddShare())
