@@ -1036,6 +1036,7 @@ std::vector<PyObject*> cyMisc::GetPlayerList()
     if (!nc) // only ever really happens if they try to call us in max... I hope
         return pyPL;
 
+    pyPL.reserve(nc->TransportMgr().GetNumMembers());
     for (size_t i = 0; i < nc->TransportMgr().GetNumMembers(); i++)
     {
         plNetTransportMember *mbr = nc->TransportMgr().GetMember(i);
@@ -1045,7 +1046,7 @@ std::vector<PyObject*> cyMisc::GetPlayerList()
             // only non-ignored people in list and not in ignore list
             if ( !VaultAmIgnoringPlayer ( mbr->GetPlayerID()) )
             {
-                PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName().c_str(), mbr->GetPlayerID(), mbr->GetDistSq());
+                PyObject* playerObj = pyPlayer::New(avkey, mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
                 pyPlayer* player = pyPlayer::ConvertFrom(playerObj); // accesses internal pyPlayer object
 
                 // modifies playerObj
@@ -1065,8 +1066,15 @@ std::vector<PyObject*> cyMisc::GetPlayerListDistanceSorted()
 {
     std::vector<PyObject*> pyPL;
 
+    plNetClientMgr* nc = plNetClientMgr::GetInstance();
+
+    if (!nc) // only ever really happens if they try to call us in max... I hope
+        return pyPL;
+
+    pyPL.reserve(nc->TransportMgr().GetNumMembers());
+
     // get the sorted member list from the Net transport manager
-    std::vector<plNetTransportMember*> members = plNetClientMgr::GetInstance()->TransportMgr().GetMemberListDistSorted();
+    std::vector<plNetTransportMember*> members = nc->TransportMgr().GetMemberListDistSorted();
     for (plNetTransportMember* mbr : members)
     {
         plKey avkey = mbr->GetAvatarKey();
