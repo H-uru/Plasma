@@ -429,7 +429,7 @@ public:
     //  Function   : IsSolo
     //  PARAMETERS : 
     //
-    //  PURPOSE    : Return if we are the only player in the Age
+    //  PURPOSE    : Return whether we are the only player in the Age
     //
     static bool IsSolo();
 

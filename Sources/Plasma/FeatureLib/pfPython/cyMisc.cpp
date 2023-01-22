@@ -1022,7 +1022,7 @@ void cyMisc::PrintToScreen(const char* msg)
 //  Function   : IsSolo
 //  PARAMETERS : 
 //
-//  PURPOSE    : Return if we are the only player in the Age
+//  PURPOSE    : Return whether we are the only player in the Age
 //
 bool cyMisc::IsSolo()
 {
