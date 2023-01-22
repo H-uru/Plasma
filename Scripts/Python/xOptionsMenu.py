@@ -1406,7 +1406,7 @@ class xOptionsMenu(ptModifier):
                     gLiveMovieList = []
                     for file in os.listdir(kLiveMovieDir):
                         tempfile = os.path.join(kLiveMovieDir, file)
-                        if os.stat(tempfile).st_size > 1000 and os.path.splitext(tempfile)[1] == ".webm":
+                        if os.stat(tempfile).st_size > 1000 and tempfile.endswith(".webm"):
                             gLiveMovieList.append(file)
                     else:
                         if gLiveMovieList == []:
