@@ -111,7 +111,7 @@ class xRandomBoolChange(ptModifier):
             nearby  = ageSDL[strProximityVar.value][0]
     
             # if I'm the only one in here then make sure the proximity setting is 0
-            if len(PtGetPlayerList()) == 0 and nearby:
+            if PtIsSolo() and nearby:
                 ageSDL[strProximityVar.value] = (0,)
                 nearby = 0
         except:

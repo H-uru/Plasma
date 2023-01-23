@@ -1669,7 +1669,7 @@ class CommandsProcessor:
         if not file:
             self.chatMgr.AddChatLine(None, "Usage: /loadclothing <name>", kChat.SystemMessage)
             return
-        if PtGetPlayerList() and not PtIsInternalRelease():
+        if not PtIsSolo() and not PtIsInternalRelease():
             self.chatMgr.AddChatLine(None, "You have to be alone to change your clothes!", kChat.SystemMessage)
             return
         file = file + ".clo"

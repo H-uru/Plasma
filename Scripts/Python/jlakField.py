@@ -189,7 +189,7 @@ class jlakField(ptResponder):
         
         #If the last person links out while a bulk move is being performed the SDL gets stuck!
         #So we'll reset it only if we're the first person entering the age....
-        if len(PtGetPlayerList()) == 0:
+        if PtIsSolo():
             PtDebugPrint("jlakField.OnServerInitComplete():\tResetting GUI lock as we're the only ones here!")
             ageSDL[sdlGUILock] = (0,)
             boolGUILock = 0
@@ -234,7 +234,7 @@ class jlakField(ptResponder):
             listWarpPlayers.append(pt)
         #PtDebugPrint("listWarpPlayers = ",listWarpPlayers)
 
-        if not len(PtGetPlayerList()):
+        if PtIsSolo():
             PtDebugPrint("jlakField.OnServerInitComplete(): on link-in, am only player here.  Will reset player start point")
             newPoint = byteStartPt
             while newPoint == byteStartPt:

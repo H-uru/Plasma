@@ -161,7 +161,7 @@ class kdshGlowInTheDark(ptResponder):
         if solved:
             PtDebugPrint("\tThe puzzle was solved.")
             PtDebugPrint("\tThere are", len(PtGetPlayerList()), " other players in this Kadish instance.")
-            if len(PtGetPlayerList()) == 0:
+            if PtIsSolo():
                 PtDebugPrint("\t I'm alone, so I'm starting the elevator.")
                 respElevDown.run(self.key)
                 PtAtTimeCallback(self.key,4,2) # clear xRgn at top

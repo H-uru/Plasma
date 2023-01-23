@@ -65,7 +65,7 @@ class xPodium(ptResponder):
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
-        if not PtGetPlayerList():
+        if PtIsSolo():
             ageSDL[stringVarName.value] = (0,)
         ageSDL.setNotify(self.key, stringVarName.value, 0.0)
         ageSDL.sendToClients(stringVarName.value)

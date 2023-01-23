@@ -102,9 +102,8 @@ class xHighLevelStarTrekDoor(ptModifier):
             self.DoorState = self.SDL['DoorState'][0]
          
         PtDebugPrint("xHighLevelStarTrekDoor: self.SDL = %d" % self.DoorState)
-        PtDebugPrint("xHighLevelStarTrekDoor: Player List = %d" % len(PtGetPlayerList()))
 
-        if len(PtGetPlayerList()) > 0:
+        if not PtIsSolo():
             
             PtDebugPrint("xHighLevelStarTrekDoor: Somebody is already in the age. Attempting to sync states.")
 
@@ -131,7 +130,7 @@ class xHighLevelStarTrekDoor(ptModifier):
                 respOpenDoor.run(self.key,fastforward=1)
                 
 
-        elif len(PtGetPlayerList()) < 1:
+        else:
             # the door is really shut, someone left it open
             self.SDL['DoorState'] = (doorSDLstates['closed'],)
             self.DoorState = self.SDL['DoorState'][0]

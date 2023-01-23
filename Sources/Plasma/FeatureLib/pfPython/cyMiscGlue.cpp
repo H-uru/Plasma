@@ -40,12 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-
 #include "cyMisc.h"
+
+#include <Python.h>
+
 #include "pyGlueHelpers.h"
+#include "pyKey.h"
 #include "pyPlayer.h"
+#include "plPythonConvert.h"
 
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtFlashWindow, cyMisc::FlashWindow, "Flashes the client window if it is not focused");
@@ -129,6 +131,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLocalAvatar, "This will return a ptS
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLocalPlayer, "Returns a ptPlayer object of the local player")
 {
     return cyMisc::GetLocalPlayer();
+}
+
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsSolo, "Returns whether we are the only player in the Age")
+{
+    return plPython::ConvertFrom(cyMisc::IsSolo());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetPlayerList, "Returns a list of ptPlayer objects of all the remote players")

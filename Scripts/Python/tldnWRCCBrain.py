@@ -146,7 +146,7 @@ class tldnWRCCBrain(ptResponder):
     def Load(self):
         global boolWRCCOperated
         
-        solo = not PtGetPlayerList()
+        solo = PtIsSolo()
 
         boolOperated = self.SDL["boolOperated"][0]
         if boolOperated:

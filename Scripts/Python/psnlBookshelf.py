@@ -198,7 +198,7 @@ class psnlBookshelf(ptModifier):
             actLock.disable()
             actTray.disable()
 
-        solo = not PtGetPlayerList()
+        solo = PtIsSolo()
 
         self.IUpdateLinks()
 

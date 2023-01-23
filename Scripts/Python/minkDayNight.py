@@ -83,7 +83,7 @@ class minkDayNight(ptResponder):
         ageSDL.sendToClients("minkIsDayTime")
         ageSDL.setNotify(self.key, "minkIsDayTime", 0.0)
 
-        if not len(PtGetPlayerList()):
+        if PtIsSolo():
             ageSDL["minkIsDayTime"] = (1,)
 
         if ageSDL["minkIsDayTime"][0]:

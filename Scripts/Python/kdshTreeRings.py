@@ -163,7 +163,7 @@ class kdshTreeRings(ptModifier):
         PtDebugPrint("/tMiddleRing: ", MiddleRing)
         PtDebugPrint("/tInnerRing: ", InnerRing)
 
-        solo = not PtGetPlayerList()
+        solo = PtIsSolo()
 
         boolOperated = ageSDL["boolOperatedScope0" + str(ScopeNumber.value)][0]
         if boolOperated:

@@ -110,7 +110,7 @@ class psnlBugs(ptResponder):
         # check for all the cases where it would be raining, and if its not then turn on bugs
         sdl = PtGetAgeSDL()
         bugState = sdl["psnlBugsVis"]
-        if rainState == 1 or (rainState == 4 and len(PtGetPlayerList()) == 0) or (rainState == 3 and len(PtGetPlayerList()) > 0):
+        if rainState == 1 or (rainState == 4 and PtIsSolo()) or (rainState == 3 and not PtIsSolo()):
             PtDebugPrint("turning off bugs")
             if bugState != 0:
                 sdl["psnlBugsVis"] = (0,)

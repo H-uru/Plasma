@@ -282,14 +282,14 @@ class ercaPelletRoom(ptResponder):
             if boolMachine:
                 PtDebugPrint("We shouldn't get here.  Just in case some states got hosed.")
                 RespMachineMode.run(self.key,state="Close",fastforward=1)
-                if not len(PtGetPlayerList()):
+                if PtIsSolo():
                     ageSDL[SDLMachine.value] = (0,)
                     ageSDL[SDLChamber.value] = (0,)
                 boolMachine = 0
                 byteChamber = 0
             else:
                 RespMachineMode.run(self.key,state="Close",fastforward=1)
-                if not len(PtGetPlayerList()):
+                if PtIsSolo():
                     ageSDL[SDLChamber.value] = (0,)
                 byteChamber = 0
 
@@ -581,7 +581,7 @@ class ercaPelletRoom(ptResponder):
             elif byteChamber == 5:
                 ageSDL[SDLPellet5.value] = (0,)
                 RespHidePellet.run(self.key,state="pellet5")
-                if LastPellet or not len(PtGetPlayerList()):
+                if LastPellet or PtIsSolo():
                     ageSDL[SDLMachine.value] = (0,)
                     LastPellet = 0
         

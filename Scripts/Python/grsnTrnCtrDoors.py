@@ -87,8 +87,7 @@ class grsnTrnCtrDoors(ptResponder):
         PtDebugPrint("grsnTrnCtrDoors: self.SDL = %d" % self.grsnDoorState)
         PtDebugPrint("grsnTrnCtrDoors: Player List = %d" % len(PtGetPlayerList()))
 
-        if len(PtGetPlayerList()) > 0:
-            
+        if not PtIsSolo():
             PtDebugPrint("grsnTrnCtrDoors: Somebody is already in the age. Attempting to sync states.")
 
             if self.grsnDoorState == doorSDLstates['open'] or self.grsnDoorState == doorSDLstates['opening']:
@@ -104,7 +103,7 @@ class grsnTrnCtrDoors(ptResponder):
             else:
                 PtDebugPrint("grsnTrnCtrDoors: Exception. Door State = %d" % self.grsnDoorState)
 
-        elif len(PtGetPlayerList()) < 1:
+        else:
             # the door is really shut, someone left it open
             self.SDL['grsnDoorState'] = (doorSDLstates['closed'],)
             self.grsnDoorState = self.SDL['grsnDoorState'][0]

@@ -1019,6 +1019,21 @@ void cyMisc::PrintToScreen(const char* msg)
 
 /////////////////////////////////////////////////////////////////////////////
 //
+//  Function   : IsSolo
+//  PARAMETERS : 
+//
+//  PURPOSE    : Return whether we are the only player in the Age
+//
+bool cyMisc::IsSolo()
+{
+    plNetClientMgr* nc = plNetClientMgr::GetInstance();
+    if (nc)
+        return nc->TransportMgr().GetMemberList().empty();
+    return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
 //  Function   : GetPlayerList
 //  Function   : GetPlayerListDistanceSorted
 //  PARAMETERS : 

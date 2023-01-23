@@ -86,7 +86,7 @@ class grtzMarkerScopes(ptResponder):
     def Load(self):
         global boolScopeOperated
 
-        solo = not PtGetPlayerList()
+        solo = PtIsSolo()
 
         boolOperated = self.SDL["boolOperated"][0]
         if boolOperated:
