@@ -207,7 +207,7 @@ class kAges:
         "Personal", "Nexus", "Cleft", "AvatarCustomization", "city",
         "BahroCave", "LiveBahroCave", "LiveBahroCaves", 
         "BaronCityOffice", "ErcanaCitySilo", "GreatZero", "Shaft",
-        "Descent", "Spyroom", "Myst"
+        "Descent", "Spyroom", "Myst", "ChisoPreniv"
     }
     Replace = {
         "Ercana" : "Er'cana",
