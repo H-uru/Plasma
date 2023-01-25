@@ -61,14 +61,16 @@ class grsnWallImagerDisplayS(ptResponder):
         ptResponder.__init__(self)
         self.id = 52397
         self.version = 2
+        self.oldSouthWall = None
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnWallImagerDisplayS::OnServerInitComplete")
         ageSDL = PtGetAgeSDL()
+        self.oldSouthWall = ageSDL["southWall"]
         
         ageSDL.setNotify(self.key, "sState", 0.0)
         
-        if not PtIsSolo() and ageSDL["sState"] >= kWait:
+        if not PtIsSolo() and ageSDL["sState"][0] >= kWait:
             for blocker in ageSDL["southWall"]:
                 if(blocker == -1):
                     return
@@ -78,11 +80,13 @@ class grsnWallImagerDisplayS(ptResponder):
         ageSDL = PtGetAgeSDL()
         #We only get a notify from nState
         value = ageSDL[VARname][0]
-        if(value == kWait):
+        if(value == kEnd):
+            self.oldSouthWall = ageSDL["southWall"]
+        elif(value == kWait):
             for blocker in ageSDL["southWall"]:
                 if(blocker == -1):
                     break
                 southImager.value[blocker].runAttachedResponder(kBlockerOn)
-        if(value == kSelectCount):
-            for i in range(0,171):
-                southImager.value[i].runAttachedResponder(kBlockerOff)
+        elif(value == kSelectCount):
+            for blocker in self.oldSouthWall:
+                southImager.value[blocker].runAttachedResponder(kBlockerOff)

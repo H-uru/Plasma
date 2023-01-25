@@ -66,30 +66,35 @@ class grsnMainWallPython(ptResponder):
         ptResponder.__init__(self)
         self.id = 52394
         self.version = 2
+        self.oldNorthWall = None
+        self.oldSouthWall = None
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnMainWallPython::OnServerInitComplete")
         ageSDL = PtGetAgeSDL()
+        self.oldNorthWall = ageSDL["northWall"]
+        self.oldSouthWall = ageSDL["southWall"]
         
         ageSDL.setNotify(self.key, "nState", 0.0)
         ageSDL.setNotify(self.key, "sState", 0.0)
 
     def OnClimbingBlockerEvent(self,blocker):
         ageSDL = PtGetAgeSDL()
-        if(ageSDL['nState'][0] == kEnd):
+        if(ageSDL['nState'][0] != kGameInProgress):
             return
 
-        for i in range(0,171):
-            if(northBlockers.value[i] == blocker):
-                northWall.value[i].runAttachedResponder(kBlockerBlink)
-                if(eventHandler):
-                    eventHandler.HandleBlocker()
-                break
-            elif(southBlockers.value[i] == blocker):
-                southWall.value[i].runAttachedResponder(kBlockerBlink)
-                if(eventHandler):
-                    eventHandler.HandleBlocker()
-                break
+        try:
+            index = northBlockers.value.index(blocker)
+            northWall.value[index].runAttachedResponder(kBlockerBlink)
+        except:
+            try:
+                index = southBlockers.value.index(blocker)
+                southWall.value[index].runAttachedResponder(kBlockerBlink)
+            except:
+                PtDebugPrint("grsnMainWallPython::OnClimbingBlockerEvent: Blocker not found on either panel")
+                return
+        if(eventHandler and self.IAmMaster()):
+            eventHandler.HandleBlocker()
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         ageSDL = PtGetAgeSDL()
@@ -97,6 +102,8 @@ class grsnMainWallPython(ptResponder):
         nState = ageSDL["nState"][0]
         sState = ageSDL["sState"][0]
         if(nState == sState == kEnd):
+            self.oldNorthWall = ageSDL["northWall"]
+            self.oldSouthWall = ageSDL["southWall"]
             for blocker in ageSDL["northWall"]:
                 if(blocker == -1):
                     break
@@ -106,9 +113,16 @@ class grsnMainWallPython(ptResponder):
                     break
                 southWall.value[blocker].runAttachedResponder(kBlockerOn)
         elif(nState == sState == kSelectCount and ageSDL["NumBlockers"][0] == 0):
-            for i in range(0,171):
-                northWall.value[i].runAttachedResponder(kBlockerOff)
-                southWall.value[i].runAttachedResponder(kBlockerOff)
+            if self.oldNorthWall:
+                for blocker in self.oldNorthWall:
+                    if(blocker == -1):
+                        break
+                    northWall.value[blocker].runAttachedResponder(kBlockerOff)
+            if self.oldSouthWall:
+                for blocker in self.oldSouthWall:
+                    if(blocker == -1):
+                        break
+                    southWall.value[blocker].runAttachedResponder(kBlockerOff)
 
     def IAmMaster(self):
         return (self.sceneobject.isLocallyOwned())
