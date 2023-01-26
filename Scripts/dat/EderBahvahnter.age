@@ -4,4 +4,5 @@ MaxCapacity=50
 LingerTime=180
 SequencePrefix=478
 ReleaseVersion=0
+Page=Building,1
 Page=Default,0
