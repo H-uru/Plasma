@@ -720,8 +720,9 @@ static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *param)
 
     HWND hwnd = (HWND)param;
 
-    strncpy(status, (const char *)buffer, std::min<size_t>(size * nmemb, 256));
-    status[255] = 0;
+    size_t count = std::min<size_t>(size * nmemb, std::size(status) - 1);
+    memcpy(status, buffer, count);
+    status[count] = 0;
     PostMessage(hwnd, WM_USER_SETSTATUSMSG, 0, (LPARAM) status);
     return size * nmemb;
 }
