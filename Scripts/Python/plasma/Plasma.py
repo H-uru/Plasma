@@ -602,6 +602,10 @@ def PtIsSinglePlayerMode():
     """Returns whether the game is in single player mode or not"""
     pass
 
+def PtIsSolo() -> bool:
+    """Returns whether we are the only player in the Age"""
+    ...
+
 def PtKillParticles(timeRemaining,pctToKill,particleSystem):
     """Tells particleSystem to kill pctToKill percent of its particles"""
     pass
