@@ -95,8 +95,9 @@ static size_t ICurlCallback(void* buffer, size_t size, size_t nmemb, void* threa
 {
     static char status[256];
 
-    strncpy(status, (const char *)buffer, std::min<size_t>(size * nmemb, std::size(status)));
-    status[std::size(status) - 1] = 0;
+    size_t count = std::min<size_t>(size * nmemb, std::size(status) - 1);
+    memcpy(status, buffer, count);
+    status[count] = 0;
     static_cast<plShardStatus*>(thread)->fShardFunc(status);
     return size * nmemb;
 }
