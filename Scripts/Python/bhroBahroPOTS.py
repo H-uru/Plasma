@@ -60,6 +60,7 @@ respWedges  = ptAttribResponder(3, "resp: Ground Wedges", ['Ercana','Ahnonay'])
 respErcanaRing  = ptAttribResponder(4, "resp: Ercana Floating Ring")
 respAhnonayRing = ptAttribResponder(5, "resp: Ahnonay Floating Ring")
 
+rgnCaveJump     = ptAttribActivator(6, "Cave jump region")
 
 class bhroBahroPOTS(ptResponder):
     def __init__(self):
@@ -75,6 +76,8 @@ class bhroBahroPOTS(ptResponder):
         gAgeStartedIn = PtGetAgeName()
         PtSendKIMessage(kDisableYeeshaBook,0)
 
+    def BeginAgeUnLoad(self,avatar):
+        ptCamera().enableFirstPersonOverride()
 
     def OnServerInitComplete(self):
         # if the age is not the one that I'm from then run the responder to make it back off
@@ -118,4 +121,10 @@ class bhroBahroPOTS(ptResponder):
                 PtDebugPrint("bhroBahroPOTS.OnNotify:  Turning wedge SDL of psnlBahroWedge13 to On")
                 psnlSDL["psnlBahroWedge13"] = (1,)
 
+        # notify from cave jump force 3rd person region
+        elif id == rgnCaveJump.id:
+            cam = ptCamera()
+            cam.undoFirstPerson()
+            cam.disableFirstPersonOverride()
+            PtDebugPrint("undid first person and disabled override")
 

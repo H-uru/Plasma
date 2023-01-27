@@ -65,6 +65,8 @@ respDerenoRing          = ptAttribResponder(7, "resp: Dereno Floating Ring")
 respPayiferenRing       = ptAttribResponder(8, "resp: Payiferen Floating Ring")
 respTetsonotRing        = ptAttribResponder(9, "resp: Tetsonot Floating Ring")
 
+rgnCaveJump             = ptAttribActivator(10, "Cave jump region")
+
 # define global variables
 
 #====================================
@@ -86,6 +88,9 @@ class bhroBahroPod(ptResponder):
 
         gAgeStartedIn = PtGetAgeName()
         PtSendKIMessage(kDisableYeeshaBook,0)
+
+    def BeginAgeUnLoad(self,avatar):
+        ptCamera().enableFirstPersonOverride()
 
     ###########################
     def OnServerInitComplete(self):
@@ -171,3 +176,9 @@ class bhroBahroPod(ptResponder):
                 PtDebugPrint("bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge10 to On")
                 psnlSDL["psnlBahroWedge10"] = (1,)
 
+        # notify from cave jump force 3rd person region
+        elif id == rgnCaveJump.id:
+            cam = ptCamera()
+            cam.undoFirstPerson()
+            cam.disableFirstPersonOverride()
+            PtDebugPrint("undid first person and disabled override")
