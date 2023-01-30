@@ -1148,7 +1148,7 @@ class xOptionsMenu(ptModifier):
                 elif tagID == kVideoResSliderTag:
                     videoText = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
                     videoSlider = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResSliderTag))
-                    curText = videoText.getString()
+                    curText = videoText.getStringW()
                     vidResList = self.GetVideoResList()
                     resSlider = videoSlider.getValue() * (len(vidResList) - 1)
                     curSelection = int(round(resSlider))
@@ -1156,7 +1156,7 @@ class xOptionsMenu(ptModifier):
                         videoSlider.setValue(0)
                         videoSlider.disable()
                         respDisableItems.run(self.key, state="disableRes")
-                        videoText.setString("800x600")
+                        videoText.setStringW("800x600")
                         videoText.setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                         ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextHeaderTag)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                     else:
@@ -1187,7 +1187,7 @@ class xOptionsMenu(ptModifier):
                     vidResList = self.GetVideoResList()
                     vidRes = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
                     if not self.GetVidResField() in vidResList:
-                        vidRes.setString("800x600 [4:3]")
+                        vidRes.setStringW("800x600 [4:3]")
                         videoField.setValue(0.0)
                     
                     numRes = len(vidResList)
@@ -1195,7 +1195,7 @@ class xOptionsMenu(ptModifier):
                         videoField.setValue(0)
                         videoField.disable()
                         respDisableItems.run(self.key, state="disableRes")
-                        vidRes.setString("800x600 [4:3]")
+                        vidRes.setStringW("800x600 [4:3]")
                         vidRes.setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                         ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextHeaderTag)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                     else:
@@ -1582,18 +1582,18 @@ class xOptionsMenu(ptModifier):
     
     def GetVidResField(self):
         videoResField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
-        value = videoResField.getString().split(' ')
+        value = videoResField.getStringW().split(' ')
         return value[0]
     
     def SetVidResField(self, value):
         videoResField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
         w, h = value.split("x")
         label = value + self._AspectRatio(w, h)
-        videoResField.setString(label)
+        videoResField.setStringW(label)
 
     def WriteVideoControls(self, setMode = 0):
         videoField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
-        width, height = videoField.getString().split("x")
+        width, height = videoField.getStringW().split("x")
         try:
             height, trash = height.split(" ")
         except ValueError:
@@ -1759,7 +1759,7 @@ class xOptionsMenu(ptModifier):
             ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEAXTextID)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
             audioField.disable()
             audioModeCtrlTextBox = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeTextID))
-            audioModeCtrlTextBox.setString("None")
+            audioModeCtrlTextBox.setStringW("None")
             audioModeCtrlTextBox.setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                 
     def setNewChronicleVar(self, chronicleVar, value):

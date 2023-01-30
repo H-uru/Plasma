@@ -148,7 +148,7 @@ class xGUILinkHandler:
         self._lastColor = color
         self._control.insertColor(color)
 
-    def insertString(self, text: str, /, *, censorLevel: Union[int, None] = None, urlDetection: bool = True) -> None:
+    def insertStringW(self, text: str, /, *, censorLevel: Union[int, None] = None, urlDetection: bool = True) -> None:
         lastInsert = 0
         control, linkColor, normalColor = self._control, self._linkColor, self._lastColor
 
@@ -168,7 +168,7 @@ class xGUILinkHandler:
 
                     self._links[self._nextLink] = _Link(url, control.getCursor())
                     control.insertLink(self._nextLink)
-                    PtDebugPrint(f"xGUILinkHandler.insertString():\tInserting URL {url} as linkId {self._nextLink}", level=kDebugDumpLevel)
+                    PtDebugPrint(f"xGUILinkHandler.insertStringW():\tInserting URL {url} as linkId {self._nextLink}", level=kDebugDumpLevel)
                     self._nextLink += 1
 
                     control.insertStringW(censor(url))
@@ -179,16 +179,10 @@ class xGUILinkHandler:
         else:
             control.insertStringW(censor(text))
 
-    def insertStringW(self, text: str, /, *, censorLevel: Union[int, None] = None, urlDetection: bool = True) -> None:
-        self.insertString(text, censorLevel=censorLevel, urlDetection=urlDetection)
-
-    def setString(self, text: str, /, *, censorLevel: Union[int, None] = None, urlDetection: bool = True) -> None:
+    def setStringW(self, text: str, /, *, censorLevel: Union[int, None] = None, urlDetection: bool = True) -> None:
         with PtBeginGUIUpdate(self._control):
             self.clearBuffer()
-            self.insertString(text, censorLevel=censorLevel, urlDetection=urlDetection)
-            # Emulate the real behavior of setString() - this to ensure we don't get duplicate
+            self.insertStringW(text, censorLevel=censorLevel, urlDetection=urlDetection)
+            # Emulate the real behavior of setStringW() - this to ensure we don't get duplicate
             # cursors if the string is reset while the control is being focused (eg text notes).
             self._control.moveCursor(PtGUIMultiLineDirection.kBufferStart)
-
-    def setStringW(self, text: str, /, *, censorLevel: Union[int, None] = None, urlDetection: bool = True) -> None:
-        self.setString(text, censorLevel=censorLevel, urlDetection=urlDetection)

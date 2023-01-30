@@ -3487,12 +3487,8 @@ class ptGUIControlEditBox(ptGUIControl):
         """Returns the selection color"""
         pass
 
-    def getString(self):
-        """Returns the sting that the user typed in."""
-        pass
-
     def getStringW(self):
-        """Unicode version of getString."""
+        """Returns the sting that the user typed in."""
         pass
 
     def getTagID(self):
@@ -3579,16 +3575,12 @@ class ptGUIControlEditBox(ptGUIControl):
         """Set the Capture mode on this control"""
         pass
 
-    def setString(self,text):
-        """Pre-sets the editbox to a atring."""
+    def setStringW(self,text):
+        """Pre-sets the editbox to a string."""
         pass
 
     def setStringSize(self,size):
         """Sets the maximum size of the string that can be inputted by the user."""
-        pass
-
-    def setStringW(self,text):
-        """Unicode version of setString."""
         pass
 
     def setVisible(self,state):
@@ -4272,12 +4264,8 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Returns the link the mouse is currently over."""
         ...
 
-    def getEncodedBuffer(self):
-        """Returns the encoded buffer in a python buffer object. Do NOT use result with setEncodedBufferW."""
-        pass
-
     def getEncodedBufferW(self):
-        """Unicode version of getEncodedBuffer. Do NOT use result with setEncodedBuffer."""
+        """Returns the encoded buffer in a python buffer object."""
         pass
 
     def getFontSize(self):
@@ -4312,12 +4300,8 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Returns the selection color"""
         pass
 
-    def getString(self):
-        """Gets the string of the edit control."""
-        pass
-
     def getStringW(self):
-        """Unicode version of getString."""
+        """Gets the string of the edit control."""
         pass
 
     def getTagID(self):
@@ -4328,12 +4312,8 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Hides this GUI control"""
         pass
 
-    def insertChar(self,c):
-        """Inserts a character at the current cursor position."""
-        pass
-
     def insertCharW(self,c):
-        """Unicode version of insertChar."""
+        """Inserts a character at the current cursor position."""
         pass
 
     def insertColor(self,color):
@@ -4345,12 +4325,8 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Inserts a link hotspot at the current cursor position."""
         ...
 
-    def insertString(self,string):
-        """Inserts a string at the current cursor position."""
-        pass
-
     def insertStringW(self,string):
-        """Unicode version of insertString"""
+        """Inserts a string at the current cursor position."""
         pass
 
     def insertStyle(self,style):
@@ -4409,13 +4385,8 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Sets the buffer max for the editbox"""
         pass
 
-    def setEncodedBuffer(self,bufferObject):
-        """Sets the edit control to the encoded buffer in the python buffer object. Do NOT use with a result from getEncodedBufferW."""
-        pass
-
     def setEncodedBufferW(self,bufferObject):
-        """Unicode version of setEncodedBuffer. Do NOT use with a result from getEncodedBuffer."""
-        pass
+        """Sets the edit control to the encoded buffer in the python buffer object."""
 
     def setFocus(self,state):
         """Sets the state of the focus of this GUI control"""
@@ -4449,12 +4420,8 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Sets the selection color"""
         pass
 
-    def setString(self,asciiText):
+    def setStringW(self,asciiText):
         """Sets the multi-line edit control string."""
-        pass
-
-    def setStringW(self,unicodeText):
-        """Unicode version of setString."""
         pass
 
     def setVisible(self,state):
@@ -4812,16 +4779,12 @@ class ptGUIControlTextBox(ptGUIControl):
         """Returns the selection color"""
         pass
 
-    def getString(self):
+    def getStringW(self):
         """Returns the string that the TextBox is set to (in case you forgot)"""
         pass
 
     def getStringJustify(self):
         """Returns current justify"""
-        pass
-
-    def getStringW(self):
-        """Unicode version of getString"""
         pass
 
     def getTagID(self):
@@ -4884,16 +4847,12 @@ class ptGUIControlTextBox(ptGUIControl):
         """Sets the selection color"""
         pass
 
-    def setString(self,text):
+    def setStringW(self,text):
         """Sets the textbox string to 'text'"""
         pass
 
     def setStringJustify(self,justify):
         """Sets current justify"""
-        pass
-
-    def setStringW(self,text):
-        """Unicode version of setString"""
         pass
 
     def setVisible(self,state):

@@ -912,7 +912,7 @@ class xAvatarCustomization(ptModifier):
                             zoomBtn.hide()
                         # unset the description box
                         descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
-                        descbox.setString("")
+                        descbox.setStringW("")
                         self.ISetStandardControls()
                 elif isinstance(control,ptGUIControlButton):
                     btnID = control.getTagID()
@@ -1440,7 +1440,7 @@ class xAvatarCustomization(ptModifier):
         editbox = ptGUIControlEditBox(AvCustGUI.dialog.getControlFromTag(kNameEBID))
         editbox.hide() # don't want people changing their name
         localplayer = PtGetLocalPlayer()
-        namebox.setString(localplayer.getPlayerName())
+        namebox.setStringW(localplayer.getPlayerName())
         panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
         clothing_panel = panelRG.getValue()
         zoomBtn = ptGUIControlCheckBox(AvCustGUI.dialog.getControlFromTag(kZoomButton))
@@ -1825,7 +1825,7 @@ class xAvatarCustomization(ptModifier):
         clickMap.disable()
         clickMap.hide()
         if not textBox == None:
-            textBox.setString("")
+            textBox.setStringW("")
         texMap.clearToColor(ptColor(0,0,0,0))
         texMap.flush()
 

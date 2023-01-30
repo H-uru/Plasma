@@ -1093,9 +1093,9 @@ class nxusBookMachine(ptModifier):
             self.IHideDisableButton(idButton)
 
     def IDisableLanguageControls(self):
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDEngText)).setString("")
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDFreText)).setString("")
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDGerText)).setString("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDEngText)).setStringW("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDFreText)).setStringW("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDGerText)).setStringW("")
         for id in kLanguageControls.keys():
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(id)).hide()
 
@@ -1120,8 +1120,8 @@ class nxusBookMachine(ptModifier):
 
     def IClearGUI(self):
         # clear header titles and disable their buttons
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setString("")
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setStringW("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setStringW("")
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDNameHeaderBtn)).disable()
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDPopHeaderBtn)).disable()
 
@@ -1134,7 +1134,7 @@ class nxusBookMachine(ptModifier):
 
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodPublic)).disable()
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodPublic)).hide()
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)).setString("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)).setStringW("")
         ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodSelect)).setNotifyOnInteresting(1)
 
         self.ISetDescriptionText("")
@@ -1164,8 +1164,8 @@ class nxusBookMachine(ptModifier):
                 del self.controlIdToAgeEntry[btnSelectId]
             except KeyError:
                 pass
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtNameId)).setString("")
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtInfoId)).setString("")
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtNameId)).setStringW("")
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtInfoId)).setStringW("")
 
             ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(btnSelectId)).setNotifyOnInteresting(1)
 
@@ -1459,8 +1459,8 @@ class nxusBookMachine(ptModifier):
         self.IHideDisableButton(kIDBtnNeighborhoodPublic)
         self.IHideDisableButton(kIDBtnNeighborhoodSelect)
 
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodName)).setString("")
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodInfo)).setString("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodName)).setStringW("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodInfo)).setStringW("")
         self.ISetDescriptionText("")
 
     def IUpdateHoodLink(self):
