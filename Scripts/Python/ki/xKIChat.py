@@ -174,7 +174,7 @@ class xKIChat(object):
             if not KIMini.dialog.isEnabled():
                 self.ClearBBMini(0)
             if firstChar:
-                chatEdit.setStringW(firstChar)
+                chatEdit.setString(firstChar)
                 chatEdit.end()
             else:
                 chatEdit.clearString()
@@ -631,7 +631,7 @@ class xKIChat(object):
                 chatArea.insertColor(headerColor)
 
                 # Added unicode support here.
-                chatArea.insertStringW(f"\n{contextPrefix if self.chatTextColor else ''}{chatHeaderFormatted}")
+                chatArea.insertString(f"\n{contextPrefix if self.chatTextColor else ''}{chatHeaderFormatted}")
                 chatArea.insertColor(bodyColor)
 
                 lastInsert = 0
@@ -640,18 +640,18 @@ class xKIChat(object):
                 for start, end, mention in chatMentions:
                     if start > lastInsert:
                         # Insert normal text up to the current name mention position
-                        chatArea.insertStringW(chatMessageFormatted[lastInsert:start], censorLevel=censorLevel)
+                        chatArea.insertString(chatMessageFormatted[lastInsert:start], censorLevel=censorLevel)
 
                     lastInsert = end
                     
                     chatArea.insertColor(mentionColor)
-                    chatArea.insertStringW(mention, censorLevel=censorLevel, urlDetection=False)
+                    chatArea.insertString(mention, censorLevel=censorLevel, urlDetection=False)
                     chatArea.insertColor(bodyColor)
 
                 # If there is remaining text to display after last mention, write it
                 # Or if it was just a plain message with no mention of player's name
                 if lastInsert != len(chatMessageFormatted):
-                    chatArea.insertStringW(chatMessageFormatted[lastInsert:], censorLevel=censorLevel)
+                    chatArea.insertString(chatMessageFormatted[lastInsert:], censorLevel=censorLevel)
 
                 chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
 
@@ -1056,7 +1056,7 @@ class CommandsProcessor:
                                     pass
                                 else:
                                     userListBox.setSelection(folderIdx)
-                                    caret.setStringW(caretValue)
+                                    caret.setString(caretValue)
                                     privateChbox.setChecked(False)
                                 
                             # Don't send an actual message because it was just a command with nothing after it

@@ -3487,7 +3487,7 @@ class ptGUIControlEditBox(ptGUIControl):
         """Returns the selection color"""
         pass
 
-    def getStringW(self):
+    def getString(self):
         """Returns the sting that the user typed in."""
         pass
 
@@ -3575,7 +3575,7 @@ class ptGUIControlEditBox(ptGUIControl):
         """Set the Capture mode on this control"""
         pass
 
-    def setStringW(self,text):
+    def setString(self,text):
         """Pre-sets the editbox to a string."""
         pass
 
@@ -4264,7 +4264,7 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Returns the link the mouse is currently over."""
         ...
 
-    def getEncodedBufferW(self):
+    def getEncodedBuffer(self):
         """Returns the encoded buffer in a python buffer object."""
         pass
 
@@ -4300,7 +4300,7 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Returns the selection color"""
         pass
 
-    def getStringW(self):
+    def getString(self):
         """Gets the string of the edit control."""
         pass
 
@@ -4312,7 +4312,7 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Hides this GUI control"""
         pass
 
-    def insertCharW(self,c):
+    def insertChar(self,c):
         """Inserts a character at the current cursor position."""
         pass
 
@@ -4325,7 +4325,7 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Inserts a link hotspot at the current cursor position."""
         ...
 
-    def insertStringW(self,string):
+    def insertString(self,string):
         """Inserts a string at the current cursor position."""
         pass
 
@@ -4420,7 +4420,7 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Sets the selection color"""
         pass
 
-    def setStringW(self,asciiText):
+    def setString(self,asciiText):
         """Sets the multi-line edit control string."""
         pass
 
@@ -4779,7 +4779,7 @@ class ptGUIControlTextBox(ptGUIControl):
         """Returns the selection color"""
         pass
 
-    def getStringW(self):
+    def getString(self):
         """Returns the string that the TextBox is set to (in case you forgot)"""
         pass
 
@@ -4847,7 +4847,7 @@ class ptGUIControlTextBox(ptGUIControl):
         """Sets the selection color"""
         pass
 
-    def setStringW(self,text):
+    def setString(self,text):
         """Sets the textbox string to 'text'"""
         pass
 

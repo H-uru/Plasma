@@ -84,7 +84,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setStringSize, args)
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlEditBox, getStringW)
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlEditBox, getString)
 {
     std::wstring val = self->fThis->GetBufferW();
     return PyUnicode_FromWideChar(val.c_str(), val.length());
@@ -92,12 +92,12 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlEditBox, getStringW)
 
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlEditBox, clearString, ClearBuffer)
 
-PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setStringW, args)
+PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setString, args)
 {
     PyObject* textObj;
     if (!PyArg_ParseTuple(args, "O", &textObj))
     {
-        PyErr_SetString(PyExc_TypeError, "setStringW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setString expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
     if (PyUnicode_Check(textObj))
@@ -109,7 +109,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setStringW, args)
     }
     else
     {
-        PyErr_SetString(PyExc_TypeError, "setStringW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setString expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
 }
@@ -211,9 +211,9 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setChatMode, args)
 
 PYTHON_START_METHODS_TABLE(ptGUIControlEditBox)
     PYTHON_METHOD(ptGUIControlEditBox, setStringSize, "Params: size\nSets the maximum size of the string that can be inputted by the user."),
-    PYTHON_METHOD_NOARGS(ptGUIControlEditBox, getStringW, "Returns the sting that the user typed in."),
+    PYTHON_METHOD_NOARGS(ptGUIControlEditBox, getString, "Returns the sting that the user typed in."),
     PYTHON_BASIC_METHOD(ptGUIControlEditBox, clearString, "Clears the editbox."),
-    PYTHON_METHOD(ptGUIControlEditBox, setStringW, "Params: text\nPre-sets the editbox to a string."),
+    PYTHON_METHOD(ptGUIControlEditBox, setString, "Params: text\nPre-sets the editbox to a string."),
     PYTHON_BASIC_METHOD(ptGUIControlEditBox, home, "Sets the cursor in the editbox to before the first character."),
     PYTHON_BASIC_METHOD(ptGUIControlEditBox, end, "Sets the cursor in the editbox to the after the last character."),
     PYTHON_METHOD(ptGUIControlEditBox, setColor, "Params: foreColor,backColor\nSets the fore and back color of the editbox."),

@@ -730,7 +730,7 @@ class xAvatarCustomization(ptModifier):
                             if newitem.isClothingSet:
                                 self.IWearClothingSet(newitem.clothingSet)
                                 descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
-                                descbox.setStringW(newitem.description)
+                                descbox.setString(newitem.description)
                                 return None
                             # get the current worn item to see what color it was
                             lastitem = FindWornItem(clothing_group.clothingType)
@@ -756,14 +756,14 @@ class xAvatarCustomization(ptModifier):
                             self.IMorphOneItem(kWeightKnob,newitem.name) # propigate the weight morph to the new clothing item
                             # then set the description box
                             descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
-                            descbox.setStringW(newitem.description)
+                            descbox.setString(newitem.description)
                             # set up the color pickers
                             colorbar1 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName1))
                             if newitem.colorlabel1 == "":
                                 self.IHideColorPicker(kColor1ClickMap)
                             else:
                                 self.IShowColorPicker(kColor1ClickMap)
-                                colorbar1.setStringW(newitem.colorlabel1)
+                                colorbar1.setString(newitem.colorlabel1)
                                 if newitem.type == kHairClothingItem:
                                     self.IDrawPickerThingy(kHairClickMap,lastcolor1)
                                 else:
@@ -773,7 +773,7 @@ class xAvatarCustomization(ptModifier):
                                 self.IHideColorPicker(kColor2ClickMap)
                             else:
                                 self.IShowColorPicker(kColor2ClickMap)
-                                colorbar2.setStringW(newitem.colorlabel2)
+                                colorbar2.setString(newitem.colorlabel2)
                                 self.IDrawPickerThingy(kColor2ClickMap,lastcolor2)
                     # else it might be one of the accessory listboxes
                     else:
@@ -801,7 +801,7 @@ class xAvatarCustomization(ptModifier):
                                     if newitem.isClothingSet:
                                         self.IWearClothingSet(newitem.clothingSet)
                                         descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
-                                        descbox.setStringW(newitem.description)
+                                        descbox.setString(newitem.description)
                                         return None
                                     avatar = PtGetLocalAvatar()
                                     # get the current worn item to see what color it was
@@ -820,21 +820,21 @@ class xAvatarCustomization(ptModifier):
                                     self.IMorphOneItem(kWeightKnob,newitem.name) # propigate the weight morph to the new clothing item
                                     # then set the description box
                                     descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
-                                    descbox.setStringW(newitem.description)
+                                    descbox.setString(newitem.description)
                                     # set up the color pickers
                                     colorbar1 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName1))
                                     if newitem.colorlabel1 == "":
                                         self.IHideColorPicker(kColor1ClickMap)
                                     else:
                                         self.IShowColorPicker(kColor1ClickMap)
-                                        colorbar1.setStringW(newitem.colorlabel1)
+                                        colorbar1.setString(newitem.colorlabel1)
                                         self.IDrawPickerThingy(kColor1ClickMap,lastcolor1)
                                     colorbar2 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName2))
                                     if newitem.colorlabel2 == "":
                                         self.IHideColorPicker(kColor2ClickMap)
                                     else:
                                         self.IShowColorPicker(kColor2ClickMap)
-                                        colorbar2.setStringW(newitem.colorlabel2)
+                                        colorbar2.setString(newitem.colorlabel2)
                                         self.IDrawPickerThingy(kColor2ClickMap,lastcolor2)
                         elif clothing_group is not None:
                             itemselect = control.getSelection()
@@ -853,7 +853,7 @@ class xAvatarCustomization(ptModifier):
                                 if newitem.isClothingSet:
                                     self.IWearClothingSet(newitem.clothingSet)
                                     descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
-                                    descbox.setStringW(newitem.description)
+                                    descbox.setString(newitem.description)
                                     return None
                                 avatar = PtGetLocalAvatar()
                                 lastitem = ""
@@ -878,7 +878,7 @@ class xAvatarCustomization(ptModifier):
                                         if tagID == kHeadAccLB and not (newitem.name in untintableHeadAcc):
                                             self.IShowColorPicker(kColor2ClickMap)
                                             colorbar2 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName2))
-                                            colorbar2.setStringW(GetItemName("Glasses"))
+                                            colorbar2.setString(GetItemName("Glasses"))
                                             if not lastitem == "":
                                                 lastcolor = avatar.avatar.getTintClothingItem(lastitem,1)
                                             else:
@@ -912,7 +912,7 @@ class xAvatarCustomization(ptModifier):
                             zoomBtn.hide()
                         # unset the description box
                         descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
-                        descbox.setStringW("")
+                        descbox.setString("")
                         self.ISetStandardControls()
                 elif isinstance(control,ptGUIControlButton):
                     btnID = control.getTagID()
@@ -1440,7 +1440,7 @@ class xAvatarCustomization(ptModifier):
         editbox = ptGUIControlEditBox(AvCustGUI.dialog.getControlFromTag(kNameEBID))
         editbox.hide() # don't want people changing their name
         localplayer = PtGetLocalPlayer()
-        namebox.setStringW(localplayer.getPlayerName())
+        namebox.setString(localplayer.getPlayerName())
         panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
         clothing_panel = panelRG.getValue()
         zoomBtn = ptGUIControlCheckBox(AvCustGUI.dialog.getControlFromTag(kZoomButton))
@@ -1710,19 +1710,19 @@ class xAvatarCustomization(ptModifier):
             wornitem = FindWornItem(clothing_type)
             if wornitem is not None:
                 descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
-                descbox.setStringW(wornitem.description)
+                descbox.setString(wornitem.description)
                 colorbar1 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName1))
                 if wornitem.colorlabel1 == "":
                     self.IHideColorPicker(kColor1ClickMap)
                 else:
                     self.IShowColorPicker(kColor1ClickMap)
-                    colorbar1.setStringW(wornitem.colorlabel1)
+                    colorbar1.setString(wornitem.colorlabel1)
                 colorbar2 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName2))
                 if wornitem.colorlabel2 == "":
                     self.IHideColorPicker(kColor2ClickMap)
                 else:
                     self.IShowColorPicker(kColor2ClickMap)
-                    colorbar2.setStringW(wornitem.colorlabel2)
+                    colorbar2.setString(wornitem.colorlabel2)
                 # special case the face... its the skin tint
                 if clothing_type == kFaceClothingItem:
                     skin = avatar.avatar.getTintSkin()
@@ -1825,7 +1825,7 @@ class xAvatarCustomization(ptModifier):
         clickMap.disable()
         clickMap.hide()
         if not textBox == None:
-            textBox.setStringW("")
+            textBox.setString("")
         texMap.clearToColor(ptColor(0,0,0,0))
         texMap.flush()
 

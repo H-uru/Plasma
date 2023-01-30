@@ -582,7 +582,7 @@ class xOptionsMenu(ptModifier):
             if event == kShowHide:
                 if control.isEnabled():
                     textField = ptGUIControlTextBox(OptionsMenuDlg.dialog.getControlFromTag(kOptionsOkText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Resume"))
 
             elif event == kAction or event == kValueChanged:
                 # test to see which control had the event
@@ -664,14 +664,14 @@ class xOptionsMenu(ptModifier):
                 if control.isEnabled():
                     # buttons localized
                     textField = ptGUIControlTextBox(ReleaseNotesDlg.dialog.getControlFromTag(kRNOkText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Resume"))
                     textField = ptGUIControlTextBox(ReleaseNotesDlg.dialog.getControlFromTag(kRNGoBackText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
 
                     # BOOM if you do this on dialog load. Probably due to how early it happens
                     # in the init process. Do it now.
                     if not self._releaseNotesCtrl.getBufferSize():
-                        self._releaseNotesCtrl.setStringW(gCurrentReleaseNotes)
+                        self._releaseNotesCtrl.setString(gCurrentReleaseNotes)
 
                     self._releaseNotesCtrl.setScrollPosition(1)
                     self._releaseNotesCtrl.setScrollPosition(0)
@@ -701,31 +701,31 @@ class xOptionsMenu(ptModifier):
                 if control.isEnabled():
                     # localize the strings
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine1))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.MoveForward"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.KeyCommands.MoveForward"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine2))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.MoveBackward"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.KeyCommands.MoveBackward"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine3))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.RotateLeft"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.KeyCommands.RotateLeft"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine4))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.RotateRight"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.KeyCommands.RotateRight"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine5))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.Jump"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.KeyCommands.Jump"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine6))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.StrafeLeft"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.KeyCommands.StrafeLeft"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine7))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.StrafeRight"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.KeyCommands.StrafeRight"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine8))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.ExitMode"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.KeyCommands.ExitMode"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kKMTextLine9))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.KeyCommands.FirstPerson"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.KeyCommands.FirstPerson"))
 
                     # buttons localized
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kOptionsOkText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Resume"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kOptionsDefaultsText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
                     textField = ptGUIControlTextBox(KeyMapDlg.dialog.getControlFromTag(kOptionsGoBackText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
                     self.IShowMappedKeys(control,gKM1ControlCodesRow1,gKM1ControlCodesRow2)
                     # read the ini file in
                     # xIniInput.ReadIni()
@@ -841,27 +841,27 @@ class xOptionsMenu(ptModifier):
 
                     # localize the strings
                     textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSAdvanceHeader))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.Advanced"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.Advanced"))
                     textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSQuickerCameraText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.SmootherCamera"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.SmootherCamera"))
                     textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSMouseInvert))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.InvertMouse"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.InvertMouse"))
                     textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSWalkAndPan))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.WalkAndPan"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.WalkAndPan"))
                     textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSStayInFirstPerson))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.StayInFP"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.StayInFP"))
                     textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSClickToTurn))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.ClickToTurn"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.ClickToTurn"))
                     textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kAGSMouseTurn))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.MouseTurn"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.MouseTurn"))
 
                     # buttons localized
                     textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kOptionsGoBackText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
                     textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kOptionsOkText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Resume"))
                     textField = ptGUIControlTextBox(AdvGameSettingDlg.dialog.getControlFromTag(kOptionsDefaultsText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
 
             elif event == kAction or event == kValueChanged:
                 gsID = control.getTagID()
@@ -961,11 +961,11 @@ class xOptionsMenu(ptModifier):
         elif id == CalibrateDlg.id:
             if event == kDialogLoaded:
                 textField = ptGUIControlTextBox(CalibrateDlg.dialog.getControlFromTag(kCalMessageText))
-                textField.setStringW(PtGetLocalizedString("OptionsMenu.Messages.Calibration"))
+                textField.setString(PtGetLocalizedString("OptionsMenu.Messages.Calibration"))
             elif event == kShowHide:
                 if control.isEnabled():
                     textField = ptGUIControlTextBox(CalibrateDlg.dialog.getControlFromTag(kCalMessageText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Messages.Calibration"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Messages.Calibration"))
             elif event == kAction or event == kValueChanged:
                 cbID = control.getTagID()
                 if cbID == kClickOnMeBtn:
@@ -1046,11 +1046,11 @@ class xOptionsMenu(ptModifier):
 
                     # buttons localized
                     textField = ptGUIControlTextBox(NavigationDlg.dialog.getControlFromTag(kOptionsGoBackText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
                     textField = ptGUIControlTextBox(NavigationDlg.dialog.getControlFromTag(kOptionsOkText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Resume"))
                     textField = ptGUIControlTextBox(NavigationDlg.dialog.getControlFromTag(kGSAdvancedBtnText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Advanced"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Advanced"))
 
             elif event == kAction or event == kValueChanged:
                 NavigationID = control.getTagID()
@@ -1100,11 +1100,11 @@ class xOptionsMenu(ptModifier):
                     # buttons localized
                     # Temporary HACK - These controls lack TagIDs in the 902 PRPs, so we're going to call them up by index instead.
                     textField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromIndex(3)) # (kOptionsGoBackText) GSGoBackBtnText_5
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
                     textField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromIndex(4)) # (kOptionsOkText) GSOkBtnText_6
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Resume"))
                     textField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromIndex(6)) # (kOptionsDefaultsText) GSDefaultsBtnText_2
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
 
                     self.restartWarn = 0
                     
@@ -1148,7 +1148,7 @@ class xOptionsMenu(ptModifier):
                 elif tagID == kVideoResSliderTag:
                     videoText = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
                     videoSlider = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResSliderTag))
-                    curText = videoText.getStringW()
+                    curText = videoText.getString()
                     vidResList = self.GetVideoResList()
                     resSlider = videoSlider.getValue() * (len(vidResList) - 1)
                     curSelection = int(round(resSlider))
@@ -1156,7 +1156,7 @@ class xOptionsMenu(ptModifier):
                         videoSlider.setValue(0)
                         videoSlider.disable()
                         respDisableItems.run(self.key, state="disableRes")
-                        videoText.setStringW("800x600")
+                        videoText.setString("800x600")
                         videoText.setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                         ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextHeaderTag)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                     else:
@@ -1187,7 +1187,7 @@ class xOptionsMenu(ptModifier):
                     vidResList = self.GetVideoResList()
                     vidRes = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
                     if not self.GetVidResField() in vidResList:
-                        vidRes.setStringW("800x600 [4:3]")
+                        vidRes.setString("800x600 [4:3]")
                         videoField.setValue(0.0)
                     
                     numRes = len(vidResList)
@@ -1195,7 +1195,7 @@ class xOptionsMenu(ptModifier):
                         videoField.setValue(0)
                         videoField.disable()
                         respDisableItems.run(self.key, state="disableRes")
-                        vidRes.setStringW("800x600 [4:3]")
+                        vidRes.setString("800x600 [4:3]")
                         vidRes.setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                         ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextHeaderTag)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                     else:
@@ -1227,27 +1227,27 @@ class xOptionsMenu(ptModifier):
                 if control.isEnabled():
                     # localize the strings
                     textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVolumeHeader))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.AudioSettings"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.AudioSettings"))
                     textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVolSoundFXText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.SoundFX"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.SoundFX"))
                     textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVolMusicText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.Music"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.Music"))
                     textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSMyVoiceHeader))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.MyVoice"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.MyVoice"))
                     textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVolAmbientText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.Ambient"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.Ambient"))
                     textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVoiceHeader))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.OtherVoice"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.OtherVoice"))
                     textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kGSVolMuteText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.GameSettings.Mute"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.GameSettings.Mute"))
 
                     # buttons localized
                     textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kOptionsGoBackText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
                     textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kOptionsOkText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Resume"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Resume"))
                     textField = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kOptionsDefaultsText))
-                    textField.setStringW(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
+                    textField.setString(PtGetLocalizedString("OptionsMenu.Main.Defaults"))
 
                     self.restartAudio = 0
 
@@ -1336,7 +1336,7 @@ class xOptionsMenu(ptModifier):
                     audioDeviceName = gAudioDevices[intCurSelection]
 
                     audioModeCtrlTextBox = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeTextID))
-                    audioModeCtrlTextBox.setStringW(audio.getFriendlyDeviceName(audioDeviceName))
+                    audioModeCtrlTextBox.setString(audio.getFriendlyDeviceName(audioDeviceName))
 
                     if audioDeviceName != prevAudioDeviceName:  #Only update the EAX checkbox when the mouse has been let up...
                         PtDebugPrint("Audio Device Name changed!")
@@ -1582,18 +1582,18 @@ class xOptionsMenu(ptModifier):
     
     def GetVidResField(self):
         videoResField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
-        value = videoResField.getStringW().split(' ')
+        value = videoResField.getString().split(' ')
         return value[0]
     
     def SetVidResField(self, value):
         videoResField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
         w, h = value.split("x")
         label = value + self._AspectRatio(w, h)
-        videoResField.setStringW(label)
+        videoResField.setString(label)
 
     def WriteVideoControls(self, setMode = 0):
         videoField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
-        width, height = videoField.getStringW().split("x")
+        width, height = videoField.getString().split("x")
         try:
             height, trash = height.split(" ")
         except ValueError:
@@ -1751,7 +1751,7 @@ class xOptionsMenu(ptModifier):
                     audioField.setValue(num/numAudioDevices)
                     audioModeCtrlTextBox = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeTextID))
                     audioDeviceName = prevAudioDeviceName = audio.getPlaybackDevice()
-                    audioModeCtrlTextBox.setStringW(audio.getFriendlyDeviceName(device))
+                    audioModeCtrlTextBox.setString(audio.getFriendlyDeviceName(device))
         else:
             EAXcheckbox.disable()
             respDisableItems.run(self.key, state="disableEAX")
@@ -1759,7 +1759,7 @@ class xOptionsMenu(ptModifier):
             ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEAXTextID)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
             audioField.disable()
             audioModeCtrlTextBox = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeTextID))
-            audioModeCtrlTextBox.setStringW("None")
+            audioModeCtrlTextBox.setString("None")
             audioModeCtrlTextBox.setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                 
     def setNewChronicleVar(self, chronicleVar, value):

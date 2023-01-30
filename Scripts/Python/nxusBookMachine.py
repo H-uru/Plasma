@@ -1006,7 +1006,7 @@ class nxusBookMachine(ptModifier):
 
     def ISetDescriptionText(self, description, permanent = True):
         descrTxt = ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtLinkDescription))
-        descrTxt.setStringW(description)
+        descrTxt.setString(description)
         if permanent:
             self.currentStatusBarText = description
             
@@ -1080,11 +1080,11 @@ class nxusBookMachine(ptModifier):
 
         txtName = ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(idTxtName))
         txtName.setForeColor(color)
-        txtName.setStringW(displayName)
+        txtName.setString(displayName)
 
         txtInfo = ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(idTxtInfo))
         txtInfo.setForeColor(color)
-        txtInfo.setStringW(linkEntry.displayInfo)
+        txtInfo.setString(linkEntry.displayInfo)
 
     def IUpdateDeleteButton(self, idButton, enable):
         if enable:
@@ -1093,9 +1093,9 @@ class nxusBookMachine(ptModifier):
             self.IHideDisableButton(idButton)
 
     def IDisableLanguageControls(self):
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDEngText)).setStringW("")
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDFreText)).setStringW("")
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDGerText)).setStringW("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDEngText)).setString("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDFreText)).setString("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDGerText)).setString("")
         for id in kLanguageControls.keys():
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(id)).hide()
 
@@ -1120,8 +1120,8 @@ class nxusBookMachine(ptModifier):
 
     def IClearGUI(self):
         # clear header titles and disable their buttons
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setStringW("")
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setStringW("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setString("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString("")
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDNameHeaderBtn)).disable()
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDPopHeaderBtn)).disable()
 
@@ -1134,7 +1134,7 @@ class nxusBookMachine(ptModifier):
 
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodPublic)).disable()
         ptGUIControlButton(NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodPublic)).hide()
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)).setStringW("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)).setString("")
         ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDBtnNeighborhoodSelect)).setNotifyOnInteresting(1)
 
         self.ISetDescriptionText("")
@@ -1164,8 +1164,8 @@ class nxusBookMachine(ptModifier):
                 del self.controlIdToAgeEntry[btnSelectId]
             except KeyError:
                 pass
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtNameId)).setStringW("")
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtInfoId)).setStringW("")
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtNameId)).setString("")
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(txtInfoId)).setString("")
 
             ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(btnSelectId)).setNotifyOnInteresting(1)
 
@@ -1459,8 +1459,8 @@ class nxusBookMachine(ptModifier):
         self.IHideDisableButton(kIDBtnNeighborhoodPublic)
         self.IHideDisableButton(kIDBtnNeighborhoodSelect)
 
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodName)).setStringW("")
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodInfo)).setStringW("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodName)).setString("")
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodInfo)).setString("")
         self.ISetDescriptionText("")
 
     def IUpdateHoodLink(self):
@@ -1490,20 +1490,20 @@ class nxusBookMachine(ptModifier):
             hoodPubPriv = PtGetLocalizedString("Nexus.Neighborhood.MakePrivate")
         else:
             hoodPubPriv = PtGetLocalizedString("Nexus.Neighborhood.MakePublic")
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)).setStringW(hoodPubPriv)
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)).setString(hoodPubPriv)
 
     def IUpdateGUILinkList(self):
         if self.idCategorySelected == kCategoryPublic:
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setStringW(PtGetLocalizedString("Nexus.Headers.Name"))
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setStringW(PtGetLocalizedString("Nexus.Headers.Population"))
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setString(PtGetLocalizedString("Nexus.Headers.Name"))
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString(PtGetLocalizedString("Nexus.Headers.Population"))
             # show our header sorting buttons
             self.IShowEnableButton(kIDNameHeaderBtn)
             self.IShowEnableButton(kIDPopHeaderBtn)
             #show current sort direction
             self.IToggleSortControls(True)
         else:
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setStringW("")
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setStringW("")
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setString("")
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString("")
             self.IToggleSortControls(False)
 
         ageList = self.categoryLinksList[self.idCategorySelected]

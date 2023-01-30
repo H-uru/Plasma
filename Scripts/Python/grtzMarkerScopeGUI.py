@@ -362,7 +362,7 @@ class grtzMarkerScopeGUI(ptModifier):
         # Now do the deed
         fieldID = (mission * 10) + kMarkerGameFieldStart
         numTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID + kMarkerGameNumFieldOffset))
-        numTB.setStringW(str(len(grtzMarkerGames.mgs[mission])))
+        numTB.setString(str(len(grtzMarkerGames.mgs[mission])))
         timeTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID + kMarkerGameNameFieldOffset))
-        timeTB.setStringW(msg)
+        timeTB.setString(msg)
 

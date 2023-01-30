@@ -119,12 +119,12 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getCursor)
 
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, clearBuffer, ClearBuffer)
 
-PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setStringW, args)
+PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setString, args)
 {
     PyObject* textObj;
     if (!PyArg_ParseTuple(args, "O", &textObj))
     {
-        PyErr_SetString(PyExc_TypeError, "setStringW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setString expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
     if (PyUnicode_Check(textObj))
@@ -136,30 +136,30 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setStringW, args)
     }
     else
     {
-        PyErr_SetString(PyExc_TypeError, "setStringW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setString expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
 }
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getStringW)
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getString)
 {
     const wchar_t* text = self->fThis->GetTextW();
     return PyUnicode_FromWideChar(text, wcslen(text));
 }
 
-PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setEncodedBufferW, args)
+PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setEncodedBuffer, args)
 {
     PyObject* bufferObj = nullptr;
     if (!PyArg_ParseTuple(args, "O", &bufferObj))
     {
-        PyErr_SetString(PyExc_TypeError, "setEncodedBufferW expects a python buffer object");
+        PyErr_SetString(PyExc_TypeError, "setEncodedBuffer expects a python buffer object");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->SetEncodedBufferW(bufferObj);
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getEncodedBufferW)
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getEncodedBuffer)
 {
     const wchar_t* text = self->fThis->GetEncodedBufferW();
     PyObject* retVal = PyUnicode_FromWideChar(text, wcslen(text));
@@ -172,12 +172,12 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getBufferSize)
     return PyLong_FromSize_t(self->fThis->GetBufferSize());
 }
 
-PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertCharW, args)
+PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertChar, args)
 {
     PyObject* textObj;
     if (!PyArg_ParseTuple(args, "O", &textObj))
     {
-        PyErr_SetString(PyExc_TypeError, "insertCharW expects a single unicode character");
+        PyErr_SetString(PyExc_TypeError, "insertChar expects a single unicode character");
         PYTHON_RETURN_ERROR;
     }
     if (PyUnicode_Check(textObj))
@@ -186,7 +186,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertCharW, args)
         wchar_t* temp = PyUnicode_AsWideCharString(textObj, &strLen);
         if (strLen != 1)
         {
-            PyErr_SetString(PyExc_TypeError, "insertCharW expects a single unicode character");
+            PyErr_SetString(PyExc_TypeError, "insertChar expects a single unicode character");
             PyMem_Free(temp);
             PYTHON_RETURN_ERROR;
         }
@@ -197,17 +197,17 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertCharW, args)
     }
     else
     {
-        PyErr_SetString(PyExc_TypeError, "insertCharW expects a single unicode character");
+        PyErr_SetString(PyExc_TypeError, "insertChar expects a single unicode character");
         PYTHON_RETURN_ERROR;
     }
 }
 
-PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertStringW, args)
+PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertString, args)
 {
     PyObject* textObj;
     if (!PyArg_ParseTuple(args, "O", &textObj))
     {
-        PyErr_SetString(PyExc_TypeError, "insertStringW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "insertString expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
     if (PyUnicode_Check(textObj))
@@ -219,7 +219,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertStringW, args)
     }
     else
     {
-        PyErr_SetString(PyExc_TypeError, "insertStringW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "insertString expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
 }
@@ -385,13 +385,13 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_METHOD(ptGUIControlMultiLineEdit, moveCursor, "Params: direction\nMove the cursor in the specified direction (see PtGUIMultiLineDirection)"),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getCursor, "Get the current position of the cursor in the encoded buffer."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, clearBuffer, "Clears all text from the multi-line edit control."),
-    PYTHON_METHOD(ptGUIControlMultiLineEdit, setStringW, "Params: text\nSets the multi-line edit control string."),
-    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getStringW, "Gets the string of the edit control."),
-    PYTHON_METHOD(ptGUIControlMultiLineEdit, setEncodedBufferW, "Params: bufferObject\nSets the edit control to the encoded buffer in the python buffer object."),
-    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getEncodedBufferW, "Returns the encoded buffer in a python buffer object."),
+    PYTHON_METHOD(ptGUIControlMultiLineEdit, setString, "Params: text\nSets the multi-line edit control string."),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getString, "Gets the string of the edit control."),
+    PYTHON_METHOD(ptGUIControlMultiLineEdit, setEncodedBuffer, "Params: bufferObject\nSets the edit control to the encoded buffer in the python buffer object."),
+    PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getEncodedBuffer, "Returns the encoded buffer in a python buffer object."),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getBufferSize, "Returns the size of the buffer"),
-    PYTHON_METHOD(ptGUIControlMultiLineEdit, insertCharW, "Params: c\nInserts a character at the current cursor position."),
-    PYTHON_METHOD(ptGUIControlMultiLineEdit, insertStringW, "Params: string\nInserts a string at the current cursor position."),
+    PYTHON_METHOD(ptGUIControlMultiLineEdit, insertChar, "Params: c\nInserts a character at the current cursor position."),
+    PYTHON_METHOD(ptGUIControlMultiLineEdit, insertString, "Params: string\nInserts a string at the current cursor position."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, insertColor, "Params: color\nInserts an encoded color object at the current cursor position.\n"
                 "'color' is a ptColor object."),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, insertStyle, "Params: style\nInserts an encoded font style at the current cursor position."),
