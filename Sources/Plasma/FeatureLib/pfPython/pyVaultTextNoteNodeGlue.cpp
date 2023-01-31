@@ -126,22 +126,10 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, noteGetSubType)
 
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTitle, args)
 {
-    char* title;
-    if (!PyArg_ParseTuple(args, "s", &title))
-    {
-        PyErr_SetString(PyExc_TypeError, "setTitle expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Note_SetTitle(title);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTitleW, args)
-{
     PyObject* textObj;
     if (!PyArg_ParseTuple(args, "O", &textObj))
     {
-        PyErr_SetString(PyExc_TypeError, "setTitleW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setTitle expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
     if (PyUnicode_Check(textObj))
@@ -151,7 +139,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTitleW, args)
         PyMem_Free(title);
         PYTHON_RETURN_NONE;
     }
-    PyErr_SetString(PyExc_TypeError, "setTitleW expects a unicode string");
+    PyErr_SetString(PyExc_TypeError, "setTitle expects a unicode string");
     PYTHON_RETURN_ERROR;
 }
 
@@ -160,29 +148,12 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTitle)
     return PyUnicode_FromSTString(self->fThis->Note_GetTitle());
 }
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTitleW)
-{
-    return PyUnicode_FromSTString(self->fThis->Note_GetTitle());
-}
-
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setText, args)
-{
-    char* text;
-    if (!PyArg_ParseTuple(args, "s", &text))
-    {
-        PyErr_SetString(PyExc_TypeError, "setText expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Note_SetText(text);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTextW, args)
 {
     PyObject* textObj;
     if (!PyArg_ParseTuple(args, "O", &textObj))
     {
-        PyErr_SetString(PyExc_TypeError, "setTextW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setText expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
     if (PyUnicode_Check(textObj))
@@ -192,16 +163,11 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTextW, args)
         PyMem_Free(text);
         PYTHON_RETURN_NONE;
     }
-    PyErr_SetString(PyExc_TypeError, "setTextW expects a unicode string");
+    PyErr_SetString(PyExc_TypeError, "setText expects a unicode string");
     PYTHON_RETURN_ERROR;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getText)
-{
-    return PyUnicode_FromSTString(self->fThis->Note_GetText());
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTextW)
 {
     return PyUnicode_FromSTString(self->fThis->Note_GetText());
 }
@@ -271,13 +237,9 @@ PYTHON_START_METHODS_TABLE(ptVaultTextNoteNode)
     PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, noteGetSubType, "LEGACY\nReturns the subtype of this text note node."),
     // new glue
     PYTHON_METHOD(ptVaultTextNoteNode, setTitle, "Params: title\nSets the title of this text note node."),
-    PYTHON_METHOD(ptVaultTextNoteNode, setTitleW, "Params: title\nUnicode version of setTitle"),
     PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getTitle, "Returns the title of this text note node."),
-    PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getTitleW, "Unicode version of getTitle"),
     PYTHON_METHOD(ptVaultTextNoteNode, setText, "Params: text\nSets text of the this text note node."),
-    PYTHON_METHOD(ptVaultTextNoteNode, setTextW, "Params: text\nUnicode version of setText"),
     PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getText, "Returns the text of this text note node."),
-    PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getTextW, "Unicode version of getText."),
     PYTHON_METHOD(ptVaultTextNoteNode, setNoteType, "Params: type\nSets the type of text note for this text note node."),
     PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getNoteType, "Returns the type of text note for this text note node."),
     PYTHON_METHOD(ptVaultTextNoteNode, setNoteSubType, "Params: subType\nSets the subtype of the this text note node."),

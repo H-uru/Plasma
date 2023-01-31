@@ -3817,13 +3817,13 @@ class xKI(ptModifier):
             content = content.getChild()
         if isinstance(content, ptVaultNode):
             if imageNode := content.upcastToImageNode():
-                return xCensor.xCensor(imageNode.getTitleW(), self.censorLevel)
+                return xCensor.xCensor(imageNode.getTitle(), self.censorLevel)
             if markerNode := content.upcastToMarkerGameNode():
                 return xCensor.xCensor(markerNode.getGameName(), self.censorLevel)
             if playerInfoNode := content.upcastToPlayerInfoNode():
                 return xCensor.xCensor(playerInfoNode.playerGetName(), self.censorLevel)
             if textNode := content.upcastToTextNoteNode():
-                return xCensor.xCensor(textNode.getTitleW(), self.censorLevel)
+                return xCensor.xCensor(textNode.getTitle(), self.censorLevel)
         # Any other types of content? Implement it yourself.
         return "<unknown>"
 
@@ -4569,10 +4569,10 @@ class xKI(ptModifier):
         jrnDate.setString(curTime)
         jrnDate.show()
         if not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldJRNTitle:
-            jrnTitle.setString(xCensor.xCensor(element.getTitleW(), self.censorLevel))
+            jrnTitle.setString(xCensor.xCensor(element.getTitle(), self.censorLevel))
             jrnTitle.show()
         if not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldJRNNote:
-            jrnNote.setString(element.getTextW(), censorLevel=self.censorLevel)
+            jrnNote.setString(element.getText(), censorLevel=self.censorLevel)
             jrnNote.show()
         self.BigKISetSeen(self.BKCurrentContent)
         # If it came from someone else, add them to the SendTo field.
@@ -4594,8 +4594,8 @@ class xKI(ptModifier):
 
                 # Create the note.
                 note = ptVaultTextNoteNode(0)
-                note.setTextW(PtGetLocalizedString("KI.Journal.InitialMessage"))
-                note.setTitleW(PtGetLocalizedString("KI.Journal.InitialTitle"))
+                note.setText(PtGetLocalizedString("KI.Journal.InitialMessage"))
+                note.setTitle(PtGetLocalizedString("KI.Journal.InitialTitle"))
 
                 self.BKCurrentContent = journal.addNode(note)
                 return self.BKCurrentContent
@@ -4680,7 +4680,7 @@ class xKI(ptModifier):
                     imgElem.setImageFromScrShot()
                 else:
                     imgElem.imageSetImage(image)
-                imgElem.setTitleW(PtGetLocalizedString("KI.Image.InitialTitle"))
+                imgElem.setTitle(PtGetLocalizedString("KI.Image.InitialTitle"))
                 self.BKCurrentContent = journal.addNode(imgElem)
                 return self.BKCurrentContent
             else:
@@ -5208,11 +5208,11 @@ class xKI(ptModifier):
                 # Set the edit box and display it.
                 if self.BKEditField == kGUI.BKEditFieldJRNTitle:
                     edElement = edElement.upcastToTextNoteNode()
-                    editBox.setString(edElement.getTitleW())
+                    editBox.setString(edElement.getTitle())
                     KIJournalExpanded.dialog.setFocus(editBox.getKey())
                 elif self.BKEditField == kGUI.BKEditFieldPICTitle:
                     edElement = edElement.upcastToImageNode()
-                    editBox.setString(edElement.getTitleW())
+                    editBox.setString(edElement.getTitle())
                     KIPictureExpanded.dialog.setFocus(editBox.getKey())
                 else:
                     editBox.setString("")
@@ -5236,7 +5236,7 @@ class xKI(ptModifier):
                 # But we need to change the content over to the non-censored version without
                 # active hyperlinks. Otherwise we get interesting results where the URLs become
                 # censored and offset.
-                self.journalNoteArea.setString(self.BKEditContent.getChild().upcastToTextNoteNode().getTextW(), urlDetection=False)
+                self.journalNoteArea.setString(self.BKEditContent.getChild().upcastToTextNoteNode().getText(), urlDetection=False)
 
     ## Save what the player was editing to the right place.
     def BigKISaveEdit(self, noExitEditMode=False):
@@ -5274,7 +5274,7 @@ class xKI(ptModifier):
                                         # Make sure that the player actually added something (so as not to get a blank title).
                                         if jTitle != PtGetLocalizedString("KI.Journal.InitialTitle"):
                                             jTitle = jTitle[len(PtGetLocalizedString("KI.Journal.InitialTitle")):]
-                                    edElement.setTitleW(jTitle)
+                                    edElement.setTitle(jTitle)
                                 elif self.BKEditField == kGUI.BKEditFieldPICTitle:
                                     edElement = edElement.upcastToImageNode()
                                     pTitle = editBox.getString()
@@ -5282,7 +5282,7 @@ class xKI(ptModifier):
                                         # Make sure that the player actually added something (so as not to get a blank title).
                                         if pTitle != PtGetLocalizedString("KI.Image.InitialTitle"):
                                             pTitle = pTitle[len(PtGetLocalizedString("KI.Image.InitialTitle")):]
-                                    edElement.setTitleW(pTitle)
+                                    edElement.setTitle(pTitle)
                                 edElement.save()
                         else:
                             if self.BKEditField == kGUI.BKEditFieldJRNNote:
@@ -5290,7 +5290,7 @@ class xKI(ptModifier):
                                 if buf[:len(PtGetLocalizedString("KI.Journal.InitialMessage"))] == PtGetLocalizedString("KI.Journal.InitialMessage"):
                                     buf = buf[len(PtGetLocalizedString("KI.Journal.InitialMessage")):]
                                 edElement = edElement.upcastToTextNoteNode()
-                                edElement.setTextW(buf)
+                                edElement.setText(buf)
                                 edElement.save()
                 if self.BKEditField != kGUI.BKEditFieldJRNNote:
                     # Put the fields back into no-edit mode.

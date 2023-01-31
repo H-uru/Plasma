@@ -8012,10 +8012,6 @@ class ptVaultImageNode(ptVaultNode):
         """Returns the title (caption) of this image node"""
         pass
 
-    def getTitleW(self):
-        """Unicode version of getTitle"""
-        pass
-
     def getType(self):
         """Returns the type of ptVaultNode this is.
 See PlasmaVaultTypes.py"""
@@ -8103,10 +8099,6 @@ Sets the title (caption) of this image node"""
 
     def setTitle(self,title):
         """Sets the title (caption) of this image node"""
-        pass
-
-    def setTitleW(self,title):
-        """Unicode version of setTitle"""
         pass
 
     def setType(self,type):
@@ -9368,16 +9360,8 @@ class ptVaultTextNoteNode(ptVaultNode):
         """Returns the text of this text note node."""
         pass
 
-    def getTextW(self):
-        """Unicode version of getText."""
-        pass
-
     def getTitle(self):
         """Returns the title of this text note node."""
-        pass
-
-    def getTitleW(self):
-        """Unicode version of getTitle"""
         pass
 
     def hasNode(self,id):
@@ -9484,16 +9468,8 @@ Sets the type of text note for this text note node."""
         """Sets text of the this text note node."""
         pass
 
-    def setTextW(self,text):
-        """Unicode version of setText"""
-        pass
-
     def setTitle(self,title):
         """Sets the title of this text note node."""
-        pass
-
-    def setTitleW(self,title):
-        """Unicode version of setTitle"""
         pass
 
     def upcastToAgeInfoListNode(self):
