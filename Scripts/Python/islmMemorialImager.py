@@ -249,8 +249,8 @@ class islmMemorialImager(ptModifier):
             node = child.getChild()
             folderNode = node.upcastToFolderNode()
             if folderNode is not None:
-                PtDebugPrint("islmMemorialImager: node is named %s" % (folderNode.getFolderNameW()),level=kDebugDumpLevel)
-                if folderNode.getFolderNameW() == "MemorialImager":
+                PtDebugPrint("islmMemorialImager: node is named %s" % (folderNode.getFolderName()),level=kDebugDumpLevel)
+                if folderNode.getFolderName() == "MemorialImager":
                     folderNodeChildList = folderNode.getChildNodeRefList()
                     for folderChild in folderNodeChildList:
                         PtDebugPrint("islmMemorialImager: looking at child node " + str(folderChild),level=kDebugDumpLevel)

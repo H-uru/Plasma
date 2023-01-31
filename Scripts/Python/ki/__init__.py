@@ -3935,14 +3935,14 @@ class xKI(ptModifier):
                         for ageFolderRef in ageFolderRefs:
                             ageFolder = ageFolderRef.getChild()
                             ageFolder = ageFolder.upcastToFolderNode()
-                            if ageFolder is not None and ageFolder.getFolderNameW() == instAgeName:
+                            if ageFolder is not None and ageFolder.getFolderName() == instAgeName:
                                 createAgeFolder = False
                                 break
 
                         if instAgeName and createAgeFolder:
                             nFolder = ptVaultFolderNode(0)
                             if nFolder is not None:
-                                nFolder.setFolderNameW(self.GetAgeInstanceName())
+                                nFolder.setFolderName(self.GetAgeInstanceName())
                                 nFolder.folderSetType(PtVaultStandardNodes.kAgeTypeJournalFolder)
                                 # Add to the master Age folder folder.
                                 masterAgeFolder.addNode(nFolder)

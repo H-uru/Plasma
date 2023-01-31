@@ -6813,7 +6813,7 @@ Set the folder type"""
         """Returns the creator's node ID"""
         pass
 
-    def getFolderNameW(self):
+    def getFolderName(self):
         """Returns the folder's name"""
         pass
 
@@ -6886,7 +6886,7 @@ See PlasmaVaultTypes.py"""
         """Set creator's node ID"""
         pass
 
-    def setFolderNameW(self,name):
+    def setFolderName(self,name):
         """Set the folder name"""
         pass
 
@@ -7036,7 +7036,7 @@ Set the folder type"""
         """Returns the creator's node ID"""
         pass
 
-    def getFolderNameW(self):
+    def getFolderName(self):
         """Returns the folder's name"""
         pass
 
@@ -7117,7 +7117,7 @@ See PlasmaVaultTypes.py"""
         """Set creator's node ID"""
         pass
 
-    def setFolderNameW(self,name):
+    def setFolderName(self,name):
         """Set the folder name"""
         pass
 
@@ -8488,7 +8488,7 @@ Set the folder type"""
         """Returns the creator's node ID"""
         pass
 
-    def getFolderNameW(self):
+    def getFolderName(self):
         """Returns the folder's name"""
         pass
 
@@ -8589,7 +8589,7 @@ See PlasmaVaultTypes.py"""
         """Set creator's node ID"""
         pass
 
-    def setFolderNameW(self,name):
+    def setFolderName(self,name):
         """Set the folder name"""
         pass
 
