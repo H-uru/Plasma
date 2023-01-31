@@ -65,23 +65,6 @@ PYTHON_INIT_DEFINITION(ptVaultImageNode, args, keywords)
     PYTHON_RETURN_INIT_OK;
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultImageNode, imageSetTitle, args)
-{
-    char* title;
-    if (!PyArg_ParseTuple(args, "s", &title))
-    {
-        PyErr_SetString(PyExc_TypeError, "imageSetTitle expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Image_SetTitle(title);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultImageNode, imageGetTitle)
-{
-    return PyUnicode_FromSTString(self->fThis->Image_GetTitle());
-}
-
 PYTHON_METHOD_DEFINITION(ptVaultImageNode, imageSetImage, args)
 {
     PyObject* imageObj = nullptr;
@@ -168,8 +151,6 @@ PYTHON_BASIC_METHOD_DEFINITION(ptVaultImageNode, setImageFromScrShot, SetImageFr
 
 PYTHON_START_METHODS_TABLE(ptVaultImageNode)
     // legacy glue
-    PYTHON_METHOD(ptVaultImageNode, imageSetTitle, "Params: title\nLEGACY\nSets the title (caption) of this image node"),
-    PYTHON_METHOD_NOARGS(ptVaultImageNode, imageGetTitle, "LEGACY\nReturns the title (caption) of this image node"),
     PYTHON_METHOD(ptVaultImageNode, imageSetImage, "Params: image\nLEGACY\nSets the image(ptImage) of this image node"),
     PYTHON_METHOD_NOARGS(ptVaultImageNode, imageGetImage, "LEGACY\nReturns the image(ptImage) of this image node"),
     // new glue

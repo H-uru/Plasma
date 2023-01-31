@@ -94,7 +94,7 @@ class xMusicBox(ptModifier):
         for ageInfoChildRef in ageInfoChildren:
             ageInfoChild = ageInfoChildRef.getChild()
             folder = ageInfoChild.upcastToFolderNode()
-            if folder and folder.folderGetName() == "AgeData":
+            if folder and folder.getFolderName() == "AgeData":
                 ageDataFolder = folder
                 ageDataChildren = folder.getChildNodeRefList()
                 for ageDataChildRef in ageDataChildren:
@@ -105,7 +105,7 @@ class xMusicBox(ptModifier):
 
         if not ageDataFolder:
             newFolder = ptVaultFolderNode(0)
-            newFolder.folderSetName("AgeData")
+            newFolder.setFolderName("AgeData")
             ageInfoNode.addNode(newFolder)
             
             newNode = ptVaultChronicleNode(0)
@@ -212,7 +212,7 @@ class xMusicBox(ptModifier):
         for ageInfoChildRef in ageInfoChildren:
             ageInfoChild = ageInfoChildRef.getChild()
             folder = ageInfoChild.upcastToFolderNode()
-            if folder and folder.folderGetName() == "AgeData":
+            if folder and folder.getFolderName() == "AgeData":
                 ageDataChildren = folder.getChildNodeRefList()
                 for ageDataChildRef in ageDataChildren:
                     ageDataChild = ageDataChildRef.getChild()

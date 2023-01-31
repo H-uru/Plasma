@@ -137,9 +137,9 @@ class xSimpleImager(ptModifier):
                         if (len(tempValue) >= 1):
                             name = ageSDL[ImagerInboxVariable.value][0]
                         else:
-                            name = node.noteGetTitle()
+                            name = node.getTitle()
                     else:
-                        name = node.noteGetTitle()
+                        name = node.getTitle()
                     PtDebugPrint("\tSetting device inbox: %s"%(name),level=kDebugDumpLevel)
                     node.setDeviceInbox(name, self, kSettingDeviceInbox)
                 else:
@@ -466,12 +466,12 @@ class xSimpleImager(ptModifier):
                         elemType = element.getType()
                         if elemType == PtVaultNodeTypes.kImageNode:
                             element = element.upcastToImageNode()
-                            PtDebugPrint("simpleImager: now showing image %s" % (element.imageGetTitle()),level=kDebugDumpLevel)
+                            PtDebugPrint("simpleImager: now showing image %s" % (element.getTitle()),level=kDebugDumpLevel)
                             ImagerMap.textmap.drawImage(0,0,element.imageGetImage(),0)
                             ImagerMap.textmap.flush()
                         elif elemType == PtVaultNodeTypes.kTextNoteNode:
                             element = element.upcastToTextNoteNode()
-                            textbody = element.noteGetText()
+                            textbody = element.getText()
                             if textbody == "cleardaImager":
                                 PtDebugPrint("xSimpleImager[%s]: clearing the imager of images" % (ImagerName.value),level=kWarningLevel)
                                 folder.removeAllNodes()
@@ -488,7 +488,7 @@ class xSimpleImager(ptModifier):
                                 except:
                                     textfrom = "System"
                                 try:
-                                    textsubject = element.noteGetTitle()
+                                    textsubject = element.getTitle()
                                 except:
                                     textsubject = "Imager Transmission"
                                 PtDebugPrint("simpleImager: now showing textnote %s" % (textsubject),level=kDebugDumpLevel)

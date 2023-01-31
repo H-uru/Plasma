@@ -6753,19 +6753,9 @@ class ptVaultFolderNode(ptVaultNode):
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
-    def folderGetName(self):
-        """LEGACY
-Returns the folder's name"""
-        pass
-
     def folderGetType(self):
         """LEGACY
 Returns the folder type (of the standard folder types)"""
-        pass
-
-    def folderSetName(self,name):
-        """LEGACY
-Set the folder name"""
         pass
 
     def folderSetType(self,type):
@@ -6976,19 +6966,9 @@ class ptVaultAgeInfoListNode(ptVaultFolderNode):
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
-    def folderGetName(self):
-        """LEGACY
-Returns the folder's name"""
-        pass
-
     def folderGetType(self):
         """LEGACY
 Returns the folder type (of the standard folder types)"""
-        pass
-
-    def folderSetName(self,name):
-        """LEGACY
-Set the folder name"""
         pass
 
     def folderSetType(self,type):
@@ -8026,19 +8006,9 @@ See PlasmaVaultTypes.py"""
 Returns the image(ptImage) of this image node"""
         pass
 
-    def imageGetTitle(self):
-        """LEGACY
-Returns the title (caption) of this image node"""
-        pass
-
     def imageSetImage(self,image):
         """LEGACY
 Sets the image(ptImage) of this image node"""
-        pass
-
-    def imageSetTitle(self,title):
-        """LEGACY
-Sets the title (caption) of this image node"""
         pass
 
     def linkToNode(self,nodeID,cb=None,cbContext=0):
@@ -8420,19 +8390,9 @@ class ptVaultPlayerInfoListNode(ptVaultFolderNode):
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
-    def folderGetName(self):
-        """LEGACY
-Returns the folder's name"""
-        pass
-
     def folderGetType(self):
         """LEGACY
 Returns the folder type (of the standard folder types)"""
-        pass
-
-    def folderSetName(self,name):
-        """LEGACY
-Set the folder name"""
         pass
 
     def folderSetType(self,type):
@@ -9377,16 +9337,6 @@ class ptVaultTextNoteNode(ptVaultNode):
 Returns the subtype of this text note node."""
         pass
 
-    def noteGetText(self):
-        """LEGACY
-Returns the text of this text note node."""
-        pass
-
-    def noteGetTitle(self):
-        """LEGACY
-Returns the title of this text note node."""
-        pass
-
     def noteGetType(self):
         """LEGACY
 Returns the type of text note for this text note node."""
@@ -9395,16 +9345,6 @@ Returns the type of text note for this text note node."""
     def noteSetSubType(self,subType):
         """LEGACY
 Sets the subtype of the this text note node."""
-        pass
-
-    def noteSetText(self,text):
-        """LEGACY
-Sets text of the this text note node."""
-        pass
-
-    def noteSetTitle(self,title):
-        """LEGACY
-Sets the title of this text note node."""
         pass
 
     def noteSetType(self,type):

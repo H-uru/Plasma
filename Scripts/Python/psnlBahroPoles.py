@@ -1200,7 +1200,7 @@ class psnlBahroPoles(ptModifier):
             for ageInfoChildRef in ageInfoChildren:
                 ageInfoChild = ageInfoChildRef.getChild()
                 folder = ageInfoChild.upcastToFolderNode()
-                if folder and folder.folderGetName() == "AgeData":
+                if folder and folder.getFolderName() == "AgeData":
                     ageDataFolder = folder
                     ageDataChildren = folder.getChildNodeRefList()
                     for ageDataChildRef in ageDataChildren:
@@ -1231,7 +1231,7 @@ class psnlBahroPoles(ptModifier):
        
         if not ageDataFolder:
             ageDataFolder = ptVaultFolderNode(0)
-            ageDataFolder.folderSetName("AgeData")
+            ageDataFolder.setFolderName("AgeData")
             ageInfoNode.addNode(ageDataFolder)
 
         if pelletSolution:

@@ -56,40 +56,6 @@ PYTHON_INIT_DEFINITION(ptVaultTextNoteNode, args, keywords)
     PYTHON_RETURN_INIT_OK;
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetTitle, args)
-{
-    char* title;
-    if (!PyArg_ParseTuple(args, "s", &title))
-    {
-        PyErr_SetString(PyExc_TypeError, "noteSetTitle expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Note_SetTitle(title);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, noteGetTitle)
-{
-    return PyUnicode_FromSTString(self->fThis->Note_GetTitle());
-}
-
-PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetText, args)
-{
-    char* text;
-    if (!PyArg_ParseTuple(args, "s", &text))
-    {
-        PyErr_SetString(PyExc_TypeError, "noteSetText expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Note_SetText(text);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, noteGetText)
-{
-    return PyUnicode_FromSTString(self->fThis->Note_GetText());
-}
-
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetType, args)
 {
     long nodeType;
@@ -227,10 +193,6 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getDeviceInbox)
 
 PYTHON_START_METHODS_TABLE(ptVaultTextNoteNode)
     // legacy glue
-    PYTHON_METHOD(ptVaultTextNoteNode, noteSetTitle, "Params: title\nLEGACY\nSets the title of this text note node."),
-    PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, noteGetTitle, "LEGACY\nReturns the title of this text note node."),
-    PYTHON_METHOD(ptVaultTextNoteNode, noteSetText, "Params: text\nLEGACY\nSets text of the this text note node."),
-    PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, noteGetText, "LEGACY\nReturns the text of this text note node."),
     PYTHON_METHOD(ptVaultTextNoteNode, noteSetType, "Params: type\nLEGACY\nSets the type of text note for this text note node."),
     PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, noteGetType, "LEGACY\nReturns the type of text note for this text note node."),
     PYTHON_METHOD(ptVaultTextNoteNode, noteSetSubType, "Params: subType\nLEGACY\nSets the subtype of the this text note node."),

@@ -86,7 +86,7 @@ class ahnySaveCloth(ptModifier):
             for ageInfoChildRef in ageInfoChildren:
                 ageInfoChild = ageInfoChildRef.getChild()
                 folder = ageInfoChild.upcastToFolderNode()
-                if folder and folder.folderGetName() == "AgeData":
+                if folder and folder.getFolderName() == "AgeData":
                     ageDataFolder = folder
                     ageDataChildren = folder.getChildNodeRefList()
                     for ageDataChildRef in ageDataChildren:
@@ -199,7 +199,7 @@ class ahnySaveCloth(ptModifier):
                     for ageInfoChildRef in ageInfoChildren:
                         ageInfoChild = ageInfoChildRef.getChild()
                         folder = ageInfoChild.upcastToFolderNode()
-                        if folder and folder.folderGetName() == "AgeData":
+                        if folder and folder.getFolderName() == "AgeData":
                             ageDataFolder = folder
                             ageDataChildren = folder.getChildNodeRefList()
                             for ageDataChildRef in ageDataChildren:

@@ -81,23 +81,6 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultFolderNode, folderGetType)
     return PyLong_FromLong(self->fThis->Folder_GetType());
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultFolderNode, folderSetName, args)
-{
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
-    {
-        PyErr_SetString(PyExc_TypeError, "folderSetName expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Folder_SetName(name);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultFolderNode, folderGetName)
-{
-    return PyUnicode_FromSTString(self->fThis->Folder_GetName());
-}
-
 PYTHON_METHOD_DEFINITION(ptVaultFolderNode, setFolderType, args)
 {
     int folderType;
@@ -143,8 +126,6 @@ PYTHON_START_METHODS_TABLE(ptVaultFolderNode)
     // legacy glue
     PYTHON_METHOD(ptVaultFolderNode, folderSetType, "Params: type\nLEGACY\nSet the folder type"),
     PYTHON_METHOD_NOARGS(ptVaultFolderNode, folderGetType, "LEGACY\nReturns the folder type (of the standard folder types)"),
-    PYTHON_METHOD(ptVaultFolderNode, folderSetName, "Params: name\nLEGACY\nSet the folder name"),
-    PYTHON_METHOD_NOARGS(ptVaultFolderNode, folderGetName, "LEGACY\nReturns the folder's name"),
     // new glue
     PYTHON_METHOD(ptVaultFolderNode, setFolderType, "Params: type\nSet the folder type"),
     PYTHON_METHOD_NOARGS(ptVaultFolderNode, getFolderType, "Returns the folder type (of the standard folder types)"),

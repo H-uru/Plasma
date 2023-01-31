@@ -2751,8 +2751,8 @@ class xKI(ptModifier):
 
         localPlayer = PtGetLocalPlayer()
         invite = ptVaultTextNoteNode(0)
-        invite.noteSetText(PtGetLocalizedString(message, [ageName, localPlayer.getPlayerName()]))
-        invite.noteSetTitle(PtGetLocalizedString(title, [ageName]))
+        invite.setText(PtGetLocalizedString(message, [ageName, localPlayer.getPlayerName()]))
+        invite.setTitle(PtGetLocalizedString(title, [ageName]))
         invite.sendTo(playerID)
 
     #~~~~~~~~~~~~~~~~~#
@@ -2998,7 +2998,7 @@ class xKI(ptModifier):
             elif isinstance(plyr, ptVaultMarkerGameNode):
                 # its a marker list, display its name
                 playerlist.closeBranch()
-                playerlist.addBranch(plyr.folderGetName(), 1)
+                playerlist.addBranch(plyr.getFolderName(), 1)
             elif isinstance(plyr, str):
                 playerlist.closeBranch()
                 playerlist.addBranch(plyr, 1)
@@ -3696,7 +3696,7 @@ class xKI(ptModifier):
     ## Determines whether this is a hidden folder.
     def IsFolderHidden(self, ageFolder):
 
-        if ageFolder.folderGetName() == "Hidden":
+        if ageFolder.getFolderName() == "Hidden":
             return True
         return False
 
@@ -3898,7 +3898,7 @@ class xKI(ptModifier):
                 ageFolder = ageFolder.upcastToFolderNode()
                 if ageFolder is not None:
                     if not self.IsFolderHidden(ageFolder):
-                        ageFolderName = ageFolder.folderGetName()
+                        ageFolderName = ageFolder.getFolderName()
                         if ageFolderName == "":
                             ageFolderName = "[invalid]"
                         ageFolderName = FilterAgeName(ageFolderName)
@@ -4440,9 +4440,9 @@ class xKI(ptModifier):
                                         contentDate.setForeColor(kColors.DniSelectable)
 
                                     if isinstance(element, ptVaultImageNode):
-                                        contentTitle.setString(xCensor.xCensor(element.imageGetTitle(), self.censorLevel))
+                                        contentTitle.setString(xCensor.xCensor(element.getTitle(), self.censorLevel))
                                     elif isinstance(element, ptVaultTextNoteNode):
-                                        contentTitle.setString(xCensor.xCensor(element.noteGetTitle(), self.censorLevel))
+                                        contentTitle.setString(xCensor.xCensor(element.getTitle(), self.censorLevel))
                                     elif isinstance(element, ptVaultMarkerGameNode):
                                         contentTitle.setString(xCensor.xCensor(element.getGameName(), self.censorLevel))
                                     else:
@@ -4645,7 +4645,7 @@ class xKI(ptModifier):
         picDate.setString(curTime)
         picDate.show()
         if not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldPICTitle:
-            picTitle.setString(xCensor.xCensor(element.imageGetTitle(), self.censorLevel))
+            picTitle.setString(xCensor.xCensor(element.getTitle(), self.censorLevel))
             picTitle.show()
         if picImage.getNumMaps() > 0:
             dynMap = picImage.getMap(0)
