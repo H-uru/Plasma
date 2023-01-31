@@ -6438,7 +6438,7 @@ class xKI(ptModifier):
 
         if event == kDialogLoaded:
             for menuItem in kLoc.MarkerFolderPopupMenu:
-                KIMarkerFolderPopupMenu.menu.addNotifyItemW(menuItem[0])
+                KIMarkerFolderPopupMenu.menu.addNotifyItem(menuItem[0])
         elif event == kAction:
             menuID = control.getTagID()
             self.markerGameTimeID = menuID

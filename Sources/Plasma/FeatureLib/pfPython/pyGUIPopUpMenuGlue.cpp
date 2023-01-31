@@ -272,43 +272,43 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, setBackSelectColor, args)
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addConsoleCmdItemW, args)
+PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addConsoleCmdItem, args)
 {
     wchar_t* name;
     char* consoleCmd;
     if (!PyArg_ParseTuple(args, "us", &name, &consoleCmd))
     {
-        PyErr_SetString(PyExc_TypeError, "addConsoleCmdItemW expects a unicode string and a string");
+        PyErr_SetString(PyExc_TypeError, "addConsoleCmdItem expects a unicode string and a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->AddConsoleCmdItemW(name, consoleCmd);
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addNotifyItemW, args)
+PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addNotifyItem, args)
 {
     wchar_t* name;
     if (!PyArg_ParseTuple(args, "u", &name))
     {
-        PyErr_SetString(PyExc_TypeError, "addNotifyItemW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "addNotifyItem expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->AddNotifyItemW(name);
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addSubMenuItemW, args)
+PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addSubMenuItem, args)
 {
     wchar_t* name;
     PyObject* subMenuObj = nullptr;
     if (!PyArg_ParseTuple(args, "uO", &name, &subMenuObj))
     {
-        PyErr_SetString(PyExc_TypeError, "addSubMenuItemW expects a unicode string and a ptGUIPopUpMenu");
+        PyErr_SetString(PyExc_TypeError, "addSubMenuItem expects a unicode string and a ptGUIPopUpMenu");
         PYTHON_RETURN_ERROR;
     }
     if (!pyGUIPopUpMenu::Check(subMenuObj))
     {
-        PyErr_SetString(PyExc_TypeError, "addSubMenuItemW expects a unicode string and a ptGUIPopUpMenu");
+        PyErr_SetString(PyExc_TypeError, "addSubMenuItem expects a unicode string and a ptGUIPopUpMenu");
         PYTHON_RETURN_ERROR;
     }
     pyGUIPopUpMenu* subMenu = pyGUIPopUpMenu::ConvertFrom(subMenuObj);
@@ -334,9 +334,9 @@ PYTHON_START_METHODS_TABLE(ptGUIPopUpMenu)
     PYTHON_METHOD(ptGUIPopUpMenu, setSelectColor, "Params: r,g,b,a\nSets the selection color"),
     PYTHON_METHOD(ptGUIPopUpMenu, setBackColor, "Params: r,g,b,a\nSets the background color"),
     PYTHON_METHOD(ptGUIPopUpMenu, setBackSelectColor, "Params: r,g,b,a\nSets the selection background color"),
-    PYTHON_METHOD(ptGUIPopUpMenu, addConsoleCmdItemW, "Params: name,consoleCmd\nAdds a new item to the menu that fires a console command"),
-    PYTHON_METHOD(ptGUIPopUpMenu, addNotifyItemW, "Params: name\nAdds a new item ot the mneu"),
-    PYTHON_METHOD(ptGUIPopUpMenu, addSubMenuItemW, "Params: name,subMenu\nAdds a submenu to this menu"),
+    PYTHON_METHOD(ptGUIPopUpMenu, addConsoleCmdItem, "Params: name,consoleCmd\nAdds a new item to the menu that fires a console command"),
+    PYTHON_METHOD(ptGUIPopUpMenu, addNotifyItem, "Params: name\nAdds a new item ot the mneu"),
+    PYTHON_METHOD(ptGUIPopUpMenu, addSubMenuItem, "Params: name,subMenu\nAdds a submenu to this menu"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
