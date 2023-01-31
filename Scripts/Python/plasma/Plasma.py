@@ -3913,10 +3913,6 @@ class ptGUIControlListBox(ptGUIControl):
         """UNKNOWN"""
         pass
 
-    def addBranchW(self,name,initiallyOpen):
-        """Unicode version of addBranch"""
-        pass
-
     def addImage(self,image,respectAlphaFlag):
         """Appends an image item to the listbox"""
         pass
@@ -3939,10 +3935,6 @@ class ptGUIControlListBox(ptGUIControl):
 
     def addStringInBox(self,text,min_width,min_height):
         """Adds a text list item that has a minimum width and height"""
-        pass
-
-    def addStringW(self,text):
-        """Unicode version of addString."""
         pass
 
     def addStringWithColor(self,text,color,inheritAlpha):
@@ -3985,10 +3977,6 @@ class ptGUIControlListBox(ptGUIControl):
         """Finds and returns the index of the item that matches 'text' in the listbox."""
         pass
 
-    def findStringW(self,text):
-        """Unicode version of findString."""
-        pass
-
     def focus(self):
         """Gets focus for this GUI control"""
         pass
@@ -4007,10 +3995,6 @@ class ptGUIControlListBox(ptGUIControl):
 
     def getElement(self,index):
         """Get the string of the item at 'index' in the listbox."""
-        pass
-
-    def getElementW(self,index):
-        """Unicode version of getElement."""
         pass
 
     def getFontSize(self):
@@ -4116,10 +4100,6 @@ NOTE: an unlock() call must be made before the next lock() can be."""
 
     def setElement(self,index,text):
         """Set a particular item in the listbox to a string."""
-        pass
-
-    def setElementW(self,index,text):
-        """Unicode version of setElement."""
         pass
 
     def setFocus(self,state):
@@ -5910,10 +5890,6 @@ class ptPlayer:
 
     def getPlayerName(self):
         """Returns the name of the player"""
-        pass
-
-    def getPlayerNameW(self):
-        """Returns the name of the player as Unicode"""
         pass
 
     def isCCR(self):

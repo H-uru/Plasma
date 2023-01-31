@@ -2958,7 +2958,7 @@ class xKI(ptModifier):
         for plyr in self.BKPlayerList:
             if isinstance(plyr, DeviceFolder):
                 playerlist.closeBranch()
-                playerlist.addBranchW(plyr.name.upper(), 1)
+                playerlist.addBranch(plyr.name.upper(), 1)
             elif isinstance(plyr, Device):
                 playerlist.addStringWithColor(plyr.name, kColors.DniSelectable, kSelectUseGUIColor)
             elif isinstance(plyr, ptVaultNodeRef):
@@ -2987,21 +2987,21 @@ class xKI(ptModifier):
                         playerlist.addStringWithColor(preText + "?unknown user?" + postText, kColors.DniSelectable, kSelectDetermined)
             elif isinstance(plyr, KIFolder):
                 playerlist.closeBranch()
-                playerlist.addBranchW(plyr.name.upper(), 1)
+                playerlist.addBranch(plyr.name.upper(), 1)
             elif isinstance(plyr, ptVaultPlayerInfoListNode):
                 # It's a player list, display its name.
                 fldrType = plyr.folderGetType()
                 if fldrType == PtVaultStandardNodes.kAgeOwnersFolder:
                     fldrType = PtVaultStandardNodes.kHoodMembersFolder
                 playerlist.closeBranch()
-                playerlist.addBranchW(xLocTools.FolderIDToFolderName(fldrType).upper(), 1)
+                playerlist.addBranch(xLocTools.FolderIDToFolderName(fldrType).upper(), 1)
             elif isinstance(plyr, ptVaultMarkerGameNode):
                 # its a marker list, display its name
                 playerlist.closeBranch()
-                playerlist.addBranchW(plyr.folderGetName(), 1)
+                playerlist.addBranch(plyr.folderGetName(), 1)
             elif isinstance(plyr, str):
                 playerlist.closeBranch()
-                playerlist.addBranchW(plyr, 1)
+                playerlist.addBranch(plyr, 1)
             else:
                 PtDebugPrint("xKI.RefreshPlayerListDisplay(): Unknown list type ", plyr, level=kErrorLevel)
             # Is it the selected player?
@@ -4954,7 +4954,7 @@ class xKI(ptModifier):
                     torans = coord.getTorans()
                     hSpans = coord.getHSpans()
                     vSpans = coord.getVSpans()
-                    mlbMarkerList.addStringW("[{}:{},{},{}] {}".format(FilterAgeName(age), torans, hSpans, vSpans, xCensor.xCensor(desc, self.censorLevel)))
+                    mlbMarkerList.addString("[{}:{},{},{}] {}".format(FilterAgeName(age), torans, hSpans, vSpans, xCensor.xCensor(desc, self.censorLevel)))
                 mlbMarkerList.unlock()
 
                 # Refresh the scroll position
@@ -5052,7 +5052,7 @@ class xKI(ptModifier):
                     torans = coord.getTorans()
                     hSpans = coord.getHSpans()
                     vSpans = coord.getVSpans()
-                    mlbMarkerList.addStringW("[{}:{},{},{}] {}".format(FilterAgeName(age), torans, hSpans, vSpans, xCensor.xCensor(desc, self.censorLevel)))
+                    mlbMarkerList.addString("[{}:{},{},{}] {}".format(FilterAgeName(age), torans, hSpans, vSpans, xCensor.xCensor(desc, self.censorLevel)))
                 else:
                     questGameFinished = False
 
