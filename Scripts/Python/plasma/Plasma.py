@@ -5140,28 +5140,16 @@ name,parent,screenOriginX,screenOriginY"""
         """None"""
         pass
 
-    def addConsoleCmdItem(self,name,consoleCmd):
+    def addConsoleCmdItemW(self,name,consoleCmd):
         """Adds a new item to the menu that fires a console command"""
         pass
 
-    def addConsoleCmdItemW(self,name,consoleCmd):
-        """Unicode version of addConsoleCmdItem"""
-        pass
-
-    def addNotifyItem(self,name):
+    def addNotifyItemW(self,name):
         """Adds a new item ot the mneu"""
         pass
 
-    def addNotifyItemW(self,name):
-        """Unicode version of addNotifyItem"""
-        pass
-
-    def addSubMenuItem(self,name,subMenu):
-        """Adds a submenu to this menu"""
-        pass
-
     def addSubMenuItemW(self,name,subMenu):
-        """Unicode version of addSubMenuItem"""
+        """Adds a submenu to this menu"""
         pass
 
     def disable(self):
