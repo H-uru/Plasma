@@ -271,7 +271,7 @@ class xLinkingBookGUIPopup(ptModifier):
                         BookOfferer = event[1]
                         PtDebugPrint("xLinkingBookGUIPopup: offered book by %s" % (BookOfferer.getName()),level=kDebugDumpLevel)
                         avID = PtGetClientIDFromAvatarKey(BookOfferer.getKey())
-                        if ptVault().getIgnoreListFolder().playerlistHasPlayer(avID):
+                        if ptVault().getIgnoreListFolder().hasPlayer(avID):
                             OfferedBookMode = False
                             PtNotifyOffererLinkRejected(avID) 
                             BookOfferer = None

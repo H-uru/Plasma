@@ -64,23 +64,6 @@ PYTHON_INIT_DEFINITION(ptVaultFolderNode, args, keywords)
     PYTHON_RETURN_INIT_OK;
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultFolderNode, folderSetType, args)
-{
-    int folderType;
-    if (!PyArg_ParseTuple(args, "i", &folderType))
-    {
-        PyErr_SetString(PyExc_TypeError, "folderSetType expects an int");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Folder_SetType(folderType);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultFolderNode, folderGetType)
-{
-    return PyLong_FromLong(self->fThis->Folder_GetType());
-}
-
 PYTHON_METHOD_DEFINITION(ptVaultFolderNode, setFolderType, args)
 {
     int folderType;
@@ -123,10 +106,6 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultFolderNode, getFolderName)
 }
 
 PYTHON_START_METHODS_TABLE(ptVaultFolderNode)
-    // legacy glue
-    PYTHON_METHOD(ptVaultFolderNode, folderSetType, "Params: type\nLEGACY\nSet the folder type"),
-    PYTHON_METHOD_NOARGS(ptVaultFolderNode, folderGetType, "LEGACY\nReturns the folder type (of the standard folder types)"),
-    // new glue
     PYTHON_METHOD(ptVaultFolderNode, setFolderType, "Params: type\nSet the folder type"),
     PYTHON_METHOD_NOARGS(ptVaultFolderNode, getFolderType, "Returns the folder type (of the standard folder types)"),
     PYTHON_METHOD(ptVaultFolderNode, setFolderName, "Params: name\nSet the folder name"),

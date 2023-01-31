@@ -467,7 +467,7 @@ class xSimpleImager(ptModifier):
                         if elemType == PtVaultNodeTypes.kImageNode:
                             element = element.upcastToImageNode()
                             PtDebugPrint("simpleImager: now showing image %s" % (element.getTitle()),level=kDebugDumpLevel)
-                            ImagerMap.textmap.drawImage(0,0,element.imageGetImage(),0)
+                            ImagerMap.textmap.drawImage(0,0,element.getImage(),0)
                             ImagerMap.textmap.flush()
                         elif elemType == PtVaultNodeTypes.kTextNoteNode:
                             element = element.upcastToTextNoteNode()

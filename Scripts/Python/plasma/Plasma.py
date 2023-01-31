@@ -6753,16 +6753,6 @@ class ptVaultFolderNode(ptVaultNode):
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
-    def folderGetType(self):
-        """LEGACY
-Returns the folder type (of the standard folder types)"""
-        pass
-
-    def folderSetType(self,type):
-        """LEGACY
-Set the folder type"""
-        pass
-
     def getChildNodeCount(self):
         """Returns how many children this node has."""
         pass
@@ -6964,16 +6954,6 @@ class ptVaultAgeInfoListNode(ptVaultFolderNode):
 
     def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
-        pass
-
-    def folderGetType(self):
-        """LEGACY
-Returns the folder type (of the standard folder types)"""
-        pass
-
-    def folderSetType(self,type):
-        """LEGACY
-Set the folder type"""
         pass
 
     def getChildNodeCount(self):
@@ -8001,16 +7981,6 @@ See PlasmaVaultTypes.py"""
         """Returns true if node if a child node"""
         pass
 
-    def imageGetImage(self):
-        """LEGACY
-Returns the image(ptImage) of this image node"""
-        pass
-
-    def imageSetImage(self,image):
-        """LEGACY
-Sets the image(ptImage) of this image node"""
-        pass
-
     def linkToNode(self,nodeID,cb=None,cbContext=0):
         """Adds a link to the node designated by nodeID"""
         pass
@@ -8390,16 +8360,6 @@ class ptVaultPlayerInfoListNode(ptVaultFolderNode):
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
-    def folderGetType(self):
-        """LEGACY
-Returns the folder type (of the standard folder types)"""
-        pass
-
-    def folderSetType(self,type):
-        """LEGACY
-Set the folder type"""
-        pass
-
     def getChildNodeCount(self):
         """Returns how many children this node has."""
         pass
@@ -8487,22 +8447,6 @@ See PlasmaVaultTypes.py"""
 
     def linkToNode(self,nodeID,cb=None,cbContext=0):
         """Adds a link to the node designated by nodeID"""
-        pass
-
-    def playerlistAddPlayer(self,playerID):
-        """LEGACY: Adds playerID player to this player info list node."""
-        pass
-
-    def playerlistGetPlayer(self,playerID):
-        """LEGACY: Gets the player info node for the specified player."""
-        pass
-
-    def playerlistHasPlayer(self,playerID):
-        """LEGACY: Returns whether the 'playerID' is a member of this player info list node."""
-        pass
-
-    def playerlistRemovePlayer(self,playerID):
-        """LEGACY: Removes playerID player from this player info list node."""
         pass
 
     def removeAllNodes(self):
@@ -9330,26 +9274,6 @@ class ptVaultTextNoteNode(ptVaultNode):
 
     def linkToNode(self,nodeID,cb=None,cbContext=0):
         """Adds a link to the node designated by nodeID"""
-        pass
-
-    def noteGetSubType(self):
-        """LEGACY
-Returns the subtype of this text note node."""
-        pass
-
-    def noteGetType(self):
-        """LEGACY
-Returns the type of text note for this text note node."""
-        pass
-
-    def noteSetSubType(self,subType):
-        """LEGACY
-Sets the subtype of the this text note node."""
-        pass
-
-    def noteSetType(self,type):
-        """LEGACY
-Sets the type of text note for this text note node."""
         pass
 
     def removeAllNodes(self):

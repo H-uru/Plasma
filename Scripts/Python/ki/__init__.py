@@ -492,7 +492,7 @@ class xKI(ptModifier):
                 elif event[2] == 999:
                     self.bookOfferer = event[1]
                     avID = PtGetClientIDFromAvatarKey(self.bookOfferer.getKey())
-                    if ptVault().getIgnoreListFolder().playerlistHasPlayer(avID):
+                    if ptVault().getIgnoreListFolder().hasPlayer(avID):
                         self.offeredBookMode = kGUI.NotOffering
                         PtNotifyOffererLinkRejected(avID)
                         self.bookOfferer = None
@@ -1001,7 +1001,7 @@ class xKI(ptModifier):
             # Is the message from an ignored player?
             vault = ptVault()
             ignores = vault.getIgnoreListFolder()
-            if ignores is not None and ignores.playerlistHasPlayer(player.getPlayerID()):
+            if ignores is not None and ignores.hasPlayer(player.getPlayerID()):
                 return
 
             if cFlags.lockey:
@@ -2941,7 +2941,7 @@ class xKI(ptModifier):
                 PLR = PLR.upcastToPlayerInfoNode()
                 if PLR is not None and PLR.getType() == PtVaultNodeTypes.kPlayerInfoNode:
                     if PLR.playerIsOnline():
-                        if not ignores.playerlistHasPlayer(PLR.playerGetID()):
+                        if not ignores.hasPlayer(PLR.playerGetID()):
                             onlineList.append(plyr)
         return onlineList
 
@@ -2990,7 +2990,7 @@ class xKI(ptModifier):
                 playerlist.addBranch(plyr.name.upper(), 1)
             elif isinstance(plyr, ptVaultPlayerInfoListNode):
                 # It's a player list, display its name.
-                fldrType = plyr.folderGetType()
+                fldrType = plyr.getFolderType()
                 if fldrType == PtVaultStandardNodes.kAgeOwnersFolder:
                     fldrType = PtVaultStandardNodes.kHoodMembersFolder
                 playerlist.closeBranch()
@@ -3643,7 +3643,7 @@ class xKI(ptModifier):
         folder = content.getParent()
         if folder:
             folder = folder.upcastToFolderNode()
-        if folder is not None and folder.folderGetType() == PtVaultStandardNodes.kInboxFolder:
+        if folder is not None and folder.getFolderType() == PtVaultStandardNodes.kInboxFolder:
             sender = content.getSaver()
             if sender is not None and sender.getType() == PtVaultNodeTypes.kPlayerInfoNode:
                 sendToField = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKIPlayerLine))
@@ -3671,23 +3671,23 @@ class xKI(ptModifier):
             return False
 
         # Check for the incoming folder.
-        if folder.folderGetType() == PtVaultStandardNodes.kInboxFolder:
+        if folder.getFolderType() == PtVaultStandardNodes.kInboxFolder:
             return False
 
         # Check against the AgeMembers folder.
-        if folder.folderGetType() == PtVaultStandardNodes.kAgeMembersFolder:
+        if folder.getFolderType() == PtVaultStandardNodes.kAgeMembersFolder:
             return False
 
         # Check for the neighborhood members folder.
-        if folder.folderGetType() == PtVaultStandardNodes.kHoodMembersFolder:
+        if folder.getFolderType() == PtVaultStandardNodes.kHoodMembersFolder:
             return False
 
         # Oh hayll no, you can't change AllPlayers
-        if folder.folderGetType() == PtVaultStandardNodes.kAllPlayersFolder:
+        if folder.getFolderType() == PtVaultStandardNodes.kAllPlayersFolder:
             return False
 
         # Check for neighborhood CanVisit folder (actually half-mutable, they can delete).
-        if folder.folderGetType() == PtVaultStandardNodes.kAgeOwnersFolder:
+        if folder.getFolderType() == PtVaultStandardNodes.kAgeOwnersFolder:
             return False
 
         # It's not a special folder, so it's mutable.
@@ -3716,7 +3716,7 @@ class xKI(ptModifier):
                 if creatorID != PtGetLocalClientID():
                     return False
                 if folder := folder.upcastToFolderNode():
-                    if folder.folderGetType() == PtVaultStandardNodes.kGlobalInboxFolder:
+                    if folder.getFolderType() == PtVaultStandardNodes.kGlobalInboxFolder:
                         return False
         return True
 
@@ -3728,7 +3728,7 @@ class xKI(ptModifier):
             if (folder := self.BKCurrentContent.getParent()) and (item := self.BKCurrentContent.getChild()):
                 if folder := folder.upcastToFolderNode():
                     # Global inbox items should *not* be able to be deleted or moved
-                    if folder.folderGetType() == PtVaultStandardNodes.kGlobalInboxFolder:
+                    if folder.getFolderType() == PtVaultStandardNodes.kGlobalInboxFolder:
                         return False
         return True
 
@@ -3943,7 +3943,7 @@ class xKI(ptModifier):
                             nFolder = ptVaultFolderNode(0)
                             if nFolder is not None:
                                 nFolder.setFolderName(self.GetAgeInstanceName())
-                                nFolder.folderSetType(PtVaultStandardNodes.kAgeTypeJournalFolder)
+                                nFolder.setFolderType(PtVaultStandardNodes.kAgeTypeJournalFolder)
                                 # Add to the master Age folder folder.
                                 masterAgeFolder.addNode(nFolder)
                             else:
@@ -4230,7 +4230,7 @@ class xKI(ptModifier):
                     for idx in range(len(self.BKContentList)):
                         player = self.BKContentList[idx]
                         if isinstance(player, ptPlayer):
-                            if ignores.playerlistHasPlayer(player.getPlayerID()):
+                            if ignores.hasPlayer(player.getPlayerID()):
                                 # Remove ignored player.
                                 removeList.insert(0, idx)
                         else:
@@ -4250,14 +4250,14 @@ class xKI(ptModifier):
                                     # Put them in reverse order in the removeList.
                                     removeList.insert(0, idx)
                                 # Check if they are in the ignore list.
-                                elif ignores.playerlistHasPlayer(elem.playerGetID()):
+                                elif ignores.hasPlayer(elem.playerGetID()):
                                     # Get parent; in some folders the player has to be still visible.
                                     parent = ref.getParent()
                                     if parent:
                                         parent = parent.upcastToFolderNode()
                                     if parent is None:
                                         # Make sure this is not the IgnoreList.
-                                        if parent.folderGetType() != PtVaultStandardNodes.kIgnoreListFolder:
+                                        if parent.getFolderType() != PtVaultStandardNodes.kIgnoreListFolder:
                                             # Put in them in reverse order in the removeList.
                                             removeList.insert(0, idx)
                             else:
@@ -4277,7 +4277,7 @@ class xKI(ptModifier):
                     if ref.getSaver() is None or ref.getSaverID() == 0:
                         continue
 
-                    if (self.onlyGetPMsFromBuddies and not buddies.playerlistHasPlayer(ref.getSaverID())) or ignores.playerlistHasPlayer(ref.getSaverID()):
+                    if (self.onlyGetPMsFromBuddies and not buddies.hasPlayer(ref.getSaverID())) or ignores.hasPlayer(ref.getSaverID()):
                         PtDebugPrint("xKI.BigKIProcessContentList(): Remove from inbox because it's from {}.".format(ref.getSaver().playerGetName()), level=kWarningLevel)
                         # Remove from the list.
                         removeList.insert(0, idx)
@@ -4320,7 +4320,7 @@ class xKI(ptModifier):
                 PtDebugPrint(f"xKI.BigKIProcessContentList(): {remRecents} remaining recents slots.", level=kWarningLevel)
                 # add Inbox senders (sorted by most recent) to Recents folder
                 # but don't overload Recents or refresh triggers infinitely due to Recents node additions/removals
-                cannotAdd = lambda ref: not (s := xKIHelpers.GetSaverID(ref)) or recentsList.playerlistHasPlayer(s) or not self.chatMgr.AddPlayerToRecents(s)
+                cannotAdd = lambda ref: not (s := xKIHelpers.GetSaverID(ref)) or recentsList.hasPlayer(s) or not self.chatMgr.AddPlayerToRecents(s)
                 # add only one then stop because addition triggers BK refresh again that will add next one, etc.
                 inboxRef = next(itertools.dropwhile(cannotAdd, self.BKContentList), None)
                 PtDebugPrint(f"xKI.BigKIProcessContentList(): Added {xKIHelpers.GetSaverID(inboxRef)} ({inboxRef}) to recents.", level=kWarningLevel)
@@ -4393,7 +4393,7 @@ class xKI(ptModifier):
                                     contentIconAva.hide()
                                     if contentIconP.getNumMaps() > 0:
                                         dynMap = contentIconP.getMap(0)
-                                        image = element.imageGetImage()
+                                        image = element.getImage()
                                         dynMap.clearToColor(ptColor(.1, .1, .1, .1))
                                         if image is not None:
                                             dynMap.drawImage(kGUI.BKIImageStartX, kGUI.BKIImageStartY, image, 0)
@@ -4649,7 +4649,7 @@ class xKI(ptModifier):
             picTitle.show()
         if picImage.getNumMaps() > 0:
             dynMap = picImage.getMap(0)
-            image = element.imageGetImage()
+            image = element.getImage()
             dynMap.clearToColor(ptColor(.1, .1, .1, .3))
             if image is not None:
                 dynMap.drawImage(kGUI.BKIImageStartX, kGUI.BKIImageStartY, image, 0)
@@ -4679,7 +4679,7 @@ class xKI(ptModifier):
                 if useScreenShot:
                     imgElem.setImageFromScrShot()
                 else:
-                    imgElem.imageSetImage(image)
+                    imgElem.setImage(image)
                 imgElem.setTitle(PtGetLocalizedString("KI.Image.InitialTitle"))
                 self.BKCurrentContent = journal.addNode(imgElem)
                 return self.BKCurrentContent
@@ -4777,13 +4777,13 @@ class xKI(ptModifier):
                         vault = ptVault()
                         buddies = vault.getBuddyListFolder()
                         if buddies is not None:
-                            if buddies.playerlistHasPlayer(ID):
+                            if buddies.hasPlayer(ID):
                                 plyDetail = ptGUIControlTextBox(KIPlayerExpanded.dialog.getControlFromTag(kGUI.BKIPLYDetail))
                                 plyDetail.setString(PtGetLocalizedString("KI.Player.AlreadyAdded"))
                                 plyDetail.show()
                                 self.BKGettingPlayerID = True
                             else:
-                                buddies.playerlistAddPlayer(ID)
+                                buddies.addPlayer(ID)
                                 self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Added"))
                         if not self.BKGettingPlayerID:
                             self.ChangeBigKIMode(kGUI.BKListMode)
@@ -5681,7 +5681,7 @@ class xKI(ptModifier):
                         privateChbox.setChecked(1)
                     # Is it a list of players?
                     elif isinstance(self.BKPlayerSelected, ptVaultPlayerInfoListNode):
-                        fldrType = self.BKPlayerSelected.folderGetType()
+                        fldrType = self.BKPlayerSelected.getFolderType()
                         # Is it not the All Players folder?
                         if fldrType != PtVaultStandardNodes.kAgeMembersFolder:
                             # If it's a list of age owners, it's a list of neighbors.
@@ -5848,7 +5848,7 @@ class xKI(ptModifier):
                                 if newFolder.getType() == PtVaultNodeTypes.kAgeInfoNode:
                                     self.InviteToVisit(playerID, newFolder)
                                 elif newFolder.getType() == PtVaultNodeTypes.kPlayerInfoListNode:
-                                    newFolder.playerlistAddPlayer(playerID)
+                                    newFolder.addPlayer(playerID)
                         except (IndexError, KeyError):
                             # If there was an error, display whatever was already selected.
                             toFolderNum = self.BKFolderSelected
@@ -5870,7 +5870,7 @@ class xKI(ptModifier):
                                         theElement = theElement.upcastToPlayerInfoNode()
                                         if theElement is not None and theElement.playerGetID() != localPlayerID:
                                             theElement = theElement.upcastToPlayerInfoNode()
-                                            newFolder.playerlistAddPlayer(theElement.playerGetID())
+                                            newFolder.addPlayer(theElement.playerGetID())
                                     else:
                                         self.BKCurrentContent = newFolder.addNode(theElement)
                                         if oldFolder is not None:
@@ -6511,14 +6511,14 @@ class xKI(ptModifier):
                 folder = tupData[0].getParent()
                 folder = folder.upcastToFolderNode()
                 # If the parent of this ref is the Inbox, then it's incoming mail.
-                if folder is not None and folder.folderGetType() == PtVaultStandardNodes.kInboxFolder:
+                if folder is not None and folder.getFolderType() == PtVaultStandardNodes.kInboxFolder:
                     self.AlertKIStart()
                     # Note: beenSeen() is not yet implemented.
                     if not tupData[0].beenSeen():
                         if self.onlyGetPMsFromBuddies:
                             vault = ptVault()
                             buddies = vault.getBuddyListFolder()
-                            if buddies.playerlistHasPlayer(tupData[0].getSaverID()):
+                            if buddies.hasPlayer(tupData[0].getSaverID()):
                                 # then show alert
                                 self.AlertKIStart()
                         else:
@@ -6559,7 +6559,7 @@ class xKI(ptModifier):
             if delFolder is not None and delElem is not None:
                 # Are we removing a visitor from an Age we own?
                 tFolder = delFolder.upcastToFolderNode()
-                if tFolder is not None and tFolder.folderGetType() == PtVaultStandardNodes.kCanVisitFolder:
+                if tFolder is not None and tFolder.getFolderType() == PtVaultStandardNodes.kCanVisitFolder:
                     PtDebugPrint("xKI.HandleBigKIDeleteConfirmation(): Revoking visitor.", level=kDebugDumpLevel)
                     delElem = delElem.upcastToPlayerInfoNode()
                     # Need to refind the folder that has the ageInfo in it.
@@ -6572,7 +6572,7 @@ class xKI(ptModifier):
                     PtDebugPrint("xKI.HandleBigKIDeleteConfirmation(): Removing player from folder.", level=kDebugDumpLevel)
                     delFolder = delFolder.upcastToPlayerInfoListNode()
                     delElem = delElem.upcastToPlayerInfoNode()
-                    delFolder.playerlistRemovePlayer(delElem.playerGetID())
+                    delFolder.removePlayer(delElem.playerGetID())
                     self.BKPlayerSelected = None
                     sendToField = ptGUIControlTextBox(BigKI.dialog.getControlFromTag(kGUI.BKIPlayerLine))
                     sendToField.setString(" ")

@@ -246,7 +246,7 @@ class xKIChat(object):
             else:
                 vault = ptVault()
                 PIKA = vault.getPeopleIKnowAboutFolder()
-                if PIKA is not None and PIKA.playerlistHasPlayer(self.toReplyToLastPrivatePlayerID[1]):
+                if PIKA is not None and PIKA.hasPlayer(self.toReplyToLastPrivatePlayerID[1]):
                     PIKArefs = PIKA.getChildNodeRefList()
                     for PIKAref in PIKArefs:
                         PIKAelem = PIKAref.getChild()
@@ -366,7 +366,7 @@ class xKIChat(object):
 
                 # Is it a list of players?
                 elif isinstance(toPlyr, ptVaultPlayerInfoListNode):
-                    fldrType = toPlyr.folderGetType()
+                    fldrType = toPlyr.getFolderType()
                     # If it's a list of Age Owners, they must be neighbors.
                     if fldrType == PtVaultStandardNodes.kAgeOwnersFolder:
                         fldrType = PtVaultStandardNodes.kHoodMembersFolder
@@ -496,7 +496,7 @@ class xKIChat(object):
                                 buddies = ptVault().getBuddyListFolder()
                                 if buddies is not None:
                                     buddyID = player.getPlayerID()
-                                    if not buddies.playerlistHasPlayer(buddyID):
+                                    if not buddies.hasPlayer(buddyID):
                                         PtDebugPrint("xKIChat.AddChatLine(): Add unknown buddy {} to recents.".format(buddyID))
                                         self.AddPlayerToRecents(buddyID)
                         except ValueError:
@@ -711,8 +711,8 @@ class xKIChat(object):
         if PIKAFolder:
             PIKA = PIKAFolder.upcastToPlayerInfoListNode()
             if PIKA is not None:
-                if not PIKA.playerlistHasPlayer(playerID):
-                    PIKA.playerlistAddPlayer(playerID)
+                if not PIKA.hasPlayer(playerID):
+                    PIKA.addPlayer(playerID)
                     childRefList = PIKAFolder.getChildNodeRefList()
                     numPeople = len(childRefList)
                     if numPeople > kLimits.MaxRecentPlayerListSize:
@@ -758,7 +758,7 @@ class xKIChat(object):
         if self.onlyGetPMsFromBuddies:
             buddies = ptVault().getBuddyListFolder()
             if buddies is not None:
-                return buddies.playerlistHasPlayer(playerID)
+                return buddies.hasPlayer(playerID)
             return False
         return True
 
@@ -1110,10 +1110,10 @@ class CommandsProcessor:
                 vault = ptVault()
                 buddies = vault.getBuddyListFolder()
                 if buddies is not None:
-                    if buddies.playerlistHasPlayer(pID):
+                    if buddies.hasPlayer(pID):
                         self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.AlreadyAdded"), kChat.SystemMessage)
                     else:
-                        buddies.playerlistAddPlayer(pID)
+                        buddies.addPlayer(pID)
                         self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Added"))
             else:
                 self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NotYourself"), kChat.SystemMessage)
@@ -1135,10 +1135,10 @@ class CommandsProcessor:
                 vault = ptVault()
                 ignores = vault.getIgnoreListFolder()
                 if ignores is not None:
-                    if ignores.playerlistHasPlayer(pID):
+                    if ignores.hasPlayer(pID):
                         self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.AlreadyAdded"), kChat.SystemMessage)
                     else:
-                        ignores.playerlistAddPlayer(pID)
+                        ignores.addPlayer(pID)
                         self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Added"))
             else:
                 self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NotYourself"), kChat.SystemMessage)
@@ -1156,8 +1156,8 @@ class CommandsProcessor:
 
         # Is it a number?
         if pID:
-            if buddies.playerlistHasPlayer(pID):
-                buddies.playerlistRemovePlayer(pID)
+            if buddies.hasPlayer(pID):
+                buddies.removePlayer(pID)
                 self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Removed"))
             else:
                 self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NotFound"), kChat.SystemMessage)
@@ -1170,7 +1170,7 @@ class CommandsProcessor:
                     PLR = PLR.upcastToPlayerInfoNode()
                     if PLR is not None and PLR.getType() == PtVaultNodeTypes.kPlayerInfoNode:
                         if player == PLR.playerGetName():
-                            buddies.playerlistRemovePlayer(PLR.playerGetID())
+                            buddies.removePlayer(PLR.playerGetID())
                             self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Removed"))
                             return
             self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NumberOnly"), kChat.SystemMessage)
@@ -1202,8 +1202,8 @@ class CommandsProcessor:
 
         # Is it a number?
         if pID:
-            if ignores.playerlistHasPlayer(pID):
-                ignores.playerlistRemovePlayer(pID)
+            if ignores.hasPlayer(pID):
+                ignores.removePlayer(pID)
                 self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Removed"))
             else:
                 self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NotFound"), kChat.SystemMessage)
@@ -1216,7 +1216,7 @@ class CommandsProcessor:
                     PLR = PLR.upcastToPlayerInfoNode()
                     if PLR is not None and PLR.getType() == PtVaultNodeTypes.kPlayerInfoNode:
                         if player == PLR.playerGetName():
-                            ignores.playerlistRemovePlayer(PLR.playerGetID())
+                            ignores.removePlayer(PLR.playerGetID())
                             self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Removed"))
                             return
             self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NumberOnly"), kChat.SystemMessage)

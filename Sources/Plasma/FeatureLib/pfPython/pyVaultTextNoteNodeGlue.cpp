@@ -56,40 +56,6 @@ PYTHON_INIT_DEFINITION(ptVaultTextNoteNode, args, keywords)
     PYTHON_RETURN_INIT_OK;
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetType, args)
-{
-    long nodeType;
-    if (!PyArg_ParseTuple(args, "l", &nodeType))
-    {
-        PyErr_SetString(PyExc_TypeError, "noteSetType expects a long");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Note_SetType(nodeType);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, noteGetType)
-{
-    return PyLong_FromLong(self->fThis->Note_GetType());
-}
-
-PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetSubType, args)
-{
-    long nodeType;
-    if (!PyArg_ParseTuple(args, "l", &nodeType))
-    {
-        PyErr_SetString(PyExc_TypeError, "noteSetSubType expects a long");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Note_SetSubType(nodeType);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, noteGetSubType)
-{
-    return PyLong_FromLong(self->fThis->Note_GetSubType());
-}
-
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTitle, args)
 {
     PyObject* textObj;
@@ -192,12 +158,6 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getDeviceInbox)
 }
 
 PYTHON_START_METHODS_TABLE(ptVaultTextNoteNode)
-    // legacy glue
-    PYTHON_METHOD(ptVaultTextNoteNode, noteSetType, "Params: type\nLEGACY\nSets the type of text note for this text note node."),
-    PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, noteGetType, "LEGACY\nReturns the type of text note for this text note node."),
-    PYTHON_METHOD(ptVaultTextNoteNode, noteSetSubType, "Params: subType\nLEGACY\nSets the subtype of the this text note node."),
-    PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, noteGetSubType, "LEGACY\nReturns the subtype of this text note node."),
-    // new glue
     PYTHON_METHOD(ptVaultTextNoteNode, setTitle, "Params: title\nSets the title of this text note node."),
     PYTHON_METHOD_NOARGS(ptVaultTextNoteNode, getTitle, "Returns the title of this text note node."),
     PYTHON_METHOD(ptVaultTextNoteNode, setText, "Params: text\nSets text of the this text note node."),

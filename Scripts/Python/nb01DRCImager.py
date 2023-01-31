@@ -134,7 +134,7 @@ class nb01DRCImager(ptModifier):
                         image = image.upcastToImageNode()
                         PtDebugPrint("nb01DRCImager: now showing image %s" % (image.getTitle()))
                         try:
-                            ImagerMap.textmap.drawImage(0,0,image.imageGetImage(),0)
+                            ImagerMap.textmap.drawImage(0,0,image.getImage(),0)
                             ImagerMap.textmap.flush()
                         except:
                             PtDebugPrint("nb01DRCImager: couldn't draw image...")
