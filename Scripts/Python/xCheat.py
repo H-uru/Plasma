@@ -497,9 +497,9 @@ def RemoveHiddenContent(args):
 def _DumpEm(f,markerfolder,mfNumber):
     lines = 0
     tab = ""
-    print("  -dumping %s" % (markerfolder.getFolderName()))
+    print("  -dumping %s" % (markerfolder.getFolderNameW()))
     f.write("#\n")
-    f.write("# %s\n" %(markerfolder.getFolderName()))
+    f.write("# %s\n" %(markerfolder.getFolderNameW()))
     f.write("MG%02d = [ " % (mfNumber))
     f.write("%d, " % (markerfolder.getOwnerID()))
     f.write('"%s", ' % (markerfolder.getOwnerName()))
@@ -566,7 +566,7 @@ def DumpMarkers(args):
                 jentry = jentry.upcastToMarkerListNode()
                 if jentry is not None:
                     # see if we are looking for a particular markerfolder
-                    if len(argresidual) > 0 and argresidual == jentry.getFolderName():
+                    if len(argresidual) > 0 and argresidual == jentry.getFolderNameW():
                         # only dump the one
                         lines += _DumpEm(dfile,jentry,totalmfs+1)
                         totalmfs += 1

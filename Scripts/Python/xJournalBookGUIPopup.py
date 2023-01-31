@@ -171,8 +171,8 @@ class xJournalBookGUIPopup(ptModifier):
                 node = child.getChild()
                 folderNode = node.upcastToFolderNode()
                 if folderNode:
-                    PtDebugPrint("xJournalBookGUIPopupDyn: node is named %s" % (folderNode.getFolderName()), level=kDebugDumpLevel)
-                    if folderNode.getFolderName() == "Journals":
+                    PtDebugPrint("xJournalBookGUIPopupDyn: node is named %s" % (folderNode.getFolderNameW()), level=kDebugDumpLevel)
+                    if folderNode.getFolderNameW() == "Journals":
                         folderNodeChildList = folderNode.getChildNodeRefList()
                         for folderChild in folderNodeChildList:
                             PtDebugPrint("xJournalBookGUIPopupDyn: looking at child node " + str(folderChild), level=kDebugDumpLevel)

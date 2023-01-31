@@ -6813,12 +6813,8 @@ Set the folder type"""
         """Returns the creator's node ID"""
         pass
 
-    def getFolderName(self):
-        """Returns the folder's name"""
-        pass
-
     def getFolderNameW(self):
-        """Unicode version of getFolerName"""
+        """Returns the folder's name"""
         pass
 
     def getFolderType(self):
@@ -6890,12 +6886,8 @@ See PlasmaVaultTypes.py"""
         """Set creator's node ID"""
         pass
 
-    def setFolderName(self,name):
-        """Set the folder name"""
-        pass
-
     def setFolderNameW(self,name):
-        """Unicode version of setFolderName"""
+        """Set the folder name"""
         pass
 
     def setFolderType(self,type):
@@ -7044,12 +7036,8 @@ Set the folder type"""
         """Returns the creator's node ID"""
         pass
 
-    def getFolderName(self):
-        """Returns the folder's name"""
-        pass
-
     def getFolderNameW(self):
-        """Unicode version of getFolerName"""
+        """Returns the folder's name"""
         pass
 
     def getFolderType(self):
@@ -7129,12 +7117,8 @@ See PlasmaVaultTypes.py"""
         """Set creator's node ID"""
         pass
 
-    def setFolderName(self,name):
-        """Set the folder name"""
-        pass
-
     def setFolderNameW(self,name):
-        """Unicode version of setFolderName"""
+        """Set the folder name"""
         pass
 
     def setFolderType(self,type):
@@ -8504,12 +8488,8 @@ Set the folder type"""
         """Returns the creator's node ID"""
         pass
 
-    def getFolderName(self):
-        """Returns the folder's name"""
-        pass
-
     def getFolderNameW(self):
-        """Unicode version of getFolerName"""
+        """Returns the folder's name"""
         pass
 
     def getFolderType(self):
@@ -8609,12 +8589,8 @@ See PlasmaVaultTypes.py"""
         """Set creator's node ID"""
         pass
 
-    def setFolderName(self,name):
-        """Set the folder name"""
-        pass
-
     def setFolderNameW(self,name):
-        """Unicode version of setFolderName"""
+        """Set the folder name"""
         pass
 
     def setFolderType(self,type):
