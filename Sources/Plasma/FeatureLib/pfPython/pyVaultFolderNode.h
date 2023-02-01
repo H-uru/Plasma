@@ -72,7 +72,6 @@ public:
 
     virtual void    Folder_SetType( int type );
     virtual int     Folder_GetType();
-    void    Folder_SetName(const char* name);
     void    Folder_SetNameW(const wchar_t* name);
     ST::string Folder_GetName() const;
 

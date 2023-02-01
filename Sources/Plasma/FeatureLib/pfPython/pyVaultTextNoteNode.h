@@ -74,10 +74,8 @@ public:
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-    void Note_SetTitle( const char * text );
     void Note_SetTitleW( const wchar_t * text );
     ST::string Note_GetTitle() const;
-    void Note_SetText( const char * text );
     void Note_SetTextW( const wchar_t * text );
     ST::string Note_GetText() const;
     void Note_SetType( int32_t type );

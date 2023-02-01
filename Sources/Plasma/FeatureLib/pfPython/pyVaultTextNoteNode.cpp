@@ -66,14 +66,6 @@ pyVaultTextNoteNode::pyVaultTextNoteNode()
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-void pyVaultTextNoteNode::Note_SetTitle( const char * text )
-{
-    if (fNode) {
-        VaultTextNoteNode textNote(fNode);
-        textNote.SetNoteTitle(text);
-    }
-}
-
 void pyVaultTextNoteNode::Note_SetTitleW( const wchar_t * text )
 {
     if (!fNode)
@@ -90,14 +82,6 @@ ST::string pyVaultTextNoteNode::Note_GetTitle() const
         return note.GetNoteTitle();
     }
     return ST::string();
-}
-
-void pyVaultTextNoteNode::Note_SetText(const char * text)
-{
-    if (fNode) {
-        VaultTextNoteNode textNote(fNode);
-        textNote.SetNoteText(text);
-    }
 }
 
 void pyVaultTextNoteNode::Note_SetTextW( const wchar_t * text )

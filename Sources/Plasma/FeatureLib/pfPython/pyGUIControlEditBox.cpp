@@ -75,19 +75,6 @@ void pyGUIControlEditBox::SetBufferSize( uint32_t size )
     }
 }
 
-
-std::string pyGUIControlEditBox::GetBuffer()
-{
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIEditBoxMod* pebmod = pfGUIEditBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( pebmod )
-            return pebmod->GetBuffer();
-    }
-    return "";
-}
-
 std::wstring pyGUIControlEditBox::GetBufferW()
 {
     if ( fGCkey )
@@ -108,17 +95,6 @@ void pyGUIControlEditBox::ClearBuffer()
         pfGUIEditBoxMod* pebmod = pfGUIEditBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pebmod )
             pebmod->ClearBuffer();
-    }
-}
-
-void pyGUIControlEditBox::SetText( const char *str )
-{
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIEditBoxMod* pebmod = pfGUIEditBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( pebmod )
-            pebmod->SetText(str);
     }
 }
 

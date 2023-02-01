@@ -360,37 +360,16 @@ void pyGUIPopUpMenu::SetBackSelColor( float r, float g, float b, float a )
         color->fSelBackColor.a = a;
 }
 
-void    pyGUIPopUpMenu::AddConsoleCmdItem( const char *name, const char *consoleCmd )
-{
-    wchar_t *wName = hsStringToWString(name);
-    AddConsoleCmdItemW(wName,consoleCmd);
-    delete [] wName;
-}
-
 void    pyGUIPopUpMenu::AddConsoleCmdItemW( const std::wstring& name, const char *consoleCmd )
 {
     kGetMenuPtr( ; );
     menu->AddItem(name.c_str(), new pfGUIConsoleCmdProc(consoleCmd), nullptr);
 }
 
-void    pyGUIPopUpMenu::AddNotifyItem( const char *name )
-{
-    wchar_t *wName = hsStringToWString(name);
-    AddNotifyItemW(wName);
-    delete [] wName;
-}
-
 void    pyGUIPopUpMenu::AddNotifyItemW( const std::wstring& name )
 {
     kGetMenuPtr( ; );
     menu->AddItem(name.c_str(), (pfGUICtrlProcObject *)(menu->GetHandler()), nullptr);
-}
-
-void    pyGUIPopUpMenu::AddSubMenuItem( const char *name, pyGUIPopUpMenu &subMenu )
-{
-    wchar_t *wName = hsStringToWString(name);
-    AddSubMenuItemW(wName,subMenu);
-    delete [] wName;
 }
 
 void    pyGUIPopUpMenu::AddSubMenuItemW( const std::wstring& name, pyGUIPopUpMenu &subMenu )
