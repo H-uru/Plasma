@@ -75,7 +75,7 @@ void pyGUIControlEditBox::SetBufferSize( uint32_t size )
     }
 }
 
-std::wstring pyGUIControlEditBox::GetBufferW()
+std::wstring pyGUIControlEditBox::GetBuffer()
 {
     if ( fGCkey )
     {
@@ -98,7 +98,7 @@ void pyGUIControlEditBox::ClearBuffer()
     }
 }
 
-void pyGUIControlEditBox::SetTextW( const wchar_t *str )
+void pyGUIControlEditBox::SetText( const wchar_t *str )
 {
     if ( fGCkey )
     {

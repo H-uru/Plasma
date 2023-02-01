@@ -127,9 +127,9 @@ public:
     virtual void        SetBackSelColor( float r, float g, float b, float a );
 
     // Menu item functions
-    virtual void        AddConsoleCmdItemW( const std::wstring& name, const char *consoleCmd );
-    virtual void        AddNotifyItemW( const std::wstring& name );
-    virtual void        AddSubMenuItemW( const std::wstring& name, pyGUIPopUpMenu &subMenu );
+    virtual void        AddConsoleCmdItem( const std::wstring& name, const char *consoleCmd );
+    virtual void        AddNotifyItem( const std::wstring& name );
+    virtual void        AddSubMenuItem( const std::wstring& name, pyGUIPopUpMenu &subMenu );
 };
 
 #endif // _pyGUIPopUpMenu_h_

@@ -86,7 +86,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setStringSize, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlEditBox, getString)
 {
-    std::wstring val = self->fThis->GetBufferW();
+    std::wstring val = self->fThis->GetBuffer();
     return PyUnicode_FromWideChar(val.c_str(), val.length());
 }
 
@@ -103,7 +103,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setString, args)
     if (PyUnicode_Check(textObj))
     {
         wchar_t* text = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->SetTextW(text);
+        self->fThis->SetText(text);
         PyMem_Free(text);
         PYTHON_RETURN_NONE;
     }

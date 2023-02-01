@@ -130,7 +130,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setString, args)
     if (PyUnicode_Check(textObj))
     {
         wchar_t* temp = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->SetTextW(temp);
+        self->fThis->SetText(temp);
         PyMem_Free(temp);
         PYTHON_RETURN_NONE;
     }
@@ -143,7 +143,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setString, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getString)
 {
-    const wchar_t* text = self->fThis->GetTextW();
+    const wchar_t* text = self->fThis->GetText();
     return PyUnicode_FromWideChar(text, wcslen(text));
 }
 
@@ -155,13 +155,13 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setEncodedBuffer, args)
         PyErr_SetString(PyExc_TypeError, "setEncodedBuffer expects a python buffer object");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetEncodedBufferW(bufferObj);
+    self->fThis->SetEncodedBuffer(bufferObj);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getEncodedBuffer)
 {
-    const wchar_t* text = self->fThis->GetEncodedBufferW();
+    const wchar_t* text = self->fThis->GetEncodedBuffer();
     PyObject* retVal = PyUnicode_FromWideChar(text, wcslen(text));
     delete [] text;
     return retVal;
@@ -191,7 +191,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertChar, args)
             PYTHON_RETURN_ERROR;
         }
 
-        self->fThis->InsertCharW(temp[0]);
+        self->fThis->InsertChar(temp[0]);
         PyMem_Free(temp);
         PYTHON_RETURN_NONE;
     }
@@ -213,7 +213,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertString, args)
     if (PyUnicode_Check(textObj))
     {
         wchar_t* temp = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->InsertStringW(temp);
+        self->fThis->InsertString(temp);
         PyMem_Free(temp);
         PYTHON_RETURN_NONE;
     }

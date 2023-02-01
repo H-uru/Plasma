@@ -76,7 +76,7 @@ PYTHON_METHOD_DEFINITION(ptVaultImageNode, setTitle, args)
     if (PyUnicode_Check(textObj))
     {
         wchar_t* title = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->Image_SetTitleW(title);
+        self->fThis->Image_SetTitle(title);
         PyMem_Free(title);
         PYTHON_RETURN_NONE;
     }

@@ -67,7 +67,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTitle, args)
     if (PyUnicode_Check(textObj))
     {
         wchar_t* title = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->Note_SetTitleW(title);
+        self->fThis->Note_SetTitle(title);
         PyMem_Free(title);
         PYTHON_RETURN_NONE;
     }
@@ -91,7 +91,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setText, args)
     if (PyUnicode_Check(textObj))
     {
         wchar_t* text = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->Note_SetTextW(text);
+        self->fThis->Note_SetText(text);
         PyMem_Free(text);
         PYTHON_RETURN_NONE;
     }

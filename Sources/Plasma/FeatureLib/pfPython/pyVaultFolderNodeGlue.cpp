@@ -92,7 +92,7 @@ PYTHON_METHOD_DEFINITION(ptVaultFolderNode, setFolderName, args)
     if (PyUnicode_Check(textObj))
     {
         wchar_t* name = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->Folder_SetNameW(name);
+        self->fThis->Folder_SetName(name);
         PyMem_Free(name);
         PYTHON_RETURN_NONE;
     }

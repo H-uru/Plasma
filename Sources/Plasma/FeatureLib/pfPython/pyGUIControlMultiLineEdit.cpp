@@ -140,7 +140,7 @@ void pyGUIControlMultiLineEdit::ClearBuffer()
     }
 }
 
-void pyGUIControlMultiLineEdit::SetTextW( const wchar_t *asciiText )
+void pyGUIControlMultiLineEdit::SetText( const wchar_t *text )
 {
     if ( fGCkey )
     {
@@ -148,12 +148,12 @@ void pyGUIControlMultiLineEdit::SetTextW( const wchar_t *asciiText )
         pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pbmod )
         {
-            pbmod->SetBuffer(asciiText);
+            pbmod->SetBuffer(text);
         }
     }
 }
 
-const wchar_t* pyGUIControlMultiLineEdit::GetTextW()
+const wchar_t* pyGUIControlMultiLineEdit::GetText()
 {
     // up to the caller to free the string... but when?
     if ( fGCkey )
@@ -171,7 +171,7 @@ const wchar_t* pyGUIControlMultiLineEdit::GetTextW()
     return nullptr;
 }
 
-void pyGUIControlMultiLineEdit::SetEncodedBufferW( PyObject* buffer_object )
+void pyGUIControlMultiLineEdit::SetEncodedBuffer( PyObject* buffer_object )
 {
     if ( fGCkey )
     {
@@ -209,7 +209,7 @@ void pyGUIControlMultiLineEdit::SetEncodedBufferW( PyObject* buffer_object )
     }
 }
 
-const wchar_t* pyGUIControlMultiLineEdit::GetEncodedBufferW()
+const wchar_t* pyGUIControlMultiLineEdit::GetEncodedBuffer()
 {
     if ( fGCkey )
     {
@@ -259,7 +259,7 @@ size_t pyGUIControlMultiLineEdit::GetBufferSize() const
 }
 
 
-void pyGUIControlMultiLineEdit::InsertCharW( wchar_t c )
+void pyGUIControlMultiLineEdit::InsertChar( wchar_t c )
 {
     if ( fGCkey )
     {
@@ -272,7 +272,7 @@ void pyGUIControlMultiLineEdit::InsertCharW( wchar_t c )
     }
 }
 
-void pyGUIControlMultiLineEdit::InsertStringW( const wchar_t *string )
+void pyGUIControlMultiLineEdit::InsertString( const wchar_t *string )
 {
     if ( fGCkey )
     {

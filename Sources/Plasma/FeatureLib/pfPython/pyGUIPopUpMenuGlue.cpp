@@ -281,7 +281,7 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addConsoleCmdItem, args)
         PyErr_SetString(PyExc_TypeError, "addConsoleCmdItem expects a unicode string and a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->AddConsoleCmdItemW(name, consoleCmd);
+    self->fThis->AddConsoleCmdItem(name, consoleCmd);
     PYTHON_RETURN_NONE;
 }
 
@@ -293,7 +293,7 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addNotifyItem, args)
         PyErr_SetString(PyExc_TypeError, "addNotifyItem expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->AddNotifyItemW(name);
+    self->fThis->AddNotifyItem(name);
     PYTHON_RETURN_NONE;
 }
 
@@ -312,7 +312,7 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addSubMenuItem, args)
         PYTHON_RETURN_ERROR;
     }
     pyGUIPopUpMenu* subMenu = pyGUIPopUpMenu::ConvertFrom(subMenuObj);
-    self->fThis->AddSubMenuItemW(name, *subMenu);
+    self->fThis->AddSubMenuItem(name, *subMenu);
     PYTHON_RETURN_NONE;
 }
 
