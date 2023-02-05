@@ -3325,20 +3325,20 @@ void pfJournalBook::IPurgeDynaTextMaps( )
         turnBackEdit->PurgeDynaTextMapImage();
 }
 
-std::string pfJournalBook::GetEditableText()
+std::wstring pfJournalBook::GetEditableText()
 {
     pfGUIMultiLineEditCtrl *left = fBookGUIs[fCurBookGUI]->GetEditCtrl( pfJournalDlgProc::kTagLeftEditCtrl );
     if (left)
     {
-        char *temp = left->GetNonCodedBuffer();
-        std::string retVal = temp;
+        wchar_t *temp = left->GetNonCodedBufferW();
+        std::wstring retVal = temp;
         delete [] temp;
         return retVal;
     }
-    return "";
+    return L"";
 }
 
-void pfJournalBook::SetEditableText(const std::string& text)
+void pfJournalBook::SetEditableText(const std::wstring& text)
 {
     pfGUIMultiLineEditCtrl *left = fBookGUIs[fCurBookGUI]->GetEditCtrl( pfJournalDlgProc::kTagLeftEditCtrl );
     if (left)

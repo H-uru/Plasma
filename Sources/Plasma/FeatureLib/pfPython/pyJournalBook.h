@@ -123,8 +123,8 @@ public:
     virtual PyObject *GetMovie( uint8_t index ); // returns cyAnimation
     
     virtual void    SetEditable( bool editable );
-    virtual std::string GetEditableText() const;
-    virtual void    SetEditableText( const std::string& text );
+    virtual std::wstring GetEditableText() const;
+    virtual void    SetEditableText( const std::wstring& text );
 };
 
 #endif // _pyJournalBook_h_
