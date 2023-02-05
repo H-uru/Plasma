@@ -445,7 +445,7 @@ def ShowHiddenFolder(args):
             agefolder = agefolder.upcastToFolderNode()
             if agefolder is not None:
                 # look for the Hidden folder
-                if "Hidden" == agefolder.folderGetName():
+                if "Hidden" == agefolder.getFolderName():
                     jfolder = agefolder
                     break
     if jfolder:
@@ -458,7 +458,7 @@ def ShowHiddenFolder(args):
             # is it a marker folder list?
             if jnode is not None:
                 # is it named the right one?
-                print("markerFolder - ",jnode.folderGetName())
+                print("markerFolder - ",jnode.getFolderName())
     else:
         print("There is no Hidden folder")
 
@@ -477,7 +477,7 @@ def RemoveHiddenContent(args):
             agefolder = agefolder.upcastToFolderNode()
             if agefolder is not None:
                 # look for the Hidden folder
-                if "Hidden" == agefolder.folderGetName():
+                if "Hidden" == agefolder.getFolderName():
                     jfolder = agefolder
                     break
     if jfolder:
@@ -551,9 +551,9 @@ def DumpMarkers(args):
             agefolder = agefolder.upcastToFolderNode()
             if agefolder is not None:
                 # might be a foldername with spaces! so see if it starts with the name
-                if argresidual.startswith(agefolder.folderGetName()):
+                if argresidual.startswith(agefolder.getFolderName()):
                     jfolder = agefolder
-                    argresidual = argresidual[len(agefolder.folderGetName())+1:]
+                    argresidual = argresidual[len(agefolder.getFolderName())+1:]
                     break
         if jfolder:
             # loop thru all the journal entries looking for marker folders
@@ -618,14 +618,14 @@ def ImportGames(args):
             agefolder = agefolder.upcastToFolderNode()
             if agefolder is not None:
                 # might be a foldername with spaces! so see if it starts with the name
-                if argresidual.startswith(agefolder.folderGetName()):
+                if argresidual.startswith(agefolder.getFolderName()):
                     jfolder = agefolder
-                    argresidual = argresidual[len(agefolder.folderGetName())+1:]
+                    argresidual = argresidual[len(agefolder.getFolderName())+1:]
     if jfolder:
         from importlib import import_module
         for mg in import_module(filename).mgs:
             nMarkerFolder = Plasma.ptVaultMarkerListNode(PlasmaVaultConstants.PtVaultNodePermissionFlags.kDefaultPermissions)
-            nMarkerFolder.folderSetName(mg[1])
+            nMarkerFolder.setFolderName(mg[1])
             nMarkerFolder.setOwnerID(mg[0][0])
             nMarkerFolder.setOwnerName(mg[0][1])
             nMarkerFolder.setGameType(mg[0][2])
@@ -661,9 +661,9 @@ def ImportMarkers(args):
             agefolder = agefolder.upcastToFolderNode()
             if agefolder is not None:
                 # might be a foldername with spaces! so see if it starts with the name
-                if argresidual.startswith(agefolder.folderGetName()):
+                if argresidual.startswith(agefolder.getFolderName()):
                     jfolder = agefolder
-                    argresidual = argresidual[len(agefolder.folderGetName())+1:]
+                    argresidual = argresidual[len(agefolder.getFolderName())+1:]
     if jfolder:
         from importlib import import_module
         for mg in import_module(filename).mgs:
@@ -675,7 +675,7 @@ def ImportMarkers(args):
                 # is it a marker folder list?
                 if jnode is not None:
                     # is it named the right one?
-                    if jnode.folderGetName() == mg[1]:
+                    if jnode.getFolderName() == mg[1]:
                         # yes, add the markers to this game
                         for marker in mg[0][4]:
                             nMarker = Plasma.ptVaultMarkerNode(PlasmaVaultConstants.PtVaultNodePermissionFlags.kDefaultPermissions)

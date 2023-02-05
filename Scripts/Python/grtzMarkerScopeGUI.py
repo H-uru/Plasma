@@ -364,5 +364,5 @@ class grtzMarkerScopeGUI(ptModifier):
         numTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID + kMarkerGameNumFieldOffset))
         numTB.setString(str(len(grtzMarkerGames.mgs[mission])))
         timeTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID + kMarkerGameNameFieldOffset))
-        timeTB.setStringW(msg)
+        timeTB.setString(msg)
 

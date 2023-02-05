@@ -3491,10 +3491,6 @@ class ptGUIControlEditBox(ptGUIControl):
         """Returns the sting that the user typed in."""
         pass
 
-    def getStringW(self):
-        """Unicode version of getString."""
-        pass
-
     def getTagID(self):
         """Returns the Tag ID for this GUI control"""
         pass
@@ -3580,15 +3576,11 @@ class ptGUIControlEditBox(ptGUIControl):
         pass
 
     def setString(self,text):
-        """Pre-sets the editbox to a atring."""
+        """Pre-sets the editbox to a string."""
         pass
 
     def setStringSize(self,size):
         """Sets the maximum size of the string that can be inputted by the user."""
-        pass
-
-    def setStringW(self,text):
-        """Unicode version of setString."""
         pass
 
     def setVisible(self,state):
@@ -3921,10 +3913,6 @@ class ptGUIControlListBox(ptGUIControl):
         """UNKNOWN"""
         pass
 
-    def addBranchW(self,name,initiallyOpen):
-        """Unicode version of addBranch"""
-        pass
-
     def addImage(self,image,respectAlphaFlag):
         """Appends an image item to the listbox"""
         pass
@@ -3947,10 +3935,6 @@ class ptGUIControlListBox(ptGUIControl):
 
     def addStringInBox(self,text,min_width,min_height):
         """Adds a text list item that has a minimum width and height"""
-        pass
-
-    def addStringW(self,text):
-        """Unicode version of addString."""
         pass
 
     def addStringWithColor(self,text,color,inheritAlpha):
@@ -3993,10 +3977,6 @@ class ptGUIControlListBox(ptGUIControl):
         """Finds and returns the index of the item that matches 'text' in the listbox."""
         pass
 
-    def findStringW(self,text):
-        """Unicode version of findString."""
-        pass
-
     def focus(self):
         """Gets focus for this GUI control"""
         pass
@@ -4015,10 +3995,6 @@ class ptGUIControlListBox(ptGUIControl):
 
     def getElement(self,index):
         """Get the string of the item at 'index' in the listbox."""
-        pass
-
-    def getElementW(self,index):
-        """Unicode version of getElement."""
         pass
 
     def getFontSize(self):
@@ -4124,10 +4100,6 @@ NOTE: an unlock() call must be made before the next lock() can be."""
 
     def setElement(self,index,text):
         """Set a particular item in the listbox to a string."""
-        pass
-
-    def setElementW(self,index,text):
-        """Unicode version of setElement."""
         pass
 
     def setFocus(self,state):
@@ -4273,11 +4245,7 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         ...
 
     def getEncodedBuffer(self):
-        """Returns the encoded buffer in a python buffer object. Do NOT use result with setEncodedBufferW."""
-        pass
-
-    def getEncodedBufferW(self):
-        """Unicode version of getEncodedBuffer. Do NOT use result with setEncodedBuffer."""
+        """Returns the encoded buffer in a python buffer object."""
         pass
 
     def getFontSize(self):
@@ -4316,10 +4284,6 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Gets the string of the edit control."""
         pass
 
-    def getStringW(self):
-        """Unicode version of getString."""
-        pass
-
     def getTagID(self):
         """Returns the Tag ID for this GUI control"""
         pass
@@ -4330,10 +4294,6 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
 
     def insertChar(self,c):
         """Inserts a character at the current cursor position."""
-        pass
-
-    def insertCharW(self,c):
-        """Unicode version of insertChar."""
         pass
 
     def insertColor(self,color):
@@ -4347,10 +4307,6 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
 
     def insertString(self,string):
         """Inserts a string at the current cursor position."""
-        pass
-
-    def insertStringW(self,string):
-        """Unicode version of insertString"""
         pass
 
     def insertStyle(self,style):
@@ -4409,13 +4365,8 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
         """Sets the buffer max for the editbox"""
         pass
 
-    def setEncodedBuffer(self,bufferObject):
-        """Sets the edit control to the encoded buffer in the python buffer object. Do NOT use with a result from getEncodedBufferW."""
-        pass
-
     def setEncodedBufferW(self,bufferObject):
-        """Unicode version of setEncodedBuffer. Do NOT use with a result from getEncodedBuffer."""
-        pass
+        """Sets the edit control to the encoded buffer in the python buffer object."""
 
     def setFocus(self,state):
         """Sets the state of the focus of this GUI control"""
@@ -4451,10 +4402,6 @@ class ptGUIControlMultiLineEdit(ptGUIControl):
 
     def setString(self,asciiText):
         """Sets the multi-line edit control string."""
-        pass
-
-    def setStringW(self,unicodeText):
-        """Unicode version of setString."""
         pass
 
     def setVisible(self,state):
@@ -4820,10 +4767,6 @@ class ptGUIControlTextBox(ptGUIControl):
         """Returns current justify"""
         pass
 
-    def getStringW(self):
-        """Unicode version of getString"""
-        pass
-
     def getTagID(self):
         """Returns the Tag ID for this GUI control"""
         pass
@@ -4890,10 +4833,6 @@ class ptGUIControlTextBox(ptGUIControl):
 
     def setStringJustify(self,justify):
         """Sets current justify"""
-        pass
-
-    def setStringW(self,text):
-        """Unicode version of setString"""
         pass
 
     def setVisible(self,state):
@@ -5185,24 +5124,12 @@ name,parent,screenOriginX,screenOriginY"""
         """Adds a new item to the menu that fires a console command"""
         pass
 
-    def addConsoleCmdItemW(self,name,consoleCmd):
-        """Unicode version of addConsoleCmdItem"""
-        pass
-
     def addNotifyItem(self,name):
         """Adds a new item ot the mneu"""
         pass
 
-    def addNotifyItemW(self,name):
-        """Unicode version of addNotifyItem"""
-        pass
-
     def addSubMenuItem(self,name,subMenu):
         """Adds a submenu to this menu"""
-        pass
-
-    def addSubMenuItemW(self,name,subMenu):
-        """Unicode version of addSubMenuItem"""
         pass
 
     def disable(self):
@@ -5963,10 +5890,6 @@ class ptPlayer:
 
     def getPlayerName(self):
         """Returns the name of the player"""
-        pass
-
-    def getPlayerNameW(self):
-        """Returns the name of the player as Unicode"""
         pass
 
     def isCCR(self):
@@ -6830,26 +6753,6 @@ class ptVaultFolderNode(ptVaultNode):
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
-    def folderGetName(self):
-        """LEGACY
-Returns the folder's name"""
-        pass
-
-    def folderGetType(self):
-        """LEGACY
-Returns the folder type (of the standard folder types)"""
-        pass
-
-    def folderSetName(self,name):
-        """LEGACY
-Set the folder name"""
-        pass
-
-    def folderSetType(self,type):
-        """LEGACY
-Set the folder type"""
-        pass
-
     def getChildNodeCount(self):
         """Returns how many children this node has."""
         pass
@@ -6892,10 +6795,6 @@ Set the folder type"""
 
     def getFolderName(self):
         """Returns the folder's name"""
-        pass
-
-    def getFolderNameW(self):
-        """Unicode version of getFolerName"""
         pass
 
     def getFolderType(self):
@@ -6969,10 +6868,6 @@ See PlasmaVaultTypes.py"""
 
     def setFolderName(self,name):
         """Set the folder name"""
-        pass
-
-    def setFolderNameW(self,name):
-        """Unicode version of setFolderName"""
         pass
 
     def setFolderType(self,type):
@@ -7061,26 +6956,6 @@ class ptVaultAgeInfoListNode(ptVaultFolderNode):
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
-    def folderGetName(self):
-        """LEGACY
-Returns the folder's name"""
-        pass
-
-    def folderGetType(self):
-        """LEGACY
-Returns the folder type (of the standard folder types)"""
-        pass
-
-    def folderSetName(self,name):
-        """LEGACY
-Set the folder name"""
-        pass
-
-    def folderSetType(self,type):
-        """LEGACY
-Set the folder type"""
-        pass
-
     def getChildNodeCount(self):
         """Returns how many children this node has."""
         pass
@@ -7123,10 +6998,6 @@ Set the folder type"""
 
     def getFolderName(self):
         """Returns the folder's name"""
-        pass
-
-    def getFolderNameW(self):
-        """Unicode version of getFolerName"""
         pass
 
     def getFolderType(self):
@@ -7208,10 +7079,6 @@ See PlasmaVaultTypes.py"""
 
     def setFolderName(self,name):
         """Set the folder name"""
-        pass
-
-    def setFolderNameW(self,name):
-        """Unicode version of setFolderName"""
         pass
 
     def setFolderType(self,type):
@@ -8105,10 +7972,6 @@ class ptVaultImageNode(ptVaultNode):
         """Returns the title (caption) of this image node"""
         pass
 
-    def getTitleW(self):
-        """Unicode version of getTitle"""
-        pass
-
     def getType(self):
         """Returns the type of ptVaultNode this is.
 See PlasmaVaultTypes.py"""
@@ -8116,26 +7979,6 @@ See PlasmaVaultTypes.py"""
 
     def hasNode(self,id):
         """Returns true if node if a child node"""
-        pass
-
-    def imageGetImage(self):
-        """LEGACY
-Returns the image(ptImage) of this image node"""
-        pass
-
-    def imageGetTitle(self):
-        """LEGACY
-Returns the title (caption) of this image node"""
-        pass
-
-    def imageSetImage(self,image):
-        """LEGACY
-Sets the image(ptImage) of this image node"""
-        pass
-
-    def imageSetTitle(self,title):
-        """LEGACY
-Sets the title (caption) of this image node"""
         pass
 
     def linkToNode(self,nodeID,cb=None,cbContext=0):
@@ -8196,10 +8039,6 @@ Sets the title (caption) of this image node"""
 
     def setTitle(self,title):
         """Sets the title (caption) of this image node"""
-        pass
-
-    def setTitleW(self,title):
-        """Unicode version of setTitle"""
         pass
 
     def setType(self,type):
@@ -8521,26 +8360,6 @@ class ptVaultPlayerInfoListNode(ptVaultFolderNode):
         """Returns ptVaultNode if child node found matching template, or None"""
         pass
 
-    def folderGetName(self):
-        """LEGACY
-Returns the folder's name"""
-        pass
-
-    def folderGetType(self):
-        """LEGACY
-Returns the folder type (of the standard folder types)"""
-        pass
-
-    def folderSetName(self,name):
-        """LEGACY
-Set the folder name"""
-        pass
-
-    def folderSetType(self,type):
-        """LEGACY
-Set the folder type"""
-        pass
-
     def getChildNodeCount(self):
         """Returns how many children this node has."""
         pass
@@ -8583,10 +8402,6 @@ Set the folder type"""
 
     def getFolderName(self):
         """Returns the folder's name"""
-        pass
-
-    def getFolderNameW(self):
-        """Unicode version of getFolerName"""
         pass
 
     def getFolderType(self):
@@ -8634,22 +8449,6 @@ See PlasmaVaultTypes.py"""
         """Adds a link to the node designated by nodeID"""
         pass
 
-    def playerlistAddPlayer(self,playerID):
-        """LEGACY: Adds playerID player to this player info list node."""
-        pass
-
-    def playerlistGetPlayer(self,playerID):
-        """LEGACY: Gets the player info node for the specified player."""
-        pass
-
-    def playerlistHasPlayer(self,playerID):
-        """LEGACY: Returns whether the 'playerID' is a member of this player info list node."""
-        pass
-
-    def playerlistRemovePlayer(self,playerID):
-        """LEGACY: Removes playerID player from this player info list node."""
-        pass
-
     def removeAllNodes(self):
         """Removes all the child nodes on this node."""
         pass
@@ -8688,10 +8487,6 @@ See PlasmaVaultTypes.py"""
 
     def setFolderName(self,name):
         """Set the folder name"""
-        pass
-
-    def setFolderNameW(self,name):
-        """Unicode version of setFolderName"""
         pass
 
     def setFolderType(self,type):
@@ -9469,16 +9264,8 @@ class ptVaultTextNoteNode(ptVaultNode):
         """Returns the text of this text note node."""
         pass
 
-    def getTextW(self):
-        """Unicode version of getText."""
-        pass
-
     def getTitle(self):
         """Returns the title of this text note node."""
-        pass
-
-    def getTitleW(self):
-        """Unicode version of getTitle"""
         pass
 
     def hasNode(self,id):
@@ -9487,46 +9274,6 @@ class ptVaultTextNoteNode(ptVaultNode):
 
     def linkToNode(self,nodeID,cb=None,cbContext=0):
         """Adds a link to the node designated by nodeID"""
-        pass
-
-    def noteGetSubType(self):
-        """LEGACY
-Returns the subtype of this text note node."""
-        pass
-
-    def noteGetText(self):
-        """LEGACY
-Returns the text of this text note node."""
-        pass
-
-    def noteGetTitle(self):
-        """LEGACY
-Returns the title of this text note node."""
-        pass
-
-    def noteGetType(self):
-        """LEGACY
-Returns the type of text note for this text note node."""
-        pass
-
-    def noteSetSubType(self,subType):
-        """LEGACY
-Sets the subtype of the this text note node."""
-        pass
-
-    def noteSetText(self,text):
-        """LEGACY
-Sets text of the this text note node."""
-        pass
-
-    def noteSetTitle(self,title):
-        """LEGACY
-Sets the title of this text note node."""
-        pass
-
-    def noteSetType(self,type):
-        """LEGACY
-Sets the type of text note for this text note node."""
         pass
 
     def removeAllNodes(self):
@@ -9585,16 +9332,8 @@ Sets the type of text note for this text note node."""
         """Sets text of the this text note node."""
         pass
 
-    def setTextW(self,text):
-        """Unicode version of setText"""
-        pass
-
     def setTitle(self,title):
         """Sets the title of this text note node."""
-        pass
-
-    def setTitleW(self,title):
-        """Unicode version of setTitle"""
         pass
 
     def upcastToAgeInfoListNode(self):

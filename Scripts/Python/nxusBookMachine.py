@@ -1006,7 +1006,7 @@ class nxusBookMachine(ptModifier):
 
     def ISetDescriptionText(self, description, permanent = True):
         descrTxt = ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtLinkDescription))
-        descrTxt.setStringW(description)
+        descrTxt.setString(description)
         if permanent:
             self.currentStatusBarText = description
             
@@ -1080,11 +1080,11 @@ class nxusBookMachine(ptModifier):
 
         txtName = ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(idTxtName))
         txtName.setForeColor(color)
-        txtName.setStringW(displayName)
+        txtName.setString(displayName)
 
         txtInfo = ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(idTxtInfo))
         txtInfo.setForeColor(color)
-        txtInfo.setStringW(linkEntry.displayInfo)
+        txtInfo.setString(linkEntry.displayInfo)
 
     def IUpdateDeleteButton(self, idButton, enable):
         if enable:
@@ -1490,20 +1490,20 @@ class nxusBookMachine(ptModifier):
             hoodPubPriv = PtGetLocalizedString("Nexus.Neighborhood.MakePrivate")
         else:
             hoodPubPriv = PtGetLocalizedString("Nexus.Neighborhood.MakePublic")
-        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)).setStringW(hoodPubPriv)
+        ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDTxtNeighborhoodPublic)).setString(hoodPubPriv)
 
     def IUpdateGUILinkList(self):
         if self.idCategorySelected == kCategoryPublic:
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setStringW(PtGetLocalizedString("Nexus.Headers.Name"))
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setStringW(PtGetLocalizedString("Nexus.Headers.Population"))
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setString(PtGetLocalizedString("Nexus.Headers.Name"))
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString(PtGetLocalizedString("Nexus.Headers.Population"))
             # show our header sorting buttons
             self.IShowEnableButton(kIDNameHeaderBtn)
             self.IShowEnableButton(kIDPopHeaderBtn)
             #show current sort direction
             self.IToggleSortControls(True)
         else:
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setStringW("")
-            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setStringW("")
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDNameHeaderText)).setString("")
+            ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDPopHeaderText)).setString("")
             self.IToggleSortControls(False)
 
         ageList = self.categoryLinksList[self.idCategorySelected]
@@ -1606,7 +1606,7 @@ class nxusBookMachine(ptModifier):
             for ageInfoChildRef in ageInfoChildren:
                 ageInfoChild = ageInfoChildRef.getChild()
                 folder = ageInfoChild.upcastToFolderNode()
-                if folder and folder.folderGetName() == "AgeData":
+                if folder and folder.getFolderName() == "AgeData":
                     ageDataFolder = folder
                     ageDataChildren = folder.getChildNodeRefList()
                     for ageDataChildRef in ageDataChildren:
@@ -1635,7 +1635,7 @@ class nxusBookMachine(ptModifier):
                 PtDebugPrint("got ageLinkNode, created AgeData folder")
                 ageInfoNode = ageLinkNode.getAgeInfo()
                 ageDataFolder = ptVaultFolderNode(0)
-                ageDataFolder.folderSetName("AgeData")
+                ageDataFolder.setFolderName("AgeData")
                 ageInfoNode.addNode(ageDataFolder)
 
         if not GUIDChronFound:

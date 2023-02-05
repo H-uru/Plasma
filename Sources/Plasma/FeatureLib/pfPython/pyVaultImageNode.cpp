@@ -100,16 +100,7 @@ pyVaultImageNode::~pyVaultImageNode () {
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-void pyVaultImageNode::Image_SetTitle( const char * text )
-{
-    if (!fNode)
-        return;
-
-    VaultImageNode image(fNode);
-    image.SetImageTitle(text);
-}
-
-void pyVaultImageNode::Image_SetTitleW( const wchar_t* text )
+void pyVaultImageNode::Image_SetTitle( const wchar_t* text )
 {
     if (!fNode)
         return;

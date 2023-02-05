@@ -126,36 +126,12 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, setElement, args)
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptGUIControlListBox, setElementW, args)
-{
-    unsigned short index;
-    ST::string text;
-    if (!PyArg_ParseTuple(args, "hO&", &index, PyUnicode_STStringConverter, &text))
-    {
-        PyErr_SetString(PyExc_TypeError, "setElementW expects an unsigned short and a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->SetElement(index, std::move(text));
-    PYTHON_RETURN_NONE;
-}
-
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, getElement, args)
 {
     unsigned short index;
     if (!PyArg_ParseTuple(args, "h", &index))
     {
         PyErr_SetString(PyExc_TypeError, "getElement expects an unsigned short");
-        PYTHON_RETURN_ERROR;
-    }
-    return PyUnicode_FromSTString(self->fThis->GetElement(index));
-}
-
-PYTHON_METHOD_DEFINITION(ptGUIControlListBox, getElementW, args)
-{
-    unsigned short index;
-    if (!PyArg_ParseTuple(args, "h", &index))
-    {
-        PyErr_SetString(PyExc_TypeError, "getElementW expects an unsigned short");
         PYTHON_RETURN_ERROR;
     }
     return PyUnicode_FromSTString(self->fThis->GetElement(index));
@@ -185,34 +161,12 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addString, args)
     return PyLong_FromLong(self->fThis->AddString(std::move(text)));
 }
 
-PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addStringW, args)
-{
-    ST::string text;
-    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
-    {
-        PyErr_SetString(PyExc_TypeError, "addStringW expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    return PyLong_FromLong(self->fThis->AddString(std::move(text)));
-}
-
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, findString, args)
 {
     ST::string text;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "findString expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    return PyLong_FromLong(self->fThis->FindString(std::move(text)));
-}
-
-PYTHON_METHOD_DEFINITION(ptGUIControlListBox, findStringW, args)
-{
-    ST::string text;
-    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
-    {
-        PyErr_SetString(PyExc_TypeError, "findStringW expects a string");
         PYTHON_RETURN_ERROR;
     }
     return PyLong_FromLong(self->fThis->FindString(std::move(text)));
@@ -370,19 +324,6 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addBranch, args)
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addBranchW, args)
-{
-    ST::string name;
-    char initiallyOpen;
-    if (!PyArg_ParseTuple(args, "O&b", PyUnicode_STStringConverter, &name, &initiallyOpen))
-    {
-        PyErr_SetString(PyExc_TypeError, "addBranchW expects a string and a boolean");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->AddBranch(std::move(name), initiallyOpen != 0);
-    PYTHON_RETURN_NONE;
-}
-
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlListBox, closeBranch, CloseBranch)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, removeSelection, args)
@@ -480,14 +421,10 @@ PYTHON_START_METHODS_TABLE(ptGUIControlListBox)
     PYTHON_BASIC_METHOD(ptGUIControlListBox, clearAllElements, "Removes all the items from the listbox, making it empty."),
     PYTHON_METHOD_NOARGS(ptGUIControlListBox, getNumElements, "Return the number of items in the listbox."),
     PYTHON_METHOD(ptGUIControlListBox, setElement, "Params: index,text\nSet a particular item in the listbox to a string."),
-    PYTHON_METHOD(ptGUIControlListBox, setElementW, "Params: index,text\nUnicode version of setElement."),
     PYTHON_METHOD(ptGUIControlListBox, getElement, "Params: index\nGet the string of the item at 'index' in the listbox."),
-    PYTHON_METHOD(ptGUIControlListBox, getElementW, "Params: index\nUnicode version of getElement."),
     PYTHON_METHOD(ptGUIControlListBox, setStringJustify, "Params: index,justify\nSets the text justification"),
     PYTHON_METHOD(ptGUIControlListBox, addString, "Params: text\nAppends a list item 'text' to the listbox."),
-    PYTHON_METHOD(ptGUIControlListBox, addStringW, "Params: text\nUnicode version of addString."),
     PYTHON_METHOD(ptGUIControlListBox, findString, "Params: text\nFinds and returns the index of the item that matches 'text' in the listbox."),
-    PYTHON_METHOD(ptGUIControlListBox, findStringW, "Params: text\nUnicode version of findString."),
     PYTHON_METHOD(ptGUIControlListBox, addImage, "Params: image,respectAlphaFlag\nAppends an image item to the listbox"),
     PYTHON_METHOD(ptGUIControlListBox, addImageInBox, "Params: image,x,y,width,height,respectAlpha\nAppends an image item to the listbox, centering within the box dimension."),
     PYTHON_METHOD(ptGUIControlListBox, addStringWithColor, "Params: text,color,inheritAlpha\nAdds a colored string to the list box"),
@@ -503,7 +440,6 @@ PYTHON_START_METHODS_TABLE(ptGUIControlListBox)
                 "NOTE: an unlock() call must be made before the next lock() can be."),
     PYTHON_BASIC_METHOD(ptGUIControlListBox, unlock, "Unlocks updates to a listbox and does any saved up changes"),
     PYTHON_METHOD(ptGUIControlListBox, addBranch, "Params: name,initiallyOpen\nUNKNOWN"),
-    PYTHON_METHOD(ptGUIControlListBox, addBranchW, "Params: name,initiallyOpen\nUnicode version of addBranch"),
     PYTHON_BASIC_METHOD(ptGUIControlListBox, closeBranch, "UNKNOWN"),
     PYTHON_METHOD(ptGUIControlListBox, removeSelection, "Params: item\nRemoves item from selection list"),
     PYTHON_METHOD(ptGUIControlListBox, addSelection, "Params: item\nAdds item to selection list"),

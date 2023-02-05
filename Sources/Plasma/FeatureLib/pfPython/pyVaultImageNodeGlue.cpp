@@ -65,86 +65,28 @@ PYTHON_INIT_DEFINITION(ptVaultImageNode, args, keywords)
     PYTHON_RETURN_INIT_OK;
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultImageNode, imageSetTitle, args)
-{
-    char* title;
-    if (!PyArg_ParseTuple(args, "s", &title))
-    {
-        PyErr_SetString(PyExc_TypeError, "imageSetTitle expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Image_SetTitle(title);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultImageNode, imageGetTitle)
-{
-    return PyUnicode_FromSTString(self->fThis->Image_GetTitle());
-}
-
-PYTHON_METHOD_DEFINITION(ptVaultImageNode, imageSetImage, args)
-{
-    PyObject* imageObj = nullptr;
-    if (!PyArg_ParseTuple(args, "O", &imageObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "imageSetImage expects a ptImage");
-        PYTHON_RETURN_ERROR;
-    }
-    if (!pyImage::Check(imageObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "imageSetImage expects a ptImage");
-        PYTHON_RETURN_ERROR;
-    }
-    pyImage* image = pyImage::ConvertFrom(imageObj);
-    self->fThis->Image_SetImage(*image);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultImageNode, imageGetImage)
-{
-    return self->fThis->Image_GetImage();
-}
-
 PYTHON_METHOD_DEFINITION(ptVaultImageNode, setTitle, args)
-{
-    char* title;
-    if (!PyArg_ParseTuple(args, "s", &title))
-    {
-        PyErr_SetString(PyExc_TypeError, "setTitle expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Image_SetTitle(title);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION(ptVaultImageNode, setTitleW, args)
 {
     PyObject* textObj;
     if (!PyArg_ParseTuple(args, "O", &textObj))
     {
-        PyErr_SetString(PyExc_TypeError, "setTitleW expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setTitle expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
     if (PyUnicode_Check(textObj))
     {
         wchar_t* title = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->Image_SetTitleW(title);
+        self->fThis->Image_SetTitle(title);
         PyMem_Free(title);
         PYTHON_RETURN_NONE;
     }
-    PyErr_SetString(PyExc_TypeError, "setTitleW expects a unicode string");
+    PyErr_SetString(PyExc_TypeError, "setTitle expects a unicode string");
     PYTHON_RETURN_ERROR;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultImageNode, getTitle)
 {
     return PyUnicode_FromSTString(self->fThis->Image_GetTitle());
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultImageNode, getTitleW)
-{
-    ST::wchar_buffer retVal = self->fThis->Image_GetTitle().to_wchar();
-    return PyUnicode_FromWideChar(retVal.data(), retVal.size());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultImageNode, setImage, args)
@@ -185,16 +127,8 @@ PYTHON_METHOD_DEFINITION(ptVaultImageNode, setImageFromBuf, args)
 PYTHON_BASIC_METHOD_DEFINITION(ptVaultImageNode, setImageFromScrShot, SetImageFromScrShot)
 
 PYTHON_START_METHODS_TABLE(ptVaultImageNode)
-    // legacy glue
-    PYTHON_METHOD(ptVaultImageNode, imageSetTitle, "Params: title\nLEGACY\nSets the title (caption) of this image node"),
-    PYTHON_METHOD_NOARGS(ptVaultImageNode, imageGetTitle, "LEGACY\nReturns the title (caption) of this image node"),
-    PYTHON_METHOD(ptVaultImageNode, imageSetImage, "Params: image\nLEGACY\nSets the image(ptImage) of this image node"),
-    PYTHON_METHOD_NOARGS(ptVaultImageNode, imageGetImage, "LEGACY\nReturns the image(ptImage) of this image node"),
-    // new glue
     PYTHON_METHOD(ptVaultImageNode, setTitle, "Params: title\nSets the title (caption) of this image node"),
-    PYTHON_METHOD(ptVaultImageNode, setTitleW, "Params: title\nUnicode version of setTitle"),
     PYTHON_METHOD_NOARGS(ptVaultImageNode, getTitle, "Returns the title (caption) of this image node"),
-    PYTHON_METHOD_NOARGS(ptVaultImageNode, getTitleW, "Unicode version of getTitle"),
     PYTHON_METHOD(ptVaultImageNode, setImage, "Params: image\nSets the image(ptImage) of this image node"),
     PYTHON_METHOD_NOARGS(ptVaultImageNode, getImage, "Returns the image(ptImage) of this image node"),
     PYTHON_METHOD(ptVaultImageNode, setImageFromBuf, "Params: buf\nSets our image from a buffer"),

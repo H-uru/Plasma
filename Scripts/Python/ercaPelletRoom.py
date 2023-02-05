@@ -743,7 +743,7 @@ class ercaPelletRoom(ptResponder):
         for ageInfoChildRef in ageInfoChildren:
             ageInfoChild = ageInfoChildRef.getChild()
             folder = ageInfoChild.upcastToFolderNode()
-            if folder and folder.folderGetName() == "AgeData":
+            if folder and folder.getFolderName() == "AgeData":
                 ageDataChildren = folder.getChildNodeRefList()
                 for ageDataChildRef in ageDataChildren:
                     ageDataChild = ageDataChildRef.getChild()

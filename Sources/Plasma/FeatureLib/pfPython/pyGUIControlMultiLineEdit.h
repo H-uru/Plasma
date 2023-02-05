@@ -84,24 +84,18 @@ public:
     virtual void    MoveCursor( int32_t dir );
     int32_t GetCursor() const;
     virtual void    ClearBuffer();
-    virtual void    SetText( const char *asciiText );
-    virtual void    SetTextW( const wchar_t *asciiText );
-    virtual const char* GetText();        // returns a python string object
-    virtual const wchar_t* GetTextW();
+    virtual void    SetText( const wchar_t *text );
+    virtual const wchar_t* GetText();
     virtual void    SetEncodedBuffer( PyObject* buffer_object );
-    virtual void    SetEncodedBufferW( PyObject* buffer_object );
-    virtual const char* GetEncodedBuffer();
-    virtual const wchar_t* GetEncodedBufferW();
+    virtual const wchar_t* GetEncodedBuffer();
     size_t  GetBufferSize() const;
 
     virtual void    SetBufferLimit(int32_t limit);
     virtual int32_t   GetBufferLimit();
     int16_t GetCurrentLink() const;
 
-    virtual void    InsertChar( char c );
-    virtual void    InsertCharW( wchar_t c );
-    virtual void    InsertString( const char *string );
-    virtual void    InsertStringW( const wchar_t *string );
+    virtual void    InsertChar( wchar_t c );
+    virtual void    InsertString( const wchar_t *string );
     virtual void    InsertColor( pyColor& color );
     virtual void    InsertStyle( uint8_t fontStyle );
     void InsertLink(int16_t linkId);

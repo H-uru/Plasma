@@ -96,7 +96,7 @@ def CreateInvitation(params=None):
             if invites.getChildNodeCount() <= gMaxInviteCount:
                 # create the note
                 note = ptVaultTextNoteNode()
-                note.noteSetTitle(passkey)
+                note.setTitle(passkey)
                 invites.addNode(note)
                 return PtGetLocalizedString("KI.Invitation.InviteKeyAdded", [str(passkey)])
             else:
@@ -130,7 +130,7 @@ def ShowInvitations(params=None):
             child = ref.getChild()
             child = child.upcastToTextNoteNode()
             if child is not None:
-                passkeys += child.noteGetTitle()
+                passkeys += child.getTitle()
             else:
                 PtDebugPrint("xInvite: Couldn't cast list item to note",level=kErrorLevel)
                 pass
@@ -152,7 +152,7 @@ def DeleteInvitation(params=None):
                 child = ref.getChild()
                 child = child.upcastToTextNoteNode()
                 if child is not None:
-                    if passkey == child.noteGetTitle():
+                    if passkey == child.getTitle():
                         try:
                             invites.removeNode(child)
                         except:

@@ -271,7 +271,7 @@ class xLinkingBookGUIPopup(ptModifier):
                         BookOfferer = event[1]
                         PtDebugPrint("xLinkingBookGUIPopup: offered book by %s" % (BookOfferer.getName()),level=kDebugDumpLevel)
                         avID = PtGetClientIDFromAvatarKey(BookOfferer.getKey())
-                        if ptVault().getIgnoreListFolder().playerlistHasPlayer(avID):
+                        if ptVault().getIgnoreListFolder().hasPlayer(avID):
                             OfferedBookMode = False
                             PtNotifyOffererLinkRejected(avID) 
                             BookOfferer = None
@@ -432,7 +432,7 @@ class xLinkingBookGUIPopup(ptModifier):
                                 if ageLinkNode := vault.getOwnedAgeLink(ahnonayAgeStruct):
                                     if ageInfoNode := ageLinkNode.getAgeInfo():
                                         ageDataTemplate = ptVaultFolderNode()
-                                        ageDataTemplate.folderSetName("AgeData")
+                                        ageDataTemplate.setFolderName("AgeData")
                                         if ageDataFolder := ageInfoNode.findNode(ageDataTemplate):
                                             chronTemplate = ptVaultChronicleNode()
                                             chronTemplate.chronicleSetName("AhnonayVolatile")
@@ -894,7 +894,7 @@ class xLinkingBookGUIPopup(ptModifier):
             for ageInfoChildRef in ageInfoChildren:
                 ageInfoChild = ageInfoChildRef.getChild()
                 folder = ageInfoChild.upcastToFolderNode()
-                if folder and folder.folderGetName() == "AgeData":
+                if folder and folder.getFolderName() == "AgeData":
                     ageDataChildren = folder.getChildNodeRefList()
                     for ageDataChildRef in ageDataChildren:
                         ageDataChild = ageDataChildRef.getChild()
@@ -1091,7 +1091,7 @@ class xLinkingBookGUIPopup(ptModifier):
             for ageInfoChildRef in ageInfoChildren:
                 ageInfoChild = ageInfoChildRef.getChild()
                 folder = ageInfoChild.upcastToFolderNode()
-                if folder and folder.folderGetName() == "AgeData":
+                if folder and folder.getFolderName() == "AgeData":
                     ageDataFolder = folder
                     ageDataChildren = folder.getChildNodeRefList()
                     for ageDataChildRef in ageDataChildren:
@@ -1121,7 +1121,7 @@ class xLinkingBookGUIPopup(ptModifier):
                 PtDebugPrint("got ageLinkNode, created AgeData folder")
                 ageInfoNode = ageLinkNode.getAgeInfo()
                 ageDataFolder = ptVaultFolderNode(0)
-                ageDataFolder.folderSetName("AgeData")
+                ageDataFolder.setFolderName("AgeData")
                 ageInfoNode.addNode(ageDataFolder)
 
         if not GUIDChronFound:
@@ -1141,7 +1141,7 @@ class xLinkingBookGUIPopup(ptModifier):
         for ageInfoChildRef in ageInfoChildren:
             ageInfoChild = ageInfoChildRef.getChild()
             folder = ageInfoChild.upcastToFolderNode()
-            if folder and folder.folderGetName() == "AgeData":
+            if folder and folder.getFolderName() == "AgeData":
                 ageDataChildren = folder.getChildNodeRefList()
                 for ageDataChildRef in ageDataChildren:
                     ageDataChild = ageDataChildRef.getChild()
@@ -1163,7 +1163,7 @@ class xLinkingBookGUIPopup(ptModifier):
             for ageInfoChildRef in ageInfoChildren:
                 ageInfoChild = ageInfoChildRef.getChild()
                 folder = ageInfoChild.upcastToFolderNode()
-                if folder and folder.folderGetName() == "AgeData":
+                if folder and folder.getFolderName() == "AgeData":
                     ageDataChildren = folder.getChildNodeRefList()
                     for ageDataChildRef in ageDataChildren:
                         ageDataChild = ageDataChildRef.getChild()

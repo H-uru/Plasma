@@ -124,7 +124,7 @@ class nb01DRCImager(ptModifier):
     def SetImage(self,id):
         
         if self.inbox is not None:
-            PtDebugPrint("nb01DRCImager.SetImage: inbox %s id = %d" % (self.inbox.folderGetName(),self.inbox.getID()))
+            PtDebugPrint("nb01DRCImager.SetImage: inbox %s id = %d" % (self.inbox.getFolderName(),self.inbox.getID()))
             
             if self.number_of_images > 0:
                 fcontents = self.inbox.getChildNodeRefList()
@@ -132,9 +132,9 @@ class nb01DRCImager(ptModifier):
                     image = element.getChild()
                     if image.getID() == id:
                         image = image.upcastToImageNode()
-                        PtDebugPrint("nb01DRCImager: now showing image %s" % (image.imageGetTitle()))
+                        PtDebugPrint("nb01DRCImager: now showing image %s" % (image.getTitle()))
                         try:
-                            ImagerMap.textmap.drawImage(0,0,image.imageGetImage(),0)
+                            ImagerMap.textmap.drawImage(0,0,image.getImage(),0)
                             ImagerMap.textmap.flush()
                         except:
                             PtDebugPrint("nb01DRCImager: couldn't draw image...")

@@ -75,19 +75,6 @@ PYTHON_INIT_DEFINITION(ptGUIControlTextBox, args, keywords)
 PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setString, args)
 {
     ST::string text;
-    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
-    {
-        PyErr_SetString(PyExc_TypeError, "setString expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->SetText(std::move(text));
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setStringW, args)
-{
-    // TODO: Remove this from the scripts.
-    ST::string text;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text)) {
         PyErr_SetString(PyExc_TypeError, "setString expects a string");
         PYTHON_RETURN_ERROR;
@@ -98,12 +85,6 @@ PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setStringW, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getString)
 {
-    return PyUnicode_FromSTString(self->fThis->GetText());
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getStringW)
-{
-    // TODO: Remove this from the scripts.
     return PyUnicode_FromSTString(self->fThis->GetText());
 }
 
@@ -181,9 +162,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getForeColor)
 
 PYTHON_START_METHODS_TABLE(ptGUIControlTextBox)
     PYTHON_METHOD(ptGUIControlTextBox, setString, "Params: text\nSets the textbox string to 'text'"),
-    PYTHON_METHOD(ptGUIControlTextBox, setStringW, "Params: text\nUnicode version of setString"),
     PYTHON_METHOD_NOARGS(ptGUIControlTextBox, getString, "Returns the string that the TextBox is set to (in case you forgot)"),
-    PYTHON_METHOD_NOARGS(ptGUIControlTextBox, getStringW, "Unicode version of getString"),
     PYTHON_METHOD(ptGUIControlTextBox, setFontSize, "Params: size\nDon't use"),
     PYTHON_METHOD(ptGUIControlTextBox, setForeColor, "Params: color\nSets the text forecolor to 'color', which is a ptColor object."),
     PYTHON_METHOD(ptGUIControlTextBox, setBackColor, "Params: color\nSets the text backcolor to 'color', which is a ptColor object."),

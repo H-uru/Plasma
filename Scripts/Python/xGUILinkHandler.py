@@ -162,7 +162,7 @@ class xGUILinkHandler:
                 urls = ((i.span(), i[0]) for i in _URL_REGEX.finditer(text))
                 for (start, end), url in urls:
                     if start > lastInsert:
-                        control.insertStringW(censor(text[lastInsert:start]))
+                        control.insertString(censor(text[lastInsert:start]))
                     lastInsert = end
                     control.insertColor(linkColor)
 
@@ -171,16 +171,13 @@ class xGUILinkHandler:
                     PtDebugPrint(f"xGUILinkHandler.insertString():\tInserting URL {url} as linkId {self._nextLink}", level=kDebugDumpLevel)
                     self._nextLink += 1
 
-                    control.insertStringW(censor(url))
+                    control.insertString(censor(url))
                     control.clearLink()
                     control.insertColor(normalColor)
                 if lastInsert != len(text):
-                    control.insertStringW(censor(text[lastInsert:]))
+                    control.insertString(censor(text[lastInsert:]))
         else:
-            control.insertStringW(censor(text))
-
-    def insertStringW(self, text: str, /, *, censorLevel: Union[int, None] = None, urlDetection: bool = True) -> None:
-        self.insertString(text, censorLevel=censorLevel, urlDetection=urlDetection)
+            control.insertString(censor(text))
 
     def setString(self, text: str, /, *, censorLevel: Union[int, None] = None, urlDetection: bool = True) -> None:
         with PtBeginGUIUpdate(self._control):
@@ -189,6 +186,3 @@ class xGUILinkHandler:
             # Emulate the real behavior of setString() - this to ensure we don't get duplicate
             # cursors if the string is reset while the control is being focused (eg text notes).
             self._control.moveCursor(PtGUIMultiLineDirection.kBufferStart)
-
-    def setStringW(self, text: str, /, *, censorLevel: Union[int, None] = None, urlDetection: bool = True) -> None:
-        self.setString(text, censorLevel=censorLevel, urlDetection=urlDetection)
