@@ -51,7 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGlueHelpers.h"
 #include "pyGUIControl.h"
-#include <string>
+
+#include <string_theory/string>
 
 class pyColor;
 
@@ -75,9 +76,9 @@ public:
     static bool IsGUIControlEditBox(pyKey& gckey);
 
     virtual void    SetBufferSize( uint32_t size );
-    virtual std::wstring GetBuffer();
+    virtual ST::string GetBuffer();
     virtual void    ClearBuffer();
-    virtual void    SetText( const wchar_t *str );
+    virtual void    SetText( const ST::string& str );
     virtual void    SetCursorToHome();
     virtual void    SetCursorToEnd();
     virtual void    SetColor(pyColor& forecolor, pyColor& backcolor);

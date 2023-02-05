@@ -86,32 +86,21 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setStringSize, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlEditBox, getString)
 {
-    std::wstring val = self->fThis->GetBuffer();
-    return PyUnicode_FromWideChar(val.c_str(), val.length());
+    return PyUnicode_FromSTString(self->fThis->GetBuffer());
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlEditBox, clearString, ClearBuffer)
 
 PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setString, args)
 {
-    PyObject* textObj;
-    if (!PyArg_ParseTuple(args, "O", &textObj))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "setString expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj))
-    {
-        wchar_t* text = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->SetText(text);
-        PyMem_Free(text);
-        PYTHON_RETURN_NONE;
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "setString expects a unicode string");
-        PYTHON_RETURN_ERROR;
-    }
+    self->fThis->SetText(text);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlEditBox, home, SetCursorToHome)
