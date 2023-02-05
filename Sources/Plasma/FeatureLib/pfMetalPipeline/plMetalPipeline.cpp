@@ -1184,7 +1184,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
     // Turn on this spans lights and turn off the rest.
     ISelectLights(&span, mRef);
     
-#ifdef _DEBUG
+#ifdef HS_DEBUGGING
     fDevice.CurrentRenderCommandEncoder()->pushDebugGroup(NS::String::string(material->GetKeyName().c_str(), NS::UTF8StringEncoding));
 #endif
     
@@ -1218,11 +1218,11 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
         // Take care of projections that get applied to each pass.
         if( fProjEach.size() && !(fView.fRenderState & kRenderNoProjection) )
         {
-#ifdef _DEBUG
+#ifdef HS_DEBUGGING
             fDevice.CurrentRenderCommandEncoder()->pushDebugGroup(NS::String::string("Render projections", NS::UTF8StringEncoding));
 #endif
             IRenderProjectionEach(render, material, pass, span, vRef);
-#ifdef _DEBUG
+#ifdef HS_DEBUGGING
             fDevice.CurrentRenderCommandEncoder()->popDebugGroup();
 #endif
         }
@@ -1271,7 +1271,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
     if ( span.GetNumAuxSpans() || (pass >= 0 && fShadows.size()) ) {
     }
         
-#ifdef _DEBUG
+#ifdef HS_DEBUGGING
     fDevice.CurrentRenderCommandEncoder()->popDebugGroup();
 #endif
 }
