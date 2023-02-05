@@ -163,7 +163,6 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         void    SetOriginAnchor( plSceneObject *anchor, pfGUIDialogMod *context );
         void    SetAlignment( Alignment a ) { fAlignment = a; }
         void    ClearItems();
-        void    AddItem(const char *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nullptr);
         void    AddItem(const wchar_t *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nullptr);
         void    SetSkin( pfGUISkin *skin );
 

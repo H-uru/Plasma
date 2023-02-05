@@ -1134,7 +1134,7 @@ bool    pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
             if( IsLocked() )
                 return true;
 
-            InsertChar('\n');
+            InsertChar(L'\n');
         }
         else if (modifiers & pfGameGUIMgr::kCtrlDown) 
         {
@@ -1348,11 +1348,6 @@ void    pfGUIMultiLineEditCtrl::IMoveCursorTo( int32_t position )
 //  the selection with the given character. Either way, at the end the cursor
 //  is after the inserted character.
 
-void    pfGUIMultiLineEditCtrl::InsertChar( char c )
-{
-    InsertChar((wchar_t)c); // a simple cast should be fine
-}
-
 void    pfGUIMultiLineEditCtrl::InsertChar( wchar_t c )
 {
     // Error checking--make sure our actual character isn't in the range of our
@@ -1377,13 +1372,6 @@ void    pfGUIMultiLineEditCtrl::InsertChar( wchar_t c )
 //// InsertString ////////////////////////////////////////////////////////////
 //  Same as InsertChar, only with a null-terminated string of characters
 //  instead of just one.
-
-void    pfGUIMultiLineEditCtrl::InsertString( const char *string )
-{
-    wchar_t* temp = hsStringToWString(string);
-    InsertString(temp);
-    delete [] temp;
-}
 
 void    pfGUIMultiLineEditCtrl::InsertString( const wchar_t *string )
 {
@@ -1546,28 +1534,14 @@ void    pfGUIMultiLineEditCtrl::ClearBuffer()
 //  Replaces the entire contents of the buffer with the given text. Also
 //  clears the undo list.
 
-void    pfGUIMultiLineEditCtrl::SetBuffer( const char *asciiText )
+void    pfGUIMultiLineEditCtrl::SetBuffer( const wchar_t *text )
 {
-    SetBuffer(asciiText, strlen(asciiText));
-}
-
-void    pfGUIMultiLineEditCtrl::SetBuffer( const wchar_t *asciiText )
-{
-    SetBuffer(asciiText, wcslen(asciiText));
+    SetBuffer(text, wcslen(text));
 }
 
 //// SetBuffer ///////////////////////////////////////////////////////////////
 //  The non-0-terminated-string version that can handle buffers with style
 //  codes in them.
-
-void    pfGUIMultiLineEditCtrl::SetBuffer(const char *codedText, size_t length)
-{
-    // convert to wchar_t and set
-    auto convertedText = std::make_unique<wchar_t[]>(length);
-    for (size_t curChar = 0; curChar < length; curChar++)
-        convertedText[curChar] = (wchar_t)codedText[curChar];
-    SetBuffer(convertedText.get(), length);
-}
 
 void    pfGUIMultiLineEditCtrl::SetBuffer(const wchar_t *codedText, size_t length)
 {
@@ -1590,31 +1564,15 @@ void    pfGUIMultiLineEditCtrl::SetBuffer(const wchar_t *codedText, size_t lengt
 }
 
 //// GetNonCodedBuffer ///////////////////////////////////////////////////////
-//  Copies the entire buffer into an ASCII string (i.e. strips formatting)
+//  Copies the entire buffer into an plain text string (i.e. strips formatting)
 //  and returns it. The caller is responsible for freeing it.
 //  To avoid code duplication, we'll just cheat and use CopySelection()...
 
-char    *pfGUIMultiLineEditCtrl::GetNonCodedBuffer() const
+wchar_t *pfGUIMultiLineEditCtrl::GetNonCodedBuffer() const
 {
     // recursively search back to the first control in the linked list and grab its buffer
     if (fPrevCtrl)
         return fPrevCtrl->GetNonCodedBuffer();
-    else
-    {
-        // -1 for the null terminator
-        wchar_t *buffer = ICopyRange(0, (int32_t)fBuffer.size() - 1);
-        char *retVal = hsWStringToString(buffer);
-        delete [] buffer;
-
-        return retVal;
-    }
-}
-
-wchar_t *pfGUIMultiLineEditCtrl::GetNonCodedBufferW() const
-{
-    // recursively search back to the first control in the linked list and grab its buffer
-    if (fPrevCtrl)
-        return fPrevCtrl->GetNonCodedBufferW();
     else
     {
         // -1 for the null terminator
@@ -1626,37 +1584,11 @@ wchar_t *pfGUIMultiLineEditCtrl::GetNonCodedBufferW() const
 //  Basically does a blanket copy of the entire buffer and returns it and
 //  the length. The caller is responsible for freeing the buffer.
 
-char *pfGUIMultiLineEditCtrl::GetCodedBuffer(size_t &length) const
+wchar_t *pfGUIMultiLineEditCtrl::GetCodedBuffer(size_t &length) const
 {
     // recursively search back to the first control in the linked list and grab its buffer
     if (fPrevCtrl)
         return fPrevCtrl->GetCodedBuffer(length);
-    else
-    {
-        length = fBuffer.size() - 1;
-
-        // convert to char and return
-        char *buffer = new char[length];
-
-        for (int32_t curChar = 0; curChar < length; curChar++)
-        {
-            if (fBuffer[ curChar ] > (wchar_t)0xFF)
-            {
-                // char doesn't fit, fake it with a space
-                buffer[curChar] = ' ';
-            }
-            else
-                buffer[curChar] = (char)fBuffer[curChar];
-        }
-        return buffer;
-    }
-}
-
-wchar_t *pfGUIMultiLineEditCtrl::GetCodedBufferW(size_t &length) const
-{
-    // recursively search back to the first control in the linked list and grab its buffer
-    if (fPrevCtrl)
-        return fPrevCtrl->GetCodedBufferW(length);
     else
     {
         length = fBuffer.size() - 1;
@@ -1808,7 +1740,7 @@ void    pfGUIMultiLineEditCtrl::IUpdateBuffer()
     {
         // copy the buffer from our global one
         size_t length;
-        wchar_t *codedText = GetCodedBufferW(length);
+        wchar_t *codedText = GetCodedBuffer(length);
         fBuffer.assign(codedText, codedText + length);
         fBuffer.emplace_back(L'\0');
         delete [] codedText;
@@ -1913,7 +1845,7 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
         return; // don't do anything
 
     size_t bufferLen = 0;
-    wchar_t* buffer = GetCodedBufferW(bufferLen);
+    wchar_t* buffer = GetCodedBuffer(bufferLen);
 
     if (bufferLen == 0)
     {

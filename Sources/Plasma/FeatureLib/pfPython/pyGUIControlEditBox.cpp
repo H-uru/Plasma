@@ -82,7 +82,7 @@ std::wstring pyGUIControlEditBox::GetBuffer()
         // get the pointer to the modifier
         pfGUIEditBoxMod* pebmod = pfGUIEditBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pebmod )
-            return pebmod->GetBufferW();
+            return pebmod->GetBuffer();
     }
     return L"";
 }

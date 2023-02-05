@@ -76,13 +76,6 @@ pfGUIMenuItem::~pfGUIMenuItem()
     delete [] fName;
 }
 
-void    pfGUIMenuItem::SetName( const char *name )
-{
-    wchar_t *wName = hsStringToWString(name);
-    SetName(wName);
-    delete [] wName;
-}
-
 void    pfGUIMenuItem::SetName( const wchar_t *name )
 {
     delete [] fName;

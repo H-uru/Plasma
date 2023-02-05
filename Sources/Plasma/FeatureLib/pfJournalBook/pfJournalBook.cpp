@@ -3330,7 +3330,7 @@ std::wstring pfJournalBook::GetEditableText()
     pfGUIMultiLineEditCtrl *left = fBookGUIs[fCurBookGUI]->GetEditCtrl( pfJournalDlgProc::kTagLeftEditCtrl );
     if (left)
     {
-        wchar_t *temp = left->GetNonCodedBufferW();
+        wchar_t *temp = left->GetNonCodedBuffer();
         std::wstring retVal = temp;
         delete [] temp;
         return retVal;

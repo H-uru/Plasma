@@ -162,7 +162,7 @@ const wchar_t* pyGUIControlMultiLineEdit::GetText()
         pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( pbmod )
         {
-            const wchar_t* text = pbmod->GetNonCodedBufferW();
+            const wchar_t* text = pbmod->GetNonCodedBuffer();
             // convert string to a PyObject (which also copies the string)
             return text;
         }
@@ -218,7 +218,7 @@ const wchar_t* pyGUIControlMultiLineEdit::GetEncodedBuffer()
         if ( pbmod )
         {
             size_t length;
-            wchar_t* daBuffer = pbmod->GetCodedBufferW(length);
+            wchar_t* daBuffer = pbmod->GetCodedBuffer(length);
             if ( daBuffer )
             {
                 wchar_t* altBuffer = new wchar_t[length + 1];

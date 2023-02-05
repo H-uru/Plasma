@@ -109,10 +109,8 @@ class pfGUIEditBoxMod : public pfGUIControlMod
 
         void    SetBufferSize( uint32_t size );
 
-        std::string GetBuffer();
-        std::wstring    GetBufferW() { return fBuffer; }
+        std::wstring    GetBuffer() { return fBuffer; }
         void        ClearBuffer();
-        void        SetText( const char *str );
         void        SetText( const wchar_t *str );
 
         void        SetCursorToHome();

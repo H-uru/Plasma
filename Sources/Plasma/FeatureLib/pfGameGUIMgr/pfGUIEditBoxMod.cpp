@@ -456,14 +456,6 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
     }
 }
 
-std::string pfGUIEditBoxMod::GetBuffer()
-{
-    char* temp = hsWStringToString(fBuffer);
-    std::string retVal = temp;
-    delete [] temp;
-    return retVal;
-}
-
 void    pfGUIEditBoxMod::ClearBuffer()
 {
     if (fBuffer != nullptr)
@@ -473,13 +465,6 @@ void    pfGUIEditBoxMod::ClearBuffer()
         fScrollPos = 0;
         IUpdate();
     }
-}
-
-void    pfGUIEditBoxMod::SetText( const char *str )
-{
-    wchar_t* temp = hsStringToWString(str);
-    SetText(temp);
-    delete [] temp;
 }
 
 void    pfGUIEditBoxMod::SetText( const wchar_t *str )
