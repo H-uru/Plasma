@@ -185,7 +185,7 @@ static void SocketStartAsyncRead(AsyncSocket sock)
     uint8_t* start = sock->fBuffer + sock->fBytesLeft;
     size_t   count = sizeof(sock->fBuffer) - sock->fBytesLeft;
     sock->fSock.async_read_some(asio::buffer(start, count),
-                                [sock](const asio::error_code& err, size_t bytes) {
+        [sock](const asio::error_code& err, size_t bytes) {
         if (err) {
             bool isEOFError     = (err.category() == asio::error::get_misc_category() && err.value() == asio::error::eof);
             bool isAbortedError = (err.category() == asio::error::get_system_category() && err.value() == asio::error::operation_aborted);
@@ -214,8 +214,7 @@ static void SocketStartAsyncRead(AsyncSocket sock)
         notifyRead.buffer = sock->fBuffer;
         notifyRead.bytes = sock->fBytesLeft;
 
-        if (!sock->fNotifyProc || !sock->fNotifyProc(sock, kNotifySocketRead, &notifyRead, &sock->fUserState))
-        {
+        if (!sock->fNotifyProc || !sock->fNotifyProc(sock, kNotifySocketRead, &notifyRead, &sock->fUserState)) {
             // No callback, or the callback told us to stop reading
             return;
         }
@@ -224,8 +223,7 @@ static void SocketStartAsyncRead(AsyncSocket sock)
         // remaining bytes down.  Otherwise, clear the buffer.
         sock->fBytesLeft -= notifyRead.bytesProcessed;
         if (sock->fBytesLeft != 0) {
-            if ((sock->fBytesLeft > sizeof(sock->fBuffer)) || ((notifyRead.bytesProcessed + sock->fBytesLeft) > sizeof(sock->fBuffer)))
-            {
+            if ((sock->fBytesLeft > sizeof(sock->fBuffer)) || ((notifyRead.bytesProcessed + sock->fBytesLeft) > sizeof(sock->fBuffer))) {
                 LogMsg(kLogError, "SocketDispatchRead error: {} {} {}",
                        sock->fBytesLeft, notifyRead.bytes, notifyRead.bytesProcessed);
                 return;
@@ -290,8 +288,7 @@ static bool SocketInitConnect(ConnectOperation& op)
     }
 
     if (!IS_TEXT_CONNTYPE(op.fConnectionType)
-        && op.fConnectBuffer.size() < sizeof(AsyncSocketConnectPacket))
-    {
+        && op.fConnectBuffer.size() < sizeof(AsyncSocketConnectPacket)) {
         return false;
     }
 
@@ -427,8 +424,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
     WriteOperation* firstQueuedWrite = conn->fWriteOps.front();
     if (firstQueuedWrite) {
         unsigned currTimeMs = TimeGetMs();
-        if (((long)(currTimeMs - firstQueuedWrite->queueTimeMs) >= (long)kBacklogFailMs) && ((long)(currTimeMs - conn->initTimeMs) >= (long)kBacklogInitMs))
-        {
+        if (((long)(currTimeMs - firstQueuedWrite->queueTimeMs) >= (long)kBacklogFailMs) && ((long)(currTimeMs - conn->initTimeMs) >= (long)kBacklogInitMs)) {
             PerfAddCounter(kAsyncPerfSocketDisconnectBacklog, 1);
 
             if (conn->fConnectionType) {
@@ -447,7 +443,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
     // If the last buffer still has space available then add data to it
     if (!conn->fWriteOps.empty()) {
         WriteOperation* op = conn->fWriteOps.back();
-        size_t          bytesLeft = std::min(op->fAllocSize - op->fNotify.bytes, bytes);
+        size_t bytesLeft = std::min(op->fAllocSize - op->fNotify.bytes, bytes);
         if (bytesLeft) {
             PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytesLeft);
             memcpy(op->fNotify.buffer + op->fNotify.bytes, data, bytesLeft);
@@ -459,8 +455,9 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
 
     if (bytes) {
         // Allocate storage alongside the operation structure itself
-        size_t          bytesAlloc = std::max(bytes, kMinBacklogBytes);
-        auto            membuf = new uint8_t[sizeof(WriteOperation) + bytesAlloc];
+        size_t bytesAlloc = std::max(bytes, kMinBacklogBytes);
+        auto membuf = new uint8_t[sizeof(WriteOperation) + bytesAlloc];
+
         WriteOperation* op = new (membuf) WriteOperation;
         conn->fWriteOps.emplace_back(op);
 

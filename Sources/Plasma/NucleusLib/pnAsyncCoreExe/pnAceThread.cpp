@@ -84,8 +84,7 @@ void ThreadDestroy(unsigned exitThreadWaitMs)
 }
 
 //============================================================================
-AsyncThreadRef AsyncThreadCreate(
-    std::function<void()> threadProc)
+AsyncThreadRef AsyncThreadCreate(std::function<void()> threadProc)
 {
     AsyncThreadRef ref;
     ref.impl = std::make_shared<AsyncThread>();
