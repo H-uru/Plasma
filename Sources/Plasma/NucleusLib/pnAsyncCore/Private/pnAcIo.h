@@ -146,10 +146,7 @@ struct AsyncNotifySocketWrite : AsyncNotifySocketRead {
 };
 
 // return false to disconnect
-typedef std::function<bool (AsyncSocket /* sock */,
-                            EAsyncNotifySocket /* code */,
-                            AsyncNotifySocket* /* notify */,
-                            void** /* userState */)> FAsyncNotifySocketProc;
+using FAsyncNotifySocketProc = std::function<bool(AsyncSocket, EAsyncNotifySocket, AsyncNotifySocket*, void**)> ;
 
 
 /****************************************************************************
