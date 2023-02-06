@@ -441,45 +441,39 @@ void pfGUIEditBoxMod::SetLastKeyCapture(uint32_t key, uint8_t modifiers)
     fSavedModifiers = modifiers;
 
     // turn key event into string
-    char keyStr[30];
+    ST::string keyStr;
     if (plKeyMap::ConvertVKeyToChar( key ))
-        strcpy(keyStr, plKeyMap::ConvertVKeyToChar( key ));
-    else
-        memset(keyStr, 0, sizeof(keyStr));
+        keyStr = ST::string::from_latin_1(plKeyMap::ConvertVKeyToChar( key ));
 
-    static char shortKey[ 2 ];
-    if( strlen(keyStr) == 0 )
+    if(keyStr.empty())
     {
         if( isalnum( key ) )
         {
-            shortKey[ 0 ] = (char)key;
-            shortKey[ 1 ] = 0;
-            strcpy(keyStr, shortKey);
+            char keyChar = (char)key;
+            keyStr = ST::string::from_latin_1(&keyChar, 1);
         }
         else
-            strcpy(keyStr, plKeyMap::GetStringUnmapped());
+            keyStr = ST::string::from_latin_1(plKeyMap::GetStringUnmapped());
     }
     else
     {
         // check to see the buffer has ForewardSlash and change it to ForwardSlash
-        if ( strcmp(keyStr,"ForewardSlash") == 0)
+        if (keyStr == "ForewardSlash")
         {
-            strcpy(keyStr,"ForwardSlash");
+            keyStr = "ForwardSlash";
         }
     }
 
-    static char newKey[ 16 ];
-    newKey[0] = 0;
+    ST::string newKey;
     if( modifiers & kShift )
-        strcat( newKey, plKeyMap::GetStringShift() );
+        newKey += ST::string::from_latin_1(plKeyMap::GetStringShift());
     if( modifiers & kCtrl )
-        strcat( newKey, plKeyMap::GetStringCtrl() );
-    strcat( newKey, keyStr );
+        newKey += ST::string::from_latin_1(plKeyMap::GetStringCtrl());
+    newKey += keyStr;
 
     // set something in the buffer to be displayed
-    wchar_t* temp = hsStringToWString(newKey);
-    wcsncpy( fBuffer.data(), temp , fBuffer.size() );
-    delete [] temp;
+    ST::wchar_buffer temp = newKey.to_wchar();
+    wcsncpy( fBuffer.data(), temp.c_str(), fBuffer.size() );
 
     fCursorPos = 0;
     SetCursorToEnd();
