@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from Plasma import *
 from PlasmaTypes import *
 from grsnWallConstants import *
+from itertools import takewhile
 
 
 ##############################################################
@@ -66,8 +67,8 @@ class grsnMainWallPython(ptResponder):
         ptResponder.__init__(self)
         self.id = 52394
         self.version = 2
-        self.oldNorthWall = None
-        self.oldSouthWall = None
+        self.oldNorthWall = []
+        self.oldSouthWall = []
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnMainWallPython::OnServerInitComplete")
@@ -104,25 +105,15 @@ class grsnMainWallPython(ptResponder):
         if(nState == sState == kEnd):
             self.oldNorthWall = ageSDL["northWall"]
             self.oldSouthWall = ageSDL["southWall"]
-            for blocker in ageSDL["northWall"]:
-                if(blocker == -1):
-                    break
+            for blocker in takewhile(lambda x: x!= -1, ageSDL["northWall"]):
                 northWall.value[blocker].runAttachedResponder(kBlockerOn)
-            for blocker in ageSDL["southWall"]:
-                if(blocker == -1):
-                    break
+            for blocker in takewhile(lambda x: x!= -1, ageSDL["southWall"]):
                 southWall.value[blocker].runAttachedResponder(kBlockerOn)
         elif(nState == sState == kSelectCount and ageSDL["NumBlockers"][0] == 0):
-            if self.oldNorthWall:
-                for blocker in self.oldNorthWall:
-                    if(blocker == -1):
-                        break
-                    northWall.value[blocker].runAttachedResponder(kBlockerOff)
-            if self.oldSouthWall:
-                for blocker in self.oldSouthWall:
-                    if(blocker == -1):
-                        break
-                    southWall.value[blocker].runAttachedResponder(kBlockerOff)
+            for blocker in takewhile(lambda x: x!= -1, self.oldNorthWall):
+                northWall.value[blocker].runAttachedResponder(kBlockerOff)
+            for blocker in takewhile(lambda x: x!= -1, self.oldSouthWall):
+                southWall.value[blocker].runAttachedResponder(kBlockerOff)
 
     def IAmMaster(self):
         return (self.sceneobject.isLocallyOwned())

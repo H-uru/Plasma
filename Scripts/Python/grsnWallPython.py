@@ -392,7 +392,7 @@ class grsnWallPython(ptResponder):
                             DefaultColor1 = {item[1]: avatar.avatar.getTintClothingItem(item[0],1) for item in wornItem}
                             DefaultColor2 = {item[1]: avatar.avatar.getTintClothingItem(item[0],2) for item in wornItem}
                         for index, item in enumerate(clothing):
-                            if item == None:
+                            if item is None:
                                 continue
                             avatar.avatar.netForce(1)
                             avatar.avatar.wearClothingItem(item, 0)
@@ -425,7 +425,7 @@ class grsnWallPython(ptResponder):
                             DefaultColor1 = {item[1]: avatar.avatar.getTintClothingItem(item[0],1) for item in wornItem}
                             DefaultColor2 = {item[1]: avatar.avatar.getTintClothingItem(item[0],2) for item in wornItem}
                         for index, item in enumerate(clothing):
-                            if item == None:
+                            if item is None:
                                 continue
                             avatar.avatar.netForce(1)
                             avatar.avatar.wearClothingItem(item, 0)
@@ -454,17 +454,17 @@ class grsnWallPython(ptResponder):
             ### Blocker ###
             elif (id == NorthPanelClick.id or id == SouthPanelClick.id):
                 if (event[0] == kPickedEvent and event[1] == 1):
-                    pickedBlockerObj = event[3]
-                    team = kNorth
+                    if id == NorthPanelClick.id:
+                        team = kNorth
+                        blockerObjs = NorthPanel.value
+                    else:
+                        team = kSouth
+                        blockerObjs = SouthPanel.value
                     try:
-                        index = NorthPanel.value.index(pickedBlockerObj)
+                        index = blockerObjs.index(event[3])
                     except:
-                        try:
-                            index = SouthPanel.value.index(pickedBlockerObj)
-                            team = kSouth
-                        except:
-                            PtDebugPrint("grsnWallPython::OnNotify: Blocker not found on either panel")
-                            continue
+                        PtDebugPrint("grsnWallPython::OnNotify: Blocker not found on panel")
+                        continue
                     if ((team == kNorth or PtIsSolo()) and ageSDL["nState"][0] == kSetBlocker):
                         self.SetPanelBlocker(kNorth, index, not self.FindBlocker(kNorth, index), eventAvatar=PtFindAvatar(events))
                     if ((team == kSouth or PtIsSolo()) and ageSDL["sState"][0] == kSetBlocker):

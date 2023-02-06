@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from Plasma import *
 from PlasmaTypes import *
 from grsnWallConstants import *
-
+from itertools import takewhile
 
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
@@ -61,7 +61,7 @@ class grsnWallImagerDisplayS(ptResponder):
         ptResponder.__init__(self)
         self.id = 52397
         self.version = 2
-        self.oldSouthWall = None
+        self.oldSouthWall = []
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnWallImagerDisplayS::OnServerInitComplete")
@@ -71,9 +71,7 @@ class grsnWallImagerDisplayS(ptResponder):
         ageSDL.setNotify(self.key, "sState", 0.0)
         
         if not PtIsSolo() and ageSDL["sState"][0] >= kWait:
-            for blocker in ageSDL["southWall"]:
-                if(blocker == -1):
-                    return
+            for blocker in takewhile(lambda x: x!= -1, ageSDL["southWall"]):
                 southImager.value[blocker].runAttachedResponder(kBlockerOn)
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
@@ -83,9 +81,7 @@ class grsnWallImagerDisplayS(ptResponder):
         if(value == kEnd):
             self.oldSouthWall = ageSDL["southWall"]
         elif(value == kWait):
-            for blocker in ageSDL["southWall"]:
-                if(blocker == -1):
-                    break
+            for blocker in takewhile(lambda x: x!= -1, ageSDL["southWall"]):
                 southImager.value[blocker].runAttachedResponder(kBlockerOn)
         elif(value == kSelectCount):
             for blocker in self.oldSouthWall:
