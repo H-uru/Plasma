@@ -62,7 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-typedef struct AsyncIdStruct *         AsyncId;
 typedef struct AsyncSocketStruct *     AsyncSocket;
 typedef struct AsyncCancelIdStruct *   AsyncCancelId;
 
@@ -102,9 +101,8 @@ enum EAsyncNotifySocket {
 
 struct AsyncNotifySocket {
     void *          param;
-    AsyncId         asyncId;
 
-    AsyncNotifySocket() : param(), asyncId() { }
+    AsyncNotifySocket() : param() { }
 };
 
 struct AsyncNotifySocketConnect : AsyncNotifySocket {

@@ -296,7 +296,6 @@ static bool SocketInitConnect(ConnectOperation& op)
     AsyncNotifySocketConnect notify;
     SocketGetAddresses(sock.get(), &notify.localAddr, &notify.remoteAddr);
     notify.param        = sock->fParam;
-    notify.asyncId      = nullptr;
     notify.connType     = sock->fConnectionType;
     if (!sock->fNotifyProc(sock.get(), kNotifySocketConnectSuccess, &notify, &sock->fUserState))
         return false;
@@ -461,9 +460,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
         WriteOperation* op = new (membuf) WriteOperation;
         conn->fWriteOps.emplace_back(op);
 
-        // TODO: asyncId
         op->fAllocSize = bytesAlloc;
-        op->fNotify.asyncId = /* TODO */ nullptr;
         op->fNotify.buffer = membuf + sizeof(WriteOperation);
         op->fNotify.bytes = bytes;
         op->fNotify.bytesProcessed = 0;
