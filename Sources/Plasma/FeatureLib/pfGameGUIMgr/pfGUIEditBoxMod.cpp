@@ -259,53 +259,7 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                 return true;
             }
 #endif
-            // capture the key
-            fSavedKey = key;
-            fSavedModifiers = modifiers;
-
-            // turn key event into string
-            char keyStr[30];
-            if (plKeyMap::ConvertVKeyToChar( key ))
-                strcpy(keyStr, plKeyMap::ConvertVKeyToChar( key ));
-            else
-                memset(keyStr, 0, sizeof(keyStr));
-
-            static char shortKey[ 2 ];
-            if( strlen(keyStr) == 0 )
-            {
-                if( isalnum( key ) )
-                {
-                    shortKey[ 0 ] = (char)key;
-                    shortKey[ 1 ] = 0;
-                    strcpy(keyStr, shortKey);
-                }
-                else
-                    strcpy(keyStr, plKeyMap::GetStringUnmapped());
-            }
-            else
-            {
-                // check to see the buffer has ForewardSlash and change it to ForwardSlash
-                if ( strcmp(keyStr,"ForewardSlash") == 0)
-                {
-                    strcpy(keyStr,"ForwardSlash");
-                }
-            }
-
-            static char newKey[ 16 ];
-            newKey[0] = 0;
-            if( modifiers & kShift )
-                strcat( newKey, plKeyMap::GetStringShift() );
-            if( modifiers & kCtrl )
-                strcat( newKey, plKeyMap::GetStringCtrl() );
-            strcat( newKey, keyStr );
-
-            // set something in the buffer to be displayed
-            wchar_t* temp = hsStringToWString(newKey);
-            wcsncpy( fBuffer.data(), temp , fBuffer.size() );
-            delete [] temp;
-            fCursorPos = 0;
-            SetCursorToEnd();
-            IUpdate();
+            SetLastKeyCapture((uint32_t)key, modifiers);
 
             // done capturing... tell the handler
             DoSomething();
