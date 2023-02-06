@@ -145,7 +145,11 @@ struct AsyncNotifySocketWrite : AsyncNotifySocketRead {
     AsyncNotifySocketWrite() : AsyncNotifySocketRead(), bytesCommitted() { }
 };
 
-// return false to disconnect
+/*! \brief return false to disconnect
+    \param sock
+    \param code
+    \param notify
+*/
 using FAsyncNotifySocketProc = std::function<bool(AsyncSocket, EAsyncNotifySocket, AsyncNotifySocket*, void**)> ;
 
 
