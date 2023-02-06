@@ -148,7 +148,7 @@ class bhroBahroYeeshaCave(ptModifier):
         self.SpeechRespReset = 1
         self.IsStarfield = 1
 
-    def BeginAgeUnLoad(self,avatar):
+    def BeginAgeUnLoad(self, avatar):
         ptCamera().enableFirstPersonOverride()
 
     def OnFirstUpdate(self):

@@ -84,7 +84,7 @@ class bhroBahroBlueSpiral(ptResponder):
         gAgeStartedIn = PtGetAgeName()
         PtSendKIMessage(kDisableYeeshaBook,0)
 
-    def BeginAgeUnLoad(self,avatar):
+    def BeginAgeUnLoad(self, avatar):
         ptCamera().enableFirstPersonOverride()
 
     ###########################
