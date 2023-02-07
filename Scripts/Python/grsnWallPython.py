@@ -607,7 +607,7 @@ class grsnWallPython(ptResponder):
         ### Win region ###
         elif (id == NorthTeamWin.id):
             PtAtTimeCallback(self.key, 3.0, kLinkToNorthNexus)
-            if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["nState"][0] != kEnd and not PtIsSolo()):
+            if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["nState"][0] == kGameInProgress and not PtIsSolo()):
                 currentgender = avatar.avatar.getAvatarClothingGroup()
                 if currentgender == kFemaleClothingGroup:
                     clothing = FemaleSuit
@@ -622,7 +622,7 @@ class grsnWallPython(ptResponder):
                         item = self.IGetItem(item)
                         if hasattr(item, "description"):
                             PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NewClothing", [item.description]))
-            if (ageSDL["nState"][0] != kEnd):
+            if (ageSDL["nState"][0] == kGameInProgress):
                 if (eventHandler):
                     eventHandler.Handle(kEventNorthWin)
                 self.ChangeGameState(kNorth, kEnd)
@@ -630,7 +630,7 @@ class grsnWallPython(ptResponder):
             return
         elif (id == SouthTeamWin.id):
             PtAtTimeCallback(self.key, 3.0, kLinkToSouthNexus)
-            if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["sState"][0] != kEnd and not PtIsSolo()):
+            if (ageSDL["grsnGrantMaintainerSuit"][0] and ageSDL["sState"][0] == kGameInProgress and not PtIsSolo()):
                 currentgender = avatar.avatar.getAvatarClothingGroup()
                 if currentgender == kFemaleClothingGroup:
                     clothing = FemaleSuit
@@ -645,7 +645,7 @@ class grsnWallPython(ptResponder):
                         item = self.IGetItem(item)
                         if hasattr(item, "description"):
                             PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NewClothing", [item.description]))
-            if (ageSDL["sState"][0] != kEnd):
+            if (ageSDL["sState"][0] == kGameInProgress):
                 if (eventHandler):
                     eventHandler.Handle(kEventSouthWin)
                 self.ChangeGameState(kNorth, kEnd)
@@ -654,7 +654,7 @@ class grsnWallPython(ptResponder):
         ### Quit button ###
         elif (id == NorthTeamQuit.id and state):
             avatar.avatar.runBehaviorSetNotify(NorthQuitBehavior.value, self.key, NorthQuitBehavior.netForce)
-            if (ageSDL["nState"][0] != kEnd):
+            if (ageSDL["nState"][0] == kGameInProgress):
                 if (eventHandler):
                     eventHandler.Handle(kEventNorthQuit)
                 self.ChangeGameState(kNorth, kEnd)
@@ -662,7 +662,7 @@ class grsnWallPython(ptResponder):
             return
         elif (id == SouthTeamQuit.id and state):
             avatar.avatar.runBehaviorSetNotify(SouthQuitBehavior.value, self.key, SouthQuitBehavior.netForce)
-            if (ageSDL["sState"][0] != kEnd):
+            if (ageSDL["sState"][0] == kGameInProgress):
                 if (eventHandler):
                     eventHandler.Handle(kEventSouthQuit)
                 self.ChangeGameState(kNorth, kEnd)
