@@ -1132,42 +1132,6 @@ void    pfJournalBook::UnloadAllGUIs()
 // the name of the mipmap to use as the cover of the book. The callback
 // key is the keyed object to send event messages to (see <img> tag).
 
-pfJournalBook::pfJournalBook(const char *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= {}*/,
-                             const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = {} */)
-{
-    if (!guiName.empty())
-        fCurBookGUI = guiName;
-    else
-        fCurBookGUI = "BkBook";
-    if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
-    {
-        fBookGUIs[fCurBookGUI] = new pfBookData(fCurBookGUI);
-        hsgResMgr::ResMgr()->NewKey(fCurBookGUI,fBookGUIs[fCurBookGUI],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
-        fBookGUIs[fCurBookGUI]->LoadGUI();
-    }
-    
-    fCurrentPage = 0;
-    fLastPage = -1;
-    fCoverMipKey = std::move(coverImageKey);
-    fCoverFromHTML = false;
-    fCallbackKey = std::move(callbackKey);
-    fWidthScale = fHeightScale = 0.f;
-    fPageTMargin = fPageLMargin = fPageBMargin = fPageRMargin = 16;
-    fAllowTurning = true;
-    fAreWeShowing = false;
-    fCoverTint.Set( 0.f, 0.f, 0.f, 1.f );
-    fTintFirst = true;
-    fTintCover = false;
-    fAreEditing = false;
-    fWantEditing = false;
-    fDefLoc = hintLoc;
-
-    wchar_t *wESHTMLSource = hsStringToWString(esHTMLSource);
-    fUncompiledSource = wESHTMLSource;
-    ICompileSource( wESHTMLSource, hintLoc );
-    delete [] wESHTMLSource;
-}
-
 pfJournalBook::pfJournalBook(const wchar_t *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= {}*/,
                              const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = {} */)
 {

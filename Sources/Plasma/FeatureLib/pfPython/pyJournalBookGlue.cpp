@@ -285,13 +285,6 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE(ptBook, "Params: esHTMLSource,coverImage=None,callbackKey=None,guiName=''\nCreates a new book");
 
 // required functions for PyObject interoperability
-PyObject *pyJournalBook::New(const std::string& htmlSource, plKey coverImageKey /* = {} */, plKey callbackKey /* = {} */, const ST::string &guiName /* = "" */)
-{
-    ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, nullptr, nullptr);
-    newObj->fThis->MakeBook(htmlSource, std::move(coverImageKey), std::move(callbackKey), guiName);
-    return (PyObject*)newObj;
-}
-
 PyObject *pyJournalBook::New(const std::wstring& htmlSource, plKey coverImageKey /* = {} */, plKey callbackKey /* = {} */, const ST::string &guiName /* = "" */)
 {
     ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, nullptr, nullptr);

@@ -374,7 +374,6 @@ class pfJournalBook : public hsKeyedObject
         // The constructor takes in the esHTML source for the journal, along with
         // the name of the mipmap to use as the cover of the book. The callback
         // key is the keyed object to send event messages to (see <img> tag).
-        pfJournalBook(const char *esHTMLSource, plKey coverImageKey = {}, plKey callbackKey = {}, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const ST::string &guiName = {});
         pfJournalBook(const wchar_t *esHTMLSource, plKey coverImageKey = {}, plKey callbackKey = {}, const plLocation &hintLoc = plLocation::kGlobalFixedLoc, const ST::string &guiName = {});
 
         virtual ~pfJournalBook();
