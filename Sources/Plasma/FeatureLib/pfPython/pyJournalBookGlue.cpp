@@ -246,14 +246,13 @@ PYTHON_METHOD_DEFINITION(ptBook, setEditable, args)
 
 PYTHON_METHOD_DEFINITION(ptBook, getEditableText, args)
 {
-    std::wstring text = self->fThis->GetEditableText();
-    return PyUnicode_FromWideChar(text.c_str(), text.size());
+    return PyUnicode_FromSTString(self->fThis->GetEditableText());
 }
 
 PYTHON_METHOD_DEFINITION(ptBook, setEditableText, args)
 {
-    wchar_t* text;
-    if (!PyArg_ParseTuple(args, "u", &text))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "setEditableText expects a string");
         PYTHON_RETURN_ERROR;

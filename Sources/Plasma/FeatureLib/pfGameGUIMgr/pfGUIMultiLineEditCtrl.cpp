@@ -1143,12 +1143,12 @@ bool    pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
             // Too lazy to worry about that...
             if (key == KEY_C) 
             {
-                plClipboard::GetInstance().SetClipboardText(ST::string::from_wchar(fBuffer.data()));
+                plClipboard::GetInstance().SetClipboardText(ST::string::from_wchar(fBuffer.data(), fBuffer.size() - 1));
             }
             else if (key == KEY_V)
             {
                 ST::string contents = plClipboard::GetInstance().GetClipboardText();
-                InsertString(contents.to_wchar().data());
+                InsertString(contents);
             }
         } 
         else if( key == KEY_ESCAPE )
@@ -1370,21 +1370,20 @@ void    pfGUIMultiLineEditCtrl::InsertChar( wchar_t c )
 }
 
 //// InsertString ////////////////////////////////////////////////////////////
-//  Same as InsertChar, only with a null-terminated string of characters
-//  instead of just one.
+//  Same as InsertChar, only with a string of characters instead of just one.
 
-void    pfGUIMultiLineEditCtrl::InsertString( const wchar_t *string )
+void    pfGUIMultiLineEditCtrl::InsertString( const ST::string& string )
 {
-    size_t numChars = wcslen(string);
+    ST::wchar_buffer buf = string.to_wchar();
 
-    if (fBufferLimit == -1 || (int32_t)(fBuffer.size() + numChars) < fBufferLimit - 1)
+    if (fBufferLimit == -1 || (int32_t)(fBuffer.size() + buf.size()) < fBufferLimit - 1)
     {
-        fBuffer.insert(fBuffer.begin() + fCursorPos, string, string + numChars);
+        fBuffer.insert(fBuffer.begin() + fCursorPos, buf.begin(), buf.end());
 
         ISetGlobalBuffer(); // update the global buffer
 
-        IOffsetLineStarts( fCursorPos, numChars );
-        IMoveCursorTo( fCursorPos + numChars );
+        IOffsetLineStarts( fCursorPos, buf.size() );
+        IMoveCursorTo( fCursorPos + buf.size() );
         IRecalcFromCursor();
     }
 }
@@ -1487,14 +1486,11 @@ void    pfGUIMultiLineEditCtrl::DeleteChar()
 }
 
 //// ICopyRange //////////////////////////////////////////////////////////////
-//  Generic coded-to-non-coded conversion. Returns a copy of the string that
-//  the caller must free.
+//  Generic coded-to-non-coded conversion. Returns a copy of the string.
 
-wchar_t *pfGUIMultiLineEditCtrl::ICopyRange( int32_t start, int32_t end ) const
+ST::wchar_buffer pfGUIMultiLineEditCtrl::ICopyRange( int32_t start, int32_t end ) const
 {
     int32_t   stringSize, pos;
-    wchar_t *string;
-
 
     // First loop, just count how much space we need
     for( stringSize = 0, pos = start; pos < end; pos = pos + IOffsetToNextChar( fBuffer[ pos ] ) )
@@ -1504,7 +1500,8 @@ wchar_t *pfGUIMultiLineEditCtrl::ICopyRange( int32_t start, int32_t end ) const
     }
 
     // Our string...
-    string = new wchar_t[ stringSize + 1 ];
+    ST::wchar_buffer string;
+    string.allocate(stringSize);
 
     // Now actually copy the characters
     for( stringSize = 0, pos = start; pos < end; pos = pos + IOffsetToNextChar( fBuffer[ pos ] ) )
@@ -1512,7 +1509,6 @@ wchar_t *pfGUIMultiLineEditCtrl::ICopyRange( int32_t start, int32_t end ) const
         if( !IIsCodeChar( fBuffer[ pos ] ) )
             string[ stringSize++ ] = fBuffer[ pos ];
     }
-    string[ stringSize++ ] = 0;
 
     // All done!
     return string;
@@ -1532,16 +1528,13 @@ void    pfGUIMultiLineEditCtrl::ClearBuffer()
 
 //// SetBuffer ///////////////////////////////////////////////////////////////
 //  Replaces the entire contents of the buffer with the given text. Also
-//  clears the undo list.
+//  clears the undo list. Can handle buffers with style codes in them.
 
-void    pfGUIMultiLineEditCtrl::SetBuffer( const wchar_t *text )
+void    pfGUIMultiLineEditCtrl::SetBuffer(const ST::string& text)
 {
-    SetBuffer(text, wcslen(text));
+    ST::wchar_buffer buffer = text.to_wchar();
+    SetBuffer(buffer.c_str(), buffer.size());
 }
-
-//// SetBuffer ///////////////////////////////////////////////////////////////
-//  The non-0-terminated-string version that can handle buffers with style
-//  codes in them.
 
 void    pfGUIMultiLineEditCtrl::SetBuffer(const wchar_t *codedText, size_t length)
 {
@@ -1565,10 +1558,9 @@ void    pfGUIMultiLineEditCtrl::SetBuffer(const wchar_t *codedText, size_t lengt
 
 //// GetNonCodedBuffer ///////////////////////////////////////////////////////
 //  Copies the entire buffer into an plain text string (i.e. strips formatting)
-//  and returns it. The caller is responsible for freeing it.
-//  To avoid code duplication, we'll just cheat and use CopySelection()...
+//  and returns it.
 
-wchar_t *pfGUIMultiLineEditCtrl::GetNonCodedBuffer() const
+ST::wchar_buffer pfGUIMultiLineEditCtrl::GetNonCodedBuffer() const
 {
     // recursively search back to the first control in the linked list and grab its buffer
     if (fPrevCtrl)
@@ -1581,23 +1573,16 @@ wchar_t *pfGUIMultiLineEditCtrl::GetNonCodedBuffer() const
 }
 
 //// GetCodedBuffer //////////////////////////////////////////////////////////
-//  Basically does a blanket copy of the entire buffer and returns it and
-//  the length. The caller is responsible for freeing the buffer.
+//  Basically does a blanket copy of the entire buffer and returns it.
 
-wchar_t *pfGUIMultiLineEditCtrl::GetCodedBuffer(size_t &length) const
+ST::wchar_buffer pfGUIMultiLineEditCtrl::GetCodedBuffer() const
 {
     // recursively search back to the first control in the linked list and grab its buffer
     if (fPrevCtrl)
-        return fPrevCtrl->GetCodedBuffer(length);
+        return fPrevCtrl->GetCodedBuffer();
     else
     {
-        length = fBuffer.size() - 1;
-
-        wchar_t *buffer = new wchar_t[length];
-
-        memcpy(buffer, fBuffer.data(), length * sizeof(wchar_t));
-
-        return buffer;
+        return ST::wchar_buffer(fBuffer.data(), fBuffer.size() - 1);
     }
 }
 
@@ -1740,10 +1725,9 @@ void    pfGUIMultiLineEditCtrl::IUpdateBuffer()
     {
         // copy the buffer from our global one
         size_t length;
-        wchar_t *codedText = GetCodedBuffer(length);
-        fBuffer.assign(codedText, codedText + length);
+        ST::wchar_buffer codedText = GetCodedBuffer();
+        fBuffer.assign(codedText.begin(), codedText.end());
         fBuffer.emplace_back(L'\0');
-        delete [] codedText;
     }
 }
 
@@ -1844,14 +1828,8 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
     if (fPrevCtrl || fNextCtrl)
         return; // don't do anything
 
-    size_t bufferLen = 0;
-    wchar_t* buffer = GetCodedBuffer(bufferLen);
-
-    if (bufferLen == 0)
-    {
-        delete [] buffer;
-        return;
-    }
+    ST::wchar_buffer buffer = GetCodedBuffer();
+    size_t bufferLen = buffer.size();
 
     for (int curLine = 0; curLine < numLines; ++curLine)
     {
@@ -1919,8 +1897,8 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
                 hitEnd = false;
                 uint32_t newBufferStart = curChar + 1; // +1 so we eat the newline as well
                 uint32_t newBufferLen = bufferLen - newBufferStart;
-                memcpy(buffer, buffer + newBufferStart, newBufferLen * sizeof(wchar_t)); // copy all bytes after the newline to the beginning
-                memset(buffer + newBufferLen, 0, (bufferLen - newBufferLen) * sizeof(wchar_t)); // fill out the rest of the buffer with null chars
+                memcpy(buffer.data(), &buffer[newBufferStart], newBufferLen * sizeof(wchar_t)); // copy all bytes after the newline to the beginning
+                memset(&buffer[newBufferLen], 0, (bufferLen - newBufferLen) * sizeof(wchar_t)); // fill out the rest of the buffer with null chars
                 bufferLen = newBufferLen;
                 break;
             }
@@ -1928,7 +1906,6 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
 
         if (hitEnd)
         {
-            delete [] buffer;
             SetBuffer(L""); // we are removing too many (or all) lines, just clear it
             return;
         }
@@ -1937,7 +1914,6 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
     }
 
     // we got here, so buffer is now our new buffer
-    SetBuffer(buffer, bufferLen);
-    delete [] buffer;
+    SetBuffer(buffer.c_str(), bufferLen);
     return;
 }

@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsBounds.h"
 
+#include <string_theory/char_buffer>
 #include <string_theory/string>
 #include <tuple>
 #include <vector>
@@ -174,7 +175,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         void    IUpdateScrollRange();
 
-        wchar_t *ICopyRange( int32_t start, int32_t end ) const;
+        ST::wchar_buffer ICopyRange( int32_t start, int32_t end ) const;
 
         int32_t   ICharPosToBufferPos( int32_t charPos ) const;
 
@@ -236,7 +237,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         int32_t GetCursor() const { return fCursorPos; }
 
         void    InsertChar( wchar_t c);
-        void    InsertString( const wchar_t *string );
+        void    InsertString( const ST::string& string );
 
         void    InsertColor( hsColorRGBA &color );
         void    InsertStyle( uint8_t fontStyle );
@@ -249,10 +250,10 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         void    DeleteChar();
         void    ClearBuffer();
-        void    SetBuffer( const wchar_t *text );
+        void    SetBuffer(const ST::string& text);
         void    SetBuffer(const wchar_t *codedText, size_t length);
-        wchar_t *GetNonCodedBuffer() const;
-        wchar_t *GetCodedBuffer(size_t &length) const;
+        ST::wchar_buffer GetNonCodedBuffer() const;
+        ST::wchar_buffer GetCodedBuffer() const;
         size_t  GetBufferSize() const { return fBuffer.size() - 1; }
 
         void    SetBufferLimit(int32_t limit) { fBufferLimit = limit; }

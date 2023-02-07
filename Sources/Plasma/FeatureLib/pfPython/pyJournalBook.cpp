@@ -281,14 +281,14 @@ void    pyJournalBook::SetEditable( bool editable )
         fBook->SetEditable(editable);
 }
 
-std::wstring pyJournalBook::GetEditableText() const
+ST::string pyJournalBook::GetEditableText() const
 {
     if (fBook != nullptr)
         return fBook->GetEditableText();
     return L"";
 }
 
-void    pyJournalBook::SetEditableText( const std::wstring& text )
+void    pyJournalBook::SetEditableText( const ST::string& text )
 {
     if (fBook != nullptr)
         fBook->SetEditableText(text);

@@ -454,9 +454,9 @@ class pfJournalBook : public hsKeyedObject
         void    SetEditable( bool editable=true );
 
         // returns the text contained by the edit controls
-        std::wstring GetEditableText();
+        ST::string GetEditableText();
 
-        void    SetEditableText(const std::wstring& text);
+        void    SetEditableText(const ST::string& text);
 
     private:
 
