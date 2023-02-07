@@ -166,7 +166,7 @@ ST::string pyGUIControlMultiLineEdit::GetText()
             return pbmod->GetNonCodedBuffer();
         }
     }
-    return "";
+    return ST::string();
 }
 
 void pyGUIControlMultiLineEdit::SetEncodedBuffer( PyObject* buffer_object )
@@ -228,7 +228,7 @@ ST::string pyGUIControlMultiLineEdit::GetEncodedBuffer()
             return buffer;
         }
     }
-    return "";
+    return ST::string();
 }
 
 size_t pyGUIControlMultiLineEdit::GetBufferSize() const

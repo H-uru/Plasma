@@ -84,7 +84,7 @@ ST::string pyGUIControlEditBox::GetBuffer()
         if ( pebmod )
             return pebmod->GetBuffer();
     }
-    return L"";
+    return ST::string();
 }
 
 void pyGUIControlEditBox::ClearBuffer()
