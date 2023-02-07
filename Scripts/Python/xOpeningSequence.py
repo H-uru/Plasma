@@ -75,7 +75,7 @@ OrientationPBIcon01Zandi = ptAttribSceneobject(6, "Zandi Icon")
 
 gIntroMovie = None
 kAtrusIntroMovie = "avi/AtrusIntro.webm"
-kYeeshaIntroMovie = "avi/URULiveIntro.webm"
+kIntroMovie = "avi/Relto23Intro.webm"
 
 gIntroStarted = 0
 
@@ -226,7 +226,7 @@ class xOpeningSequence(ptModifier):
                     if IsTutorialPath():
                         os.stat(kAtrusIntroMovie)
                     else:
-                        os.stat(kYeeshaIntroMovie)
+                        os.stat(kIntroMovie)
                     # its there! show the background, which will start the movie
                     PtShowDialog("IntroBahroBgGUI")
                     skipMovie = 0
@@ -331,7 +331,7 @@ class xOpeningSequence(ptModifier):
                     if StartInCleft():
                         gIntroMovie = ptMoviePlayer(kAtrusIntroMovie, self.key)
                     else:
-                        gIntroMovie = ptMoviePlayer(kYeeshaIntroMovie, self.key)
+                        gIntroMovie = ptMoviePlayer(kIntroMovie, self.key)
                     gIntroMovie.playPaused()
                     if gIntroByTimer:
                         PtAtTimeCallback(self.key, kIntroPauseSeconds, kIntroPauseID)
