@@ -3296,7 +3296,7 @@ ST::string pfJournalBook::GetEditableText()
     {
         return left->GetNonCodedBuffer();
     }
-    return ST::string();
+    return {};
 }
 
 void pfJournalBook::SetEditableText(const ST::string& text)

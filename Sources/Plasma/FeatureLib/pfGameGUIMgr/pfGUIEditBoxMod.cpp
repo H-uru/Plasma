@@ -464,15 +464,17 @@ void pfGUIEditBoxMod::SetLastKeyCapture(uint32_t key, uint8_t modifiers)
         }
     }
 
-    ST::string newKey;
+    // Using ST::string_stream here avoids extra allocations
+    // because its SSO buffer is much larger than ST::string's.
+    ST::string_stream newKey;
     if( modifiers & kShift )
-        newKey += ST::string::from_latin_1(plKeyMap::GetStringShift());
+        newKey << ST::string::from_latin_1(plKeyMap::GetStringShift());
     if( modifiers & kCtrl )
-        newKey += ST::string::from_latin_1(plKeyMap::GetStringCtrl());
-    newKey += keyStr;
+        newKey << ST::string::from_latin_1(plKeyMap::GetStringCtrl());
+    newKey << keyStr;
 
     // set something in the buffer to be displayed
-    ST::wchar_buffer temp = newKey.to_wchar();
+    ST::wchar_buffer temp = newKey.to_string().to_wchar();
     wcsncpy( fBuffer.data(), temp.c_str(), fBuffer.size() );
 
     fCursorPos = 0;

@@ -244,7 +244,7 @@ ST::string pyJournalBook::GetEditableText() const
 {
     if (fBook != nullptr)
         return fBook->GetEditableText();
-    return ST::string();
+    return {};
 }
 
 void    pyJournalBook::SetEditableText( const ST::string& text )

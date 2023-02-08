@@ -1906,7 +1906,7 @@ void pfGUIMultiLineEditCtrl::DeleteLinesFromTop(int numLines)
 
         if (hitEnd)
         {
-            SetBuffer(ST::string()); // we are removing too many (or all) lines, just clear it
+            SetBuffer({}); // we are removing too many (or all) lines, just clear it
             return;
         }
 
