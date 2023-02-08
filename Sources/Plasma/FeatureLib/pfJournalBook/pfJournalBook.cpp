@@ -104,7 +104,7 @@ class pfEsHTMLChunk
 {
     public:
 
-        std::wstring fText; // Paragraph text, or face name
+        ST::string fText; // Paragraph text, or face name
         plKey   fImageKey;  // Key of image
         uint8_t   fFontSize;
         uint32_t  fFlags;
@@ -173,8 +173,8 @@ class pfEsHTMLChunk
         };
 
         // Paragraph constructor
-        pfEsHTMLChunk( const wchar_t *text )
-            : fType(kParagraph), fFlags(kLeft), fText(text ? text : L""),
+        pfEsHTMLChunk( ST::string text )
+            : fType(kParagraph), fFlags(kLeft), fText(std::move(text)),
               fFontSize(), fImageKey(), fEventID(), fSFXTime(),
               fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
               fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
@@ -189,7 +189,7 @@ class pfEsHTMLChunk
 
         // Image constructor (used for decals and movies too)
         pfEsHTMLChunk( plKey imageKey, uint32_t alignFlags )
-            : fType(kImage), fFlags(alignFlags), fText(L""),
+            : fType(kImage), fFlags(alignFlags), fText(),
               fFontSize(), fImageKey(std::move(imageKey)), fEventID(), fSFXTime(),
               fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
               fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
@@ -203,7 +203,7 @@ class pfEsHTMLChunk
 
         // Page break constructor
         pfEsHTMLChunk()
-            : fType(kPageBreak), fFlags(), fText(L""),
+            : fType(kPageBreak), fFlags(), fText(),
               fFontSize(), fImageKey(), fEventID(), fSFXTime(),
               fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
               fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
@@ -216,8 +216,8 @@ class pfEsHTMLChunk
         }
 
         // Font change constructor
-        pfEsHTMLChunk( const wchar_t *face, uint8_t size, uint32_t fontFlags )
-            : fType(kFontChange), fFlags(fontFlags), fText(face ? face : L""),
+        pfEsHTMLChunk( ST::string face, uint8_t size, uint32_t fontFlags )
+            : fType(kFontChange), fFlags(fontFlags), fText(std::move(face)),
               fFontSize(size), fImageKey(), fEventID(), fSFXTime(),
               fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
               fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
@@ -1704,7 +1704,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
     IFreeSource();
 
 
-    pfEsHTMLChunk *chunk, *lastParChunk = new pfEsHTMLChunk(nullptr);
+    pfEsHTMLChunk *chunk, *lastParChunk = new pfEsHTMLChunk(ST::string());
     const wchar_t *c, *start;
     wchar_t name[128], option[256];
     float bookWidth=1.f, bookHeight=1.f;
@@ -1726,7 +1726,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                 lastParChunk = nullptr;
             } else if (lastParChunk) {
                 size_t count = ((uintptr_t)c - (uintptr_t)start) / sizeof(wchar_t); // wchar_t is 2 bytes
-                lastParChunk->fText.assign(start, 0, count);
+                lastParChunk->fText = ST::string(start, count);
                 fHTMLSource.emplace_back(lastParChunk);
             }
 
@@ -1734,7 +1734,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
             switch (type) {
                 case pfEsHTMLChunk::kParagraph:
                     c += 2;
-                    chunk = new pfEsHTMLChunk(nullptr);
+                    chunk = new pfEsHTMLChunk(ST::string());
                     chunk->fFlags = IFindLastAlignment();
                     while (IGetNextOption(c, name, option)) {
                         if (wcsicmp(name, L"align") == 0) {
@@ -1834,7 +1834,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     else
                         delete chunk;
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -1858,7 +1858,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                         }
                     }
                     // Still gotta create a new par chunk
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -1869,13 +1869,13 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     }
                     fHTMLSource.emplace_back(chunk);
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
                 case pfEsHTMLChunk::kFontChange:
                     c += 5;
-                    chunk = new pfEsHTMLChunk(nullptr, 0, 0);
+                    chunk = new pfEsHTMLChunk(ST::string(), 0, 0);
                     while (IGetNextOption(c, name, option)) {
                         if (wcsicmp(name, L"style") == 0) {
                             uint8_t guiFlags = 0;
@@ -1932,7 +1932,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     }
                     fHTMLSource.emplace_back(chunk);
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -1956,7 +1956,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                         fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetMargins(fPageTMargin,fPageLMargin,fPageBMargin,fPageRMargin);
                     }
                     // Start a new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -1973,7 +1973,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     fWidthScale = 1.f - bookWidth;
 
                     // Still gotta create a new par chunk
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -2014,7 +2014,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     else
                         delete chunk;
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -2056,18 +2056,18 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     chunk->fMovieIndex = movieIndex;
                     movieIndex++;
                     if (chunk->fOnCover) {
-                        if (chunk->fText != L"")
+                        if (!chunk->fText.empty())
                             fCoverDecals.emplace_back(chunk);
                         else
                             delete chunk;
                     } else {
-                        if (chunk->fText != L"")
+                        if (!chunk->fText.empty())
                             fHTMLSource.emplace_back(chunk);
                         else
                             delete chunk;
                     }
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
                     
@@ -2079,7 +2079,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     }
                     fHTMLSource.emplace_back(chunk);
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
             }
@@ -2098,7 +2098,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
         lastParChunk = nullptr;
     } else if (lastParChunk) {
         size_t count = (uintptr_t)c - (uintptr_t)start;
-        lastParChunk->fText.assign(start, 0, count);
+        lastParChunk->fText = ST::string(start, count);
 
         fHTMLSource.emplace_back(lastParChunk);
     }
@@ -2396,10 +2396,10 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                     width = (uint16_t)(512 - fPageLMargin - fPageRMargin);
                     height = (uint16_t)(512 - fPageBMargin - y);
                     uint32_t lastChar;
-                    dtMap->CalcWrappedStringSize( chunk->fText.c_str(), &width, &height, &lastChar, &ascent, &lastX, &lastY );
+                    dtMap->CalcWrappedStringSize( chunk->fText, &width, &height, &lastChar, &ascent, &lastX, &lastY );
                     width = (uint16_t)(512 - fPageLMargin - fPageRMargin);
                     if( !suppressRendering )
-                        dtMap->DrawWrappedString( (uint16_t)fPageLMargin, y, chunk->fText.c_str(), width, (uint16_t)(512 - fPageBMargin - y), &lastX, &lastY );
+                        dtMap->DrawWrappedString( (uint16_t)fPageLMargin, y, chunk->fText, width, (uint16_t)(512 - fPageBMargin - y), &lastX, &lastY );
 
                     if( lastChar == 0 )
                     {
@@ -2417,10 +2417,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                         // this changes the chunk array beyond this point, so we need to invalidate the
                         // cache, but that's ok 'cause if we're doing this, it's probably invalid (or empty)
                         // anyway
-                        size_t fTextLen = chunk->fText.length();
-                        auto s = std::make_unique<wchar_t[]>(fTextLen + 1);
-                        wcscpy(s.get(), chunk->fText.c_str());
-                        s[fTextLen] = L'\0';
+                        ST::wchar_buffer s = chunk->fText.to_wchar();
 
                         // Note: Makes a copy of the string
                         pfEsHTMLChunk *c2 = new pfEsHTMLChunk( &s[ lastChar ] );
@@ -2428,8 +2425,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                         fHTMLSource.emplace(fHTMLSource.begin() + idx + 1, c2);
 
                         // Clip and reallocate so we don't have two copies laying around
-                        s[ lastChar ] = L'\0';
-                        chunk->fText = s.get();
+                        chunk->fText = ST::string::from_wchar(s.c_str(), lastChar);
 
                         // Invalidate our cache starting with the next page
                         if (fPageStarts.size() > page + 1)
@@ -2785,9 +2781,7 @@ plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uin
         movieLayer->AttachViaNotify(layer);
 
         // Initialize it.
-        char *name = hsWStringToString(chunk->fText.c_str());
-        movieLayer->SetMovieName(name);
-        delete [] name;
+        movieLayer->SetMovieName(chunk->fText);
         movieLayer->Eval(0,0,0); // set up the movie
 
         movieWidth = movieLayer->GetWidth();
@@ -3108,9 +3102,9 @@ void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, ST::string &face, uint
         if( chunk->fType == pfEsHTMLChunk::kFontChange )
         {
             // What do we (still) need?
-            if( !( found & kFace ) && chunk->fText != L"" )
+            if( !( found & kFace ) && !chunk->fText.empty() )
             {
-                face = ST::string::from_wchar(chunk->fText.c_str());
+                face = chunk->fText;
                 found |= kFace;
             }
             if( !( found & kSize ) && chunk->fFontSize > 0 )
