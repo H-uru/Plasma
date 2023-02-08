@@ -1132,7 +1132,7 @@ void    pfJournalBook::UnloadAllGUIs()
 // the name of the mipmap to use as the cover of the book. The callback
 // key is the keyed object to send event messages to (see <img> tag).
 
-pfJournalBook::pfJournalBook(const wchar_t *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= {}*/,
+pfJournalBook::pfJournalBook(ST::string esHTMLSource, plKey coverImageKey, plKey callbackKey /*= {}*/,
                              const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = {} */)
 {
     if (!guiName.empty())
@@ -1161,9 +1161,9 @@ pfJournalBook::pfJournalBook(const wchar_t *esHTMLSource, plKey coverImageKey, p
     fAreEditing = false;
     fWantEditing = false;
     fDefLoc = hintLoc;
-    fUncompiledSource = esHTMLSource;
+    fUncompiledSource = std::move(esHTMLSource);
 
-    ICompileSource( esHTMLSource, hintLoc );
+    ICompileSource( fUncompiledSource, hintLoc );
 }
 
 pfJournalBook::~pfJournalBook()
@@ -1189,7 +1189,7 @@ void    pfJournalBook::SetGUI( const ST::string &guiName )
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
         fCurBookGUI = "BkBook"; // requested GUI isn't loaded, so use default GUI
     SetEditable(fWantEditing); // make sure that if we want editing, to set it
-    ICompileSource(fUncompiledSource.c_str(), fDefLoc); // recompile the source to be safe
+    ICompileSource(fUncompiledSource, fDefLoc); // recompile the source to be safe
 }
 
 //// Show ////////////////////////////////////////////////////////////////////
@@ -1699,10 +1699,11 @@ static uint32_t   IConvertHex( const wchar_t *str )
 //// ICompileSource //////////////////////////////////////////////////////////
 // Compiles the given string of esHTML source into our compiled chunk list
 
-bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &hintLoc)
+bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation &hintLoc)
 {
     IFreeSource();
 
+    ST::wchar_buffer sourceBuffer = source.to_wchar();
 
     pfEsHTMLChunk *chunk, *lastParChunk = new pfEsHTMLChunk(ST::string());
     const wchar_t *c, *start;
@@ -1714,7 +1715,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
 
 
     // Parse our source!
-    for (start = c = source; *c != 0;) {
+    for (start = c = sourceBuffer.c_str(); *c != 0;) {
         // Are we on a tag?
         uint8_t type = IGetTagType( c );
         if (type != pfEsHTMLChunk::kEmpty) {

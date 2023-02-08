@@ -58,12 +58,12 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptBook)
 PYTHON_INIT_DEFINITION(ptBook, args, keywords)
 {
     const char* kwlist[] = {"esHTMLSource", "coverImage", "callbackKey", "guiName", nullptr};
-    PyObject* sourceObj = nullptr;
+    ST::string source;
     PyObject* coverObj = nullptr;
     PyObject* callbackObj = nullptr;
     char* guiName = nullptr;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|OOs", const_cast<char **>(kwlist),
-                                     &sourceObj, &coverObj, &callbackObj, &guiName))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O&|OOs", const_cast<char **>(kwlist),
+                                     PyUnicode_STStringConverter, &source, &coverObj, &callbackObj, &guiName))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
         PYTHON_RETURN_INIT_ERROR;
@@ -108,20 +108,8 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
     if (guiName)
         guiNameStr = ST::string::from_utf8(guiName);
 
-    // convert the sourcecode object
-    if (PyUnicode_Check(sourceObj))
-    {
-        wchar_t* temp = PyUnicode_AsWideCharString(sourceObj, nullptr);
-        std::wstring source = temp;
-        PyMem_Free(temp);
-
-        self->fThis->MakeBook(source, coverKey, callbackKey, guiNameStr);
-        PYTHON_RETURN_INIT_OK;
-    }
-
-    // source wasn't a string or unicode string
-    PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
-    PYTHON_RETURN_INIT_ERROR;
+    self->fThis->MakeBook(source, coverKey, callbackKey, guiNameStr);
+    PYTHON_RETURN_INIT_OK;
 }
 
 PYTHON_METHOD_DEFINITION(ptBook, show, args)
@@ -285,7 +273,7 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE(ptBook, "Params: esHTMLSource,coverImage=None,callbackKey=None,guiName=''\nCreates a new book");
 
 // required functions for PyObject interoperability
-PyObject *pyJournalBook::New(const std::wstring& htmlSource, plKey coverImageKey /* = {} */, plKey callbackKey /* = {} */, const ST::string &guiName /* = "" */)
+PyObject *pyJournalBook::New(const ST::string& htmlSource, plKey coverImageKey /* = {} */, plKey callbackKey /* = {} */, const ST::string &guiName /* = "" */)
 {
     ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, nullptr, nullptr);
     newObj->fThis->MakeBook(htmlSource, std::move(coverImageKey), std::move(callbackKey), guiName);

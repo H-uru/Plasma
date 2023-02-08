@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGlueHelpers.h"
 #include <vector>
-#include <string>
 
 class cyAnimation;
 class pyImage;
@@ -69,10 +68,10 @@ protected:
     void    IMakeNewKey();
 
     pyJournalBook(); // used by python glue only, do NOT call
-    pyJournalBook( const std::wstring& esHTMLSource );
-    pyJournalBook( const std::wstring& esHTMLSource, const pyKey& callbackKey );
-    pyJournalBook( const std::wstring& esHTMLSource, pyImage &coverImage, const pyKey& callbackKey );
-    pyJournalBook( const std::wstring& esHTMLSource, pyImage &coverImage, const pyKey& callbackKey, const ST::string &guiName );
+    pyJournalBook( const ST::string& esHTMLSource );
+    pyJournalBook( const ST::string& esHTMLSource, const pyKey& callbackKey );
+    pyJournalBook( const ST::string& esHTMLSource, pyImage &coverImage, const pyKey& callbackKey );
+    pyJournalBook( const ST::string& esHTMLSource, pyImage &coverImage, const pyKey& callbackKey, const ST::string &guiName );
 
 public:
     virtual ~pyJournalBook();
@@ -81,7 +80,7 @@ public:
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptBook);
-    static PyObject *New(const std::wstring& htmlSource, plKey coverImageKey = {}, plKey callbackKey = {}, const ST::string &guiName = {});
+    static PyObject *New(const ST::string& htmlSource, plKey coverImageKey = {}, plKey callbackKey = {}, const ST::string &guiName = {});
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyJournalBook object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyJournalBook); // converts a PyObject to a pyJournalBook (throws error if not correct type)
 
@@ -90,7 +89,7 @@ public:
     static void AddPlasmaConstantsClasses(PyObject *m);
 
     // Deletes the existing book and re-creates it, for use by the python glue
-    void MakeBook(const std::wstring& esHTMLSource, plKey coverImageKey = {}, plKey callbackKey = {}, const ST::string &guiName = {});
+    void MakeBook(const ST::string& esHTMLSource, plKey coverImageKey = {}, plKey callbackKey = {}, const ST::string &guiName = {});
 
     // Interface functions per book
     virtual void    Show( bool startOpened );
