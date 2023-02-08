@@ -61,9 +61,9 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
     ST::string source;
     PyObject* coverObj = nullptr;
     PyObject* callbackObj = nullptr;
-    char* guiName = nullptr;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O&|OOs", const_cast<char **>(kwlist),
-                                     PyUnicode_STStringConverter, &source, &coverObj, &callbackObj, &guiName))
+    ST::string guiName;
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O&|OOO&", const_cast<char **>(kwlist),
+                                     PyUnicode_STStringConverter, &source, &coverObj, &callbackObj, PyUnicode_STStringConverter, &guiName))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
         PYTHON_RETURN_INIT_ERROR;
@@ -104,11 +104,7 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
         callbackKey = pyKey::ConvertFrom(callbackObj)->getKey();
     }
 
-    ST::string guiNameStr;
-    if (guiName)
-        guiNameStr = ST::string::from_utf8(guiName);
-
-    self->fThis->MakeBook(source, coverKey, callbackKey, guiNameStr);
+    self->fThis->MakeBook(source, coverKey, callbackKey, guiName);
     PYTHON_RETURN_INIT_OK;
 }
 
@@ -296,25 +292,25 @@ void pyJournalBook::AddPlasmaClasses(PyObject *m)
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadBookGUI, args, "Params: guiName\nLoads the gui specified, a gui must be loaded before it can be used. If the gui is already loaded, doesn't do anything")
 {
-    char* guiName;
-    if (!PyArg_ParseTuple(args, "s", &guiName))
+    ST::string guiName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guiName))
     {
         PyErr_SetString(PyExc_TypeError, "PtLoadBookGUI expects a string");
         PYTHON_RETURN_ERROR;
     }
-    pyJournalBook::LoadGUI(ST::string::from_utf8(guiName));
+    pyJournalBook::LoadGUI(guiName);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtUnloadBookGUI, args, "Params: guiName\nUnloads the gui specified. If the gui isn't loaded, doesn't do anything")
 {
-    char* guiName;
-    if (!PyArg_ParseTuple(args, "s", &guiName))
+    ST::string guiName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guiName))
     {
         PyErr_SetString(PyExc_TypeError, "PtUnloadBookGUI expects a string");
         PYTHON_RETURN_ERROR;
     }
-    pyJournalBook::UnloadGUI(ST::string::from_utf8(guiName));
+    pyJournalBook::UnloadGUI(guiName);
     PYTHON_RETURN_NONE;
 }
 
