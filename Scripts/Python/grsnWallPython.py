@@ -284,6 +284,7 @@ class grsnWallPython(ptResponder):
         self.version = 5
         self.BlockerCount = 0
         self.oldCount = [0, 0]
+        self.performReset = False
 
     def IAmMaster(self):
         return (self.sceneobject.isLocallyOwned())
@@ -326,6 +327,7 @@ class grsnWallPython(ptResponder):
 
         if (solo):
             PtDebugPrint("grsnWallPython::OnServerInitComplete: I am alone :(")
+            self.ResetWallSDL()
             self.ResetWall()
         else:
             PtDebugPrint("grsnWallPython::OnServerInitComplete: There is already another Game Master - Request Game Update")
@@ -488,8 +490,12 @@ class grsnWallPython(ptResponder):
         elif (id == goButtonNorth.id and not state):
             ### Start Game ###
             if (ageSDL["nState"][0] == kSit):
-                self.ResetWall(resetState=False)
+                self.ResetWallSDL(resetState=False)
                 self.ChangeGameState(kNorth, kSelectCount)
+                if (ageSDL["sState"][0] != kSelectCount):
+                    #Force South to keep up
+                    self.ChangeGameState(kSouth, kSelectCount)
+                    self.ResetWall()
                 #NorthPanelSound.run(self.key, state='main')
                 if (eventHandler):
                     eventHandler.Handle(kEventInit)
@@ -502,12 +508,18 @@ class grsnWallPython(ptResponder):
                     NorthPanelSound.run(self.key, state='gameStart')
                     if PtIsSolo():
                         self.ChangeGameState(kSouth, kWait)
+                    if (ageSDL["sState"][0] == kWait and eventHandler):
+                        eventHandler.Handle(kEventEntry)
             return
         elif (id == goButtonSouth.id and not state):
             ### Start Game ###
             if (ageSDL["sState"][0] == kSit):
-                self.ResetWall(resetState=False)
+                self.ResetWallSDL(resetState=False)
                 self.ChangeGameState(kSouth, kSelectCount)
+                if (ageSDL["nState"][0] != kSelectCount):
+                    #Force South to keep up
+                    self.ChangeGameState(kNorth, kSelectCount)
+                    self.ResetWall()
                 if (eventHandler):
                     eventHandler.Handle(kEventInit)
             ### Confirm Blocker ###
@@ -519,6 +531,8 @@ class grsnWallPython(ptResponder):
                     SouthPanelSound.run(self.key, state='gameStart')
                     if PtIsSolo():
                         self.ChangeGameState(kNorth, kWait)
+                    if (ageSDL["nState"][0] == kWait and eventHandler):
+                        eventHandler.Handle(kEventEntry)
             return
         ### Blocker Count Buttons ###
         elif (id == fiveBtnNorth.id and state and (ageSDL["nState"][0] == kSelectCount or ageSDL["sState"][0] == kSelectCount)):
@@ -595,6 +609,8 @@ class grsnWallPython(ptResponder):
                 self.ChangeChuteState(kNorth, PtGetClientIDFromAvatarKey(PtFindAvatar(events).getKey()))
                 if (cID == ageSDL["sWallPlayer"][0]):
                     ageSDL["sWallPlayer"] = (-1,)
+                if ((ageSDL["sWallPlayer"][0] != -1 or PtIsSolo()) and eventHandler):
+                    eventHandler.Handle(kEventStart)
             return
         elif (id == SouthTubeEntry.id and ageSDL["sState"][0] >= kWait and ageSDL["sState"][0] != kEnd):
             if ageSDL["sState"][0] == kWait:
@@ -603,6 +619,8 @@ class grsnWallPython(ptResponder):
                 self.ChangeChuteState(kSouth, PtGetClientIDFromAvatarKey(PtFindAvatar(events).getKey()))
                 if (cID == ageSDL["nWallPlayer"][0]):
                     ageSDL["nWallPlayer"] = (-1,)
+                if ((ageSDL["nWallPlayer"][0] != -1 or PtIsSolo()) and eventHandler):
+                    eventHandler.Handle(kEventStart)
             return
         ### Win region ###
         elif (id == NorthTeamWin.id):
@@ -712,12 +730,6 @@ class grsnWallPython(ptResponder):
         avatar = PtGetLocalAvatar()
         PtDebugPrint("grsn::OnSDLNotify: received SDL '%s' with value %d" % (VARname, value))
         if (VARname == "NumBlockers"):
-            if (ageSDL["nState"][0] == kSetBlocker):
-                #South wants another count - set North back to kSelectCount
-                self.ChangeGameState(kNorth, kSelectCount, True)
-            if (ageSDL["sState"][0] == kSetBlocker):
-                #same thing
-                self.ChangeGameState(kSouth, kSelectCount, True)
             self.SetPanelMode(kNorth,onlNorthLights=True)
             self.SetPanelMode(kSouth,onlNorthLights=True)
         ### BlockerCount ###
@@ -733,9 +745,8 @@ class grsnWallPython(ptResponder):
             if (value == kSit):
                 self.SetPanelMode(kNorth)
             if (value == kSelectCount):
-                if (ageSDL["sState"][0] != kSelectCount):
-                    #Force South to keep up
-                    self.ChangeGameState(kSouth, kSelectCount, True)
+                if (self.performReset):
+                    self.ResetWall()
                 self.SetPanelMode(kNorth)
             if (value == kSetBlocker and ageSDL["sState"][0] == kSetBlocker):
                 #Both players are ok with the blocker count
@@ -747,10 +758,10 @@ class grsnWallPython(ptResponder):
                 #North player is ready - transmit blockers to the wall
                 for blocker in ageSDL["northWall"]:
                     NorthWall.value[blocker].physics.enable()
-                if (ageSDL["sState"][0] >= kWait and eventHandler and self.IAmMaster()):
-                    eventHandler.Handle(kEventEntry)
                 NorthTubeOpen.run(self.key)
                 self.SetPanelMode(kNorth)
+            if (value == kEnd):
+                self.performReset = True
 
         elif (VARname == "sState"):
             self.PanelLight()
@@ -759,9 +770,6 @@ class grsnWallPython(ptResponder):
             if (value == kSit):
                 self.SetPanelMode(kSouth)
             if (value == kSelectCount):
-                if (ageSDL["nState"][0] != kSelectCount):
-                    #Force North to keep up
-                    self.ChangeGameState(kNorth, kSelectCount, True)
                 self.SetPanelMode(kSouth)
             if (value == kSetBlocker and ageSDL["nState"][0] == kSetBlocker):
                 #Both players are ok with the blocker count
@@ -773,15 +781,11 @@ class grsnWallPython(ptResponder):
                 #South player is ready - transmit blockers to the wall
                 for blocker in ageSDL["southWall"]:
                     SouthWall.value[blocker].physics.enable()
-                if (ageSDL["nState"][0] >= kWait and eventHandler and not PtIsSolo() and self.IAmMaster()):
-                    eventHandler.Handle(kEventEntry)
                 SouthTubeOpen.run(self.key)
                 self.SetPanelMode(kSouth)
 
         elif (VARname == "nWallPlayer" and ageSDL["nWallPlayer"][0] != -1):
             if (ageSDL["sState"][0] == kEntry or PtIsSolo()):
-                if (eventHandler and self.IAmMaster()):
-                    eventHandler.Handle(kEventStart)
                 #both players are in the Tube - flush them down
                 if (cID == ageSDL["nWallPlayer"][0]):
                     avatar.avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
@@ -793,8 +797,6 @@ class grsnWallPython(ptResponder):
 
         elif (VARname == "sWallPlayer" and ageSDL["sWallPlayer"][0] != -1):
             if (ageSDL["nState"][0] == kEntry or PtIsSolo()):
-                if (eventHandler and self.IAmMaster()):
-                    eventHandler.Handle(kEventStart)
                 #both players are in the Tube - flush them down
                 if (cID == ageSDL["nWallPlayer"][0]):
                     avatar.avatar.runBehaviorSetNotify(NorthTubeMulti.value, self.key, NorthTubeMulti.netForce)
@@ -939,14 +941,13 @@ class grsnWallPython(ptResponder):
             tenBtn[team].disable()
             fifteenBtn[team].disable()
 
-    def ChangeGameState(self,team,state,master=False):
+    def ChangeGameState(self,team,state):
         PtDebugPrint("grsnWallPython::ChangeGameState: New State %d for team %s" % (state, team))
-        if (master and self.IAmMaster()) or not master:
-            ageSDL = PtGetAgeSDL()
-            if (team == kNorth):
-                ageSDL["nState"] = (state,)
-            elif (team == kSouth):
-                ageSDL["sState"] = (state,)
+        ageSDL = PtGetAgeSDL()
+        if (team == kNorth):
+            ageSDL["nState"] = (state,)
+        elif (team == kSouth):
+            ageSDL["sState"] = (state,)
 
     def ChangeChuteState(self,team,cID):
         ageSDL = PtGetAgeSDL()
@@ -998,9 +999,16 @@ class grsnWallPython(ptResponder):
     def ChangeBlockerCount(self,num):
         ageSDL = PtGetAgeSDL()
         ageSDL["NumBlockers"] = (num,)
+        if (ageSDL["nState"][0] == kSetBlocker):
+            #South wants another count - set North back to kSelectCount
+            self.ChangeGameState(kNorth, kSelectCount)
+        if (ageSDL["sState"][0] == kSetBlocker):
+            #same thing
+            self.ChangeGameState(kSouth, kSelectCount)
 
     def RequestGameUpdate(self):
         ageSDL = PtGetAgeSDL()
+        self.performReset = True
         self.SetPanelMode(kNorth)
         self.SetPanelMode(kSouth)
         for i in range(0,171):
@@ -1101,7 +1109,8 @@ class grsnWallPython(ptResponder):
         except ValueError:
              return 20
 
-    def ResetWall(self,resetState=True):
+    def ResetWallSDL(self,resetState=True):
+        PtDebugPrint("grsnWallPython::ResetWallSDL")
         ageSDL = PtGetAgeSDL()
         ageSDL["northWall"] = (-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,)
         ageSDL["southWall"] = (-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,)
@@ -1116,14 +1125,14 @@ class grsnWallPython(ptResponder):
             ageSDL["nChairOccupant"] = (-1,)
             ageSDL["sChairOccupant"] = (-1,)
 
+    def ResetWall(self):
+        PtDebugPrint("grsnWallPython::ResetWall")
+        self.performReset = False
         for i in range(0,171):
             NorthWall.value[i].physics.disable()
             SouthWall.value[i].physics.disable()
             self.SetPanelBlocker(kNorth, i, False, onlyLight=True)
             self.SetPanelBlocker(kSouth, i, False, onlyLight=True)
-
-        self.SetPanelMode(kNorth)
-        self.SetPanelMode(kSouth)
 
         NorthTubeExclude.clear(self.key)
         SouthTubeExclude.clear(self.key)
