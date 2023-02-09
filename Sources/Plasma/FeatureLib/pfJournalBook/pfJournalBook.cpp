@@ -1727,8 +1727,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                 delete lastParChunk;
                 lastParChunk = nullptr;
             } else if (lastParChunk) {
-                size_t count = ((uintptr_t)c - (uintptr_t)start) / sizeof(wchar_t); // wchar_t is 2 bytes
-                lastParChunk->fText = ST::string(start, count);
+                lastParChunk->fText = ST::string(start, c - start);
                 fHTMLSource.emplace_back(lastParChunk);
             }
 
@@ -2093,8 +2092,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
         delete lastParChunk;
         lastParChunk = nullptr;
     } else if (lastParChunk) {
-        size_t count = (uintptr_t)c - (uintptr_t)start;
-        lastParChunk->fText = ST::string(start, count);
+        lastParChunk->fText = ST::string(start, c - start);
 
         fHTMLSource.emplace_back(lastParChunk);
     }
