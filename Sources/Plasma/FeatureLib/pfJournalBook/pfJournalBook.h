@@ -532,9 +532,9 @@ class pfJournalBook : public hsKeyedObject
 
         // Compile helpers
         uint8_t   IGetTagType( const wchar_t *string );
-        bool    IGetNextOption( const wchar_t *&string, wchar_t *name, wchar_t *option );
+        bool    IGetNextOption( const wchar_t *&string, ST::string& name, ST::string& option );
 
-        plKey   IGetMipmapKey( const wchar_t *name, const plLocation &loc );
+        plKey   IGetMipmapKey( const ST::string& name, const plLocation &loc );
 
         // Renders one (1) page into the given DTMap
         void    IRenderPage( uint32_t page, uint32_t whichDTMap, bool suppressRendering = false );

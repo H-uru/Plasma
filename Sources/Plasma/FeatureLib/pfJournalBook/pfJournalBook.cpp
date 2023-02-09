@@ -1665,32 +1665,32 @@ void    pfJournalBook::ForceCacheCalculations()
 }
 
 // Tiny helper to convert hex values the *right* way
-static uint32_t   IConvertHex( const wchar_t *str )
+// TODO Is it safe to replace this with str.to_uint(16)?
+static uint32_t   IConvertHex( ST::string& str )
 {
     uint32_t value = 0;
-    while( *str != 0 )
+    for(const char *s = str.begin(); s < str.end(); s++)
     {
         value <<= 4;
-        switch( *str )
+        switch( *s )
         {
-            case L'0':          value |= 0x0;   break;
-            case L'1':          value |= 0x1;   break;
-            case L'2':          value |= 0x2;   break;
-            case L'3':          value |= 0x3;   break;
-            case L'4':          value |= 0x4;   break;
-            case L'5':          value |= 0x5;   break;
-            case L'6':          value |= 0x6;   break;
-            case L'7':          value |= 0x7;   break;
-            case L'8':          value |= 0x8;   break;
-            case L'9':          value |= 0x9;   break;
-            case L'a': case L'A':   value |= 0xa;   break;
-            case L'b': case L'B':   value |= 0xb;   break;
-            case L'c': case L'C':   value |= 0xc;   break;
-            case L'd': case L'D':   value |= 0xd;   break;
-            case L'e': case L'E':   value |= 0xe;   break;
-            case L'f': case L'F':   value |= 0xf;   break;
+            case '0':          value |= 0x0;   break;
+            case '1':          value |= 0x1;   break;
+            case '2':          value |= 0x2;   break;
+            case '3':          value |= 0x3;   break;
+            case '4':          value |= 0x4;   break;
+            case '5':          value |= 0x5;   break;
+            case '6':          value |= 0x6;   break;
+            case '7':          value |= 0x7;   break;
+            case '8':          value |= 0x8;   break;
+            case '9':          value |= 0x9;   break;
+            case 'a': case 'A':   value |= 0xa;   break;
+            case 'b': case 'B':   value |= 0xb;   break;
+            case 'c': case 'C':   value |= 0xc;   break;
+            case 'd': case 'D':   value |= 0xd;   break;
+            case 'e': case 'E':   value |= 0xe;   break;
+            case 'f': case 'F':   value |= 0xf;   break;
         }
-        str++;
     }
 
     return value;
@@ -1707,7 +1707,8 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
 
     pfEsHTMLChunk *chunk, *lastParChunk = new pfEsHTMLChunk(ST::string());
     const wchar_t *c, *start;
-    wchar_t name[128], option[256];
+    ST::string name;
+    ST::string option;
     float bookWidth=1.f, bookHeight=1.f;
     uint8_t movieIndex = 0; // the index of a movie in the source (used for id purposes)
 
@@ -1738,12 +1739,12 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     chunk = new pfEsHTMLChunk(ST::string());
                     chunk->fFlags = IFindLastAlignment();
                     while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp(name, L"align") == 0) {
-                            if (wcsicmp( option, L"left") == 0)
+                        if (name.compare_i(ST_LITERAL("align")) == 0) {
+                            if (option.compare_i(ST_LITERAL("left")) == 0)
                                 chunk->fFlags = pfEsHTMLChunk::kLeft;
-                            else if (wcsicmp(option, L"center") == 0)
+                            else if (option.compare_i(ST_LITERAL("center")) == 0)
                                 chunk->fFlags = pfEsHTMLChunk::kCenter;
-                            else if (wcsicmp(option, L"right") == 0)
+                            else if (option.compare_i(ST_LITERAL("right")) == 0)
                                 chunk->fFlags = pfEsHTMLChunk::kRight;
                         }
                     }
@@ -1755,70 +1756,67 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     c += 4;
                     chunk = new pfEsHTMLChunk(nullptr , 0);
                     while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp(name, L"align") == 0) {
+                        if (name.compare_i(ST_LITERAL("align")) == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
-                            if (wcsicmp(option, L"left" ) == 0)
+                            if (option.compare_i(ST_LITERAL("left")) == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kLeft;
-                            else if (wcsicmp(option, L"center") == 0)
+                            else if (option.compare_i(ST_LITERAL("center")) == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kCenter;
-                            else if (wcsicmp(option, L"right") == 0)
+                            else if (option.compare_i(ST_LITERAL("right")) == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kRight;
-                        } else if (wcsicmp(name, L"src") == 0) {
+                        } else if (name.compare_i(ST_LITERAL("src")) == 0) {
                             // Name of mipmap source
                             chunk->fImageKey = IGetMipmapKey( option, hintLoc );
-                        } else if (wcsicmp(name, L"link") == 0) {
-                            chunk->fEventID = wcstoul(option, nullptr, 0);
+                        } else if (name.compare_i(ST_LITERAL("link")) == 0) {
+                            chunk->fEventID = option.to_uint();
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
-                        } else if (wcsicmp(name, L"blend") == 0) {
-                            if (wcsicmp(option, L"alpha") == 0)
+                        } else if (name.compare_i(ST_LITERAL("blend")) == 0) {
+                            if (option.compare_i(ST_LITERAL("alpha")) == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kBlendAlpha;
-                        } else if (wcsicmp( name, L"pos") == 0) {
+                        } else if (name.compare_i(ST_LITERAL("pos")) == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
-                            wchar_t* comma = wcschr(option, L',');
-                            if (comma) {
-                                chunk->fAbsoluteY = (uint16_t)wcstoul(comma + 1, nullptr, 0);
-                                *comma = 0;
+                            ST::string comma = option.after_first(',');
+                            if (!comma.empty()) {
+                                chunk->fAbsoluteY = comma.to_ushort();
                             }
-                            chunk->fAbsoluteX = (uint16_t)wcstoul(option, nullptr, 0);
-                        } else if (wcsicmp(name, L"glow") == 0) {
+                            chunk->fAbsoluteX = option.before_first(',').to_ushort();
+                        } else if (name.compare_i(ST_LITERAL("glow")) == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kGlowing;
                             chunk->fFlags &= ~pfEsHTMLChunk::kActAsCB;
 
-                            wchar_t* comma = wcschr(option, L',');
-                            if (comma) {
-                                wchar_t* comma2 = wcschr(comma + 1, L',');
-                                if (comma2) {
-                                    chunk->fMaxOpacity = wcstof(comma2 + 1, nullptr);
-                                    *comma2 = 0;
+                            ST::string comma = option.after_first(',');
+                            if (!comma.empty()) {
+                                ST::string comma2 = comma.after_first(',');
+                                if (!comma2.empty()) {
+                                    chunk->fMaxOpacity = comma2.to_float();
                                 }
-                                chunk->fMinOpacity = wcstof(comma + 1, nullptr);
-                                *comma = 0;
+                                chunk->fMinOpacity = comma.before_first(',').to_float();
                             }
-                            chunk->fSFXTime = wcstof(option, nullptr);
-                        } else if (wcsicmp( name, L"opacity") == 0) {
+                            chunk->fSFXTime = option.before_first(',').to_float();
+                        } else if (name.compare_i(ST_LITERAL("opacity")) == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kTranslucent;
-                            chunk->fCurrOpacity = wcstof(option, nullptr);
-                        } else if (wcsicmp( name, L"check" ) == 0) {
+                            chunk->fCurrOpacity = option.to_float();
+                        } else if (name.compare_i(ST_LITERAL("check")) == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kActAsCB;
                             chunk->fFlags &= ~pfEsHTMLChunk::kGlowing;
 
-                            wchar_t* comma = wcschr(option, L',');
-                            if (comma) {
-                                wchar_t* comma2 = wcschr(comma + 1, L',');
-                                if (comma2) {
-                                    if (wcstol(comma2 + 1, nullptr, 0))
+                            ST::string comma = option.after_first(',');
+                            if (!comma.empty()) {
+                                ST::string comma2 = comma.after_first(',');
+                                if (!comma2.empty()) {
+                                    if (comma2.to_long())
                                         chunk->fFlags |= pfEsHTMLChunk::kChecked;
-                                    *comma2 = 0;
                                 }
-                                uint32_t c = IConvertHex(comma + 1);
-                                if (wcslen(comma + 1) <= 6)
+                                comma = comma.before_first(',');
+                                uint32_t c = IConvertHex(comma);
+                                if (comma.size() <= 6)
                                     c |= 0xff000000;    // Add in full alpha if none specified
                                 chunk->fOffColor.FromARGB32(c);
-                                *comma = 0;
                             }
+                            option = option.before_first(',');
                             uint32_t c = IConvertHex(option);
-                            if (wcslen(option) <= 6)
+                            if (option.size() <= 6)
                                 c |= 0xff000000;    // Add in full alpha if none specified
                             chunk->fOnColor.FromARGB32(c);
 
@@ -1826,8 +1824,8 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 chunk->fCurrColor = chunk->fOnColor;
                             else
                                 chunk->fCurrColor = chunk->fOffColor;
-                        } else if (wcsicmp(name,L"resize") == 0) {
-                            chunk->fNoResizeImg = (wcsicmp(option, L"no") == 0);
+                        } else if (name.compare_i(ST_LITERAL("resize")) == 0) {
+                            chunk->fNoResizeImg = (option.compare_i(ST_LITERAL("no")) == 0);
                         }
                     }
                     if (chunk->fImageKey)
@@ -1844,18 +1842,18 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     // grab the mipmap key for our cover
                     c += 6;
                     while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp(name, L"src") == 0) {
+                        if (name.compare_i(ST_LITERAL("src")) == 0) {
                             // Name of mipmap source
                             anotherKey = IGetMipmapKey( option, hintLoc );
                             if (anotherKey) {
                                 fCoverMipKey = anotherKey;
                                 fCoverFromHTML = true;
                             }
-                        } else if (wcsicmp(name, L"tint") == 0) {
+                        } else if (name.compare_i(ST_LITERAL("tint")) == 0) {
                             fTintCover = true;
-                            fCoverTint.FromARGB32(wcstol( option, nullptr, 16 ) | 0xff000000);
-                        } else if (wcsicmp(name, L"tintfirst") == 0) {
-                            fTintFirst = (wcsicmp(option, L"no") != 0);
+                            fCoverTint.FromARGB32(option.to_long(16) | 0xff000000);
+                        } else if (name.compare_i(ST_LITERAL("tintfirst")) == 0) {
+                            fTintFirst = (option.compare_i(ST_LITERAL("no")) != 0);
                         }
                     }
                     // Still gotta create a new par chunk
@@ -1878,15 +1876,15 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     c += 5;
                     chunk = new pfEsHTMLChunk(ST::string(), 0, 0);
                     while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp(name, L"style") == 0) {
+                        if (name.compare_i(ST_LITERAL("style")) == 0) {
                             uint8_t guiFlags = 0;
-                            if (wcsicmp(option, L"b") == 0) {
+                            if (option.compare_i(ST_LITERAL("b")) == 0) {
                                 chunk->fFlags = pfEsHTMLChunk::kFontBold;
                                 guiFlags = plDynamicTextMap::kFontBold;
-                            } else if (wcsicmp(option, L"i") == 0) {
+                            } else if (option.compare_i(ST_LITERAL("i")) == 0) {
                                 chunk->fFlags = pfEsHTMLChunk::kFontItalic;
                                 guiFlags = plDynamicTextMap::kFontItalic;
-                            } else if (wcsicmp(option, L"bi") == 0) {
+                            } else if (option.compare_i(ST_LITERAL("bi")) == 0) {
                                 chunk->fFlags = pfEsHTMLChunk::kFontBold | pfEsHTMLChunk::kFontItalic;
                                 guiFlags = plDynamicTextMap::kFontBold | plDynamicTextMap::kFontItalic;
                             } else {
@@ -1899,26 +1897,25 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontStyle(guiFlags);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontStyle(guiFlags);
                             }
-                        } else if (wcsicmp(name, L"face") == 0) {
+                        } else if (name.compare_i(ST_LITERAL("face")) == 0) {
                             // Name of mipmap source
                             chunk->fText = option;
                             if (fBookGUIs[fCurBookGUI]->IsEditable()) {
-                                ST::string fontFace = ST::string::from_wchar(option);
-                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagRightEditCtrl)->SetFontFace(fontFace);
-                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagLeftEditCtrl)->SetFontFace(fontFace);
-                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontFace(fontFace);
-                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontFace(fontFace);
+                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagRightEditCtrl)->SetFontFace(option);
+                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagLeftEditCtrl)->SetFontFace(option);
+                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontFace(option);
+                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontFace(option);
                             }
-                        } else if (wcsicmp(name, L"size") == 0) {
-                            chunk->fFontSize = (uint8_t)wcstoul(option, nullptr, 0);
+                        } else if (name.compare_i(ST_LITERAL("size")) == 0) {
+                            chunk->fFontSize = (uint8_t)option.to_ulong();
                             if (fBookGUIs[fCurBookGUI]->IsEditable()) {
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagRightEditCtrl)->SetFontSize(chunk->fFontSize);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagLeftEditCtrl)->SetFontSize(chunk->fFontSize);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontSize(chunk->fFontSize);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontSize(chunk->fFontSize);
                             }
-                        } else if(wcsicmp(name, L"color") == 0) {
-                            chunk->fColor.FromARGB32(wcstoul(option, nullptr, 16) | 0xff000000);
+                        } else if(name.compare_i(ST_LITERAL("color")) == 0) {
+                            chunk->fColor.FromARGB32(option.to_ulong(16) | 0xff000000);
                             chunk->fFlags |= pfEsHTMLChunk::kFontColor;
                             if (fBookGUIs[fCurBookGUI]->IsEditable()) {
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagRightEditCtrl)->SetFontColor(chunk->fColor);
@@ -1926,8 +1923,8 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontColor(chunk->fColor);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontColor(chunk->fColor);
                             }
-                        } else if(wcsicmp(name, L"spacing") == 0) {
-                            chunk->fLineSpacing = (int16_t)wcstol(option, nullptr, 0);
+                        } else if(name.compare_i(ST_LITERAL("spacing")) == 0) {
+                            chunk->fLineSpacing = option.to_short();
                             chunk->fFlags |= pfEsHTMLChunk::kFontSpacing;
                         }
                     }
@@ -1940,14 +1937,14 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                 case pfEsHTMLChunk::kMargin:
                     c += 7;
                     while(IGetNextOption(c,name,option)) {
-                        if (wcsicmp(name,L"top") == 0)
-                            fPageTMargin = wcstoul(option, nullptr, 0);
-                        else if (wcsicmp(name,L"left") == 0)
-                            fPageLMargin = wcstoul(option, nullptr, 0);
-                        else if (wcsicmp(name,L"bottom") == 0)
-                            fPageBMargin = wcstoul(option, nullptr, 0);
-                        else if (wcsicmp(name,L"right") == 0)
-                            fPageRMargin = wcstoul(option, nullptr, 0);
+                        if (name.compare_i(ST_LITERAL("top")) == 0)
+                            fPageTMargin = option.to_uint();
+                        else if (name.compare_i(ST_LITERAL("left")) == 0)
+                            fPageLMargin = option.to_uint();
+                        else if (name.compare_i(ST_LITERAL("bottom")) == 0)
+                            fPageBMargin = option.to_uint();
+                        else if (name.compare_i(ST_LITERAL("right")) == 0)
+                            fPageRMargin = option.to_uint();
                     }
                     // set the edit controls to the margins we just set
                     if (fBookGUIs[fCurBookGUI]->IsEditable()) {
@@ -1965,10 +1962,10 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     c += 5;
                     // don't actually create a chunk, just set the book size
                     while (IGetNextOption(c,name,option)) {
-                        if (wcsicmp(name, L"height") == 0)
-                            bookHeight = wcstof(option, nullptr);
-                        else if (wcsicmp(name, L"width") == 0)
-                            bookWidth = wcstof(option, nullptr);
+                        if (name.compare_i(ST_LITERAL("height")) == 0)
+                            bookHeight = option.to_float();
+                        else if (name.compare_i(ST_LITERAL("width")) == 0)
+                            bookWidth = option.to_float();
                     }
                     fHeightScale = 1.f - bookHeight;
                     fWidthScale = 1.f - bookWidth;
@@ -1983,30 +1980,29 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     chunk = new pfEsHTMLChunk(nullptr, 0);
                     chunk->fType = pfEsHTMLChunk::kDecal;
                     while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp(name, L"align") == 0) {
+                        if (name.compare_i(ST_LITERAL("align")) == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
-                            if (wcsicmp( option, L"left" ) == 0)
+                            if (option.compare_i(ST_LITERAL("left")) == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kLeft;
-                            else if (wcsicmp( option, L"center" ) == 0)
+                            else if (option.compare_i(ST_LITERAL("center")) == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kCenter;
-                            else if (wcsicmp( option, L"right" ) == 0)
+                            else if (option.compare_i(ST_LITERAL("right")) == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kRight;
-                        } else if (wcsicmp(name, L"src") == 0) {
+                        } else if (name.compare_i(ST_LITERAL("src")) == 0) {
                             // Name of mipmap source
                             chunk->fImageKey = IGetMipmapKey(option, hintLoc);
-                        } else if (wcsicmp(name, L"pos") == 0) {
+                        } else if (name.compare_i(ST_LITERAL("pos")) == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
-                            wchar_t* comma = wcschr(option, L',');
-                            if (comma) {
-                                chunk->fAbsoluteY = (uint16_t)wcstoul(comma + 1, nullptr, 0);
-                                *comma = 0;
+                            ST::string comma = option.after_first(',');
+                            if (!comma.empty()) {
+                                chunk->fAbsoluteY = comma.to_ushort();
                             }
-                            chunk->fAbsoluteX = (uint16_t)wcstoul(option, nullptr, 0);
-                        } else if (wcsicmp(name, L"resize") == 0) {
-                            chunk->fNoResizeImg = (wcsicmp(option, L"no") == 0);
-                        } else if (wcsicmp(name, L"tint") == 0) {
-                            chunk->fTintDecal = (wcsicmp(option, L"yes") == 0);
+                            chunk->fAbsoluteX = option.before_first(',').to_ushort();
+                        } else if (name.compare_i(ST_LITERAL("resize")) == 0) {
+                            chunk->fNoResizeImg = (option.compare_i(ST_LITERAL("no")) == 0);
+                        } else if (name.compare_i(ST_LITERAL("tint")) == 0) {
+                            chunk->fTintDecal = (option.compare_i(ST_LITERAL("yes")) == 0);
                         }
                     }
                     // add it to our cover decals list (this is tag is essentially thrown away as far as the parser cares)
@@ -2024,34 +2020,33 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     chunk = new pfEsHTMLChunk(nullptr, 0);
                     chunk->fType = pfEsHTMLChunk::kMovie;
                     while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp( name, L"align" ) == 0) {
+                        if (name.compare_i(ST_LITERAL("align")) == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
-                            if (wcsicmp(option, L"left") == 0)
+                            if (option.compare_i(ST_LITERAL("left")) == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kLeft;
-                            else if (wcsicmp( option, L"center") == 0)
+                            else if (option.compare_i(ST_LITERAL("center")) == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kCenter;
-                            else if (wcsicmp( option, L"right") == 0)
+                            else if (option.compare_i(ST_LITERAL("right")) == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kRight;
-                        } else if(wcsicmp(name, L"src") == 0) {
+                        } else if(name.compare_i(ST_LITERAL("src")) == 0) {
                             chunk->fText = option;
-                        } else if(wcsicmp(name, L"link") == 0) {
-                            chunk->fEventID = wcstoul(option, nullptr, 0);
+                        } else if(name.compare_i(ST_LITERAL("link")) == 0) {
+                            chunk->fEventID = option.to_uint();
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
-                        } else if(wcsicmp(name, L"pos") == 0) {
+                        } else if(name.compare_i(ST_LITERAL("pos")) == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
-                            wchar_t* comma = wcschr(option, L',');
-                            if (comma) {
-                                chunk->fAbsoluteY = (uint16_t)wcstoul(comma + 1, nullptr, 0);
-                                *comma = 0;
+                            ST::string comma = option.after_first(',');
+                            if (!comma.empty()) {
+                                chunk->fAbsoluteY = comma.to_ushort();
                             }
-                            chunk->fAbsoluteX = (uint16_t)wcstoul(option, nullptr, 0);
-                        } else if (wcsicmp(name, L"resize") == 0) {
-                            chunk->fNoResizeImg = (wcsicmp(option, L"no") == 0);
-                        } else if (wcsicmp(name, L"oncover") == 0) {
-                            chunk->fOnCover = (wcsicmp(option, L"yes") == 0);
-                        } else if (wcsicmp(name, L"loop") == 0) {
-                            chunk->fLoopMovie = wcsicmp(option, L"no") != 0;
+                            chunk->fAbsoluteX = option.before_first(',').to_ushort();
+                        } else if (name.compare_i(ST_LITERAL("resize")) == 0) {
+                            chunk->fNoResizeImg = (option.compare_i(ST_LITERAL("no")) == 0);
+                        } else if (name.compare_i(ST_LITERAL("oncover")) == 0) {
+                            chunk->fOnCover = (option.compare_i(ST_LITERAL("yes")) == 0);
+                        } else if (name.compare_i(ST_LITERAL("loop")) == 0) {
+                            chunk->fLoopMovie = option.compare_i(ST_LITERAL("no")) != 0;
                         }
                     }
                     chunk->fMovieIndex = movieIndex;
@@ -2151,7 +2146,7 @@ uint8_t   pfJournalBook::IGetTagType( const wchar_t *string )
     return pfEsHTMLChunk::kEmpty;
 }
 
-bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wchar_t *option )
+bool    pfJournalBook::IGetNextOption( const wchar_t *&string, ST::string& name, ST::string& option )
 {
     const wchar_t *c;
 
@@ -2175,9 +2170,7 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
         return false;
 
     // Copy name
-    size_t len = string - c;
-    wcsncpy( name, c, len );
-    name[len] = L'\0';
+    name = ST::string::from_wchar(c, string - c);
 
     // Find start of option value
     string++;
@@ -2195,9 +2188,7 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
         while( *string != L'>' && *string != L'\"' && *string != L'\0' )
             string++;
 
-        len = string - c;
-        wcsncpy( option, c, len );
-        option[len] = L'\0';
+        option = ST::string::from_wchar(c, string - c);
         
         if( *string == L'\"' )
             string++;
@@ -2210,9 +2201,7 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
     while( *string != L' ' && *string != L'>' && *string != L'\0' )
         string++;
 
-    len = string - c;
-    wcsncpy( option, c, len );
-    option[len] = L'\0';
+    option = ST::string::from_wchar(c, string - c);
     
     return true;
 }
@@ -2242,27 +2231,26 @@ void    pfJournalBook::IFreeSource()
 // the code will attempt to look in the currently loaded age for a matching
 // image name.
 
-plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc )
+plKey   pfJournalBook::IGetMipmapKey( const ST::string& name, const plLocation &loc )
 {
-    ST::string cName = ST::string::from_wchar(name);
 #ifndef PLASMA_EXTERNAL_RELEASE
-    if( cName.contains( '/' ) || cName.contains( '\\' ) )
+    if( name.contains( '/' ) || name.contains( '\\' ) )
     {
         // For internal use only--allow local path names of PNG and JPEG images, to
         // facilitate fast prototyping
         plMipmap *mip;
-        if( cName.contains( ".png" ) )
-            mip = plPNG::Instance().ReadFromFile( cName.c_str() );
+        if( name.contains( ".png" ) )
+            mip = plPNG::Instance().ReadFromFile( name.c_str() );
         else
-            mip = plJPEG::Instance().ReadFromFile( cName.c_str() );
+            mip = plJPEG::Instance().ReadFromFile( name.c_str() );
 
-        hsgResMgr::ResMgr()->NewKey( cName, mip, loc );
+        hsgResMgr::ResMgr()->NewKey(name, mip, loc );
         return mip->GetKey();
     }
 #endif
 
     // Try first to find in the given location
-    plUoid myUoid( loc, plMipmap::Index(), cName );
+    plUoid myUoid( loc, plMipmap::Index(), name);
     plKey key = hsgResMgr::ResMgr()->FindKey( myUoid );
     if (key != nullptr)
     {
@@ -2272,7 +2260,7 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
 
     // Next, try our "global" pre-defined age
     const plLocation &globLoc = plKeyFinder::Instance().FindLocation( "GUI", "BkBookImages" );
-    myUoid = plUoid( globLoc, plMipmap::Index(), cName );
+    myUoid = plUoid( globLoc, plMipmap::Index(), name);
     key = hsgResMgr::ResMgr()->FindKey( myUoid );
     if (key != nullptr)
     {
@@ -2285,7 +2273,7 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
         ST::string thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
         if (!thisAge.empty())
         {
-            key = plKeyFinder::Instance().StupidSearch( thisAge, "", plMipmap::Index(), cName, true );
+            key = plKeyFinder::Instance().StupidSearch( thisAge, "", plMipmap::Index(), name, true );
             if (key != nullptr)
             {
                 return key;
