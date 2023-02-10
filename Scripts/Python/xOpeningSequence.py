@@ -74,8 +74,9 @@ OrientationPBIcon01Zandi = ptAttribSceneobject(6, "Zandi Icon")
 #--------
 
 gIntroMovie = None
+gMovieFilePath = None
 kAtrusIntroMovie = "avi/AtrusIntro.webm"
-kIntroMovie = "avi/NewPlayerIntro.webm"
+kReltoIntroMovie = "avi/NewPlayerIntro.webm"
 
 gIntroStarted = 0
 
@@ -194,7 +195,7 @@ class xOpeningSequence(ptModifier):
         global gOriginalAmbientVolume
         global gOriginalSFXVolume
         global gIntroMovie
-        global kIntroMovie
+        global gMovieFilePath
         PtDebugPrint("xOpeningSequence::OnGUINotify id=%d, event=%d control=" % (id,event),control,level=kDebugDumpLevel)
 ###############################################
 ##
@@ -224,13 +225,14 @@ class xOpeningSequence(ptModifier):
                 # see if the there actually is a movie to play
                 skipMovie = 1
                 try:
+                    ageSDL = PtGetAgeSDL()
                     if IsTutorialPath():
-                        os.stat(kAtrusIntroMovie)
+                        gMovieFilePath = kAtrusIntroMovie
+                    elif ageSDL["psnlIntroMovie"]:
+                        gMovieFilePath = ageSDL["psnlIntroMovie"][0]
                     else:
-                        ageSDL = PtGetAgeSDL()
-                        if ageSDL["psnlIntroMovie"]:
-                            kIntroMovie = ageSDL["psnlIntroMovie"][0]
-                        os.stat(kIntroMovie)
+                        gMovieFilePath = kReltoIntroMovie
+                    os.stat(gMovieFilePath)
                     # its there! show the background, which will start the movie
                     PtShowDialog("IntroBahroBgGUI")
                     skipMovie = 0
@@ -332,10 +334,7 @@ class xOpeningSequence(ptModifier):
         elif id == -1:
             if event == kShowHide:
                 if control.isEnabled():
-                    if StartInCleft():
-                        gIntroMovie = ptMoviePlayer(kAtrusIntroMovie, self.key)
-                    else:
-                        gIntroMovie = ptMoviePlayer(kIntroMovie, self.key)
+                    gIntroMovie = ptMoviePlayer(gMovieFilePath, self.key)
                     gIntroMovie.playPaused()
                     if gIntroByTimer:
                         PtAtTimeCallback(self.key, kIntroPauseSeconds, kIntroPauseID)
