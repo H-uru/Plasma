@@ -75,7 +75,7 @@ OrientationPBIcon01Zandi = ptAttribSceneobject(6, "Zandi Icon")
 
 gIntroMovie = None
 kAtrusIntroMovie = "avi/AtrusIntro.webm"
-kIntroMovie = "avi/Relto23Intro.webm"
+kIntroMovie = "avi/NewPlayerIntro.webm"
 
 gIntroStarted = 0
 
@@ -194,6 +194,7 @@ class xOpeningSequence(ptModifier):
         global gOriginalAmbientVolume
         global gOriginalSFXVolume
         global gIntroMovie
+        global kIntroMovie
         PtDebugPrint("xOpeningSequence::OnGUINotify id=%d, event=%d control=" % (id,event),control,level=kDebugDumpLevel)
 ###############################################
 ##
@@ -226,6 +227,9 @@ class xOpeningSequence(ptModifier):
                     if IsTutorialPath():
                         os.stat(kAtrusIntroMovie)
                     else:
+                        ageSDL = PtGetAgeSDL()
+                        if ageSDL["psnlIntroMovie"]:
+                            kIntroMovie = ageSDL["psnlIntroMovie"][0]
                         os.stat(kIntroMovie)
                     # its there! show the background, which will start the movie
                     PtShowDialog("IntroBahroBgGUI")
