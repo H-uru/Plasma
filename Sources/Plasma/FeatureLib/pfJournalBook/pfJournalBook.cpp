@@ -1738,12 +1738,12 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     chunk = new pfEsHTMLChunk(ST::string());
                     chunk->fFlags = IFindLastAlignment();
                     while (IGetNextOption(c, name, option)) {
-                        if (name.compare_i(ST_LITERAL("align")) == 0) {
-                            if (option.compare_i(ST_LITERAL("left")) == 0)
+                        if (name.compare_i("align") == 0) {
+                            if (option.compare_i("left") == 0)
                                 chunk->fFlags = pfEsHTMLChunk::kLeft;
-                            else if (option.compare_i(ST_LITERAL("center")) == 0)
+                            else if (option.compare_i("center") == 0)
                                 chunk->fFlags = pfEsHTMLChunk::kCenter;
-                            else if (option.compare_i(ST_LITERAL("right")) == 0)
+                            else if (option.compare_i("right") == 0)
                                 chunk->fFlags = pfEsHTMLChunk::kRight;
                         }
                     }
@@ -1755,24 +1755,24 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     c += 4;
                     chunk = new pfEsHTMLChunk(nullptr , 0);
                     while (IGetNextOption(c, name, option)) {
-                        if (name.compare_i(ST_LITERAL("align")) == 0) {
+                        if (name.compare_i("align") == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
-                            if (option.compare_i(ST_LITERAL("left")) == 0)
+                            if (option.compare_i("left") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kLeft;
-                            else if (option.compare_i(ST_LITERAL("center")) == 0)
+                            else if (option.compare_i("center") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kCenter;
-                            else if (option.compare_i(ST_LITERAL("right")) == 0)
+                            else if (option.compare_i("right") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kRight;
-                        } else if (name.compare_i(ST_LITERAL("src")) == 0) {
+                        } else if (name.compare_i("src") == 0) {
                             // Name of mipmap source
                             chunk->fImageKey = IGetMipmapKey( option, hintLoc );
-                        } else if (name.compare_i(ST_LITERAL("link")) == 0) {
+                        } else if (name.compare_i("link") == 0) {
                             chunk->fEventID = option.to_uint();
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
-                        } else if (name.compare_i(ST_LITERAL("blend")) == 0) {
-                            if (option.compare_i(ST_LITERAL("alpha")) == 0)
+                        } else if (name.compare_i("blend") == 0) {
+                            if (option.compare_i("alpha") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kBlendAlpha;
-                        } else if (name.compare_i(ST_LITERAL("pos")) == 0) {
+                        } else if (name.compare_i("pos") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
                             ST::string comma = option.after_first(',');
@@ -1780,7 +1780,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 chunk->fAbsoluteY = comma.to_ushort();
                             }
                             chunk->fAbsoluteX = option.before_first(',').to_ushort();
-                        } else if (name.compare_i(ST_LITERAL("glow")) == 0) {
+                        } else if (name.compare_i("glow") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kGlowing;
                             chunk->fFlags &= ~pfEsHTMLChunk::kActAsCB;
 
@@ -1793,10 +1793,10 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 chunk->fMinOpacity = comma.before_first(',').to_float();
                             }
                             chunk->fSFXTime = option.before_first(',').to_float();
-                        } else if (name.compare_i(ST_LITERAL("opacity")) == 0) {
+                        } else if (name.compare_i("opacity") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kTranslucent;
                             chunk->fCurrOpacity = option.to_float();
-                        } else if (name.compare_i(ST_LITERAL("check")) == 0) {
+                        } else if (name.compare_i("check") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kActAsCB;
                             chunk->fFlags &= ~pfEsHTMLChunk::kGlowing;
 
@@ -1823,8 +1823,8 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 chunk->fCurrColor = chunk->fOnColor;
                             else
                                 chunk->fCurrColor = chunk->fOffColor;
-                        } else if (name.compare_i(ST_LITERAL("resize")) == 0) {
-                            chunk->fNoResizeImg = (option.compare_i(ST_LITERAL("no")) == 0);
+                        } else if (name.compare_i("resize") == 0) {
+                            chunk->fNoResizeImg = (option.compare_i("no") == 0);
                         }
                     }
                     if (chunk->fImageKey)
@@ -1841,18 +1841,18 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     // grab the mipmap key for our cover
                     c += 6;
                     while (IGetNextOption(c, name, option)) {
-                        if (name.compare_i(ST_LITERAL("src")) == 0) {
+                        if (name.compare_i("src") == 0) {
                             // Name of mipmap source
                             anotherKey = IGetMipmapKey( option, hintLoc );
                             if (anotherKey) {
                                 fCoverMipKey = anotherKey;
                                 fCoverFromHTML = true;
                             }
-                        } else if (name.compare_i(ST_LITERAL("tint")) == 0) {
+                        } else if (name.compare_i("tint") == 0) {
                             fTintCover = true;
                             fCoverTint.FromARGB32(option.to_long(16) | 0xff000000);
-                        } else if (name.compare_i(ST_LITERAL("tintfirst")) == 0) {
-                            fTintFirst = (option.compare_i(ST_LITERAL("no")) != 0);
+                        } else if (name.compare_i("tintfirst") == 0) {
+                            fTintFirst = (option.compare_i("no") != 0);
                         }
                     }
                     // Still gotta create a new par chunk
@@ -1875,15 +1875,15 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     c += 5;
                     chunk = new pfEsHTMLChunk(ST::string(), 0, 0);
                     while (IGetNextOption(c, name, option)) {
-                        if (name.compare_i(ST_LITERAL("style")) == 0) {
+                        if (name.compare_i("style") == 0) {
                             uint8_t guiFlags = 0;
-                            if (option.compare_i(ST_LITERAL("b")) == 0) {
+                            if (option.compare_i("b") == 0) {
                                 chunk->fFlags = pfEsHTMLChunk::kFontBold;
                                 guiFlags = plDynamicTextMap::kFontBold;
-                            } else if (option.compare_i(ST_LITERAL("i")) == 0) {
+                            } else if (option.compare_i("i") == 0) {
                                 chunk->fFlags = pfEsHTMLChunk::kFontItalic;
                                 guiFlags = plDynamicTextMap::kFontItalic;
-                            } else if (option.compare_i(ST_LITERAL("bi")) == 0) {
+                            } else if (option.compare_i("bi") == 0) {
                                 chunk->fFlags = pfEsHTMLChunk::kFontBold | pfEsHTMLChunk::kFontItalic;
                                 guiFlags = plDynamicTextMap::kFontBold | plDynamicTextMap::kFontItalic;
                             } else {
@@ -1896,7 +1896,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontStyle(guiFlags);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontStyle(guiFlags);
                             }
-                        } else if (name.compare_i(ST_LITERAL("face")) == 0) {
+                        } else if (name.compare_i("face") == 0) {
                             // Name of mipmap source
                             chunk->fText = option;
                             if (fBookGUIs[fCurBookGUI]->IsEditable()) {
@@ -1905,7 +1905,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontFace(option);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontFace(option);
                             }
-                        } else if (name.compare_i(ST_LITERAL("size")) == 0) {
+                        } else if (name.compare_i("size") == 0) {
                             chunk->fFontSize = (uint8_t)option.to_ulong();
                             if (fBookGUIs[fCurBookGUI]->IsEditable()) {
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagRightEditCtrl)->SetFontSize(chunk->fFontSize);
@@ -1913,7 +1913,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontSize(chunk->fFontSize);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontSize(chunk->fFontSize);
                             }
-                        } else if(name.compare_i(ST_LITERAL("color")) == 0) {
+                        } else if(name.compare_i("color") == 0) {
                             chunk->fColor.FromARGB32(option.to_ulong(16) | 0xff000000);
                             chunk->fFlags |= pfEsHTMLChunk::kFontColor;
                             if (fBookGUIs[fCurBookGUI]->IsEditable()) {
@@ -1922,7 +1922,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontColor(chunk->fColor);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontColor(chunk->fColor);
                             }
-                        } else if(name.compare_i(ST_LITERAL("spacing")) == 0) {
+                        } else if(name.compare_i("spacing") == 0) {
                             chunk->fLineSpacing = option.to_short();
                             chunk->fFlags |= pfEsHTMLChunk::kFontSpacing;
                         }
@@ -1936,13 +1936,13 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                 case pfEsHTMLChunk::kMargin:
                     c += 7;
                     while(IGetNextOption(c,name,option)) {
-                        if (name.compare_i(ST_LITERAL("top")) == 0)
+                        if (name.compare_i("top") == 0)
                             fPageTMargin = option.to_uint();
-                        else if (name.compare_i(ST_LITERAL("left")) == 0)
+                        else if (name.compare_i("left") == 0)
                             fPageLMargin = option.to_uint();
-                        else if (name.compare_i(ST_LITERAL("bottom")) == 0)
+                        else if (name.compare_i("bottom") == 0)
                             fPageBMargin = option.to_uint();
-                        else if (name.compare_i(ST_LITERAL("right")) == 0)
+                        else if (name.compare_i("right") == 0)
                             fPageRMargin = option.to_uint();
                     }
                     // set the edit controls to the margins we just set
@@ -1961,9 +1961,9 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     c += 5;
                     // don't actually create a chunk, just set the book size
                     while (IGetNextOption(c,name,option)) {
-                        if (name.compare_i(ST_LITERAL("height")) == 0)
+                        if (name.compare_i("height") == 0)
                             bookHeight = option.to_float();
-                        else if (name.compare_i(ST_LITERAL("width")) == 0)
+                        else if (name.compare_i("width") == 0)
                             bookWidth = option.to_float();
                     }
                     fHeightScale = 1.f - bookHeight;
@@ -1979,18 +1979,18 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     chunk = new pfEsHTMLChunk(nullptr, 0);
                     chunk->fType = pfEsHTMLChunk::kDecal;
                     while (IGetNextOption(c, name, option)) {
-                        if (name.compare_i(ST_LITERAL("align")) == 0) {
+                        if (name.compare_i("align") == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
-                            if (option.compare_i(ST_LITERAL("left")) == 0)
+                            if (option.compare_i("left") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kLeft;
-                            else if (option.compare_i(ST_LITERAL("center")) == 0)
+                            else if (option.compare_i("center") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kCenter;
-                            else if (option.compare_i(ST_LITERAL("right")) == 0)
+                            else if (option.compare_i("right") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kRight;
-                        } else if (name.compare_i(ST_LITERAL("src")) == 0) {
+                        } else if (name.compare_i("src") == 0) {
                             // Name of mipmap source
                             chunk->fImageKey = IGetMipmapKey(option, hintLoc);
-                        } else if (name.compare_i(ST_LITERAL("pos")) == 0) {
+                        } else if (name.compare_i("pos") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
                             ST::string comma = option.after_first(',');
@@ -1998,10 +1998,10 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 chunk->fAbsoluteY = comma.to_ushort();
                             }
                             chunk->fAbsoluteX = option.before_first(',').to_ushort();
-                        } else if (name.compare_i(ST_LITERAL("resize")) == 0) {
-                            chunk->fNoResizeImg = (option.compare_i(ST_LITERAL("no")) == 0);
-                        } else if (name.compare_i(ST_LITERAL("tint")) == 0) {
-                            chunk->fTintDecal = (option.compare_i(ST_LITERAL("yes")) == 0);
+                        } else if (name.compare_i("resize") == 0) {
+                            chunk->fNoResizeImg = (option.compare_i("no") == 0);
+                        } else if (name.compare_i("tint") == 0) {
+                            chunk->fTintDecal = (option.compare_i("yes") == 0);
                         }
                     }
                     // add it to our cover decals list (this is tag is essentially thrown away as far as the parser cares)
@@ -2019,20 +2019,20 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     chunk = new pfEsHTMLChunk(nullptr, 0);
                     chunk->fType = pfEsHTMLChunk::kMovie;
                     while (IGetNextOption(c, name, option)) {
-                        if (name.compare_i(ST_LITERAL("align")) == 0) {
+                        if (name.compare_i("align") == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
-                            if (option.compare_i(ST_LITERAL("left")) == 0)
+                            if (option.compare_i("left") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kLeft;
-                            else if (option.compare_i(ST_LITERAL("center")) == 0)
+                            else if (option.compare_i("center") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kCenter;
-                            else if (option.compare_i(ST_LITERAL("right")) == 0)
+                            else if (option.compare_i("right") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kRight;
-                        } else if(name.compare_i(ST_LITERAL("src")) == 0) {
+                        } else if(name.compare_i("src") == 0) {
                             chunk->fText = option;
-                        } else if(name.compare_i(ST_LITERAL("link")) == 0) {
+                        } else if(name.compare_i("link") == 0) {
                             chunk->fEventID = option.to_uint();
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
-                        } else if(name.compare_i(ST_LITERAL("pos")) == 0) {
+                        } else if(name.compare_i("pos") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
                             ST::string comma = option.after_first(',');
@@ -2040,12 +2040,12 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                 chunk->fAbsoluteY = comma.to_ushort();
                             }
                             chunk->fAbsoluteX = option.before_first(',').to_ushort();
-                        } else if (name.compare_i(ST_LITERAL("resize")) == 0) {
-                            chunk->fNoResizeImg = (option.compare_i(ST_LITERAL("no")) == 0);
-                        } else if (name.compare_i(ST_LITERAL("oncover")) == 0) {
-                            chunk->fOnCover = (option.compare_i(ST_LITERAL("yes")) == 0);
-                        } else if (name.compare_i(ST_LITERAL("loop")) == 0) {
-                            chunk->fLoopMovie = option.compare_i(ST_LITERAL("no")) != 0;
+                        } else if (name.compare_i("resize") == 0) {
+                            chunk->fNoResizeImg = (option.compare_i("no") == 0);
+                        } else if (name.compare_i("oncover") == 0) {
+                            chunk->fOnCover = (option.compare_i("yes") == 0);
+                        } else if (name.compare_i("loop") == 0) {
+                            chunk->fLoopMovie = option.compare_i("no") != 0;
                         }
                     }
                     chunk->fMovieIndex = movieIndex;

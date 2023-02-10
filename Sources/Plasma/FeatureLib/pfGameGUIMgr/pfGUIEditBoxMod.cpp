@@ -458,7 +458,7 @@ void pfGUIEditBoxMod::SetLastKeyCapture(uint32_t key, uint8_t modifiers)
     else
     {
         // check to see the buffer has ForewardSlash and change it to ForwardSlash
-        if (keyStr == ST_LITERAL("ForewardSlash"))
+        if (keyStr == "ForewardSlash")
         {
             keyStr = ST_LITERAL("ForwardSlash");
         }
