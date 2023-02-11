@@ -334,6 +334,13 @@ class xOpeningSequence(ptModifier):
         elif id == -1:
             if event == kShowHide:
                 if control.isEnabled():
+                    ageSDL = PtGetAgeSDL()
+                    if StartInCleft():
+                        gMovieFilePath = kAtrusIntroMovie
+                    elif ageSDL["psnlIntroMovie"]:
+                        gMovieFilePath = ageSDL["psnlIntroMovie"][0]
+                    else:
+                        gMovieFilePath = kReltoIntroMovie
                     gIntroMovie = ptMoviePlayer(gMovieFilePath, self.key)
                     gIntroMovie.playPaused()
                     if gIntroByTimer:
