@@ -1703,10 +1703,8 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
 {
     IFreeSource();
 
-    ST::wchar_buffer sourceBuffer = source.to_wchar();
-
     pfEsHTMLChunk *chunk, *lastParChunk = new pfEsHTMLChunk(ST::string());
-    const wchar_t *c, *start;
+    const char *c, *start;
     ST::string name;
     ST::string option;
     float bookWidth=1.f, bookHeight=1.f;
@@ -1716,9 +1714,10 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
 
 
     // Parse our source!
-    for (start = c = sourceBuffer.c_str(); *c != 0;) {
+    const char *end = source.end();
+    for (start = c = source.begin(); c < end;) {
         // Are we on a tag?
-        uint8_t type = IGetTagType( c );
+        uint8_t type = IGetTagType(c, end);
         if (type != pfEsHTMLChunk::kEmpty) {
             // First, end the current paragraph chunk, which is a special case 'cause its 
             // text is defined outside the tag
@@ -1737,7 +1736,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     c += 2;
                     chunk = new pfEsHTMLChunk(ST::string());
                     chunk->fFlags = IFindLastAlignment();
-                    while (IGetNextOption(c, name, option)) {
+                    while (IGetNextOption(c, end, name, option)) {
                         if (name.compare_i("align") == 0) {
                             if (option.compare_i("left") == 0)
                                 chunk->fFlags = pfEsHTMLChunk::kLeft;
@@ -1754,7 +1753,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                 case pfEsHTMLChunk::kImage:
                     c += 4;
                     chunk = new pfEsHTMLChunk(nullptr , 0);
-                    while (IGetNextOption(c, name, option)) {
+                    while (IGetNextOption(c, end, name, option)) {
                         if (name.compare_i("align") == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
                             if (option.compare_i("left") == 0)
@@ -1840,7 +1839,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     // Don't create an actual chunk for this one, just use the "src" and 
                     // grab the mipmap key for our cover
                     c += 6;
-                    while (IGetNextOption(c, name, option)) {
+                    while (IGetNextOption(c, end, name, option)) {
                         if (name.compare_i("src") == 0) {
                             // Name of mipmap source
                             anotherKey = IGetMipmapKey( option, hintLoc );
@@ -1863,7 +1862,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                 case pfEsHTMLChunk::kPageBreak:
                     c += 3;
                     chunk = new pfEsHTMLChunk();
-                    while (IGetNextOption(c, name, option)) {
+                    while (IGetNextOption(c, end, name, option)) {
                     }
                     fHTMLSource.emplace_back(chunk);
                     // Start new paragraph chunk after this one
@@ -1874,7 +1873,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                 case pfEsHTMLChunk::kFontChange:
                     c += 5;
                     chunk = new pfEsHTMLChunk(ST::string(), 0, 0);
-                    while (IGetNextOption(c, name, option)) {
+                    while (IGetNextOption(c, end, name, option)) {
                         if (name.compare_i("style") == 0) {
                             uint8_t guiFlags = 0;
                             if (option.compare_i("b") == 0) {
@@ -1935,7 +1934,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
 
                 case pfEsHTMLChunk::kMargin:
                     c += 7;
-                    while(IGetNextOption(c,name,option)) {
+                    while(IGetNextOption(c, end, name, option)) {
                         if (name.compare_i("top") == 0)
                             fPageTMargin = option.to_uint();
                         else if (name.compare_i("left") == 0)
@@ -1960,7 +1959,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                 case pfEsHTMLChunk::kBook:
                     c += 5;
                     // don't actually create a chunk, just set the book size
-                    while (IGetNextOption(c,name,option)) {
+                    while (IGetNextOption(c, end, name, option)) {
                         if (name.compare_i("height") == 0)
                             bookHeight = option.to_float();
                         else if (name.compare_i("width") == 0)
@@ -1978,7 +1977,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     c += 6;
                     chunk = new pfEsHTMLChunk(nullptr, 0);
                     chunk->fType = pfEsHTMLChunk::kDecal;
-                    while (IGetNextOption(c, name, option)) {
+                    while (IGetNextOption(c, end, name, option)) {
                         if (name.compare_i("align") == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
                             if (option.compare_i("left") == 0)
@@ -2018,7 +2017,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     c += 6;
                     chunk = new pfEsHTMLChunk(nullptr, 0);
                     chunk->fType = pfEsHTMLChunk::kMovie;
-                    while (IGetNextOption(c, name, option)) {
+                    while (IGetNextOption(c, end, name, option)) {
                         if (name.compare_i("align") == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
                             if (option.compare_i("left") == 0)
@@ -2070,7 +2069,7 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                     c += 9;
                     SetEditable(true);
                     chunk = new pfEsHTMLChunk();
-                    while (IGetNextOption(c, name, option)) {
+                    while (IGetNextOption(c, end, name, option)) {
                     }
                     fHTMLSource.emplace_back(chunk);
                     // Start new paragraph chunk after this one
@@ -2107,53 +2106,53 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
     return true;
 }
 
-uint8_t   pfJournalBook::IGetTagType( const wchar_t *string )
+uint8_t   pfJournalBook::IGetTagType( const char *string, const char *end )
 {
-    if( string[ 0 ] != '<' )
+    if (string == end || string[0] != '<')
         return pfEsHTMLChunk::kEmpty;
+
+    string++;
 
     struct TagRec
     {
-        const wchar_t *fTag;
+        ST::string fTag;
         uint8_t       fType;
-    } tags[] = { { L"p", pfEsHTMLChunk::kParagraph },
-                { L"img", pfEsHTMLChunk::kImage },
-                { L"pb", pfEsHTMLChunk::kPageBreak },
-                { L"font", pfEsHTMLChunk::kFontChange },
-                { L"margin", pfEsHTMLChunk::kMargin },
-                { L"cover", pfEsHTMLChunk::kCover },
-                { L"book", pfEsHTMLChunk::kBook },
-                { L"decal", pfEsHTMLChunk::kDecal },
-                { L"movie", pfEsHTMLChunk::kMovie },
-                { L"editable", pfEsHTMLChunk::kEditable },
-                { nullptr, pfEsHTMLChunk::kEmpty } };
-                
+    } tags[] = { { ST_LITERAL("p"), pfEsHTMLChunk::kParagraph },
+                { ST_LITERAL("img"), pfEsHTMLChunk::kImage },
+                { ST_LITERAL("pb"), pfEsHTMLChunk::kPageBreak },
+                { ST_LITERAL("font"), pfEsHTMLChunk::kFontChange },
+                { ST_LITERAL("margin"), pfEsHTMLChunk::kMargin },
+                { ST_LITERAL("cover"), pfEsHTMLChunk::kCover },
+                { ST_LITERAL("book"), pfEsHTMLChunk::kBook },
+                { ST_LITERAL("decal"), pfEsHTMLChunk::kDecal },
+                { ST_LITERAL("movie"), pfEsHTMLChunk::kMovie },
+                { ST_LITERAL("editable"), pfEsHTMLChunk::kEditable },
+    };
 
-    uint32_t i;
-    for (i = 0; tags[i].fTag != nullptr; i++)
+    for (auto tag : tags)
     {
-        if( wcsnicmp( string + 1, tags[ i ].fTag, wcslen( tags[ i ].fTag ) ) == 0 )
+        if (string + tag.fTag.size() < end && tag.fTag.compare_ni(string, tag.fTag.size()) == 0)
         {
             // Found tag--but only space or end tag marker allowed afterwards
-            char end = (char)string[ wcslen( tags[ i ].fTag ) + 1 ];
-            if( end == '>' || end == ' ' )
-                return tags[ i ].fType;
+            char sep = string[tag.fTag.size()];
+            if (sep == '>' || sep == ' ')
+                return tag.fType;
         }
     }
 
     return pfEsHTMLChunk::kEmpty;
 }
 
-bool    pfJournalBook::IGetNextOption( const wchar_t *&string, ST::string& name, ST::string& option )
+bool    pfJournalBook::IGetNextOption( const char *&string, const char *end, ST::string& name, ST::string& option )
 {
-    const wchar_t *c;
+    const char *c;
 
 
     // Advance past any white space
-    while( *string == L' ' )
+    while (string < end && *string == ' ')
         string++;
 
-    if( *string == L'>' )
+    if (string < end && *string == '>')
     {
         string++;
         return false;
@@ -2161,34 +2160,34 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, ST::string& name,
 
     // Advance to =
     c = string;
-    while( *string != L'>' && *string != L' ' && *string != L'=' && *string != L'\0' )
+    while (string < end && *string != '>' && *string != ' ' && *string != '=')
         string++;
 
-    if( *string != L'=' )
+    if (string == end || *string != '=')
         return false;
 
     // Copy name
-    name = ST::string::from_wchar(c, string - c);
+    name = ST::string::from_utf8(c, string - c);
 
     // Find start of option value
     string++;
-    while( *string == L' ' )
+    while (string < end && *string == ' ')
         string++;
 
-    if( *string == L'\0' || *string == L'>' )
+    if (string == end || *string == '>')
         return false;
 
-    if( *string == L'\"' )
+    if (*string == '\"')
     {
         // Search for other quote
         string++;
         c = string;
-        while( *string != L'>' && *string != L'\"' && *string != L'\0' )
+        while (string < end && *string != '>' && *string != '\"')
             string++;
 
-        option = ST::string::from_wchar(c, string - c);
+        option = ST::string::from_utf8(c, string - c);
         
-        if( *string == L'\"' )
+        if (string < end && *string == '\"')
             string++;
 
         return true;
@@ -2196,10 +2195,10 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, ST::string& name,
 
     // Non-quoted token
     c = string;
-    while( *string != L' ' && *string != L'>' && *string != L'\0' )
+    while (string < end && *string != ' ' && *string != '>')
         string++;
 
-    option = ST::string::from_wchar(c, string - c);
+    option = ST::string::from_utf8(c, string - c);
     
     return true;
 }

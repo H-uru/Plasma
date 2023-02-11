@@ -531,8 +531,8 @@ class pfJournalBook : public hsKeyedObject
         void    IFreeSource();
 
         // Compile helpers
-        uint8_t   IGetTagType( const wchar_t *string );
-        bool    IGetNextOption( const wchar_t *&string, ST::string& name, ST::string& option );
+        uint8_t   IGetTagType( const char *string, const char *end );
+        bool    IGetNextOption( const char *&string, const char *end, ST::string& name, ST::string& option );
 
         plKey   IGetMipmapKey( const ST::string& name, const plLocation &loc );
 
