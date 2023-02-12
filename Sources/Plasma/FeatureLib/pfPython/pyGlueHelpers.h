@@ -444,13 +444,12 @@ static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 // Different basic return types
 #define PYTHON_RETURN_ERROR { return nullptr; }
 #define PYTHON_RETURN_NONE {Py_INCREF(Py_None); return Py_None;}
-#define PYTHON_RETURN_BOOL(testValue) \
-{ \
-    if (testValue) \
-        return PyLong_FromLong((long)1); \
-    else \
-        return PyLong_FromLong((long)0); \
-}
+#define PYTHON_RETURN_BOOL(testValue)                     \
+{                                                         \
+    PyObject* retVal = (testValue) ? Py_True : Py_False;  \
+    Py_INCREF(retVal);                                    \
+    return retVal;                                        \
+}                                                         //
 #define PYTHON_RETURN_NOT_IMPLEMENTED {Py_INCREF(Py_NotImplemented); return Py_NotImplemented;}
 
 // method table start
