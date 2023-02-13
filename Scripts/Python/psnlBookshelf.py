@@ -1205,6 +1205,11 @@ class psnlBookshelf(ptModifier):
             ageInfo = ptAgeInfoStruct()
             ageInfo.setAgeFilename(ageName)
             ageInfo.setAgeInstanceName(ageName)
+            link = self.GetOwnedAgeLink(ptAgeVault(), ageName)
+            if link is None:
+                link = self.IGetHoodChildLink(ageName)
+            if link is not None:
+                ageInfo = link.getAgeInfo().asAgeInfoStruct()
             ageInfo.setAgeInstanceGuid(hardcoded)
 
             ageLink = ptAgeLinkStruct()
