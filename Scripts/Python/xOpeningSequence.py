@@ -110,9 +110,6 @@ kFakeMovieSeconds = 10.0
 kSoundFadeInID = 99
 kSoundTickTime = 0.10
 
-kDelayStartMovie = 300
-kDelayStartMovieSeconds = 3.0
-
 kIntroPlayedChronicle = "IntroPlayed"
 
 # tag ids for dialog components
@@ -156,7 +153,7 @@ class xOpeningSequence(ptModifier):
         self.version = MaxVersionNumber
         PtDebugPrint("__xOpeningSequence: Max version %d - minor version %d" % (MaxVersionNumber,MinorVersionNumber))
 
-    def OnFirstUpdate(self):
+    def OnServerInitComplete(self):
         "First update, load our dialogs"
         global gCurrentTick
         global gIntroByTimer
@@ -337,7 +334,15 @@ class xOpeningSequence(ptModifier):
         elif id == -1:
             if event == kShowHide:
                 if control.isEnabled():
-                    PtAtTimeCallback(self.key, kDelayStartMovieSeconds, kDelayStartMovie)
+                    ageSDL = PtGetAgeSDL()
+                    if StartInCleft():
+                        gMovieFilePath = kAtrusIntroMovie
+                    elif ageSDL["psnlIntroMovie"]:
+                        gMovieFilePath = ageSDL["psnlIntroMovie"][0]
+                    else:
+                        gMovieFilePath = kReltoIntroMovie
+                    gIntroMovie = ptMoviePlayer(gMovieFilePath, self.key)
+                    gIntroMovie.playPaused()
                     if gIntroByTimer:
                         PtAtTimeCallback(self.key, kIntroPauseSeconds, kIntroPauseID)
 
@@ -360,27 +365,12 @@ class xOpeningSequence(ptModifier):
             self.IFinishStartGame()
         elif id == kSoundFadeInID:
             self.IUpdateSounds()
-        elif id == kDelayStartMovie:
-            self.DelayStartMovie()
 
     def OnMovieEvent(self,movieName,reason):
         PtDebugPrint("xOpeningSequence: movie done ",level=kDebugDumpLevel)
         if gIntroMovie:
             self.IStartOrientation()
 
-    def DelayStartMovie(self):
-        global gIntroMovie
-        global gMovieFilePath
-        ageSDL = PtGetAgeSDL()
-        if StartInCleft():
-            gMovieFilePath = kAtrusIntroMovie
-        elif ageSDL["psnlIntroMovie"]:
-            gMovieFilePath = ageSDL["psnlIntroMovie"][0]
-        else:
-            gMovieFilePath = kReltoIntroMovie
-        gIntroMovie = ptMoviePlayer(gMovieFilePath, self.key)
-        gIntroMovie.playPaused()
-        self.IStartMovie()
 
     def IStartMovie(self):
         global gIntroMovie
