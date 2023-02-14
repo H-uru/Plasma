@@ -116,8 +116,8 @@ void plGrabCubeMap::ISetupRenderRequests(plPipeline* pipe, const hsPoint3& cente
     const char* suff[6] = {
         "LF",
         "RT",
-        "BK",
         "FR",
+        "BK",
         "UP",
         "DN" };
 
