@@ -184,7 +184,12 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGroupOwner)
         delete netOwnMsg;
     */
 
+    // Simplified object ownership model means that one client owns everything.
+    hsLogEntry(nc->DebugMsg("<RCV> plNetMsgGroupOwner, isOwner={}", m->IsOwner()));
     nc->SetObjectOwner(m->IsOwner());
+
+    plNetOwnershipMsg* netOwnMsg = new plNetOwnershipMsg();
+    netOwnMsg->Send();
 
     return hsOK;
 }
