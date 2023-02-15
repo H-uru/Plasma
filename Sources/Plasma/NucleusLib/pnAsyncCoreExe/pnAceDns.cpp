@@ -117,7 +117,8 @@ static void AddressResolved(const asio::error_code&            err,
     PerfSubCounter(kAsyncPerfNameLookupAttemptsCurr, 1);
 }
 
-void AsyncAddressLookupName(FAsyncLookupProc  lookupProc,
+void AsyncAddressLookupName(FAsyncLookupProc lookupProc,
+
                             const ST::string& name, unsigned port, void* param)
 {
     ASSERT(lookupProc);
