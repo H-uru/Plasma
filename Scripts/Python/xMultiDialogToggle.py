@@ -92,22 +92,16 @@ class xMultiDialogToggle(ptModifier,):
         self.VignetteList = []
         print ('__init__%s v. %d.%d' % (self.me, self.version, minor))
 
-
-
     def IGetAgeFilename(self):
         ageInfo = PtGetAgeInfo()
-        if (type(ageInfo) != type(None)):
+        if ageInfo is not None:
             return ageInfo.getAgeFilename()
         else:
             return 'GUI'
 
-
-
     def OnFirstUpdate(self):
         try:
-            self.VignetteList += Vignettes.value.split(',')
-            for i in range(len(self.VignetteList)):
-                self.VignetteList[i] = self.VignetteList[i].strip()
+            self.VignetteList = [i.strip() for i in Vignettes.value.split(',')]
 
             PtDebugPrint(('%s: Dialog list = %s' % (self.me,
              self.VignetteList)))
@@ -117,23 +111,15 @@ class xMultiDialogToggle(ptModifier,):
         for i in range(len(self.VignetteList)):
             PtLoadDialog(self.VignetteList[i], self.key, self.IGetAgeFilename())
 
-
-
-
     def __del__(self):
         for i in range(len(self.VignetteList)):
             PtUnloadDialog(self.VignetteList[i])
-
-
-
 
     def OnNotify(self, state, id, events):
         global Vignette
         if (state and ((id == Activate.id) and PtWasLocallyNotified(self.key))):
             Vignette = self.VignetteList[0]
             self.IStartDialog(1)
-
-
 
     def OnGUINotify(self, id, control, event):
         global Vignette
@@ -154,15 +140,11 @@ class xMultiDialogToggle(ptModifier,):
         elif (event == kExitMode):
             self.IQuitDialog(1)
 
-
-
     def OnControlKeyEvent(self, controlKey, activeFlag):
         PtDebugPrint(('Got controlKey event %d and its activeFlag is %d' % (controlKey,
          activeFlag)), level=kDebugDumpLevel)
         if (controlKey == PlasmaControlKeys.kKeyExitMode):
             self.IQuitDialog(1)
-
-
 
     def IStartDialog(self, init = 1):
         PtLoadDialog(Vignette, self.key, self.IGetAgeFilename())
@@ -171,17 +153,15 @@ class xMultiDialogToggle(ptModifier,):
             PtDebugPrint(('%s: Dialog %s goes up' % (self.me,
              Vignette)))
         if init:
-            PtGetControlEvents(true, self.key)
+            PtGetControlEvents(True, self.key)
             if SingleUser.value:
                 Activate.disable()
 
-
-
     def IQuitDialog(self, exit = 1):
-        if ((type(Vignette) != type(None)) and (Vignette != '')):
+        if Vignette:
             PtHideDialog(Vignette)
             PtDebugPrint(('%s: Dialog %s goes down' % (self.me,
              Vignette)))
         if exit:
-            PtGetControlEvents(false, self.key)
+            PtGetControlEvents(False, self.key)
             Activate.enable()
