@@ -57,6 +57,8 @@ from xPsnlVaultSDL import *
 clickable       = ptAttribActivator(1, "clickable")
 respRing        = ptAttribResponder(2, "resp: Ring")
 
+rgnCaveJump     = ptAttribActivator(3, "Cave jump region")
+
 # define global variables
 
 #====================================
@@ -79,6 +81,9 @@ class bhroBahroMink(ptResponder):
         gAgeStartedIn = PtGetAgeName()
         PtSendKIMessage(kDisableYeeshaBook,0)
 
+    def BeginAgeUnLoad(self, avatar):
+        ptCamera().enableFirstPersonOverride()
+
     ###########################
     def OnServerInitComplete(self):
         psnlSDL = xPsnlVaultSDL()
@@ -100,3 +105,11 @@ class bhroBahroMink(ptResponder):
             if not sdlVal:
                 PtDebugPrint("bhroBahroMink.OnNotify:  Turning wedge SDL of psnlBahroWedge11 to On")
                 psnlSDL["psnlBahroWedge11"] = (1,)
+
+        # notify from cave jump force 3rd person region
+        elif id == rgnCaveJump.id:
+            cam = ptCamera()
+            cam.undoFirstPerson()
+            cam.disableFirstPersonOverride()
+            PtDebugPrint("undid first person and disabled override")
+

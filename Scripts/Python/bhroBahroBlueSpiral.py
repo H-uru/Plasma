@@ -60,6 +60,8 @@ clkBSDelin              = ptAttribActivator(2, "clk: Delin Blue Spiral")
 respWedges              = ptAttribResponder(3, "resp: Ground Wedges", ['Delin', 'Tsogal'])
 respRings               = ptAttribResponder(4, "resp: Floating Rings", ['Delin', 'Tsogal'])
 
+rgnCaveJump             = ptAttribActivator(5, "Cave jump region")
+
 # define global variables
 
 #====================================
@@ -81,6 +83,9 @@ class bhroBahroBlueSpiral(ptResponder):
 
         gAgeStartedIn = PtGetAgeName()
         PtSendKIMessage(kDisableYeeshaBook,0)
+
+    def BeginAgeUnLoad(self, avatar):
+        ptCamera().enableFirstPersonOverride()
 
     ###########################
     def OnServerInitComplete(self):
@@ -120,4 +125,11 @@ class bhroBahroBlueSpiral(ptResponder):
             if not sdlVal:
                 PtDebugPrint("bhroBahroBlueSpiral.OnNotify:  Tturning wedge SDL of psnlBahroWedge05 to On")
                 psnlSDL["psnlBahroWedge05"] = (1,)
+
+        # notify from cave jump force 3rd person region
+        elif id == rgnCaveJump.id:
+            cam = ptCamera()
+            cam.undoFirstPerson()
+            cam.disableFirstPersonOverride()
+            PtDebugPrint("undid first person and disabled override")
 
