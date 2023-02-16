@@ -630,8 +630,7 @@ static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
             {
                 // Use simple fan triangulation because this is known to be a convex polygon
                 // https://gameworksdocs.nvidia.com/PhysX/4.1/documentation/physxguide/Manual/Geometry.html#id2
-                for (physx::PxU16 j = 2; j < polygon.mNbVerts; j++)
-                {
+                for (physx::PxU16 j = 2; j < polygon.mNbVerts; j++) {
                     tris.push_back(*indices);
                     tris.push_back(*(indices + j));
                     tris.push_back(*(indices + j - 1));
