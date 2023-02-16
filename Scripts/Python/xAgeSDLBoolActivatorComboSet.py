@@ -51,7 +51,7 @@ combination = ptAttribString(4, "Combination")
 resetOnEmpty = ptAttribBoolean(5, "Reset when the Age shuts down", default=False)
 disableOnSolve = ptAttribBoolean(6, "Disable activators on solve", default=True)
 actButtons = ptAttribActivatorList(7, "Act: Buttons")
-respButtonPush = ptAttribResponder(8, "Resp: Button Push")
+respButtonPush = ptAttribResponderList(8, "Resp: Button Pushes")
 allowSlidingSolution = ptAttribBoolean(9, "Allow solving by sliding solution rather than needing feedback on failure", default=False)
 
 class xAgeSDLBoolActivatorComboSet(ptResponder):
