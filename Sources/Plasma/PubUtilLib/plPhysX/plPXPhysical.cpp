@@ -637,7 +637,7 @@ static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
                     tris.push_back(*(indices + j - 1));
                 }
 
-                hsAssert(tris.size() < std::numeric_limits<int16_t>::max(), "Too many triangle indices");
+                hsAssert(tris.size() < std::numeric_limits<uint16_t>::max(), "Too many triangle indices");
             }
             break;
         }
