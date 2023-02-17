@@ -44,14 +44,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct AsyncTimer
 {
-    asio::steady_timer  fTimer;
-    FAsyncTimerProc     fTimerProc;
-    FAsyncTimerProc     fDestroyProc;
-    void*               fParam;
+    asio::steady_timer fTimer;
+    FAsyncTimerProc    fTimerProc;
+    FAsyncTimerProc    fDestroyProc;
+    void*              fParam;
 
     AsyncTimer(asio::io_context& context, FAsyncTimerProc&& timerProc, void* param)
-        : fTimer(context), fTimerProc(std::move(timerProc)), fParam(param)
-    { }
+        : fTimer(context),
+          fTimerProc(std::move(timerProc)),
+          fParam(param)
+    {
+    }
 
     void Start(unsigned callbackMs);
 };
@@ -60,27 +63,19 @@ static std::recursive_mutex s_timerCrit;
 
 struct AsyncTimerManager
 {
-    asio::io_context fContext;
+    asio::io_context                                           fContext;
     asio::executor_work_guard<asio::io_context::executor_type> fWorkGuard;
-    std::list<AsyncTimer> fTimers;
-    std::thread fTimerThread;
+    std::list<AsyncTimer>                                      fTimers;
+    AsyncThreadRef                                             fTimerThread;
 
     AsyncTimerManager() : fWorkGuard(fContext.get_executor())
     {
-        fTimerThread = std::thread([this] {
-#ifdef USE_VLD
-            VLDEnable();
-#endif
-            PerfAddCounter(kAsyncPerfThreadsTotal, 1);
-            PerfAddCounter(kAsyncPerfThreadsCurr, 1);
-
+        fTimerThread = AsyncThreadCreate([this] {
             fContext.run();
-
-            PerfSubCounter(kAsyncPerfThreadsCurr, 1);
         });
     }
 
-    AsyncTimer* AddTimer(FAsyncTimerProc &&timerProc, void* param)
+    AsyncTimer* AddTimer(FAsyncTimerProc&& timerProc, void* param)
     {
         return &fTimers.emplace_back(fContext, std::move(timerProc), param);
     }
@@ -106,14 +101,10 @@ struct AsyncTimerManager
     {
         fWorkGuard.reset();
         AsyncThreadTimedJoin(fTimerThread, exitThreadWaitMs);
-        fTimerThread = {};
 
-        {
-            // Ensure the event loop exits without processing any more tasks,
-            // in case the thread takes more than exitThreadWaitMs to finish
-            hsLockGuard(s_timerCrit);
-            fContext.stop();
-        }
+        // Ensure the event loop exits without processing any more tasks,
+        // in case the thread takes more than exitThreadWaitMs to finish
+        fContext.stop();
 
         // Cancel all remaining timers
         for (AsyncTimer& timer : fTimers) {
@@ -132,7 +123,7 @@ void AsyncTimer::Start(unsigned callbackMs)
         return;
 
     fTimer.expires_after(std::chrono::milliseconds(callbackMs));
-    fTimer.async_wait([this](const asio::error_code &err) {
+    fTimer.async_wait([this](const asio::error_code& err) {
         if (err == asio::error::operation_aborted)
             return;
 

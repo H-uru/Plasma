@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTHREAD_H
 
+#include <mutex>
 #include <thread>
 
 #include "pnNetBase/pnNbError.h"
@@ -65,10 +66,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // for IoWaitId/TimerCreate/TimerUpdate
 constexpr unsigned kAsyncTimeInfinite = (unsigned) -1;
 
+struct AsyncThread;
+
+struct AsyncThreadRef {
+    std::shared_ptr<AsyncThread> impl;
+    std::thread&                 thread() const;
+    bool joinable() const;
+};
+
+
+// Threads are also allowed to set the workTimeMs field of their
+// structure to a nonzero value for "on", and IO_TIME_INFINITE for
+// "off" to avoid the overhead of calling these functions. Note
+// that this function may not be called for the main thread. I
+// suggest that application code not worry that timeMs might
+// "accidentally" equal the IO_TIME_INFINITE value, as it only
+// happens for one millisecond every 49 days.
+struct AsyncThread {
+    std::function<void()>                proc;
+    std::thread                          handle;
+    unsigned                             workTimeMs;
+    std::timed_mutex                     completion;
+};
+
+
 /*****************************************************************************
 *
 *   Thread functions
 *
 ***/
 
-void AsyncThreadTimedJoin(std::thread& thread, unsigned timeoutMs);
+AsyncThreadRef AsyncThreadCreate (
+    std::function<void()>    procs
+);
+
+void AsyncThreadTimedJoin(AsyncThreadRef& ref, unsigned timeoutMs);

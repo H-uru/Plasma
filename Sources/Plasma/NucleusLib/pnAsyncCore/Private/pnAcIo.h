@@ -62,11 +62,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-typedef struct AsyncIdStruct *         AsyncId;
 typedef struct AsyncSocketStruct *     AsyncSocket;
 typedef struct AsyncCancelIdStruct *   AsyncCancelId;
 
-const unsigned kAsyncSocketBufferSize   = 1460;
+constexpr unsigned kAsyncSocketBufferSize   = 1460;
 
 /****************************************************************************
 *
@@ -102,9 +101,8 @@ enum EAsyncNotifySocket {
 
 struct AsyncNotifySocket {
     void *          param;
-    AsyncId         asyncId;
 
-    AsyncNotifySocket() : param(), asyncId() { }
+    AsyncNotifySocket() : param() { }
 };
 
 struct AsyncNotifySocketConnect : AsyncNotifySocket {
@@ -132,20 +130,25 @@ struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
 
 struct AsyncNotifySocketRead : AsyncNotifySocket {
     uint8_t *       buffer;
-    unsigned        bytes;
-    unsigned        bytesProcessed;
+    size_t          bytes;
+    size_t          bytesProcessed;
 
     AsyncNotifySocketRead() : buffer(), bytes(), bytesProcessed() { }
 };
 
-typedef AsyncNotifySocketRead AsyncNotifySocketWrite;
 
-typedef bool (* FAsyncNotifySocketProc) (    // return false to disconnect
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-    void **             userState
-);
+struct AsyncNotifySocketWrite : AsyncNotifySocketRead {
+    size_t          bytesCommitted;
+    
+    AsyncNotifySocketWrite() : AsyncNotifySocketRead(), bytesCommitted() { }
+};
+
+/*! \brief return false to disconnect
+    \param sock
+    \param code
+    \param notify
+*/
+using FAsyncNotifySocketProc = std::function<bool(AsyncSocket, EAsyncNotifySocket, AsyncNotifySocket*, void**)> ;
 
 
 /****************************************************************************
@@ -219,7 +222,7 @@ void AsyncSocketDelete (AsyncSocket sock);
 bool AsyncSocketSend (
     AsyncSocket             sock,
     const void *            data,
-    unsigned                bytes
+    size_t                  bytes
 );
 
 void AsyncSocketEnableNagling (

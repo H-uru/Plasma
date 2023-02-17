@@ -146,6 +146,14 @@ public:
     uint32_t GetHost() const { return fHost; }
 
     /**
+     * Gets the IPv4 address of the host as a byte array in network byte
+     * order (big endian).
+     *
+     * @return The IPv4 host address
+     */
+    std::array<uint8_t, 4> GetHostBytes() const;
+
+    /**
      * Sets the IPv4 address of the host from a DNS name.
      *
      * @param hostname The DNS name of the host.
