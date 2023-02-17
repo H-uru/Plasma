@@ -434,7 +434,7 @@ void plWalkingStrategy::Apply(float delSecs)
 
     // Now Cyan's good old "slide along all the contacts" code.
     hsVector3 offset(0.f, 0.f, 0.f);
-    for (const auto contact : fContacts) {
+    for (const auto& contact : fContacts) {
         if (!contact.GetPhysical() || contact.GetPhysical()->GetGroup() == plSimDefs::kGroupDynamic)
             continue;
         if (contact.Normal.fZ >= .5f)
