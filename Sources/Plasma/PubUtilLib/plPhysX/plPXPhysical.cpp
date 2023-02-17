@@ -610,6 +610,7 @@ static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
         physx::PxHullPolygon polygon;
         if (!geometry.convexMesh->getPolygonData(i, polygon))
             continue;
+
         const physx::PxU8* indices = geometry.convexMesh->getIndexBuffer();
         indices += polygon.mIndexBase;
 
@@ -627,28 +628,15 @@ static plDrawableSpans* IGenerateProxy(plDrawableSpans* drawable,
 
         default:
             {
-                // I suck at 3d math, so let's just draw a line from the center of the face to each vert,
-                // complete with either the next one or the first one. If you don't like it, write
-                // your own fucking ngon algorithm. As for me, this is what you get. Use the
-                // damn PhysX Visual Debugger if it really bothers you.
-                physx::PxVec3 center(physx::PxZero);
-                const physx::PxU8* ptr = indices;
-                const physx::PxU8* end = indices + (polygon.mNbVerts * sizeof(physx::PxU8));
-                do {
-                    center += geometry.convexMesh->getVertices()[*ptr++];
-                } while (ptr < end);
-                center /= polygon.mNbVerts;
+                // Use simple fan triangulation because this is known to be a convex polygon
+                // https://gameworksdocs.nvidia.com/PhysX/4.1/documentation/physxguide/Manual/Geometry.html#id2
+                for (physx::PxU16 j = 2; j < polygon.mNbVerts; j++) {
+                    tris.push_back(*indices);
+                    tris.push_back(*(indices + j));
+                    tris.push_back(*(indices + j - 1));
+                }
 
-                hsAssert(verts.size() < std::numeric_limits<uint16_t>::max(), "Too many verts");
-                uint16_t centerIdx = (uint16_t)verts.size();
-                verts.push_back(plPXConvert::Point(center));
-
-                ptr = indices;
-                do {
-                    tris.push_back(centerIdx);
-                    tris.push_back(*ptr++);
-                    tris.push_back(ptr < end ? *ptr : *indices);
-                } while (ptr < end);
+                hsAssert(tris.size() < std::numeric_limits<uint16_t>::max(), "Too many triangle indices");
             }
             break;
         }
