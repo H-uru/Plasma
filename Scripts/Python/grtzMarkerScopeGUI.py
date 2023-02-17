@@ -43,12 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 from Plasma import *
 from PlasmaConstants import *
+import PlasmaControlKeys
 from PlasmaTypes import *
 from PlasmaKITypes import *
 import time
 
 import grtzMarkerGames
-import PlasmaControlKeys
+import xMarkerGameUtils
 
 # define the attributes that will be entered in max
 MarkerGameDlg = ptAttribGUIDialog(1, "The MarkerGame GUI")
@@ -85,11 +86,8 @@ class grtzMarkerScopeGUI(ptModifier):
         self.version = 3
 
         self._lookingAtGUI = False
-        self._pendingScoreUpdate = None
 
     def __del__(self):
-        if self._pendingScoreUpdate is not None:
-            PtDebugPrint("grtzMarkerScopeGUI.__del__():\tShutting down with a pending score update :(")
         PtUnloadDialog("MarkerGameGUI")
 
     def OnBackdoorMsg(self, target, param):
@@ -99,11 +97,7 @@ class grtzMarkerScopeGUI(ptModifier):
                 mission = int(target[-2:])
             except:
                 return
-            score = self._scores[mission]
-            if isinstance(score, ptGameScore):
-                score.setPoints(int(param), self.key)
-            else:
-                PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tDon't have the GameScore yet!")
+            self._UpdateScore(mission, int(param))
 
         elif target == "cgztime":
             try:
@@ -111,9 +105,12 @@ class grtzMarkerScopeGUI(ptModifier):
             except:
                 PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tcgztime wants an integer")
             else:
-                time = PtGetServerTime() - time
+                time =  xMarkerGameUtils.GetCurrentTime() - time
                 PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tUpdating CGZ Start Time to {}".format(time))
-                PtUpdateCGZStartTime(time)
+                xMarkerGameUtils.SetCGZMTimes(
+                    xMarkerGameUtils.GetCurrentGZM(),
+                    xMarkerGameUtils.CGZMTimes(start_time=time)
+                )
 
         elif target == "gps":
             value = True if param in {"enable", "1", "true", "on"} else False
@@ -129,8 +126,8 @@ class grtzMarkerScopeGUI(ptModifier):
                     PtDebugPrint("grtzMarkerScopeGUI._CheckForGPSCalibration():\tMGS #{} has no score. No GPS.".format(i), level=kWarningLevel)
                     return
             if score.getPoints() == 0:
-                    PtDebugPrint("grtzMarkerScopeGUI._CheckForGPSCalibration():\tMGS #{} has a score of zero. No GPS.".format(i), level=kWarningLevel)
-                    return
+                PtDebugPrint("grtzMarkerScopeGUI._CheckForGPSCalibration():\tMGS #{} has a score of zero. No GPS.".format(i), level=kWarningLevel)
+                return
         self._GrantGPS()
 
     def OnControlKeyEvent(self, controlKey, activeFlag):
@@ -148,31 +145,36 @@ class grtzMarkerScopeGUI(ptModifier):
             except:
                 PtDebugPrint("grtzMarkerScopeGUI.OnGameScoreMsg():\tTITS! '{}' didn't match.".format(score.getName()))
                 return
+
+            legacyScore = xMarkerGameUtils.GetLegacyCGZMScore(mission)
             try:
-                score = msg.getScores()[0]
+                scores = msg.getScores()
             except:
                 self._scores[mission] = 0
+                # If we have a score in the legacy chronicle, then force the ScoreSrv value
+                # to what the chronicle says. That way, we can be consistent and do leaderboards.
+                if legacyScore > 0:
+                    self._UpdateScore(mission, legacyScore)
             else:
+                # Pick the lowest score in the list to use.
+                scores = sorted(scores, key=lambda x: x.getPoints())
+                score = scores[0]
                 self._scores[mission] = score
-                if self._lookingAtGUI:
+
+                # All the other scores are garbage.
+                for i in scores[1:]:
+                    i.remove()
+
+                # The legacy chronicle seems to have a better score value than ScoreSrv, so adopt
+                # it per the comment above. If this happens, don't update the GUI with the stale
+                # value from ScoreSrv - wait for the authorative update.
+                if legacyScore > 0 and legacyScore < score.getPoints():
+                    self._UpdateScore(mission, legacyScore)
+                elif self._lookingAtGUI:
                     self._UpdateGUI(mission)
 
-            # Process pending score op
-            if self._pendingScoreUpdate is not None:
-                wantMission, wantScore = self._pendingScoreUpdate
-                if mission == wantMission:
-                    if isinstance(self._scores[mission], ptGameScore):
-                        if self._scores[mission].getScore() > wantScore:
-                            self._scores[mission].setScore(wantScore, self.key)
-                    else:
-                        ptGameScore.createPlayerScore(msg.getName(), kScoreType, wantScore, self.key)
-                    self._pendingScoreUpdate = None
-
         elif isinstance(msg, ptGameScoreUpdateMsg):
-            try:
-                score = msg.getScore()
-            except:
-                return
+            score = msg.getScore()
             try:
                 mission = int(score.getName()[-2:])
             except:
@@ -180,7 +182,7 @@ class grtzMarkerScopeGUI(ptModifier):
                 return
 
             points = score.getPoints()
-            self._scores[mission] = points
+            self._scores[mission] = score
             PtDebugPrint("grtzMarkerScopeGUI.OnGameScoreMsg():\tUpdated CGZ #{} = {}".format(mission, points))
 
             if self._lookingAtGUI:
@@ -220,7 +222,7 @@ class grtzMarkerScopeGUI(ptModifier):
                 mission = gameSelector.getValue()
                 if mission == -1:
                     self._StopCGZM(win=False)
-                elif mission != PtGetCGZM():
+                elif mission != xMarkerGameUtils.GetCurrentCGZM():
                     self._PlayCGZM(mission)
 
     def OnNotify(self, state, id, events):
@@ -247,7 +249,7 @@ class grtzMarkerScopeGUI(ptModifier):
     def OnTimer(self, id):
         if id == kTimerUpdateActiveCB:
             if self._lookingAtGUI:
-                mission = PtGetCGZM()
+                mission = xMarkerGameUtils.GetCurrentCGZM()
                 if mission != -1:
                     self._UpdateGUI(mission)
                     PtAtTimeCallback(self.key, kTimerUpdateSecs, kTimerUpdateActiveCB)
@@ -284,10 +286,10 @@ class grtzMarkerScopeGUI(ptModifier):
             gameSelector.disable()
         else:
             self._UpdateGUI()
-            mission = PtGetCGZM()
+            mission = xMarkerGameUtils.GetCurrentCGZM()
             gameSelector.setValue(mission)
             if mission != -1:
-                if PtIsCGZMComplete():
+                if xMarkerGameUtils.IsCGZMComplete():
                     PtDebugPrint("grtzMarkerScopeGUI._ShowGUI():\tCGZM #{}: complete!".format(mission), level=kWarningLevel)
                     self._StopCGZM(win=True)
                 else:
@@ -295,23 +297,20 @@ class grtzMarkerScopeGUI(ptModifier):
                     PtAtTimeCallback(self.key, kTimerUpdateSecs, kTimerUpdateActiveCB)
 
     def _StopCGZM(self, win):
-        mission = PtGetCGZM()
+        mission = xMarkerGameUtils.GetCurrentCGZM()
         if win:
-            time = PtGetTimePlayingCGZ()
+            score = self._scores[mission]
+            timeRange = xMarkerGameUtils.GetCGZMTimes(mission)
+            currentTime = xMarkerGameUtils.GetCurrentTime()
+            time = currentTime - timeRange.start_time
+            isBestTime = time < timeRange.best_time
+            timeRange.best_time = min(timeRange.best_time, time) if timeRange.best_time else time
+            PtDebugPrint(f"grtzMarkerScopeGUI._StopCGZM():\t{timeRange=!s}, {currentTime=}, {score.getPoints()=} {time=}", level=kWarningLevel)
 
             # Update the score. Be aware that we may not actually have the GameScore at all...
-            score = self._scores[mission]
-            if isinstance(score, ptGameScore):
-                bestTime = score.getPoints() > time
-                if bestTime:
-                    score.setPoints(time, self.key)
-                self._UpdateGUI(mission, quitting=False, score=time, star=bestTime)
-            elif score == 0:
-                ptGameScore.createPlayerScore(kGameScore.format(mission), kScoreType, time, self.key)
-            else:
-                self._pendingScoreUpdate = (mission, time)
-        else:
-            self._UpdateGUI(mission, quitting=True, star=False)
+            self._UpdateScore(mission, timeRange.best_time)
+            xMarkerGameUtils.SetCGZMTimes(mission, timeRange, legacyOnly=True)
+            self._UpdateGUI(mission, quitting=False, score=time, star=isBestTime)
 
         # Tear down game brain
         PtSendKIMessageInt(kMGStopCGZGame, -1)
@@ -334,7 +333,11 @@ class grtzMarkerScopeGUI(ptModifier):
             if quitting:
                 span = prev
             else:
-                span = PtGetTimePlayingCGZ() if PtGetCGZM() == mission else prev
+                if xMarkerGameUtils.GetCurrentCGZM() == mission:
+                    timeRange = xMarkerGameUtils.GetCGZMTimes(mission)
+                    span = xMarkerGameUtils.GetCurrentTime() - timeRange.start_time
+                else:
+                    span = prev
                 if star is None and span < prev:
                     star = True
         else:
@@ -366,3 +369,8 @@ class grtzMarkerScopeGUI(ptModifier):
         timeTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID + kMarkerGameNameFieldOffset))
         timeTB.setString(msg)
 
+    def _UpdateScore(self, mission: int, points: int) -> None:
+        if isinstance(self._scores[mission], ptGameScore):
+            self._scores[mission].remove()
+            self._scores[mission] = -1
+        ptGameScore.createPlayerScore(kGameScore.format(mission), kScoreType, points, self.key)

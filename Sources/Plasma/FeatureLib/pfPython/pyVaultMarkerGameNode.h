@@ -73,7 +73,9 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
+    ST::string      GetGameGuid() const;
     ST::string      GetGameName () const;
+    void            SetGameGuid(const ST::string& guid);
     void            SetGameName (const ST::string& name);
 
     ST::string GetReward() const;

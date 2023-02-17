@@ -41,59 +41,101 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-import abc
+from __future__ import annotations
 
 from Plasma import *
+
+import abc
+from typing import NamedTuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .xMarkerMgr import MarkerGameManager
+
+
+class xMarker(NamedTuple):
+    idx: int
+    age: str
+    pos: ptVector3
+    desc: str
+
 
 class MarkerGameBrain(abc.ABC):
     """ABC for marker games"""
 
     @abc.abstractmethod
-    def CaptureMarker(self, idx):
-        pass
+    def CaptureMarker(self, idx: int):
+        ...
 
     @abc.abstractmethod
-    def Cleanup(self):
-        pass
+    def Cleanup(self) -> int:
+        ...
+
+    @abc.abstractmethod
+    def FlushMarkers(self) -> None:
+        ...
 
     @abc.abstractproperty
-    def game_id(self):
-        pass
+    def game_id(self) -> str:
+        ...
 
-    @abc.abstractmethod
-    def IsMarkerCaptured(self, idx):
-        """Returns if the marker has been captured"""
+    @abc.abstractproperty
+    def game_name(self) -> str:
+        ...
+
+    @abc.abstractproperty
+    def game_type(self) -> int:
+        ...
+
+    @abc.abstractproperty
+    def is_loaded(self) -> bool:
         return False
 
+    @abc.abstractmethod
+    def IsMarkerCaptured(self, idx: int) -> bool:
+        """Returns if the marker has been captured"""
+        ...
+
+    @abc.abstractclassmethod
+    def LoadFromVault(cls, mgr: MarkerGameManager) -> MarkerGameBrain:
+        ...
+
     @abc.abstractproperty
-    def marker_colors(self):
+    def marker_colors(self) -> Tuple[str, str]:
         """Returns a tuple of colors to use in the KI (captured, need_capture)"""
         pass
 
     @abc.abstractproperty
-    def marker_total(self):
+    def marker_total(self) -> int:
         """Returns the total number of markers"""
-        return 0
+        ...
 
     @abc.abstractproperty
-    def markers(self):
+    def markers(self) -> Iterator[xMarker]:
         """Returns all markers as (id, age, position, description)"""
-        pass
+        ...
 
     @abc.abstractproperty
-    def markers_captured(self):
+    def markers_captured(self) -> Iterator[xMarker]:
         """Returns all markers captured"""
-        pass
+        ...
 
     @abc.abstractproperty
-    def num_markers_captured(self):
+    def markers_visible(self) -> bool:
+        """Returns whether or not game markers are being shown."""
+        ...
+
+    @abc.abstractproperty
+    def num_markers_captured(self) -> int:
         """Returns the total number of markers captured"""
-        return 0
+        ...
+
+    def Play(self) -> None:
+        ...
 
     @abc.abstractproperty
-    def playing(self):
-        return False
+    def playing(self) -> bool:
+        ...
 
     @abc.abstractmethod
-    def RefreshMarkers(self):
-        pass
+    def RefreshMarkers(self) -> None:
+        ...
