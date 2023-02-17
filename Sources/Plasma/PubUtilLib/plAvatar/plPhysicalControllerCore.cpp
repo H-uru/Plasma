@@ -439,6 +439,8 @@ void plWalkingStrategy::Apply(float delSecs)
             continue;
         if (contact.Normal.fZ >= .5f)
             continue;
+        if (contact.Displacement < .1f)
+            continue;
         offset += contact.Normal;
         hsVector3 velNorm = velocity;
 
