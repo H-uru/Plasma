@@ -1664,38 +1664,6 @@ void    pfJournalBook::ForceCacheCalculations()
     IRecalcPageStarts( -1 );
 }
 
-// Tiny helper to convert hex values the *right* way
-// TODO Is it safe to replace this with str.to_uint(16)?
-static uint32_t   IConvertHex( ST::string& str )
-{
-    uint32_t value = 0;
-    for(const char *s = str.begin(); s < str.end(); s++)
-    {
-        value <<= 4;
-        switch( *s )
-        {
-            case '0':          value |= 0x0;   break;
-            case '1':          value |= 0x1;   break;
-            case '2':          value |= 0x2;   break;
-            case '3':          value |= 0x3;   break;
-            case '4':          value |= 0x4;   break;
-            case '5':          value |= 0x5;   break;
-            case '6':          value |= 0x6;   break;
-            case '7':          value |= 0x7;   break;
-            case '8':          value |= 0x8;   break;
-            case '9':          value |= 0x9;   break;
-            case 'a': case 'A':   value |= 0xa;   break;
-            case 'b': case 'B':   value |= 0xb;   break;
-            case 'c': case 'C':   value |= 0xc;   break;
-            case 'd': case 'D':   value |= 0xd;   break;
-            case 'e': case 'E':   value |= 0xe;   break;
-            case 'f': case 'F':   value |= 0xf;   break;
-        }
-    }
-
-    return value;
-}
-
 //// ICompileSource //////////////////////////////////////////////////////////
 // Compiles the given string of esHTML source into our compiled chunk list
 
@@ -1807,13 +1775,13 @@ bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation
                                         chunk->fFlags |= pfEsHTMLChunk::kChecked;
                                 }
                                 comma = comma.before_first(',');
-                                uint32_t c = IConvertHex(comma);
+                                uint32_t c = comma.to_uint(16);
                                 if (comma.size() <= 6)
                                     c |= 0xff000000;    // Add in full alpha if none specified
                                 chunk->fOffColor.FromARGB32(c);
                             }
                             option = option.before_first(',');
-                            uint32_t c = IConvertHex(option);
+                            uint32_t c = option.to_uint(16);
                             if (option.size() <= 6)
                                 c |= 0xff000000;    // Add in full alpha if none specified
                             chunk->fOnColor.FromARGB32(c);
