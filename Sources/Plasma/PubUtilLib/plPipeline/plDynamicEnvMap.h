@@ -218,6 +218,7 @@ public:
     void        SetRefreshRate(float secs);
     void        AddVisRegion(plVisRegion* reg);
     void        SetVisRegionName(ST::string name) override { fVisRegionNames.emplace_back(std::move(name)); }
+    bool        IsReflection() const { return fCamera == nullptr; }
 
     static bool     GetEnabled() { return (fFlags & kReflectionEnabled) != 0; }
     static void     SetEnabled(bool enable);

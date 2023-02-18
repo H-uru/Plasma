@@ -3472,7 +3472,9 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
     plDynamicCamMap* camMap = plDynamicCamMap::ConvertNoRef(owner);
     if (camMap)
     {
-        if ((plQuality::GetCapability() > plQuality::kPS_2) && fSettings.fD3DCaps & kCapsNpotTextures)
+        bool havePS3 = plQuality::GetCapability() > plQuality::kPS_2;
+        bool haveNpot = fSettings.fD3DCaps & kCapsNpotTextures;
+        if (camMap->IsReflection() && havePS3 && haveNpot)
             camMap->ResizeViewport(IGetViewTransform());
     }
 
