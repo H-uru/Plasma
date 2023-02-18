@@ -340,7 +340,7 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
             {
                 if (key == KEY_C) 
                 {
-                    plClipboard::GetInstance().SetClipboardText(fBuffer.c_str());
+                    plClipboard::GetInstance().SetClipboardText(ST::string::from_wchar(fBuffer.c_str(), ST_AUTO_SIZE));
                 }
                 else if (key == KEY_V)
                 {
@@ -401,7 +401,7 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
 
 void    pfGUIEditBoxMod::ClearBuffer()
 {
-    fBuffer.allocate(fBuffer.size(), 0);
+    memset(fBuffer.data(), 0, fBuffer.size());
     fCursorPos = 0;
     fScrollPos = 0;
     IUpdate();
