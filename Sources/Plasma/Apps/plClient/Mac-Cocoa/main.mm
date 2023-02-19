@@ -502,7 +502,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 
 - (void)updateWindowTitle
 {
-    NSString *productTitle = [NSString stringWithCString:plProduct::LongName().c_str() encoding:NSUTF8StringEncoding];
+    NSString *productTitle = [NSString stringWithSTString:plProduct::LongName()];
     id<MTLDevice> device = ((CAMetalLayer *) self.window.contentView.layer).device;
 #ifdef HS_DEBUGGING
     [self.window setTitle:[NSString stringWithFormat:@"%@ - %@, %@",
