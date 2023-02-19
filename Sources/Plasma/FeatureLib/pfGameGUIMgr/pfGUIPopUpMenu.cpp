@@ -655,13 +655,6 @@ void    pfGUIPopUpMenu::ClearItems()
 //// AddItem /////////////////////////////////////////////////////////////////
 //  Append a new item to the list of things to build the menu from 
 
-void    pfGUIPopUpMenu::AddItem( const char *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu )
-{
-    wchar_t *wName = hsStringToWString(name);
-    AddItem(wName,handler,subMenu);
-    delete [] wName;
-}
-
 void    pfGUIPopUpMenu::AddItem( const wchar_t *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu )
 {
     pfMenuItem  &newItem = fMenuItems.emplace_back();

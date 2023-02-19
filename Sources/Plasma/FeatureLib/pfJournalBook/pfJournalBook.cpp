@@ -104,7 +104,7 @@ class pfEsHTMLChunk
 {
     public:
 
-        std::wstring fText; // Paragraph text, or face name
+        ST::string fText; // Paragraph text, or face name
         plKey   fImageKey;  // Key of image
         uint8_t   fFontSize;
         uint32_t  fFlags;
@@ -173,8 +173,8 @@ class pfEsHTMLChunk
         };
 
         // Paragraph constructor
-        pfEsHTMLChunk( const wchar_t *text )
-            : fType(kParagraph), fFlags(kLeft), fText(text ? text : L""),
+        pfEsHTMLChunk( ST::string text )
+            : fType(kParagraph), fFlags(kLeft), fText(std::move(text)),
               fFontSize(), fImageKey(), fEventID(), fSFXTime(),
               fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
               fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
@@ -189,7 +189,7 @@ class pfEsHTMLChunk
 
         // Image constructor (used for decals and movies too)
         pfEsHTMLChunk( plKey imageKey, uint32_t alignFlags )
-            : fType(kImage), fFlags(alignFlags), fText(L""),
+            : fType(kImage), fFlags(alignFlags), fText(),
               fFontSize(), fImageKey(std::move(imageKey)), fEventID(), fSFXTime(),
               fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
               fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
@@ -203,7 +203,7 @@ class pfEsHTMLChunk
 
         // Page break constructor
         pfEsHTMLChunk()
-            : fType(kPageBreak), fFlags(), fText(L""),
+            : fType(kPageBreak), fFlags(), fText(),
               fFontSize(), fImageKey(), fEventID(), fSFXTime(),
               fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
               fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
@@ -216,8 +216,8 @@ class pfEsHTMLChunk
         }
 
         // Font change constructor
-        pfEsHTMLChunk( const wchar_t *face, uint8_t size, uint32_t fontFlags )
-            : fType(kFontChange), fFlags(fontFlags), fText(face ? face : L""),
+        pfEsHTMLChunk( ST::string face, uint8_t size, uint32_t fontFlags )
+            : fType(kFontChange), fFlags(fontFlags), fText(std::move(face)),
               fFontSize(size), fImageKey(), fEventID(), fSFXTime(),
               fAbsoluteX(), fAbsoluteY(), fNoResizeImg(), fLineSpacing(),
               fCurrOpacity(1.f), fMinOpacity(), fMaxOpacity(1.f),
@@ -1132,43 +1132,7 @@ void    pfJournalBook::UnloadAllGUIs()
 // the name of the mipmap to use as the cover of the book. The callback
 // key is the keyed object to send event messages to (see <img> tag).
 
-pfJournalBook::pfJournalBook(const char *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= {}*/,
-                             const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = {} */)
-{
-    if (!guiName.empty())
-        fCurBookGUI = guiName;
-    else
-        fCurBookGUI = "BkBook";
-    if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
-    {
-        fBookGUIs[fCurBookGUI] = new pfBookData(fCurBookGUI);
-        hsgResMgr::ResMgr()->NewKey(fCurBookGUI,fBookGUIs[fCurBookGUI],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
-        fBookGUIs[fCurBookGUI]->LoadGUI();
-    }
-    
-    fCurrentPage = 0;
-    fLastPage = -1;
-    fCoverMipKey = std::move(coverImageKey);
-    fCoverFromHTML = false;
-    fCallbackKey = std::move(callbackKey);
-    fWidthScale = fHeightScale = 0.f;
-    fPageTMargin = fPageLMargin = fPageBMargin = fPageRMargin = 16;
-    fAllowTurning = true;
-    fAreWeShowing = false;
-    fCoverTint.Set( 0.f, 0.f, 0.f, 1.f );
-    fTintFirst = true;
-    fTintCover = false;
-    fAreEditing = false;
-    fWantEditing = false;
-    fDefLoc = hintLoc;
-
-    wchar_t *wESHTMLSource = hsStringToWString(esHTMLSource);
-    fUncompiledSource = wESHTMLSource;
-    ICompileSource( wESHTMLSource, hintLoc );
-    delete [] wESHTMLSource;
-}
-
-pfJournalBook::pfJournalBook(const wchar_t *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= {}*/,
+pfJournalBook::pfJournalBook(ST::string esHTMLSource, plKey coverImageKey, plKey callbackKey /*= {}*/,
                              const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = {} */)
 {
     if (!guiName.empty())
@@ -1197,9 +1161,9 @@ pfJournalBook::pfJournalBook(const wchar_t *esHTMLSource, plKey coverImageKey, p
     fAreEditing = false;
     fWantEditing = false;
     fDefLoc = hintLoc;
-    fUncompiledSource = esHTMLSource;
+    fUncompiledSource = std::move(esHTMLSource);
 
-    ICompileSource( esHTMLSource, hintLoc );
+    ICompileSource( fUncompiledSource, hintLoc );
 }
 
 pfJournalBook::~pfJournalBook()
@@ -1225,7 +1189,7 @@ void    pfJournalBook::SetGUI( const ST::string &guiName )
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
         fCurBookGUI = "BkBook"; // requested GUI isn't loaded, so use default GUI
     SetEditable(fWantEditing); // make sure that if we want editing, to set it
-    ICompileSource(fUncompiledSource.c_str(), fDefLoc); // recompile the source to be safe
+    ICompileSource(fUncompiledSource, fDefLoc); // recompile the source to be safe
 }
 
 //// Show ////////////////////////////////////////////////////////////////////
@@ -1700,49 +1664,17 @@ void    pfJournalBook::ForceCacheCalculations()
     IRecalcPageStarts( -1 );
 }
 
-// Tiny helper to convert hex values the *right* way
-static uint32_t   IConvertHex( const wchar_t *str )
-{
-    uint32_t value = 0;
-    while( *str != 0 )
-    {
-        value <<= 4;
-        switch( *str )
-        {
-            case L'0':          value |= 0x0;   break;
-            case L'1':          value |= 0x1;   break;
-            case L'2':          value |= 0x2;   break;
-            case L'3':          value |= 0x3;   break;
-            case L'4':          value |= 0x4;   break;
-            case L'5':          value |= 0x5;   break;
-            case L'6':          value |= 0x6;   break;
-            case L'7':          value |= 0x7;   break;
-            case L'8':          value |= 0x8;   break;
-            case L'9':          value |= 0x9;   break;
-            case L'a': case L'A':   value |= 0xa;   break;
-            case L'b': case L'B':   value |= 0xb;   break;
-            case L'c': case L'C':   value |= 0xc;   break;
-            case L'd': case L'D':   value |= 0xd;   break;
-            case L'e': case L'E':   value |= 0xe;   break;
-            case L'f': case L'F':   value |= 0xf;   break;
-        }
-        str++;
-    }
-
-    return value;
-}
-
 //// ICompileSource //////////////////////////////////////////////////////////
 // Compiles the given string of esHTML source into our compiled chunk list
 
-bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &hintLoc)
+bool    pfJournalBook::ICompileSource(const ST::string& source, const plLocation &hintLoc)
 {
     IFreeSource();
 
-
-    pfEsHTMLChunk *chunk, *lastParChunk = new pfEsHTMLChunk(nullptr);
-    const wchar_t *c, *start;
-    wchar_t name[128], option[256];
+    pfEsHTMLChunk *chunk, *lastParChunk = new pfEsHTMLChunk(ST::string());
+    const char *c, *start;
+    ST::string name;
+    ST::string option;
     float bookWidth=1.f, bookHeight=1.f;
     uint8_t movieIndex = 0; // the index of a movie in the source (used for id purposes)
 
@@ -1750,9 +1682,10 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
 
 
     // Parse our source!
-    for (start = c = source; *c != 0;) {
+    const char *end = source.end();
+    for (start = c = source.begin(); c < end;) {
         // Are we on a tag?
-        uint8_t type = IGetTagType( c );
+        uint8_t type = IGetTagType(c, end);
         if (type != pfEsHTMLChunk::kEmpty) {
             // First, end the current paragraph chunk, which is a special case 'cause its 
             // text is defined outside the tag
@@ -1761,8 +1694,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                 delete lastParChunk;
                 lastParChunk = nullptr;
             } else if (lastParChunk) {
-                size_t count = ((uintptr_t)c - (uintptr_t)start) / sizeof(wchar_t); // wchar_t is 2 bytes
-                lastParChunk->fText.assign(start, 0, count);
+                lastParChunk->fText = ST::string(start, c - start);
                 fHTMLSource.emplace_back(lastParChunk);
             }
 
@@ -1770,15 +1702,15 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
             switch (type) {
                 case pfEsHTMLChunk::kParagraph:
                     c += 2;
-                    chunk = new pfEsHTMLChunk(nullptr);
+                    chunk = new pfEsHTMLChunk(ST::string());
                     chunk->fFlags = IFindLastAlignment();
-                    while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp(name, L"align") == 0) {
-                            if (wcsicmp( option, L"left") == 0)
+                    while (IGetNextOption(c, end, name, option)) {
+                        if (name.compare_i("align") == 0) {
+                            if (option.compare_i("left") == 0)
                                 chunk->fFlags = pfEsHTMLChunk::kLeft;
-                            else if (wcsicmp(option, L"center") == 0)
+                            else if (option.compare_i("center") == 0)
                                 chunk->fFlags = pfEsHTMLChunk::kCenter;
-                            else if (wcsicmp(option, L"right") == 0)
+                            else if (option.compare_i("right") == 0)
                                 chunk->fFlags = pfEsHTMLChunk::kRight;
                         }
                     }
@@ -1789,71 +1721,68 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                 case pfEsHTMLChunk::kImage:
                     c += 4;
                     chunk = new pfEsHTMLChunk(nullptr , 0);
-                    while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp(name, L"align") == 0) {
+                    while (IGetNextOption(c, end, name, option)) {
+                        if (name.compare_i("align") == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
-                            if (wcsicmp(option, L"left" ) == 0)
+                            if (option.compare_i("left") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kLeft;
-                            else if (wcsicmp(option, L"center") == 0)
+                            else if (option.compare_i("center") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kCenter;
-                            else if (wcsicmp(option, L"right") == 0)
+                            else if (option.compare_i("right") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kRight;
-                        } else if (wcsicmp(name, L"src") == 0) {
+                        } else if (name.compare_i("src") == 0) {
                             // Name of mipmap source
                             chunk->fImageKey = IGetMipmapKey( option, hintLoc );
-                        } else if (wcsicmp(name, L"link") == 0) {
-                            chunk->fEventID = wcstoul(option, nullptr, 0);
+                        } else if (name.compare_i("link") == 0) {
+                            chunk->fEventID = option.to_uint();
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
-                        } else if (wcsicmp(name, L"blend") == 0) {
-                            if (wcsicmp(option, L"alpha") == 0)
+                        } else if (name.compare_i("blend") == 0) {
+                            if (option.compare_i("alpha") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kBlendAlpha;
-                        } else if (wcsicmp( name, L"pos") == 0) {
+                        } else if (name.compare_i("pos") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
-                            wchar_t* comma = wcschr(option, L',');
-                            if (comma) {
-                                chunk->fAbsoluteY = (uint16_t)wcstoul(comma + 1, nullptr, 0);
-                                *comma = 0;
+                            ST::string comma = option.after_first(',');
+                            if (!comma.empty()) {
+                                chunk->fAbsoluteY = comma.to_ushort();
                             }
-                            chunk->fAbsoluteX = (uint16_t)wcstoul(option, nullptr, 0);
-                        } else if (wcsicmp(name, L"glow") == 0) {
+                            chunk->fAbsoluteX = option.before_first(',').to_ushort();
+                        } else if (name.compare_i("glow") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kGlowing;
                             chunk->fFlags &= ~pfEsHTMLChunk::kActAsCB;
 
-                            wchar_t* comma = wcschr(option, L',');
-                            if (comma) {
-                                wchar_t* comma2 = wcschr(comma + 1, L',');
-                                if (comma2) {
-                                    chunk->fMaxOpacity = wcstof(comma2 + 1, nullptr);
-                                    *comma2 = 0;
+                            ST::string comma = option.after_first(',');
+                            if (!comma.empty()) {
+                                ST::string comma2 = comma.after_first(',');
+                                if (!comma2.empty()) {
+                                    chunk->fMaxOpacity = comma2.to_float();
                                 }
-                                chunk->fMinOpacity = wcstof(comma + 1, nullptr);
-                                *comma = 0;
+                                chunk->fMinOpacity = comma.before_first(',').to_float();
                             }
-                            chunk->fSFXTime = wcstof(option, nullptr);
-                        } else if (wcsicmp( name, L"opacity") == 0) {
+                            chunk->fSFXTime = option.before_first(',').to_float();
+                        } else if (name.compare_i("opacity") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kTranslucent;
-                            chunk->fCurrOpacity = wcstof(option, nullptr);
-                        } else if (wcsicmp( name, L"check" ) == 0) {
+                            chunk->fCurrOpacity = option.to_float();
+                        } else if (name.compare_i("check") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kActAsCB;
                             chunk->fFlags &= ~pfEsHTMLChunk::kGlowing;
 
-                            wchar_t* comma = wcschr(option, L',');
-                            if (comma) {
-                                wchar_t* comma2 = wcschr(comma + 1, L',');
-                                if (comma2) {
-                                    if (wcstol(comma2 + 1, nullptr, 0))
+                            ST::string comma = option.after_first(',');
+                            if (!comma.empty()) {
+                                ST::string comma2 = comma.after_first(',');
+                                if (!comma2.empty()) {
+                                    if (comma2.to_long())
                                         chunk->fFlags |= pfEsHTMLChunk::kChecked;
-                                    *comma2 = 0;
                                 }
-                                uint32_t c = IConvertHex(comma + 1);
-                                if (wcslen(comma + 1) <= 6)
+                                comma = comma.before_first(',');
+                                uint32_t c = comma.to_uint(16);
+                                if (comma.size() <= 6)
                                     c |= 0xff000000;    // Add in full alpha if none specified
                                 chunk->fOffColor.FromARGB32(c);
-                                *comma = 0;
                             }
-                            uint32_t c = IConvertHex(option);
-                            if (wcslen(option) <= 6)
+                            option = option.before_first(',');
+                            uint32_t c = option.to_uint(16);
+                            if (option.size() <= 6)
                                 c |= 0xff000000;    // Add in full alpha if none specified
                             chunk->fOnColor.FromARGB32(c);
 
@@ -1861,8 +1790,8 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                                 chunk->fCurrColor = chunk->fOnColor;
                             else
                                 chunk->fCurrColor = chunk->fOffColor;
-                        } else if (wcsicmp(name,L"resize") == 0) {
-                            chunk->fNoResizeImg = (wcsicmp(option, L"no") == 0);
+                        } else if (name.compare_i("resize") == 0) {
+                            chunk->fNoResizeImg = (option.compare_i("no") == 0);
                         }
                     }
                     if (chunk->fImageKey)
@@ -1870,7 +1799,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     else
                         delete chunk;
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -1878,50 +1807,50 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     // Don't create an actual chunk for this one, just use the "src" and 
                     // grab the mipmap key for our cover
                     c += 6;
-                    while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp(name, L"src") == 0) {
+                    while (IGetNextOption(c, end, name, option)) {
+                        if (name.compare_i("src") == 0) {
                             // Name of mipmap source
                             anotherKey = IGetMipmapKey( option, hintLoc );
                             if (anotherKey) {
                                 fCoverMipKey = anotherKey;
                                 fCoverFromHTML = true;
                             }
-                        } else if (wcsicmp(name, L"tint") == 0) {
+                        } else if (name.compare_i("tint") == 0) {
                             fTintCover = true;
-                            fCoverTint.FromARGB32(wcstol( option, nullptr, 16 ) | 0xff000000);
-                        } else if (wcsicmp(name, L"tintfirst") == 0) {
-                            fTintFirst = (wcsicmp(option, L"no") != 0);
+                            fCoverTint.FromARGB32(option.to_long(16) | 0xff000000);
+                        } else if (name.compare_i("tintfirst") == 0) {
+                            fTintFirst = (option.compare_i("no") != 0);
                         }
                     }
                     // Still gotta create a new par chunk
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
                 case pfEsHTMLChunk::kPageBreak:
                     c += 3;
                     chunk = new pfEsHTMLChunk();
-                    while (IGetNextOption(c, name, option)) {
+                    while (IGetNextOption(c, end, name, option)) {
                     }
                     fHTMLSource.emplace_back(chunk);
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
                 case pfEsHTMLChunk::kFontChange:
                     c += 5;
-                    chunk = new pfEsHTMLChunk(nullptr, 0, 0);
-                    while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp(name, L"style") == 0) {
+                    chunk = new pfEsHTMLChunk(ST::string(), 0, 0);
+                    while (IGetNextOption(c, end, name, option)) {
+                        if (name.compare_i("style") == 0) {
                             uint8_t guiFlags = 0;
-                            if (wcsicmp(option, L"b") == 0) {
+                            if (option.compare_i("b") == 0) {
                                 chunk->fFlags = pfEsHTMLChunk::kFontBold;
                                 guiFlags = plDynamicTextMap::kFontBold;
-                            } else if (wcsicmp(option, L"i") == 0) {
+                            } else if (option.compare_i("i") == 0) {
                                 chunk->fFlags = pfEsHTMLChunk::kFontItalic;
                                 guiFlags = plDynamicTextMap::kFontItalic;
-                            } else if (wcsicmp(option, L"bi") == 0) {
+                            } else if (option.compare_i("bi") == 0) {
                                 chunk->fFlags = pfEsHTMLChunk::kFontBold | pfEsHTMLChunk::kFontItalic;
                                 guiFlags = plDynamicTextMap::kFontBold | plDynamicTextMap::kFontItalic;
                             } else {
@@ -1934,26 +1863,25 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontStyle(guiFlags);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontStyle(guiFlags);
                             }
-                        } else if (wcsicmp(name, L"face") == 0) {
+                        } else if (name.compare_i("face") == 0) {
                             // Name of mipmap source
                             chunk->fText = option;
                             if (fBookGUIs[fCurBookGUI]->IsEditable()) {
-                                ST::string fontFace = ST::string::from_wchar(option);
-                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagRightEditCtrl)->SetFontFace(fontFace);
-                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagLeftEditCtrl)->SetFontFace(fontFace);
-                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontFace(fontFace);
-                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontFace(fontFace);
+                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagRightEditCtrl)->SetFontFace(option);
+                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagLeftEditCtrl)->SetFontFace(option);
+                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontFace(option);
+                                fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontFace(option);
                             }
-                        } else if (wcsicmp(name, L"size") == 0) {
-                            chunk->fFontSize = (uint8_t)wcstoul(option, nullptr, 0);
+                        } else if (name.compare_i("size") == 0) {
+                            chunk->fFontSize = (uint8_t)option.to_ulong();
                             if (fBookGUIs[fCurBookGUI]->IsEditable()) {
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagRightEditCtrl)->SetFontSize(chunk->fFontSize);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagLeftEditCtrl)->SetFontSize(chunk->fFontSize);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontSize(chunk->fFontSize);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontSize(chunk->fFontSize);
                             }
-                        } else if(wcsicmp(name, L"color") == 0) {
-                            chunk->fColor.FromARGB32(wcstoul(option, nullptr, 16) | 0xff000000);
+                        } else if(name.compare_i("color") == 0) {
+                            chunk->fColor.FromARGB32(option.to_ulong(16) | 0xff000000);
                             chunk->fFlags |= pfEsHTMLChunk::kFontColor;
                             if (fBookGUIs[fCurBookGUI]->IsEditable()) {
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagRightEditCtrl)->SetFontColor(chunk->fColor);
@@ -1961,28 +1889,28 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnFrontEditCtrl)->SetFontColor(chunk->fColor);
                                 fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetFontColor(chunk->fColor);
                             }
-                        } else if(wcsicmp(name, L"spacing") == 0) {
-                            chunk->fLineSpacing = (int16_t)wcstol(option, nullptr, 0);
+                        } else if(name.compare_i("spacing") == 0) {
+                            chunk->fLineSpacing = option.to_short();
                             chunk->fFlags |= pfEsHTMLChunk::kFontSpacing;
                         }
                     }
                     fHTMLSource.emplace_back(chunk);
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
                 case pfEsHTMLChunk::kMargin:
                     c += 7;
-                    while(IGetNextOption(c,name,option)) {
-                        if (wcsicmp(name,L"top") == 0)
-                            fPageTMargin = wcstoul(option, nullptr, 0);
-                        else if (wcsicmp(name,L"left") == 0)
-                            fPageLMargin = wcstoul(option, nullptr, 0);
-                        else if (wcsicmp(name,L"bottom") == 0)
-                            fPageBMargin = wcstoul(option, nullptr, 0);
-                        else if (wcsicmp(name,L"right") == 0)
-                            fPageRMargin = wcstoul(option, nullptr, 0);
+                    while(IGetNextOption(c, end, name, option)) {
+                        if (name.compare_i("top") == 0)
+                            fPageTMargin = option.to_uint();
+                        else if (name.compare_i("left") == 0)
+                            fPageLMargin = option.to_uint();
+                        else if (name.compare_i("bottom") == 0)
+                            fPageBMargin = option.to_uint();
+                        else if (name.compare_i("right") == 0)
+                            fPageRMargin = option.to_uint();
                     }
                     // set the edit controls to the margins we just set
                     if (fBookGUIs[fCurBookGUI]->IsEditable()) {
@@ -1992,24 +1920,24 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                         fBookGUIs[fCurBookGUI]->GetEditCtrl(pfJournalDlgProc::kTagTurnBackEditCtrl)->SetMargins(fPageTMargin,fPageLMargin,fPageBMargin,fPageRMargin);
                     }
                     // Start a new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
                 case pfEsHTMLChunk::kBook:
                     c += 5;
                     // don't actually create a chunk, just set the book size
-                    while (IGetNextOption(c,name,option)) {
-                        if (wcsicmp(name, L"height") == 0)
-                            bookHeight = wcstof(option, nullptr);
-                        else if (wcsicmp(name, L"width") == 0)
-                            bookWidth = wcstof(option, nullptr);
+                    while (IGetNextOption(c, end, name, option)) {
+                        if (name.compare_i("height") == 0)
+                            bookHeight = option.to_float();
+                        else if (name.compare_i("width") == 0)
+                            bookWidth = option.to_float();
                     }
                     fHeightScale = 1.f - bookHeight;
                     fWidthScale = 1.f - bookWidth;
 
                     // Still gotta create a new par chunk
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -2017,31 +1945,30 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     c += 6;
                     chunk = new pfEsHTMLChunk(nullptr, 0);
                     chunk->fType = pfEsHTMLChunk::kDecal;
-                    while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp(name, L"align") == 0) {
+                    while (IGetNextOption(c, end, name, option)) {
+                        if (name.compare_i("align") == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
-                            if (wcsicmp( option, L"left" ) == 0)
+                            if (option.compare_i("left") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kLeft;
-                            else if (wcsicmp( option, L"center" ) == 0)
+                            else if (option.compare_i("center") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kCenter;
-                            else if (wcsicmp( option, L"right" ) == 0)
+                            else if (option.compare_i("right") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kRight;
-                        } else if (wcsicmp(name, L"src") == 0) {
+                        } else if (name.compare_i("src") == 0) {
                             // Name of mipmap source
                             chunk->fImageKey = IGetMipmapKey(option, hintLoc);
-                        } else if (wcsicmp(name, L"pos") == 0) {
+                        } else if (name.compare_i("pos") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
-                            wchar_t* comma = wcschr(option, L',');
-                            if (comma) {
-                                chunk->fAbsoluteY = (uint16_t)wcstoul(comma + 1, nullptr, 0);
-                                *comma = 0;
+                            ST::string comma = option.after_first(',');
+                            if (!comma.empty()) {
+                                chunk->fAbsoluteY = comma.to_ushort();
                             }
-                            chunk->fAbsoluteX = (uint16_t)wcstoul(option, nullptr, 0);
-                        } else if (wcsicmp(name, L"resize") == 0) {
-                            chunk->fNoResizeImg = (wcsicmp(option, L"no") == 0);
-                        } else if (wcsicmp(name, L"tint") == 0) {
-                            chunk->fTintDecal = (wcsicmp(option, L"yes") == 0);
+                            chunk->fAbsoluteX = option.before_first(',').to_ushort();
+                        } else if (name.compare_i("resize") == 0) {
+                            chunk->fNoResizeImg = (option.compare_i("no") == 0);
+                        } else if (name.compare_i("tint") == 0) {
+                            chunk->fTintDecal = (option.compare_i("yes") == 0);
                         }
                     }
                     // add it to our cover decals list (this is tag is essentially thrown away as far as the parser cares)
@@ -2050,7 +1977,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     else
                         delete chunk;
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
 
@@ -2058,52 +1985,51 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     c += 6;
                     chunk = new pfEsHTMLChunk(nullptr, 0);
                     chunk->fType = pfEsHTMLChunk::kMovie;
-                    while (IGetNextOption(c, name, option)) {
-                        if (wcsicmp( name, L"align" ) == 0) {
+                    while (IGetNextOption(c, end, name, option)) {
+                        if (name.compare_i("align") == 0) {
                             chunk->fFlags &= ~pfEsHTMLChunk::kAlignMask;
-                            if (wcsicmp(option, L"left") == 0)
+                            if (option.compare_i("left") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kLeft;
-                            else if (wcsicmp( option, L"center") == 0)
+                            else if (option.compare_i("center") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kCenter;
-                            else if (wcsicmp( option, L"right") == 0)
+                            else if (option.compare_i("right") == 0)
                                 chunk->fFlags |= pfEsHTMLChunk::kRight;
-                        } else if(wcsicmp(name, L"src") == 0) {
+                        } else if(name.compare_i("src") == 0) {
                             chunk->fText = option;
-                        } else if(wcsicmp(name, L"link") == 0) {
-                            chunk->fEventID = wcstoul(option, nullptr, 0);
+                        } else if(name.compare_i("link") == 0) {
+                            chunk->fEventID = option.to_uint();
                             chunk->fFlags |= pfEsHTMLChunk::kCanLink;
-                        } else if(wcsicmp(name, L"pos") == 0) {
+                        } else if(name.compare_i("pos") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
-                            wchar_t* comma = wcschr(option, L',');
-                            if (comma) {
-                                chunk->fAbsoluteY = (uint16_t)wcstoul(comma + 1, nullptr, 0);
-                                *comma = 0;
+                            ST::string comma = option.after_first(',');
+                            if (!comma.empty()) {
+                                chunk->fAbsoluteY = comma.to_ushort();
                             }
-                            chunk->fAbsoluteX = (uint16_t)wcstoul(option, nullptr, 0);
-                        } else if (wcsicmp(name, L"resize") == 0) {
-                            chunk->fNoResizeImg = (wcsicmp(option, L"no") == 0);
-                        } else if (wcsicmp(name, L"oncover") == 0) {
-                            chunk->fOnCover = (wcsicmp(option, L"yes") == 0);
-                        } else if (wcsicmp(name, L"loop") == 0) {
-                            chunk->fLoopMovie = wcsicmp(option, L"no") != 0;
+                            chunk->fAbsoluteX = option.before_first(',').to_ushort();
+                        } else if (name.compare_i("resize") == 0) {
+                            chunk->fNoResizeImg = (option.compare_i("no") == 0);
+                        } else if (name.compare_i("oncover") == 0) {
+                            chunk->fOnCover = (option.compare_i("yes") == 0);
+                        } else if (name.compare_i("loop") == 0) {
+                            chunk->fLoopMovie = option.compare_i("no") != 0;
                         }
                     }
                     chunk->fMovieIndex = movieIndex;
                     movieIndex++;
                     if (chunk->fOnCover) {
-                        if (chunk->fText != L"")
+                        if (!chunk->fText.empty())
                             fCoverDecals.emplace_back(chunk);
                         else
                             delete chunk;
                     } else {
-                        if (chunk->fText != L"")
+                        if (!chunk->fText.empty())
                             fHTMLSource.emplace_back(chunk);
                         else
                             delete chunk;
                     }
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
                     
@@ -2111,11 +2037,11 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                     c += 9;
                     SetEditable(true);
                     chunk = new pfEsHTMLChunk();
-                    while (IGetNextOption(c, name, option)) {
+                    while (IGetNextOption(c, end, name, option)) {
                     }
                     fHTMLSource.emplace_back(chunk);
                     // Start new paragraph chunk after this one
-                    lastParChunk = new pfEsHTMLChunk(nullptr);
+                    lastParChunk = new pfEsHTMLChunk(ST::string());
                     lastParChunk->fFlags = IFindLastAlignment();
                     break;
             }
@@ -2133,8 +2059,7 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
         delete lastParChunk;
         lastParChunk = nullptr;
     } else if (lastParChunk) {
-        size_t count = (uintptr_t)c - (uintptr_t)start;
-        lastParChunk->fText.assign(start, 0, count);
+        lastParChunk->fText = ST::string(start, c - start);
 
         fHTMLSource.emplace_back(lastParChunk);
     }
@@ -2149,53 +2074,53 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
     return true;
 }
 
-uint8_t   pfJournalBook::IGetTagType( const wchar_t *string )
+uint8_t   pfJournalBook::IGetTagType( const char *string, const char *end )
 {
-    if( string[ 0 ] != '<' )
+    if (string == end || string[0] != '<')
         return pfEsHTMLChunk::kEmpty;
+
+    string++;
 
     struct TagRec
     {
-        const wchar_t *fTag;
+        ST::string fTag;
         uint8_t       fType;
-    } tags[] = { { L"p", pfEsHTMLChunk::kParagraph },
-                { L"img", pfEsHTMLChunk::kImage },
-                { L"pb", pfEsHTMLChunk::kPageBreak },
-                { L"font", pfEsHTMLChunk::kFontChange },
-                { L"margin", pfEsHTMLChunk::kMargin },
-                { L"cover", pfEsHTMLChunk::kCover },
-                { L"book", pfEsHTMLChunk::kBook },
-                { L"decal", pfEsHTMLChunk::kDecal },
-                { L"movie", pfEsHTMLChunk::kMovie },
-                { L"editable", pfEsHTMLChunk::kEditable },
-                { nullptr, pfEsHTMLChunk::kEmpty } };
-                
+    } tags[] = { { ST_LITERAL("p"), pfEsHTMLChunk::kParagraph },
+                { ST_LITERAL("img"), pfEsHTMLChunk::kImage },
+                { ST_LITERAL("pb"), pfEsHTMLChunk::kPageBreak },
+                { ST_LITERAL("font"), pfEsHTMLChunk::kFontChange },
+                { ST_LITERAL("margin"), pfEsHTMLChunk::kMargin },
+                { ST_LITERAL("cover"), pfEsHTMLChunk::kCover },
+                { ST_LITERAL("book"), pfEsHTMLChunk::kBook },
+                { ST_LITERAL("decal"), pfEsHTMLChunk::kDecal },
+                { ST_LITERAL("movie"), pfEsHTMLChunk::kMovie },
+                { ST_LITERAL("editable"), pfEsHTMLChunk::kEditable },
+    };
 
-    uint32_t i;
-    for (i = 0; tags[i].fTag != nullptr; i++)
+    for (auto tag : tags)
     {
-        if( wcsnicmp( string + 1, tags[ i ].fTag, wcslen( tags[ i ].fTag ) ) == 0 )
+        if (string + tag.fTag.size() < end && tag.fTag.compare_ni(string, tag.fTag.size()) == 0)
         {
             // Found tag--but only space or end tag marker allowed afterwards
-            char end = (char)string[ wcslen( tags[ i ].fTag ) + 1 ];
-            if( end == '>' || end == ' ' )
-                return tags[ i ].fType;
+            char sep = string[tag.fTag.size()];
+            if (sep == '>' || sep == ' ')
+                return tag.fType;
         }
     }
 
     return pfEsHTMLChunk::kEmpty;
 }
 
-bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wchar_t *option )
+bool    pfJournalBook::IGetNextOption( const char *&string, const char *end, ST::string& name, ST::string& option )
 {
-    const wchar_t *c;
+    const char *c;
 
 
     // Advance past any white space
-    while( *string == L' ' )
+    while (string < end && *string == ' ')
         string++;
 
-    if( *string == L'>' )
+    if (string < end && *string == '>')
     {
         string++;
         return false;
@@ -2203,38 +2128,34 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
 
     // Advance to =
     c = string;
-    while( *string != L'>' && *string != L' ' && *string != L'=' && *string != L'\0' )
+    while (string < end && *string != '>' && *string != ' ' && *string != '=')
         string++;
 
-    if( *string != L'=' )
+    if (string == end || *string != '=')
         return false;
 
     // Copy name
-    size_t len = string - c;
-    wcsncpy( name, c, len );
-    name[len] = L'\0';
+    name = ST::string::from_utf8(c, string - c);
 
     // Find start of option value
     string++;
-    while( *string == L' ' )
+    while (string < end && *string == ' ')
         string++;
 
-    if( *string == L'\0' || *string == L'>' )
+    if (string == end || *string == '>')
         return false;
 
-    if( *string == L'\"' )
+    if (*string == '\"')
     {
         // Search for other quote
         string++;
         c = string;
-        while( *string != L'>' && *string != L'\"' && *string != L'\0' )
+        while (string < end && *string != '>' && *string != '\"')
             string++;
 
-        len = string - c;
-        wcsncpy( option, c, len );
-        option[len] = L'\0';
+        option = ST::string::from_utf8(c, string - c);
         
-        if( *string == L'\"' )
+        if (string < end && *string == '\"')
             string++;
 
         return true;
@@ -2242,12 +2163,10 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
 
     // Non-quoted token
     c = string;
-    while( *string != L' ' && *string != L'>' && *string != L'\0' )
+    while (string < end && *string != ' ' && *string != '>')
         string++;
 
-    len = string - c;
-    wcsncpy( option, c, len );
-    option[len] = L'\0';
+    option = ST::string::from_utf8(c, string - c);
     
     return true;
 }
@@ -2277,27 +2196,26 @@ void    pfJournalBook::IFreeSource()
 // the code will attempt to look in the currently loaded age for a matching
 // image name.
 
-plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc )
+plKey   pfJournalBook::IGetMipmapKey( const ST::string& name, const plLocation &loc )
 {
-    ST::string cName = ST::string::from_wchar(name);
 #ifndef PLASMA_EXTERNAL_RELEASE
-    if( cName.contains( '/' ) || cName.contains( '\\' ) )
+    if( name.contains( '/' ) || name.contains( '\\' ) )
     {
         // For internal use only--allow local path names of PNG and JPEG images, to
         // facilitate fast prototyping
         plMipmap *mip;
-        if( cName.contains( ".png" ) )
-            mip = plPNG::Instance().ReadFromFile( cName.c_str() );
+        if( name.contains( ".png" ) )
+            mip = plPNG::Instance().ReadFromFile( name.c_str() );
         else
-            mip = plJPEG::Instance().ReadFromFile( cName.c_str() );
+            mip = plJPEG::Instance().ReadFromFile( name.c_str() );
 
-        hsgResMgr::ResMgr()->NewKey( cName, mip, loc );
+        hsgResMgr::ResMgr()->NewKey(name, mip, loc );
         return mip->GetKey();
     }
 #endif
 
     // Try first to find in the given location
-    plUoid myUoid( loc, plMipmap::Index(), cName );
+    plUoid myUoid( loc, plMipmap::Index(), name);
     plKey key = hsgResMgr::ResMgr()->FindKey( myUoid );
     if (key != nullptr)
     {
@@ -2307,7 +2225,7 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
 
     // Next, try our "global" pre-defined age
     const plLocation &globLoc = plKeyFinder::Instance().FindLocation( "GUI", "BkBookImages" );
-    myUoid = plUoid( globLoc, plMipmap::Index(), cName );
+    myUoid = plUoid( globLoc, plMipmap::Index(), name);
     key = hsgResMgr::ResMgr()->FindKey( myUoid );
     if (key != nullptr)
     {
@@ -2320,7 +2238,7 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
         ST::string thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
         if (!thisAge.empty())
         {
-            key = plKeyFinder::Instance().StupidSearch( thisAge, "", plMipmap::Index(), cName, true );
+            key = plKeyFinder::Instance().StupidSearch( thisAge, "", plMipmap::Index(), name, true );
             if (key != nullptr)
             {
                 return key;
@@ -2432,10 +2350,10 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                     width = (uint16_t)(512 - fPageLMargin - fPageRMargin);
                     height = (uint16_t)(512 - fPageBMargin - y);
                     uint32_t lastChar;
-                    dtMap->CalcWrappedStringSize( chunk->fText.c_str(), &width, &height, &lastChar, &ascent, &lastX, &lastY );
+                    dtMap->CalcWrappedStringSize( chunk->fText, &width, &height, &lastChar, &ascent, &lastX, &lastY );
                     width = (uint16_t)(512 - fPageLMargin - fPageRMargin);
                     if( !suppressRendering )
-                        dtMap->DrawWrappedString( (uint16_t)fPageLMargin, y, chunk->fText.c_str(), width, (uint16_t)(512 - fPageBMargin - y), &lastX, &lastY );
+                        dtMap->DrawWrappedString( (uint16_t)fPageLMargin, y, chunk->fText, width, (uint16_t)(512 - fPageBMargin - y), &lastX, &lastY );
 
                     if( lastChar == 0 )
                     {
@@ -2453,10 +2371,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                         // this changes the chunk array beyond this point, so we need to invalidate the
                         // cache, but that's ok 'cause if we're doing this, it's probably invalid (or empty)
                         // anyway
-                        size_t fTextLen = chunk->fText.length();
-                        auto s = std::make_unique<wchar_t[]>(fTextLen + 1);
-                        wcscpy(s.get(), chunk->fText.c_str());
-                        s[fTextLen] = L'\0';
+                        ST::wchar_buffer s = chunk->fText.to_wchar();
 
                         // Note: Makes a copy of the string
                         pfEsHTMLChunk *c2 = new pfEsHTMLChunk( &s[ lastChar ] );
@@ -2464,8 +2379,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                         fHTMLSource.emplace(fHTMLSource.begin() + idx + 1, c2);
 
                         // Clip and reallocate so we don't have two copies laying around
-                        s[ lastChar ] = L'\0';
-                        chunk->fText = s.get();
+                        chunk->fText = ST::string::from_wchar(s.c_str(), lastChar);
 
                         // Invalidate our cache starting with the next page
                         if (fPageStarts.size() > page + 1)
@@ -2821,9 +2735,7 @@ plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uin
         movieLayer->AttachViaNotify(layer);
 
         // Initialize it.
-        char *name = hsWStringToString(chunk->fText.c_str());
-        movieLayer->SetMovieName(name);
-        delete [] name;
+        movieLayer->SetMovieName(chunk->fText);
         movieLayer->Eval(0,0,0); // set up the movie
 
         movieWidth = movieLayer->GetWidth();
@@ -3144,9 +3056,9 @@ void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, ST::string &face, uint
         if( chunk->fType == pfEsHTMLChunk::kFontChange )
         {
             // What do we (still) need?
-            if( !( found & kFace ) && chunk->fText != L"" )
+            if( !( found & kFace ) && !chunk->fText.empty() )
             {
-                face = ST::string::from_wchar(chunk->fText.c_str());
+                face = chunk->fText;
                 found |= kFace;
             }
             if( !( found & kSize ) && chunk->fFontSize > 0 )
@@ -3325,25 +3237,22 @@ void pfJournalBook::IPurgeDynaTextMaps( )
         turnBackEdit->PurgeDynaTextMapImage();
 }
 
-std::string pfJournalBook::GetEditableText()
+ST::string pfJournalBook::GetEditableText()
 {
     pfGUIMultiLineEditCtrl *left = fBookGUIs[fCurBookGUI]->GetEditCtrl( pfJournalDlgProc::kTagLeftEditCtrl );
     if (left)
     {
-        char *temp = left->GetNonCodedBuffer();
-        std::string retVal = temp;
-        delete [] temp;
-        return retVal;
+        return left->GetNonCodedBuffer();
     }
-    return "";
+    return {};
 }
 
-void pfJournalBook::SetEditableText(const std::string& text)
+void pfJournalBook::SetEditableText(const ST::string& text)
 {
     pfGUIMultiLineEditCtrl *left = fBookGUIs[fCurBookGUI]->GetEditCtrl( pfJournalDlgProc::kTagLeftEditCtrl );
     if (left)
     {
-        left->SetBuffer(text.c_str());
+        left->SetBuffer(text);
         left->ForceUpdate();
     }
 }

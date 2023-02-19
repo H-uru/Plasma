@@ -50,7 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include <string>
+#include <string_theory/char_buffer>
+#include <string_theory/string>
 
 #include "pfGUIControlMod.h"
 
@@ -64,8 +65,8 @@ class pfGUIEditBoxMod : public pfGUIControlMod
 {
     protected:
 
-        wchar_t         *fBuffer;
-        uint32_t          fBufferSize, fCursorPos;
+        ST::wchar_buffer fBuffer;
+        uint32_t        fCursorPos;
         int32_t           fScrollPos;
         bool            fEscapedFlag;
         bool            fFirstHalfExitKeyPushed;
@@ -88,7 +89,6 @@ class pfGUIEditBoxMod : public pfGUIControlMod
         };
 
         pfGUIEditBoxMod();
-        virtual ~pfGUIEditBoxMod();
 
         CLASSNAME_REGISTER( pfGUIEditBoxMod );
         GETINTERFACE_ANY( pfGUIEditBoxMod, pfGUIControlMod );
@@ -109,11 +109,9 @@ class pfGUIEditBoxMod : public pfGUIControlMod
 
         void    SetBufferSize( uint32_t size );
 
-        std::string GetBuffer();
-        std::wstring    GetBufferW() { return fBuffer; }
+        ST::string  GetBuffer() const { return ST::string::from_wchar(fBuffer.c_str(), ST_AUTO_SIZE); }
         void        ClearBuffer();
-        void        SetText( const char *str );
-        void        SetText( const wchar_t *str );
+        void        SetText( const ST::string& str );
 
         void        SetCursorToHome();
         void        SetCursorToEnd();

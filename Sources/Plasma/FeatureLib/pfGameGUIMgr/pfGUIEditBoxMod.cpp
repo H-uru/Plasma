@@ -78,11 +78,6 @@ pfGUIEditBoxMod::pfGUIEditBoxMod()
     SetBufferSize(128);
 }
 
-pfGUIEditBoxMod::~pfGUIEditBoxMod()
-{
-    delete [] fBuffer;
-}
-
 //// IEval ///////////////////////////////////////////////////////////////////
 
 bool    pfGUIEditBoxMod::IEval( double secs, float del, uint32_t dirty )
@@ -122,49 +117,46 @@ void    pfGUIEditBoxMod::IUpdate()
     else
         fDynTextMap->ClearToColor( GetColorScheme()->fBackColor );
 
-    if (fBuffer != nullptr)
+    // First, calc the cursor position, so we can adjust the scrollPos as necessary
+    int16_t cursorPos, oldCursorPos;
+    if( fFocused && !fSpecialCaptureKeyEventMode )
     {
-        // First, calc the cursor position, so we can adjust the scrollPos as necessary
-        int16_t cursorPos, oldCursorPos;
-        if( fFocused && !fSpecialCaptureKeyEventMode )
+        // Really cheap hack here to figure out where to draw the cursor
+        wchar_t backup = fBuffer[ fCursorPos ];
+        fBuffer[ fCursorPos ] = 0;
+        cursorPos = fDynTextMap->CalcStringWidth( fBuffer.c_str() );
+        fBuffer[ fCursorPos ] = backup;
+
+        oldCursorPos = cursorPos;
+        cursorPos -= (int16_t)fScrollPos;
+
+        if( 4 + cursorPos > fDynTextMap->GetVisibleWidth() - 4 - 2 )
         {
-            // Really cheap hack here to figure out where to draw the cursor
-            wchar_t backup = fBuffer[ fCursorPos ];
-            fBuffer[ fCursorPos ] = 0;
-            cursorPos = fDynTextMap->CalcStringWidth( fBuffer );
-            fBuffer[ fCursorPos ] = backup;
-
-            oldCursorPos = cursorPos;
-            cursorPos -= (int16_t)fScrollPos;
-
-            if( 4 + cursorPos > fDynTextMap->GetVisibleWidth() - 4 - 2 )
-            {
-                fScrollPos += ( 4 + cursorPos ) - ( fDynTextMap->GetVisibleWidth() - 4 - 2 );
-            }
-            else if( 4 + cursorPos < 4 )
-            {
-                fScrollPos -= 4 - ( 4 + cursorPos );
-                if( fScrollPos < 0 )
-                    fScrollPos = 0;
-            }
-
-            cursorPos = (int16_t)(oldCursorPos - fScrollPos);
+            fScrollPos += ( 4 + cursorPos ) - ( fDynTextMap->GetVisibleWidth() - 4 - 2 );
+        }
+        else if( 4 + cursorPos < 4 )
+        {
+            fScrollPos -= 4 - ( 4 + cursorPos );
+            if( fScrollPos < 0 )
+                fScrollPos = 0;
         }
 
-        if ( fFocused && fSpecialCaptureKeyEventMode )
-            // if special and has focus then use select
-            fDynTextMap->SetTextColor( GetColorScheme()->fSelForeColor, GetColorScheme()->fTransparent &&
-                                                                     GetColorScheme()->fSelBackColor.a == 0.f );
-        else
-            fDynTextMap->SetTextColor( GetColorScheme()->fForeColor, GetColorScheme()->fTransparent &&
-                                                                     GetColorScheme()->fBackColor.a == 0.f );
-        fDynTextMap->DrawClippedString( (int16_t)(4 - fScrollPos), 4, fBuffer, 
-                                        4, 4, fDynTextMap->GetVisibleWidth() - 8, fDynTextMap->GetVisibleHeight() - 8 );
+        cursorPos = (int16_t)(oldCursorPos - fScrollPos);
+    }
 
-        if( fFocused && !fSpecialCaptureKeyEventMode )
-        {
-            fDynTextMap->FrameRect( 4 + cursorPos, 4, 2, fDynTextMap->GetVisibleHeight() - 8, GetColorScheme()->fSelForeColor );
-        }
+    if ( fFocused && fSpecialCaptureKeyEventMode )
+        // if special and has focus then use select
+        fDynTextMap->SetTextColor( GetColorScheme()->fSelForeColor, GetColorScheme()->fTransparent &&
+                                                                 GetColorScheme()->fSelBackColor.a == 0.f );
+    else
+        fDynTextMap->SetTextColor( GetColorScheme()->fForeColor, GetColorScheme()->fTransparent &&
+                                                                 GetColorScheme()->fBackColor.a == 0.f );
+    fDynTextMap->DrawClippedString( (int16_t)(4 - fScrollPos), 4, fBuffer.c_str(), 
+                                    4, 4, fDynTextMap->GetVisibleWidth() - 8, fDynTextMap->GetVisibleHeight() - 8 );
+
+    if( fFocused && !fSpecialCaptureKeyEventMode )
+    {
+        fDynTextMap->FrameRect( 4 + cursorPos, 4, 2, fDynTextMap->GetVisibleHeight() - 8, GetColorScheme()->fSelForeColor );
     }
     fDynTextMap->FlushToHost();
 }
@@ -198,7 +190,7 @@ void    pfGUIEditBoxMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
     uint16_t  width;
 
 
-    if (fBuffer != nullptr && fDynTextMap != nullptr)
+    if (fDynTextMap != nullptr)
     {
         if( !fBounds.IsInside( &mousePt ) )
             return;
@@ -207,11 +199,11 @@ void    pfGUIEditBoxMod::HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers )
 
         mousePt.fX *= fDynTextMap->GetVisibleWidth();
         mousePt.fX += fScrollPos - 4;
-        for( fCursorPos = 0; fCursorPos < wcslen( fBuffer ); fCursorPos++ )
+        for( fCursorPos = 0; fCursorPos < wcslen( fBuffer.c_str() ); fCursorPos++ )
         {
             backup = fBuffer[ fCursorPos + 1 ];
             fBuffer[ fCursorPos + 1 ] = 0;
-            width = fDynTextMap->CalcStringWidth( fBuffer );
+            width = fDynTextMap->CalcStringWidth( fBuffer.c_str() );
             fBuffer[ fCursorPos + 1 ] = backup;
 
             if( width > mousePt.fX )
@@ -236,15 +228,12 @@ void    pfGUIEditBoxMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 
 bool    pfGUIEditBoxMod::HandleKeyPress( wchar_t key, uint8_t modifiers )
 {
-    if (fBuffer == nullptr)
-        return false;
-
-    int i = wcslen( fBuffer );
+    int i = wcslen( fBuffer.c_str() );
 
     // Insert character at the current cursor position, then inc the cursor by one
-    if( i < fBufferSize - 1 && key != 0 )
+    if( i < fBuffer.size() && key != 0 )
     {
-        memmove( fBuffer + fCursorPos + 1, fBuffer + fCursorPos, (i - fCursorPos + 1) * sizeof(wchar_t) );
+        memmove( &fBuffer[fCursorPos + 1], &fBuffer[fCursorPos], (i - fCursorPos + 1) * sizeof(wchar_t) );
         fBuffer[ fCursorPos ] = key;
         fCursorPos++;
 
@@ -270,53 +259,7 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                 return true;
             }
 #endif
-            // capture the key
-            fSavedKey = key;
-            fSavedModifiers = modifiers;
-
-            // turn key event into string
-            char keyStr[30];
-            if (plKeyMap::ConvertVKeyToChar( key ))
-                strcpy(keyStr, plKeyMap::ConvertVKeyToChar( key ));
-            else
-                memset(keyStr, 0, sizeof(keyStr));
-
-            static char shortKey[ 2 ];
-            if( strlen(keyStr) == 0 )
-            {
-                if( isalnum( key ) )
-                {
-                    shortKey[ 0 ] = (char)key;
-                    shortKey[ 1 ] = 0;
-                    strcpy(keyStr, shortKey);
-                }
-                else
-                    strcpy(keyStr, plKeyMap::GetStringUnmapped());
-            }
-            else
-            {
-                // check to see the buffer has ForewardSlash and change it to ForwardSlash
-                if ( strcmp(keyStr,"ForewardSlash") == 0)
-                {
-                    strcpy(keyStr,"ForwardSlash");
-                }
-            }
-
-            static char newKey[ 16 ];
-            newKey[0] = 0;
-            if( modifiers & kShift )
-                strcat( newKey, plKeyMap::GetStringShift() );
-            if( modifiers & kCtrl )
-                strcat( newKey, plKeyMap::GetStringCtrl() );
-            strcat( newKey, keyStr );
-
-            // set something in the buffer to be displayed
-            wchar_t* temp = hsStringToWString(newKey);
-            wcsncpy( fBuffer, temp , fBufferSize - 1 );
-            delete [] temp;
-            fCursorPos = 0;
-            SetCursorToEnd();
-            IUpdate();
+            SetLastKeyCapture((uint32_t)key, modifiers);
 
             // done capturing... tell the handler
             DoSomething();
@@ -347,23 +290,23 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                 if( fCursorPos > 0 )
                     fCursorPos--;
             }
-            else if (key == KEY_RIGHT && fBuffer != nullptr)
+            else if (key == KEY_RIGHT)
             {
-                if( fCursorPos < wcslen( fBuffer ) )
+                if( fCursorPos < wcslen( fBuffer.c_str() ) )
                     fCursorPos++;
             }
-            else if (key == KEY_BACKSPACE && fBuffer != nullptr)
+            else if (key == KEY_BACKSPACE)
             {
                 if( fCursorPos > 0 )
                 {
                     fCursorPos--;
-                    memmove( fBuffer + fCursorPos, fBuffer + fCursorPos + 1, (wcslen( fBuffer + fCursorPos + 1 ) + 1) * sizeof(wchar_t) );
+                    memmove( &fBuffer[fCursorPos], &fBuffer[fCursorPos + 1], (wcslen( &fBuffer[fCursorPos + 1] ) + 1) * sizeof(wchar_t) );
                 }
             }
-            else if (key == KEY_DELETE && fBuffer != nullptr)
+            else if (key == KEY_DELETE)
             {
-                if( fCursorPos < wcslen( fBuffer ) )
-                    memmove( fBuffer + fCursorPos, fBuffer + fCursorPos + 1, (wcslen( fBuffer + fCursorPos + 1 ) + 1) * sizeof(wchar_t) );          
+                if( fCursorPos < wcslen( fBuffer.c_str() ) )
+                    memmove( &fBuffer[fCursorPos], &fBuffer[fCursorPos + 1], (wcslen( &fBuffer[fCursorPos + 1] ) + 1) * sizeof(wchar_t) );          
             }
             else if( key == KEY_ENTER )
             {
@@ -397,7 +340,7 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
             {
                 if (key == KEY_C) 
                 {
-                    plClipboard::GetInstance().SetClipboardText(ST::string::from_wchar(fBuffer));
+                    plClipboard::GetInstance().SetClipboardText(ST::string::from_wchar(fBuffer.c_str(), ST_AUTO_SIZE));
                 }
                 else if (key == KEY_V)
                 {
@@ -405,9 +348,9 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
                     ST::wchar_buffer tmp = contents.to_wchar();
                     size_t len = tmp.size();
                     if (len > 0) {
-                        wchar_t* insertTarget = fBuffer + fCursorPos;
+                        wchar_t* insertTarget = &fBuffer[fCursorPos];
                         size_t bufferTailLen = wcslen(insertTarget);
-                        if (fCursorPos + len + bufferTailLen < fBufferSize) {
+                        if (fCursorPos + len + bufferTailLen <= fBuffer.size()) {
                             memmove(insertTarget + len, insertTarget, bufferTailLen * sizeof(wchar_t));
                             memcpy(insertTarget, tmp.data(), len * sizeof(wchar_t));
                             fCursorPos += len;
@@ -456,56 +399,26 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
     }
 }
 
-std::string pfGUIEditBoxMod::GetBuffer()
-{
-    char* temp = hsWStringToString(fBuffer);
-    std::string retVal = temp;
-    delete [] temp;
-    return retVal;
-}
-
 void    pfGUIEditBoxMod::ClearBuffer()
 {
-    if (fBuffer != nullptr)
-    {
-        memset( fBuffer, 0, (fBufferSize + 1) * sizeof(wchar_t) );
-        fCursorPos = 0;
-        fScrollPos = 0;
-        IUpdate();
-    }
+    memset(fBuffer.data(), 0, fBuffer.size());
+    fCursorPos = 0;
+    fScrollPos = 0;
+    IUpdate();
 }
 
-void    pfGUIEditBoxMod::SetText( const char *str )
+void    pfGUIEditBoxMod::SetText( const ST::string& str )
 {
-    wchar_t* temp = hsStringToWString(str);
-    SetText(temp);
-    delete [] temp;
-}
-
-void    pfGUIEditBoxMod::SetText( const wchar_t *str )
-{
-    if (fBuffer != nullptr)
-    {
-        wcsncpy( fBuffer, str, fBufferSize - 1 );
-        fCursorPos = 0;
-        fScrollPos = 0;
-        IUpdate();
-    }
+    ST::wchar_buffer buf = str.to_wchar();
+    wcsncpy( fBuffer.data(), buf.c_str(), fBuffer.size() );
+    fCursorPos = 0;
+    fScrollPos = 0;
+    IUpdate();
 }
 
 void    pfGUIEditBoxMod::SetBufferSize( uint32_t size )
 {
-    delete [] fBuffer;
-
-    fBufferSize = size;
-    if( size > 0 )
-    {
-        fBuffer = new wchar_t[ size + 1 ];
-        memset( fBuffer, 0, (size + 1) * sizeof(wchar_t) );
-    }
-    else
-        fBuffer = nullptr;
-
+    fBuffer.allocate(size, 0);
     fCursorPos = 0;
     fScrollPos = 0;
 }
@@ -518,8 +431,7 @@ void    pfGUIEditBoxMod::SetCursorToHome()
 
 void    pfGUIEditBoxMod::SetCursorToEnd()
 {
-    if (fBuffer != nullptr)
-        fCursorPos = wcslen( fBuffer );
+    fCursorPos = wcslen( fBuffer.c_str() );
 }
 
 void pfGUIEditBoxMod::SetLastKeyCapture(uint32_t key, uint8_t modifiers)
@@ -529,45 +441,41 @@ void pfGUIEditBoxMod::SetLastKeyCapture(uint32_t key, uint8_t modifiers)
     fSavedModifiers = modifiers;
 
     // turn key event into string
-    char keyStr[30];
+    ST::string keyStr;
     if (plKeyMap::ConvertVKeyToChar( key ))
-        strcpy(keyStr, plKeyMap::ConvertVKeyToChar( key ));
-    else
-        memset(keyStr, 0, sizeof(keyStr));
+        keyStr = ST::string::from_latin_1(plKeyMap::ConvertVKeyToChar( key ));
 
-    static char shortKey[ 2 ];
-    if( strlen(keyStr) == 0 )
+    if(keyStr.empty())
     {
         if( isalnum( key ) )
         {
-            shortKey[ 0 ] = (char)key;
-            shortKey[ 1 ] = 0;
-            strcpy(keyStr, shortKey);
+            char keyChar = (char)key;
+            keyStr = ST::string::from_latin_1(&keyChar, 1);
         }
         else
-            strcpy(keyStr, plKeyMap::GetStringUnmapped());
+            keyStr = ST::string::from_latin_1(plKeyMap::GetStringUnmapped());
     }
     else
     {
         // check to see the buffer has ForewardSlash and change it to ForwardSlash
-        if ( strcmp(keyStr,"ForewardSlash") == 0)
+        if (keyStr == "ForewardSlash")
         {
-            strcpy(keyStr,"ForwardSlash");
+            keyStr = ST_LITERAL("ForwardSlash");
         }
     }
 
-    static char newKey[ 16 ];
-    newKey[0] = 0;
+    // Using ST::string_stream here avoids extra allocations
+    // because its SSO buffer is much larger than ST::string's.
+    ST::string_stream newKey;
     if( modifiers & kShift )
-        strcat( newKey, plKeyMap::GetStringShift() );
+        newKey << ST::string::from_latin_1(plKeyMap::GetStringShift());
     if( modifiers & kCtrl )
-        strcat( newKey, plKeyMap::GetStringCtrl() );
-    strcat( newKey, keyStr );
+        newKey << ST::string::from_latin_1(plKeyMap::GetStringCtrl());
+    newKey << keyStr;
 
     // set something in the buffer to be displayed
-    wchar_t* temp = hsStringToWString(newKey);
-    wcsncpy( fBuffer, temp , fBufferSize - 1 );
-    delete [] temp;
+    ST::wchar_buffer temp = newKey.to_string().to_wchar();
+    wcsncpy( fBuffer.data(), temp.c_str(), fBuffer.size() );
 
     fCursorPos = 0;
     SetCursorToEnd();

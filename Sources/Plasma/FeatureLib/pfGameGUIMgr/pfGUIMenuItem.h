@@ -117,7 +117,6 @@ class pfGUIMenuItem : public pfGUIButtonMod
         void    PurgeDynaTextMapImage() override;
 
 
-        void        SetName( const char *name );
         void        SetName( const wchar_t *name );
         const wchar_t   *GetName() const { return fName; }
     

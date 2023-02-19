@@ -56,6 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pyColor;
 
+namespace ST { class string; }
+
 class pyGUIControlMultiLineEdit : public pyGUIControl
 {
 protected:
@@ -84,10 +86,10 @@ public:
     virtual void    MoveCursor( int32_t dir );
     int32_t GetCursor() const;
     virtual void    ClearBuffer();
-    virtual void    SetText( const wchar_t *text );
-    virtual const wchar_t* GetText();
+    virtual void    SetText( const ST::string& text );
+    virtual ST::string GetText();
     virtual void    SetEncodedBuffer( PyObject* buffer_object );
-    virtual const wchar_t* GetEncodedBuffer();
+    virtual ST::string GetEncodedBuffer();
     size_t  GetBufferSize() const;
 
     virtual void    SetBufferLimit(int32_t limit);
@@ -95,7 +97,7 @@ public:
     int16_t GetCurrentLink() const;
 
     virtual void    InsertChar( wchar_t c );
-    virtual void    InsertString( const wchar_t *string );
+    virtual void    InsertString( const ST::string& string );
     virtual void    InsertColor( pyColor& color );
     virtual void    InsertStyle( uint8_t fontStyle );
     void InsertLink(int16_t linkId);
