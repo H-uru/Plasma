@@ -136,8 +136,6 @@ elseif(APPLE)
     set_source_files_properties(${plClient_SHADERS} PROPERTIES LANGUAGE METAL)
     source_group("Metal Shaders" FILES ${plClient_SHADERS})
     set(plClient_SOURCES ${plClient_SOURCES} ${plClient_SHADERS})
-    include_directories("../../FeatureLib/pfMetalPipeline/metal-cpp"
-                        "../../FeatureLib/pfMetalPipeline/ShaderSrc")
 else()
     list(APPEND plClient_SOURCES
         main.cpp
@@ -185,6 +183,8 @@ if(APPLE)
     set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
          MACOSX_PACKAGE_LOCATION Resources
     )
+    target_include_directories(plClient PRIVATE "../../FeatureLib/pfMetalPipeline/metal-cpp"
+                                        PRIVATE "../../FeatureLib/pfMetalPipeline/ShaderSrc")
     target_link_libraries(plClient PRIVATE "-framework MetalPerformanceShaders")
     install(
         TARGETS plClient
