@@ -87,11 +87,6 @@ private:
     static plCyDebServer debugServer;
 #endif
 
-    static void initPlasmaModule();
-    static void initPlasmaConstantsModule();
-    static void initPlasmaNetConstantsModule();
-    static void initPlasmaVaultConstantsModule();
-
 public:
 
     // set that we are truly shutting down
