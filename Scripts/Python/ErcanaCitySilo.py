@@ -100,11 +100,11 @@ class ErcanaCitySilo(ptResponder):
         vault = ptVault()
         entry = vault.findChronicleEntry("GotPellet")
         if entry is not None:
-            entryValue = entry.chronicleGetValue()
+            entryValue = entry.getValue()
             gotPellet = int(entryValue)
             if gotPellet != 0:
                 self._gotTurd = True
-                entry.chronicleSetValue("0")
+                entry.setValue("0")
                 entry.save()
                 avatar = PtGetLocalAvatar()
                 avatar.avatar.registerForBehaviorNotify(self.key)

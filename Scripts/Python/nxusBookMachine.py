@@ -436,7 +436,7 @@ class nxusBookMachine(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry("GotLinkToKveerPublic")
         if entry is not None:
-            entryValue = entry.chronicleGetValue()
+            entryValue = entry.getValue()
             if entryValue == "yes":
                 PtDebugPrint("nxusBookMachine.OnServerInitComplete(): chron says you have the link to public Kveer, woo hoo")
                 self.publicAges['Kveer'].linkVisible = True
@@ -445,7 +445,7 @@ class nxusBookMachine(ptModifier):
         # copy pasta for the Pub
         entrygmpn = vault.findChronicleEntry("GotLinkToGoMePublic")
         if entrygmpn is not None:
-            entryValue02 = entrygmpn.chronicleGetValue()
+            entryValue02 = entrygmpn.getValue()
             if entryValue02 == "yes":
                 PtDebugPrint("nxusBookMachine.OnServerInitComplete(): chron says you have the link to public GoMePub, hooray!")
                 self.publicAges['GoMePubNew'].linkVisible = True
@@ -468,7 +468,7 @@ class nxusBookMachine(ptModifier):
         if entry is None:
             return True # we haven't created a hood before, so let them!
 
-        temp = float(entry.chronicleGetValue())
+        temp = float(entry.getValue())
         lastTime = datetime.date.fromtimestamp(temp)
         temp = PtGetDniTime()
         curTime = datetime.date.fromtimestamp(temp)
@@ -608,7 +608,7 @@ class nxusBookMachine(ptModifier):
             # not found... add current level chronicle
             vault.addChronicleEntry("LastHoodCreationTime", kChronicleVarType, str(PtGetDniTime()))
         else:
-            entry.chronicleSetValue(str(PtGetDniTime()))
+            entry.setValue(str(PtGetDniTime()))
             entry.save()
 
     def IPushGetBookBtn(self):
@@ -1641,7 +1641,7 @@ class nxusBookMachine(ptModifier):
         if not GUIDChronFound:
             PtDebugPrint("creating PelletCave GUID chron")
             newNode = ptVaultChronicleNode(0)
-            newNode.chronicleSetName("PelletCaveGUID")
-            newNode.chronicleSetValue(pelletCaveGUID)
+            newNode.setName("PelletCaveGUID")
+            newNode.setValue(pelletCaveGUID)
             ageDataFolder.addNode(newNode)
             PtDebugPrint("created pelletCaveGUID age chron, = ", pelletCaveGUID)

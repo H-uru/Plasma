@@ -56,7 +56,7 @@ def _GetPathValue() -> Optional[str]:
     if start is None:
         return None
 
-    value = start.chronicleGetValue()
+    value = start.getValue()
     assert value in {kTutorialPathValue, kAdvancedPathValue}, f"Invalid path value {value}"
     return value
 
@@ -74,7 +74,7 @@ def IsAdvancedPath() -> bool:
 def IsCleftSolved() -> bool:
     """Determines whether or not the Cleft has been solved."""
     entry = ptVault().findChronicleEntry(kCleftChronicle)
-    return entry is not None and entry.chronicleGetValue() == "yes"
+    return entry is not None and entry.getValue() == "yes"
 
 def SelectPath(path: Literal[kTutorialPathValue, kAdvancedPathValue]) -> None:
     assert path in {kTutorialPathValue, kAdvancedPathValue}, "Path must be cleft or relto"
@@ -85,7 +85,7 @@ def SelectPath(path: Literal[kTutorialPathValue, kAdvancedPathValue]) -> None:
 def StartInACA() -> bool:
     """Returns if the first Age the player links to should be AvatarCustomization."""
     entry = ptVault().findChronicleEntry(kACAChronicle)
-    return entry is None or entry.chronicleGetValue() != "1"
+    return entry is None or entry.getValue() != "1"
 
 def StartInCleft() -> bool:
     """Returns if the first Age the player links to should be Cleft. This means that the player

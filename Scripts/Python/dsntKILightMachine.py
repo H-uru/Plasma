@@ -181,12 +181,12 @@ class dsntKILightMachine(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry("KILightStop")
         if entry is not None:
-            entryValue = entry.chronicleGetValue()
+            entryValue = entry.getValue()
             oldVal = int(entryValue)
             if remaining == oldVal:
                 return
             PtDebugPrint("set KI light chron to: ",remaining)
-            entry.chronicleSetValue("%d" % (remaining))
+            entry.setValue("%d" % (remaining))
             entry.save()
         else:
             vault.addChronicleEntry("KILightStop",1,"%d" % (remaining))

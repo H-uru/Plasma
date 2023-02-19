@@ -63,57 +63,6 @@ PYTHON_INIT_DEFINITION(ptVaultChronicleNode, args, keywords)
     PYTHON_RETURN_INIT_OK;
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, chronicleSetName, args)
-{
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
-    {
-        PyErr_SetString(PyExc_TypeError, "chronicleSetName expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Chronicle_SetName(name);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultChronicleNode, chronicleGetName)
-{
-    return PyUnicode_FromSTString(self->fThis->Chronicle_GetName());
-}
-
-PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, chronicleSetValue, args)
-{
-    char* val;
-    if (!PyArg_ParseTuple(args, "s", &val))
-    {
-        PyErr_SetString(PyExc_TypeError, "chronicleSetValue expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Chronicle_SetValue(val);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultChronicleNode, chronicleGetValue)
-{
-    return PyUnicode_FromSTString(self->fThis->Chronicle_GetValue());
-}
-
-PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, chronicleSetType, args)
-{
-    unsigned long chronType;
-    if (!PyArg_ParseTuple(args, "l", &chronType))
-    {
-        PyErr_SetString(PyExc_TypeError, "chronicleSetType expects an unsigned long");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->Chronicle_SetType(chronType);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultChronicleNode, chronicleGetType)
-{
-    return PyLong_FromUnsignedLong(self->fThis->Chronicle_GetType());
-}
-
 PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, setName, args)
 {
     char* name;
@@ -166,14 +115,6 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultChronicleNode, getEntryType)
 }
 
 PYTHON_START_METHODS_TABLE(ptVaultChronicleNode)
-    // legacy glue
-    PYTHON_METHOD(ptVaultChronicleNode, chronicleSetName, "Params: name\nLEGACY: Sets the name of the chronicle node."),
-    PYTHON_METHOD_NOARGS(ptVaultChronicleNode, chronicleGetName, "LEGACY: Returns the name of the chronicle node."),
-    PYTHON_METHOD(ptVaultChronicleNode, chronicleSetValue, "Params: value\nLEGACY: Sets the chronicle to a value that is a string"),
-    PYTHON_METHOD_NOARGS(ptVaultChronicleNode, chronicleGetValue, "LEGACY: Returns the value as a string of this chronicle node."),
-    PYTHON_METHOD(ptVaultChronicleNode, chronicleSetType, "Params: type\nLEGACY: Sets this chronicle node to a user defined type."),
-    PYTHON_METHOD_NOARGS(ptVaultChronicleNode, chronicleGetType, "LEGACY: Returns the user defined type of the chronicle node."),
-    // new glue
     PYTHON_METHOD(ptVaultChronicleNode, setName, "Params: name\nSets the name of the chronicle node."),
     PYTHON_METHOD_NOARGS(ptVaultChronicleNode, getName, "Returns the name of the chronicle node."),
     PYTHON_METHOD(ptVaultChronicleNode, setValue, "Params: value\nSets the chronicle to a value that is a string"),

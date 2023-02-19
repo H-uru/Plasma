@@ -156,7 +156,7 @@ class xJourneyClothGate(ptResponder):
                 if entry is None:
                     PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: Sorry, couldn't find journey cloth chronicle for this age")
                     return
-                FoundJCs = entry.chronicleGetValue()
+                FoundJCs = entry.getValue()
                     
 
             length = len(FoundJCs)
@@ -237,7 +237,7 @@ class xJourneyClothGate(ptResponder):
             if entry is None:
                 PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: Sorry, couldn't find journey cloth chronicle for this age")
                 return
-            FoundJCs = entry.chronicleGetValue()
+            FoundJCs = entry.getValue()
             length = len(FoundJCs)
             all = len(AllCloths)
 
@@ -269,7 +269,7 @@ class xJourneyClothGate(ptResponder):
 
             ageChild = ageChild.upcastToChronicleNode()
 
-            if ageChild.chronicleGetName() == Age.value:
+            if ageChild.getName() == Age.value:
                 return ageChild
 
         return None

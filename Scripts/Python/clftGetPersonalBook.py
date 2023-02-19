@@ -88,7 +88,7 @@ class clftGetPersonalBook(ptResponder):
         #~ vault = ptVault()
         #~ entry = vault.findChronicleEntry("JourneyClothProgress")
         #~ if entry is not None:
-            #~ FoundJCs = entry.chronicleGetValue()
+            #~ FoundJCs = entry.getValue()
             #~ if "Z" in FoundJCs:
                 #~ PtPageOutNode("clftYeeshaBookVis")
                 #~ PtDebugPrint("clftGetPersonalBook: Paging out the Yeesha Book in the bookroom",level=kDebugDumpLevel)

@@ -109,14 +109,14 @@ class xMusicBox(ptModifier):
             ageInfoNode.addNode(newFolder)
             
             newNode = ptVaultChronicleNode(0)
-            newNode.chronicleSetName("MusicBoxSongs")
-            newNode.chronicleSetValue(strInitialSong.value)
+            newNode.setName("MusicBoxSongs")
+            newNode.setValue(strInitialSong.value)
             newFolder.addNode(newNode)
 
         elif not musicBoxChronFound:
             newNode = ptVaultChronicleNode(0)
-            newNode.chronicleSetName("MusicBoxSongs")
-            newNode.chronicleSetValue(strInitialSong.value)
+            newNode.setName("MusicBoxSongs")
+            newNode.setValue(strInitialSong.value)
             ageDataFolder.addNode(newNode)
 
         SoundObjIndex = soSoundObj.value.getSoundIndex(strSoundObj.value)

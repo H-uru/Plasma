@@ -914,11 +914,11 @@ class xKI(ptModifier):
                 vault = ptVault()
                 entry = vault.findChronicleEntry(kChronicleGZMarkersAquired)
                 if entry is not None:
-                    markers = entry.chronicleGetValue()
+                    markers = entry.getValue()
                     if len(markers) < value:
                         # Need to increase the capacity of the markers; start as active.
                         markers += kGZMarkerAvailable * (value - len(markers))
-                        entry.chronicleSetValue(markers)
+                        entry.setValue(markers)
                         entry.save()
                 else:
                     # If there are none, then just add another entry; start as active.
@@ -1415,7 +1415,7 @@ class xKI(ptModifier):
             # Not found, set to 0 by default.
             vault.addChronicleEntry(kChron.OnlyPMs, kChron.OnlyPMsType, str(int(self.onlyGetPMsFromBuddies)))
         else:
-            self.onlyGetPMsFromBuddies = int(entry.chronicleGetValue())
+            self.onlyGetPMsFromBuddies = int(entry.getValue())
 
         # Only allow the player to be buddied on request.
         entry = vault.findChronicleEntry(kChron.BuddiesOnRequest)
@@ -1423,7 +1423,7 @@ class xKI(ptModifier):
             # Not found, set to 0 by default.
             vault.addChronicleEntry(kChron.BuddiesOnRequest, kChron.BuddiesOnRequestType, str(int(self.onlyAllowBuddiesOnRequest)))
         else:
-            self.onlyAllowBuddiesOnRequest = int(entry.chronicleGetValue())
+            self.onlyAllowBuddiesOnRequest = int(entry.getValue())
 
     ## Save the KI Flags to the Chronicle.
     def SaveKIFlags(self):
@@ -1432,7 +1432,7 @@ class xKI(ptModifier):
         # Only get PMs and KI Mails from Buddies.
         entry = vault.findChronicleEntry(kChron.OnlyPMs)
         if entry is not None:
-            entry.chronicleSetValue(str(int(self.onlyGetPMsFromBuddies)))
+            entry.setValue(str(int(self.onlyGetPMsFromBuddies)))
             entry.save()
         else:
             vault.addChronicleEntry(kChron.OnlyPMs, kChron.OnlyPMsType, str(int(self.onlyGetPMsFromBuddies)))
@@ -1440,7 +1440,7 @@ class xKI(ptModifier):
         # Only allow the player to be buddied on request.
         entry = vault.findChronicleEntry(kChron.BuddiesOnRequest)
         if entry is not None:
-            entry.chronicleSetValue(str(int(self.onlyAllowBuddiesOnRequest)))
+            entry.setValue(str(int(self.onlyAllowBuddiesOnRequest)))
             entry.save()
         else:
             vault.addChronicleEntry(kChron.BuddiesOnRequest, kChron.BuddiesOnRequestType, str(int(self.onlyAllowBuddiesOnRequest)))
@@ -1469,7 +1469,7 @@ class xKI(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry("KILightStop")
         if entry is not None:
-            entryValue = entry.chronicleGetValue()
+            entryValue = entry.getValue()
             remaining = int(entryValue)
             return remaining
         else:
@@ -1482,12 +1482,12 @@ class xKI(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry("KILightStop")
         if entry is not None:
-            entryValue = entry.chronicleGetValue()
+            entryValue = entry.getValue()
             oldVal = int(entryValue)
             if remaining == oldVal:
                 return
             PtDebugPrint("xKI.SetKILightChron(): Set KI light chron to: ", remaining, level=kDebugDumpLevel)
-            entry.chronicleSetValue(str(int(remaining)))
+            entry.setValue(str(int(remaining)))
             entry.save()
 
     ## Manages the KI light.
@@ -1654,7 +1654,7 @@ class xKI(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry(kChronicleKITextColor)
         if entry is not None:
-            if colorStr := entry.chronicleGetValue():
+            if colorStr := entry.getValue():
                 PtDebugPrint(f"xKI.DetermineTextColor(): KI Text Color is: \"{colorStr}\".", level=kWarningLevel)
                 args = colorStr.split(",")
                 try:
@@ -1684,7 +1684,7 @@ class xKI(ptModifier):
                 entry = vault.findChronicleEntry(kChronicleGZGames)
                 error = 0
                 if entry is not None:
-                    gameString = entry.chronicleGetValue()
+                    gameString = entry.getValue()
                     PtDebugPrint("xKI.DetermineGZ(): Game string is: \"{}\".".format(gameString), level=kWarningLevel)
                     args = gameString.split()
                     if len(args) == 3:
@@ -1789,7 +1789,7 @@ class xKI(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry(kChronicleGZGames)
         if entry is not None:
-            if gameString == entry.chronicleGetValue():
+            if gameString == entry.getValue():
                 PtDebugPrint("xKI.GZFlashUpdate(): Vault corrupted: trying to gracefully reset to a default state.", level=kErrorLevel)
                 import grtzKIMarkerMachine
                 grtzKIMarkerMachine.ResetMarkerGame()
@@ -1804,7 +1804,7 @@ class xKI(ptModifier):
             entry = vault.findChronicleEntry(kChronicleGZGames)
             upString = "{} {}:{} {}:{}".format(self.gGZPlaying, self.gMarkerGottenColor, self.gMarkerToGetColor, self.gMarkerGottenNumber, self.gMarkerToGetNumber)
             if entry is not None:
-                entry.chronicleSetValue(upString)
+                entry.setValue(upString)
                 entry.save()
             else:
                 vault.addChronicleEntry(kChronicleGZGames, kChronicleGZGamesType, upString)
@@ -1817,14 +1817,14 @@ class xKI(ptModifier):
             vault = ptVault()
             entry = vault.findChronicleEntry(kChronicleGZMarkersAquired)
             if entry is not None:
-                markers = entry.chronicleGetValue()
+                markers = entry.getValue()
                 markerIdx = self.gGZMarkerInRange - 1
                 if markerIdx >= 0 and markerIdx < len(markers):
                     if len(markers) - (markerIdx + 1) != 0:
                         markers = markers[:markerIdx] + kGZMarkerCaptured + markers[-(len(markers) - (markerIdx + 1)):]
                     else:
                         markers = markers[:markerIdx] + kGZMarkerCaptured
-                    entry.chronicleSetValue(markers)
+                    entry.setValue(markers)
                     entry.save()
                     # Update the "marker gotten" count.
                     totalGotten = markers.count(kGZMarkerCaptured)
@@ -2259,7 +2259,7 @@ class xKI(ptModifier):
             # Not found, set to MicroKI by default.
             vault.addChronicleEntry(kChronicleKILevel, kChronicleKILevelType, str(self.KILevel))
         else:
-            oldLevel = int(entry.chronicleGetValue())
+            oldLevel = int(entry.getValue())
             if oldLevel >= kLowestKILevel and oldLevel <= kHighestKILevel:
                 self.KILevel = oldLevel
             elif oldLevel < kLowestKILevel:
@@ -2276,10 +2276,10 @@ class xKI(ptModifier):
             vault.addChronicleEntry(kChronicleKIMarkerLevel, kChronicleKIMarkerLevelType, str(self.gKIMarkerLevel))
         else:
             try:
-                self.gKIMarkerLevel = int(entry.chronicleGetValue())
+                self.gKIMarkerLevel = int(entry.getValue())
             except:
                 PtDebugPrint("xKI.DetermineKILevel(): Chronicle entry error with the KI's Marker Level, resetting to the default value.", level=kErrorLevel)
-                entry.chronicleSetValue(str(self.gKIMarkerLevel))
+                entry.setValue(str(self.gKIMarkerLevel))
                 entry.save()
         PtDebugPrint("xKI.DetermineKILevel(): The KI Marker Level is {}.".format(self.gKIMarkerLevel), level=kWarningLevel)
 
@@ -2288,7 +2288,7 @@ class xKI(ptModifier):
             self.chatMgr.gFeather = 0
         else:
             try:
-                self.chatMgr.gFeather = int(entry.chronicleGetValue())
+                self.chatMgr.gFeather = int(entry.getValue())
             except ValueError:
                 self.chatMgr.gFeather = 0
 
@@ -2305,7 +2305,7 @@ class xKI(ptModifier):
                 vault.addChronicleEntry(kChronicleKIMarkerLevel, kChronicleKIMarkerLevelType, str(self.gKIMarkerLevel))
             else:
                 PtDebugPrint("xKI.UpgradeKIMarkerLevel(): Upgrading existing KI Marker Level to {}.".format(self.gKIMarkerLevel), level=kWarningLevel)
-                entry.chronicleSetValue(str(self.gKIMarkerLevel))
+                entry.setValue(str(self.gKIMarkerLevel))
                 entry.save()
 
     ## Updates the KI level's Chronicle value.
@@ -2314,7 +2314,7 @@ class xKI(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry(kChronicleKILevel)
         if entry is not None:
-            entry.chronicleSetValue(str(self.KILevel))
+            entry.setValue(str(self.KILevel))
             entry.save()
         else:
             vault.addChronicleEntry(kChronicleKILevel, kChronicleKILevelType, str(self.KILevel))
@@ -2405,7 +2405,7 @@ class xKI(ptModifier):
         if entry is None:
             vault.addChronicleEntry(kChronicleCensorLevel, kChronicleCensorLevelType, str(self.censorLevel))
         else:
-            self.censorLevel = int(entry.chronicleGetValue())
+            self.censorLevel = int(entry.getValue())
         PtDebugPrint("xKI.DetermineCensorLevel(): The censor level is {}.".format(self.censorLevel), level=kWarningLevel)
 
     def GetCensorLevel(self):
@@ -2425,7 +2425,7 @@ class xKI(ptModifier):
             # Not found, add the current size to the Chronicle.
             vault.addChronicleEntry(kChron.FontSize, kChron.FontSizeType, str(fontSize))
         else:
-            fontSize = int(entry.chronicleGetValue())
+            fontSize = int(entry.getValue())
             self.SetFontSize(fontSize)
         PtDebugPrint("xKI.DetermineFontSize(): The saved font size is {}.".format(fontSize), level=kWarningLevel)
 
@@ -2436,7 +2436,7 @@ class xKI(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry(kChron.FontSize)
         if entry is not None:
-            entry.chronicleSetValue(str(fontSize))
+            entry.setValue(str(fontSize))
             entry.save()
         else:
             vault.addChronicleEntry(kChron.FontSize, kChron.FontSizeType, str(fontSize))
@@ -2497,7 +2497,7 @@ class xKI(ptModifier):
             # Not found, add the current fade time to the Chronicle.
             vault.addChronicleEntry(kChron.FadeTime, kChron.FadeTimeType, str(self.chatMgr.ticksOnFull))
         else:
-            self.chatMgr.ticksOnFull = int(entry.chronicleGetValue())
+            self.chatMgr.ticksOnFull = int(entry.getValue())
             if self.chatMgr.ticksOnFull == kChat.FadeTimeMax:
                 # Disable the fade altogether.
                 self.chatMgr.fadeEnableFlag = False
@@ -2513,7 +2513,7 @@ class xKI(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry(kChron.FadeTime)
         if entry is not None:
-            entry.chronicleSetValue(str(self.chatMgr.ticksOnFull))
+            entry.setValue(str(self.chatMgr.ticksOnFull))
             entry.save()
         else:
             vault.addChronicleEntry(kChron.FadeTime, kChron.FadeTimeType, str(self.chatMgr.ticksOnFull))
@@ -3925,7 +3925,7 @@ class xKI(ptModifier):
                     entry = vault.findChronicleEntry("CleftSolved")
                     cleftSolved = False
                     if entry is not None:
-                        if entry.chronicleGetValue() == "yes":
+                        if entry.getValue() == "yes":
                             cleftSolved = True
                     if self.GetAgeInstanceName() != "D'ni-Riltagamin" or cleftSolved:
                         instAgeName = self.GetAgeInstanceName()

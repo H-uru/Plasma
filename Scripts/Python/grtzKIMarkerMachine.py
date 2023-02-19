@@ -120,7 +120,7 @@ def ResetMarkerGame():
     # First, reset the KI Marker Level
     entry = vault.findChronicleEntry(kChronicleKIMarkerLevel)
     if entry is not None:
-        entry.chronicleSetValue("0")
+        entry.setValue("0")
         entry.save()
 
     # Next, reset the Marker's Aquired Data
@@ -130,7 +130,7 @@ def ResetMarkerGame():
     resetString = "0 off:off 0:0"
     entry = vault.findChronicleEntry(kChronicleGZGames)
     if entry is not None:
-        entry.chronicleSetValue(resetString)
+        entry.setValue(resetString)
 
     #Who knows what state we were in so we'll reset the CGZs as well!!!
     PtSendKIMessage(kMGStopCGZGame, 0)
@@ -149,9 +149,9 @@ def UpdateGZMarkers(markerStatus):
     vault = ptVault()
     entry = vault.findChronicleEntry(kChronicleGZMarkersAquired)
     if entry is not None:
-        markers = entry.chronicleGetValue()
+        markers = entry.getValue()
         resetValue = markerStatus * len(markers)
-        entry.chronicleSetValue(resetValue)
+        entry.setValue(resetValue)
         entry.save()
     else:
         markers = markerStatus * kNumGZMarkers
@@ -232,7 +232,7 @@ class grtzKIMarkerMachine(ptModifier):
                         vault.addChronicleEntry(kChronicleGZMarkersAquired,kChronicleGZMarkersAquiredType,markers)
                     else:
                         markers = kGZMarkerAvailable * kNumGZMarkers
-                        entry.chronicleSetValue(markers)
+                        entry.setValue(markers)
                         entry.save()
 
                     # after fun with lights then the activator will be enabled
@@ -277,7 +277,7 @@ class grtzKIMarkerMachine(ptModifier):
         entry = vault.findChronicleEntry(kChronicleGZGames)
         error = 0
         if entry is not None:
-            markerGameString = entry.chronicleGetValue()
+            markerGameString = entry.getValue()
             args = markerGameString.split()
             
             if len(args) == 3:
@@ -339,7 +339,7 @@ class grtzKIMarkerMachine(ptModifier):
         entry = vault.findChronicleEntry(kChronicleGZGames)
         upstring = "%d %s:%s %d:%d" % (gGZPlaying,gMarkerGottenColor,gMarkerToGetColor,gMarkerGottenNumber,gMarkerToGetNumber)
         if entry is not None:
-            entry.chronicleSetValue(upstring)
+            entry.setValue(upstring)
             entry.save()
         else:
             # if there is none, then just add another entry
@@ -409,7 +409,7 @@ class grtzKIMarkerMachine(ptModifier):
                 # is there a chronicle for the GZ games?
                 entry = vault.findChronicleEntry(kChronicleGZGames)
                 if entry is not None:
-                    entry.chronicleSetValue("0")
+                    entry.setValue("0")
                     entry.save()
                 # they've made it to the next level
                 PtSendKIMessageInt(kUpgradeKIMarkerLevel,kKIMarkerNormalLevel)
@@ -525,16 +525,16 @@ class grtzKIMarkerMachine(ptModifier):
         vault = ptVault()
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
         if entryCityLinks is not None:
-            valCityLinks = entryCityLinks.chronicleGetValue()
+            valCityLinks = entryCityLinks.getValue()
             PtDebugPrint("valCityLinks = ",valCityLinks)
             CityLinks = valCityLinks.split(",")
             PtDebugPrint("CityLinks = ",CityLinks)
             if agePanel not in CityLinks:
                 NewLinks = valCityLinks + "," + agePanel
-                entryCityLinks.chronicleSetValue(NewLinks)
+                entryCityLinks.setValue(NewLinks)
                 entryCityLinks.save()
                 PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  setting citylinks chron entry to include: ",agePanel)
-                valCityLinks = entryCityLinks.chronicleGetValue()
+                valCityLinks = entryCityLinks.getValue()
                 CityLinks = valCityLinks.split(",")
                 PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  citylinks now = ",CityLinks)
             else:

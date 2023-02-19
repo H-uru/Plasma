@@ -156,10 +156,10 @@ class PelletBahroCave(ptResponder):
             vault = ptVault()
             entry = vault.findChronicleEntry("GotPellet")
             if entry is not None:
-                entryValue = entry.chronicleGetValue()
+                entryValue = entry.getValue()
                 gotPellet = int(entryValue)
                 if gotPellet != 0:
-                    entry.chronicleSetValue("%d" % (0))
+                    entry.setValue("%d" % (0))
                     entry.save()
                     avatar = PtGetLocalAvatar()
                     avatar.avatar.registerForBehaviorNotify(self.key)

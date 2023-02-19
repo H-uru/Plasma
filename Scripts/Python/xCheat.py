@@ -123,17 +123,17 @@ def GetAgeJourneyCloths(args):
 
         ageChild = ageChild.upcastToChronicleNode()
 
-        if ageChild.chronicleGetName() == ageName:
+        if ageChild.getName() == ageName:
             ageChronNode = ageChild
             break
 
     if ageChronNode is None:
         newNode = Plasma.ptVaultChronicleNode(0)
-        newNode.chronicleSetName(ageName)
-        newNode.chronicleSetValue("abcdefg")
+        newNode.setName(ageName)
+        newNode.setValue("abcdefg")
         chron.addNode(newNode)
     else:
-        ageChronNode.chronicleSetValue("abcdefg")
+        ageChronNode.setValue("abcdefg")
         ageChronNode.save()
 
 
@@ -187,10 +187,10 @@ def GenerateCleftSolution(args):
         agelist = ["Teledahn", "Garrison", "Garden", "Kadish"]
         for v in range(len(agelist)):
             newnode = Plasma.ptVaultChronicleNode(0)
-            newnode.chronicleSetName(agelist[v])
+            newnode.setName(agelist[v])
             ageVal = str(solutionlist[v])            
-            newnode.chronicleSetValue("1," + ageVal + "," + str(v + 1))
-            #newnode.chronicleSetValue("1," + str(solutionlist[v]) + "," + str(v + 1))
+            newnode.setValue("1," + ageVal + "," + str(v + 1))
+            #newnode.setValue("1," + str(solutionlist[v]) + "," + str(v + 1))
             entry.addNode(newnode)
             print("%s solution is %s" % (agelist[v], ageVal))
 
@@ -271,7 +271,7 @@ def GZSetGame(args):
     # is there a chronicle for the GZ games?
     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZGames)
     if entry is not None:
-        entry.chronicleSetValue(gameString)
+        entry.setValue(gameString)
         entry.save()
     else:
         # if there is none, then just add another entry
@@ -298,7 +298,7 @@ def GZGetMarkers(args):
         # is there a chronicle for the GZ games?
         entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZGames)
         if entry is not None:
-            gameString = entry.chronicleGetValue()
+            gameString = entry.getValue()
             gargs = gameString.split()
             if len(gargs) == 3:
                 try:
@@ -314,13 +314,13 @@ def GZGetMarkers(args):
                         newgotten = markerToGetNumber
                     print("Updating markers gotten to %d from %d" % (newgotten,markerToGetNumber))
                     upstring = "%d %s:%s %d:%d" % (markerGame,markerGottenColor,markerToGetColor,newgotten,markerToGetNumber)
-                    entry.chronicleSetValue(upstring)
+                    entry.setValue(upstring)
                     entry.save()
                     # just pick some marker to have gotten
                     # is there a chronicle for the GZ games?
                     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZMarkersAquired)
                     if entry is not None:
-                        markers = entry.chronicleGetValue()
+                        markers = entry.getValue()
                         for mnum in range(markersToGet):
                             markerIdx = markers.index(PlasmaKITypes.kGZMarkerAvailable)
                             if markerIdx >= 0 and markerIdx < len(markers):
@@ -330,7 +330,7 @@ def GZGetMarkers(args):
                                 else:
                                     markers = markers[:markerIdx] + PlasmaKITypes.kGZMarkerCaptured
                                 print("Update marker #%d - out string is '%s'" % (markerIdx+1,markers))
-                                entry.chronicleSetValue(markers)
+                                entry.setValue(markers)
                                 entry.save()
                     # update the 
                     Plasma.PtSendKIMessage(PlasmaKITypes.kGZUpdated,0)
@@ -364,7 +364,7 @@ def GZGiveMeFullAccess(args):
     vault = Plasma.ptVault()
     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZGames)
     if entry is not None:
-        entry.chronicleSetValue(resetString)
+        entry.setValue(resetString)
 
     # Finally, update the KI display
     Plasma.PtSendKIMessage(PlasmaKITypes.kGZUpdated,0)
@@ -388,17 +388,17 @@ def RemoveMarkerTag(args):
     # is there a chronicle for the GZ games?
     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleKIMarkerLevel)
     if entry is not None:
-        entry.chronicleSetValue(newlevel)
+        entry.setValue(newlevel)
         entry.save()
     # is there a chronicle for the GZ games?
     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZGames)
     if entry is not None:
-        entry.chronicleSetValue("0")
+        entry.setValue("0")
         entry.save()
     # is there a chronicle for the GZ games?
     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZMarkersAquired)
     if entry is not None:
-        entry.chronicleSetValue("")
+        entry.setValue("")
         entry.save()
     Plasma.PtSendKIMessage(PlasmaKITypes.kGZUpdated,0)
     # get rid of the CGZ marker games
@@ -406,12 +406,12 @@ def RemoveMarkerTag(args):
     for mg in MGs:
         entry = vault.findChronicleEntry(mg)
         if entry is not None:
-            entry.chronicleSetValue("")
+            entry.setValue("")
             entry.save()
    
     entry = vault.findChronicleEntry("CGZPlaying")
     if entry is not None:
-        entry.chronicleSetValue("")
+        entry.setValue("")
         entry.save()
     # remove the marker games from the hidden folder--- later
 
@@ -425,11 +425,11 @@ def CGZKillAll(args):
     for mg in MGs:
         entry = vault.findChronicleEntry(mg)
         if entry is not None:
-            entry.chronicleSetValue("")
+            entry.setValue("")
             entry.save()
     entry = vault.findChronicleEntry("CGZPlaying")
     if entry is not None:
-        entry.chronicleSetValue("")
+        entry.setValue("")
         entry.save()
 
 def ShowHiddenFolder(args):

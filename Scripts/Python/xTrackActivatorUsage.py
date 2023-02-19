@@ -71,7 +71,7 @@ class xTrackActivatorUsage(ptModifier):
             entry = vault.findChronicleEntry(strChronVar.value)
 
             if entry is not None:
-                entry.chronicleSetValue( str(self.currentValue) )
+                entry.setValue( str(self.currentValue) )
                 entry.save()
             else:
                 vault.addChronicleEntry(strChronVar.value, 0, str(self.currentValue) )
@@ -84,7 +84,7 @@ class xTrackActivatorUsage(ptModifier):
             entry = vault.findChronicleEntry(strChronVar.value)
 
             if entry is not None:
-                self.currentValue = int(entry.chronicleGetValue())
+                self.currentValue = int(entry.getValue())
 
         self.startingValue = self.currentValue
 

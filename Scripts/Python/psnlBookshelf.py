@@ -1892,7 +1892,7 @@ class psnlBookshelf(ptModifier):
         vault = ptVault()
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
         if entryCityLinks is not None:
-            valCityLinks = entryCityLinks.chronicleGetValue()
+            valCityLinks = entryCityLinks.getValue()
             PtDebugPrint("valCityLinks = ",valCityLinks)
             CityLinks = valCityLinks.split(",")
             PtDebugPrint("CityLinks = ",CityLinks)

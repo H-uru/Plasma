@@ -126,7 +126,7 @@ class clftNpcZandi(ptModifier):
         vault = ptVault()
         #~ entry = vault.findChronicleEntry("JourneyClothProgress")
         #~ if entry is not None:
-            #~ FoundJCs = entry.chronicleGetValue()
+            #~ FoundJCs = entry.getValue()
             #~ if "Z" in FoundJCs:
                 #~ PtPageOutNode("clftZandiVis")
                 #~ PtDebugPrint("Zandi seems to have stepped away from the Airstream. Hmmm...")
@@ -231,8 +231,8 @@ class clftNpcZandi(ptModifier):
 
                 ageChild = ageChild.upcastToChronicleNode()
 
-                if ageChild.chronicleGetName() == "Cleft":
-                    return ageChild.chronicleGetValue()
+                if ageChild.getName() == "Cleft":
+                    return ageChild.getValue()
 
         return ""
 
@@ -272,7 +272,7 @@ class clftNpcZandi(ptModifier):
             PtDebugPrint("ERROR: clftNpcZandi.HaventSeenImagerMessage: cannot find YeeshaVisionViewed chronicle entry")
             return 1
 
-        if entry.chronicleGetValue() == "1":
+        if entry.getValue() == "1":
             return 0
         else:
             return 1
@@ -290,11 +290,11 @@ class clftNpcZandi(ptModifier):
                 vault.addChronicleEntry("ZandiWelcome", 0, "1")
             return 1
 
-        if entry.chronicleGetValue() == "1":
+        if entry.getValue() == "1":
             return 0
         else:
             if not clicked:
-                entry.chronicleSetValue("1")
+                entry.setValue("1")
                 entry.save()
             return 1
 

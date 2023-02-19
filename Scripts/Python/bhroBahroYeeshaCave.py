@@ -263,7 +263,7 @@ class bhroBahroYeeshaCave(ptModifier):
         journeyComplete = 0
         #vault = ptVault()
         #jcNode = vault.findChronicleEntry("JourneyClothProgress")
-        #if jcNode.chronicleGetValue() == "Z":
+        #if jcNode.getValue() == "Z":
 
         sdl = xPsnlVaultSDL()
         if sdl["CleftVisited"][0]:
@@ -451,7 +451,7 @@ class bhroBahroYeeshaCave(ptModifier):
 
             ageChild = ageChild.upcastToChronicleNode()
 
-            if ageChild.chronicleGetName() == age:
+            if ageChild.getName() == age:
                 return ageChild
 
         return None
@@ -461,7 +461,7 @@ class bhroBahroYeeshaCave(ptModifier):
         node = self.GetAgeNode(age)
 
         if node != None:
-            varlist = node.chronicleGetValue().split(",")
+            varlist = node.getValue().split(",")
             return varlist[ self.varMap[variable] ]            
         else:
             return None
@@ -471,7 +471,7 @@ class bhroBahroYeeshaCave(ptModifier):
         node = self.GetAgeNode(age)
 
         if node != None:
-            varlist = node.chronicleGetValue().split(",")
+            varlist = node.getValue().split(",")
             while len(varlist) < len(self.varMap):
                 varlist.append("0")
             varlist[ self.varMap[variable] ] = str(value)
@@ -480,7 +480,7 @@ class bhroBahroYeeshaCave(ptModifier):
                 varstr += (varlist[var] + ",")
             varstr += varlist[-1]
             
-            node.chronicleSetValue(varstr)
+            node.setValue(varstr)
             node.save()
         else:
             raise RuntimeError("Could not find chronicle variable to set")
@@ -532,8 +532,8 @@ class bhroBahroYeeshaCave(ptModifier):
             agelist = ["Teledahn", "Garden", "Garrison", "Kadish"]
             for v in range(len(agelist)):
                 newnode = ptVaultChronicleNode(0)
-                newnode.chronicleSetName(agelist[v])
-                newnode.chronicleSetValue("0," + str(solutionlist[v]) + ",0")
+                newnode.setName(agelist[v])
+                newnode.setValue("0," + str(solutionlist[v]) + ",0")
                 entry.addNode(newnode)
 
 
@@ -784,7 +784,7 @@ class bhroBahroYeeshaCave(ptModifier):
         vault = ptVault()
         bc = vault.findChronicleEntry("BahroCave")
         if bc is not None:
-            val = bc.chronicleGetValue()
+            val = bc.getValue()
             if val == "":
                 return 0
             else:
@@ -797,12 +797,12 @@ class bhroBahroYeeshaCave(ptModifier):
         vault = ptVault()
         bc = vault.findChronicleEntry("BahroCave")
         if bc is not None:
-            val = bc.chronicleGetValue()
+            val = bc.getValue()
             if val == "":
                 val = 0
             else:
                 val = int(val)
-            bc.chronicleSetValue(str(val + 1))
+            bc.setValue(str(val + 1))
             bc.save()
             PtDebugPrint("bhroBahroYeeshaCave.IncrementAutoStartLevel(): setting BC chron = ",str(val + 1))
         else:

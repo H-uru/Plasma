@@ -153,10 +153,10 @@ class ercaPelletRoom(ptResponder):
         vault = ptVault()
         entry = vault.findChronicleEntry("GotPellet")
         if entry is not None:
-            entryValue = entry.chronicleGetValue()
+            entryValue = entry.getValue()
             oldGotPellet = int(entryValue)
             if oldGotPellet != 0:
-                entry.chronicleSetValue("%d" % (0))
+                entry.setValue("%d" % (0))
                 entry.save()
                 PtDebugPrint("ercaPelletRoom.OnServerInitComplete(): chron entry GotPellet still contained a recipe, setting to 0")
 
@@ -549,7 +549,7 @@ class ercaPelletRoom(ptResponder):
             vault = ptVault()
             entry = vault.findChronicleEntry("GotPellet")
             if entry is not None:
-                entry.chronicleSetValue("%d" % (Recipe))
+                entry.setValue("%d" % (Recipe))
                 entry.save()
                 PtDebugPrint("Chronicle entry GotPellet already added, setting to Recipe value of %d" % (Recipe))
             else:

@@ -92,7 +92,7 @@ class Cleft(ptResponder):
         vault = ptVault()
         entryTomahna = vault.findChronicleEntry("TomahnaLoad")
         if entryTomahna is not None:
-            entryTomahnaValue = entryTomahna.chronicleGetValue()
+            entryTomahnaValue = entryTomahna.getValue()
             if entryTomahnaValue == "yes":
                 loadTomahna = 1
                 if loadZandi:
@@ -134,7 +134,7 @@ class Cleft(ptResponder):
             #now that Tomahna pages have loaded, reset its chronicle value back to no,
             #so subsequent linking will default to regular Cleft instead of Tomahna,
             #unless a Tomahna link is used, of course...
-            entryTomahna.chronicleSetValue("no")
+            entryTomahna.setValue("no")
             entryTomahna.save()
 
         pass

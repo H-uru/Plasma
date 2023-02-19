@@ -471,7 +471,7 @@ class xDialogStartUp(ptResponder):
 
             start = ptVault().findChronicleEntry("StartPathChosen")
             if start is not None:
-                gPlayerStart = start.chronicleGetValue()
+                gPlayerStart = start.getValue()
             if StartInACA():
                 ageInfo.setAgeFilename("AvatarCustomization")
             elif StartInCleft():

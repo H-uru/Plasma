@@ -87,14 +87,14 @@ class GardenBugs(ptResponder):
             # not found... add chronicle
             vault.addChronicleEntry(chronicleEntryName,0,str(count))
         else:
-            entry.chronicleSetValue(str(count))
+            entry.setValue(str(count))
             entry.save()
     
     def IGetBugCount(self):
         vault = ptVault()
         entry = vault.findChronicleEntry(chronicleEntryName)
         if entry is not None:
-            return int(entry.chronicleGetValue())
+            return int(entry.getValue())
         return 0 # no chronicle var
 
     def OnServerInitComplete(self):

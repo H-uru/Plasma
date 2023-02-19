@@ -91,8 +91,8 @@ class xChronicleCounter(ptResponder):
                 vault.addChronicleEntry(var.value,kChronicleVarType,"%d" %(kInitialValue))
                 PtDebugPrint("xChronicleCounter:\tentered new chronicle counter %s, count is %d" % (var.value,kInitialValue))
             else:
-                count = int(entry.chronicleGetValue())
+                count = int(entry.getValue())
                 count = count + 1
-                entry.chronicleSetValue("%d" % (count))
+                entry.setValue("%d" % (count))
                 entry.save()
-                PtDebugPrint("xChronicleCounter:\tyour current count for %s is %s" % (var.value,entry.chronicleGetValue()))
+                PtDebugPrint("xChronicleCounter:\tyour current count for %s is %s" % (var.value,entry.getValue()))

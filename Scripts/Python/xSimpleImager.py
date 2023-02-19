@@ -219,7 +219,7 @@ class xSimpleImager(ptModifier):
             # not found... add current level chronicle
             vault.addChronicleEntry(kChronicleCensorLevel,kChronicleCensorLevelType,"%d" % (theCensorLevel))
         else:
-            theCensorLevel = int(entry.chronicleGetValue())
+            theCensorLevel = int(entry.getValue())
         PtDebugPrint("xSimpleImager: the censor level is %d" % (theCensorLevel),level=kWarningLevel)
 
     def OnTimer(self,id):
