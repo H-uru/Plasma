@@ -100,6 +100,8 @@ plProfile_Extern(LightChar);
 plProfile_Extern(LightActive);
 plProfile_Extern(FindLightsFound);
 plProfile_Extern(FindLightsPerm);
+plProfile_Extern(AvatarSort);
+plProfile_Extern(AvatarFaces);
 
 static const float kPerspLayerScale  = 0.00001f;
 static const float kPerspLayerScaleW = 0.001f;
@@ -953,6 +955,32 @@ protected:
 
     /** pass the current local to world tranform on to the device. */
     void ILocalToWorldToDevice();
+
+    /**
+     * Sorts the avatar geometry for display.
+     *
+     * We handle avatar sort differently from the rest of the face sort. The
+     * reason is that within the single avatar index buffer, we want to only
+     * sort the faces of spans requesting a sort, and sort them in place.
+     *
+     * Contrast that with the normal scene translucency sort. There, we sort
+     * all the spans in a drawble, then we sort all the faces in that drawable,
+     * then for each span in the sorted span list, we extract the faces for
+     * that span appending onto the index buffer. This gives great efficiency
+     * because only the visible faces are sorted and they wind up packed into
+     * the front of the index buffer, which permits more batching. See
+     * plDrawableSpans::SortVisibleSpans.
+     *
+     * For the avatar, it's generally the case that all the avatar is visible
+     * or not, and there is only one material, so neither of those efficiencies
+     * is helpful. Moreover, for the avatar the faces we want sorted are a tiny
+     * subset of the avatar's faces. Moreover, and most importantly, for the
+     * avatar, we want to preserve the order that spans are drawn, so, for
+     * example, the opaque base head will always be drawn before the
+     * translucent hair fringe, which will always be drawn before the pink
+     * clear plastic baseball cap.
+     */
+    bool IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList);
 };
 
 
@@ -1040,6 +1068,7 @@ pl3DPipeline<DeviceType>::~pl3DPipeline()
     while (fActiveLights)
         UnRegisterLight(fActiveLights);
 
+    IReleaseAvRTPool();
     IClearClothingOutfits(&fClothingOutfits);
     IClearClothingOutfits(&fPrevClothingOutfits);
 }
@@ -2184,6 +2213,138 @@ void pl3DPipeline<DeviceType>::ILocalToWorldToDevice()
 {
     fDevice.SetLocalToWorldMatrix(fView.GetLocalToWorld());
     fView.fXformResetFlags &= ~fView.kResetL2W;
+}
+
+struct plSortFace
+{
+    uint16_t      fIdx[3];
+    float    fDist;
+};
+
+struct plCompSortFace
+{
+    bool operator()( const plSortFace& lhs, const plSortFace& rhs) const
+    {
+        return lhs.fDist > rhs.fDist;
+    }
+};
+
+template <class DeviceType>
+bool pl3DPipeline<DeviceType>::IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList)
+{
+    plProfile_BeginTiming(AvatarSort);
+    for (int16_t visIdx : visList)
+    {
+        hsAssert(d->GetSpan(visIdx)->fTypeMask & plSpan::kIcicleSpan, "Unknown type for sorting faces");
+
+        plIcicle* span = (plIcicle*)d->GetSpan(visIdx);
+
+        if (span->fProps & plSpan::kPartialSort) {
+            hsAssert(d->GetBufferGroup(span->fGroupIdx)->AreIdxVolatile(), "Badly setup buffer group - set PartialSort too late?");
+
+            const hsPoint3 viewPos = GetViewPositionWorld();
+
+            plGBufferGroup* group = d->GetBufferGroup(span->fGroupIdx);
+
+            typename DeviceType::VertexBufferRef* vRef = static_cast<typename DeviceType::VertexBufferRef*>(group->GetVertexBufferRef(span->fVBufferIdx));
+
+            const uint8_t* vdata = vRef->fData;
+            const uint32_t stride = vRef->fVertexSize;
+
+            const int numTris = span->fILength/3;
+
+            static std::vector<plSortFace> sortScratch;
+            sortScratch.resize(numTris);
+
+            plProfile_IncCount(AvatarFaces, numTris);
+
+            // Have three very similar sorts here, differing only on where the "position" of
+            // each triangle is defined, either as the center of the triangle, the nearest
+            // point on the triangle, or the farthest point on the triangle.
+            // Having tried all three on the avatar (the only thing this sort is used on),
+            // the best results surprisingly came from using the center of the triangle.
+            uint16_t* indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
+            int j;
+            for( j = 0; j < numTris; j++ )
+            {
+#if 1 // TRICENTER
+                uint16_t idx = *indices++;
+                sortScratch[j].fIdx[0] = idx;
+                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
+
+                idx = *indices++;
+                sortScratch[j].fIdx[1] = idx;
+                pos += *(hsPoint3*)(vdata + idx * stride);
+
+                idx = *indices++;
+                sortScratch[j].fIdx[2] = idx;
+                pos += *(hsPoint3*)(vdata + idx * stride);
+
+                pos *= 0.3333f;
+
+                sortScratch[j].fDist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+#elif 0 // NEAREST
+                uint16_t idx = *indices++;
+                sortScratch[j].fIdx[0] = idx;
+                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
+                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                float minDist = dist;
+
+                idx = *indices++;
+                sortScratch[j].fIdx[1] = idx;
+                pos = *(hsPoint3*)(vdata + idx * stride);
+                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                if( dist < minDist )
+                    minDist = dist;
+
+                idx = *indices++;
+                sortScratch[j].fIdx[2] = idx;
+                pos = *(hsPoint3*)(vdata + idx * stride);
+                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                if( dist < minDist )
+                    minDist = dist;
+
+                sortScratch[j].fDist = minDist;
+#elif 1 // FURTHEST
+                uint16_t idx = *indices++;
+                sortScratch[j].fIdx[0] = idx;
+                hsPoint3 pos = *(hsPoint3*)(vdata + idx * stride);
+                float dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                float maxDist = dist;
+
+                idx = *indices++;
+                sortScratch[j].fIdx[1] = idx;
+                pos = *(hsPoint3*)(vdata + idx * stride);
+                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                if( dist > maxDist )
+                    maxDist = dist;
+
+                idx = *indices++;
+                sortScratch[j].fIdx[2] = idx;
+                pos = *(hsPoint3*)(vdata + idx * stride);
+                dist = hsVector3(&pos, &viewPos).MagnitudeSquared();
+                if( dist > maxDist )
+                    maxDist = dist;
+
+                sortScratch[j].fDist = maxDist;
+#endif // SORTTYPES
+            }
+
+            std::sort(sortScratch.begin(), sortScratch.end(), plCompSortFace());
+
+            indices = group->GetIndexBufferData(span->fIBufferIdx) + span->fIStartIdx;
+            for (const plSortFace& iter : sortScratch)
+            {
+                *indices++ = iter.fIdx[0];
+                *indices++ = iter.fIdx[1];
+                *indices++ = iter.fIdx[2];
+            }
+
+            group->DirtyIndexBuffer(span->fIBufferIdx);
+        }
+    }
+    plProfile_EndTiming(AvatarSort);
+    return true;
 }
 
 #endif //_pl3DPipeline_inc_
