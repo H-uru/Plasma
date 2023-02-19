@@ -94,6 +94,7 @@ plProfile_Extern(DrawTriangles);
 plProfile_Extern(MatChange);
 plProfile_Extern(NumSkin);
 
+plProfile_Extern(PipeReload);
 plProfile_Extern(PrepShadows);
 plProfile_Extern(PrepDrawable);
 plProfile_Extern(Skin);
@@ -111,12 +112,10 @@ plProfile_Extern(RenderPrim);
 plProfile_Extern(PlateMgr);
 plProfile_Extern(DebugText);
 plProfile_Extern(Reset);
-
-plProfile_CreateCounterNoReset("Reload", "PipeC", PipeReload);
-plProfile_CreateCounter("AvRTPoolUsed", "PipeC", AvRTPoolUsed);
-plProfile_CreateCounter("AvRTPoolCount", "PipeC", AvRTPoolCount);
-plProfile_CreateCounter("AvRTPoolRes", "PipeC", AvRTPoolRes);
-plProfile_CreateCounter("AvRTShrinkTime", "PipeC", AvRTShrinkTime);
+plProfile_Extern(AvRTPoolUsed);
+plProfile_Extern(AvRTPoolCount);
+plProfile_Extern(AvRTPoolRes);
+plProfile_Extern(AvRTShrinkTime);
 
 plMetalEnumerate plMetalPipeline::enumerator;
 
