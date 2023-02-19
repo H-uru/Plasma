@@ -59,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef PLASMA_PIPELINE_GL
     #include "pfGLPipeline/pfGLPipelineCreatable.h"
-#endif"
+#endif
 
 #ifdef PLASMA_PIPELINE_METAL
     #include "pfMetalPipeline/pfMetalPipelineCreatable.h"
