@@ -62,7 +62,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeDebugFlags.h"
 #include "plPipeResReq.h"
 #include "plProfile.h"
+#include "pnNetCommon/plNetApp.h"   // for dbg logging
 #include "pnMessage/plPipeResMakeMsg.h"
+#include "plAvatar/plAvatarClothing.h"
+#include "plGImage/plMipmap.h"
 #include "plGLight/plLightInfo.h"
 #include "plPipeline/hsWinRef.h"
 #include "plPipeline/plCubicRenderTarget.h"
@@ -96,6 +99,14 @@ plProfile_Extern(PlateMgr);
 plProfile_Extern(DebugText);
 plProfile_Extern(Reset);
 plProfile_Extern(NumSkin);
+plProfile_Extern(PipeReload);
+plProfile_Extern(AvRTPoolUsed);
+plProfile_Extern(AvRTPoolCount);
+plProfile_Extern(AvRTPoolRes);
+plProfile_Extern(AvRTShrinkTime);
+plProfile_Extern(SpanMerge);
+plProfile_Extern(MatLightState);
+plProfile_Extern(EmptyList);
 
 // Adding a nil RenderPrim for turning off drawing
 static plRenderNilFunc sRenderNil;
@@ -242,7 +253,9 @@ bool plGLPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>& vis
         return false;
     }
 
-    // Other stuff that we're ignoring for now...
+    // Avatar face sorting happens after the software skin.
+    if (ice->GetNativeProperty(plDrawable::kPropPartialSort))
+        IAvatarSort(ice, visList);
 
     plProfile_EndTiming(PrepDrawable);
 
@@ -353,7 +366,7 @@ hsGDeviceRef* plGLPipeline::MakeRenderTargetRef(plRenderTarget* owner)
 
     // If we have Shader Model 3 and support non-POT textures, let's make reflections the pipe size
     if (plDynamicCamMap* camMap = plDynamicCamMap::ConvertNoRef(owner)) {
-        if (plQuality::GetCapability() > plQuality::kPS_2)
+        if (camMap->IsReflection() && plQuality::GetCapability() > plQuality::kPS_2)
             camMap->ResizeViewport(IGetViewTransform());
     }
 
@@ -388,13 +401,23 @@ hsGDeviceRef* plGLPipeline::MakeRenderTargetRef(plRenderTarget* owner)
     // See if it's a cubic render target.
     // Primary consumer here is the vertex/pixel shader water.
     if (plCubicRenderTarget* cubicRT = plCubicRenderTarget::ConvertNoRef(owner)) {
-        /// And create the ref (it'll know how to set all the flags)
-        //if (ref)
-        //    ref->Set(surfFormat, 0, owner);
-        //else
-        //    ref = new plGLRenderTargetRef(surfFormat, 0, owner);
+#if 0
+        if (!ref)
+            ref = new plGLRenderTargetRef();
 
-        // TODO: The rest
+        ref->fOwner = owner;
+        ref->fDepthBuffer = depthBuffer;
+        ref->fMapping = GL_TEXTURE_CUBE_MAP;
+
+        if (plGLVersion() >= 45) {
+            glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &ref->fRef);
+            // TODO: The rest
+        } else {
+            glGenTextures(1, &ref->fRef);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, ref->fRef);
+            // TODO: The rest
+        }
+#endif
     }
 
     // Not a cubic, is it a texture render target? These are currently used
@@ -448,6 +471,7 @@ hsGDeviceRef* plGLPipeline::MakeRenderTargetRef(plRenderTarget* owner)
     // Keep it in a linked list for ready destruction.
     if (owner->GetDeviceRef() != ref) {
         owner->SetDeviceRef(ref);
+
         // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
         hsRefCnt_SafeUnRef(ref);
         if (ref != nullptr && !ref->IsLinked())
@@ -460,14 +484,16 @@ hsGDeviceRef* plGLPipeline::MakeRenderTargetRef(plRenderTarget* owner)
     // Mark as not dirty so it doesn't get re-created
     if (ref != nullptr)
         ref->SetDirty(false);
+    else {
+        hsStatusMessage("Got an unfilled render target!");
+        ref->SetDirty(false);
+    }
 
     return ref;
 }
 
 bool plGLPipeline::BeginRender()
 {
-    // TODO: Device Init/Reset stuff here
-
     // offset transform
     RefreshScreenMatrices();
 
@@ -476,6 +502,8 @@ bool plGLPipeline::BeginRender()
         fDevice.BeginRender();
 
         fVtxRefTime++;
+
+        IPreprocessAvatarTextures();
 
         hsColorRGBA clearColor = GetClearColor();
 
@@ -564,9 +592,46 @@ void plGLPipeline::Resize(uint32_t width, uint32_t height)
 
 void plGLPipeline::LoadResources()
 {
-    if (plGLPlateManager* pm = static_cast<plGLPlateManager*>(fPlateMgr)) {
+    hsStatusMessageF("Begin Device Reload t=%f",hsTimer::GetSeconds());
+    plNetClientApp::StaticDebugMsg("Begin Device Reload");
+
+    if (plGLPlateManager* pm = static_cast<plGLPlateManager*>(fPlateMgr))
         pm->IReleaseGeometry();
+
+    IReleaseAvRTPool();
+
+    if (fDevice.fContextType == plGLDevice::kNone) {
+        // We can't create anything if the OpenGL context isn't initialized
+        plProfile_IncCount(PipeReload, 1);
+
+        hsStatusMessageF("End Device Reload (but no GL Context) t=%f",hsTimer::GetSeconds());
+        plNetClientApp::StaticDebugMsg("End Device Reload (but no GL Context)");
+        return;
     }
+
+    // Create all RenderTargets
+    plPipeRTMakeMsg* rtMake = new plPipeRTMakeMsg(this);
+    rtMake->Send();
+
+    if (plGLPlateManager* pm = static_cast<plGLPlateManager*>(fPlateMgr))
+        pm->ICreateGeometry();
+
+    plPipeGeoMakeMsg* defMake = new plPipeGeoMakeMsg(this, true);
+    defMake->Send();
+
+    IFillAvRTPool();
+
+    // Force a create of all our static vertex buffers.
+    plPipeGeoMakeMsg* manMake = new plPipeGeoMakeMsg(this, false);
+    manMake->Send();
+
+    // Okay, we've done it, clear the request.
+    plPipeResReq::Clear();
+
+    plProfile_IncCount(PipeReload, 1);
+
+    hsStatusMessageF("End Device Reload t=%f",hsTimer::GetSeconds());
+    plNetClientApp::StaticDebugMsg("End Device Reload");
 }
 
 bool plGLPipeline::SetGamma(float eR, float eG, float eB)
@@ -613,7 +678,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
     hsGMaterial* material;
     const std::vector<plSpan*>& spans = ice->GetSpanArray();
 
-    //plProfile_IncCount(EmptyList, visList.empty());
+    plProfile_IncCount(EmptyList, visList.empty());
 
     /// Set this (*before* we do our TestVisibleWorld stuff...)
     lastL2W.Reset();
@@ -646,7 +711,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
                 break;
             }
             plProfile_EndTiming(MergeCheck);
-            //plProfile_Inc(SpanMerge);
+            plProfile_Inc(SpanMerge);
 
             plProfile_BeginTiming(MergeSpan);
             spans[visList[j]]->MergeInto(&tempIce);
@@ -849,8 +914,8 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
         // If the layer opacity is 0, don't draw it. This prevents it from
         // contributing to the Z buffer. This can happen with some models like
         // the fire marbles in the neighborhood that have some models for
-        // physics only, and then can block other rendering in the Z buffer. DX
-        // pipeline does this in ILoopOverLayers.
+        // physics only, and then can block other rendering in the Z buffer.
+        // DX pipeline does this in ILoopOverLayers.
         if ((s.fBlendFlags & hsGMatState::kBlendAlpha) && lay->GetOpacity() <= 0 && fCurrLightingMethod != plSpan::kLiteVtxPreshaded)
             continue;
 
@@ -1085,7 +1150,7 @@ void plGLPipeline::ISetCullMode()
 
 void plGLPipeline::ICalcLighting(plGLMaterialShaderRef* mRef, const plLayerInterface* currLayer, const plSpan* currSpan)
 {
-    //plProfile_Inc(MatLightState);
+    plProfile_Inc(MatLightState);
 
     GLint e;
 
@@ -1450,6 +1515,70 @@ void plGLPipeline::IDrawPlate(plPlate* plate)
     glUniform1f(mRef->uMatSpecularSrc, 1.0);
 
     glDrawElements(GL_TRIANGLE_STRIP, 6, GL_UNSIGNED_SHORT, (GLvoid*)(sizeof(uint16_t) * 0));
+}
+
+struct plAVTexVert
+{
+    float fPos[3];
+    float fUv[2];
+};
+
+void plGLPipeline::IPreprocessAvatarTextures()
+{
+    plProfile_Set(AvRTPoolUsed, fClothingOutfits.size());
+    plProfile_Set(AvRTPoolCount, fAvRTPool.size());
+    plProfile_Set(AvRTPoolRes, fAvRTWidth);
+    plProfile_Set(AvRTShrinkTime, uint32_t(hsTimer::GetSysSeconds() - fAvRTShrinkValidSince));
+
+    // Frees anyone used last frame that we don't need this frame
+    IClearClothingOutfits(&fPrevClothingOutfits);
+
+    if (fClothingOutfits.empty())
+        return;
+
+    static float kIdentityMatrix[16] = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+    //glUniformMatrix4fv(mRef->uMatrixProj, 1, GL_TRUE, kIdentityMatrix);
+    //glUniformMatrix4fv(mRef->uMatrixW2C, 1, GL_TRUE, kIdentityMatrix);
+    //glUniformMatrix4fv(mRef->uMatrixC2W, 1, GL_TRUE, kIdentityMatrix);
+    //glUniformMatrix4fv(mRef->uMatrixL2W, 1, GL_TRUE, kIdentityMatrix);
+
+    for (size_t oIdx = 0; oIdx < fClothingOutfits.size(); oIdx++) {
+        plClothingOutfit* co = fClothingOutfits[oIdx];
+        if (co->fBase == nullptr || co->fBase->fBaseTexture == nullptr)
+            continue;
+
+#if 0
+        plRenderTarget* rt = plRenderTarget::ConvertNoRef(co->fTargetLayer->GetTexture());
+        if (rt != nullptr && co->fDirtyItems.Empty())
+            // we've still got our valid RT from last frame and we have nothing to do.
+            continue;
+
+        if (rt == nullptr) {
+            rt = IGetNextAvRT();
+            co->fTargetLayer->SetTexture(rt);
+        }
+#endif
+
+        //PushRenderTarget(rt);
+
+        // HACK HACK HACK
+        co->fTargetLayer->SetTexture(co->fBase->fBaseTexture);
+
+        // TODO: Actually render to the render target
+
+        //PopRenderTarget();
+        //co->fDirtyItems.Clear();
+    }
+
+    fView.fXformResetFlags = fView.kResetAll;
+
+    fClothingOutfits.swap(fPrevClothingOutfits);
 }
 
 

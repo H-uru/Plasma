@@ -348,7 +348,7 @@ bool plGLDevice::InitDevice()
     // ANGLE.
     //
     // On Linux, this should be true with mesa or nvidia drivers.
-    if (epoxy_has_egl())
+    if (epoxy_has_egl() && fContextType == kNone)
         InitEGLDevice(this);
 #endif
 
@@ -457,6 +457,19 @@ bool plGLDevice::BeginRender()
         plStatusLog::AddLineS("pipeline.log", GetErrorString());
         return false;
     }
+
+#ifdef USE_EGL
+    if (fContextType == kEGL) {
+        EGLDisplay display = static_cast<EGLDisplay>(fDisplay);
+        EGLContext context = static_cast<EGLContext>(fContext);
+        EGLSurface surface = static_cast<EGLSurface>(fSurface);
+
+        if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
+            fErrorMsg = "Failed to attach EGL context to surface";
+            return false;
+        }
+    } //else
+#endif
 
     return true;
 }

@@ -83,6 +83,16 @@ plProfile_CreateCounter("LightActive",          "PipeC", LightActive);
 plProfile_CreateCounter("Lights Found",         "PipeC", FindLightsFound);
 plProfile_CreateCounter("Perms Found",          "PipeC", FindLightsPerm);
 plProfile_CreateCounter("NumSkin",              "PipeC", NumSkin);
+plProfile_CreateCounter("AvRTPoolUsed",         "PipeC", AvRTPoolUsed);
+plProfile_CreateCounter("AvRTPoolCount",        "PipeC", AvRTPoolCount);
+plProfile_CreateCounter("AvRTPoolRes",          "PipeC", AvRTPoolRes);
+plProfile_CreateCounter("AvRTShrinkTime",       "PipeC", AvRTShrinkTime);
+plProfile_CreateCounter("AvatarFaces",          "PipeC", AvatarFaces);
+plProfile_CreateCounter("Merge",                "PipeC", SpanMerge);
+plProfile_CreateCounter("LiState",              "PipeC", MatLightState);
+plProfile_CreateCounter("EmptyList",            "PipeC", EmptyList);
+
+plProfile_CreateCounterNoReset("Reload",        "PipeC", PipeReload);
 
 plProfile_CreateCounter("Polys",                "General",  DrawTriangles);
 plProfile_CreateCounter("Material Change",      "Draw",     MatChange);
