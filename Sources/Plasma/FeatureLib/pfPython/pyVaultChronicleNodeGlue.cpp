@@ -65,8 +65,8 @@ PYTHON_INIT_DEFINITION(ptVaultChronicleNode, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, setName, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "setName expects a string");
         PYTHON_RETURN_ERROR;
@@ -82,8 +82,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultChronicleNode, getName)
 
 PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, setValue, args)
 {
-    char* val;
-    if (!PyArg_ParseTuple(args, "s", &val))
+    ST::string val;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &val))
     {
         PyErr_SetString(PyExc_TypeError, "setValue expects a string");
         PYTHON_RETURN_ERROR;

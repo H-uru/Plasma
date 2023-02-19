@@ -63,7 +63,7 @@ pyVaultChronicleNode::pyVaultChronicleNode()
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-void pyVaultChronicleNode::Chronicle_SetName( const char * text )
+void pyVaultChronicleNode::Chronicle_SetName( const ST::string& text )
 {
     if (!fNode)
         return;
@@ -81,7 +81,7 @@ ST::string pyVaultChronicleNode::Chronicle_GetName() const
     return ST::string();
 }
 
-void pyVaultChronicleNode::Chronicle_SetValue( const char * text )
+void pyVaultChronicleNode::Chronicle_SetValue( const ST::string& text )
 {
     if (fNode) {
         VaultChronicleNode chron(fNode);
