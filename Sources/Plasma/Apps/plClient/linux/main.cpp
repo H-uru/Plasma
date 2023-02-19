@@ -82,6 +82,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfDisplayHelpers/plX11DisplayHelper.h"
+#include "pfPasswordStore/pfPasswordStore.h"
 
 extern bool gDataServerLocal;
 extern bool gPythonLocal;
@@ -275,16 +276,42 @@ static bool ConsoleLoginScreen()
     fflush(stdout);
 
     char username[kMaxAccountNameLength];
-    char password[kMaxPasswordLength];
 
     if (fscanf(stdin, "%s", username) != 1) {
         return false;
     }
 
-    fprintf(stdout, "Password: ");
-    fflush(stdout);
+    pfPasswordStore* store = pfPasswordStore::Instance();
+    ST::string password = store->GetPassword(username);
 
-    getpassword(password);
+    if (!password.empty()) {
+        fprintf(stdout, "Use saved password? [y/n] ");
+        fflush(stdout);
+        char c;
+        fscanf(stdin, " %c", &c);
+        if (c == 'n' || c == 'N') {
+            password = ST_LITERAL("");
+        }
+        fprintf(stdout, "\n");
+    }
+
+    if (password.empty()) {
+        fprintf(stdout, "Password: ");
+        fflush(stdout);
+
+        char tmpPassword[kMaxPasswordLength];
+        getpassword(tmpPassword);
+        password = tmpPassword;
+
+        fprintf(stdout, "Save password? [y/n] ");
+        fflush(stdout);
+        char c;
+        fscanf(stdin, " %c", &c);
+        if (c == 'y' || c == 'Y') {
+            store->SetPassword(username, password);
+        }
+        fprintf(stdout, "\n");
+    }
 
     ShaDigest namePassHash;
     CalculateHash(username, password, namePassHash);
