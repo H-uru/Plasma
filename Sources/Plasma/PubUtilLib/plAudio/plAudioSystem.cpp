@@ -43,10 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <al.h>
 #ifdef USE_EFX
 #   include <efx.h>
-#else
-#   if __APPLE__
-#   include <OpenAL/OpenAL.h>
-#   endif
 #endif
 #ifdef EAX_SDK_AVAILABLE
 #   include <eax.h>
