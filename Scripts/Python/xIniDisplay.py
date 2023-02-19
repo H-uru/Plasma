@@ -62,9 +62,10 @@ kGraphicsQualityLevel = "Quality.Level"
 kGraphicsShadows = "Graphics.Shadow.Enable"
 kGraphicsVerticalSync = "Graphics.EnableVSync"
 kGraphicsShadowQuality = "Graphics.Shadow.VisibleDistance"
+kGraphicsOutputScale = "Graphics.OutputScale"
 
-CmdList = [kGraphicsWidth, kGraphicsHeight, kGraphicsColorDepth, kGraphicsWindowed, kGraphicsTextureQuality, kGraphicsAntiAliasLevel, kGraphicsAnisotropicLevel, kGraphicsQualityLevel, kGraphicsShadows, kGraphicsVerticalSync, kGraphicsShadowQuality]
-DefaultsList = ["800", "600", "32", "false", "2", "0", "0", "2", "true", "false", "0"]
+CmdList = [kGraphicsWidth, kGraphicsHeight, kGraphicsColorDepth, kGraphicsWindowed, kGraphicsTextureQuality, kGraphicsAntiAliasLevel, kGraphicsAnisotropicLevel, kGraphicsQualityLevel, kGraphicsShadows, kGraphicsVerticalSync, kGraphicsShadowQuality, kGraphicsOutputScale]
+DefaultsList = ["800", "600", "32", "false", "2", "0", "0", "2", "true", "false", "0", "100"]
 
 def ConstructFilenameAndPath():
     global gFilenameAndPath
@@ -120,9 +121,9 @@ def ReadIni():
             ConstructFilenameAndPath()
             gIniFile.writeFile(gFilenameAndPath)
 
-def SetGraphicsOptions(width, heigth, colordepth, windowed, texquality, aaLevel, anisoLevel, qualityLevel, useShadows, vsync, shadowqual):
+def SetGraphicsOptions(width, heigth, colordepth, windowed, texquality, aaLevel, anisoLevel, qualityLevel, useShadows, vsync, shadowqual, outputScale):
     if gIniFile:
-        paramList = [width, heigth, colordepth, windowed, texquality, aaLevel, anisoLevel, qualityLevel, useShadows, vsync, shadowqual]
+        paramList = [width, heigth, colordepth, windowed, texquality, aaLevel, anisoLevel, qualityLevel, useShadows, vsync, shadowqual, outputScale]
         for idx in range(len(CmdList)):
             entry,junk = gIniFile.findByCommand(CmdList[idx])
             val = str(paramList[idx])
