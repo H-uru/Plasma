@@ -115,7 +115,7 @@ IsChildLink = 0
 
 stupidHackForLock = None
 
-kPublicBooks = ("Nexus", "Cleft", "City") #These books cannot be linked to by guests, and cannot be deleted by the owner
+kPublicBooks = ("Nexus", "Cleft", "city") #These books cannot be linked to by guests, and cannot be deleted by the owner
 
 # list of ages that show up in the city book
 CityBookAges = { "BaronCityOffice": ["BaronCityOffice", "Default"], "Descent": ["dsntShaftFall"], "GreatZero": ["grtzGrtZeroLinkRm"], "spyroom": ["Spyroom", "Default"], "Kveer": ["Kveer", "Default"]}
@@ -1146,7 +1146,6 @@ class psnlBookshelf(ptModifier):
         # better set this to 0 by default now that we're using it to correct the city book clasp
         IsChildLink = 0
 
-        
         ageName = self.IGetAgeFromBook()
         PtDebugPrint("psnlBookshelf.IGetLinkFromBook(): before city lookup, ageName = ",ageName)
 
@@ -1298,7 +1297,7 @@ class psnlBookshelf(ptModifier):
             if ((ageName == "city" or ageName == "BaronCityOffice") and PtIsSinglePlayerMode()) or (ageName in CityBookAges.keys()):
                 continue
 
-            if ageName == "Cleft":
+            if ageName in kPublicBooks:
                 if not link.getLocked():
                     link.setLocked(True)
                     vault = ptVault()
@@ -1508,7 +1507,7 @@ class psnlBookshelf(ptModifier):
 
                 # find and enable the corresponding clickable modifier for the book
                 PtDebugPrint("psnlBookshelf.IUpdateLinks():\tageName: ",ageName," boolInMyAge: ",boolInMyAge," getLocked(): ",link.getLocked()," getVolatile(): ",link.getVolatile())
-                if link.getVolatile() or ((not boolInMyAge) and (link.getLocked() or ageName == "Cleft")):
+                if link.getVolatile() or ((not boolInMyAge) and (link.getLocked() or ageName in kPublicBooks)):
                     bookName = objBook.getName()
                     for key,value in actBook.byObject.items():
                         parent = value.getParentKey()
@@ -1517,7 +1516,7 @@ class psnlBookshelf(ptModifier):
                                 PtDebugPrint("%s book: DISABLED" % (bookName))
                                 actBook.disable(objectName=key)
                                 break
-                    if (not boolInMyAge) and (link.getLocked() or ageName == "Cleft"):
+                    if (not boolInMyAge) and (link.getLocked() or ageName in kPublicBooks):
                         # owner of book has locked this one -- go on to next link element
                         continue
                 
