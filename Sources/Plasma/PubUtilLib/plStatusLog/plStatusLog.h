@@ -100,8 +100,8 @@ class plStatusLog : public plLog
         void    IUnlink();
         void    ILink( plStatusLog **back );
 
-        bool    IAddLine( const char *line, int32_t count, uint32_t color );
-        bool    IPrintLineToFile( const char *line, uint32_t count );
+        bool    IAddLine(const ST::string& line, uint32_t color);
+        bool    IPrintLineToFile(const ST::string& line);
         void    IParseFileName(plFileName &fileNoExt, ST::string &ext) const;
         static plStatusLog* IFindLog(const plFileName& filename);
 
@@ -160,10 +160,10 @@ class plStatusLog : public plLog
 
         ~plStatusLog();
 
-        bool AddLine(uint32_t color, const char* line);
-        bool AddLine(const char* line) { return AddLine(kWhite, line); }
-        bool AddLine(uint32_t color, const ST::string& line) { return AddLine(color, line.c_str()); }
-        bool AddLine(const ST::string& line) override { return AddLine(line.c_str()); }
+        bool AddLine(uint32_t color, const char* line) { return AddLine(color, ST::string(line)); };
+        bool AddLine(const char* line) { return AddLine(kWhite, ST::string(line)); }
+        bool AddLine(uint32_t color, const ST::string& line);
+        bool AddLine(const ST::string& line) override { return AddLine(kWhite, line); }
 
         template<typename... _Args>
         bool AddLineF(const char* format, _Args&&... args)
