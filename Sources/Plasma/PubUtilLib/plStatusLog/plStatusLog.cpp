@@ -629,7 +629,8 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
 
 #if HS_BUILD_FOR_WIN32
 #ifndef PLASMA_EXTERNAL_RELEASE
-        OutputDebugString(out_str.c_str());
+        ST::wchar_buffer buf = out_str.to_wchar();
+        OutputDebugStringW(buf.c_str());
 #endif
 #else
         fputs(out_str.c_str(), stderr);
