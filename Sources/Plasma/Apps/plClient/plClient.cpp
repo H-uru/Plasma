@@ -735,7 +735,7 @@ bool plClient::MsgReceive(plMessage* msg)
                     // FIXME... There doesn't seem to be a way to get the current AA value?
                     fPipeline->GetMaxAntiAlias(width, height, fPipeline->ColorDepth()),
                     fPipeline->GetMaxAnisotropicSamples(),
-                    // FIXME... There doesn't seem to be a way tog et the current VSync value?
+                    // FIXME... There doesn't seem to be a way to get the current VSync value?
                     true
                 );
             }
