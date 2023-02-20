@@ -6201,9 +6201,8 @@ PF_CONSOLE_CMD( Python,
 
     PythonInterface::RunFunctionSafe("xCheat", params[0], args.c_str());
 
-    std::string output;
     // get the messages
-    PythonInterface::getOutputAndReset(&output);
+    ST::string output = PythonInterface::getOutputAndReset();
     PrintString(output.c_str());
 }
 
@@ -6216,9 +6215,8 @@ PF_CONSOLE_CMD( Python,
     PyObject* mymod = PythonInterface::FindModule("__main__");
 
     PythonInterface::RunString("import xCheat;xc=[x for x in dir(xCheat) if not x.startswith('_')]\nfor i in range((len(xc)//4)+1): print(xc[i*4:(i*4)+4])\n",mymod);
-    std::string output;
     // get the messages
-    PythonInterface::getOutputAndReset(&output);
+    ST::string output = PythonInterface::getOutputAndReset();
     PrintString(output.c_str());
 }
 

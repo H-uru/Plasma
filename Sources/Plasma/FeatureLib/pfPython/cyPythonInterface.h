@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 #include "HeadSpin.h"
 #include <string_theory/string>
-#include <string>
 #include <vector>
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
@@ -130,13 +129,13 @@ public:
     static PyObject* GetStdErr();
 
     // get the Output to the error file to be displayed
-    static int getOutputAndReset(std::string* output = nullptr);
+    static ST::string getOutputAndReset();
 
     // Writes 'text' to the Python log
     static void WriteToLog(const ST::string& text);
 
     // Writes 'text' to stderr specified in the python interface
-    static void WriteToStdErr(const char* text);
+    static void WriteToStdErr(const ST::string& text);
 
     static PyObject* ImportModule(const char* module);
 

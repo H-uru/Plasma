@@ -1673,7 +1673,7 @@ void plPythonFileMod::ReportError()
     ST::string objectName = this->GetKeyName();
     objectName += " - ";
 
-    PythonInterface::WriteToStdErr(objectName.c_str());
+    PythonInterface::WriteToStdErr(objectName);
 
     PyErr_Print();      // make sure the error is printed
     PyErr_Clear();      // clear the error
@@ -1699,9 +1699,9 @@ void plPythonFileMod::DisplayPythonOutput()
 //
 //  PURPOSE    : get the Output to the error file to be displayed
 //
-int  plPythonFileMod::getPythonOutput(std::string* line)
+ST::string plPythonFileMod::getPythonOutput()
 {
-     return PythonInterface::getOutputAndReset(line);
+     return PythonInterface::getOutputAndReset();
 }
 
 
