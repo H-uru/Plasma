@@ -50,9 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // NOTE: Eventually, this will be made into a separate dll, because there should
 //       only be one instance of this interface. 
 //
-#include "HeadSpin.h"
-#include <string_theory/string>
-#include <vector>
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 #include "../../Apps/CyPythonIDE/plCyDebug/plCyDebServer.h"
@@ -62,6 +59,7 @@ class plStatusLog;
 class pyKey;
 typedef struct _object PyObject;
 typedef struct PyMethodDef PyMethodDef;
+namespace ST { class string; }
 
 class  PythonInterface
 {

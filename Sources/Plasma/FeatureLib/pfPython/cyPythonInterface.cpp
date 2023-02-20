@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include <functional>
+#include <string_theory/string>
 #include <string_theory/string_stream>
 
 #include <Python.h>
@@ -190,6 +191,7 @@ bool PythonInterface::requestedExit = false;
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 // Special includes for debugging
 #include <string>
+#include <vector>
 #include <frameobject.h>
 
 /////////////////////////////////////////////////////////////////////////////
