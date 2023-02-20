@@ -554,14 +554,6 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
     if( fFlags & kDontWriteFile )
         return true;
 
-#ifdef PLASMA_EXTERNAL_RELEASE
-    uint8_t hint = 0;
-    if( fFlags & kAppendToLast )
-    {
-        hint = (uint8_t)fSize;
-    }
-#endif
-
     if (!fFileHandle)
         IReOpen();
 
@@ -572,7 +564,7 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
         char work[256];
         ST::string_stream buf;
 
-        //build line to encrypt
+        //build line to write to log file
 
         if( count != 0 )
         {
