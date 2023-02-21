@@ -86,7 +86,7 @@ class plStatusLog : public plLog
 
         uint32_t     fMaxNumLines;
         plFileName   fFilename;
-        char**       fLines;
+        ST::string*  fLines;
         uint32_t*    fColors;
         hsGlobalSemaphore* fSema;
         FILE*        fFileHandle;
@@ -300,7 +300,7 @@ class plStatusLogDrawerStub
     protected:
 
         uint32_t      IGetMaxNumLines( plStatusLog *log ) const { return log->fMaxNumLines; }
-        char        **IGetLines( plStatusLog *log ) const { return log->fLines; }
+        const ST::string* IGetLines( plStatusLog *log ) const { return log->fLines; }
         plFileName    IGetFilename( plStatusLog *log ) const { return log->GetFileName(); }
         uint32_t     *IGetColors( plStatusLog *log ) const { return log->fColors; }
         uint32_t      IGetFlags( plStatusLog *log ) const { return log->fFlags; }

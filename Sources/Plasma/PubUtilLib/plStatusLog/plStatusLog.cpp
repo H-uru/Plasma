@@ -291,11 +291,10 @@ void    plStatusLog::IInit()
 
     fFlags = fOrigFlags;
 
-    fLines = new char *[ fMaxNumLines ];
+    fLines = new ST::string[fMaxNumLines];
     fColors = new uint32_t[ fMaxNumLines ];
     for( i = 0; i < fMaxNumLines; i++ )
     {
-        fLines[i] = nullptr;
         fColors[ i ] = kWhite;
     }
 
@@ -367,9 +366,6 @@ void    plStatusLog::IFini()
     if (fBack != nullptr || fNext != nullptr)
         IUnlink();
 
-    for( i = 0; i < fMaxNumLines; i++ )
-        delete [] fLines[ i ];
-
     if (fSema)
         delete fSema;
 
@@ -437,39 +433,20 @@ bool plStatusLog::IAddLine(const ST::string& line, uint32_t color)
     /// Scroll pointers up
     fSema->Wait();
 
-    bool ret = true;
-
     if (fMaxNumLines > 0)
     {
-        delete [] fLines[ 0 ];
         for( i = 0; i < fMaxNumLines - 1; i++ )
         {
-            fLines[ i ] = fLines[ i + 1 ];
+            fLines[ i ] = std::move(fLines[ i + 1 ]);
             fColors[ i ] = fColors[ i + 1 ];
         }
+
+        /// Add new
+        fLines[i] = line;
+        fColors[i] = color;
     }
 
-    /// Add new
-    if (line.empty())
-    {
-        if (fMaxNumLines > 0)
-        {
-            fColors[ i ] = 0;
-            fLines[i] = nullptr;
-        }
-        ret = IPrintLineToFile({});
-    }
-    else
-    {
-        if (fMaxNumLines > 0)
-        {
-            fLines[ i ] = new char[line.size() + 1];
-            hsStrncpy( fLines[ i ], line.c_str(), line.size() + 1);
-            fColors[ i ] = color;
-        }
-
-        ret = IPrintLineToFile(line);
-    }
+    bool ret = IPrintLineToFile(line);
 
     fSema->Signal();
 
@@ -514,8 +491,7 @@ void    plStatusLog::Clear()
 
     for( i = 0; i < fMaxNumLines; i++ )
     {
-        delete [] fLines[ i ];
-        fLines[i] = nullptr;
+        fLines[i] = ST::string();
     }
 }
 
