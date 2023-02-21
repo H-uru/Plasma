@@ -1519,12 +1519,41 @@ void plGLPipeline::IDrawPlate(plPlate* plate)
 
 struct plAVTexVert
 {
-    float fPos[3];
+    float fPos[2];
     float fUv[2];
 };
 
+static const char* AVATAR_VERTEX_SHADER_STRING = R"(#version 430
+
+layout(location = 0) in vec2 aVtxPosition;
+layout(location = 1) in vec2 aVtxUV;
+
+out vec2 vVtxUV;
+
+void main() {
+    vVtxUV = aVtxUV;
+    gl_Position = vec4(aVtxPosition, 0.0, 1.0);
+})";
+
+static const char* AVATAR_FRAGMENT_SHADER_STRING = R"(#version 430
+precision mediump float;
+
+layout(location = 0) uniform sampler2D uTex;
+layout(location = 1) uniform vec4 uColor;
+
+in highp vec2 vVtxUV;
+out vec4 fragColor;
+
+void main() {
+    fragColor = texture(uTex, vVtxUV.xy) * uColor;
+})";
+
 void plGLPipeline::IPreprocessAvatarTextures()
 {
+    static GLuint sVertShader = 0;
+    static GLuint sFragShader = 0;
+    static GLuint sProgram = 0;
+
     plProfile_Set(AvRTPoolUsed, fClothingOutfits.size());
     plProfile_Set(AvRTPoolCount, fAvRTPool.size());
     plProfile_Set(AvRTPoolRes, fAvRTWidth);
@@ -1536,24 +1565,66 @@ void plGLPipeline::IPreprocessAvatarTextures()
     if (fClothingOutfits.empty())
         return;
 
-    static float kIdentityMatrix[16] = {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
+    // Set up the shaders the first time to go through here
+    if (!sVertShader) {
+        GLuint vshader = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vshader, 1, &AVATAR_VERTEX_SHADER_STRING, nullptr);
+        glCompileShader(vshader);
+        LOG_GL_ERROR_CHECK("Vertex Shader compile failed");
 
-    //glUniformMatrix4fv(mRef->uMatrixProj, 1, GL_TRUE, kIdentityMatrix);
-    //glUniformMatrix4fv(mRef->uMatrixW2C, 1, GL_TRUE, kIdentityMatrix);
-    //glUniformMatrix4fv(mRef->uMatrixC2W, 1, GL_TRUE, kIdentityMatrix);
-    //glUniformMatrix4fv(mRef->uMatrixL2W, 1, GL_TRUE, kIdentityMatrix);
+        sVertShader = vshader;
+    }
+
+    if (!sFragShader) {
+        GLuint fshader = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fshader, 1, &AVATAR_FRAGMENT_SHADER_STRING, nullptr);
+        glCompileShader(fshader);
+        LOG_GL_ERROR_CHECK("Vertex Shader compile failed");
+
+        sFragShader = fshader;
+    }
+
+    if (!sProgram) {
+        GLuint program = glCreateProgram();
+        LOG_GL_ERROR_CHECK("Create Program failed");
+
+        if (plGLVersion() >= 43) {
+            const char* name = "AvatarClothing";
+            glObjectLabel(GL_PROGRAM, program, strlen(name), name);
+        }
+
+        glAttachShader(program, sVertShader);
+        LOG_GL_ERROR_CHECK("Attach Vertex Shader failed");
+
+        glAttachShader(program, sFragShader);
+        LOG_GL_ERROR_CHECK("Attach Fragment Shader failed");
+
+        glLinkProgram(program);
+        LOG_GL_ERROR_CHECK("Program Link failed");
+
+        GLint isLinked = 0;
+        glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
+        if (isLinked == GL_FALSE)
+        {
+            GLint maxLength = 0;
+            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+            // The maxLength includes the NULL character
+            char* log = new char[maxLength];
+            glGetProgramInfoLog(program, maxLength, &maxLength, log);
+
+            hsStatusMessage(log);
+            delete[] log;
+        }
+
+        sProgram = program;
+    }
 
     for (size_t oIdx = 0; oIdx < fClothingOutfits.size(); oIdx++) {
         plClothingOutfit* co = fClothingOutfits[oIdx];
         if (co->fBase == nullptr || co->fBase->fBaseTexture == nullptr)
             continue;
 
-#if 0
         plRenderTarget* rt = plRenderTarget::ConvertNoRef(co->fTargetLayer->GetTexture());
         if (rt != nullptr && co->fDirtyItems.Empty())
             // we've still got our valid RT from last frame and we have nothing to do.
@@ -1561,24 +1632,131 @@ void plGLPipeline::IPreprocessAvatarTextures()
 
         if (rt == nullptr) {
             rt = IGetNextAvRT();
+
+            plGLMaterialShaderRef* mRef = static_cast<plGLMaterialShaderRef*>(co->fMaterial->GetDeviceRef());
+            if (mRef)
+                mRef->SetDirty(true);
+
             co->fTargetLayer->SetTexture(rt);
         }
-#endif
 
-        //PushRenderTarget(rt);
+        PushRenderTarget(rt);
+        glViewport(0, 0, rt->GetWidth(), rt->GetHeight());
+        glDepthRange(0.0, 1.0);
 
-        // HACK HACK HACK
-        co->fTargetLayer->SetTexture(co->fBase->fBaseTexture);
+        glUseProgram(sProgram);
+        LOG_GL_ERROR_CHECK("Use Program failed");
+        fDevice.fCurrentProgram = sProgram;
 
-        // TODO: Actually render to the render target
+        glUniform1i(0, 0);
+        glUniform4f(1, 1.f, 1.f, 1.f, 1.f);
+        glDepthFunc(GL_LEQUAL);
+        glDepthMask(GL_TRUE);
 
-        //PopRenderTarget();
-        //co->fDirtyItems.Clear();
+        float uOff = 0.5f / rt->GetWidth();
+        float vOff = 0.5f / rt->GetHeight();
+
+        IDrawClothingQuad(-1.f, -1.f, 2.f, 2.f, uOff, vOff, co->fBase->fBaseTexture);
+        plClothingLayout *layout = plClothingMgr::GetClothingMgr()->GetLayout(co->fBase->fLayoutName);
+
+        for (plClothingItem *item : co->fItems) {
+            for (size_t j = 0; j < item->fElements.size(); j++) {
+                for (int k = 0; k < plClothingElement::kLayerMax; k++) {
+                    if (item->fTextures[j][k] == nullptr)
+                        continue;
+
+                    plMipmap* itemBufferTex = item->fTextures[j][k];
+                    hsColorRGBA tint = co->GetItemTint(item, k);
+                    if (k >= plClothingElement::kLayerSkinBlend1 && k <= plClothingElement::kLayerSkinLast)
+                        tint.a = co->fSkinBlends[k - plClothingElement::kLayerSkinBlend1];
+
+                    if (k == plClothingElement::kLayerBase) {
+                        glBlendFunc(GL_ONE, GL_ZERO);
+                    } else {
+                        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE);
+                    }
+
+                    glUniform4f(1, tint.r, tint.g, tint.b, tint.a);
+
+                    float screenW = (float)item->fElements[j]->fWidth / layout->fOrigWidth * 2.f;
+                    float screenH = (float)item->fElements[j]->fHeight / layout->fOrigWidth * 2.f;
+                    float screenX = (float)item->fElements[j]->fXPos / layout->fOrigWidth * 2.f - 1.f;
+                    float screenY = (1.f - (float)item->fElements[j]->fYPos / layout->fOrigWidth) * 2.f - 1.f - screenH;
+
+                    IDrawClothingQuad(screenX, screenY, screenW, screenH, uOff, vOff, itemBufferTex);
+                }
+            }
+        }
+
+        PopRenderTarget();
+        co->fDirtyItems.Clear();
     }
 
     fView.fXformResetFlags = fView.kResetAll;
 
     fClothingOutfits.swap(fPrevClothingOutfits);
+}
+
+void plGLPipeline::IDrawClothingQuad(float x, float y, float w, float h, float uOff, float vOff, plMipmap *tex)
+{
+    const uint32_t kVSize = sizeof(plAVTexVert);
+
+    plGLTextureRef* ref = static_cast<plGLTextureRef*>(tex->GetDeviceRef());
+    if (!ref || ref->IsDirty())
+    {
+        CheckTextureRef(tex);
+        ref = (plGLTextureRef*)tex->GetDeviceRef();
+    }
+
+    glActiveTexture(GL_TEXTURE0);
+    LOG_GL_ERROR_CHECK("Active Texture failed")
+
+    glBindTexture(GL_TEXTURE_2D, ref->fRef);
+    LOG_GL_ERROR_CHECK("Bind Texture failed");
+
+    plAVTexVert ptr[4];
+    plAVTexVert vert;
+    vert.fPos[0] = x;
+    vert.fPos[1] = y;
+    vert.fUv[0] = uOff;
+    vert.fUv[1] = 1.f + vOff;
+
+    // P0
+    ptr[2] = vert;
+
+    // P1
+    ptr[0] = vert;
+    ptr[0].fPos[0] += w;
+    ptr[0].fUv[0] += 1.f;
+
+    // P2
+    ptr[1] = vert;
+    ptr[1].fPos[0] += w;
+    ptr[1].fUv[0] += 1.f;
+    ptr[1].fPos[1] += h;
+    ptr[1].fUv[1] -= 1.f;
+
+    // P3
+    ptr[3] = vert;
+    ptr[3].fPos[1] += h;
+    ptr[3].fUv[1] -= 1.f;
+
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(ptr), ptr, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, kVSize, (void*)(sizeof(float) * 0));
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, kVSize, (void*)(sizeof(float) * 2));
+    glEnableVertexAttribArray(1);
+
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
+
+    LOG_GL_ERROR_CHECK("Render failed")
+
+    glDeleteBuffers(1, &vbo);
 }
 
 

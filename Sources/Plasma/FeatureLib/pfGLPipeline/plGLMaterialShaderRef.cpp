@@ -382,6 +382,7 @@ void plGLMaterialShaderRef::ICompile()
                     char* log = new char[length];
                     glGetShaderInfoLog(vshader, length, &length, log);
                     hsStatusMessage(log);
+                    delete[] log;
                 }
             }
         }
@@ -405,6 +406,7 @@ void plGLMaterialShaderRef::ICompile()
                 char* log = new char[length];
                 glGetShaderInfoLog(fFragShaderRef, length, &length, log);
                 hsStatusMessage(log);
+                delete[] log;
             }
         }
     }

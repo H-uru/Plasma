@@ -330,6 +330,8 @@ public:
 
     void CheckTextureRef(plLayerInterface* lay) override;
 
+    void CheckTextureRef(plBitmap* bmp);
+
     void SetDefaultFogEnviron(plFogEnvironment* fog) override {
         fView.SetDefaultFog(*fog);
     }
@@ -1201,6 +1203,38 @@ void pl3DPipeline<DeviceType>::CheckTextureRef(plLayerInterface* layer)
                 fDevice.MakeCubicTextureRef(tRef, layer, cubic);
                 return;
             }
+        }
+    }
+}
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::CheckTextureRef(plBitmap* bitmap)
+{
+    typename DeviceType::TextureRef* tRef = static_cast<typename DeviceType::TextureRef*>(bitmap->GetDeviceRef());
+
+    if (!tRef) {
+        tRef = new typename DeviceType::TextureRef();
+        fDevice.SetupTextureRef(nullptr, bitmap, tRef);
+    }
+
+    if (!tRef->IsLinked())
+        tRef->Link(&fTextureRefList);
+
+    // Make sure it has all resources created.
+    fDevice.CheckTexture(tRef);
+
+    // If it's dirty, refill it.
+    if (tRef->IsDirty()) {
+        plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
+        if (mip) {
+            fDevice.MakeTextureRef(tRef, nullptr, mip);
+            return;
+        }
+
+        plCubicEnvironmap* cubic = plCubicEnvironmap::ConvertNoRef(bitmap);
+        if (cubic) {
+            fDevice.MakeCubicTextureRef(tRef, nullptr, cubic);
+            return;
         }
     }
 }
@@ -2229,7 +2263,7 @@ struct plCompSortFace
     }
 };
 
-template <class DeviceType>
+template<class DeviceType>
 bool pl3DPipeline<DeviceType>::IAvatarSort(plDrawableSpans* d, const std::vector<int16_t>& visList)
 {
     plProfile_BeginTiming(AvatarSort);

@@ -142,9 +142,6 @@ public:
     bool           IHandleMaterialPass(hsGMaterial* material, uint32_t pass, const plSpan* currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders = true);
     plMetalDevice* GetMetalDevice() const;
 
-    // Create and/or Refresh geometry buffers
-    void          CheckTextureRef(plBitmap* bitmap);
-    hsGDeviceRef* MakeTextureRef(plBitmap* bitmap);
     void          IReloadTexture(plBitmap* bitmap, plMetalTextureRef* ref);
 
     plRenderTarget* PopRenderTarget() override;

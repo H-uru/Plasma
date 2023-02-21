@@ -4055,46 +4055,6 @@ void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, 
     }
 }
 
-// Resource checking
-
-void plMetalPipeline::CheckTextureRef(plBitmap* bitmap)
-{
-    plMetalTextureRef* tRef = static_cast<plMetalTextureRef*>(bitmap->GetDeviceRef());
-
-    if (!tRef) {
-        tRef = static_cast<plMetalTextureRef*>(MakeTextureRef(bitmap));
-    }
-
-    // If it's dirty, refill it.
-    if (tRef->IsDirty()) {
-        IReloadTexture(bitmap, tRef);
-    }
-}
-
-hsGDeviceRef* plMetalPipeline::MakeTextureRef(plBitmap* bitmap)
-{
-    plMetalTextureRef* tRef = static_cast<plMetalTextureRef*>(bitmap->GetDeviceRef());
-
-    if (!tRef) {
-        tRef = new plMetalTextureRef();
-
-        fDevice.SetupTextureRef(nullptr, bitmap, tRef);
-    }
-
-    if (!tRef->IsLinked()) {
-        tRef->Link(&fTextureRefList);
-    }
-
-    // Make sure it has all resources created.
-    fDevice.CheckTexture(tRef);
-
-    // If it's dirty, refill it.
-    if (tRef->IsDirty()) {
-        IReloadTexture(bitmap, tRef);
-    }
-    return tRef;
-}
-
 void plMetalPipeline::IReloadTexture(plBitmap* bitmap, plMetalTextureRef* ref)
 {
     plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
