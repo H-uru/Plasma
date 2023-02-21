@@ -1459,7 +1459,7 @@ void RelVaultNode::Print (const ST::string& tag, unsigned level) {
 #undef STNAME
     }
 
-    plStatusLog::AddLineS("VaultClient.log", ss.to_string().c_str());
+    plStatusLog::AddLineS("VaultClient.log", ss.to_string());
 }
 
 //============================================================================
@@ -3365,12 +3365,12 @@ bool VaultSetCCRStatus (bool online) {
 
 //============================================================================
 void VaultDump (const ST::string& tag, unsigned vaultId) {
-    plStatusLog::AddLineS("VaultClient.log", ST::format("<---- ID:{}, Begin Vault {} ---->", vaultId, tag).c_str());
+    plStatusLog::AddLineSF("VaultClient.log", "<---- ID:{}, Begin Vault {} ---->", vaultId, tag);
 
     if (hsRef<RelVaultNode> rvn = VaultGetNode(vaultId))
         rvn->PrintTree(0);
 
-    plStatusLog::AddLineS("VaultClient.log", ST::format("<---- ID:{}, End Vault {} ---->", vaultId, tag).c_str());
+    plStatusLog::AddLineSF("VaultClient.log", "<---- ID:{}, End Vault {} ---->", vaultId, tag);
 }
 
 //============================================================================

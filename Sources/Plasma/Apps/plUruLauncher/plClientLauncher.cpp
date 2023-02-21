@@ -210,7 +210,7 @@ plClientLauncher::plClientLauncher() :
     fInstallerThread(new plRedistUpdater()),
     fNetCoreState(kNetCoreInactive)
 {
-    pfPatcher::GetLog()->AddLine(plProduct::ProductString().c_str());
+    pfPatcher::GetLog()->AddLine(plProduct::ProductString());
 }
 
 plClientLauncher::~plClientLauncher() { }

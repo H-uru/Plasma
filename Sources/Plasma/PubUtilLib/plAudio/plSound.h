@@ -73,6 +73,7 @@ class plGraphPlate;
 struct hsMatrix44;
 class plSceneObject;
 class plSoundVolumeApplicator;
+namespace ST { class string; }
 
 // Set this to 1 to do our own distance attenuation (model doesn't work yet tho)
 #define MCN_HACK_OUR_ATTEN  0
@@ -340,7 +341,7 @@ protected:
     bool                fLoading;
 
     void            IUpdateDebugPlate();
-    void            IPrintDbgMessage( const char *msg, bool isErr = false );
+    void            IPrintDbgMessage( const ST::string& msg, bool isErr = false );
 
     virtual void    ISetActualVolume(float v) = 0;
     virtual void    IActuallyStop();

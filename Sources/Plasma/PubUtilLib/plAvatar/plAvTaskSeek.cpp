@@ -601,7 +601,7 @@ void plAvTaskSeek::DumpDebug(const char *name, int &x, int&y, int lineHeight, pl
 void plAvTaskSeek::DumpToAvatarLog(plArmatureMod *avatar)
 {
     plStatusLog *log = plAvatarMgr::GetInstance()->GetLog();
-    log->AddLine(avatar->GetMoveKeyString().c_str());
+    log->AddLine(avatar->GetMoveKeyString());
 
     log->AddLine(ST::format("    duration: {.2f} pos: ({.3f}, {.3f}, {.3f}) goalPos: ({.3f}, {.3f}, {.3f}) ",
             hsTimer::GetSysSeconds() - fStartTime,

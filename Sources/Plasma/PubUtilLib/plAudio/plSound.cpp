@@ -98,7 +98,7 @@ plSound::~plSound()
     plProfile_Dec(SoundNumLoaded);
 }
 
-void plSound::IPrintDbgMessage( const char *msg, bool isError )
+void plSound::IPrintDbgMessage( const ST::string& msg, bool isError )
 {
     ST::string keyName = GetKey() ? GetKeyName() : ST_LITERAL("unkeyed");
     if( isError )
