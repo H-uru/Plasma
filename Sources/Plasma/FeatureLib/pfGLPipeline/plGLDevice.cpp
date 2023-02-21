@@ -388,6 +388,9 @@ bool plGLDevice::InitDevice()
     glFrontFace(GL_CCW);
     glCullFace(GL_BACK);
 
+    if (plGLVersion() >= 46)
+        glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+
     return true;
 }
 
@@ -420,12 +423,21 @@ void plGLDevice::SetRenderTarget(plRenderTarget* target)
             ref = static_cast<plGLRenderTargetRef*>(fPipeline->MakeRenderTargetRef(target));
     }
 
-    if (ref == nullptr)
+    if (ref == nullptr) {
         /// Set to main screen
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    else
+
+        if (plGLVersion() >= 46)
+            glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
+    } else {
         /// Set to this target
         glBindFramebuffer(GL_FRAMEBUFFER, ref->fFrameBuffer);
+
+        // We need to flip the Y axis :(
+        if (plGLVersion() >= 46)
+            glClipControl(GL_UPPER_LEFT, GL_ZERO_TO_ONE);
+        // else... find a way to do this with the projection matrix?
+    }
 
     SetViewport();
 }

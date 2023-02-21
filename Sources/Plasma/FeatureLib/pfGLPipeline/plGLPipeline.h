@@ -148,6 +148,7 @@ protected:
     void IScaleLight(plGLMaterialShaderRef* mRef, size_t i, float scale);
     void IDrawPlate(plPlate* plate);
     void IPreprocessAvatarTextures();
+    void IDrawClothingQuad(float x, float y, float w, float h, float uOff, float vOff, plMipmap *tex);
 
     /**
      * Emulate matrix palette operations in software.
