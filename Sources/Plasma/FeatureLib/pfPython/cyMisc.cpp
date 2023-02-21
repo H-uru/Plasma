@@ -1001,7 +1001,7 @@ PyObject* cyMisc::GetNPCCount()
 //
 // TEMP SCREEN PRINT CODE FOR NON-DBG TEXT DISPLAY
 //
-void cyMisc::PrintToScreen(const char* msg)
+void cyMisc::PrintToScreen(const ST::string& msg)
 {
     static plStatusLog* gStatusLog = nullptr;
     if (gStatusLog == nullptr)
