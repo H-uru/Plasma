@@ -1358,7 +1358,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     // are they looking for a CCR communication message?
     auto ccrmsg = IScriptWantsMsg<plCCRCommunicationMsg>(kfunc_OnCCRMsg, msg);
     if (ccrmsg) {
-        const char* textmessage = ccrmsg->GetMessage();
+        const char* textmessage = ccrmsg->GetMessageText();
         if (!textmessage)
             textmessage = "";
         ICallScriptMethod(kfunc_OnCCRMsg, (int)ccrmsg->GetType(), textmessage, ccrmsg->GetCCRPlayerID());
