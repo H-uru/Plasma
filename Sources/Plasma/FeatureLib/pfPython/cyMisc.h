@@ -373,7 +373,7 @@ public:
     //  PURPOSE    : UnLoads the dialog by name
     //             : optionally sets the receiver key for the GUINotifyMsg
     //
-    static void UnloadDialog(const char* name);
+    static void UnloadDialog(const ST::string& name);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -382,7 +382,7 @@ public:
     //
     //  PURPOSE    : Test to see if a dialog is loaded (according to the dialog manager)
     //
-    static bool IsDialogLoaded(const char* name);
+    static bool IsDialogLoaded(const ST::string& name);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -392,8 +392,8 @@ public:
     //
     //  PURPOSE    : Show or Hide a dialog by name
     //
-    static void ShowDialog(const char* name);
-    static void HideDialog(const char* name);
+    static void ShowDialog(const ST::string& name);
+    static void HideDialog(const ST::string& name);
 
     /////////////////////////////////////////////////////////////////////////////
     //

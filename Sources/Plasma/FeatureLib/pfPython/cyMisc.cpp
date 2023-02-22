@@ -846,7 +846,7 @@ void cyMisc::LoadDialogKA(const ST::string& name, pyKey& rKey, const char* ageNa
 //  PURPOSE    : UnLoads the dialog by name
 //             : optionally sets the receiver key for the GUINotifyMsg
 //
-void cyMisc::UnloadDialog(const char* name)
+void cyMisc::UnloadDialog(const ST::string& name)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )
@@ -863,7 +863,7 @@ void cyMisc::UnloadDialog(const char* name)
 //
 //  PURPOSE    : Test to see if a dialog is loaded (according to the dialog manager)
 //
-bool cyMisc::IsDialogLoaded(const char* name)
+bool cyMisc::IsDialogLoaded(const ST::string& name)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )
@@ -879,13 +879,13 @@ bool cyMisc::IsDialogLoaded(const char* name)
 //
 //  PURPOSE    : Show or Hide a dialog by name
 //
-void cyMisc::ShowDialog(const char* name)
+void cyMisc::ShowDialog(const ST::string& name)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )
         mgr->ShowDialog(name);
 }
-void cyMisc::HideDialog(const char* name)
+void cyMisc::HideDialog(const ST::string& name)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )
