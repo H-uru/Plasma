@@ -546,7 +546,7 @@ bool    pfGUIPopUpMenu::IBuildMenu()
         float thisMargin = (i == 0 || i == fMenuItems.size() - 1) ? topMargin : 0.f;
         float thisOffset = (i == fMenuItems.size() - 1) ? topMargin : 0.f;
 
-        pfGUIMenuItem *button = pfGUIMenuItem::ConvertNoRef( pfGUICtrlGenerator::Instance().CreateRectButton( this, fMenuItems[ i ].fName.c_str(), x, y + thisOffset, width, height + thisMargin, mat, true ) );
+        pfGUIMenuItem *button = pfGUIMenuItem::ConvertNoRef(pfGUICtrlGenerator::Instance().CreateRectButton(this, x, y + thisOffset, width, height + thisMargin, mat, true));
         if (button != nullptr)
         {
             button->SetColorScheme( scheme );

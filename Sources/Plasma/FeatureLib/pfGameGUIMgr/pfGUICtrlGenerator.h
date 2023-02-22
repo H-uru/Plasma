@@ -122,9 +122,7 @@ class pfGUICtrlGenerator
         void            GenerateDialog( const char *name );
 
 
-        pfGUIButtonMod  *CreateRectButton( pfGUIDialogMod *parent, const char *title, float x, float y, 
-                                                float width, float height, hsGMaterial *material, bool asMenuItem = false );
-        pfGUIButtonMod  *CreateRectButton( pfGUIDialogMod *parent, const wchar_t *title, float x, float y,
+        pfGUIButtonMod  *CreateRectButton( pfGUIDialogMod *parent, float x, float y,
                                                 float width, float height, hsGMaterial *material, bool asMenuItem = false );
 
         static pfGUICtrlGenerator   &Instance();

@@ -284,7 +284,7 @@ pfGUIButtonMod  *pfGUICtrlGenerator::GenerateRectButton( const char *title, floa
     // Get us a material
     material = ICreateTextMaterial( title, color, textColor, width * 20.f, height * 20.f );
 
-    pfGUIButtonMod *but = CreateRectButton( dlgToAddTo, title, x, y, width, height, material );
+    pfGUIButtonMod *but = CreateRectButton(dlgToAddTo, x, y, width, height, material);
     if (but != nullptr)
         but->SetHandler( new pfGUIConsoleCmdProc( consoleCmd ) );
 
@@ -293,16 +293,7 @@ pfGUIButtonMod  *pfGUICtrlGenerator::GenerateRectButton( const char *title, floa
 
 //// CreateRectButton ////////////////////////////////////////////////////////
 
-pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, const char *title, float x, float y, float width, float height,
-                                    hsGMaterial *material, bool asMenuItem )
-{
-    wchar_t *wTitle = hsStringToWString(title);
-    pfGUIButtonMod *retVal = CreateRectButton(parent,wTitle,x,y,width,height,material,asMenuItem);
-    delete [] wTitle;
-    return retVal;
-}
-
-pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, const wchar_t *title, float x, float y, float width, float height,
+pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, float x, float y, float width, float height,
                                     hsGMaterial *material, bool asMenuItem )
 {
     plDrawableSpans *myDraw;
