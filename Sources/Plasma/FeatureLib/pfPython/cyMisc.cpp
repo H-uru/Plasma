@@ -823,7 +823,7 @@ void cyMisc::LoadDialogK(const ST::string& name, pyKey& rKey)
 }
 
 // Load dialog and set the GUINotifyMsg receiver key
-void cyMisc::LoadDialogKA(const ST::string& name, pyKey& rKey, const char* ageName)
+void cyMisc::LoadDialogKA(const ST::string& name, pyKey& rKey, const ST::string& ageName)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )

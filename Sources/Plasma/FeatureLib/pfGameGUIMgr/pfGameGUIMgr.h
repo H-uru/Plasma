@@ -195,7 +195,7 @@ class pfGameGUIMgr : public hsKeyedObject
 
         bool    MsgReceive(plMessage* pMsg) override;
 
-        void    LoadDialog(const ST::string& name, plKey recvrKey = {}, const char *ageName = nullptr);  // AgeName = nil defaults to "GUI"
+        void    LoadDialog(const ST::string& name, plKey recvrKey = {}, const ST::string& ageName = ST_LITERAL("GUI"));
         void    ShowDialog( const ST::string& name ) { IShowDialog(name); }
         void    HideDialog( const ST::string&  name ) { IHideDialog(name); }
         void    UnloadDialog( const ST::string& name );

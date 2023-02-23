@@ -420,7 +420,7 @@ void pfBookData::LoadGUI()
     // has the dialog been loaded yet?
     if (!pfGameGUIMgr::GetInstance()->IsDialogLoaded(fGUIName))
         // no then load and set handler
-        pfGameGUIMgr::GetInstance()->LoadDialog(fGUIName, GetKey(), "GUI");
+        pfGameGUIMgr::GetInstance()->LoadDialog(fGUIName, GetKey());
     else
         // yes then just set the handler
         pfGameGUIMgr::GetInstance()->SetDialogToNotify(fGUIName, GetKey());

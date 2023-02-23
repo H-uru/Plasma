@@ -363,7 +363,7 @@ public:
     //
     static void LoadDialog(const ST::string& name);
     static void LoadDialogK(const ST::string& name, pyKey& modKey);
-    static void LoadDialogKA(const ST::string& name, pyKey& rKey, const char* ageName);
+    static void LoadDialogKA(const ST::string& name, pyKey& rKey, const ST::string& ageName);
 
     /////////////////////////////////////////////////////////////////////////////
     //
