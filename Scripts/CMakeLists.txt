@@ -2,7 +2,7 @@ file(GLOB_RECURSE GameScripts "${CMAKE_CURRENT_SOURCE_DIR}/Python/*.py")
 file(GLOB_RECURSE GameSDL "${CMAKE_CURRENT_SOURCE_DIR}/SDL/*.sdl")
 file(GLOB_RECURSE GameData "${CMAKE_CURRENT_SOURCE_DIR}/dat/*.age" "${CMAKE_CURRENT_SOURCE_DIR}/dat/*.fni")
 
-source_group("Python" FILES ${GameScripts})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/Python/" PREFIX "Python" FILES ${GameScripts})
 source_group("SDL" FILES ${GameSDL})
 source_group("Ages" FILES ${GameData})
 
