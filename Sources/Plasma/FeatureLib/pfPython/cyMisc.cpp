@@ -1385,7 +1385,7 @@ void cyMisc::SendChatToCCR(const char* message,int32_t CCRPlayerID)
 {
     // create the mesage to send
     plCCRCommunicationMsg *msg = new plCCRCommunicationMsg();
-    msg->SetMessage(message);
+    msg->SetMessageText(message);
     msg->SetType(plCCRCommunicationMsg::kReturnChatMsg);
     msg->SetBCastFlag(plMessage::kNetAllowInterAge);
     msg->SetBCastFlag(plMessage::kNetPropagate);

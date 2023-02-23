@@ -133,8 +133,8 @@ public:
     GETINTERFACE_ANY( plCCRCommunicationMsg, plCCRMessage );    
 
     // getters and setters
-    void SetMessage(const char* n) { fString=n; }
-    const char* GetMessage() const { return fString.c_str();    }
+    void SetMessageText(const char* n) { fString=n; }
+    const char* GetMessageText() const { return fString.c_str(); }
 
     void SetType(Type t) { fType=t; }
     Type GetType() const { return fType; }
