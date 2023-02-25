@@ -8766,7 +8766,7 @@ static inline void ISkinVertexFPU(const hsMatrix44& xfm, float wgt,
 
         vec_dst[0] += (srcX * m00 + srcY * m01 + srcZ * m02) * wgt;
         vec_dst[1] += (srcX * m10 + srcY * m11 + srcZ * m12) * wgt;
-        vec_dst[1] += (srcX * m20 + srcY * m21 + srcZ * m22) * wgt;
+        vec_dst[2] += (srcX * m20 + srcY * m21 + srcZ * m22) * wgt;
     }
 }
 
