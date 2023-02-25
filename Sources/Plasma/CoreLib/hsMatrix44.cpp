@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cmath>
 
 #ifdef HS_BUILD_FOR_APPLE
-#import <simd/simd.h>
+#import <Accelerate/Accelerate.h>
 #endif
 
 static hsMatrix44 myIdent = hsMatrix44().Reset();
@@ -101,7 +101,7 @@ void hsMatrix44::DecompRigid(hsScalarTriple &translate, hsQuat &rotate) const
 }
 
 #ifdef HS_BUILD_FOR_APPLE
-hsMatrix44 hsMatrix44::mult_acclerate(const hsMatrix44 &a, const hsMatrix44 &b)
+hsMatrix44 hsMatrix44::mult_accelerate(const hsMatrix44 &a, const hsMatrix44 &b)
 {
     hsMatrix44 c;
 
@@ -115,11 +115,8 @@ hsMatrix44 hsMatrix44::mult_acclerate(const hsMatrix44 &a, const hsMatrix44 &b)
         return b;
     if( b.fFlags & hsMatrix44::kIsIdent )
         return a;
-
-    const simd_float4x4& a_simd = simd_transpose((simd_float4x4&)a.fMap);
-    const simd_float4x4& b_simd = simd_transpose((simd_float4x4&)b.fMap);
-
-    (simd_float4x4&)c.fMap = simd_transpose(simd_mul(a_simd, b_simd));
+    
+    vDSP_mmul((const float*)a.fMap, 1, (const float*)b.fMap, 1, (float*)&(c.fMap), 1, 4, 4, 4);
     
     return c;
 }
