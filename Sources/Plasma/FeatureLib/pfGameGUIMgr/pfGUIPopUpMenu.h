@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsBounds.h"
 
-#include <string>
+#include <string_theory/string>
 
 #include "pfGUIDialogMod.h"
 
@@ -93,7 +93,7 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         {
             // Simple wrapper class that tells us how to build our menu
             public:
-                std::wstring        fName;
+                ST::string          fName;
                 pfGUICtrlProcObject *fHandler;
                 pfGUIPopUpMenu      *fSubMenu;
                 float               fYOffsetToNext;     // Filled in by IBuildMenu()
@@ -163,10 +163,10 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         void    SetOriginAnchor( plSceneObject *anchor, pfGUIDialogMod *context );
         void    SetAlignment( Alignment a ) { fAlignment = a; }
         void    ClearItems();
-        void    AddItem(const wchar_t *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nullptr);
+        void    AddItem(ST::string name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nullptr);
         void    SetSkin( pfGUISkin *skin );
 
-        static pfGUIPopUpMenu   *Build( const char *name, pfGUIDialogMod *parent, float x, float y, const plLocation &destLoc = plLocation::kGlobalFixedLoc );
+        static pfGUIPopUpMenu   *Build(const ST::string& name, pfGUIDialogMod *parent, float x, float y, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
 
 };
 

@@ -84,7 +84,7 @@ PYTHON_INIT_DEFINITION(ptGUIPopUpMenu, args, keywords)
     else if (PyUnicode_Check(arg1))
     {
         // arg list 2 or 3
-        const char* name = PyUnicode_AsUTF8(arg1);
+        ST::string name = PyUnicode_AsSTString(arg1);
         if (PyFloat_Check(arg2))
         {
             // arg list 2
@@ -274,9 +274,9 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, setBackSelectColor, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addConsoleCmdItem, args)
 {
-    wchar_t* name;
-    char* consoleCmd;
-    if (!PyArg_ParseTuple(args, "us", &name, &consoleCmd))
+    ST::string name;
+    ST::string consoleCmd;
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_STStringConverter, &name, PyUnicode_STStringConverter, &consoleCmd))
     {
         PyErr_SetString(PyExc_TypeError, "addConsoleCmdItem expects a unicode string and a string");
         PYTHON_RETURN_ERROR;
@@ -287,8 +287,8 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addConsoleCmdItem, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addNotifyItem, args)
 {
-    wchar_t* name;
-    if (!PyArg_ParseTuple(args, "u", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "addNotifyItem expects a unicode string");
         PYTHON_RETURN_ERROR;
@@ -299,9 +299,9 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addNotifyItem, args)
 
 PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addSubMenuItem, args)
 {
-    wchar_t* name;
+    ST::string name;
     PyObject* subMenuObj = nullptr;
-    if (!PyArg_ParseTuple(args, "uO", &name, &subMenuObj))
+    if (!PyArg_ParseTuple(args, "O&O", PyUnicode_STStringConverter, &name, &subMenuObj))
     {
         PyErr_SetString(PyExc_TypeError, "addSubMenuItem expects a unicode string and a ptGUIPopUpMenu");
         PYTHON_RETURN_ERROR;
@@ -373,14 +373,14 @@ PyObject *pyGUIPopUpMenu::New(plKey objkey)
     return (PyObject*)newObj;
 }
 
-PyObject *pyGUIPopUpMenu::New(const char *name, float screenOriginX, float screenOriginY, const plLocation &destLoc /* = plLocation::kGlobalFixedLoc */)
+PyObject *pyGUIPopUpMenu::New(const ST::string& name, float screenOriginX, float screenOriginY, const plLocation &destLoc /* = plLocation::kGlobalFixedLoc */)
 {
     ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
     newObj->fThis->setup(name, screenOriginX, screenOriginY, destLoc);
     return (PyObject*)newObj;
 }
 
-PyObject *pyGUIPopUpMenu::New(const char *name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY)
+PyObject *pyGUIPopUpMenu::New(const ST::string& name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY)
 {
     ptGUIPopUpMenu *newObj = (ptGUIPopUpMenu*)ptGUIPopUpMenu_type.tp_new(&ptGUIPopUpMenu_type, nullptr, nullptr);
     newObj->fThis->setup(name, parent, screenOriginX, screenOriginY);
