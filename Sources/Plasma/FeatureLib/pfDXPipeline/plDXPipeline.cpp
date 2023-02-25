@@ -8815,40 +8815,6 @@ static inline void ISkinVertexSSE3(const hsMatrix44& xfm, float wgt,
 #endif // HAVE_SSE3
 }
 
-#ifdef HAVE_SSE41
-static inline void ISkinDpSSE41(const float* src, float* dst, const __m128& mc0,
-                                const __m128& mc1, const __m128& mc2, const __m128& mwt)
-{
-    enum { DP_F4_X = 0xF1, DP_F4_Y = 0xF2, DP_F4_Z = 0xF4 };
-
-    __m128 msr = _mm_load_ps(src);
-    __m128 _r =        _mm_dp_ps(msr, mc0, DP_F4_X);
-    _r = _mm_or_ps(_r, _mm_dp_ps(msr, mc1, DP_F4_Y));
-    _r = _mm_or_ps(_r, _mm_dp_ps(msr, mc2, DP_F4_Z));
-
-    __m128 _dst = _mm_load_ps(dst);
-    _dst = _mm_add_ps(_dst, _mm_mul_ps(_r, mwt));
-    _mm_store_ps(dst, _dst);
-}
-#endif // HAVE_SSE41
-
-static inline void ISkinVertexSSE41(const hsMatrix44& xfm, float wgt,
-                                    const float* srcBuf, float* dstBuf)
-{
-#ifdef HAVE_SSE41
-    __m128 mc0 = _mm_load_ps(xfm.fMap[0]);
-    __m128 mc1 = _mm_load_ps(xfm.fMap[1]);
-    __m128 mc2 = _mm_load_ps(xfm.fMap[2]);
-    __m128 mwt = _mm_set_ps1(wgt);
-
-    SPLIT_SKIN_BUFFER(srcBuf, pt_src, vec_src);
-    SPLIT_SKIN_BUFFER(dstBuf, pt_dst, vec_dst);
-
-    ISkinDpSSE41(pt_src, pt_dst, mc0, mc1, mc2, mwt);
-    ISkinDpSSE41(vec_src, vec_dst, mc0, mc1, mc2, mwt);
-#endif // HAVE_SSE41
-}
-
 typedef void(*skin_vert_ptr)(const hsMatrix44&, float, const float*, float*);
 
 template<skin_vert_ptr T>
@@ -8913,9 +8879,7 @@ hsCpuFunctionDispatcher<plDXPipeline::blend_vert_buffer_ptr> plDXPipeline::blend
     &IBlendVertBuffer<ISkinVertexFPU>,
     nullptr,                                // SSE1
     nullptr,                                // SSE2
-    &IBlendVertBuffer<ISkinVertexSSE3>,
-    nullptr,                                // SSSE3
-    &IBlendVertBuffer<ISkinVertexSSE41>
+    &IBlendVertBuffer<ISkinVertexSSE3>
 };
 
 #undef SPLIT_SKIN_TRIPLES
