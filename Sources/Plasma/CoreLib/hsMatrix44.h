@@ -142,7 +142,15 @@ struct hsMatrix44 {
     [[nodiscard]]
     hsVector3 operator*(const hsVector3& p) const;
     [[nodiscard]]
-    hsMatrix44 operator *(const hsMatrix44& other) const { return mat_mult.call(*this, other); }
+    hsMatrix44 operator *(const hsMatrix44& other) const {
+        
+#ifdef HS_BUILD_FOR_APPLE
+        return mult_acclerate(*this, other);
+#else
+        return mat_mult.call(*this, other);
+#endif
+        
+    }
 
     hsPoint3*           MapPoints(long count, hsPoint3 points[]) const;
 
@@ -163,6 +171,9 @@ private:
 
     static hsMatrix44 mult_fpu(const hsMatrix44& a, const hsMatrix44& b);
     static hsMatrix44 mult_sse3(const hsMatrix44& a, const hsMatrix44& b);
+#ifdef HS_BUILD_FOR_APPLE
+    static hsMatrix44 mult_acclerate(const hsMatrix44 &a, const hsMatrix44 &b);
+#endif
 };
 
 ST_DECL_FORMAT_TYPE(const hsMatrix44&);
