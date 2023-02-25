@@ -58,6 +58,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plProfile.h"
 
+#ifdef HS_BUILD_FOR_APPLE
+#import <Accelerate/Accelerate.h>
+#endif
+
 uint8_t plCoordinateInterface::fTransformPhase = plCoordinateInterface::kTransformPhaseNormal;
 bool plCoordinateInterface::fDelayedTransformsEnabled = true;
 
@@ -382,9 +386,10 @@ static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& r
 {
     hsMatrix44 ret;
     ret.NotIdentity();
-    ret.fMap[3][0] = ret.fMap[3][1] = ret.fMap[3][2] = 0;
-    ret.fMap[3][3] = 1.f;
-
+    
+#ifdef HS_BUILD_FOR_APPLE
+    vDSP_mmul((const float*)lhs.fMap, 1, (const float*)rhs.fMap, 1, (float*)&(ret.fMap), 1, 3, 4, 4);
+#else
     ret.fMap[0][0] = lhs.fMap[0][0] * rhs.fMap[0][0]
         + lhs.fMap[0][1] * rhs.fMap[1][0]
         + lhs.fMap[0][2] * rhs.fMap[2][0];
@@ -435,6 +440,9 @@ static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& r
         + lhs.fMap[2][1] * rhs.fMap[1][3]
         + lhs.fMap[2][2] * rhs.fMap[2][3]
         + lhs.fMap[2][3];
+#endif
+    ret.fMap[3][0] = ret.fMap[3][1] = ret.fMap[3][2] = 0;
+    ret.fMap[3][3] = 1.f;
 
     return ret;
 }
