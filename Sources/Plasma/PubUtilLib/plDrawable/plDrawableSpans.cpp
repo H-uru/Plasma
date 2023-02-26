@@ -406,66 +406,6 @@ bool plDrawableSpans::IBoundsInvalid(const hsBounds3Ext& bnd) const
 }
 
 //// SetTransform ////////////////////////////////////////////////////////////
-static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& rhs)
-{
-    hsMatrix44 ret;
-    ret.NotIdentity();
-    ret.fMap[3][0] = ret.fMap[3][1] = ret.fMap[3][2] = 0;
-    ret.fMap[3][3] = 1.f;
-
-    ret.fMap[0][0] = lhs.fMap[0][0] * rhs.fMap[0][0]
-        + lhs.fMap[0][1] * rhs.fMap[1][0]
-        + lhs.fMap[0][2] * rhs.fMap[2][0];
-
-    ret.fMap[0][1] = lhs.fMap[0][0] * rhs.fMap[0][1]
-        + lhs.fMap[0][1] * rhs.fMap[1][1]
-        + lhs.fMap[0][2] * rhs.fMap[2][1];
-
-    ret.fMap[0][2] = lhs.fMap[0][0] * rhs.fMap[0][2]
-        + lhs.fMap[0][1] * rhs.fMap[1][2]
-        + lhs.fMap[0][2] * rhs.fMap[2][2];
-
-    ret.fMap[0][3] = lhs.fMap[0][0] * rhs.fMap[0][3]
-        + lhs.fMap[0][1] * rhs.fMap[1][3]
-        + lhs.fMap[0][2] * rhs.fMap[2][3]
-        + lhs.fMap[0][3];
-
-    ret.fMap[1][0] = lhs.fMap[1][0] * rhs.fMap[0][0]
-        + lhs.fMap[1][1] * rhs.fMap[1][0]
-        + lhs.fMap[1][2] * rhs.fMap[2][0];
-
-    ret.fMap[1][1] = lhs.fMap[1][0] * rhs.fMap[0][1]
-        + lhs.fMap[1][1] * rhs.fMap[1][1]
-        + lhs.fMap[1][2] * rhs.fMap[2][1];
-
-    ret.fMap[1][2] = lhs.fMap[1][0] * rhs.fMap[0][2]
-        + lhs.fMap[1][1] * rhs.fMap[1][2]
-        + lhs.fMap[1][2] * rhs.fMap[2][2];
-
-    ret.fMap[1][3] = lhs.fMap[1][0] * rhs.fMap[0][3]
-        + lhs.fMap[1][1] * rhs.fMap[1][3]
-        + lhs.fMap[1][2] * rhs.fMap[2][3]
-        + lhs.fMap[1][3];
-
-    ret.fMap[2][0] = lhs.fMap[2][0] * rhs.fMap[0][0]
-        + lhs.fMap[2][1] * rhs.fMap[1][0]
-        + lhs.fMap[2][2] * rhs.fMap[2][0];
-
-    ret.fMap[2][1] = lhs.fMap[2][0] * rhs.fMap[0][1]
-        + lhs.fMap[2][1] * rhs.fMap[1][1]
-        + lhs.fMap[2][2] * rhs.fMap[2][1];
-
-    ret.fMap[2][2] = lhs.fMap[2][0] * rhs.fMap[0][2]
-        + lhs.fMap[2][1] * rhs.fMap[1][2]
-        + lhs.fMap[2][2] * rhs.fMap[2][2];
-
-    ret.fMap[2][3] = lhs.fMap[2][0] * rhs.fMap[0][3]
-        + lhs.fMap[2][1] * rhs.fMap[1][3]
-        + lhs.fMap[2][2] * rhs.fMap[2][3]
-        + lhs.fMap[2][3];
-
-    return ret;
-}
 
 #ifdef MF_TEST_UPDATE
 plProfile_CreateCounter("DSSetTrans", "Update", DSSetTrans);
