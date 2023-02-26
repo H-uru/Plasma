@@ -1148,7 +1148,7 @@ enum
 
 //// Shared ParamBlock for All Sounds ///////////////////////////////////////////////////////////
 
-#define sSoundSharedPBHeader(s)     kSndSharedParams,   IDD_COMP_SOUNDBASE,         s##,            0, 0, &gSoundCompProc,  \
+#define sSoundSharedPBHeader(s)     kSndSharedParams,   IDD_COMP_SOUNDBASE,         s,            0, 0, &gSoundCompProc,  \
                                     kSoundFadeParams,   IDD_COMP_SOUND_FADEPARAMS,  IDS_COMP_SOUNDFADEPARAMS,   0, 0, &gSoundFadeParamsProc
 
 static ParamBlockDesc2 sSoundSharedPB
