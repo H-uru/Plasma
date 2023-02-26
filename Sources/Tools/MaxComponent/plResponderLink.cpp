@@ -161,17 +161,17 @@ ParamBlockDesc2 gResponderLinkBlock
 
     kLinkAgeSpawnPointName, _T("ageSpawnPoint"),    TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKSPAWNPOINT,
-        p_default,  kDefaultSpawnPtName,
+        p_default,  _T(kDefaultSpawnPtName),
         p_end,
 
     kLinkAgeSpawnPointTitle,    _T("ageSpawnPointTitle"),   TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKSPAWNPOINTTITLE,
-        p_default,  kDefaultSpawnPtTitle,
+        p_default,  _T(kDefaultSpawnPtTitle),
         p_end,
 
     kLinkAgeLinkInAnimName,     _T("ageLinkInAnimName"),    TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKAGELINKINANIMNAME,
-        p_default,  kDefaultLinkInAnimName,
+        p_default,  _T(kDefaultLinkInAnimName),
         p_end,
 
     kLinkParentAgeFilename, _T("parentageFilename"),        TYPE_STRING,        0, 0,

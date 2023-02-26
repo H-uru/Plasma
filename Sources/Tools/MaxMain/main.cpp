@@ -224,7 +224,7 @@ ParamBlockDesc2 generalAttribBlock
 
     // params
     kRoomName,      _T("roomName"),         TYPE_STRING,        0,  0,
-    p_default,      "", 
+    p_default,      _T(""),
     p_end,
 
     p_end
