@@ -2020,12 +2020,12 @@ static plPlasmaAnimSelectDlgProc    sGUIButtonProc( plGUIButtonComponent::kRefMo
 
 
 #define GUI_SOUND_REF( comp, evt, allCapsEvt )      \
-        comp##::kRefMouse##evt##Sound,  _T( "mouse##evt##Sound" ), TYPE_BOOL, 0, 0,                 \
+        comp::kRefMouse##evt##Sound,  _T("mouse" #evt "Sound"), TYPE_BOOL, 0, 0,                 \
             p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_M##allCapsEvt##SND,      \
             p_default, FALSE,                                                                       \
-            p_enable_ctrls, 1, comp##::kRefMouse##evt##SoundComp,                                   \
+            p_enable_ctrls, 1, comp::kRefMouse##evt##SoundComp,                                   \
             p_end,                                                                                  \
-        comp##::kRefMouse##evt##SoundComp, _T("mouse##evt##SoundComp"), TYPE_INODE,     0, 0,       \
+        comp::kRefMouse##evt##SoundComp, _T("mouse" #evt "SoundComp"), TYPE_INODE,     0, 0,       \
             p_accessor, &sGUIButtonAccessor,                                                        \
             p_end
 
@@ -4583,10 +4583,10 @@ static pfGUISkinProc gGUISkinProc;
 
 // Component defined in pfGUISkinProc.h
 
-#define kDeclSkinRectValues( ref ) (plGUISkinComp::##ref + 0), _T("f##ref##.left"), TYPE_INT, 0, 0, p_default, 0, p_end,  \
-                                   (plGUISkinComp::##ref + 1), _T("f##ref##.top"), TYPE_INT, 0, 0, p_default, 0, p_end,   \
-                                   (plGUISkinComp::##ref + 2), _T("f##ref##.width"), TYPE_INT, 0, 0, p_default, 8, p_end, \
-                                   (plGUISkinComp::##ref + 3), _T("f##ref##.height"), TYPE_INT, 0, 0, p_default, 8, p_end
+#define kDeclSkinRectValues( ref ) (plGUISkinComp::ref + 0), _T("f" #ref ".left"), TYPE_INT, 0, 0, p_default, 0, p_end,  \
+                                   (plGUISkinComp::ref + 1), _T("f" #ref ".top"), TYPE_INT, 0, 0, p_default, 0, p_end,   \
+                                   (plGUISkinComp::ref + 2), _T("f" #ref ".width"), TYPE_INT, 0, 0, p_default, 8, p_end, \
+                                   (plGUISkinComp::ref + 3), _T("f" #ref ".height"), TYPE_INT, 0, 0, p_default, 8, p_end
 
 #define kSetSkinRectValues( pb, ref, l, t, w, h ) { pb->SetValue( ref + 0, 0, (int) l ); \
                                                     pb->SetValue( ref + 1, 0, (int) t ); \
