@@ -3963,11 +3963,33 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             
             struct plMetalFragmentShaderDescription passDescription;
             memset(&passDescription, 0, sizeof(passDescription));
-            passDescription.Populate(mat->GetLayer(0), 0);
+            
             passDescription.numLayers = fCurrNumLayers = 3;
+            
+            /*
+             Things get a wee bit complicated here.
+             
+             The texture we want to alpha blend with is already bound to texture 0 or texture 1.
+             However - the texture co-ords we want are in position 2 in the FVF vertex buffer. (stage 3)
+             
+             Build the shader with texture descriptions set properly for textures 0 and 1,
+             but put the instructions on how to treat the UVW for textures 0 or 1 into
+             the third stage.
+             
+             The shadow cast shader will automatically look in textures 0 and 1 when doing
+             the third stage blend. This saves us a texture bind.
+             */
+            
+            passDescription.PopulateTextureInfo(mat->GetLayer(0), 0);
+            passDescription.Populate(mat->GetLayer(0), 2);
+            
             if (mat->GetNumLayers()>1) {
-                passDescription.Populate(mat->GetLayer(1), 1);
+                passDescription.PopulateTextureInfo(mat->GetLayer(1), 1);
+                passDescription.Populate(mat->GetLayer(1), 2);
             }
+            //There's no texture for the third stage if we're reusing the textures
+            //for the first and second stages from the last render.
+            passDescription.passTypes[2] = PassTypeColor;
             
             plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalRenderShadowPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();
             if(fState.fCurrentPipelineState != linkedPipeline->pipelineState) {

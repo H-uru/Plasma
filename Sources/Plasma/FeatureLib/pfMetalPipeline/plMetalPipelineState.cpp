@@ -310,10 +310,13 @@ void plMetalMaterialPassPipelineState::ConfigureBlend(MTL::RenderPipelineColorAt
     ConfigureBlendMode(blendMode, descriptor);
 }
 
-void plMetalFragmentShaderDescription::Populate(plLayerInterface* layPtr, uint8_t index) {
+void plMetalFragmentShaderDescription::Populate(const plLayerInterface* layPtr, const uint8_t index) {
     blendModes[index] = layPtr->GetBlendFlags();
     miscFlags[index] = layPtr->GetMiscFlags();
-    
+    PopulateTextureInfo(layPtr, index);
+}
+
+void plMetalFragmentShaderDescription::PopulateTextureInfo(const plLayerInterface* layPtr, const uint8_t index) {
     plBitmap* texture = layPtr->GetTexture();
     if (texture != nullptr) {
         if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
@@ -327,6 +330,7 @@ void plMetalFragmentShaderDescription::Populate(plLayerInterface* layPtr, uint8_
     } else {
         passTypes[index] = PassTypeColor;
     }
+    
 }
 
 bool plMetalMaterialPassPipelineState::IsEqual(const plMetalPipelineState &p) const {

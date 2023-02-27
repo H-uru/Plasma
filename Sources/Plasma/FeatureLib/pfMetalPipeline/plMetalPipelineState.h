@@ -151,7 +151,8 @@ struct plMetalFragmentShaderDescription {
         return value;
     }
     
-    void Populate(plLayerInterface* layPtr, uint8_t index);
+    void Populate(const plLayerInterface* layPtr, const uint8_t index);
+    void PopulateTextureInfo(const plLayerInterface* layPtr, const uint8_t index);
 };
 
 template<>
