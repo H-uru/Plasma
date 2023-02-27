@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMetalPipelineState.h"
 
-matrix_float4x4* hsMatrix2SIMD(const hsMatrix44& src, matrix_float4x4* dst, bool swapOrder)
+matrix_float4x4* hsMatrix2SIMD(const hsMatrix44& src, matrix_float4x4* dst)
 {
     if (src.fFlags & hsMatrix44::kIsIdent)
     {
@@ -70,31 +70,7 @@ matrix_float4x4* hsMatrix2SIMD(const hsMatrix44& src, matrix_float4x4* dst, bool
     }
     else
     {
-        //SIMD is column major, hsMatrix44 is row major.
-        //We need to flip.
-        if(swapOrder) {
-            dst->columns[0][0] = src.fMap[0][0];
-            dst->columns[1][0] = src.fMap[0][1];
-            dst->columns[2][0] = src.fMap[0][2];
-            dst->columns[3][0] = src.fMap[0][3];
-            
-            dst->columns[0][1] = src.fMap[1][0];
-            dst->columns[1][1] = src.fMap[1][1];
-            dst->columns[2][1] = src.fMap[1][2];
-            dst->columns[3][1] = src.fMap[1][3];
-            
-            dst->columns[0][2] = src.fMap[2][0];
-            dst->columns[1][2] = src.fMap[2][1];
-            dst->columns[2][2] = src.fMap[2][2];
-            dst->columns[3][2] = src.fMap[2][3];
-            
-            dst->columns[0][3] = src.fMap[3][0];
-            dst->columns[1][3] = src.fMap[3][1];
-            dst->columns[2][3] = src.fMap[3][2];
-            dst->columns[3][3] = src.fMap[3][3];
-        } else {
-            memcpy(dst, &src.fMap, sizeof(matrix_float4x4));
-        }
+        memcpy(dst, &src.fMap, sizeof(matrix_float4x4));
     }
 
     return dst;
@@ -957,13 +933,13 @@ void plMetalDevice::SetWorldToCameraMatrix(const hsMatrix44& src)
     hsMatrix2SIMD(inv, &fMatrixC2W);
 }
 
-void plMetalDevice::SetLocalToWorldMatrix(const hsMatrix44& src, bool swapOrder)
+void plMetalDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
 {
     hsMatrix44 inv;
     src.GetInverse(&inv);
     
-    hsMatrix2SIMD(src, &fMatrixL2W, swapOrder);
-    hsMatrix2SIMD(inv, &fMatrixW2L, swapOrder);
+    hsMatrix2SIMD(src, &fMatrixL2W);
+    hsMatrix2SIMD(inv, &fMatrixW2L);
 }
 
 void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)

@@ -265,9 +265,9 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
     half3 LAmbient = half3(0.0, 0.0, 0.0);
     half3 LDiffuse = half3(0.0, 0.0, 0.0);
 
-    const float3 Ndirection = normalize(uniforms.localToWorldMatrix * float4(in.normal, 0.0)).xyz;
+    const float3 Ndirection = normalize(float4(in.normal, 0.0) * uniforms.localToWorldMatrix).xyz;
     
-    float4 position = (uniforms.localToWorldMatrix * float4(in.position, 1.0));
+    float4 position = (float4(in.position, 1.0) * uniforms.localToWorldMatrix);
     if(temp_hasOnlyWeight1) {
         const float4 position2 = blendMatrix1 * float4(in.position, 1.0);
         position = (in.weight1 * position) + ((1.0f - in.weight1) * position2);
@@ -317,7 +317,7 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                                  abs(uniforms.invVtxAlpha - MDiffuse.a));
 
     out.vtxColor = half4(material.rgb, abs(uniforms.invVtxAlpha - MDiffuse.a));
-    const float4 vCamPosition = uniforms.worldToCameraMatrix * position;
+    const float4 vCamPosition = position * uniforms.worldToCameraMatrix;
     //out.vCamNormal = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 0.0));
     
     //Fog
@@ -333,13 +333,13 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
     }
     out.fogColor.rgb = uniforms.fogColor;
     
-    const float4 normal = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.normal, 0.0));
+    const float4 normal = (uniforms.localToWorldMatrix * float4(in.normal, 0.0)) * uniforms.worldToCameraMatrix;
     
     for(size_t layer=0; layer<num_layers; layer++) {
         (&out.texCoord1)[layer] = uniforms.sampleLocation(layer, &in.texCoord1, normal, vCamPosition);
     }
     
-    out.position = uniforms.projectionMatrix * vCamPosition;
+    out.position = vCamPosition * uniforms.projectionMatrix;
 
     return out;
 }
@@ -354,35 +354,35 @@ float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, co
     //Note: If we want to require newer versions of Metal/newer hardware we could pass function pointers instead of doing these ifs.
     if (flags & (kMiscUseReflectionXform | kMiscUseRefractionXform)) {
         matrix = cameraToWorldMatrix;
-        matrix[3][0] = matrix[3][1] = matrix[3][2] = 0;
+        matrix[0][3] = matrix[1][3] = matrix[2][3] = 0;
 
         // This is just a rotation about X of Pi/2 (y = z, z = -y),
         // followed by flipping Z to reflect back towards us (z = -z).
 
         // swap mat[1][0] and mat[2][0]
         float temp;
-        temp = matrix[0][1];
-        matrix[0][1] = matrix[0][2];
-        matrix[0][2] = temp;
+        temp = matrix[1][0];
+        matrix[1][0] = matrix[2][0];
+        matrix[2][0] = temp;
 
         // swap mat[1][1] and mat[2][1]
         temp = matrix[1][1];
-        matrix[1][1] = matrix[1][2];
-        matrix[1][2] = temp;
+        matrix[1][1] = matrix[2][1];
+        matrix[2][1] = temp;
 
         // swap mat[1][2] and mat[2][2]
-        temp = matrix[2][1];
-        matrix[2][1] = matrix[2][2];
+        temp = matrix[1][2];
+        matrix[1][2] = matrix[2][2];
         matrix[2][2] = temp;
 
         if (flags & kMiscUseRefractionXform) {
             // Same as reflection, but then matrix = matrix * scaleMatNegateZ.
 
             // mat[0][2] = -mat[0][2];
-            matrix[2][0] = -matrix[2][0];
+            matrix[0][2] = -matrix[0][2];
 
             // mat[1][2] = -mat[1][2];
-            matrix[2][1] = -matrix[2][1];
+            matrix[1][2] = -matrix[1][2];
 
             // mat[2][2] = -mat[2][2];
             matrix[2][2] = -matrix[2][2];
@@ -398,10 +398,10 @@ float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, co
         matrix_float4x4 scaleMatrix = matrix_float4x4(1.0);
 
         // hsVector3 camTrans(0.5f, 0.5f, 0.f);
-        scaleMatrix[3][0] = 0.5f;
-        scaleMatrix[3][1] = -0.5f;
+        scaleMatrix[0][3] = 0.5f;
+        scaleMatrix[1][3] = -0.5f;
         
-        matrix = scaleMatrix * translationMatrix;
+        matrix = translationMatrix * scaleMatrix;
 
         // The scale and trans move us from NDC to Screen space. We need to swap
         // the Z and W coordinates so that the texture projection will divide by W
@@ -410,25 +410,25 @@ float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, co
 
         // swap mat[2][2] and mat[3][2]
         temp = matrix[2][2];
-        matrix[2][2] = matrix[2][3];
-        matrix[2][3] = temp;
+        matrix[2][2] = matrix[3][2];
+        matrix[3][2] = temp;
 
         // swap mat[2][3] and mat[3][3]
-        temp = matrix[3][2];
-        matrix[3][2] = matrix[3][3];
+        temp = matrix[2][3];
+        matrix[2][3] = matrix[3][3];
         matrix[3][3] = temp;
 
         // Multiply by the projection matrix
-        matrix = matrix * projectionMatrix;
+        matrix = projectionMatrix * matrix;
     } else if (flags & kMiscProjection) {
         matrix_float4x4 cam2World = cameraToWorldMatrix;
         if( !(UVWSrc & kUVWPosition) ) {
-            cam2World.columns[3][0] = 0;
-            cam2World.columns[3][1] = 0;
-            cam2World.columns[3][2] = 0;
+            cam2World.columns[0][3] = 0;
+            cam2World.columns[1][3] = 0;
+            cam2World.columns[2][3] = 0;
         }
         
-        matrix = matrix * cam2World;
+        matrix = cam2World * matrix;
     }
     
     float4 sampleCoord;
@@ -436,24 +436,24 @@ float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, co
     switch (UVWSrc) {
     case kUVWNormal:
         {
-            sampleCoord = matrix * normal;
+            sampleCoord = normal * matrix;
         }
         break;
     case kUVWPosition:
         {
-            sampleCoord = matrix * camPosition;
+            sampleCoord = camPosition * matrix;
         }
         break;
     case kUVWReflect:
         {
-            sampleCoord = matrix * reflect(normalize(camPosition), normalize(normal));
+            sampleCoord = reflect(normalize(camPosition), normalize(normal)) * matrix;
         }
         break;
     default:
         {
             const int index = UVWSrc & 0x0F;
             if (index < num_uvs) {
-                sampleCoord = matrix * float4(texCoords[index], 1.0);
+                sampleCoord = float4(texCoords[index], 1.0) * matrix;
             } else {
                 //The DX engine will use a UV co-ord of 0,0 if the index is out of range
                 sampleCoord = float4(0.0);
@@ -649,13 +649,13 @@ vertex ShadowCasterInOut shadowVertexShader(Vertex in [[stage_in]],
 {
     ShadowCasterInOut out;
     
-    const float4 vCamPosition = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 1.0));
+    const float4 vCamPosition = (float4(in.position, 1.0) * uniforms.localToWorldMatrix) * uniforms.worldToCameraMatrix;
     
     const float4x4 matrix = uniforms.uvTransforms[0].transform;
     
-    out.texCoord1 = (matrix * vCamPosition).xyz;
+    out.texCoord1 = (vCamPosition * matrix).xyz;
     
-    out.position = uniforms.projectionMatrix * vCamPosition;
+    out.position =  vCamPosition * uniforms.projectionMatrix;
 
     return out;
 }

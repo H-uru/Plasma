@@ -2554,15 +2554,10 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(fDevice.fNoZReadOrWriteStencilState);
     fState.fCurrentDepthStencilState = fDevice.fNoZReadOrWriteStencilState;
     
-    //column major layout
     simd_float4x4 projMat = matrix_identity_float4x4;
-    //projMat.columns[2][3] = 1.0f;
-    //projMat.columns[3][1] = -0.5f;
-    projMat.columns[3][2] = 0.0f;
-    projMat.columns[1][1] = 1.0f;
 
     /// Set up the transform directly
-    fDevice.SetLocalToWorldMatrix(plate->GetTransform(), false);
+    fDevice.SetLocalToWorldMatrix(plate->GetTransform());
 
     IPushPiggyBacks(material);
 
@@ -4440,8 +4435,8 @@ void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, 
             hsMatrix2SIMD(matrixPalette[indices & 0xFF], &simdMatrix);
             if (weights[j]) {
                 //Note: This bit is different than GL/DirectX. It's using acclerate so this is also accelerated on ARM through NEON or maybe even the Neural Engine.
-                destPt_buf += weights[j] * simd_mul(simdMatrix, *(simd_float4 *)pt_buf);
-                destNorm_buf += weights[j] * simd_mul(simdMatrix, *(simd_float4 *)vec_buf);
+                destPt_buf +=  simd_mul(*(simd_float4 *)pt_buf, simdMatrix) * weights[j];
+                destNorm_buf += simd_mul(*(simd_float4 *)vec_buf, simdMatrix) * weights[j];
             }
                 //ISkinVertexSSE41(matrixPalette[indices & 0xFF], weights[j], pt_buf, destPt_buf, vec_buf, destNorm_buf);
             indices >>= 8;

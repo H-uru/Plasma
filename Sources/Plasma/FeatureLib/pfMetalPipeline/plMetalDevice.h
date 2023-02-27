@@ -67,7 +67,8 @@ class plCubicEnvironmap;
 class plLayerInterface;
 class plMetalPipelineState;
 
-matrix_float4x4* hsMatrix2SIMD(const hsMatrix44& src, matrix_float4x4* dst, bool swapOrder = true);
+//NOTE: Results of this will be row major
+matrix_float4x4* hsMatrix2SIMD(const hsMatrix44& src, matrix_float4x4* dst);
 
 class plMetalDevice
 {
@@ -149,7 +150,7 @@ public:
     
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
-    void SetLocalToWorldMatrix(const hsMatrix44& src, bool swapOrder = true);
+    void SetLocalToWorldMatrix(const hsMatrix44& src);
     
     void PopulateTexture(plMetalDevice::TextureRef *tRef, plMipmap *img, uint slice);
     uint ConfigureAllowedLevels(plMetalDevice::TextureRef *tRef, plMipmap *mipmap);

@@ -77,9 +77,11 @@ vertex ColorInOut plateVertexShader(PlateVertex in [[stage_in]],
     ColorInOut out;
 
     float4 position = float4(in.position, 0.0, 1.0);
-    position = uniforms.projectionMatrix * position;
-    out.position =  (uniforms.localToWorldMatrix * position);
+    position =  position * uniforms.projectionMatrix;
+    out.position =  ( position * uniforms.localToWorldMatrix);
+    out.position.y *= -1.0f;
     out.texCoord = (float4(in.texCoord, 1.0) * uniforms.uvTransforms[0].transform).xyz;
+    out.texCoord.y = 1.0 - out.texCoord.y;
     out.normal = float4(0.0, 0.0, 1.0, 0.0);
 
     return out;
