@@ -1280,7 +1280,7 @@ ST::string PythonInterface::getOutputAndReset()
         if (dbgOut != nullptr)
         {
             // then send it the new text
-            pyObjectRef retVal = plPython::CallObject(dbgOut, PyUnicode_FromSTString(strVal));
+            pyObjectRef retVal = plPython::CallObject(dbgOut, strVal);
             if (!retVal) {
                 // for some reason this function didn't, remember that and not call it again
                 dbgOut = nullptr;
