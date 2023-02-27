@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
+from __future__ import annotations
+
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
@@ -59,62 +61,33 @@ class xRegisterAge(ptResponder):
         version = 1
         self.version = version
         PtDebugPrint("__init__xRegisterAge v.", version)
-        
-    def OnNotify(self,state,id,events):
-        if state and PtFindAvatar(events) == PtGetLocalAvatar():
-            if id==act.id:
-                if not self.IFindAgeLinkInFolder(ageFileName.value):
-                    if resp.value:
-                        resp.run(self.key,events=events)
-                    PtSendKIMessage(kKILocalChatStatusMsg, PtGetLocalizedString("Global.Messages.AgeBookGet", [ageInstanceName.value]))
-                    self.CheckAndRegisterAge(ageFileName.value, ageInstanceName.value)
 
-    def IFindAgeLinkInFolder(self, ageName):
+    def OnNotify(self, state, id, events):
+        if PtWasLocallyNotified(self.key) and state and id == act.id:
+            if not self.IHaveAgeLink(ageFileName.value):
+                if resp.value:
+                    resp.run(self.key, events=events)
+                self.IRegisterAge(ageFileName.value, ageInstanceName.value)
+                PtSendKIMessage(kKILocalChatStatusMsg, PtGetLocalizedString("Global.Messages.AgeBookGet", [ageInstanceName.value]))
+
+    def IHaveAgeLink(self, ageName: str) -> bool:
         vault = ptVault()
-        folder = vault.getAgesIOwnFolder()
-        ageName = ageName.lower()
-        contents = folder.getChildNodeRefList()
-        for content in contents:
-            link = content.getChild().upcastToAgeLinkNode()
-            if link is not None:
-                info = link.getAgeInfo()
-            else:
-                link = content.getChild()
-                info = link.upcastToAgeInfoNode()
+        info = ptAgeInfoStruct()
+        info.setAgeFilename(ageName)
+        return vault.getOwnedAgeLink(info) is not None
 
-            if info.getAgeFilename().lower() == ageName:
-                return link
-        return None
+    def IRegisterAge(self, ageFileName: str, ageInstanceName: str):
+        PtDebugPrint(f"xRegisterAge.CheckAndRegisterAge(): {ageFileName=} {ageInstanceName=}", level=kWarningLevel)
+        playerName = PtGetClientName()
+        userDefName = f"{playerName}'" if playerName[-1] in {"s", "S"} else f"{playerName}'s"
+        desc = f"{userDefName} {ageInstanceName}"
+        info = ptAgeInfoStruct()
+        info.setAgeFilename(ageFileName)
+        info.setAgeInstanceName(ageInstanceName)
+        info.setAgeUserDefinedName(userDefName)
+        info.setAgeDescription(desc)
+        link = ptAgeLinkStruct()
+        link.setAgeInfo(info)
+        ptVault().registerOwnedAge(link)
+        PtDebugPrint(f"xRegisterAge.CheckAndRegisterAge(): Registered age {ageFileName=}", level=kWarningLevel)
 
-    def CheckAndRegisterAge(self, ageFileName, ageInstanceName):
-        PtDebugPrint("xRegisterAge.CheckAndRegisterAge(): ",ageFileName,"; ",ageInstanceName)
-        vault = ptVault()
-        ageStruct = ptAgeInfoStruct()
-        ageStruct.setAgeFilename(ageFileName)
-        ageLinkNode = vault.getOwnedAgeLink(ageStruct)
-        if not ageLinkNode:
-            info = ptAgeInfoStruct()
-            info.setAgeFilename(ageFileName)
-            info.setAgeInstanceName(ageInstanceName)
-
-            playerName = PtGetClientName()
-            ageGuid = PtGuidGenerate()
-            userDefName = ""
-            desc = ""
-
-            if playerName[-1] == "s" or playerName[-1] == "S":
-                userDefName = "%s'" % playerName
-                desc = "%s' %s" % (playerName, info.getAgeInstanceName())
-            else:
-                userDefName = "%s's" % playerName
-                desc = "%s's %s" % (playerName, info.getAgeInstanceName())
-
-            info.setAgeInstanceGuid(ageGuid)
-            info.setAgeUserDefinedName(userDefName)
-            info.setAgeDescription(desc)
-
-            link = ptAgeLinkStruct()
-            link.setAgeInfo(info)
-
-            ptVault().registerOwnedAge(link)
-            PtDebugPrint("xRegisterAge.CheckAndRegisterAge(): Registered age - ", ageFileName)
