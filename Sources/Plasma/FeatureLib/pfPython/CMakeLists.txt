@@ -51,6 +51,7 @@ set(pfPython_SOURCES
     pyGUIPopUpMenu.cpp
     pyGUISkin.cpp
     pyImage.cpp
+    pyImageLibMod.cpp
     pyJournalBook.cpp
     pyKey.cpp
     pyKeyMap.cpp
@@ -143,6 +144,7 @@ set(pfPython_HEADERS
     pyGUIPopUpMenu.h
     pyGUISkin.h
     pyImage.h
+    pyImageLibMod.h
     pyJournalBook.h
     pyKey.h
     pyKeyMap.h
@@ -231,6 +233,7 @@ set(pfPython_GLUE
     pyGUIPopUpMenuGlue.cpp
     pyGUISkinGlue.cpp
     pyImageGlue.cpp
+    pyImageLibModGlue.cpp
     pyJournalBookGlue.cpp
     pyKeyGlue.cpp
     pyKeyMapGlue.cpp

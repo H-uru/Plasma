@@ -155,6 +155,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyJournalBook.h"
 
 #include "pyKeyMap.h"
+#include "pyImageLibMod.h"
 #include "pyLayer.h"
 #include "pyStream.h"
 
@@ -1080,6 +1081,7 @@ void PythonInterface::AddPlasmaClasses(PyObject* plasmaMod)
     pyDniInfoSource::AddPlasmaClasses(plasmaMod);
     pyDynamicText::AddPlasmaClasses(plasmaMod);
     pyImage::AddPlasmaClasses(plasmaMod);
+    pyImageLibMod::AddPlasmaClasses(plasmaMod);
     pyJournalBook::AddPlasmaClasses(plasmaMod);
     pyKeyMap::AddPlasmaClasses(plasmaMod);
     pyLayer::AddPlasmaClasses(plasmaMod);
