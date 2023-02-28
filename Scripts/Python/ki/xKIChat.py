@@ -1549,7 +1549,7 @@ class CommandsProcessor:
         if entry is None:
             vault.addChronicleEntry("feather", 1, str(self.chatMgr.gFeather))
             entry = vault.findChronicleEntry("feather")
-        entry.chronicleSetValue(str(self.chatMgr.gFeather))
+        entry.setValue(str(self.chatMgr.gFeather))
         entry.save()
 
     ## Looks for feathers in the player's "inventory".
@@ -1604,15 +1604,15 @@ class CommandsProcessor:
             child = child.upcastToChronicleNode()
             if not child:
                 continue
-            if child.chronicleGetName() == kChron.Party:
+            if child.getName() == kChron.Party:
                 party = child
                 break
 
         # Let's see what we need to do
         if not params:
             # No params = LINK ME!
-            if party and party.chronicleGetValue():
-                data = party.chronicleGetValue().split(";", 3)
+            if party and party.getValue():
+                data = party.getValue().split(";", 3)
                 ageInfo = ptAgeInfoStruct()
                 ageInfo.setAgeFilename(data[0])
                 ageInfo.setAgeInstanceGuid(data[1])
@@ -1634,7 +1634,7 @@ class CommandsProcessor:
             except NameError:
                 # Garbage SO = kill party
                 if party:
-                    party.chronicleSetValue("")
+                    party.setValue("")
                     party.save()
                     self.chatMgr.AddChatLine(None, "Party Crashed.", 0)
                 else:
@@ -1645,12 +1645,12 @@ class CommandsProcessor:
                 data = "%s;%s;%s" % (ageInfo.getAgeFilename(), ageInfo.getAgeInstanceGuid(), params)
                 if not party:
                     party = ptVaultChronicleNode()
-                    party.chronicleSetName(kChron.Party)
-                    party.chronicleSetValue(data)
+                    party.setName(kChron.Party)
+                    party.setValue(data)
                     party.save() # creates node on server (and blocks) so we can add it to the global inbox
                     inbox.addNode(party)
                 else:
-                    party.chronicleSetValue(data)
+                    party.setValue(data)
                     party.save()
 
     ## Export the local avatar's clothing to a file

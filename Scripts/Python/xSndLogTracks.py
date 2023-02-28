@@ -54,7 +54,7 @@ def LogTrack(currentState,nextState):
     vault = ptVault()
     entry = vault.findChronicleEntry(kLogTrackVarname)
     if entry is not None:
-        state = entry.chronicleGetValue()
+        state = entry.getValue()
         if state == currentState:
             avatar = PtGetLocalAvatar()
             worn = avatar.avatar.getAvatarClothingList()
@@ -68,7 +68,7 @@ def LogTrack(currentState,nextState):
                 if item[0] == clothingName:
                     itsThere = 1
             if itsThere:
-                entry.chronicleSetValue(nextState)
+                entry.setValue(nextState)
                 entry.save()
                 updated = 1
                 PtDebugPrint("updated to %s" % (nextState))
@@ -77,7 +77,7 @@ def LogTrack(currentState,nextState):
         if not updated:
             # ha, ha ...start over
             PtDebugPrint("not updated")
-#            entry.chronicleSetValue("15")
+#            entry.setValue("15")
 #            entry.save()
     return updated
 
@@ -85,7 +85,7 @@ def InitLogTrack(nextState):
     vault = ptVault()
     entry = vault.findChronicleEntry(kLogTrackVarname)
     if entry is not None:
-        entry.chronicleSetValue(nextState)
+        entry.setValue(nextState)
         entry.save()
     else:
         vault.addChronicleEntry(kLogTrackVarname,1,nextState)
@@ -94,7 +94,7 @@ def SetLogMode():
     vault = ptVault()
     entry = vault.findChronicleEntry(kLogModeVarname)
     if entry is not None:
-        entry.chronicleSetValue("white")
+        entry.setValue("white")
         entry.save()
     else:
         vault.addChronicleEntry(kLogModeVarname,1,"white")
@@ -103,14 +103,14 @@ def UnsetLogMode():
     vault = ptVault()
     entry = vault.findChronicleEntry(kLogModeVarname)
     if entry is not None:
-        entry.chronicleSetValue("blue")
+        entry.setValue("blue")
         entry.save()
 
 def IsLogMode():
     vault = ptVault()
     entry = vault.findChronicleEntry(kLogModeVarname)
     if entry is not None:
-        if entry.chronicleGetValue() == "white":
+        if entry.getValue() == "white":
             return 1
     return 0
 
@@ -118,7 +118,7 @@ def WhatIsLog():
     vault = ptVault()
     entry = vault.findChronicleEntry(kLogTrackVarname)
     if entry is not None:
-        PtDebugPrint(entry.chronicleGetValue())
+        PtDebugPrint(entry.getValue())
     else:
         PtDebugPrint("not initialized")
 

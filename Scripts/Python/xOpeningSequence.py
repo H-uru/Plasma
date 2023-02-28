@@ -429,7 +429,7 @@ class xOpeningSequence(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry(kIntroPlayedChronicle)
         if entry is not None:
-            entry.chronicleSetValue("yes")
+            entry.setValue("yes")
             entry.save()
         elif IsTutorialPath():
             vault.addChronicleEntry(kIntroPlayedChronicle, 2, "no")

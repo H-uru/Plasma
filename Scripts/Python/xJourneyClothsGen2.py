@@ -240,8 +240,8 @@ class xJourneyClothsGen2(ptModifier):
 
     def AddNodeWithCurrentValue(self, node):
         newNode = ptVaultChronicleNode(0)
-        newNode.chronicleSetName(Age.value)
-        newNode.chronicleSetValue(ClothLetter.value)
+        newNode.setName(Age.value)
+        newNode.setValue(ClothLetter.value)
         node.addNode(newNode)
 
         return self.GetCurrentAgeChronicle(node)
@@ -255,7 +255,7 @@ class xJourneyClothsGen2(ptModifier):
 
             ageChild = ageChild.upcastToChronicleNode()
 
-            if ageChild.chronicleGetName() == Age.value:
+            if ageChild.getName() == Age.value:
                 return ageChild
 
         return None
@@ -374,7 +374,7 @@ class xJourneyClothsGen2(ptModifier):
                     FoundJCs = ClothLetter.value
                     self.RandomBahroSounds()
                 else:
-                    FoundJCs = currentAgeChron.chronicleGetValue()
+                    FoundJCs = currentAgeChron.getValue()
                     PtDebugPrint("previously found JCs: ", FoundJCs)
                     if ClothLetter.value in FoundJCs:
                         PtDebugPrint("You've already found this cloth.")
@@ -385,7 +385,7 @@ class xJourneyClothsGen2(ptModifier):
                         FoundJCs = FoundJCs + ClothLetter.value
                         PtDebugPrint("trying to update JourneyClothProgress to ", FoundJCs)
 
-                        currentAgeChron.chronicleSetValue("%s" % (FoundJCs)) 
+                        currentAgeChron.setValue("%s" % (FoundJCs)) 
                         currentAgeChron.save() 
                         
                         self.RandomBahroSounds()

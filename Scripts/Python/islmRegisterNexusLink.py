@@ -99,9 +99,9 @@ class islmRegisterNexusLink(ptModifier):
                 entryName = "GotLinkToKveerPublic"
                 entry = vault.findChronicleEntry(entryName)
                 if entry is not None:
-                    entryValue = entry.chronicleGetValue()
+                    entryValue = entry.getValue()
                     if entryValue != "yes":
-                        entry.chronicleSetValue("yes")
+                        entry.setValue("yes")
                         entry.save()
                         PtDebugPrint("islmRegisterNexusLink.OnNotify(): Chronicle entry 'GotLinkToKveerPublic' already added, setting to 'yes'")
                 else:
@@ -113,9 +113,9 @@ class islmRegisterNexusLink(ptModifier):
                 entryName = "GotLinkToGoMePublic"
                 entry = vault.findChronicleEntry(entryName)
                 if entry is not None:
-                    entryValue = entry.chronicleGetValue()
+                    entryValue = entry.getValue()
                     if entryValue != "yes":
-                        entry.chronicleSetValue("yes")
+                        entry.setValue("yes")
                         entry.save()
                         PtDebugPrint("islmRegisterNexusLink.OnNotify(): Chronicle entry 'GotLinkToGoMePublic' already added, setting to 'yes'")
                 else:

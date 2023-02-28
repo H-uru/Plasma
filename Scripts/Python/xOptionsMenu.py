@@ -1772,9 +1772,9 @@ class xOptionsMenu(ptModifier):
             vault.addChronicleEntry(chronicleVar,kChronicleVarType,str(value))
             PtDebugPrint("%s:\tentered new chronicle counter %s" % (kModuleName,chronicleVar))
         else:
-            entry.chronicleSetValue(str(value))
+            entry.setValue(str(value))
             entry.save()
-            PtDebugPrint("%s:\tyour current value for %s is %s" % (kModuleName,chronicleVar,entry.chronicleGetValue()))
+            PtDebugPrint("%s:\tyour current value for %s is %s" % (kModuleName,chronicleVar,entry.getValue()))
 
     def getChronicleVar(self, chronicleVar):
         kModuleName = "Personal"
@@ -1789,7 +1789,7 @@ class xOptionsMenu(ptModifier):
             #PtDebugPrint("%s:\tentered new chronicle counter %s" % (kModuleName,chronicleVar))
             return None
         else:
-            value = entry.chronicleGetValue()
+            value = entry.getValue()
             PtDebugPrint("getChronicleVar(): " + chronicleVar + " = " + value)
             return value
         

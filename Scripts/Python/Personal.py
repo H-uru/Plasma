@@ -90,7 +90,7 @@ class Personal(ptResponder):
         # test for first time to play the intro movie
         vault = ptVault()
         entry = vault.findChronicleEntry(kIntroPlayedChronicle)
-        if entry is not None and entry.chronicleGetValue() == "yes":
+        if entry is not None and entry.getValue() == "yes":
             # already played intro sometime in the past... just let 'em play
             # enable twice because if we came from the ACA (closet->ACA->personal) it was disabled twice
             PtSendKIMessage(kEnableKIandBB,0)
@@ -138,11 +138,11 @@ class Personal(ptResponder):
                 #~ vault.addChronicleEntry(kChronicleVarName,kChronicleVarType,"%d" %(1))
                 #~ PtDebugPrint("%s:\tentered new chronicle counter %s" % (kModuleName,kChronicleVarName))
             #~ else:
-                #~ count = int(entry.chronicleGetValue())
+                #~ count = int(entry.getValue())
                 #~ count = count + 1
-                #~ entry.chronicleSetValue("%d" % (count))
+                #~ entry.setValue("%d" % (count))
                 #~ entry.save()
-                #~ PtDebugPrint("%s:\tyour current count for %s is %s" % (kModuleName,kChronicleVarName,entry.chronicleGetValue()))
+                #~ PtDebugPrint("%s:\tyour current count for %s is %s" % (kModuleName,kChronicleVarName,entry.getValue()))
         #~ else:
             #~ PtDebugPrint("%s:\tERROR trying to access vault -- can't update %s variable in chronicle." % (kModuleName,kChronicleVarName))
         pass

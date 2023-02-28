@@ -244,7 +244,7 @@ class psnlBahroPoles(ptModifier):
             if ptVault().amOwnerOfCurrentAge():
                 entry = vault.findChronicleEntry("CleftSolved")
                 if entry is not None:
-                    if entry.chronicleGetValue() == "yes":
+                    if entry.getValue() == "yes":
                         boolCleftSolved = 1
                         ageSDL["psnlCleftSolved"] = (1,)
         
@@ -738,8 +738,8 @@ class psnlBahroPoles(ptModifier):
 
                 ageChild = ageChild.upcastToChronicleNode()
 
-                if ageChild.chronicleGetName() == age:
-                    return len(ageChild.chronicleGetValue() )
+                if ageChild.getName() == age:
+                    return len(ageChild.getValue() )
 
         return 0
 
@@ -910,7 +910,7 @@ class psnlBahroPoles(ptModifier):
         chron = vault.findChronicleEntry("JourneyClothProgress")
 
         if chron is not None:
-            chron.chronicleSetValue("Z")
+            chron.setValue("Z")
             chron.save()
 
         #sdl = xPsnlVaultSDL(1)
@@ -1140,8 +1140,8 @@ class psnlBahroPoles(ptModifier):
         PtDebugPrint("creating BahroCave solution in the chronicle...")
         for v in range(len(agelist)):
             newnode = ptVaultChronicleNode(0)
-            newnode.chronicleSetName(agelist[v])
-            newnode.chronicleSetValue("0," + str(bahroSolList[v]) + ",0")
+            newnode.setName(agelist[v])
+            newnode.setValue("0," + str(bahroSolList[v]) + ",0")
             entry = vault.findChronicleEntry("BahroCave")
             entry.addNode(newnode)
         PtDebugPrint("new bahro cave solution = ",self.GetBahroCaveSolution())
@@ -1169,7 +1169,7 @@ class psnlBahroPoles(ptModifier):
         for ageChron in ageChronRefList:
             ageChild = ageChron.getChild()
             ageChild = ageChild.upcastToChronicleNode()
-            if ageChild.chronicleGetName() == age:
+            if ageChild.getName() == age:
                 return ageChild
         return None
 
@@ -1177,7 +1177,7 @@ class psnlBahroPoles(ptModifier):
     def GetAgeVariable(self, age, variable):
         node = self.GetAgeNode(age)
         if node != None:
-            varlist = node.chronicleGetValue().split(",")
+            varlist = node.getValue().split(",")
             self.varMap = {'YeeshaSymbolTouched': 0, 'SolutionSymbol': 1, 'YeeshaSpeech': 2}
             return varlist[ self.varMap[variable] ]
         else:
@@ -1235,11 +1235,11 @@ class psnlBahroPoles(ptModifier):
             ageInfoNode.addNode(ageDataFolder)
 
         if pelletSolution:
-            solutionChron.chronicleSetValue(solution)
+            solutionChron.setValue(solution)
         else:
             newNode = ptVaultChronicleNode(0)
-            newNode.chronicleSetName("PelletCaveSolution")
-            newNode.chronicleSetValue(solution)
+            newNode.setName("PelletCaveSolution")
+            newNode.setValue(solution)
             ageDataFolder.addNode(newNode)
 
 

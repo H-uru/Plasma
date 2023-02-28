@@ -602,7 +602,7 @@ class clftImager(ptResponder):
 
                     ageChild = ageChild.upcastToChronicleNode()
 
-                    if ageChild.chronicleGetName() == age:
+                    if ageChild.getName() == age:
                         return ageChild
 
         return None
@@ -612,7 +612,7 @@ class clftImager(ptResponder):
         node = self.GetAgeNode(age)
 
         if node != None:
-            varlist = node.chronicleGetValue().split(",")
+            varlist = node.getValue().split(",")
             return varlist[ 1 ]            
         else:
             return None
@@ -639,7 +639,7 @@ class clftImager(ptResponder):
         vault = ptVault()
         entry = vault.findChronicleEntry("CleftSolved")
         if entry is not None:
-            if entry.chronicleGetValue() == "yes":
+            if entry.getValue() == "yes":
                 boolCleftSolved = 1
 
         if not boolCleftSolved:
@@ -808,7 +808,7 @@ class clftImager(ptResponder):
             if entry is None:
                 vault.addChronicleEntry("YeeshaVisionViewed", 0, "1")
             else:
-                entry.chronicleSetValue("1")
+                entry.setValue("1")
                 entry.save()
             YeeshaName.physics.warpObj(YeeshaWarpVis1.value.getKey())
             YeeshaMultiStage.gotoStage(YeeshaName, 1,dirFlag=1,isForward=1)
@@ -897,16 +897,16 @@ class clftImager(ptResponder):
         vault = ptVault()
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
         if entryCityLinks is not None:
-            valCityLinks = entryCityLinks.chronicleGetValue()
+            valCityLinks = entryCityLinks.getValue()
             PtDebugPrint("valCityLinks = ",valCityLinks)
             CityLinks = valCityLinks.split(",")
             PtDebugPrint("CityLinks = ",CityLinks)
             if agePanel not in CityLinks:
                 NewLinks = valCityLinks + "," + agePanel
-                entryCityLinks.chronicleSetValue(NewLinks)
+                entryCityLinks.setValue(NewLinks)
                 entryCityLinks.save()
                 PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  setting citylinks chron entry to include: ",agePanel)
-                valCityLinks = entryCityLinks.chronicleGetValue()
+                valCityLinks = entryCityLinks.getValue()
                 CityLinks = valCityLinks.split(",")
                 PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  citylinks now = ",CityLinks)
             else:

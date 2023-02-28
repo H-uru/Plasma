@@ -205,7 +205,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
                                             link.setVolatile(1)
 ##                                            entry = vault.findChronicleEntry("Reset" + name)
 ##                                            if entry:
-##                                                entry.chronicleSetValue("1")
+##                                                entry.setValue("1")
 ##                                                entry.save()
 ##                                            else:
 ##                                                vault.addChronicleEntry("Reset" + name, 0, "1")

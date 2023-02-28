@@ -353,9 +353,9 @@ class xLinkingBookGUIPopup(ptModifier):
                                         entry = vault.findChronicleEntry("TomahnaLoad")
                                         if entry is not None:
                                             if linkTitle == "Tomahna":
-                                                entry.chronicleSetValue("yes")
+                                                entry.setValue("yes")
                                             else:
-                                                entry.chronicleSetValue("no")
+                                                entry.setValue("no")
                                     
                                     # this book was taken off the personal age bookshelf. Send a note telling to link
                                     note = ptNotify(self.key)
@@ -435,9 +435,9 @@ class xLinkingBookGUIPopup(ptModifier):
                                         ageDataTemplate.setFolderName("AgeData")
                                         if ageDataFolder := ageInfoNode.findNode(ageDataTemplate):
                                             chronTemplate = ptVaultChronicleNode()
-                                            chronTemplate.chronicleSetName("AhnonayVolatile")
+                                            chronTemplate.setName("AhnonayVolatile")
                                             if (chron := ageDataFolder.findNode(chronTemplate)) and (chron := chron.upcastToChronicleNode()):
-                                                chron.chronicleSetValue("1")
+                                                chron.setValue("1")
                                             else:
                                                 PtDebugPrint(f"xLinkingBookGUIPopup.OnNotify():\tHmmm... The AhnonayVolatile chronicle is missing! This deletion may cause oddness.")
                                         else:
@@ -481,7 +481,7 @@ class xLinkingBookGUIPopup(ptModifier):
                 vault = ptVault()
                 entry = vault.findChronicleEntry("TomahnaLoad")
                 if entry is not None:
-                    entry.chronicleSetValue("yes")
+                    entry.setValue("yes")
                     entry.save()
                     PtDebugPrint("Chronicle entry TomahnaLoad already added, setting to yes")
                 else:
@@ -794,16 +794,16 @@ class xLinkingBookGUIPopup(ptModifier):
         vault = ptVault()
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
         if entryCityLinks is not None:
-            valCityLinks = entryCityLinks.chronicleGetValue()
+            valCityLinks = entryCityLinks.getValue()
             PtDebugPrint("valCityLinks = ",valCityLinks)
             CityLinks = valCityLinks.split(",")
             PtDebugPrint("CityLinks = ",CityLinks)
             if agePanel not in CityLinks:
                 NewLinks = valCityLinks + "," + agePanel
-                entryCityLinks.chronicleSetValue(NewLinks)
+                entryCityLinks.setValue(NewLinks)
                 entryCityLinks.save()
                 PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  setting citylinks chron entry to include: ",agePanel)
-                valCityLinks = entryCityLinks.chronicleGetValue()
+                valCityLinks = entryCityLinks.getValue()
                 CityLinks = valCityLinks.split(",")
                 PtDebugPrint("xLinkingBookGUIPopup.IDoCityLinksChron():  citylinks now = ",CityLinks)
             else:
@@ -824,7 +824,7 @@ class xLinkingBookGUIPopup(ptModifier):
         vault = ptVault()
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
         if entryCityLinks is not None:
-            valCityLinks = entryCityLinks.chronicleGetValue()
+            valCityLinks = entryCityLinks.getValue()
             PtDebugPrint("xLinkingBookGUIPopup.IGetCityLinksChron(): valCityLinks = ",valCityLinks)
             CityLinks = valCityLinks.split(",")
         return CityLinks	
@@ -1127,8 +1127,8 @@ class xLinkingBookGUIPopup(ptModifier):
         if not GUIDChronFound:
             PtDebugPrint("creating PelletCave GUID chron")
             newNode = ptVaultChronicleNode(0)
-            newNode.chronicleSetName("PelletCaveGUID")
-            newNode.chronicleSetValue(pelletCaveGUID)
+            newNode.setName("PelletCaveGUID")
+            newNode.setValue(pelletCaveGUID)
             ageDataFolder.addNode(newNode)
             PtDebugPrint("created pelletCaveGUID age chron, = ",pelletCaveGUID)
 

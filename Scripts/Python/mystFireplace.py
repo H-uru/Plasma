@@ -207,8 +207,8 @@ class mystFireplace(ptModifier):
                 if not entry:
                     vault.addChronicleEntry("Blah", 0, "1")
                 else:
-                    if int(entry.chronicleGetValue()) < 1:
-                        entry.chronicleSetValue("1")
+                    if int(entry.getValue()) < 1:
+                        entry.setValue("1")
                 # show kveer book
                 ageSDL["KveerBookVis"] = (1,)
                 ageSDL["YeeshaPageVis"] = (0,)

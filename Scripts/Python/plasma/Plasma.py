@@ -7669,30 +7669,6 @@ class ptVaultChronicleNode(ptVaultNode):
         """Adds 'node'(ptVaultNode) as a child to this node."""
         pass
 
-    def chronicleGetName(self):
-        """LEGACY: Returns the name of the chronicle node."""
-        pass
-
-    def chronicleGetType(self):
-        """LEGACY: Returns the user defined type of the chronicle node."""
-        pass
-
-    def chronicleGetValue(self):
-        """LEGACY: Returns the value as a string of this chronicle node."""
-        pass
-
-    def chronicleSetName(self,name):
-        """LEGACY: Sets the name of the chronicle node."""
-        pass
-
-    def chronicleSetType(self,type):
-        """LEGACY: Sets this chronicle node to a user defined type."""
-        pass
-
-    def chronicleSetValue(self,value):
-        """LEGACY: Sets the chronicle to a value that is a string"""
-        pass
-
     def findNode(self, templateNode: ptVaultNode, /, maxDepth: int = 1) -> Optional[ptVaultNode]:
         """Returns ptVaultNode if child node found matching template, or None"""
         pass

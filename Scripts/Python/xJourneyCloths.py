@@ -137,7 +137,7 @@ class xJourneyCloths(ptModifier):
             self.IPlayHandAnim(1)
         
         else:
-            FoundJCs = entry.chronicleGetValue()
+            FoundJCs = entry.getValue()
             PtDebugPrint("previously found JCs: ", FoundJCs)
             if ClothLetter.value in FoundJCs:
                 PtDebugPrint("You've already found this cloth.")
@@ -149,7 +149,7 @@ class xJourneyCloths(ptModifier):
                 FoundJCs = FoundJCs + ClothLetter.value
                 PtDebugPrint("trying to update JourneyClothProgress to ", FoundJCs)
 
-                entry.chronicleSetValue("%s" % (FoundJCs)) 
+                entry.setValue("%s" % (FoundJCs)) 
                 entry.save() 
                 
                 self.RandomBahroSounds()

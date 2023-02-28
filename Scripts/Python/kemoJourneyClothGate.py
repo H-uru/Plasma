@@ -155,17 +155,17 @@ class kemoJourneyClothGate(ptResponder):
             vault = ptVault()
             entry = vault.findChronicleEntry("JourneyClothProgress")
             if entry is not None:
-                FoundJCs = entry.chronicleGetValue()
+                FoundJCs = entry.getValue()
                 length = len(FoundJCs)
                 PtDebugPrint ("Are you the one? You've found %s Cloths." % (length))
                 
                 if length == 10:
                     vault = ptVault()
                     entry = vault.findChronicleEntry("JourneyClothProgress")
-                    FoundJCs = entry.chronicleGetValue()
+                    FoundJCs = entry.getValue()
                     FoundJCs = FoundJCs + "Z"
                     PtDebugPrint("Updating Chronicle entry to ", FoundJCs)
-                    entry.chronicleSetValue("%s" % (FoundJCs)) 
+                    entry.setValue("%s" % (FoundJCs)) 
                     entry.save()
                     respBackofCave.run(self.key, events=events)
             
@@ -196,7 +196,7 @@ class kemoJourneyClothGate(ptResponder):
         if entry is None: # is this the player's first Journey Cloth?
             PtDebugPrint("No cloths have been found. Get to work!")
         else:
-            FoundJCs = entry.chronicleGetValue()
+            FoundJCs = entry.getValue()
             length = len(FoundJCs)
             all = len(AllCloths)
 
