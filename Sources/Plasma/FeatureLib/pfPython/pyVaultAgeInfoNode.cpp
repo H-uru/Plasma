@@ -143,7 +143,7 @@ PyObject * pyVaultAgeInfoNode::GetAgeSDL() const
 
     hsAssert(false, "eric, port me");
     // just return a None object.
-    PYTHON_RETURN_NONE
+    PYTHON_RETURN_NONE;
 }
 
 PyObject * pyVaultAgeInfoNode::GetCzar() const
@@ -154,7 +154,7 @@ PyObject * pyVaultAgeInfoNode::GetCzar() const
     hsAssert(false, "eric, port me");
 
     // just return a None object.
-    PYTHON_RETURN_NONE
+    PYTHON_RETURN_NONE;
 }
 
 PyObject * pyVaultAgeInfoNode::GetParentAgeLink () const
@@ -166,7 +166,7 @@ PyObject * pyVaultAgeInfoNode::GetParentAgeLink () const
         return pyVaultAgeLinkNode::New(rvn);
 
     // just return a None object.
-    PYTHON_RETURN_NONE
+    PYTHON_RETURN_NONE;
 }
 
 

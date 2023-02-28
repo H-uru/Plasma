@@ -437,14 +437,14 @@ static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 
 // Different basic return types
 #define PYTHON_RETURN_ERROR { return nullptr; }
-#define PYTHON_RETURN_NONE {Py_INCREF(Py_None); return Py_None;}
+#define PYTHON_RETURN_NONE Py_RETURN_NONE
 #define PYTHON_RETURN_BOOL(testValue)                     \
 {                                                         \
     PyObject* retVal = (testValue) ? Py_True : Py_False;  \
     Py_INCREF(retVal);                                    \
     return retVal;                                        \
 }                                                         //
-#define PYTHON_RETURN_NOT_IMPLEMENTED {Py_INCREF(Py_NotImplemented); return Py_NotImplemented;}
+#define PYTHON_RETURN_NOT_IMPLEMENTED Py_RETURN_NOTIMPLEMENTED
 
 // method table start
 #define PYTHON_START_METHODS_TABLE(pythonClassName) static PyMethodDef pythonClassName##_methods[] = {
