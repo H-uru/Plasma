@@ -139,7 +139,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #include "pfDXPipeline/plDXPipeline.h"
 #endif
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
-#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
 #ifdef PLASMA_PIPELINE_GL
     #include "pfGLPipeline/plGLPipeline.h"
 #endif
@@ -275,9 +274,6 @@ bool plClient::Shutdown()
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if( mgr )
         mgr->UnloadDialog( "KIBlackBar" );  // unload the blackbar which will bootstrap in the rest of the KI dialogs
-
-    // Take down our GUI control generator
-    pfGUICtrlGenerator::Instance().Shutdown();
 
     if (plNetClientMgr* nc = plNetClientMgr::GetInstance())
         nc->Shutdown();
