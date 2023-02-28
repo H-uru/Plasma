@@ -404,7 +404,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadDialog, args, "Params: dialogName,selfKey=
 {
     ST::string dialogName;
     PyObject* keyObj = nullptr;
-    ST::string ageName;
+    ST::string ageName = ST_LITERAL("GUI");
     if (!PyArg_ParseTuple(args, "O&|OO&", PyUnicode_STStringConverter, &dialogName, &keyObj, PyUnicode_STStringConverter, &ageName))
     {
         PyErr_SetString(PyExc_TypeError, "PtLoadDialog expects a string, and optionally a ptKey and second string");
@@ -418,10 +418,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadDialog, args, "Params: dialogName,selfKey=
             PYTHON_RETURN_ERROR;
         }
         pyKey* key = pyKey::ConvertFrom(keyObj);
-        if (!ageName.empty())
-            cyMisc::LoadDialogKA(dialogName, *key, ageName);
-        else
-            cyMisc::LoadDialogK(dialogName, *key);
+        cyMisc::LoadDialogKA(dialogName, *key, ageName);
     }
     else
         cyMisc::LoadDialog(dialogName);
