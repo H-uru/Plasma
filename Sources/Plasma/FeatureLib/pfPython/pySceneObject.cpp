@@ -68,6 +68,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGeometry3.h"
 #include "pyGlueHelpers.h"
 #include "pyMatrix44.h"
+#include "plModifier/plResponderModifier.h"
+#include "plModifier/plImageLibMod.h"
 
 void pySceneObject::IAddObjKeyToAll(const plKey& key)
 {
@@ -815,10 +817,29 @@ std::vector<PyObject*> pySceneObject::GetPythonMods()
         {   
             for (size_t i = 0; i < obj->GetNumModifiers(); i++)
             {
-                const plPythonFileMod* resp = plPythonFileMod::ConvertNoRef(obj->GetModifier(i));
-                if (resp)
-                    pyPL.push_back(pyKey::New(resp->GetKey()));
+                const plPythonFileMod* pfm = plPythonFileMod::ConvertNoRef(obj->GetModifier(i));
+                if (pfm)
+                    pyPL.push_back(pyKey::New(pfm->GetKey()));
             }
+        }
+    }
+    return pyPL;
+}
+
+std::vector<PyObject*> pySceneObject::GetImageLibMods()
+{
+    std::vector<PyObject*> pyPL;
+    if (!fSceneObjects.empty())
+    {
+        // get the object pointer of just the first one in the list
+        // (We really can't tell which one the user is thinking of if they are
+        // referring to multiple objects, so the first one in the list will do.)
+        plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
+        if (obj)
+        {
+            const plImageLibMod* ilm = plImageLibMod::ConvertNoRef(obj->GetModifierByType(plImageLibMod::Index()));
+            if (ilm)
+                pyPL.push_back(pyKey::New(ilm->GetKey()));
         }
     }
     return pyPL;

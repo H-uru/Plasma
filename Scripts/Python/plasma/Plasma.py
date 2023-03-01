@@ -6072,6 +6072,10 @@ If there are more then one attached, get the first one"""
         """Returns list of ptKeys of the python modifiers attached to this sceneobject"""
         pass
 
+    def getImageLibMods(self):
+        """Returns list of ptKeys of the image library modifiers attached to this sceneobject"""
+        pass
+
     def getResponderState(self):
         """Return the responder state (if we are a responder)"""
         pass
