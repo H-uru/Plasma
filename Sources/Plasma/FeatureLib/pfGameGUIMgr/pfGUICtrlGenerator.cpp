@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string_theory/format>
 
-#include "pfGUIButtonMod.h"
 #include "pfGUIDialogMod.h"
 #include "pfGUIMenuItem.h"
 
@@ -102,10 +101,9 @@ plKey pfGUICtrlGenerator::IAddKey(hsKeyedObject *ko, const ST::string& prefix)
 
 //// IGenSceneObject /////////////////////////////////////////////////////////
 
-plSceneObject   *pfGUICtrlGenerator::IGenSceneObject( pfGUIDialogMod *dlg, plDrawable *myDraw, plSceneObject *parent,
-                                                        hsMatrix44 *l2w, hsMatrix44 *w2l )
+plSceneObject   *pfGUICtrlGenerator::IGenSceneObject(pfGUIDialogMod *dlg, plDrawable *myDraw)
 {
-    plKey snKey = (dlg != nullptr) ? (dlg->GetTarget() != nullptr ? dlg->GetTarget()->GetSceneNode() : nullptr) : nullptr;
+    plKey snKey = dlg->GetTarget() != nullptr ? dlg->GetTarget()->GetSceneNode() : nullptr;
 
     hsgResMgr::ResMgr()->SendRef( myDraw->GetKey(), new plNodeRefMsg( snKey, plRefMsg::kOnCreate, 0, plNodeRefMsg::kDrawable ), plRefFlags::kActiveRef );       
 
@@ -122,8 +120,7 @@ plSceneObject   *pfGUICtrlGenerator::IGenSceneObject( pfGUIDialogMod *dlg, plDra
     hsgResMgr::ResMgr()->SendRef( newDI->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );
     hsgResMgr::ResMgr()->SendRef( myDraw->GetKey(), new plIntRefMsg( newDI->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kDrawable ), plRefFlags::kActiveRef );
 
-    if (parent == nullptr)
-        parent = dlg->GetTarget();
+    plSceneObject *parent = dlg->GetTarget();
 
     if (parent != nullptr)
 //      hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), new plIntRefMsg( parent->GetKey(), plRefMsg::kOnCreate, 0, plIntRefMsg::kChild ), plRefFlags::kActiveRef );
@@ -131,25 +128,14 @@ plSceneObject   *pfGUICtrlGenerator::IGenSceneObject( pfGUIDialogMod *dlg, plDra
     
     newObj->SetSceneNode( snKey );
 
-    if (l2w != nullptr)
-    {
-        newObj->SetTransform( *l2w, *w2l );
-//      newCI->SetLocalToParent( *l2w, *w2l );
-//      myDraw->SetTransform( -1, *l2w, *w2l );
-    }
-
     return newObj;
 }
 
 //// CreateRectButton ////////////////////////////////////////////////////////
 
-pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, float x, float y, float width, float height,
-                                    hsGMaterial *material, bool asMenuItem )
+pfGUIMenuItem *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, float x, float y, float width, float height,
+                                    hsGMaterial *material )
 {
-    plDrawableSpans *myDraw;
-    hsMatrix44      l2w, w2l;
-
-
     // Translate x and y from (0:1) to (-10:10)
     x = ( x - 0.5f ) * 20.f;
     y = ( y - 0.5f ) * 20.f;
@@ -158,17 +144,17 @@ pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, f
     height *= 20.f;
 
     // Create drawable that is rectangular
+    hsMatrix44      l2w;
     l2w.Reset();
     hsPoint3 corner(x, -y, -100.f);
     hsVector3 xVec(width, 0.f, 0.f);
     hsVector3 yVec(0.f, height, 0.f);
-    hsVector3 zVec(0.f, 0.f, 0.1f);
 
-    myDraw = plDrawableGenerator::GeneratePlanarDrawable( corner, xVec, yVec, material, l2w );
+    plDrawableSpans *myDraw = plDrawableGenerator::GeneratePlanarDrawable( corner, xVec, yVec, material, l2w );
 
     plSceneObject *newObj = IGenSceneObject( parent, myDraw );
 
-    pfGUIButtonMod *newBtn = asMenuItem ? new pfGUIMenuItem : new pfGUIButtonMod;
+    pfGUIMenuItem *newBtn = new pfGUIMenuItem;
     IAddKey(newBtn, ST_LITERAL("GUIButton"));
     hsgResMgr::ResMgr()->SendRef( newBtn->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
     parent->AddControl( newBtn );

@@ -60,8 +60,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plDrawable;
 class hsGMaterial;
-class pfGUIButtonMod;
 class pfGUIDialogMod;
+class pfGUIMenuItem;
 class hsKeyedObject;
 class plKey;
 struct hsMatrix44;
@@ -73,14 +73,11 @@ class pfGUICtrlGenerator
         plKey       IAddKey(hsKeyedObject *ko, const ST::string& prefix);
         ST::string  IGetNextKeyName(const ST::string& prefix);
 
-        plSceneObject   *IGenSceneObject(pfGUIDialogMod *dlg, plDrawable *myDraw,
-                                         plSceneObject *parent = nullptr,
-                                         hsMatrix44 *l2w = nullptr,
-                                         hsMatrix44 *w2l = nullptr);
+        plSceneObject   *IGenSceneObject(pfGUIDialogMod *dlg, plDrawable *myDraw);
 
     public:
-        pfGUIButtonMod  *CreateRectButton( pfGUIDialogMod *parent, float x, float y,
-                                                float width, float height, hsGMaterial *material, bool asMenuItem = false );
+        pfGUIMenuItem *CreateRectButton( pfGUIDialogMod *parent, float x, float y,
+                                                float width, float height, hsGMaterial *material );
 
         static pfGUICtrlGenerator   &Instance();
 };
