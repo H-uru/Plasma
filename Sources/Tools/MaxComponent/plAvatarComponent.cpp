@@ -435,12 +435,12 @@ ParamBlockDesc2 gPAvatarBk
         p_end,
 
     plAvatarComponent::kBodyFootstepSoundPage,  _T("bodyFootstepPage"), TYPE_STRING,    0,  0,
-        p_default, "Audio",
+        p_default, _T("Audio"),
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_BODYFOOTSTEPPAGE_EDIT,
         p_end,
 
     plAvatarComponent::kAnimationPrefix,_T("animationPrefix"), TYPE_STRING, 0,  0,
-        p_default, "Male",
+        p_default, _T("Male"),
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_ANIMATIONPREFIX_EDIT,
         p_end,
 
@@ -1038,12 +1038,12 @@ ParamBlockDesc2 gPLODAvatarBk
         p_end,
 
     plLODAvatarComponent::kBodyFootstepSoundPage,   _T("bodyFootstepPage"), TYPE_STRING,    0,  0,
-        p_default, "Audio",
+        p_default, _T("Audio"),
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_BODYFOOTSTEPPAGE_EDIT,
         p_end,
 
     plLODAvatarComponent::kAnimationPrefix,_T("animationPrefix"), TYPE_STRING,  0,  0,
-        p_default, "Male",
+        p_default, _T("Male"),
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_ANIMATIONPREFIX_EDIT,
         p_end,
 
