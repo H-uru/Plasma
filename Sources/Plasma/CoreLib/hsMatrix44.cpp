@@ -51,6 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cmath>
 
+#ifdef HS_BUILD_FOR_APPLE
+#import <Accelerate/Accelerate.h>
+#endif
+
 static hsMatrix44 myIdent = hsMatrix44().Reset();
 const hsMatrix44& hsMatrix44::IdentityMatrix() { return myIdent; }
 

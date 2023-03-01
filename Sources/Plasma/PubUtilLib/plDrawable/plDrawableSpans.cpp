@@ -60,6 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeDebugFlags.h"
 #include "plPipeline.h"
 #include "plProfile.h"
+#include "hsMatrixMath.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 

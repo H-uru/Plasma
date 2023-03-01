@@ -50,6 +50,7 @@ set(CoreLib_HEADERS
     hsGeometry3.h
     hsLockGuard.h
     hsMatrix44.h
+    hsMatrixMath.h
     hsMemory.h
     hsPoint2.h
     hsPoolVector.h
@@ -86,9 +87,9 @@ target_link_libraries(
         string_theory
         Threads::Threads
         $<$<AND:$<CONFIG:Debug>,$<BOOL:${USE_VLD}>>:VLD::VLD>
+        "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
     PRIVATE
         "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
-        "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
 )
 target_include_directories(
     CoreLib
