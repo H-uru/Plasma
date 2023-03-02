@@ -232,8 +232,9 @@ void    pfGUIPopUpMenu::Read( hsStream *s, hsResMgr *mgr )
     fMenuItems.resize(count);
     for (uint32_t i = 0; i < count; i++)
     {
-        char readTemp[ 256 ];
-        s->Read( sizeof( readTemp ), readTemp );
+        char readTemp[257];
+        s->Read(sizeof(readTemp) - 1, readTemp);
+        readTemp[sizeof(readTemp) - 1] = '\0';
         fMenuItems[ i ].fName = ST::string::from_latin_1(readTemp);
         
         fMenuItems[ i ].fHandler = pfGUICtrlProcWriteableObject::Read( s );
