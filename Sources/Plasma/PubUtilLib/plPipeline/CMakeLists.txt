@@ -13,7 +13,6 @@ set(plPipeline_SOURCES
     plRenderTarget.cpp
     plStatusLogDrawer.cpp
     plTextFont.cpp
-    plTextGenerator.cpp
     plTransitionMgr.cpp
 )
 
@@ -39,7 +38,6 @@ set(plPipeline_HEADERS
     plStatusLogDrawer.h
     plStencil.h
     plTextFont.h
-    plTextGenerator.h
     plTransitionMgr.h
 )
 

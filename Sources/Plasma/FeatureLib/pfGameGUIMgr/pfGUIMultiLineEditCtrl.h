@@ -63,7 +63,6 @@ class hsGMaterial;
 class pfGUIValueCtrl;
 class plMessage;
 class pfMLScrollProc;
-class plTextGenerator;
 struct plUndoAction;
 
 class pfGUIMultiLineEditProc
