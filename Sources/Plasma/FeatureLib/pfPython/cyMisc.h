@@ -104,7 +104,7 @@ public:
     // TEMP SCREEN PRINT CODE FOR NON-DBG TEXT DISPLAY
     //
 public:
-    static void PrintToScreen(const char* msg);
+    static void PrintToScreen(const ST::string& msg);
 #endif
 
     enum PythonDebugPrintLevels

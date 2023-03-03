@@ -108,6 +108,16 @@ namespace plPython
         return PyLong_FromLongLong(value);
     }
 
+    inline PyObject* ConvertFrom(const ST::string& value)
+    {
+        return PyUnicode_FromSTString(value);
+    }
+
+    inline PyObject* ConvertFrom(ST::string& value)
+    {
+        return PyUnicode_FromSTString(value);
+    }
+
     inline PyObject* ConvertFrom(ST::string&& value)
     {
         return PyUnicode_FromSTString(value);

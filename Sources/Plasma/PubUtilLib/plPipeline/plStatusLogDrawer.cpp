@@ -120,8 +120,7 @@ void    plStatusLogDrawer::Draw(plStatusLog* curLog, plStatusLog* firstLog)
     y += lineHt * 2;
     for( i = 0; i < IGetMaxNumLines( curLog ); i++ )
     {
-        if (IGetLines(curLog)[i] != nullptr)
-            drawText.DrawString( x + 4, y, IGetLines( curLog )[ i ], IGetColors( curLog )[ i ] );
+        drawText.DrawString( x + 4, y, IGetLines( curLog )[ i ], IGetColors( curLog )[ i ] );
         y += lineHt;
     }
 

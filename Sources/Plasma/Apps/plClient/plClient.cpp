@@ -1143,7 +1143,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
             
 #ifndef PLASMA_EXTERNAL_RELEASE
             if (plDispatchLogBase::IsLogging())
-                plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle().c_str(), "displaying messages");
+                plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle(), "displaying messages");
 #endif // PLASMA_EXTERNAL_RELEASE
 #endif
         }
@@ -1253,7 +1253,7 @@ void    plClient::IStartProgress( const char *title, float len )
         fProgressBar = plProgressMgr::GetInstance()->RegisterOperation(len, title, plProgressMgr::kNone, false, true);
 #ifndef PLASMA_EXTERNAL_RELEASE
         if (plDispatchLogBase::IsLogging())
-            plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle().c_str(), "starting");
+            plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle(), "starting");
 #endif // PLASMA_EXTERNAL_RELEASE
 
         ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(IReadKeyedObjCallback);
@@ -1275,7 +1275,7 @@ void    plClient::IStopProgress()
     {
 #ifndef PLASMA_EXTERNAL_RELEASE
         if (plDispatchLogBase::IsLogging())
-            plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle().c_str(), "done");
+            plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle(), "done");
 #endif // PLASMA_EXTERNAL_RELEASE
 
         plDispatch::SetMsgRecieveCallback(nullptr);

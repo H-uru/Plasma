@@ -214,7 +214,7 @@ public:
     bool WasLocalNotify() const { return fLocalNotify; }
     plPipeline* GetPipeline() const { return fPipe; }
     void SetSourceFile(const ST::string& filename) { fPythonFile = filename; }
-    int getPythonOutput(std::string* line);
+    ST::string getPythonOutput();
     void ReportError();
     void DisplayPythonOutput();
     static void SetAtConvertTime() { fAtConvertTime = true; }

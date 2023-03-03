@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plMessage;
 class plStatusLog;
+namespace ST { class string; }
 
 class plDispatchLog : public plDispatchLogBase
 {
@@ -69,8 +70,8 @@ public:
     void RemoveFilterType(uint16_t type) override;
     void RemoveFilterExactType(uint16_t type) override;
 
-    void LogStatusBarChange(const char* name, const char* action) override;
-    void LogLongReceive(const char* keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms) override;
+    void LogStatusBarChange(const ST::string& name, const char* action) override;
+    void LogLongReceive(const ST::string& keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms) override;
 
     void DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, int32_t indent) override;
 };

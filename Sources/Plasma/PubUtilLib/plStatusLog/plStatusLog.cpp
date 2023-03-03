@@ -58,9 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog.h"
 #include "plEncryptLogLine.h"
 
-#include <cstdarg>
-#include <cstdlib>
-
 #include "plProduct.h"
 #include "hsThread.h"
 #include "hsTimer.h"
@@ -294,11 +291,10 @@ void    plStatusLog::IInit()
 
     fFlags = fOrigFlags;
 
-    fLines = new char *[ fMaxNumLines ];
+    fLines = new ST::string[fMaxNumLines];
     fColors = new uint32_t[ fMaxNumLines ];
     for( i = 0; i < fMaxNumLines; i++ )
     {
-        fLines[i] = nullptr;
         fColors[ i ] = kWhite;
     }
 
@@ -370,9 +366,6 @@ void    plStatusLog::IFini()
     if (fBack != nullptr || fNext != nullptr)
         IUnlink();
 
-    for( i = 0; i < fMaxNumLines; i++ )
-        delete [] fLines[ i ];
-
     if (fSema)
         delete fSema;
 
@@ -430,7 +423,7 @@ void    plStatusLog::ILink( plStatusLog **back )
 //// IAddLine ////////////////////////////////////////////////////////////////
 //  Actually add a stinking line.
 
-bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
+bool plStatusLog::IAddLine(const ST::string& line, uint32_t color)
 {
     int     i;
 
@@ -440,51 +433,20 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
     /// Scroll pointers up
     fSema->Wait();
 
-    bool ret = true;
-
     if (fMaxNumLines > 0)
     {
-        delete [] fLines[ 0 ];
         for( i = 0; i < fMaxNumLines - 1; i++ )
         {
-            fLines[ i ] = fLines[ i + 1 ];
+            fLines[ i ] = std::move(fLines[ i + 1 ]);
             fColors[ i ] = fColors[ i + 1 ];
         }
+
+        /// Add new
+        fLines[i] = line;
+        fColors[i] = color;
     }
 
-    /// Add new
-    if (line == nullptr || strlen(line) == 0)
-    {
-        if (fMaxNumLines > 0)
-        {
-            fColors[ i ] = 0;
-            fLines[i] = nullptr;
-        }
-        ret = IPrintLineToFile( "", 0 );
-    }
-    else
-    {
-        if( count < 0 )
-            count = strlen( line );
-
-        if (fMaxNumLines > 0)
-        {
-            fLines[ i ] = new char[ count + 1 ];
-            hsStrncpy( fLines[ i ], line, count + 1 );
-            fLines[ i ][ count ] = 0;
-
-            char *c = strchr( fLines[ i ], '\n' );
-            if (c != nullptr)
-            {
-                *c = 0;
-                count--;
-            }
-
-            fColors[ i ] = color;
-        }
-
-        ret = IPrintLineToFile( line, count );
-    }
+    bool ret = IPrintLineToFile(line);
 
     fSema->Signal();
 
@@ -493,25 +455,28 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
 
 //// AddLine /////////////////////////////////////////////////////////////////
 
-bool plStatusLog::AddLine(uint32_t color, const char *line)
+bool plStatusLog::AddLine(uint32_t color, const ST::string& line)
 {
-    char    *c, *str;
     if(fLoggingOff && !fForceLog)
         return true;
 
     bool ret = true;
 
     /// Scan for carriage returns and feed each section into IAddLine()
-    for (str = (char *)line; (c = strchr(str, '\n')) != nullptr; str = c + 1)
+    size_t startPos = 0;
+    ST_ssize_t pos = line.find('\n');
+    while (pos != -1)
     {
-        // So if we got here, c points to a carriage return...
-        ret = IAddLine(str, (int)((intptr_t)c - (intptr_t)str), color);
+        // So if we got here, pos points to a carriage return...
+        ret &= IAddLine(line.substr(startPos, pos - startPos), color);
+        startPos = pos + 1;
+        pos = line.find(startPos, '\n');
     }
 
     /// We might have some left over
-    if( strlen( str ) > 0 )
+    if (startPos < line.size())
     {
-        ret &= IAddLine( str, -1, color );
+        ret &= IAddLine(line.substr(startPos), color);
     }
 
     return ret;
@@ -526,8 +491,7 @@ void    plStatusLog::Clear()
 
     for( i = 0; i < fMaxNumLines; i++ )
     {
-        delete [] fLines[ i ];
-        fLines[i] = nullptr;
+        fLines[i] = ST::string();
     }
 }
 
@@ -549,18 +513,10 @@ void    plStatusLog::Bounce( uint32_t flags)
 
 //// IPrintLineToFile ////////////////////////////////////////////////////////
 
-bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
+bool plStatusLog::IPrintLineToFile(const ST::string& line)
 {
     if( fFlags & kDontWriteFile )
         return true;
-
-#ifdef PLASMA_EXTERNAL_RELEASE
-    uint8_t hint = 0;
-    if( fFlags & kAppendToLast )
-    {
-        hint = (uint8_t)fSize;
-    }
-#endif
 
     if (!fFileHandle)
         IReOpen();
@@ -569,46 +525,38 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
 
     if (fFileHandle != nullptr)
     {
-        char work[256];
         ST::string_stream buf;
 
-        //build line to encrypt
+        //build line to write to log file
 
-        if( count != 0 )
+        if (!line.empty())
         {
             if ( fFlags & kTimestamp )
             {
-                snprintf(work, std::size(work), "(%s) ", plUnifiedTime(kNow).Format("%m/%d %H:%M:%S").c_str());
-                buf.append(work);
+                buf << '(' << plUnifiedTime(kNow).Format("%m/%d %H:%M:%S") << ") ";
             }
             if ( fFlags & kTimestampGMT )
             {
-                snprintf(work, std::size(work), "(%s) ", plUnifiedTime::GetCurrent().Format("%m/%d %H:%M:%S UTC").c_str());
-                buf.append(work);
+                buf << '(' << plUnifiedTime::GetCurrent().Format("%m/%d %H:%M:%S UTC") << ") ";
             }
             if ( fFlags & kTimeInSeconds )
             {
-                snprintf(work, std::size(work), "(%lu) ", (unsigned long)plUnifiedTime(kNow).GetSecs());
-                buf.append(work);
+                buf << '(' << plUnifiedTime(kNow).GetSecs() << ") ";
             }
             if ( fFlags & kTimeAsDouble )
             {
-                snprintf(work, std::size(work), "(%f) ", plUnifiedTime(kNow).GetSecsDouble());
-                buf.append(work);
+                buf << '(' << plUnifiedTime(kNow).GetSecsDouble() << ") ";
             }
             if (fFlags & kRawTimeStamp)
             {
-                snprintf(work, std::size(work), "[t=%10f] ", hsTimer::GetSeconds());
-                buf.append(work);
+                buf << ST::format("[t={10f}] ", hsTimer::GetSeconds());
             }
             if (fFlags & kThreadID)
             {
-                snprintf(work, std::size(work), "[t=%zu] ", hsThread::ThisThreadHash());
-                buf.append(work);
+                buf << "[t=" << hsThread::ThisThreadHash() << "] ";
             }
 
-            buf.append(line, count);
-            buf.append_char('\n');
+            buf << line << '\n';
         }
 
         {
@@ -631,22 +579,25 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
 
     }
 
-    ST::string out_str = ST::string::from_utf8(line, count) + "\n";
     if (fFlags & kDebugOutput)
     {
 
 #if HS_BUILD_FOR_WIN32
 #ifndef PLASMA_EXTERNAL_RELEASE
-        OutputDebugString(out_str.c_str());
+        ST::wchar_buffer buf = line.to_wchar();
+        OutputDebugStringW(buf.c_str());
+        OutputDebugStringW(L"\n");
 #endif
 #else
-        fputs(out_str.c_str(), stderr);
+        fwrite(line.c_str(), 1, line.size(), stderr);
+        fputc('\n', stderr);
 #endif
     }
 
     if (fFlags & kStdout)
     {
-        fputs(out_str.c_str(), stdout);
+        fwrite(line.c_str(), 1, line.size(), stdout);
+        fputc('\n', stdout);
     }
 
     return ret;

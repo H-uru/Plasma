@@ -80,7 +80,7 @@ void plDispatchLog::InitInstance()
     fInstance = &dispatchLog;
 }
 
-void plDispatchLog::LogStatusBarChange(const char* name, const char* action)
+void plDispatchLog::LogStatusBarChange(const ST::string& name, const char* action)
 {
     fLog->AddLineF("----- Status bar '{}' {} -----", name, action);
 
@@ -110,7 +110,7 @@ void plDispatchLog::LogStatusBarChange(const char* name, const char* action)
 #endif // HS_BUILD_FOR_WIN32
 }
 
-void plDispatchLog::LogLongReceive(const char* keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms)
+void plDispatchLog::LogLongReceive(const ST::string& keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms)
 {
     ST::string info;
     if (DumpSpecificMsgInfo(msg, info))

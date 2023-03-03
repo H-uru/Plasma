@@ -615,9 +615,8 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
                 {
                     IAddLine( "" );     // add a blank line
                     PythonInterface::RunStringInteractive("import sys;print(f'Python {sys.version}')", nullptr);
-                    std::string output;
                     // get the messages
-                    PythonInterface::getOutputAndReset(&output);
+                    ST::string output = PythonInterface::getOutputAndReset();
                     AddLine( output.c_str() );
                     fPythonFirstTime = false;       // do this only once!
                 }
@@ -1024,9 +1023,8 @@ void    pfConsole::IExecuteWorkingLine()
                 // now evaluate this mess they made
                 PyObject* mymod = PythonInterface::FindModule("__main__");
                 PythonInterface::RunStringInteractive(biglines, mymod);
-                std::string output;
                 // get the messages
-                PythonInterface::getOutputAndReset(&output);
+                ST::string output = PythonInterface::getOutputAndReset();
                 AddLine(output.c_str());
                 // all done doing multi lines...
                 fPythonMultiLines = 0;
@@ -1044,9 +1042,8 @@ void    pfConsole::IExecuteWorkingLine()
                 {
                     PyObject* mymod = PythonInterface::FindModule("__main__");
                     PythonInterface::RunStringInteractive(fWorkingLine, mymod);
-                    std::string output;
                     // get the messages
-                    PythonInterface::getOutputAndReset(&output);
+                    ST::string output = PythonInterface::getOutputAndReset();
                     AddLine(output.c_str());
                 }
             } else {

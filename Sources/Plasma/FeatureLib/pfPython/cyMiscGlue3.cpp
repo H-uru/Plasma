@@ -123,8 +123,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtConsoleNet, args, "Params: command,netForce\nT
 // TEMP
 PYTHON_GLOBAL_METHOD_DEFINITION(PtPrintToScreen, args, "Params: message\nPrints 'message' to the status log, for debug only.")
 {
-    char* message;
-    if (!PyArg_ParseTuple(args, "s", &message))
+    ST::string message;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &message))
     {
         PyErr_SetString(PyExc_TypeError, "PtPrintToScreen expects a string");
         PYTHON_RETURN_ERROR;

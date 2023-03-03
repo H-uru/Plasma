@@ -145,7 +145,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
     if( retVal == plSoundBuffer::kError) 
     {
         ST::string str = ST::format("Unable to open .wav file {}", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
-        IPrintDbgMessage( str.c_str(), true );
+        IPrintDbgMessage(str, true);
         fFailed = true;
         return false;
     }
@@ -197,7 +197,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
         ST::string str = ST::format("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
                                     " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
                                     GetFileName());
-        IPrintDbgMessage(str.c_str(), true);
+        IPrintDbgMessage(str, true);
         fFailed = true;
 
         delete fDSoundBuffer;
@@ -221,7 +221,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
 #else
                             0);
 #endif
-    IPrintDbgMessage( str.c_str() );
+    IPrintDbgMessage(str);
     if (GetKey() != nullptr && GetKeyName().contains("Footstep"))
         ;
     else

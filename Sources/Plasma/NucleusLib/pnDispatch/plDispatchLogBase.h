@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 class plMessage;
 class plReceiver;
+namespace ST { class string; }
 
 class plDispatchLogBase
 {
@@ -80,8 +81,8 @@ public:
     virtual void RemoveFilterType(uint16_t type)=0;
     virtual void RemoveFilterExactType(uint16_t type)=0;
 
-    virtual void LogStatusBarChange(const char* name, const char* action)=0;
-    virtual void LogLongReceive(const char* keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms)=0;
+    virtual void LogStatusBarChange(const ST::string& name, const char* action)=0;
+    virtual void LogLongReceive(const ST::string& keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms)=0;
 
     virtual void DumpMsg(plMessage* msg, int numReceivers, int sendTime, int32_t indent)=0;
 };

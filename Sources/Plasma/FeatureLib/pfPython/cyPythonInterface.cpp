@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include <functional>
+#include <string_theory/string>
+#include <string_theory/string_stream>
 
 #include <Python.h>
 #include <marshal.h>
@@ -188,6 +190,8 @@ bool PythonInterface::requestedExit = false;
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 // Special includes for debugging
+#include <string>
+#include <vector>
 #include <frameobject.h>
 
 /////////////////////////////////////////////////////////////////////////////
@@ -575,7 +579,7 @@ static int PythonTraceCallback(PyObject*, PyFrameObject* frame, int what, PyObje
 class pyOutputRedirector
 {
 private:
-    std::string fData;
+    ST::string_stream fData;
     static bool fTypeCreated;
 
 protected:
@@ -588,23 +592,17 @@ public:
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyOutputRedirector object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyOutputRedirector); // converts a PyObject to a pyOutputRedirector (throws error if not correct type)
 
-    void Write(const std::string& data) {fData += data;}
-    void Write(const std::wstring& data)
-    {
-        char* strData = hsWStringToString(data.c_str());
-        Write(strData);
-        delete [] strData;
-    }
+    void Write(const ST::string& data) {fData << data;}
 
     // accessor functions for the PyObject*
 
     // returns the current data stored
-    static std::string GetData(PyObject *redirector)
+    static ST::string GetData(PyObject *redirector)
     {
         if (!pyOutputRedirector::Check(redirector))
-            return ""; // it's not a redirector object
+            return {}; // it's not a redirector object
         pyOutputRedirector *obj = pyOutputRedirector::ConvertFrom(redirector);
-        return obj->fData;
+        return obj->fData.to_string();
     }
 
     // clears the internal buffer out
@@ -613,7 +611,7 @@ public:
         if (!pyOutputRedirector::Check(redirector))
             return; // it's not a redirector object
         pyOutputRedirector *obj = pyOutputRedirector::ConvertFrom(redirector);
-        obj->fData = "";
+        obj->fData.erase(SIZE_MAX);
     }
 };
 
@@ -632,21 +630,14 @@ PYTHON_INIT_DEFINITION(ptOutputRedirector, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptOutputRedirector, write, args)
 {
-    PyObject* textObj;
-    if (!PyArg_ParseTuple(args, "O", &textObj))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj))
-    {
-        wchar_t* text = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->Write(text);
-        PyMem_Free(text);
-        PYTHON_RETURN_NONE;
-    }
-    PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
-    PYTHON_RETURN_ERROR;
+    self->fThis->Write(text);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_START_METHODS_TABLE(ptOutputRedirector)
@@ -681,7 +672,7 @@ class pyErrorRedirector
 private:
     static bool fTypeCreated;
 
-    std::string fData;
+    ST::string_stream fData;
     bool        fLog;
 
 protected:
@@ -699,7 +690,7 @@ public:
         fLog = log;
     }
 
-    void Write(const std::string& data)
+    void Write(const ST::string& data)
     {
         PyObject* stdOut = PythonInterface::GetStdOut();
 
@@ -710,14 +701,7 @@ public:
         }
 
         if (fLog)
-            fData += data;
-    }
-
-    void Write(const std::wstring& data)
-    {
-        char* strData = hsWStringToString(data.c_str());
-        Write(strData);
-        delete [] strData;
+            fData << data;
     }
 
     void ExceptHook(PyObject* except, PyObject* val, PyObject* tb)
@@ -725,12 +709,11 @@ public:
         PyErr_Display(except, val, tb);
 
         // Send to the log server
-        ST::utf16_buffer wdata = ST::utf8_to_utf16(fData.c_str(), fData.size(),
-                                                   ST::substitute_invalid);
+        ST::utf16_buffer wdata = fData.to_string().to_utf16();
         NetCliAuthLogPythonTraceback(wdata.data());
 
         if (fLog)
-            fData.clear();
+            fData.erase(SIZE_MAX);
     }
 };
 
@@ -749,21 +732,14 @@ PYTHON_INIT_DEFINITION(ptErrorRedirector, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptErrorRedirector, write, args)
 {
-    PyObject* textObj;
-    if (!PyArg_ParseTuple(args, "O", &textObj))
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
         PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj))
-    {
-        wchar_t* text = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->Write(text);
-        PyMem_Free(text);
-        PYTHON_RETURN_NONE;
-    }
-    PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
-    PYTHON_RETURN_ERROR;
+    self->fThis->Write(text);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptErrorRedirector, excepthook, args)
@@ -1284,13 +1260,12 @@ PyObject* PythonInterface::GetStdErr()
 //
 //  PURPOSE    : get the Output to the error file to be displayed
 //
-int PythonInterface::getOutputAndReset(std::string *output)
+ST::string PythonInterface::getOutputAndReset()
 {
     if (stdOut != nullptr)
     {
-        std::string strVal = pyOutputRedirector::GetData(stdOut);
-        int size = strVal.length();
-        dbgLog->AddLine(strVal.c_str());
+        ST::string strVal = pyOutputRedirector::GetData(stdOut);
+        dbgLog->AddLine(strVal);
 
         // reset the file back to zero
         pyOutputRedirector::ClearData(stdOut);
@@ -1305,7 +1280,7 @@ int PythonInterface::getOutputAndReset(std::string *output)
         if (dbgOut != nullptr)
         {
             // then send it the new text
-            pyObjectRef retVal = plPython::CallObject(dbgOut, PyUnicode_FromStdString(strVal));
+            pyObjectRef retVal = plPython::CallObject(dbgOut, strVal);
             if (!retVal) {
                 // for some reason this function didn't, remember that and not call it again
                 dbgOut = nullptr;
@@ -1315,11 +1290,9 @@ int PythonInterface::getOutputAndReset(std::string *output)
             }
         }
 
-        if (output)
-            (*output) = strVal;
-        return size;
+        return strVal;
     }
-    return 0;
+    return {};
 }
 
 void PythonInterface::WriteToLog(const ST::string& text)
@@ -1327,7 +1300,7 @@ void PythonInterface::WriteToLog(const ST::string& text)
     dbgLog->AddLine(text);
 }
 
-void PythonInterface::WriteToStdErr(const char* text)
+void PythonInterface::WriteToStdErr(const ST::string& text)
 {
     PyObject* stdErr = PythonInterface::GetStdErr();
     if (stdErr && pyErrorRedirector::Check(stdErr))
