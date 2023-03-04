@@ -88,6 +88,7 @@ public:
         kClusterComponentList,
         kMaterialAnimation,
         kGrassShaderComponent,
+        kLayer,
         kNone
     };
 
@@ -203,6 +204,9 @@ public:
                 break;
             case kGrassShaderComponent:
                 SetToGrassShaderComponent(other.fObjectKey);
+                break;
+            case kLayer:
+                SetToLayer(other.fObjectKey);
                 break;
         }
         return *this;
@@ -347,6 +351,12 @@ public:
         fValueType = kGrassShaderComponent;
         fObjectKey = std::move(key);
     }
+    void SetToLayer(plKey key)
+    {
+        SetToNone();
+        fValueType = kLayer;
+        fObjectKey = std::move(key);
+    }
 
     // read and write routines for export and reading in at runtime
     void Read(hsStream *stream, hsResMgr* mgr)
@@ -404,6 +414,7 @@ public:
             case kClusterComponentList:
             case kMaterialAnimation:
             case kGrassShaderComponent:
+            case kLayer:
                 fObjectKey = mgr->ReadKey(stream);
                 break;
         }
@@ -455,6 +466,7 @@ public:
             case kClusterComponentList:
             case kMaterialAnimation:
             case kGrassShaderComponent:
+            case kLayer:
                 mgr->WriteKey(stream, fObjectKey);
                 break;
 
