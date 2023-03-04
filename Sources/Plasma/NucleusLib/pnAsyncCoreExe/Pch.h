@@ -50,6 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PCH_H
 
+// The asio headers want _WIN32_WINNT defined,
+// otherwise they show a warning and define it themselves.
+// To ensure that our definition is visible to asio, include hsWindows.h first.
+#include "hsWindows.h"
+
 #include <asio/executor_work_guard.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
@@ -63,7 +68,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Private/pnAceInt.h"
 #include "hsThread.h"
-#include "hsWindows.h"
 #include "plProduct.h"
 #include "pnAsyncCore/pnAsyncCore.h"
 #include "pnNetBase/pnNetBase.h"
