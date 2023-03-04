@@ -125,7 +125,7 @@ void plClipboard::SetClipboardText(const ST::string& text)
     // SetClipboardData() to fail.
     if (hWnd != nullptr) {
         BOOL result = EmptyClipboard();
-        hsAssert(result == 0, ST::format("EmptyClipboard() failed:\n{}", hsCOMError(hsLastWin32Error, GetLastError())).c_str());
+        hsAssert(result, ST::format("EmptyClipboard() failed:\n{}", hsCOMError(hsLastWin32Error, GetLastError())).c_str());
     }
 
     if (SetClipboardData(CF_UNICODETEXT, copy.get()) != nullptr) {
