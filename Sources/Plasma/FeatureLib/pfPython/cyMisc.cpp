@@ -807,23 +807,7 @@ void cyMisc::LoadDialog(const ST::string& name)
 }
 
 // Load dialog and set the GUINotifyMsg receiver key
-void cyMisc::LoadDialogK(const ST::string& name, pyKey& rKey)
-{
-    pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
-    if ( mgr )
-    {
-        // has the dialog been loaded yet?
-        if ( !mgr->IsDialogLoaded(name) )
-            // no then load and set handler
-            mgr->LoadDialog( name, rKey.getKey() );
-        else
-            // yes then just set the handler
-            mgr->SetDialogToNotify(name,rKey.getKey());
-    }
-}
-
-// Load dialog and set the GUINotifyMsg receiver key
-void cyMisc::LoadDialogKA(const ST::string& name, pyKey& rKey, const char* ageName)
+void cyMisc::LoadDialogKA(const ST::string& name, pyKey& rKey, const ST::string& ageName)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )
@@ -846,7 +830,7 @@ void cyMisc::LoadDialogKA(const ST::string& name, pyKey& rKey, const char* ageNa
 //  PURPOSE    : UnLoads the dialog by name
 //             : optionally sets the receiver key for the GUINotifyMsg
 //
-void cyMisc::UnloadDialog(const char* name)
+void cyMisc::UnloadDialog(const ST::string& name)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )
@@ -863,7 +847,7 @@ void cyMisc::UnloadDialog(const char* name)
 //
 //  PURPOSE    : Test to see if a dialog is loaded (according to the dialog manager)
 //
-bool cyMisc::IsDialogLoaded(const char* name)
+bool cyMisc::IsDialogLoaded(const ST::string& name)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )
@@ -879,13 +863,13 @@ bool cyMisc::IsDialogLoaded(const char* name)
 //
 //  PURPOSE    : Show or Hide a dialog by name
 //
-void cyMisc::ShowDialog(const char* name)
+void cyMisc::ShowDialog(const ST::string& name)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )
         mgr->ShowDialog(name);
 }
-void cyMisc::HideDialog(const char* name)
+void cyMisc::HideDialog(const ST::string& name)
 {
     pfGameGUIMgr    *mgr = pfGameGUIMgr::GetInstance();
     if ( mgr )

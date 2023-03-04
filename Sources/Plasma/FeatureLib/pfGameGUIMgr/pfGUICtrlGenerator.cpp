@@ -123,7 +123,7 @@ pfGUICtrlGenerator  &pfGUICtrlGenerator::Instance()
 
 //// IGetNextKeyName /////////////////////////////////////////////////////////
 
-ST::string pfGUICtrlGenerator::IGetNextKeyName( const char *prefix )
+ST::string pfGUICtrlGenerator::IGetNextKeyName(const ST::string& prefix)
 {
     static uint32_t keyCount = 0;
 
@@ -132,7 +132,7 @@ ST::string pfGUICtrlGenerator::IGetNextKeyName( const char *prefix )
 
 //// IAddKey /////////////////////////////////////////////////////////////////
 
-plKey pfGUICtrlGenerator::IAddKey( hsKeyedObject *ko, const char *prefix )
+plKey pfGUICtrlGenerator::IAddKey(hsKeyedObject *ko, const ST::string& prefix)
 {
     ST::string keyName;
 
@@ -158,7 +158,7 @@ hsGMaterial *pfGUICtrlGenerator::ICreateSolidMaterial( hsColorRGBA &color )
 
     // Create a material with a simple blank layer, fully ambient
     hsGMaterial *material = new hsGMaterial;
-    IAddKey( material, "GUIMaterial" );
+    IAddKey(material, ST_LITERAL("GUIMaterial"));
 
     plLayer *lay = material->MakeBaseLayer();
     black.Set( 0.f,0.f,0.f,1.f );
@@ -173,7 +173,7 @@ hsGMaterial *pfGUICtrlGenerator::ICreateSolidMaterial( hsColorRGBA &color )
 //// ICreateTextMaterial /////////////////////////////////////////////////////
 //  Creates a material with a texture that has a string centered on it.
 
-hsGMaterial *pfGUICtrlGenerator::ICreateTextMaterial( const char *text, hsColorRGBA &bgColor, 
+hsGMaterial *pfGUICtrlGenerator::ICreateTextMaterial( const ST::string& text, hsColorRGBA &bgColor, 
                                                      hsColorRGBA &textColor, float objWidth, float objHeight )
 {
     uint16_t          pixWidth, pixHeight, strWidth, strHeight;
@@ -187,21 +187,22 @@ hsGMaterial *pfGUICtrlGenerator::ICreateTextMaterial( const char *text, hsColorR
 
     // Create blank mipmap
     plMipmap *bitmap = new plMipmap( 1, 1, plMipmap::kRGB32Config, 1 );
-    IAddKey( bitmap, "GUIMipmap" );
+    IAddKey(bitmap, ST_LITERAL("GUIMipmap"));
 
     // Create textGen to write string with
     plTextGenerator *textGen = new plTextGenerator( bitmap, pixWidth, pixHeight );
     textGen->SetFont( fFontFace, (uint16_t)fFontSize );
     textGen->ClearToColor( bgColor );
     textGen->SetTextColor( textColor );
-    strWidth = textGen->CalcStringWidth( text, &strHeight );
-    textGen->DrawString( ( pixWidth - strWidth ) >> 1, ( pixHeight - strHeight ) >> 1, text );
+    ST::wchar_buffer textBuf = text.to_wchar();
+    strWidth = textGen->CalcStringWidth(textBuf.c_str(), &strHeight);
+    textGen->DrawString((pixWidth - strWidth) >> 1, (pixHeight - strHeight) >> 1, textBuf.c_str());
     textGen->FlushToHost();
     fTextGens.emplace_back(textGen);
 
     // Create a material with a simple blank layer, fully ambient
     hsGMaterial *material = new hsGMaterial;
-    IAddKey( material, "GUIMaterial" );
+    IAddKey(material, ST_LITERAL("GUIMaterial"));
 
     plLayer *lay = material->MakeBaseLayer();
     white.Set( 1.f,1.f,1.f,1.f );
@@ -220,9 +221,9 @@ hsGMaterial *pfGUICtrlGenerator::ICreateTextMaterial( const char *text, hsColorR
 
 //// GenerateDialog //////////////////////////////////////////////////////////
 
-void    pfGUICtrlGenerator::GenerateDialog( const char *name )
+void    pfGUICtrlGenerator::GenerateDialog(ST::string name)
 {
-    IGenerateDialog( name, 20.f, false );
+    IGenerateDialog(std::move(name), 20.f, false);
 }
 
 //// IGenSceneObject /////////////////////////////////////////////////////////
@@ -237,13 +238,13 @@ plSceneObject   *pfGUICtrlGenerator::IGenSceneObject( pfGUIDialogMod *dlg, plDra
     hsgResMgr::ResMgr()->SendRef( myDraw->GetKey(), new plNodeRefMsg( snKey, plRefMsg::kOnCreate, 0, plNodeRefMsg::kDrawable ), plRefFlags::kActiveRef );       
 
     plDrawInterface *newDI = new plDrawInterface;
-    IAddKey( newDI, "GUIDrawIFace" );
+    IAddKey(newDI, ST_LITERAL("GUIDrawIFace"));
 
     plSceneObject   *newObj = new plSceneObject;
-    IAddKey( newObj, "GUISceneObject" );
+    IAddKey(newObj, ST_LITERAL("GUISceneObject"));
 
     plCoordinateInterface *newCI = new plCoordinateInterface;
-    IAddKey( newCI, "GUICoordIFace" );
+    IAddKey(newCI, ST_LITERAL("GUICoordIFace"));
 
     hsgResMgr::ResMgr()->SendRef( newCI->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );
     hsgResMgr::ResMgr()->SendRef( newDI->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface ), plRefFlags::kActiveRef );
@@ -274,8 +275,8 @@ plSceneObject   *pfGUICtrlGenerator::IGenSceneObject( pfGUIDialogMod *dlg, plDra
 
 //// GenerateRectButton //////////////////////////////////////////////////////
 
-pfGUIButtonMod  *pfGUICtrlGenerator::GenerateRectButton( const char *title, float x, float y, float width, float height,
-                                    const char *consoleCmd, hsColorRGBA &color, hsColorRGBA &textColor )
+pfGUIButtonMod  *pfGUICtrlGenerator::GenerateRectButton( const ST::string& title, float x, float y, float width, float height,
+                                    ST::string consoleCmd, hsColorRGBA &color, hsColorRGBA &textColor )
 {
     hsGMaterial     *material;
     pfGUIDialogMod  *dlgToAddTo = IGetDialog();
@@ -284,25 +285,16 @@ pfGUIButtonMod  *pfGUICtrlGenerator::GenerateRectButton( const char *title, floa
     // Get us a material
     material = ICreateTextMaterial( title, color, textColor, width * 20.f, height * 20.f );
 
-    pfGUIButtonMod *but = CreateRectButton( dlgToAddTo, title, x, y, width, height, material );
+    pfGUIButtonMod *but = CreateRectButton(dlgToAddTo, x, y, width, height, material);
     if (but != nullptr)
-        but->SetHandler( new pfGUIConsoleCmdProc( consoleCmd ) );
+        but->SetHandler(new pfGUIConsoleCmdProc(std::move(consoleCmd)));
 
     return but;
 }
 
 //// CreateRectButton ////////////////////////////////////////////////////////
 
-pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, const char *title, float x, float y, float width, float height,
-                                    hsGMaterial *material, bool asMenuItem )
-{
-    wchar_t *wTitle = hsStringToWString(title);
-    pfGUIButtonMod *retVal = CreateRectButton(parent,wTitle,x,y,width,height,material,asMenuItem);
-    delete [] wTitle;
-    return retVal;
-}
-
-pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, const wchar_t *title, float x, float y, float width, float height,
+pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, float x, float y, float width, float height,
                                     hsGMaterial *material, bool asMenuItem )
 {
     plDrawableSpans *myDraw;
@@ -328,7 +320,7 @@ pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, c
     plSceneObject *newObj = IGenSceneObject( parent, myDraw );
 
     pfGUIButtonMod *newBtn = asMenuItem ? new pfGUIMenuItem : new pfGUIButtonMod;
-    IAddKey( newBtn, "GUIButton" );
+    IAddKey(newBtn, ST_LITERAL("GUIButton"));
     hsgResMgr::ResMgr()->SendRef( newBtn->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
     parent->AddControl( newBtn );
     hsgResMgr::ResMgr()->AddViaNotify( newBtn->GetKey(), new plGenRefMsg( parent->GetKey(), plRefMsg::kOnCreate, parent->GetNumControls() - 1, pfGUIDialogMod::kControlRef ), plRefFlags::kActiveRef );
@@ -339,7 +331,7 @@ pfGUIButtonMod  *pfGUICtrlGenerator::CreateRectButton( pfGUIDialogMod *parent, c
 //// GenerateSphereButton ////////////////////////////////////////////////////
 
 pfGUIButtonMod  *pfGUICtrlGenerator::GenerateSphereButton( float x, float y, float radius,
-                                                            const char *consoleCmd, hsColorRGBA &color )
+                                                            ST::string consoleCmd, hsColorRGBA &color )
 {
     hsGMaterial     *material;
     plDrawableSpans *myDraw;
@@ -372,8 +364,8 @@ pfGUIButtonMod  *pfGUICtrlGenerator::GenerateSphereButton( float x, float y, flo
     plSceneObject *newObj = IGenSceneObject(dlgToAddTo, myDraw);//, nullptr, &l2w, &w2l);
 
     pfGUIButtonMod *newBtn = new pfGUIButtonMod;
-    IAddKey( newBtn, "GUIButton" );
-    newBtn->SetHandler( new pfGUIConsoleCmdProc( consoleCmd ) );
+    IAddKey(newBtn, ST_LITERAL("GUIButton"));
+    newBtn->SetHandler(new pfGUIConsoleCmdProc(std::move(consoleCmd)));
     hsgResMgr::ResMgr()->AddViaNotify( newBtn->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
     dlgToAddTo->AddControl( newBtn );
 
@@ -420,7 +412,7 @@ pfGUIDragBarCtrl *pfGUICtrlGenerator::GenerateDragBar( float x, float y, float w
     fDynDragBars.back() = newObj;
 
     pfGUIDragBarCtrl *newBtn = new pfGUIDragBarCtrl;
-    IAddKey( newBtn, "GUIDragBar" );
+    IAddKey(newBtn, ST_LITERAL("GUIDragBar"));
     hsgResMgr::ResMgr()->AddViaNotify( newBtn->GetKey(), new plObjRefMsg( newObj->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kModifier ), plRefFlags::kActiveRef );
     dlgToAddTo->AddControl( newBtn );
 
@@ -439,7 +431,7 @@ pfGUIDragBarCtrl *pfGUICtrlGenerator::GenerateDragBar( float x, float y, float w
 pfGUIDialogMod  *pfGUICtrlGenerator::IGetDialog()
 {
     if (fDynDialogs.empty())
-        IGenerateDialog( "GUIBaseDynamicDlg", 20.f );
+        IGenerateDialog(ST_LITERAL("GUIBaseDynamicDlg"), 20.f);
 
     hsAssert(!fDynDialogs.empty(), "Unable to get a dynamic dialog to add buttons to");
     return fDynDialogs.back();
@@ -447,7 +439,7 @@ pfGUIDialogMod  *pfGUICtrlGenerator::IGetDialog()
 
 //// IGenerateDialog /////////////////////////////////////////////////////////
 
-pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float scrnWidth, bool show )
+pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog(ST::string name, float scrnWidth, bool show)
 {
     float           fovX, fovY;
     plSceneNode     *node;
@@ -456,7 +448,7 @@ pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float sc
 
     // Create the rendermod
     plPostEffectMod *renderMod = new plPostEffectMod;
-    IAddKey( renderMod, "GUIRenderMod" );
+    IAddKey(renderMod, ST_LITERAL("GUIRenderMod"));
 
     renderMod->SetHither( 0.5f );
     renderMod->SetYon( 200.f );
@@ -470,7 +462,7 @@ pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float sc
 
     // Create the sceneNode to go with it
     node = new plSceneNode;
-    IAddKey( node, "GUISceneNode" );
+    IAddKey(node, ST_LITERAL("GUISceneNode"));
     node->GetKey()->RefObject();
     fDynDlgNodes.emplace_back(node);
     fDynDragBars.emplace_back(nullptr);
@@ -479,18 +471,18 @@ pfGUIDialogMod  *pfGUICtrlGenerator::IGenerateDialog( const char *name, float sc
 
     // Create the dialog
     dialog = new pfGUIDialogMod;
-    IAddKey( dialog, "GUIDialog" );
+    IAddKey(dialog, ST_LITERAL("GUIDialog"));
 
     dialog->SetRenderMod( renderMod );
-    dialog->SetName( name );
+    dialog->SetName(std::move(name));
 
     // Create the dummy scene object to hold the dialog
     plSceneObject   *newObj = new plSceneObject;
-    IAddKey( newObj, "GUISceneObject" );
+    IAddKey(newObj, ST_LITERAL("GUISceneObject"));
 
     // *#&$(*@&#$ need a coordIface...
     plCoordinateInterface *newCI = new plCoordinateInterface;
-    IAddKey( newCI, "GUICoordIFace" );
+    IAddKey(newCI, ST_LITERAL("GUICoordIFace"));
 
     hsMatrix44 l2w, w2l;
     l2w.Reset();

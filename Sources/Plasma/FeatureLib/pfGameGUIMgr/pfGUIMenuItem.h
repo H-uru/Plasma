@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfGUIMenuItem_h
 #define _pfGUIMenuItem_h
 
+#include <string_theory/string>
+
 #include "pfGUIButtonMod.h"
 
 class pfGUISkin;
@@ -68,7 +70,7 @@ class pfGUIMenuItem : public pfGUIButtonMod
 
     protected:
 
-        wchar_t         *fName;
+        ST::string      fName;
         bool            fReportingHover;
 
         HowToSkin       fHowToSkin;
@@ -117,8 +119,8 @@ class pfGUIMenuItem : public pfGUIButtonMod
         void    PurgeDynaTextMapImage() override;
 
 
-        void        SetName( const wchar_t *name );
-        const wchar_t   *GetName() const { return fName; }
+        void        SetName(ST::string name);
+        ST::string GetName() const { return fName; }
     
         void    GetTextExtents( uint16_t &width, uint16_t &height );
 

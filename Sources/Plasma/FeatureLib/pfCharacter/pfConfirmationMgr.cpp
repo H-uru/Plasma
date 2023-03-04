@@ -352,7 +352,7 @@ void pfConfirmationMgr::ILoadDialog()
         fProc->OnInit();
     } else {
         fState = State::WaitingForDialogLoad;
-        gui->LoadDialog("KIYesNo"_st, GetKey(), "GUI");
+        gui->LoadDialog("KIYesNo"_st, GetKey());
     }
 }
 

@@ -85,16 +85,16 @@ class pfGUICtrlGenerator
         std::vector<plSceneObject *>   fDynDragBars;
 
 
-        plKey       IAddKey( hsKeyedObject *ko, const char *prefix );
-        ST::string  IGetNextKeyName( const char *prefix );
+        plKey       IAddKey(hsKeyedObject *ko, const ST::string& prefix);
+        ST::string  IGetNextKeyName(const ST::string& prefix);
 
         hsGMaterial *ICreateSolidMaterial( hsColorRGBA &color );
 
-        hsGMaterial *ICreateTextMaterial( const char *text, hsColorRGBA &bgColor, 
+        hsGMaterial *ICreateTextMaterial( const ST::string& text, hsColorRGBA &bgColor, 
                                                  hsColorRGBA &textColor, float objWidth, float objHeight );
 
         pfGUIDialogMod  *IGetDialog();
-        pfGUIDialogMod  *IGenerateDialog( const char *name, float scrnWidth, bool show = true );
+        pfGUIDialogMod  *IGenerateDialog(ST::string name, float scrnWidth, bool show = true);
 
         plSceneObject   *IGenSceneObject(pfGUIDialogMod *dlg, plDrawable *myDraw,
                                          plSceneObject *parent = nullptr,
@@ -111,20 +111,18 @@ class pfGUICtrlGenerator
         void            SetFont( const char *face, uint16_t size );
 
 
-        pfGUIButtonMod  *GenerateRectButton( const char *title, float x, float y, float width, float height,
-                                                const char *consoleCmd, hsColorRGBA &color, hsColorRGBA &textColor );
+        pfGUIButtonMod  *GenerateRectButton( const ST::string& title, float x, float y, float width, float height,
+                                                ST::string consoleCmd, hsColorRGBA &color, hsColorRGBA &textColor );
 
         pfGUIButtonMod  *GenerateSphereButton( float x, float y, float radius,
-                                                const char *consoleCmd, hsColorRGBA &color );
+                                                ST::string consoleCmd, hsColorRGBA &color );
 
         pfGUIDragBarCtrl *GenerateDragBar( float x, float y, float width, float height, hsColorRGBA &color );
 
-        void            GenerateDialog( const char *name );
+        void            GenerateDialog(ST::string name);
 
 
-        pfGUIButtonMod  *CreateRectButton( pfGUIDialogMod *parent, const char *title, float x, float y, 
-                                                float width, float height, hsGMaterial *material, bool asMenuItem = false );
-        pfGUIButtonMod  *CreateRectButton( pfGUIDialogMod *parent, const wchar_t *title, float x, float y,
+        pfGUIButtonMod  *CreateRectButton( pfGUIDialogMod *parent, float x, float y,
                                                 float width, float height, hsGMaterial *material, bool asMenuItem = false );
 
         static pfGUICtrlGenerator   &Instance();

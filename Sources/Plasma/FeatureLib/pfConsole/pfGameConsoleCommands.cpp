@@ -195,16 +195,16 @@ PF_CONSOLE_CMD( Game_GUI, SetDynamicCtrlColor, "float bgRed, float bgGreen, floa
 
 PF_CONSOLE_CMD( Game_GUI, CreateRectButton, "string title, float x, float y, float width, float height, string command", "" )
 {
-    pfGUICtrlGenerator::Instance().GenerateRectButton( params[ 0 ], params[ 1 ], params[ 2 ],
+    pfGUICtrlGenerator::Instance().GenerateRectButton( ST::string(params[0]), params[ 1 ], params[ 2 ],
                                             params[ 3 ], params[ 4 ], 
-                                            params[ 5 ], 
+                                            ST::string(params[5]), 
                                             sDynCtrlColor, sDynCtrlTextColor );
 }
 
 PF_CONSOLE_CMD( Game_GUI, CreateRoundButton, "float x, float y, float radius, string command", "" )
 {
     pfGUICtrlGenerator::Instance().GenerateSphereButton( params[ 0 ], params[ 1 ], params[ 2 ], 
-                                            params[ 3 ], 
+                                            ST::string(params[3]), 
                                             sDynCtrlColor );
 }
 
@@ -215,7 +215,7 @@ PF_CONSOLE_CMD( Game_GUI, CreateDragBar, "float x, float y, float width, float h
 
 PF_CONSOLE_CMD( Game_GUI, CreateDialog, "string name", "" )
 {
-    pfGUICtrlGenerator::Instance().GenerateDialog( params[ 0 ] );
+    pfGUICtrlGenerator::Instance().GenerateDialog(ST::string(params[0]));
 }
 
 PF_CONSOLE_CMD(Game_GUI, Confirm, "int type", "Shows a sample confirmation dialog")

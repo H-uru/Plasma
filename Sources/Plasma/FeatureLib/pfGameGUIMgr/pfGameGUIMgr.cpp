@@ -174,11 +174,11 @@ bool    pfGameGUIMgr::MsgReceive( plMessage* pMsg )
     if (guiMsg != nullptr)
     {
         if( guiMsg->GetCommand() == pfGameGUIMsg::kLoadDialog )
-            LoadDialog(guiMsg->GetString(), nullptr, guiMsg->GetAge().c_str());
+            LoadDialog(guiMsg->GetString(), nullptr, guiMsg->GetAge());
         else if( guiMsg->GetCommand() == pfGameGUIMsg::kShowDialog )
-            IShowDialog(guiMsg->GetString().c_str());
+            IShowDialog(guiMsg->GetString());
         else if( guiMsg->GetCommand() == pfGameGUIMsg::kHideDialog )
-            IHideDialog(guiMsg->GetString().c_str());
+            IHideDialog(guiMsg->GetString());
 
         return true;
     }
@@ -267,7 +267,7 @@ void    pfGameGUIMgr::IRemoveDlgFromList( hsKeyedObject *obj )
 
 //// LoadDialog //////////////////////////////////////////////////////////////
 
-void    pfGameGUIMgr::LoadDialog(const ST::string& name, plKey recvrKey, const char *ageName)
+void    pfGameGUIMgr::LoadDialog(const ST::string& name, plKey recvrKey, const ST::string& ageName)
 {
     // see if they want to set the receiver key once the dialog is loaded
     if (recvrKey != nullptr)
@@ -285,14 +285,13 @@ void    pfGameGUIMgr::LoadDialog(const ST::string& name, plKey recvrKey, const c
     }
 
     plStatusLog::AddLineSF("plasmadbg.log", "Loading Dialog {} {} ... {}",
-                           name, (ageName != nullptr) ? ageName : "GUI",
-                           hsTimer::GetSeconds());
+                           name, ageName, hsTimer::GetSeconds());
 
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
 
     plClientMsg *msg = new plClientMsg( plClientMsg::kLoadRoomHold );
     msg->AddReceiver( clientKey );
-    msg->AddRoomLoc(plKeyFinder::Instance().FindLocation(ageName ? ageName : "GUI", name));
+    msg->AddRoomLoc(plKeyFinder::Instance().FindLocation(ageName, name));
     msg->Send();
 }
 
