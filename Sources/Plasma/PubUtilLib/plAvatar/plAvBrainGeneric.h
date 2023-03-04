@@ -44,6 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // base class
 #include "plAvBrain.h"
+
+#include <vector>
+
 #include "plAnimation/plAGAnim.h"
 
 class plAnimStage;
@@ -173,7 +176,7 @@ public:
     
     /** Compare the names of the anims in our stages.
         Return true on a match (order matters). */
-    bool MatchAnimNames(const char *names[], int count);
+    bool MatchAnimNames(const std::vector<ST::string>& names);
 
     /** Add the given stage to the end of the stage sequence.
         Returns the zero-based index of the stage.

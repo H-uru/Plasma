@@ -2337,12 +2337,12 @@ int plArmatureMod::GetCurrentGenericType()
         return brain->GetType();
 }
 
-bool plArmatureMod::FindMatchingGenericBrain(const char *names[], int count)
+bool plArmatureMod::FindMatchingGenericBrain(const std::vector<ST::string>& names)
 {
     for (size_t i = 0; i < GetBrainCount(); i++)
     {
         plAvBrainGeneric *brain = plAvBrainGeneric::ConvertNoRef(GetBrain(i));
-        if (brain && brain->MatchAnimNames(names, count))
+        if (brain && brain->MatchAnimNames(names))
             return true;
     }
     return false;

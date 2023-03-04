@@ -381,7 +381,7 @@ PF_CONSOLE_CMD( Game, LimitAvatarLOD, "int newLOD", "Zero is (always) highest de
 
 PF_CONSOLE_SUBGROUP( Game, Emote)       // Game.Emote.Shakefist
 
-void Emote(const char *emotion, float fadeIn = 2.0, float fadeOut = 2.0)
+void Emote(const ST::string& emotion, float fadeIn = 2.0, float fadeOut = 2.0)
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     AvatarEmote(avatar, emotion);
@@ -389,38 +389,38 @@ void Emote(const char *emotion, float fadeIn = 2.0, float fadeOut = 2.0)
 
 PF_CONSOLE_CMD( Game_Emote, Wave, "", "")
 {
-    Emote("Wave", 4.0, 1.0);
+    Emote(ST_LITERAL("Wave"), 4.0, 1.0);
 }
 
 PF_CONSOLE_CMD( Game_Emote, Sneeze, "", "")
 {
-    Emote("Sneeze");
+    Emote(ST_LITERAL("Sneeze"));
 }
 
 PF_CONSOLE_CMD( Game_Emote, Dance, "", "")
 {
-    Emote("Dance");
+    Emote(ST_LITERAL("Dance"));
 }
 
 PF_CONSOLE_CMD( Game_Emote, Laugh, "", "")
 {
-    Emote("Laugh");
+    Emote(ST_LITERAL("Laugh"));
 }
 
 PF_CONSOLE_CMD( Game_Emote, Clap, "", "")
 {
-    Emote("Clap", 4.0, 3.0);
+    Emote(ST_LITERAL("Clap"), 4.0, 3.0);
 }
 
 PF_CONSOLE_CMD( Game_Emote, Talk, "", "")
 {
-    Emote("Talk");
+    Emote(ST_LITERAL("Talk"));
 }
 
 PF_CONSOLE_CMD( Game_Emote, Sit, "", "")
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
-    PushSimpleMultiStage(avatar, "SitDownGround", "SitIdleGround", "SitStandGround", true, true, plAGAnim::kBodyLower, plAvBrainGeneric::kSitOnGround);
+    PushSimpleMultiStage(avatar, ST_LITERAL("SitDownGround"), ST_LITERAL("SitIdleGround"), ST_LITERAL("SitStandGround"), true, true, plAGAnim::kBodyLower, plAvBrainGeneric::kSitOnGround);
 }
 
 #ifndef PLASMA_EXTERNAL_RELEASE

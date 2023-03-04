@@ -64,6 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalControllerCore.h"
 
 #include <cmath>
+#include <vector>
 
 #include "pnEncryption/plRandom.h"
 #include "pnSceneObject/plCoordinateInterface.h"
@@ -1337,11 +1338,11 @@ bool PushWalk::PreCondition(double time, float elapsed)
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static bool CanPushGenericBrain(plArmatureMod* avatar, const char** anims, size_t numAnims, plAvBrainGeneric::BrainType type)
+static bool CanPushGenericBrain(plArmatureMod* avatar, const std::vector<ST::string>& anims, plAvBrainGeneric::BrainType type)
 {
     plAvBrainHuman *huBrain = plAvBrainHuman::ConvertNoRef(avatar->FindBrainByClass(plAvBrainHuman::Index()));
     if (!huBrain || !huBrain->fWalkingStrategy->IsOnGround() || !huBrain->fWalkingStrategy->HitGroundInThisAge() || huBrain->IsRunningTask() ||
-        !avatar->IsPhysicsEnabled() || avatar->FindMatchingGenericBrain(anims, numAnims))
+        !avatar->IsPhysicsEnabled() || avatar->FindMatchingGenericBrain(anims))
         return false;
 
     // XXX
@@ -1356,11 +1357,10 @@ static bool CanPushGenericBrain(plArmatureMod* avatar, const char** anims, size_
     return true;
 }
 
-bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const char *idleAnim, const char *exitAnim,
+bool PushSimpleMultiStage(plArmatureMod *avatar, const ST::string& enterAnim, const ST::string& idleAnim, const ST::string& exitAnim,
                           bool netPropagate, bool autoExit, plAGAnim::BodyUsage bodyUsage, plAvBrainGeneric::BrainType type /* = kGeneric */)
 {
-    const char* names[3] = {enterAnim, idleAnim, exitAnim};
-    if (!CanPushGenericBrain(avatar, names, std::size(names), type))
+    if (!CanPushGenericBrain(avatar, {enterAnim, idleAnim, exitAnim}, type))
         return false;
 
     // if autoExit is true, then we will immediately exit the idle loop when the user hits a move
@@ -1402,8 +1402,7 @@ bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const ch
 
 bool PushRepeatEmote(plArmatureMod* avatar, const ST::string& anim)
 {
-    const char* names[1] = { anim.c_str() };
-    if (!CanPushGenericBrain(avatar, names, std::size(names), plAvBrainGeneric::kGeneric))
+    if (!CanPushGenericBrain(avatar, {anim}, plAvBrainGeneric::kGeneric))
         return false;
 
      plAnimStageVec* v = new plAnimStageVec;
@@ -1427,7 +1426,7 @@ bool PushRepeatEmote(plArmatureMod* avatar, const ST::string& anim)
     return true;
 }
 
-bool AvatarEmote(plArmatureMod *avatar, const char *emoteName)
+bool AvatarEmote(plArmatureMod *avatar, const ST::string& emoteName)
 {
     bool result = false;
     ST::string fullName = avatar->MakeAnimationName(emoteName);

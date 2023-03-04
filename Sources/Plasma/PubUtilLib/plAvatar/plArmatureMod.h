@@ -304,7 +304,7 @@ public:
     void SetBodyType(int type) { fBodyType = type; }
     int  GetBodyType(int type) { return fBodyType; }
     int  GetCurrentGenericType();
-    bool FindMatchingGenericBrain(const char *names[], int count);
+    bool FindMatchingGenericBrain(const std::vector<ST::string>& names);
     ST::string MakeAnimationName(const ST::string& baseName) const;
     ST::string GetRootName();
     void SetRootName(const ST::string &name);

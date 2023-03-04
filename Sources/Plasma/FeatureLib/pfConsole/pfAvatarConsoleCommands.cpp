@@ -408,9 +408,9 @@ PF_CONSOLE_CMD( Avatar_Multistage, Mode, "string stage1, string stage2, string s
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     
-    const char *one = params[0];
-    const char *two = params[1];
-    const char *three = params[2];
+    ST::string one(params[0]);
+    ST::string two(params[1]);
+    ST::string three(params[2]);
     
     PushSimpleMultiStage(avatar, one, two, three, true, true, plAGAnim::kBodyFull);
 }
