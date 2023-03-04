@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
+#include "hsMatrix44.h"
 
 #ifdef HS_BUILD_FOR_APPLE
 #import <Accelerate/Accelerate.h>
