@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 #include "plgDispatch.h"
 
+#include <algorithm>
+
 #include "plAudioSystem.h"
 #include "plSound.h"
 #include "plWin32Sound.h"
@@ -1228,7 +1230,8 @@ void plSound::IRead( hsStream *s, hsResMgr *mgr )
         fCurrVolume = 1.f;
     fMaxVolume = fDesiredVol;
 
-    fOuterVol = s->ReadLE32();
+    // Many plWin32Sound objects in PRPs have fOuterVol set to -10000 even though the actual minimum is -5000.
+    fOuterVol = std::clamp(static_cast<int>(s->ReadLE32()), -5000, 0);
     fInnerCone = s->ReadLE32();
     fOuterCone = s->ReadLE32();
     s->ReadLEFloat(&fFadedVolume);
