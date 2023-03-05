@@ -48,11 +48,15 @@ Author: Derek Odell
 launch start up sequence
 """
 
+import random
+
 from Plasma import *
 from PlasmaTypes import *
 
 # define the attributes that will be entered in max
 Camera = ptAttribSceneobject(1, "Camera")
+BGObj   = ptAttribSceneobject(2, "Background Object")
+BGLayer = ptAttribLayer(3, "Background Image Layer")
 
 #====================================
 
@@ -104,3 +108,14 @@ class stupStartUp(ptResponder):
             PtShowDialog("GUIDialog04b")
         else:
             PtShowDialog("GUIDialog06")
+
+        self.randomizeBackground()
+
+    
+    ###########################
+    def randomizeBackground(self):
+        if ilmList := BGObj.sceneobject.getImageLibMods():
+            ilm = ptImageLibMod(ilmList[0])
+            bgChoice = random.choice(ilm.getNames())
+            if newImage := ilm.getImage(bgChoice):
+                BGLayer.layer.texture = newImage
