@@ -47,6 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "pyStream.h"
+
+#include <string_theory/string>
+
 #include "plFile/plEncryptedStream.h"
 
 pyStream::pyStream()
@@ -60,26 +63,25 @@ pyStream::~pyStream()
 }
 
 
-bool pyStream::Open(const plFileName& fileName, const char* flags)
+bool pyStream::Open(const plFileName& fileName, const ST::string& flags)
 {
     // make sure its closed first
     Close();
 
     if (fileName.IsValid())
     {
-        if (flags)
+        if (!flags.empty())
         {
             bool readflag = false;
             bool writeflag = false;
             bool encryptflag = false;
-            int i;
-            for (i=0 ; i < strlen(flags) ; i++ )
+            for (char flag : flags)
             {
-                if ( flags[i] == 'r' || flags[i] == 'R' )
+                if (flag == 'r' || flag == 'R')
                     readflag = true;
-                if ( flags[i] == 'w' || flags[i] == 'W' )
+                if (flag == 'w' || flag == 'W')
                     writeflag = true;
-                if ( flags[i] == 'e' || flags[i] == 'E' )
+                if (flag == 'e' || flag == 'E')
                     encryptflag = true;
             }
             // if there is a write flag, it takes priorty over read
@@ -102,12 +104,12 @@ bool pyStream::Open(const plFileName& fileName, const char* flags)
     return false;
 }
 
-std::vector<std::string> pyStream::ReadLines()
+std::vector<ST::string> pyStream::ReadLines()
 {
     
     // read all the lines in the file and put in a python list object
     // create the list
-    std::vector<std::string> pyPL;
+    std::vector<ST::string> pyPL;
 
     if (fStream)
     {
@@ -123,15 +125,14 @@ std::vector<std::string> pyStream::ReadLines()
     return pyPL;
 }
 
-bool pyStream::WriteLines(const std::vector<std::string> & lines)
+bool pyStream::WriteLines(const std::vector<ST::string> & lines)
 {
     if (fStream)
     {
         int i;
         for ( i=0 ; i<lines.size() ; i++ )
         {
-            std::string element = lines[i];
-            fStream->Write(element.length(),element.c_str());
+            fStream->WriteString(lines[i]);
         }
         return true;
     }

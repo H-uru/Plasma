@@ -60,8 +60,8 @@ PYTHON_INIT_DEFINITION(ptStream, args, keywords)
 PYTHON_METHOD_DEFINITION(ptStream, open, args)
 {
     plFileName filename;
-    char* flags;
-    if (!PyArg_ParseTuple(args, "O&s", PyUnicode_PlFileNameDecoder, &filename, &flags))
+    ST::string flags;
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_PlFileNameDecoder, &filename, PyUnicode_STStringConverter, &flags))
     {
         PyErr_SetString(PyExc_TypeError, "open expects a pathlike object or string, and a string");
         PYTHON_RETURN_ERROR;
@@ -72,7 +72,7 @@ PYTHON_METHOD_DEFINITION(ptStream, open, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptStream, readlines)
 {
-    std::vector<std::string> lines = self->fThis->ReadLines();
+    std::vector<ST::string> lines = self->fThis->ReadLines();
     PyObject* retVal = PyList_New(lines.size());
     for (int i = 0; i < lines.size(); i++)
         PyList_SetItem(retVal, i, PyUnicode_FromSTString(lines[i]));
@@ -92,7 +92,7 @@ PYTHON_METHOD_DEFINITION(ptStream, writelines, args)
         PyErr_SetString(PyExc_TypeError, "writelines expects a list of strings");
         PYTHON_RETURN_ERROR;
     }
-    std::vector<std::string> strings;
+    std::vector<ST::string> strings;
     Py_ssize_t len = PyList_Size(stringList);
     for (Py_ssize_t i = 0; i < len; i++)
     {
@@ -102,7 +102,7 @@ PYTHON_METHOD_DEFINITION(ptStream, writelines, args)
             PyErr_SetString(PyExc_TypeError, "writelines expects a list of strings");
             PYTHON_RETURN_ERROR;
         }
-        strings.emplace_back(PyUnicode_AsUTF8(element));
+        strings.emplace_back(PyUnicode_AsSTString(element));
     }
     PYTHON_RETURN_BOOL(self->fThis->WriteLines(strings));
 }
