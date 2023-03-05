@@ -92,8 +92,8 @@ PYTHON_INIT_DEFINITION(ptSDLStateDataRecord, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptSDLStateDataRecord, findVar, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "findVar expects a string");
         PYTHON_RETURN_ERROR;
@@ -203,7 +203,19 @@ STATEVAR_SET(setShort, SetShort, short, short, h)
 STATEVAR_SET(setFloat, SetFloat, float, float, f)
 STATEVAR_SET(setDouble, SetDouble, double, double, d)
 STATEVAR_SET(setInt, SetInt, int, int, i)
-STATEVAR_SET(setString, SetString, string, char*, s)
+
+// setString is special because of the ST::string conversion
+PYTHON_METHOD_DEFINITION(ptSimpleStateVariable, setString, args)
+{
+    ST::string val;
+    int idx = 0;
+    if (!PyArg_ParseTuple(args, "O&|i", PyUnicode_STStringConverter, &val, &idx))
+    {
+        PyErr_SetString(PyExc_TypeError, "setString expects a string and an optional int");
+        PYTHON_RETURN_ERROR;
+    }
+    PYTHON_RETURN_BOOL(self->fThis->SetString(val, idx));
+}
 
 // setBool is special cause of the way python represents booleans
 PYTHON_METHOD_DEFINITION(ptSimpleStateVariable, setBool, args)

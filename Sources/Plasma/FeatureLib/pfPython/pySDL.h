@@ -125,7 +125,7 @@ public:
     bool    SetFloat( float v, int idx=0 );
     bool    SetDouble( double v, int idx=0 );
     bool    SetInt( int v, int idx=0 );
-    bool    SetString( const char * v, int idx=0 );
+    bool    SetString( const ST::string& v, int idx=0 );
     bool    SetBool(bool v, int idx=0 );
     uint8_t GetByte( int idx=0 ) const;
     short   GetShort( int idx=0 ) const;

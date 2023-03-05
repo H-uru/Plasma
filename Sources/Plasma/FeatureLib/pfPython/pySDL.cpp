@@ -165,11 +165,11 @@ bool pySimpleStateVariable::SetInt( int v, int idx )
     return fVar->Set( v, idx );
 }
 
-bool pySimpleStateVariable::SetString( const char * v, int idx )
+bool pySimpleStateVariable::SetString( const ST::string& v, int idx )
 {
     if ( !fVar )
         return false;
-    return fVar->Set( v, idx );
+    return fVar->Set( v.c_str(), idx );
 }
 
 bool pySimpleStateVariable::SetBool( bool v, int idx )
