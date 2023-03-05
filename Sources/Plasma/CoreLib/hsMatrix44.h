@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define  HSMATRIX44_inc
 
 #include "HeadSpin.h"
-#include "hsCpuID.h"
 #include "hsGeometry3.h"
 
 #include <string_theory/formatter>
@@ -142,15 +141,7 @@ struct hsMatrix44 {
     [[nodiscard]]
     hsVector3 operator*(const hsVector3& p) const;
     [[nodiscard]]
-    hsMatrix44 operator *(const hsMatrix44& other) const {
-        
-#ifdef HS_BUILD_FOR_APPLE
-        return mult_accelerate(*this, other);
-#else
-        return mat_mult.call(*this, other);
-#endif
-        
-    }
+    hsMatrix44 operator *(const hsMatrix44& other) const;
 
     hsPoint3*           MapPoints(long count, hsPoint3 points[]) const;
 
@@ -163,17 +154,6 @@ struct hsMatrix44 {
 
     void Read(hsStream *stream);
     void Write(hsStream *stream);
-
-private:
-    //  CPU-optimized functions
-    typedef hsMatrix44(*mat_mult_ptr)(const hsMatrix44&, const hsMatrix44&);
-    static hsCpuFunctionDispatcher<mat_mult_ptr> mat_mult;
-
-    static hsMatrix44 mult_fpu(const hsMatrix44& a, const hsMatrix44& b);
-    static hsMatrix44 mult_sse3(const hsMatrix44& a, const hsMatrix44& b);
-#ifdef HS_BUILD_FOR_APPLE
-    static hsMatrix44 mult_accelerate(const hsMatrix44 &a, const hsMatrix44 &b);
-#endif
 };
 
 ST_DECL_FORMAT_TYPE(const hsMatrix44&);

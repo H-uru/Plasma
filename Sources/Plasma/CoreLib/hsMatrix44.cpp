@@ -55,6 +55,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #import <Accelerate/Accelerate.h>
 #endif
 
+#ifdef HS_BUILD_FOR_WIN32
+#   include <DirectXMath.h>
+#endif
+
 static hsMatrix44 myIdent = hsMatrix44().Reset();
 const hsMatrix44& hsMatrix44::IdentityMatrix() { return myIdent; }
 
@@ -101,40 +105,62 @@ void hsMatrix44::DecompRigid(hsScalarTriple &translate, hsQuat &rotate) const
 }
 
 #ifdef HS_BUILD_FOR_APPLE
-hsMatrix44 hsMatrix44::mult_accelerate(const hsMatrix44 &a, const hsMatrix44 &b)
+static inline hsMatrix44 IMatrixMultAccelerate(const hsMatrix44 &a, const hsMatrix44 &b)
 {
     hsMatrix44 c;
 
-    if( a.fFlags & b.fFlags & hsMatrix44::kIsIdent )
-    {
+    if (a.fFlags & b.fFlags & hsMatrix44::kIsIdent) {
         c.Reset();
         return c;
     }
 
-    if( a.fFlags & hsMatrix44::kIsIdent )
+    if (a.fFlags & hsMatrix44::kIsIdent)
         return b;
-    if( b.fFlags & hsMatrix44::kIsIdent )
+    if (b.fFlags & hsMatrix44::kIsIdent)
         return a;
-    
+
     vDSP_mmul((const float*)a.fMap, 1, (const float*)b.fMap, 1, (float*)&(c.fMap), 1, 4, 4, 4);
-    
+
     return c;
 }
 #endif
 
-hsMatrix44 hsMatrix44::mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
+#ifdef HS_BUILD_FOR_WIN32
+static inline hsMatrix44 IMatrixMultXM(const hsMatrix44& a, const hsMatrix44& b)
 {
     hsMatrix44 c;
 
-    if( a.fFlags & b.fFlags & hsMatrix44::kIsIdent )
-    {
+    if (a.fFlags & b.fFlags & hsMatrix44::kIsIdent) {
         c.Reset();
         return c;
     }
 
-    if( a.fFlags & hsMatrix44::kIsIdent )
+    if (a.fFlags & hsMatrix44::kIsIdent)
         return b;
-    if( b.fFlags & hsMatrix44::kIsIdent )
+    if (b.fFlags & hsMatrix44::kIsIdent)
+        return a;
+
+    DirectX::XMMATRIX m1 = DirectX::XMLoadFloat4x4A((DirectX::XMFLOAT4X4A*)a.fMap);
+    DirectX::XMMATRIX m2 = DirectX::XMLoadFloat4x4A((DirectX::XMFLOAT4X4A*)b.fMap);
+    DirectX::XMMATRIX m3 = m1 * m2;
+    DirectX::XMStoreFloat4x4A((DirectX::XMFLOAT4X4A*)c.fMap, m3);
+
+    return c;
+}
+#endif
+
+static inline hsMatrix44 IMatrixMultFPU(const hsMatrix44 &a, const hsMatrix44 &b)
+{
+    hsMatrix44 c;
+
+    if (a.fFlags & b.fFlags & hsMatrix44::kIsIdent) {
+        c.Reset();
+        return c;
+    }
+
+    if (a.fFlags & hsMatrix44::kIsIdent)
+        return b;
+    if (b.fFlags & hsMatrix44::kIsIdent)
         return a;
 
     c.fMap[0][0] = (a.fMap[0][0] * b.fMap[0][0]) + (a.fMap[0][1] * b.fMap[1][0]) + (a.fMap[0][2] * b.fMap[2][0]) + (a.fMap[0][3] * b.fMap[3][0]);
@@ -160,13 +186,16 @@ hsMatrix44 hsMatrix44::mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
     return c;
 }
 
-// CPU-optimized functions requiring dispatch
-hsCpuFunctionDispatcher<hsMatrix44::mat_mult_ptr> hsMatrix44::mat_mult {
-    &hsMatrix44::mult_fpu,
-    nullptr,            // SSE1
-    nullptr,            // SSE2
-    &hsMatrix44::mult_sse3
-};
+hsMatrix44 hsMatrix44::operator*(const hsMatrix44& other) const
+{
+#if defined(HS_BUILD_FOR_APPLE)
+    return IMatrixMultAccelerate(*this, other);
+#elif defined(HS_BUILD_FOR_WIN32)
+    return IMatrixMultXM(*this, other);
+#else
+    return IMatrixMultFPU(*this, other);
+#endif
+}
 
 hsPoint3 hsMatrix44::operator*(const hsPoint3& p) const
 {

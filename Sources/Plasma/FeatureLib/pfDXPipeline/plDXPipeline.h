@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDX9Pipeline_h
 #define _plDX9Pipeline_h
 
+#include "hsCpuID.h"
+
 #include <vector>
 
 #include "plPipeline/pl3DPipeline.h"

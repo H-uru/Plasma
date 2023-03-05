@@ -80,7 +80,6 @@ plasma_library(CoreLib
     SOURCES ${CoreLib_SOURCES} ${CoreLib_HEADERS}
     PRECOMPILED_HEADERS _CoreLibPch.h
 )
-plasma_target_simd_sources(CoreLib SSE3 hsMatrix44_SSE3.cpp)
 target_link_libraries(
     CoreLib
     PUBLIC
