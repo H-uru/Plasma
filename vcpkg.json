@@ -41,7 +41,10 @@
             "platform": "windows",
             "default-features": false
           },
-          "python3-cairosvg"
+          {
+            "name": "python3-cairosvg",
+            "host": true
+          }
         ]
       }
     }
