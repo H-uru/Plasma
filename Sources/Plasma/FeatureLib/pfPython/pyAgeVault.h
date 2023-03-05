@@ -103,17 +103,17 @@ public:
     PyObject*       GetSubAgeLink( const pyAgeInfoStruct & info ); // returns pyVaultAgeLinkNode
     // AGE DEVICES. AKA IMAGERS, WHATEVER.
     // Add a new device.
-    void AddDevice(const char * deviceName, PyObject * cb = nullptr, uint32_t cbContext = 0);
+    void AddDevice(const ST::string& deviceName, PyObject * cb = nullptr, uint32_t cbContext = 0);
     // Remove a device.
-    void RemoveDevice( const char * deviceName );
+    void RemoveDevice(const ST::string& deviceName);
     // True if device exists in age.
-    bool HasDevice( const char * deviceName );
+    bool HasDevice(const ST::string& deviceName);
     // Get the device node by name.
-    PyObject * GetDevice( const char * deviceName ); // returns pyVaultTextNoteNode
+    PyObject * GetDevice(const ST::string& deviceName); // returns pyVaultTextNoteNode
     // Sets the inbox associated with a device.
-    void SetDeviceInbox(const char * deviceName, const char * inboxName, PyObject * cb = nullptr, uint32_t cbContext = 0);
+    void SetDeviceInbox(const ST::string& deviceName, const ST::string& inboxName, PyObject * cb = nullptr, uint32_t cbContext = 0);
     // Get the inbox associated with a device.
-    PyObject * GetDeviceInbox( const char * deviceName ); // returns pyVaultFolderNode
+    PyObject * GetDeviceInbox(const ST::string& deviceName); // returns pyVaultFolderNode
     // find matching node
     PyObject* FindNode( pyVaultNode* templateNode ) const; // returns pyVaultNode
 };
