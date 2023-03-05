@@ -1005,50 +1005,50 @@ plAvatarInputMap::~plAvatarInputMap()
         
 plSuspendedMovementMap::plSuspendedMovementMap() : plAvatarInputMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_ACTION_MOUSE,      kControlFlagLeftButtonEx, 0.0f, 1.0f, 0.0f, 1.0f, "The Picked key") );
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_PICK,              kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f, "The Picked key") );
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_ACTION_MOUSE,      kControlFlagLeftButtonEx, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_PICK,              kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 plBasicControlMap::plBasicControlMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_ROTATE_RIGHT,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.95f, 1.0f, 0.0f, 1.0f,        "Rotate Player Right") );
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_ROTATE_LEFT,       kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 0.05f,    0.0f, 1.0f,     "Rotate Player Left") );
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_ROTATE_RIGHT,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.95f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_ROTATE_LEFT,       kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 0.05f,    0.0f, 1.0f));
     
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_TURN_TO,           kControlFlagLeftButtonEx, 0.05f, 0.95f, 0.0f, 0.95f,        "Turn to") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_WALK_MODE,             kControlFlagLeftButton, 0.05f, 0.95f,   0.0f, 0.95f,        "Set Walk Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_WALK_BACK_LB_MODE,     kControlFlagLeftButton, 0.05f, 0.95f,   0.95f, 1.0f,        "Set Walk Back LB Mode") );
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_WALK_BACK_MODE,        kControlFlagMiddleButton,   0.05f, 0.95f,   0.0f, 1.0f,     "Set Walk Back Mode") ); 
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_TURN_TO,           kControlFlagLeftButtonEx, 0.05f, 0.95f, 0.0f, 0.95f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_WALK_MODE,             kControlFlagLeftButton, 0.05f, 0.95f,   0.0f, 0.95f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_WALK_BACK_LB_MODE,     kControlFlagLeftButton, 0.05f, 0.95f,   0.95f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_WALK_BACK_MODE,        kControlFlagMiddleButton,   0.05f, 0.95f,   0.0f, 1.0f)); 
 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_UP,             kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.0f, 0.95f,  "set cursor up") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.95f, 1.0f,  "set cursor down") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_RIGHT,          kControlFlagNormal | kControlFlagInBox,     0.95f, 1.0f, 0.0f, 1.0f,    "set cursor right") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_LEFT,           kControlFlagNormal | kControlFlagInBox,     0.0f, 0.05f, 0.0f, 1.0f,    "set cursor left") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_UP,             kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.0f, 0.95f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.05f, 0.95f, 0.95f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_RIGHT,          kControlFlagNormal | kControlFlagInBox,     0.95f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_LEFT,           kControlFlagNormal | kControlFlagInBox,     0.0f, 0.05f, 0.0f, 1.0f));
 }
 
 plLadderControlMap::plLadderControlMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 1.0f, 0.0f, 0.5f,     "Set Walk Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton | kControlFlagBoxDisable, 0.0f, 1.0f,    0.5f, 1.0f,     "Set Walk Back LB Mode") );
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton | kControlFlagBoxDisable,    0.0f, 1.0f, 0.0f, 0.5f) ); 
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton | kControlFlagBoxDisable, 0.0f, 1.0f,    0.5f, 1.0f) );
 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_UPWARD,         kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.0f, 0.5f, "set cursor up") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.5f, 1.0f, "set cursor down") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_UPWARD,         kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.0f, 0.5f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_CURSOR_DOWN,           kControlFlagNormal | kControlFlagInBox,     0.0f, 1.0f, 0.5f, 1.0f));
 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f));
 }
 
 
 plLadderMountMap::plLadderMountMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Ladder Mode") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_LADDER_CONTROL,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 plLadderDismountMap::plLadderDismountMap() : plSuspendedMovementMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Basic Mode") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagLeftButtonUp,   0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagRightButtonUp,  0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,                kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 
@@ -1056,22 +1056,22 @@ plLadderDismountMap::plLadderDismountMap() : plSuspendedMovementMap()
 
 plBasicThirdPersonControlMap::plBasicThirdPersonControlMap() : plBasicControlMap()
 {   
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f,     "Freelook Mode") );     
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f));
 }   
 
 plBasicFirstPersonControlMap::plBasicFirstPersonControlMap() : plBasicControlMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(A_CONTROL_TURN,              kControlFlagRightButtonRepeat | kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f,     "Rotate Player") ); 
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f,        "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping(new plMouseInfo(A_CONTROL_TURN,              kControlFlagRightButtonRepeat | kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_FREELOOK,              kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagRightButton,    0.05f, 0.95f,   0.0f, 0.95f));
 }
 
 // also used in 1st person walk mode    
 pl3rdWalkMap::pl3rdWalkMap() : plAvatarInputMap()
 {
     // control special to this mode.
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MODIFIER_FAST,     kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f, "Run Modifier"  ) );
-    fMouseMap->AddMapping( new plMouseInfo(A_CONTROL_TURN,              kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f,     "Rotate Player") );
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MODIFIER_FAST,     kControlFlagRightButton,    0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(A_CONTROL_TURN,              kControlFlagXAxisEvent | kControlFlagDelta, 0.0f, 1.0f, 0.0f, 1.0f));
 
     plInputManager::SetRecenterMouse(true);     
     plMouseDevice::HideCursor();
@@ -1087,22 +1087,22 @@ pl3rdWalkMap::~pl3rdWalkMap()
 
 pl3rdWalkForwardMap::pl3rdWalkForwardMap() : pl3rdWalkMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,       "Third Person") ); 
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Walk forward") );
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Camera first-person z-axis panning") );    
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MOVE_FORWARD,      kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 pl3rdWalkBackwardMap::pl3rdWalkBackwardMap() : pl3rdWalkMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,     "Third Person") ); 
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f,       "Walk backward") );
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f,       "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagMiddleButtonUp, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagMiddleButton, 0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 // same as the other backward walk map, but this one is triggered by the left mouse button.
 pl3rdWalkBackwardLBMap::pl3rdWalkBackwardLBMap() : pl3rdWalkMap()
 {
-    fMouseMap->AddMapping( new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f,       "Third Person") ); 
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Walk backward") );
-    fMouseMap->AddMapping( new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f,     "Set Camera first-person z-axis panning") ); 
+    fMouseMap->AddMapping(new plMouseInfo(S_SET_BASIC_MODE,            kControlFlagLeftButtonUp, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_MOVE_BACKWARD,     kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f));
+    fMouseMap->AddMapping(new plMouseInfo(B_CONTROL_CAMERA_WALK_PAN,   kControlFlagLeftButton, 0.0f, 1.0f, 0.0f, 1.0f));
 }
