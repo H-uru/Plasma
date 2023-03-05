@@ -83,21 +83,14 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultFolderNode, getFolderType)
 
 PYTHON_METHOD_DEFINITION(ptVaultFolderNode, setFolderName, args)
 {
-    PyObject* textObj;
-    if (!PyArg_ParseTuple(args, "O", &textObj))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "setFolderName expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj))
-    {
-        wchar_t* name = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->Folder_SetName(name);
-        PyMem_Free(name);
-        PYTHON_RETURN_NONE;
-    }
-    PyErr_SetString(PyExc_TypeError, "setFolderName expects a unicode string");
-    PYTHON_RETURN_ERROR;
+    self->fThis->Folder_SetName(name);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultFolderNode, getFolderName)

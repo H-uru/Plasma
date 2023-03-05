@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
-#include <string>
 #include "pyVaultNode.h"
 
 struct RelVaultNode;
@@ -95,7 +94,7 @@ public:
     void     SetAgeUserDefinedName(const ST::string& v);
 
     plUUID  GetAgeInstanceGuid() const;
-    void    SetAgeInstanceGuid( const char * guid );
+    void    SetAgeInstanceGuid(const ST::string& guid);
 
     ST::string GetAgeDescription() const;
     void     SetAgeDescription(const ST::string& v);

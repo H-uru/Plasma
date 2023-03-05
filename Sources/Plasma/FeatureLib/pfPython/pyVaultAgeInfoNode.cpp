@@ -231,13 +231,11 @@ plUUID pyVaultAgeInfoNode::GetAgeInstanceGuid() const
     return kNilUuid;
 }
 
-void pyVaultAgeInfoNode::SetAgeInstanceGuid( const char * sguid )
+void pyVaultAgeInfoNode::SetAgeInstanceGuid(const ST::string& sguid)
 {
     if (fNode) {
         VaultAgeInfoNode access(fNode);
-        plUUID uuid;
-        uuid.FromString(sguid);
-        access.SetAgeInstanceGuid(uuid);
+        access.SetAgeInstanceGuid(plUUID(sguid));
     }
 }
 

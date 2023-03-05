@@ -80,7 +80,7 @@ public:
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-    void Image_SetTitle( const wchar_t * text );
+    void Image_SetTitle(const ST::string& text);
     ST::string Image_GetTitle() const;
 
     PyObject* Image_GetImage(); // returns pyImage

@@ -141,8 +141,8 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, getOwnedAgeLink, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, removeOwnedAgeLink, args)
 {
-    char* guid;
-    if (!PyArg_ParseTuple(args, "s", &guid))
+    ST::string guid;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid))
     {
         PyErr_SetString(PyExc_TypeError, "removeOwnedAgeLink expects a string");
         PYTHON_RETURN_ERROR;
@@ -170,8 +170,8 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, getVisitAgeLink, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, removeVisitAgeLink, args)
 {
-    char* guid;
-    if (!PyArg_ParseTuple(args, "s", &guid))
+    ST::string guid;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid))
     {
         PyErr_SetString(PyExc_TypeError, "removeVisitAgeLink expects a string");
         PYTHON_RETURN_ERROR;
@@ -182,8 +182,8 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, removeVisitAgeLink, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, findChronicleEntry, args)
 {
-    char* entryName;
-    if (!PyArg_ParseTuple(args, "s", &entryName))
+    ST::string entryName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &entryName))
     {
         PyErr_SetString(PyExc_TypeError, "findChronicleEntry expects a string");
         PYTHON_RETURN_ERROR;
@@ -193,8 +193,8 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, findChronicleEntry, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, setPlayerName, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "setPlayerName expects a string");
         PYTHON_RETURN_ERROR;
@@ -210,8 +210,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerNode, getPlayerName)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerNode, setAvatarShapeName, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "setAvatarShapeName expects a string");
         PYTHON_RETURN_ERROR;

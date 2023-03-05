@@ -76,9 +76,9 @@ PYTHON_METHOD_DEFINITION(ptVaultSDLNode, setIdent, args)
 
 PYTHON_METHOD_DEFINITION(ptVaultSDLNode, initStateDataRecord, args)
 {
-    char* fileName;
+    ST::string fileName;
     int flags;
-    if (!PyArg_ParseTuple(args, "si", &fileName, &flags))
+    if (!PyArg_ParseTuple(args, "O&i", PyUnicode_STStringConverter, &fileName, &flags))
     {
         PyErr_SetString(PyExc_TypeError, "initStateDataRecord expects a string and an int");
         PYTHON_RETURN_ERROR;

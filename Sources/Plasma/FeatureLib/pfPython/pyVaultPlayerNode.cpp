@@ -198,7 +198,7 @@ PyObject *pyVaultPlayerNode::GetOwnedAgeLink(const pyAgeInfoStruct *info)
     PYTHON_RETURN_NONE;
 }
 
-void pyVaultPlayerNode::RemoveOwnedAgeLink(const char* ageFilename)
+void pyVaultPlayerNode::RemoveOwnedAgeLink(const ST::string& ageFilename)
 {
     plAgeInfoStruct info;
     info.SetAgeFilename(ageFilename);
@@ -213,7 +213,7 @@ PyObject *pyVaultPlayerNode::GetVisitAgeLink(const pyAgeInfoStruct *info)
     PYTHON_RETURN_NONE;
 }
 
-void pyVaultPlayerNode::RemoveVisitAgeLink(const char *guidstr)
+void pyVaultPlayerNode::RemoveVisitAgeLink(const ST::string& guidstr)
 {
     plAgeInfoStruct info;
     plUUID guid(guidstr);
@@ -221,7 +221,7 @@ void pyVaultPlayerNode::RemoveVisitAgeLink(const char *guidstr)
     VaultUnregisterOwnedAgeAndWait(&info);
 }
 
-PyObject *pyVaultPlayerNode::FindChronicleEntry(const char *entryName)
+PyObject *pyVaultPlayerNode::FindChronicleEntry(const ST::string& entryName)
 {
     if (hsRef<RelVaultNode> rvn = VaultFindChronicleEntry(entryName))
         return pyVaultChronicleNode::New(rvn);
@@ -229,7 +229,7 @@ PyObject *pyVaultPlayerNode::FindChronicleEntry(const char *entryName)
     PYTHON_RETURN_NONE;
 }
 
-void pyVaultPlayerNode::SetPlayerName(const char *value)
+void pyVaultPlayerNode::SetPlayerName(const ST::string& value)
 {
     hsAssert(false, "python may not change a player's name this way");
 }
@@ -243,7 +243,7 @@ ST::string pyVaultPlayerNode::GetPlayerName() const
     return ST::string();
 }
 
-void pyVaultPlayerNode::SetAvatarShapeName(const char *value)
+void pyVaultPlayerNode::SetAvatarShapeName(const ST::string& value)
 {
     hsAssert(false, "python may not change a player's avatar this way");
 }

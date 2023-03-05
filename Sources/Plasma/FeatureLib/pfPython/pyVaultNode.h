@@ -150,8 +150,8 @@ public:
     void SetType( int v );
     void SetOwnerNodeID( uint32_t v );
     void SetCreatorNodeID( uint32_t v );
-    void SetCreateAgeName( const char * v );
-    void SetCreateAgeGuid( const char * v );
+    void SetCreateAgeName(const ST::string& v);
+    void SetCreateAgeGuid(const ST::string& v);
 
 
     /////////////////////////////////////////////////

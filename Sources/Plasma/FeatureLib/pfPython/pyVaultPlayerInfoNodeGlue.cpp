@@ -76,8 +76,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerInfoNode, playerGetID)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerInfoNode, playerSetName, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "playerSetName expects a string");
         PYTHON_RETURN_ERROR;
@@ -93,8 +93,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerInfoNode, playerGetName)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerInfoNode, playerSetAgeInstanceName, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "playerSetAgeInstanceName expects a string");
         PYTHON_RETURN_ERROR;
@@ -110,8 +110,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerInfoNode, playerGetAgeInstanceName)
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerInfoNode, playerSetAgeGuid, args)
 {
-    char* guid;
-    if (!PyArg_ParseTuple(args, "s", &guid))
+    ST::string guid;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid))
     {
         PyErr_SetString(PyExc_TypeError, "playerSetAgeGuid expects a string");
         PYTHON_RETURN_ERROR;

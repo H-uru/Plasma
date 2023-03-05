@@ -307,12 +307,12 @@ void pyVaultNode::SetCreatorNodeID( uint32_t v )
     fNode->SetCreatorId(v);
 }
 
-void pyVaultNode::SetCreateAgeName( const char * v )
+void pyVaultNode::SetCreateAgeName(const ST::string& v)
 {
     fNode->SetCreateAgeName(v);
 }
 
-void pyVaultNode::SetCreateAgeGuid( const char * v )
+void pyVaultNode::SetCreateAgeGuid(const ST::string& v)
 {
     ASSERT(fNode);
     plUUID uuid(v);

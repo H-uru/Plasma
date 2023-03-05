@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyVaultNode.h"
 #include "plNetCommon/plNetServerSessionInfo.h" // for plAgeLinkStruct
-#include <string>
 
 class pyVaultAgeInfoNode;
 struct RelVaultNode;
