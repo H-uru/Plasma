@@ -80,7 +80,7 @@ PyObject* pyCritterBrain::GetSceneObject()
     PYTHON_RETURN_NONE;
 }
 
-void pyCritterBrain::AddBehavior(const std::string& animationName, const std::string& behaviorName, bool loop /* = true */,
+void pyCritterBrain::AddBehavior(const ST::string& animationName, const ST::string& behaviorName, bool loop /* = true */,
     bool randomStartPos /* = true */, float fadeInLen /* = 2.f */, float fadeOutLen /* = 2.f */)
 {
     if (!fBrain)
@@ -88,31 +88,31 @@ void pyCritterBrain::AddBehavior(const std::string& animationName, const std::st
     fBrain->AddBehavior(animationName, behaviorName, loop, randomStartPos, fadeInLen, fadeOutLen);
 }
 
-void pyCritterBrain::StartBehavior(const std::string& behaviorName, bool fade /* = true */)
+void pyCritterBrain::StartBehavior(const ST::string& behaviorName, bool fade /* = true */)
 {
     if (!fBrain)
         return;
     fBrain->StartBehavior(behaviorName, fade);
 }
 
-bool pyCritterBrain::RunningBehavior(const std::string& behaviorName) const
+bool pyCritterBrain::RunningBehavior(const ST::string& behaviorName) const
 {
     if (!fBrain)
         return false;
     return fBrain->RunningBehavior(behaviorName);
 }
 
-std::string pyCritterBrain::BehaviorName(int behavior) const
+ST::string pyCritterBrain::BehaviorName(int behavior) const
 {
     if (!fBrain)
-        return nullptr;
+        return {};
     return fBrain->BehaviorName(behavior);
 }
 
 ST::string pyCritterBrain::AnimationName(int behavior) const
 {
     if (!fBrain)
-        return ST::string();
+        return {};
     return fBrain->AnimationName(behavior);
 }
 
@@ -130,17 +130,17 @@ int pyCritterBrain::NextBehavior() const
     return fBrain->NextBehavior();
 }
 
-std::string pyCritterBrain::IdleBehaviorName() const
+ST::string pyCritterBrain::IdleBehaviorName() const
 {
     if (!fBrain)
-        return nullptr;
+        return {};
     return fBrain->IdleBehaviorName();
 }
 
-std::string pyCritterBrain::RunBehaviorName() const
+ST::string pyCritterBrain::RunBehaviorName() const
 {
     if (!fBrain)
-        return nullptr;
+        return {};
     return fBrain->RunBehaviorName();
 }
 
