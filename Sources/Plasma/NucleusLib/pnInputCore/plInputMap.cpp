@@ -503,12 +503,12 @@ const char* plKeyMap::ConvertVKeyToChar( uint32_t vk )
         case plLocalization::kGerman:
             keyConvert = &fKeyConversionGerman[0];
             break;
-//      case plLocalization::kSpanish:
-//          keyConvert = &fKeyConversionSpanish[0];
-//          break;
-//      case plLocalization::kItalian:
-//          keyConvert = &fKeyConversionItalian[0];
-//          break;
+        case plLocalization::kSpanish:
+            keyConvert = &fKeyConversionSpanish[0];
+            break;
+        case plLocalization::kItalian:
+            keyConvert = &fKeyConversionItalian[0];
+            break;
 
         // default is English
         default:
@@ -534,12 +534,12 @@ plKeyDef plKeyMap::ConvertCharToVKey( const char *c )
         case plLocalization::kGerman:
             keyConvert = &fKeyConversionGerman[0];
             break;
-//      case plLocalization::kSpanish:
-//          keyConvert = &fKeyConversionSpanish[0];
-//          break;
-//      case plLocalization::kItalian:
-//          keyConvert = &fKeyConversionItalian[0];
-//          break;
+        case plLocalization::kSpanish:
+            keyConvert = &fKeyConversionSpanish[0];
+            break;
+        case plLocalization::kItalian:
+            keyConvert = &fKeyConversionItalian[0];
+            break;
 
         // default is English
         default:
@@ -582,7 +582,6 @@ plKeyDef plKeyMap::ConvertCharToVKey( const char *c )
                 return (plKeyDef)(fKeyConversionGerman[i].fVKey);
         }
     }
-    /*
     if ( plLocalization::GetLanguage() != plLocalization::kSpanish)
     {
         for (int i = 0; fKeyConversionSpanish[i].fVKey != 0xffffffff; i++)
@@ -599,7 +598,6 @@ plKeyDef plKeyMap::ConvertCharToVKey( const char *c )
                 return (plKeyDef)(fKeyConversionItalian[i].fVKey);
         }
     }
-    */
 
     // finally, just give up... unmapped!
     return KEY_UNMAPPED;
@@ -615,13 +613,13 @@ const char* plKeyMap::GetStringCtrl()
         case plLocalization::kGerman:
             return "Strg+";
             break;
-/*      case plLocalization::kSpanish:
+        case plLocalization::kSpanish:
             return "Ctrl+";
             break;
         case plLocalization::kItalian:
             return "Ctrl+";
             break;
-*/
+
         // default is English
         default:
             break;
@@ -639,13 +637,13 @@ const char* plKeyMap::GetStringShift()
         case plLocalization::kGerman:
             return "Umschalt+";
             break;
-/*      case plLocalization::kSpanish:
+        case plLocalization::kSpanish:
             return "Mayúsculas+";
             break;
         case plLocalization::kItalian:
             return "Shift+";
             break;
-*/
+
         // default is English
         default:
             break;
@@ -663,13 +661,13 @@ const char* plKeyMap::GetStringUnmapped()
         case plLocalization::kGerman:
             return "(NichtZugewiesen)";
             break;
-/*      case plLocalization::kSpanish:
+        case plLocalization::kSpanish:
             return "(SinMapear)";
             break;
         case plLocalization::kItalian:
             return "(NonAssegnato)";
             break;
-*/
+
         // default is English
         default:
             break;
@@ -902,9 +900,9 @@ Win32keyConvert  plKeyMap::fKeyConversionGerman[] =
     { 0xffffffff,   "Unused"},
 };
 
-/*
 Win32keyConvert  plKeyMap::fKeyConversionSpanish[] =
 {
+#ifdef HS_BUILD_FOR_WIN32
     { VK_F1,    "F1"}, 
     { VK_F2,    "F2"}, 
     { VK_F3,    "F3"}, 
@@ -963,12 +961,14 @@ Win32keyConvert  plKeyMap::fKeyConversionSpanish[] =
     { VK_OEM_5,     "BarraInvertida"},  
     { VK_OEM_6,     "CerrarParéntesis"},
     { VK_OEM_7,     "Comillas"},
+#endif
                 
     { 0xffffffff,   "Unused"},
 };
 
 Win32keyConvert  plKeyMap::fKeyConversionItalian[] =
 {
+#ifdef HS_BUILD_FOR_WIN32
     { VK_F1,    "F1"}, 
     { VK_F2,    "F2"}, 
     { VK_F3,    "F3"}, 
@@ -1027,10 +1027,10 @@ Win32keyConvert  plKeyMap::fKeyConversionItalian[] =
     { VK_OEM_5,     "\\"},  
     { VK_OEM_6,     "ì"},
     { VK_OEM_7,     "à"},
+#endif
                 
     { 0xffffffff,   "Unused"},
 };
-*/
 
 
 

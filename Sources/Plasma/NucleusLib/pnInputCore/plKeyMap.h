@@ -229,8 +229,8 @@ class plKeyMap : public plInputMap
         static Win32keyConvert  fKeyConversionEnglish[];
         static Win32keyConvert  fKeyConversionFrench[];
         static Win32keyConvert  fKeyConversionGerman[];
-        //static Win32keyConvert  fKeyConversionSpanish[];
-        //static Win32keyConvert  fKeyConversionItalian[];
+        static Win32keyConvert  fKeyConversionSpanish[];
+        static Win32keyConvert  fKeyConversionItalian[];
 
 };
 

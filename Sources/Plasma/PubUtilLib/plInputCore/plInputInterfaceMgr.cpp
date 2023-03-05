@@ -807,12 +807,12 @@ void    plInputInterfaceMgr::WriteKeyMap()
             case plLocalization::kGerman:
                 keyConvert = &plKeyMap::fKeyConversionGerman[0];
                 break;
-            //case plLocalization::kSpanish:
-            //  keyConvert = &plKeyMap::fKeyConversionSpanish[0];
-            //  break;
-            //case plLocalization::kItalian:
-            //  keyConvert = &plKeyMap::fKeyConversionItalian[0];
-            //  break;
+            case plLocalization::kSpanish:
+                keyConvert = &plKeyMap::fKeyConversionSpanish[0];
+                break;
+            case plLocalization::kItalian:
+                keyConvert = &plKeyMap::fKeyConversionItalian[0];
+                break;
             // default is English
             default:
                 break;
