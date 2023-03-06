@@ -150,12 +150,14 @@ PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, addBehavior, args, keywords)
 {
     const char* kwlist[] = {"animationName", "behaviorName", "loop", "randomStartPos",
                             "fadeInLen", "fadeOutLen", nullptr};
-    char* animName;
-    char* behName;
+    ST::string animName;
+    ST::string behName;
     char loop = 1, randomStartPos = 1;
     float fadeInLen = 2.f, fadeOutLen = 2.f;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "ss|bbff", const_cast<char **>(kwlist),
-                                     &animName, &behName, &loop, &randomStartPos,
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O&O&|bbff", const_cast<char **>(kwlist),
+                                     PyUnicode_STStringConverter, &animName,
+                                     PyUnicode_STStringConverter, &behName,
+                                     &loop, &randomStartPos,
                                      &fadeInLen, &fadeOutLen))
     {
         PyErr_SetString(PyExc_TypeError, "addBehavior expects two strings, and optionally two booleans and two floats");
@@ -169,10 +171,10 @@ PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, addBehavior, args, keywords)
 PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, startBehavior, args, keywords)
 {
     const char* kwlist[] = {"behaviorName", "fade", nullptr};
-    char* behName;
+    ST::string behName;
     char fade = 1;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "s|b", const_cast<char**>(kwlist),
-                                     &behName, &fade)) {
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O&|b", const_cast<char**>(kwlist),
+                                     PyUnicode_STStringConverter, &behName, &fade)) {
         PyErr_SetString(PyExc_TypeError, "startBehavior expects a string, and an optional boolean");
         PYTHON_RETURN_NONE;
     }
@@ -183,8 +185,8 @@ PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, startBehavior, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptCritterBrain, runningBehavior, args)
 {
-    char* behName = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &behName))
+    ST::string behName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &behName))
     {
         PyErr_SetString(PyExc_TypeError, "runningBehavior expects a string");
         PYTHON_RETURN_ERROR;
@@ -200,8 +202,7 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, behaviorName, args)
         PyErr_SetString(PyExc_TypeError, "behaviorName expects an integer");
         PYTHON_RETURN_ERROR;
     }
-    std::string beh = self->fThis->BehaviorName(behavior);
-    return PyUnicode_FromStdString(beh);
+    return PyUnicode_FromSTString(self->fThis->BehaviorName(behavior));
 }
 
 PYTHON_METHOD_DEFINITION(ptCritterBrain, animationName, args)
@@ -212,7 +213,7 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, animationName, args)
         PyErr_SetString(PyExc_TypeError, "animationName expects an integer");
         PYTHON_RETURN_ERROR;
     }
-    return PyUnicode_FromStdString(self->fThis->AnimationName(behavior));
+    return PyUnicode_FromSTString(self->fThis->AnimationName(behavior));
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptCritterBrain, curBehavior)
@@ -227,12 +228,12 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptCritterBrain, nextBehavior)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptCritterBrain, idleBehaviorName)
 {
-    return PyUnicode_FromStdString(self->fThis->IdleBehaviorName());
+    return PyUnicode_FromSTString(self->fThis->IdleBehaviorName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptCritterBrain, runBehaviorName)
 {
-    return PyUnicode_FromStdString(self->fThis->RunBehaviorName());
+    return PyUnicode_FromSTString(self->fThis->RunBehaviorName());
 }
 
 PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, goToGoal, args, keywords)

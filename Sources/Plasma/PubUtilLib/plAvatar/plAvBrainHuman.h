@@ -59,6 +59,7 @@ class plControlEventMsg;
 class plMatrixChannel;
 class plMatrixMultiplyApplicator;
 class plWalkingStrategy;
+namespace ST { class string; }
 
 class plAvBrainHuman : public plArmatureBrain
 {
@@ -396,11 +397,11 @@ public:
     bool PreCondition(double time, float elapsed) override;
 };
 
-bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const char *idleAnim,
-                          const char *exitAnim, bool netPropagate, bool autoExit, plAGAnim::BodyUsage bodyUsage,
+bool PushSimpleMultiStage(plArmatureMod *avatar, const ST::string& enterAnim, const ST::string& idleAnim,
+                          const ST::string& exitAnim, bool netPropagate, bool autoExit, plAGAnim::BodyUsage bodyUsage,
                           plAvBrainGeneric::BrainType type = plAvBrainGeneric::kGeneric);
 bool PushRepeatEmote(plArmatureMod* avatar, const ST::string& anim);
-bool AvatarEmote(plArmatureMod *avatar, const char *emoteName);
+bool AvatarEmote(plArmatureMod *avatar, const ST::string& emoteName);
 
 
 #endif // PLAVBRAINHUMAN_INC

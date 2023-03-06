@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include <string_theory/string>
 #include "plgDispatch.h"
 #include "pyKey.h"
 #include "plPhysical.h"
@@ -85,7 +86,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // LOCAL FORWARD DECLs
 //
 ///////////////////////////////////////////////////////////////////////////
-bool IEnterGenericMode(const char *enterAnim, const char *idleAnim, const char *exitAnim, bool autoExit, plAGAnim::BodyUsage bodyUsage,
+bool IEnterGenericMode(const ST::string& enterAnim, const ST::string& idleAnim, const ST::string& exitAnim, bool autoExit, plAGAnim::BodyUsage bodyUsage,
                        plAvBrainGeneric::BrainType = plAvBrainGeneric::kGeneric);
 bool IExitTopmostGenericMode();
 
@@ -1631,7 +1632,7 @@ bool cyAvatar::LoadClothingFromFile(plFileName filename)
 //    Male
 //    Female
 //
-void cyAvatar::ChangeAvatar(const char* genderName)
+void cyAvatar::ChangeAvatar(const ST::string& genderName)
 {
 #ifndef PLASMA_EXTERNAL_RELEASE
     plClothingMgr::ChangeAvatar(genderName);
@@ -1651,7 +1652,7 @@ void cyAvatar::ChangeAvatar(const char* genderName)
 //
 //  PURPOSE    : Change the local player's avatar name
 //
-void cyAvatar::ChangePlayerName(const char* playerName)
+void cyAvatar::ChangePlayerName(const ST::string& playerName)
 {
     hsRef<RelVaultNode> rvnPlr = VaultGetPlayerNode();
     if (rvnPlr) {
@@ -1667,7 +1668,7 @@ void cyAvatar::ChangePlayerName(const char* playerName)
 //
 //  PURPOSE    : plays an emote on a the local avatar (net propagated)
 //
-bool cyAvatar::Emote(const char* emoteName)
+bool cyAvatar::Emote(const ST::string& emoteName)
 {
     // can we find an emote of this name?
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
@@ -1687,7 +1688,7 @@ bool cyAvatar::Emote(const char* emoteName)
 //
 bool cyAvatar::Sit()
 {
-    return IEnterGenericMode("SitDownGround", "SitIdleGround", "SitStandGround", true, plAGAnim::kBodyLower, plAvBrainGeneric::kSitOnGround);
+    return IEnterGenericMode(ST_LITERAL("SitDownGround"), ST_LITERAL("SitIdleGround"), ST_LITERAL("SitStandGround"), true, plAGAnim::kBodyLower, plAvBrainGeneric::kSitOnGround);
 }
 
 
@@ -1700,7 +1701,7 @@ bool cyAvatar::Sit()
 //
 bool cyAvatar::EnterKiMode()
 {
-    return IEnterGenericMode("KiBegin", "KiUse", "KiEnd", false, plAGAnim::kBodyFull);
+    return IEnterGenericMode(ST_LITERAL("KiBegin"), ST_LITERAL("KiUse"), ST_LITERAL("KiEnd"), false, plAGAnim::kBodyFull);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1725,7 +1726,7 @@ bool cyAvatar::ExitKiMode()
 //
 bool cyAvatar::EnterAFKMode()
 {
-    return IEnterGenericMode("AFKEnter", "AFKIdle", "AFKExit", true, plAGAnim::kBodyFull, plAvBrainGeneric::kAFK);
+    return IEnterGenericMode(ST_LITERAL("AFKEnter"), ST_LITERAL("AFKIdle"), ST_LITERAL("AFKExit"), true, plAGAnim::kBodyFull, plAvBrainGeneric::kAFK);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1750,7 +1751,7 @@ bool cyAvatar::ExitAFKMode()
 //
 bool cyAvatar::EnterPBMode()
 {
-    return IEnterGenericMode("PersonalBookEnter", "PersonalBookIdle", "PersonalBookExit", false, plAGAnim::kBodyFull);
+    return IEnterGenericMode(ST_LITERAL("PersonalBookEnter"), ST_LITERAL("PersonalBookIdle"), ST_LITERAL("PersonalBookExit"), false, plAGAnim::kBodyFull);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1955,7 +1956,7 @@ void cyAvatar::UnRegisterForBehaviorNotify(pyKey &selfKey)
 //  PURPOSE    : Three-stage multistage animations (sit down, sit, get up) are really common.
 //             : This does the basic setup.
 //
-bool IEnterGenericMode(const char *enterAnim, const char *idleAnim, const char *exitAnim, bool autoExit, plAGAnim::BodyUsage bodyUsage, 
+bool IEnterGenericMode(const ST::string& enterAnim, const ST::string& idleAnim, const ST::string& exitAnim, bool autoExit, plAGAnim::BodyUsage bodyUsage, 
                        plAvBrainGeneric::BrainType type /* = kGeneric */)
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();

@@ -76,9 +76,9 @@ PYTHON_METHOD_DEFINITION(ptAvatar, oneShot, args)
     PyObject* keyObj = nullptr;
     float duration;
     char usePhysics;
-    char* animName = nullptr;
+    ST::string animName;
     char drivable, reversable;
-    if (!PyArg_ParseTuple(args, "Ofbsbb", &keyObj, &duration, &usePhysics, &animName, &drivable, &reversable))
+    if (!PyArg_ParseTuple(args, "OfbO&bb", &keyObj, &duration, &usePhysics, PyUnicode_STStringConverter, &animName, &drivable, &reversable))
     {
         PyErr_SetString(PyExc_TypeError, "oneShot expects a ptKey, float, boolean, string, and two booleans");
         PYTHON_RETURN_ERROR;
@@ -90,7 +90,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, oneShot, args)
     }
 
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    self->fThis->OneShot(*key, duration, usePhysics != 0, ST::string::from_utf8(animName), drivable != 0, reversable != 0);
+    self->fThis->OneShot(*key, duration, usePhysics != 0, animName, drivable != 0, reversable != 0);
     PYTHON_RETURN_NONE;
 }
 
@@ -275,51 +275,48 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAvatar, getAvatarClothingList)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, getMatchingClothingItem, args)
 {
-    char* clothingName = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &clothingName))
+    ST::string clothingName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &clothingName))
     {
         PyErr_SetString(PyExc_TypeError, "getMatchingClothingItem expects a string");
         PYTHON_RETURN_ERROR;
     }
 
-    std::string clothingNameStr = clothingName; // convert to string (for safety)
-    return self->fThis->GetMatchingClothingItem(clothingNameStr.c_str());
+    return self->fThis->GetMatchingClothingItem(clothingName);
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, wearClothingItem, args)
 {
-    char* clothingName = nullptr;
+    ST::string clothingName;
     char update = 1;
-    if (!PyArg_ParseTuple(args, "s|b", &clothingName, &update))
+    if (!PyArg_ParseTuple(args, "O&|b", PyUnicode_STStringConverter, &clothingName, &update))
     {
         PyErr_SetString(PyExc_TypeError, "wearClothingItem expects a string and an optional boolean");
         PYTHON_RETURN_ERROR;
     }
 
-    std::string clothingNameStr = clothingName; // convert to string (for safety)
-    PYTHON_RETURN_BOOL(self->fThis->WearClothingItemU(clothingNameStr.c_str(), update != 0));
+    PYTHON_RETURN_BOOL(self->fThis->WearClothingItemU(clothingName, update != 0));
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, removeClothingItem, args)
 {
-    char* clothingName = nullptr;
+    ST::string clothingName;
     char update = 1;
-    if (!PyArg_ParseTuple(args, "s|b", &clothingName, &update))
+    if (!PyArg_ParseTuple(args, "O&|b", PyUnicode_STStringConverter, &clothingName, &update))
     {
         PyErr_SetString(PyExc_TypeError, "removeClothingItem expects a string and an optional boolean");
         PYTHON_RETURN_ERROR;
     }
 
-    std::string clothingNameStr = clothingName; // convert to string (for safety)
-    PYTHON_RETURN_BOOL(self->fThis->RemoveClothingItemU(clothingNameStr.c_str(), update != 0));
+    PYTHON_RETURN_BOOL(self->fThis->RemoveClothingItemU(clothingName, update != 0));
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, tintClothingItem, args)
 {
-    char* clothingName = nullptr;
+    ST::string clothingName;
     PyObject* tintObj = nullptr;
     char update = 1;
-    if (!PyArg_ParseTuple(args, "sO|b", &clothingName, &tintObj, &update))
+    if (!PyArg_ParseTuple(args, "O&O|b", PyUnicode_STStringConverter, &clothingName, &tintObj, &update))
     {
         PyErr_SetString(PyExc_TypeError, "tintClothingItem expects a string, a ptColor, and an optional boolean");
         PYTHON_RETURN_ERROR;
@@ -330,18 +327,17 @@ PYTHON_METHOD_DEFINITION(ptAvatar, tintClothingItem, args)
         PYTHON_RETURN_ERROR;
     }
 
-    std::string clothingNameStr = clothingName; // convert to string (for safety)
     pyColor* tint = pyColor::ConvertFrom(tintObj);
-    PYTHON_RETURN_BOOL(self->fThis->TintClothingItemU(clothingNameStr.c_str(), *tint, update != 0));
+    PYTHON_RETURN_BOOL(self->fThis->TintClothingItemU(clothingName, *tint, update != 0));
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, tintClothingItemLayer, args)
 {
-    char* clothingName = nullptr;
+    ST::string clothingName;
     PyObject* tintObj = nullptr;
     unsigned char layer;
     char update = 1;
-    if (!PyArg_ParseTuple(args, "sOB|b", &clothingName, &tintObj, &layer, &update))
+    if (!PyArg_ParseTuple(args, "O&OB|b", PyUnicode_STStringConverter, &clothingName, &tintObj, &layer, &update))
     {
         PyErr_SetString(PyExc_TypeError, "tintClothingItemLayer expects a string, a ptColor, an unsigned 8-bit int, and an optional boolean");
         PYTHON_RETURN_ERROR;
@@ -352,23 +348,21 @@ PYTHON_METHOD_DEFINITION(ptAvatar, tintClothingItemLayer, args)
         PYTHON_RETURN_ERROR;
     }
 
-    std::string clothingNameStr = clothingName; // convert to string (for safety)
     pyColor* tint = pyColor::ConvertFrom(tintObj);
-    PYTHON_RETURN_BOOL(self->fThis->TintClothingItemLayerU(clothingNameStr.c_str(), *tint, layer, update != 0));
+    PYTHON_RETURN_BOOL(self->fThis->TintClothingItemLayerU(clothingName, *tint, layer, update != 0));
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, getTintClothingItem, args)
 {
-    char* clothingName = nullptr;
+    ST::string clothingName;
     unsigned char layer = 1;
-    if (!PyArg_ParseTuple(args, "s|B", &clothingName, &layer))
+    if (!PyArg_ParseTuple(args, "O&|B", PyUnicode_STStringConverter, &clothingName, &layer))
     {
         PyErr_SetString(PyExc_TypeError, "getTintClothingItem expects a string and an optional unsigned 8-bit int");
         PYTHON_RETURN_NONE;
     }
     
-    std::string clothingNameStr = clothingName; // convert to string (for safety)
-    return self->fThis->GetTintClothingItemL(clothingNameStr.c_str(), layer);
+    return self->fThis->GetTintClothingItemL(clothingName, layer);
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, tintSkin, args)
@@ -419,32 +413,30 @@ PYTHON_BASIC_METHOD_DEFINITION(ptAvatar, exitSubWorld, ExitSubWorld)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, setMorph, args)
 {
-    char* clothingName = nullptr;
+    ST::string clothingName;
     unsigned char layer;
     float value;
-    if (!PyArg_ParseTuple(args, "sBf", &clothingName, &layer, &value))
+    if (!PyArg_ParseTuple(args, "O&Bf", PyUnicode_STStringConverter, &clothingName, &layer, &value))
     {
         PyErr_SetString(PyExc_TypeError, "setMorph expects a string, unsigned 8-bit int, and a float");
         PYTHON_RETURN_ERROR;
     }
 
-    std::string clothingNameStr = clothingName; // convert to string (for safety)
-    self->fThis->SetMorph(clothingNameStr.c_str(), layer, value);
+    self->fThis->SetMorph(clothingName, layer, value);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, getMorph, args)
 {
-    char* clothingName = nullptr;
+    ST::string clothingName;
     unsigned char layer;
-    if (!PyArg_ParseTuple(args, "sB", &clothingName, &layer))
+    if (!PyArg_ParseTuple(args, "O&B", PyUnicode_STStringConverter, &clothingName, &layer))
     {
         PyErr_SetString(PyExc_TypeError, "getMorph expects a string, and an unsignd 8-bit int");
         PYTHON_RETURN_ERROR;
     }
 
-    std::string clothingNameStr = clothingName; // convert to string (for safety)
-    return PyFloat_FromDouble(self->fThis->GetMorph(clothingNameStr.c_str(), layer));
+    return PyFloat_FromDouble(self->fThis->GetMorph(clothingName, layer));
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, setSkinBlend, args)
@@ -493,15 +485,14 @@ PYTHON_METHOD_DEFINITION(ptAvatar, getUniqueMeshList, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, getAllWithSameMesh, args)
 {
-    char* clothingName = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &clothingName))
+    ST::string clothingName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &clothingName))
     {
         PyErr_SetString(PyExc_TypeError, "getAllWithSameMesh expects a string");
         PYTHON_RETURN_ERROR;
     }
 
-    std::string clothingNameStr = clothingName; // convert to string (for safety)
-    std::vector<PyObject*> clothingList = self->fThis->GetAllWithSameMesh(clothingNameStr.c_str());
+    std::vector<PyObject*> clothingList = self->fThis->GetAllWithSameMesh(clothingName);
     PyObject* retVal = PyList_New(clothingList.size());
     for (int i = 0; i < clothingList.size(); i++)
         PyList_SetItem(retVal, i, clothingList[i]); // steals the ref, so no need to decref
@@ -519,10 +510,10 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAvatar, getWardrobeClothingList)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, addWardrobeClothingItem, args)
 {
-    char* clothingName = nullptr;
+    ST::string clothingName;
     PyObject* tint1Obj = nullptr;
     PyObject* tint2Obj = nullptr;
-    if (!PyArg_ParseTuple(args, "sOO", &clothingName, &tint1Obj, &tint2Obj))
+    if (!PyArg_ParseTuple(args, "O&OO", PyUnicode_STStringConverter, &clothingName, &tint1Obj, &tint2Obj))
     {
         PyErr_SetString(PyExc_TypeError, "addWardrobeClothingItem expects a string and two ptColor objects");
         PYTHON_RETURN_ERROR;
@@ -533,10 +524,9 @@ PYTHON_METHOD_DEFINITION(ptAvatar, addWardrobeClothingItem, args)
         PYTHON_RETURN_ERROR;
     }
 
-    std::string clothingNameStr = clothingName; // convert to string (for safety)
     pyColor* tint1 = pyColor::ConvertFrom(tint1Obj);
     pyColor* tint2 = pyColor::ConvertFrom(tint2Obj);
-    self->fThis->AddWardrobeClothingItem(clothingNameStr.c_str(), *tint1, *tint2);
+    self->fThis->AddWardrobeClothingItem(clothingName, *tint1, *tint2);
     PYTHON_RETURN_NONE;
 }
 
@@ -604,14 +594,14 @@ PYTHON_METHOD_DEFINITION(ptAvatar, unRegisterForBehaviorNotify, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, playSimpleAnimation, args)
 {
-    char* animName = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &animName))
+    ST::string animName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &animName))
     {
         PyErr_SetString(PyExc_TypeError, "playSimpleAnimation expects a string object");
         PYTHON_RETURN_ERROR;
     }
 
-    self->fThis->PlaySimpleAnimation(ST::string::from_utf8(animName));
+    self->fThis->PlaySimpleAnimation(animName);
     PYTHON_RETURN_NONE;
 }
 
@@ -736,43 +726,40 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetBehaviorLoopCount, args, "Params: behaviorK
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtChangeAvatar, args, "Params: gender\nChange the local avatar's gender (or clothing type)")
 {
-    char* gender = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &gender))
+    ST::string gender;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &gender))
     {
         PyErr_SetString(PyExc_TypeError, "PtChangeAvatar expects a string");
         PYTHON_RETURN_ERROR;
     }
 
-    std::string genderStr = gender; // convert to string (for safety)
-    cyAvatar::ChangeAvatar(genderStr.c_str());
+    cyAvatar::ChangeAvatar(gender);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtChangePlayerName, args, "Params: name\nChange the local avatar's name")
 {
-    char* name = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "PtChangePlayerName expects a string");
         PYTHON_RETURN_ERROR;
     }
 
-    std::string nameStr = name; // convert to string (for safety)
-    cyAvatar::ChangePlayerName(nameStr.c_str());
+    cyAvatar::ChangePlayerName(name);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtEmoteAvatar, args, "Params: emote\nPlay an emote on the local avatar (netpropagated)")
 {
-    char* emote = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &emote))
+    ST::string emote;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &emote))
     {
         PyErr_SetString(PyExc_TypeError, "PtEmoteAvatar expects a string");
         PYTHON_RETURN_ERROR;
     }
 
-    std::string emoteStr = emote; // convert to string (for safety)
-    PYTHON_RETURN_BOOL(cyAvatar::Emote(emoteStr.c_str()));
+    PYTHON_RETURN_BOOL(cyAvatar::Emote(emote));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtAvatarSitOnGround, "Tells the local avatar to sit on ground and enter sit idle loop (netpropagated)")

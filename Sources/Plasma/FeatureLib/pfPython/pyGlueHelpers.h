@@ -55,7 +55,6 @@ int PyUnicode_PlFileNameDecoder(PyObject* obj, void* str);
 
 PyObject* PyUnicode_FromSTString(const ST::string& str);
 #define PyUnicode_FromSTString(x) PyUnicode_FromStringAndSize((x).c_str(), (x).size())
-#define PyUnicode_FromStdString(x) PyUnicode_FromStringAndSize((x).c_str(), (x).size())
 
 // A set of macros to take at least some of the tediousness out of creating straight python glue code
 

@@ -54,14 +54,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGlueHelpers.h"
 
-#include <string>
-
 class pySceneObject;
 class pyColor;
 class plMipmap;
 class plClothingItem;
 class plArmatureMod;
 class plMorphSequence;
+namespace ST { class string; }
 
 class cyAvatar
 {
@@ -72,9 +71,6 @@ protected:
 
     virtual const plArmatureMod* IFindArmatureMod(const plKey& avObj);
     virtual plKey IFindArmatureModKey(const plKey& avObj);
-    
-// XX   static bool IEnterGenericMode(const char *enterAnim, const char *idleAnim, const char *exitAnim, bool autoExit);
-// XX   static bool IExitTopmostGenericMode();
 
 protected:
     cyAvatar() : fNetForce() { }
@@ -427,7 +423,7 @@ public:
     //    Male
     //    Female
     //
-    static void ChangeAvatar(const char* genderName);
+    static void ChangeAvatar(const ST::string& genderName);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -436,7 +432,7 @@ public:
     //
     //  PURPOSE    : Change the local player's avatar name
     //
-    static void ChangePlayerName(const char* playerName);
+    static void ChangePlayerName(const ST::string& playerName);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -445,7 +441,7 @@ public:
     //
     //  PURPOSE    : plays an emote on the local avatar (net propagated)
     //
-    static bool Emote(const char* emoteName);
+    static bool Emote(const ST::string& emoteName);
 
     /////////////////////////////////////////////////////////////////////////////
     //

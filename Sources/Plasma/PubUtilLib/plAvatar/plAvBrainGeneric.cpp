@@ -213,13 +213,12 @@ bool plAvBrainGeneric::IsRunningTask() const
     return false;
 }
 
-bool plAvBrainGeneric::MatchAnimNames(const char *names[], int count)
+bool plAvBrainGeneric::MatchAnimNames(const std::vector<ST::string>& names)
 {
-    if (count != GetStageCount())
+    if (names.size() != GetStageCount())
         return false;
 
-    int i;
-    for (i = 0; i < count; i++)
+    for (size_t i = 0; i < names.size(); i++)
     {
         if (GetStage(i)->GetAnimName() != names[i])
             return false; // different names.

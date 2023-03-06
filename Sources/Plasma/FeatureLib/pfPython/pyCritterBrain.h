@@ -43,10 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pyCritterBrain_h_
 
 #include "pyGlueHelpers.h"
-#include <string>
 
 class plAvBrainCritter;
 struct hsPoint3;
+namespace ST { class string; }
 
 // simply here so we can pass our message types on to python
 class pyAIMsg
@@ -81,18 +81,18 @@ public:
 
     PyObject* GetSceneObject();
 
-    void AddBehavior(const std::string& animationName, const std::string& behaviorName, bool loop = true, bool randomStartPos = true,
+    void AddBehavior(const ST::string& animationName, const ST::string& behaviorName, bool loop = true, bool randomStartPos = true,
         float fadeInLen = 2.f, float fadeOutLen = 2.f);
-    void StartBehavior(const std::string& behaviorName, bool fade = true);
-    bool RunningBehavior(const std::string& behaviorName) const;
+    void StartBehavior(const ST::string& behaviorName, bool fade = true);
+    bool RunningBehavior(const ST::string& behaviorName) const;
 
-    std::string BehaviorName(int behavior) const;
+    ST::string BehaviorName(int behavior) const;
     ST::string AnimationName(int behavior) const;
     int CurBehavior() const;
     int NextBehavior() const;
 
-    std::string IdleBehaviorName() const;
-    std::string RunBehaviorName() const;
+    ST::string IdleBehaviorName() const;
+    ST::string RunBehaviorName() const;
 
     void GoToGoal(hsPoint3 newGoal, bool avoidingAvatars = false);
     PyObject* CurrentGoal() const; // returns ptPoint3
