@@ -51,13 +51,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #import <Accelerate/Accelerate.h>
 #endif
 
+#ifdef HS_BUILD_FOR_WIN32
+#include   <DirectXMath.h>
+#endif
+
 static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& rhs)
 {
     hsMatrix44 ret;
     ret.NotIdentity();
-    
-#ifdef HS_BUILD_FOR_APPLE
+
+#if defined(HS_BUILD_FOR_APPLE)
     vDSP_mmul((const float*)lhs.fMap, 1, (const float*)rhs.fMap, 1, (float*)&(ret.fMap), 1, 3, 4, 4);
+    ret.fMap[3][0] = ret.fMap[3][1] = ret.fMap[3][2] = 0.f;
+    ret.fMap[3][3] = 1.f;
+#elif defined(HS_BUILD_FOR_WIN32)
+    // Trying to interpret an hsMatrix44's fMap as an XMFLOAT3X4 doesn't work, sadly.
+    // This is still a win for performance over the auto-vectorized FPU version below,
+    // especially once the manual initialization is removed.
+    DirectX::XMMATRIX m1 = DirectX::XMLoadFloat4x4A((DirectX::XMFLOAT4X4A*)lhs.fMap);
+    DirectX::XMMATRIX m2 = DirectX::XMLoadFloat4x4A((DirectX::XMFLOAT4X4A*)rhs.fMap);
+    DirectX::XMMATRIX result = m1 * m2;
+    DirectX::XMStoreFloat4x4A((DirectX::XMFLOAT4X4A*)ret.fMap, result);
 #else
     ret.fMap[0][0] = lhs.fMap[0][0] * rhs.fMap[0][0]
         + lhs.fMap[0][1] * rhs.fMap[1][0]
@@ -109,9 +123,10 @@ static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& r
         + lhs.fMap[2][1] * rhs.fMap[1][3]
         + lhs.fMap[2][2] * rhs.fMap[2][3]
         + lhs.fMap[2][3];
-#endif
-    ret.fMap[3][0] = ret.fMap[3][1] = ret.fMap[3][2] = 0;
+
+    ret.fMap[3][0] = ret.fMap[3][1] = ret.fMap[3][2] = 0.f;
     ret.fMap[3][3] = 1.f;
+#endif
 
     return ret;
 }
