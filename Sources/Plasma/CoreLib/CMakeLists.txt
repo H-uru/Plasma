@@ -87,6 +87,7 @@ target_link_libraries(
         Threads::Threads
         $<$<AND:$<CONFIG:Debug>,$<BOOL:${USE_VLD}>>:VLD::VLD>
         "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
+        "$<$<BOOL:${USE_DIRECTXMATH}>:Microsoft::DirectXMath>"
     PRIVATE
         "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
 )

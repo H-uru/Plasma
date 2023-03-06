@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #import <Accelerate/Accelerate.h>
 #endif
 
-#ifdef HS_BUILD_FOR_WIN32
+#ifdef USE_DIRECTXMATH
 #   include <DirectXMath.h>
 #endif
 
@@ -125,7 +125,7 @@ static inline hsMatrix44 IMatrixMultAccelerate(const hsMatrix44 &a, const hsMatr
 }
 #endif
 
-#ifdef HS_BUILD_FOR_WIN32
+#ifdef USE_DIRECTXMATH
 static inline hsMatrix44 IMatrixMultXM(const hsMatrix44& a, const hsMatrix44& b)
 {
     hsMatrix44 c;
@@ -190,7 +190,7 @@ hsMatrix44 hsMatrix44::operator*(const hsMatrix44& other) const
 {
 #if defined(HS_BUILD_FOR_APPLE)
     return IMatrixMultAccelerate(*this, other);
-#elif defined(HS_BUILD_FOR_WIN32)
+#elif defined(USE_DIRECTXMATH)
     return IMatrixMultXM(*this, other);
 #else
     return IMatrixMultFPU(*this, other);

@@ -51,8 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #import <Accelerate/Accelerate.h>
 #endif
 
-#ifdef HS_BUILD_FOR_WIN32
-#include   <DirectXMath.h>
+#ifdef USE_DIRECTXMATH
+#   include <DirectXMath.h>
 #endif
 
 static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& rhs)
@@ -64,7 +64,7 @@ static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& r
     vDSP_mmul((const float*)lhs.fMap, 1, (const float*)rhs.fMap, 1, (float*)&(ret.fMap), 1, 3, 4, 4);
     ret.fMap[3][0] = ret.fMap[3][1] = ret.fMap[3][2] = 0.f;
     ret.fMap[3][3] = 1.f;
-#elif defined(HS_BUILD_FOR_WIN32)
+#elif defined(USE_DIRECTXMATH)
     // Trying to interpret an hsMatrix44's fMap as an XMFLOAT3X4 doesn't work, sadly.
     // This is still a win for performance over the auto-vectorized FPU version below,
     // especially once the manual initialization is removed.

@@ -5,6 +5,10 @@
     "dependencies": [
       "asio",
       "curl",
+      {
+        "name": "directxmath",
+        "platform": "!osx"
+      },
       "expat",
       "freetype",
       "libepoxy",

@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #cmakedefine HAVE_SSE1
 
 /* External library usage */
+#cmakedefine USE_DIRECTXMATH
 #cmakedefine USE_EGL
 #cmakedefine USE_SPEEX
 #cmakedefine USE_OPUS
