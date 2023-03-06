@@ -67,21 +67,14 @@ PYTHON_INIT_DEFINITION(ptVaultImageNode, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptVaultImageNode, setTitle, args)
 {
-    PyObject* textObj;
-    if (!PyArg_ParseTuple(args, "O", &textObj))
+    ST::string title;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &title))
     {
         PyErr_SetString(PyExc_TypeError, "setTitle expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyUnicode_Check(textObj))
-    {
-        wchar_t* title = PyUnicode_AsWideCharString(textObj, nullptr);
-        self->fThis->Image_SetTitle(title);
-        PyMem_Free(title);
-        PYTHON_RETURN_NONE;
-    }
-    PyErr_SetString(PyExc_TypeError, "setTitle expects a unicode string");
-    PYTHON_RETURN_ERROR;
+    self->fThis->Image_SetTitle(title);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultImageNode, getTitle)

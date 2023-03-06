@@ -77,11 +77,11 @@ int pyVaultFolderNode::Folder_GetType()
     return folder.GetFolderType();
 }
 
-void pyVaultFolderNode::Folder_SetName(const wchar_t* name)
+void pyVaultFolderNode::Folder_SetName(const ST::string& name)
 {
     if (fNode) {
         VaultFolderNode folder(fNode);
-        folder.SetFolderName(ST::string::from_wchar(name));
+        folder.SetFolderName(name);
     }
 }
 

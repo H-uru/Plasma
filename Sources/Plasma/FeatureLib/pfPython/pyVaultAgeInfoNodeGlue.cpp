@@ -101,8 +101,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeFilename)
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeFilename, args)
 {
-    char* filename;
-    if (!PyArg_ParseTuple(args, "s", &filename))
+    ST::string filename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &filename))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeFilename expects a string");
         PYTHON_RETURN_ERROR;
@@ -118,8 +118,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeInstanceName)
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeInstanceName, args)
 {
-    char* instanceName;
-    if (!PyArg_ParseTuple(args, "s", &instanceName))
+    ST::string instanceName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &instanceName))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeInstanceName expects a string");
         PYTHON_RETURN_ERROR;
@@ -135,8 +135,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeUserDefinedName)
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeUserDefinedName, args)
 {
-    char* userDefName;
-    if (!PyArg_ParseTuple(args, "s", &userDefName))
+    ST::string userDefName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &userDefName))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeUserDefinedName expects a string");
         PYTHON_RETURN_ERROR;
@@ -152,8 +152,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeInstanceGuid)
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeInstanceGuid, args)
 {
-    char* guid;
-    if (!PyArg_ParseTuple(args, "s", &guid))
+    ST::string guid;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeInstanceGuid expects a string");
         PYTHON_RETURN_ERROR;
@@ -169,8 +169,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeDescription)
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeDescription, args)
 {
-    char* descr;
-    if (!PyArg_ParseTuple(args, "s", &descr))
+    ST::string descr;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &descr))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeDescription expects a string");
         PYTHON_RETURN_ERROR;

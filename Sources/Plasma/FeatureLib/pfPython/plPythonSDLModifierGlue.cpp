@@ -58,10 +58,10 @@ PYTHON_INIT_DEFINITION(ptSDL, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptSDL, setIndex, args)
 {
-    char* key;
+    ST::string key;
     int idx;
     PyObject* value = nullptr;
-    if (!PyArg_ParseTuple(args, "siO", &key, &idx, &value))
+    if (!PyArg_ParseTuple(args, "O&iO", PyUnicode_STStringConverter, &key, &idx, &value))
     {
         PyErr_SetString(PyExc_TypeError, "setIndex expects a string, int, and an object");
         PYTHON_RETURN_ERROR;

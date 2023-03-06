@@ -66,13 +66,13 @@ pyVaultTextNoteNode::pyVaultTextNoteNode()
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-void pyVaultTextNoteNode::Note_SetTitle( const wchar_t * text )
+void pyVaultTextNoteNode::Note_SetTitle(const ST::string& text)
 {
     if (!fNode)
         return;
 
     VaultTextNoteNode textNote(fNode);
-    textNote.SetNoteTitle(ST::string::from_wchar(text));
+    textNote.SetNoteTitle(text);
 }
 
 ST::string pyVaultTextNoteNode::Note_GetTitle() const
@@ -84,13 +84,13 @@ ST::string pyVaultTextNoteNode::Note_GetTitle() const
     return ST::string();
 }
 
-void pyVaultTextNoteNode::Note_SetText( const wchar_t * text )
+void pyVaultTextNoteNode::Note_SetText(const ST::string& text)
 {
     if (!fNode)
         return;
 
     VaultTextNoteNode textNote(fNode);
-    textNote.SetNoteText(ST::string::from_wchar(text));
+    textNote.SetNoteText(text);
 }
 
 ST::string pyVaultTextNoteNode::Note_GetText() const
@@ -147,7 +147,7 @@ PyObject * pyVaultTextNoteNode::GetDeviceInbox() const
         PYTHON_RETURN_NONE;
 }
 
-void pyVaultTextNoteNode::SetDeviceInbox( const char * devName, PyObject * cbObject, uint32_t cbContext )
+void pyVaultTextNoteNode::SetDeviceInbox(const ST::string& devName, PyObject * cbObject, uint32_t cbContext)
 {
     if (!fNode)
         return;

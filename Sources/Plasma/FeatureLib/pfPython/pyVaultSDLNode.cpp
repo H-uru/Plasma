@@ -96,7 +96,7 @@ PyObject * pyVaultSDLNode::GetStateDataRecord() const
     PYTHON_RETURN_NONE;
 }
 
-void pyVaultSDLNode::InitStateDataRecord( const char* agename, int flags)
+void pyVaultSDLNode::InitStateDataRecord(const ST::string& agename, int flags)
 {
     if (fNode) {
         VaultSDLNode sdl(fNode);

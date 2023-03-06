@@ -182,8 +182,8 @@ PYTHON_METHOD_DEFINITION(ptVault, getVisitAgeLink, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, findChronicleEntry, args)
 {
-    char* entryName;
-    if (!PyArg_ParseTuple(args, "s", &entryName))
+    ST::string entryName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &entryName))
     {
         PyErr_SetString(PyExc_TypeError, "findChronicleEntry expects a string");
         PYTHON_RETURN_ERROR;
@@ -193,10 +193,10 @@ PYTHON_METHOD_DEFINITION(ptVault, findChronicleEntry, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, addChronicleEntry, args)
 {
-    char* entryName;
+    ST::string entryName;
     unsigned long entryType;
-    char* entryValue;
-    if (!PyArg_ParseTuple(args, "sls", &entryName, &entryType, &entryValue))
+    ST::string entryValue;
+    if (!PyArg_ParseTuple(args, "O&lO&", PyUnicode_STStringConverter, &entryName, &entryType, PyUnicode_STStringConverter, &entryValue))
     {
         PyErr_SetString(PyExc_TypeError, "addChronicleEntry expects a string, an unsigned long, and a string");
         PYTHON_RETURN_ERROR;
@@ -230,8 +230,8 @@ PYTHON_METHOD_DEFINITION(ptVault, findNode, args)
 PYTHON_METHOD_DEFINITION(ptVault, sendToDevice, args)
 {
     PyObject* nodeObj = nullptr;
-    char* deviceName;
-    if (!PyArg_ParseTuple(args, "Os", &nodeObj, &deviceName))
+    ST::string deviceName;
+    if (!PyArg_ParseTuple(args, "OO&", &nodeObj, PyUnicode_STStringConverter, &deviceName))
     {
         PyErr_SetString(PyExc_TypeError, "sendToDevice expects a ptVaultNode and a string");
         PYTHON_RETURN_ERROR;
@@ -325,9 +325,9 @@ PYTHON_METHOD_DEFINITION(ptVault, amAgeCzar, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, registerMTStation, args)
 {
-    char* stationName;
-    char* mtSpawnPoint;
-    if (!PyArg_ParseTuple(args, "ss", &stationName, &mtSpawnPoint))
+    ST::string stationName;
+    ST::string mtSpawnPoint;
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_STStringConverter, &stationName, PyUnicode_STStringConverter, &mtSpawnPoint))
     {
         PyErr_SetString(PyExc_TypeError, "registerMTStation expects two strings");
         PYTHON_RETURN_ERROR;
@@ -356,8 +356,8 @@ PYTHON_METHOD_DEFINITION(ptVault, registerOwnedAge, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, unRegisterOwnedAge, args)
 {
-    char* ageFilename;
-    if (!PyArg_ParseTuple(args, "s", &ageFilename))
+    ST::string ageFilename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &ageFilename))
     {
         PyErr_SetString(PyExc_TypeError, "unRegisterOwnedAge expects a string");
         PYTHON_RETURN_ERROR;
@@ -386,8 +386,8 @@ PYTHON_METHOD_DEFINITION(ptVault, registerVisitAge, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, unRegisterVisitAge, args)
 {
-    char* guid;
-    if (!PyArg_ParseTuple(args, "s", &guid))
+    ST::string guid;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid))
     {
         PyErr_SetString(PyExc_TypeError, "unRegisterVisitAge expects a string");
         PYTHON_RETURN_ERROR;
@@ -417,9 +417,9 @@ PYTHON_METHOD_DEFINITION(ptVault, invitePlayerToAge, args)
 
 PYTHON_METHOD_DEFINITION(ptVault, unInvitePlayerToAge, args)
 {
-    char* guid;
+    ST::string guid;
     unsigned long playerID;
-    if (!PyArg_ParseTuple(args, "sl", &guid, &playerID))
+    if (!PyArg_ParseTuple(args, "O&l", PyUnicode_STStringConverter, &guid, &playerID))
     {
         PyErr_SetString(PyExc_TypeError, "unInvitePlayerToAge expects a string and an unsigned long");
         PYTHON_RETURN_ERROR;

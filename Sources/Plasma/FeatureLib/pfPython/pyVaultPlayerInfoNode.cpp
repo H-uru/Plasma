@@ -117,7 +117,7 @@ ST::string pyVaultPlayerInfoNode::Player_GetAgeInstanceName() const
     return ST::string();
 }
 
-void pyVaultPlayerInfoNode::Player_SetAgeGuid( const char * guidtext)
+void pyVaultPlayerInfoNode::Player_SetAgeGuid(const ST::string& guidtext)
 {
     if (!fNode)
         return;

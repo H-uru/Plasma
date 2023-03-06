@@ -74,9 +74,9 @@ public:
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-    void Note_SetTitle( const wchar_t * text );
+    void Note_SetTitle(const ST::string& text);
     ST::string Note_GetTitle() const;
-    void Note_SetText( const wchar_t * text );
+    void Note_SetText(const ST::string& text);
     ST::string Note_GetText() const;
     void Note_SetType( int32_t type );
     int32_t Note_GetType();
@@ -85,7 +85,7 @@ public:
     int32_t Note_GetSubType();
 
     PyObject * GetDeviceInbox() const; // returns pyVaultFolderNode
-    void SetDeviceInbox(const char * devName, PyObject * cb=nullptr, uint32_t cbContext=0);
+    void SetDeviceInbox(const ST::string& devName, PyObject * cb=nullptr, uint32_t cbContext=0);
 };
 
 #endif // _pyVaultTextNoteNode_h_

@@ -100,13 +100,13 @@ pyVaultImageNode::~pyVaultImageNode () {
 //==================================================================
 // class RelVaultNode : public plVaultNode
 //
-void pyVaultImageNode::Image_SetTitle( const wchar_t* text )
+void pyVaultImageNode::Image_SetTitle(const ST::string& text)
 {
     if (!fNode)
         return;
 
     VaultImageNode image(fNode);
-    image.SetImageTitle(ST::string::from_wchar(text));
+    image.SetImageTitle(text);
 }
 
 ST::string pyVaultImageNode::Image_GetTitle() const

@@ -81,7 +81,7 @@ public:
     // age the player is currently in, if any.
     void    Player_SetAgeInstanceName(const ST::string& name);
     ST::string Player_GetAgeInstanceName() const;
-    void    Player_SetAgeGuid( const char * guidtext);
+    void    Player_SetAgeGuid(const ST::string& guidtext);
     plUUID  Player_GetAgeGuid() const;
     // online status
     void    Player_SetOnline( bool b );

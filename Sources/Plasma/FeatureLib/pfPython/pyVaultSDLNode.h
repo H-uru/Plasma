@@ -76,7 +76,7 @@ public:
 //
     int     GetIdent() const;
     void    SetIdent( int v );
-    void InitStateDataRecord( const char* agename, int flags);
+    void InitStateDataRecord(const ST::string& agename, int flags);
 
     PyObject * GetStateDataRecord() const; // returns pySDLStateDataRecord
     void SetStateDataRecord( const pySDLStateDataRecord & rec, int writeOptions=0 );
