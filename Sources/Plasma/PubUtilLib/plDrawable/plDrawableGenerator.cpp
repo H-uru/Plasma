@@ -52,7 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plDrawableGenerator.h"
 #include "plDrawableSpans.h"
+#include "plGeoSpanDice.h"
 #include "plGeometrySpan.h"
+#include "plGBufferGroup.h"
 #include "hsFastMath.h"
 #include "plRenderLevel.h"
 #include "hsResMgr.h"
@@ -271,6 +273,28 @@ plDrawableSpans *plDrawableGenerator::GenerateDrawable( uint32_t vertCount, hsPo
                                 numIndices, indices, 
                                 material, localToWorld, blended,
                                 span );
+
+    // Ensure that we don't overflow the maximum permissible verts/indices
+    if (spanArray[0]->fNumIndices > plGBufferGroup::kMaxNumIndicesPerBuffer ||
+        spanArray[0]->fNumVerts > plGBufferGroup::kMaxNumVertsPerBuffer) {
+        plGeoSpanDice dice;
+        dice.SetMaxFaces(plGBufferGroup::kMaxNumIndicesPerBuffer / 3);
+        bool weDiced = dice.Dice(spanArray);
+        hsAssert(weDiced, "Uh oh, a generated drawable was too large and couldn't be diced.");
+        hsAssert(
+            std::any_of(
+                spanArray.cbegin(), spanArray.cend(),
+                [](const plGeometrySpan* span) -> bool {
+                    return (
+                        span->fNumIndices < plGBufferGroup::kMaxNumIndicesPerBuffer ||
+                        span->fNumVerts < plGBufferGroup::kMaxNumVertsPerBuffer
+                    );
+                }
+            ),
+            "Uh oh, a generated drawable is too large even after dicing."
+        );
+    }
+
 
     /// Now add the span to the new drawable, clear up the span's buffers and return!
     uint32_t trash = uint32_t(-1);
