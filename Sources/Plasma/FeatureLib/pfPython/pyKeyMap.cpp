@@ -51,80 +51,71 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnInputCore/plKeyMap.h"
 
 // conversion functions
-const char* pyKeyMap::ConvertVKeyToChar( uint32_t vk, uint32_t flags )
+// FIXME This method duplicates plInputInterfaceMgr::IKeyComboToString
+ST::string pyKeyMap::ConvertVKeyToChar(uint32_t vk, uint32_t flags)
 {
-    const char *key = plKeyMap::ConvertVKeyToChar( vk );
-    static char shortKey[ 2 ];
-    if (key == nullptr)
+    ST::string key = plKeyMap::ConvertVKeyToChar(vk);
+    if (key.empty())
     {
         if( isalnum( vk ) )
         {
-            shortKey[ 0 ] = (char)vk;
-            shortKey[ 1 ] = 0;
-            key = shortKey;
+            char c = (char)vk;
+            key = ST::string::from_latin_1(&c, 1);
         }
         else
-            return "(unmapped)";
+            return ST_LITERAL("(unmapped)");
     }
 
-    static char newKey[ 16 ];
-    strcpy( newKey, key );
     if( flags & kShift )
-        strcat( newKey, "_S" );
+        key += "_S";
     if( flags & kCtrl )
-        strcat( newKey, "_C" );
+        key += "_C";
 
-    return newKey;
+    return key;
 }
 
-uint32_t pyKeyMap::ConvertCharToVKey( const char* charVKey )
-{
-    char    str[ 16 ];
-    int     i;
+// FIXME These two methods duplicate IBindKeyToVKey
 
-    if( strcmp( charVKey, "(unmapped" ) == 0 )
+uint32_t pyKeyMap::ConvertCharToVKey(const ST::string& charVKey)
+{
+    // FIXME The closing parenthesis is missing - it's been this way for at least 12 years, so I'm afraid to fix it
+    if (charVKey == "(unmapped")
         return KEY_UNMAPPED;
 
-    strcpy( str, charVKey );
-
     // Get rid of modififers
-    for( i = 0; str[ i ] != 0 && str[ i ] != '_'; i++ );
-    str[ i ] = 0;
+    ST::string str = charVKey.before_first('_');
 
     // Convert raw key and return
     return plKeyMap::ConvertCharToVKey( str );
 }
 
-uint32_t pyKeyMap::ConvertCharToFlags( const char *charVKey )
+uint32_t pyKeyMap::ConvertCharToFlags(const ST::string& charVKey)
 {
-    char    str[ 16 ];
-    strcpy( str, charVKey );
-
     // Find modifiers to set flags with
     uint32_t keyFlags = 0;
-    if( strstr( str, "_S" ) || strstr( str, "_s" ) )
+    if (charVKey.find("_S", ST::case_insensitive) != -1)
         keyFlags |= plKeyCombo::kShift;
-    if( strstr( str, "_C" ) || strstr( str, "_c" ) )
+    if (charVKey.find("_C", ST::case_insensitive) != -1)
         keyFlags |= plKeyCombo::kCtrl;
 
     return keyFlags;
 }
 
 
-uint32_t pyKeyMap::ConvertCharToControlCode(const char* charCode)
+uint32_t pyKeyMap::ConvertCharToControlCode(const ST::string& charCode)
 {
     ControlEventCode code = plInputMap::ConvertCharToControlCode(charCode);
     return (uint32_t)code;
 }
 
-const char* pyKeyMap::ConvertControlCodeToString( uint32_t code )
+ST::string pyKeyMap::ConvertControlCodeToString(uint32_t code)
 {
     return plInputMap::ConvertControlCodeToString((ControlEventCode)code);
 }
 
 
 // bind a key to an action
-void pyKeyMap::BindKey( const char* keyStr1, const char* keyStr2, const char* act)
+void pyKeyMap::BindKey(const ST::string& keyStr1, const ST::string& keyStr2, const ST::string& act)
 {
     
     ControlEventCode code = plKeyMap::ConvertCharToControlCode( act );
@@ -137,54 +128,38 @@ void pyKeyMap::BindKey( const char* keyStr1, const char* keyStr2, const char* ac
     if (plInputInterfaceMgr::GetInstance() != nullptr)
     {
         plKeyCombo key1 = IBindKeyToVKey( keyStr1 );
-        if (keyStr2)
-        {
-            plKeyCombo key2 = IBindKeyToVKey( keyStr2 );
-            plInputInterfaceMgr::GetInstance()->BindAction( key1, key2, code );
-        }
-        else
-            plInputInterfaceMgr::GetInstance()->BindAction( key1, code );
+        plKeyCombo key2 = IBindKeyToVKey( keyStr2 );
+        plInputInterfaceMgr::GetInstance()->BindAction( key1, key2, code );
     }
 }
 
 // bind a key to an action
-void pyKeyMap::BindKeyToConsoleCommand( const char* keyStr1, const char* command)
+void pyKeyMap::BindKeyToConsoleCommand(const ST::string& keyStr1, const ST::string& command)
 {
-    
-    if (command && plInputInterfaceMgr::GetInstance() != nullptr)
+    if (plInputInterfaceMgr::GetInstance() != nullptr)
     {
-        plKeyCombo key1;
-        if (keyStr1)
-            key1 = IBindKeyToVKey( keyStr1 );
-        else
-            key1 = IBindKeyToVKey( "(unmapped)" );
+        plKeyCombo key1 = IBindKeyToVKey(keyStr1);
         plInputInterfaceMgr::GetInstance()->BindConsoleCmd( key1, command, plKeyMap::kFirstAlways);
     }
 }
 
-plKeyCombo pyKeyMap::IBindKeyToVKey( const char *keyStr )
+// FIXME This method duplicates IBindKeyToVKey in pfConsoleCommands.cpp
+plKeyCombo pyKeyMap::IBindKeyToVKey(ST::string keyStr)
 {
-    char    str[ 16 ];
-    int     i;
-
     plKeyCombo  combo;
-
-
-    strcpy( str, keyStr );
 
     // Find modifiers to set flags with
     combo.fFlags = 0;
-    if( strstr( str, "_S" ) || strstr( str, "_s" ) )
+    if (keyStr.find("_S", ST::case_insensitive) != -1)
         combo.fFlags |= plKeyCombo::kShift;
-    if( strstr( str, "_C" ) || strstr( str, "_c" ) )
+    if (keyStr.find("_C", ST::case_insensitive) != -1)
         combo.fFlags |= plKeyCombo::kCtrl;
     
     // Get rid of modififers
-    for( i = 0; str[ i ] != 0 && str[ i ] != '_'; i++ );
-    str[ i ] = 0;
+    keyStr = keyStr.before_first('_');
 
     // Convert raw key
-    combo.fKey = plKeyMap::ConvertCharToVKey( str );
+    combo.fKey = plKeyMap::ConvertCharToVKey(keyStr);
     if( combo.fKey == KEY_UNMAPPED )
         combo = plKeyCombo::kUnmapped;
 
@@ -248,7 +223,7 @@ uint32_t pyKeyMap::GetBindingFlags2(uint32_t code)
     return 0;
 }
 
-uint32_t pyKeyMap::GetBindingKeyConsole(const char* command)
+uint32_t pyKeyMap::GetBindingKeyConsole(const ST::string& command)
 {
     if (plInputInterfaceMgr::GetInstance() != nullptr)
     {
@@ -262,7 +237,7 @@ uint32_t pyKeyMap::GetBindingKeyConsole(const char* command)
     return 0;
 }
 
-uint32_t pyKeyMap::GetBindingFlagsConsole(const char* command)
+uint32_t pyKeyMap::GetBindingFlagsConsole(const ST::string& command)
 {
     if (plInputInterfaceMgr::GetInstance() != nullptr)
     {

@@ -59,6 +59,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDebugInputInterface.h"
 #include "plTelescopeInputInterface.h"
 
+#include <string_theory/format>
+
 #include "pnInputCore/plKeyMap.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
@@ -315,7 +317,7 @@ bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
             pMsg->SetControlCode(ctrlMsg->fControlCode);
             pMsg->SetControlPct(ctrlMsg->fPct);
             pMsg->SetTurnToPt(ctrlMsg->fPt);
-            pMsg->SetCmdString(ctrlMsg->GetCmdString());
+            pMsg->SetCmdString(ctrlMsg->GetCmdString().c_str());
             pMsg->SetSender( GetKey() );    
             plgDispatch::MsgSend( pMsg );
 
@@ -335,7 +337,7 @@ bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
                     pMsg->SetControlCode(ctrlMsg->fControlCode);
                     pMsg->SetControlPct(ctrlMsg->fPct);
                     pMsg->SetTurnToPt(ctrlMsg->fPt);
-                    pMsg->SetCmdString(ctrlMsg->GetCmdString());
+                    pMsg->SetCmdString(ctrlMsg->GetCmdString().c_str());
                     pMsg->SetSender( GetKey() );
                     pMsg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kPropagateToModifiers | 
                         plMessage::kNetUseRelevanceRegions);    // bcast only to other players who care about the region I'm in
@@ -685,7 +687,7 @@ const plKeyBinding* plInputInterfaceMgr::FindBinding( ControlEventCode code )\
     return nullptr;
 }
 
-void plInputInterfaceMgr::BindConsoleCmd( const plKeyCombo &key, const char *cmd, plKeyMap::BindPref pref /*= kNoPreference*/  )
+void plInputInterfaceMgr::BindConsoleCmd(const plKeyCombo &key, const ST::string& cmd, plKeyMap::BindPref pref /*= kNoPreference*/)
 {
 // not sure why this is not for external...since its done thru the different interfaces?
 //#ifdef PLASMA_EXTERNAL_RELEASE
@@ -707,7 +709,7 @@ void plInputInterfaceMgr::BindConsoleCmd( const plKeyCombo &key, const char *cmd
     RefreshInterfaceKeyMaps();
 }
 
-const plKeyBinding* plInputInterfaceMgr::FindBindingByConsoleCmd( const char *cmd )
+const plKeyBinding* plInputInterfaceMgr::FindBindingByConsoleCmd(const ST::string& cmd)
 {
     plKeyMap *map = IGetRoutedKeyMap( B_CONTROL_CONSOLE_COMMAND );
     if (map != nullptr)
@@ -789,9 +791,9 @@ void    plInputInterfaceMgr::WriteKeyMap()
         
         for( int j = 0; plKeyMap::fCmdConvert[ j ].fCode != END_CONTROLS; j++ )
         {
-            if( stricmp( plKeyMap::fCmdConvert[ j ].fDesc, "Run Modifier" ) == 0)
+            if (plKeyMap::fCmdConvert[j].fDesc.compare_i("Run Modifier") == 0)
                 continue;
-            fprintf( gKeyFile, "#  %s\n", plKeyMap::fCmdConvert[ j ].fDesc );
+            fprintf(gKeyFile, "#  %s\n", plKeyMap::fCmdConvert[j].fDesc.c_str());
         }
 
         fprintf(gKeyFile, "#\n");
@@ -821,7 +823,7 @@ void    plInputInterfaceMgr::WriteKeyMap()
         {   
 //              if (stricmp(fKeyMap->fKeyConversion[i].fKeyName, "Shift") == 0)
 //                  continue;
-            fprintf(gKeyFile, "#  %s\n", keyConvert[i].fKeyName);
+            fprintf(gKeyFile, "#  %s\n", keyConvert[i].fKeyName.c_str());
         }
         fclose(gKeyFile);
     }
@@ -840,45 +842,39 @@ void plInputInterfaceMgr::ReleaseCurrentFocus(plInputInterface *focus)
 
 
 //// IKeyComboToString ///////////////////////////////////////////////////////
-//  Uses static string, so don't call twice and expect the first result to
-//  be still valid!
 
-const char  *plInputInterfaceMgr::IKeyComboToString( const plKeyCombo &combo )
+ST::string plInputInterfaceMgr::IKeyComboToString(const plKeyCombo &combo)
 {
-    static char     str[ 64 ];
     bool            unmapped = false;
 
 
     if( combo == plKeyCombo::kUnmapped )
-        sprintf( str, "(unmapped)" );
+        return ST_LITERAL("(unmapped)");
     else
     {
-        const char *c = plKeyMap::ConvertVKeyToChar( combo.fKey );
-        if (c != nullptr)
-            strncpy( str, c, sizeof( str ) );
-        else
+        ST::string str = plKeyMap::ConvertVKeyToChar( combo.fKey );
+        if (str.empty())
         {
             if( isalnum( combo.fKey ) )
             {
-                str[ 0 ] = (char)combo.fKey;
-                str[ 1 ] = 0;
+                char c = (char)combo.fKey;
+                str = ST::string(&c, 1);
             }
             else
             {
-                strcpy( str, "(unmapped)" );
+                str = ST_LITERAL("(unmapped)");
                 unmapped = true;
             }
         }
         if( !unmapped )
         {
             if( combo.fFlags & plKeyCombo::kCtrl )
-                strcat( str, "_C" );
+                str += "_C";
             if( combo.fFlags & plKeyCombo::kShift )
-                strcat( str, "_S" );
+                str += "_S";
         }
+        return str;
     }
-
-    return str;
 }
 
 //// IWriteNonConsoleCmdKeys /////////////////////////////////////////////////
@@ -895,14 +891,12 @@ void    plInputInterfaceMgr::IWriteNonConsoleCmdKeys( plKeyMap *keyMap, FILE *ke
         if( binding.GetCode() == B_CONTROL_CONSOLE_COMMAND )
             continue;
 
-        char    key1[ 64 ];
-        strcpy( key1, IKeyComboToString( binding.GetKey1() ) );
+        ST::string key1 = IKeyComboToString(binding.GetKey1());
+        ST::string key2 = IKeyComboToString(binding.GetKey2());
+        ST::string desc = plInputMap::ConvertControlCodeToString(binding.GetCode());
 
-        const char *key2 = IKeyComboToString( binding.GetKey2() );
-
-        const char *desc = plInputMap::ConvertControlCodeToString( binding.GetCode() );
-
-        fprintf( keyFile, "Keyboard.BindAction \t\t%s\t%s\t\t\t\t\"%s\"\n", key1, key2, desc );
+        ST::string line = ST::format("Keyboard.BindAction \t\t{}\t{}\t\t\t\t\"{}\"\n", key1, key2, desc);
+        fputs(line.c_str(), keyFile);
     }
 
 }
@@ -926,14 +920,16 @@ void    plInputInterfaceMgr::IWriteConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFi
         // 2 commands, which is perfectly valid
 //      if( binding.GetKey1() != plKeyCombo::kUnmapped )
 //      {
-            const char *key = IKeyComboToString( binding.GetKey1() );
-            fprintf( keyFile, "Keyboard.BindConsoleCmd\t%s\t\t\t\"%s\"\n", key, binding.GetExtendedString() );
+            ST::string key = IKeyComboToString(binding.GetKey1());
+            ST::string line = ST::format("Keyboard.BindConsoleCmd\t{}\t\t\t\"{}\"\n", key, binding.GetExtendedString());
+            fputs(line.c_str(), keyFile);
 //      }
 
         if( binding.GetKey2() != plKeyCombo::kUnmapped )
         {
-            const char *key = IKeyComboToString( binding.GetKey2() );
-            fprintf( keyFile, "Keyboard.BindConsoleCmd\t%s\t\t\t\"%s\"\n", key, binding.GetExtendedString() );
+            ST::string key2 = IKeyComboToString(binding.GetKey2());
+            ST::string line2 = ST::format("Keyboard.BindConsoleCmd\t{}\t\t\t\"{}\"\n", key2, binding.GetExtendedString());
+            fputs(line2.c_str(), keyFile);
         }
     }
 }

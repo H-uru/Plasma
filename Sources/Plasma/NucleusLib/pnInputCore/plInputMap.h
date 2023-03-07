@@ -53,8 +53,8 @@ class plInputMap
 {
 public:
     static CommandConvert   fCmdConvert[];
-    static ControlEventCode ConvertCharToControlCode(const char* c);
-    static const char       *ConvertControlCodeToString( ControlEventCode code );
+    static ControlEventCode ConvertCharToControlCode(const ST::string& c);
+    static ST::string ConvertControlCodeToString(ControlEventCode code);
 };
 
 class plMouseMap : public plInputMap

@@ -126,31 +126,31 @@ plAvatarInputInterface::plAvatarInputInterface()
     fControlMap->AddCode( B_CONTROL_DIVE,                   kControlFlagNormal | kControlFlagNoRepeat );
     fControlMap->AddCode( B_CONTROL_IGNORE_AVATARS,         kControlFlagNormal | kControlFlagNoRepeat );
 
-    fControlMap->AddConsoleCommand( "Game.EnterChatMode" );
-    fControlMap->AddConsoleCommand( "Game.Emote.wave" );
-    fControlMap->AddConsoleCommand( "Game.Emote.laugh" );
-    fControlMap->AddConsoleCommand( "Game.Emote.clap" );
-    fControlMap->AddConsoleCommand( "Game.Emote.dance" );
-    fControlMap->AddConsoleCommand( "Game.Emote.talk" );
-    fControlMap->AddConsoleCommand( "Game.Emote.sneeze" );
-    fControlMap->AddConsoleCommand( "Game.Emote.sit" );
-    fControlMap->AddConsoleCommand( "Keyboard.ResetBindings" );
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.EnterChatMode"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.wave"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.laugh"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.clap"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.dance"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.talk"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.sneeze"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.Emote.sit"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Keyboard.ResetBindings"));
     
-    fControlMap->AddConsoleCommand( "Game.KIOpenKI" );
-    fControlMap->AddConsoleCommand( "Game.KIHelp" );
-    fControlMap->AddConsoleCommand( "Game.KICreateMarker" );
-    fControlMap->AddConsoleCommand( "Game.KICreateMarkerFolder" );
-    fControlMap->AddConsoleCommand( "Game.KIOpenYeeshaBook" );
-    fControlMap->AddConsoleCommand( "Game.KIToggleMini" );
-    fControlMap->AddConsoleCommand( "Game.KIPutAway" );
-    fControlMap->AddConsoleCommand( "Game.KIChatPageUp" );
-    fControlMap->AddConsoleCommand( "Game.KIChatPageDown" );
-    fControlMap->AddConsoleCommand( "Game.KIChatToStart" );
-    fControlMap->AddConsoleCommand( "Game.KIChatToEnd" );
-    fControlMap->AddConsoleCommand( "Game.KIUpSizeFont" );
-    fControlMap->AddConsoleCommand( "Game.KIDownSizeFont" );
-    fControlMap->AddConsoleCommand( "Game.KITakePicture" );
-    fControlMap->AddConsoleCommand( "Game.KICreateJournal" );
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIOpenKI"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIHelp"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KICreateMarker"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KICreateMarkerFolder"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIOpenYeeshaBook"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIToggleMini"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIPutAway"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIChatPageUp"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIChatPageDown"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIChatToStart"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIChatToEnd"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIUpSizeFont"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KIDownSizeFont"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KITakePicture"));
+    fControlMap->AddConsoleCommand(ST_LITERAL("Game.KICreateJournal"));
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     fControlMap->AddCode( B_CONTROL_TOGGLE_PHYSICAL,        kControlFlagDownEvent | kControlFlagNoRepeat );
@@ -162,7 +162,7 @@ plAvatarInputInterface::plAvatarInputInterface()
     IDisableControl(B_CONTROL_MOVE_UP);
     IDisableControl(B_CONTROL_MOVE_DOWN);
 
-    fControlMap->AddConsoleCommand( "NextStatusLog" );
+    fControlMap->AddConsoleCommand(ST_LITERAL("NextStatusLog"));
 #endif
 
     // IF YOU ARE LOOKING TO CHANGE THE DEFAULT KEY BINDINGS, DO NOT LOOK HERE. GO TO
@@ -288,7 +288,7 @@ void plAvatarInputInterface::ClearKeyMap()
         fControlMap->UnmapAllBindings();
         
         // Still want this one tho
-        fControlMap->BindKeyToConsoleCmd( plCtrlShiftKeyCombo( KEY_0 ), "Keyboard.ResetBindings" );
+        fControlMap->BindKeyToConsoleCmd(plCtrlShiftKeyCombo(KEY_0), ST_LITERAL("Keyboard.ResetBindings"));
     }
 }
 
@@ -328,32 +328,32 @@ void    plAvatarInputInterface::RestoreDefaultKeyMappings()
 //  fControlMap->BindKey( KEY_D,                        B_CONTROL_DIVE );
     fControlMap->BindKey( KEY_DELETE,                   B_CONTROL_IGNORE_AVATARS );
 
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_1 ),  "Game.Emote.wave" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_2 ),  "Game.Emote.laugh" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_3 ),  "Game.Emote.clap" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_4 ),  "Game.Emote.dance" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_5 ),  "Game.Emote.talk" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_6 ),  "Game.Emote.sneeze" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_7 ),  "Game.Emote.sit" );
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_1), ST_LITERAL("Game.Emote.wave"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_2), ST_LITERAL("Game.Emote.laugh"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_3), ST_LITERAL("Game.Emote.clap"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_4), ST_LITERAL("Game.Emote.dance"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_5), ST_LITERAL("Game.Emote.talk"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_6), ST_LITERAL("Game.Emote.sneeze"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_7), ST_LITERAL("Game.Emote.sit"));
 
-    fControlMap->BindKeyToConsoleCmd( plCtrlShiftKeyCombo( KEY_0 ), "Keyboard.ResetBindings" );
+    fControlMap->BindKeyToConsoleCmd(plCtrlShiftKeyCombo(KEY_0), ST_LITERAL("Keyboard.ResetBindings"));
     
     // KI shortcut keyboard commands
-    fControlMap->BindKeyToConsoleCmd( KEY_F2,                                   "Game.KIOpenKI" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F3,                                   "Game.KIOpenYeeshaBook" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F4,                                   "Game.KIHelp" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_HOME ),               "Game.KIToggleMini" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_END ),                "Game.KIPutAway" );
-    fControlMap->BindKeyToConsoleCmd( KEY_PAGEUP,                               "Game.KIChatPageUp" );
-    fControlMap->BindKeyToConsoleCmd( KEY_PAGEDOWN,                             "Game.KIChatPageDown" );
-    fControlMap->BindKeyToConsoleCmd( KEY_HOME,                                 "Game.KIChatToStart" );
-    fControlMap->BindKeyToConsoleCmd( KEY_END,                                  "Game.KIChatToEnd" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_NUMPAD_ADD ),         "Game.KIUpSizeFont" );
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_NUMPAD_SUBTRACT ),    "Game.KIDownSizeFont" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F5,                                   "Game.KITakePicture" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F6,                                   "Game.KICreateJournal" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F7,                                   "Game.KICreateMarker" );
-    fControlMap->BindKeyToConsoleCmd( KEY_F8,                                   "Game.KICreateMarkerFolder" );
+    fControlMap->BindKeyToConsoleCmd(KEY_F2,                              ST_LITERAL("Game.KIOpenKI"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F3,                              ST_LITERAL("Game.KIOpenYeeshaBook"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F4,                              ST_LITERAL("Game.KIHelp"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_HOME),            ST_LITERAL("Game.KIToggleMini"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_END),             ST_LITERAL("Game.KIPutAway"));
+    fControlMap->BindKeyToConsoleCmd(KEY_PAGEUP,                          ST_LITERAL("Game.KIChatPageUp"));
+    fControlMap->BindKeyToConsoleCmd(KEY_PAGEDOWN,                        ST_LITERAL("Game.KIChatPageDown"));
+    fControlMap->BindKeyToConsoleCmd(KEY_HOME,                            ST_LITERAL("Game.KIChatToStart"));
+    fControlMap->BindKeyToConsoleCmd(KEY_END,                             ST_LITERAL("Game.KIChatToEnd"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_NUMPAD_ADD),      ST_LITERAL("Game.KIUpSizeFont"));
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_NUMPAD_SUBTRACT), ST_LITERAL("Game.KIDownSizeFont"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F5,                              ST_LITERAL("Game.KITakePicture"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F6,                              ST_LITERAL("Game.KICreateJournal"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F7,                              ST_LITERAL("Game.KICreateMarker"));
+    fControlMap->BindKeyToConsoleCmd(KEY_F8,                              ST_LITERAL("Game.KICreateMarkerFolder"));
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     fControlMap->BindKey( plCtrlKeyCombo( KEY_P ),      B_CONTROL_TOGGLE_PHYSICAL );
@@ -361,7 +361,7 @@ void    plAvatarInputInterface::RestoreDefaultKeyMappings()
     fControlMap->BindKey( KEY_H,                        B_CONTROL_MOVE_DOWN );
     fControlMap->BindKey( plCtrlKeyCombo( KEY_D ),      B_TOGGLE_DRIVE_MODE );
 
-    fControlMap->BindKeyToConsoleCmd( plCtrlKeyCombo( KEY_L ),                  "NextStatusLog" );
+    fControlMap->BindKeyToConsoleCmd(plCtrlKeyCombo(KEY_L), ST_LITERAL("NextStatusLog"));
 #endif
 }
 
@@ -664,8 +664,8 @@ bool plAvatarInputInterface::IsEnterChatModeBound()
     {
         const plKeyBinding &binding = fControlMap->GetBinding( i );
 
-        const char* extString = binding.GetExtendedString();
-        if ( extString && strcmp("Game.EnterChatMode",extString) == 0 )
+        ST::string extString = binding.GetExtendedString();
+        if (extString == "Game.EnterChatMode")
         {
             if (binding.GetKey1() != plKeyCombo::kUnmapped )
                 return true;

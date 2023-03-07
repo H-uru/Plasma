@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plKeyDef.h"
 #include "hsGeometry3.h"
 
+#include <string_theory/string>
+
 // flags for control event codes
 enum 
 {
@@ -113,13 +115,13 @@ enum
 struct Win32keyConvert
 {
     uint32_t  fVKey;
-    const char*   fKeyName;
+    ST::string fKeyName;
 };
 
 struct CommandConvert
 {
     ControlEventCode fCode;
-    const char* fDesc;
+    ST::string fDesc;
 };
 
 

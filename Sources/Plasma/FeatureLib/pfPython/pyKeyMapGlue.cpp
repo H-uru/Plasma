@@ -63,13 +63,13 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, convertVKeyToChar, args)
         PyErr_SetString(PyExc_TypeError, "convertVKeyToChar expects two unsigned longs");
         PYTHON_RETURN_ERROR;
     }
-    return PyUnicode_FromString(self->fThis->ConvertVKeyToChar(virtualKey, keyFlags));
+    return PyUnicode_FromSTString(self->fThis->ConvertVKeyToChar(virtualKey, keyFlags));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, convertCharToVKey, args)
 {
-    char* charString;
-    if (!PyArg_ParseTuple(args, "s", &charString))
+    ST::string charString;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &charString))
     {
         PyErr_SetString(PyExc_TypeError, "convertCharToVKey expects a string");
         PYTHON_RETURN_ERROR;
@@ -79,8 +79,8 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, convertCharToVKey, args)
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, convertCharToFlags, args)
 {
-    char* charString;
-    if (!PyArg_ParseTuple(args, "s", &charString))
+    ST::string charString;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &charString))
     {
         PyErr_SetString(PyExc_TypeError, "convertCharToFlags expects a string");
         PYTHON_RETURN_ERROR;
@@ -90,8 +90,8 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, convertCharToFlags, args)
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, convertCharToControlCode, args)
 {
-    char* charString;
-    if (!PyArg_ParseTuple(args, "s", &charString))
+    ST::string charString;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &charString))
     {
         PyErr_SetString(PyExc_TypeError, "convertCharToControlCode expects a string");
         PYTHON_RETURN_ERROR;
@@ -107,15 +107,15 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, convertControlCodeToString, args)
         PyErr_SetString(PyExc_TypeError, "convertControlCodeToString expects an unsigned long");
         PYTHON_RETURN_ERROR;
     }
-    return PyUnicode_FromString(self->fThis->ConvertControlCodeToString(code));
+    return PyUnicode_FromSTString(self->fThis->ConvertControlCodeToString(code));
 }
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, bindKey, args)
 {
-    char* key1;
-    char* key2;
-    char* action;
-    if (!PyArg_ParseTuple(args, "sss", &key1, &key2, &action))
+    ST::string key1;
+    ST::string key2;
+    ST::string action;
+    if (!PyArg_ParseTuple(args, "O&O&O&", PyUnicode_STStringConverter, &key1, PyUnicode_STStringConverter, &key2, PyUnicode_STStringConverter, &action))
     {
         PyErr_SetString(PyExc_TypeError, "bindKey expects three strings");
         PYTHON_RETURN_ERROR;
@@ -170,9 +170,9 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingFlags2, args)
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, bindKeyToConsoleCommand, args)
 {
-    char* keyStr1;
-    char* command;
-    if (!PyArg_ParseTuple(args, "ss", &keyStr1, &command))
+    ST::string keyStr1;
+    ST::string command;
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_STStringConverter, &keyStr1, PyUnicode_STStringConverter, &command))
     {
         PyErr_SetString(PyExc_TypeError, "bindKeyToConsoleCommand expects two strings");
         PYTHON_RETURN_ERROR;
@@ -183,8 +183,8 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, bindKeyToConsoleCommand, args)
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingKeyConsole, args)
 {
-    char* command;
-    if (!PyArg_ParseTuple(args, "s", &command))
+    ST::string command;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &command))
     {
         PyErr_SetString(PyExc_TypeError, "getBindingKeyConsole expects a string");
         PYTHON_RETURN_ERROR;
@@ -194,8 +194,8 @@ PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingKeyConsole, args)
 
 PYTHON_METHOD_DEFINITION(ptKeyMap, getBindingFlagsConsole, args)
 {
-    char* command;
-    if (!PyArg_ParseTuple(args, "s", &command))
+    ST::string command;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &command))
     {
         PyErr_SetString(PyExc_TypeError, "getBindingFlagsConsole expects a string");
         PYTHON_RETURN_ERROR;

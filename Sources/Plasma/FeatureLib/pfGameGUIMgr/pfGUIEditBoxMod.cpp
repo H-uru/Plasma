@@ -441,9 +441,7 @@ void pfGUIEditBoxMod::SetLastKeyCapture(uint32_t key, uint8_t modifiers)
     fSavedModifiers = modifiers;
 
     // turn key event into string
-    ST::string keyStr;
-    if (plKeyMap::ConvertVKeyToChar( key ))
-        keyStr = ST::string::from_latin_1(plKeyMap::ConvertVKeyToChar( key ));
+    ST::string keyStr = plKeyMap::ConvertVKeyToChar(key);
 
     if(keyStr.empty())
     {
@@ -453,7 +451,7 @@ void pfGUIEditBoxMod::SetLastKeyCapture(uint32_t key, uint8_t modifiers)
             keyStr = ST::string::from_latin_1(&keyChar, 1);
         }
         else
-            keyStr = ST::string::from_latin_1(plKeyMap::GetStringUnmapped());
+            keyStr = plKeyMap::GetStringUnmapped();
     }
     else
     {
@@ -468,9 +466,9 @@ void pfGUIEditBoxMod::SetLastKeyCapture(uint32_t key, uint8_t modifiers)
     // because its SSO buffer is much larger than ST::string's.
     ST::string_stream newKey;
     if( modifiers & kShift )
-        newKey << ST::string::from_latin_1(plKeyMap::GetStringShift());
+        newKey << plKeyMap::GetStringShift();
     if( modifiers & kCtrl )
-        newKey << ST::string::from_latin_1(plKeyMap::GetStringCtrl());
+        newKey << plKeyMap::GetStringCtrl();
     newKey << keyStr;
 
     // set something in the buffer to be displayed

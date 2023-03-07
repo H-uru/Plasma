@@ -714,7 +714,7 @@ bool    pfGameUIInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
         // HACK HACK HACK
         if ((!handled) && (pKeyMsg->GetKeyDown()) && !pKeyMsg->GetKeyChar())
         {
-            const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBindingByConsoleCmd("Game.KITakePicture");
+            const plKeyBinding* keymap = plInputInterfaceMgr::GetInstance()->FindBindingByConsoleCmd(ST_LITERAL("Game.KITakePicture"));
             if (keymap)
             {
                 unsigned keyFlags = 0;
