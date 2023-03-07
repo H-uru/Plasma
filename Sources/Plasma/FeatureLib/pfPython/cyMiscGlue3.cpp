@@ -95,8 +95,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetPythonLoggingLevel, args, "Params: level\nS
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtConsole, args, "Params: command\nThis will execute 'command' as if it were typed into the Plasma console.")
 {
-    char* command;
-    if (!PyArg_ParseTuple(args, "s", &command))
+    ST::string command;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &command))
     {
         PyErr_SetString(PyExc_TypeError, "PtConsole expects a string");
         PYTHON_RETURN_ERROR;
@@ -108,9 +108,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtConsole, args, "Params: command\nThis will exe
 PYTHON_GLOBAL_METHOD_DEFINITION(PtConsoleNet, args, "Params: command,netForce\nThis will execute 'command' on the console, over the network, on all clients.\n"
             "If 'netForce' is true then force command to be sent over the network.")
 {
-    char* command;
+    ST::string command;
     char netForce;
-    if (!PyArg_ParseTuple(args, "sb", &command, &netForce))
+    if (!PyArg_ParseTuple(args, "O&b", PyUnicode_STStringConverter, &command, &netForce))
     {
         PyErr_SetString(PyExc_TypeError, "PtConsoleNet expects a string and a boolean");
         PYTHON_RETURN_ERROR;

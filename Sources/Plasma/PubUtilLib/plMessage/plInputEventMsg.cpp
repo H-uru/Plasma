@@ -126,11 +126,6 @@ plControlEventMsg::plControlEventMsg(const plKey &s,
     SetBCastFlag(plMessage::kPropagateToModifiers);
 }
 
-plControlEventMsg::~plControlEventMsg()
-{   
-    delete [] fCmd;
-}
-
 void plControlEventMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plInputEventMsg::Read(stream, mgr);

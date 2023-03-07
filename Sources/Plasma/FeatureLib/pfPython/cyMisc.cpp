@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include <utility>
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "pyKey.h"
@@ -157,35 +158,29 @@ void cyMisc::SetPythonLoggingLevel(uint32_t new_level)
 //
 //  PURPOSE    : Execute a console command from a python script
 //
-void cyMisc::Console(const char* command)
+void cyMisc::Console(ST::string command)
 {
-    if (command != nullptr)
-    {
-        // create message to send to the console
-        plControlEventMsg* pMsg = new plControlEventMsg;
-        pMsg->SetBCastFlag(plMessage::kBCastByType);
-        pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
-        pMsg->SetControlActivated(true);
-        pMsg->SetCmdString(command);
-        plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
-    }
+    // create message to send to the console
+    plControlEventMsg* pMsg = new plControlEventMsg;
+    pMsg->SetBCastFlag(plMessage::kBCastByType);
+    pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
+    pMsg->SetControlActivated(true);
+    pMsg->SetCmdString(std::move(command));
+    plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
 }
 
-void cyMisc::ConsoleNet(const char* command, bool netForce)
+void cyMisc::ConsoleNet(ST::string command, bool netForce)
 {
-    if (command != nullptr)
-    {
-        // create message to send to the console
-        plControlEventMsg* pMsg = new plControlEventMsg;
-        pMsg->SetBCastFlag(plMessage::kBCastByType);
-        pMsg->SetBCastFlag(plMessage::kNetPropagate);
-        if ( netForce )
-            pMsg->SetBCastFlag(plMessage::kNetForce);
-        pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
-        pMsg->SetControlActivated(true);
-        pMsg->SetCmdString(command);
-        plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
-    }
+    // create message to send to the console
+    plControlEventMsg* pMsg = new plControlEventMsg;
+    pMsg->SetBCastFlag(plMessage::kBCastByType);
+    pMsg->SetBCastFlag(plMessage::kNetPropagate);
+    if ( netForce )
+        pMsg->SetBCastFlag(plMessage::kNetForce);
+    pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
+    pMsg->SetControlActivated(true);
+    pMsg->SetCmdString(std::move(command));
+    plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
 }
 
 
@@ -265,24 +260,21 @@ PyObject* cyMisc::FindActivator(const ST::string& name)
 //
 //  PURPOSE    : Execute a console command from a python script
 //
-void cyMisc::PopUpConsole(const char* command)
+void cyMisc::PopUpConsole(ST::string command)
 {
-    if (command != nullptr)
-    {
-        // create message to send to the console
-        plControlEventMsg* pMsg1 = new plControlEventMsg;
-        pMsg1->SetBCastFlag(plMessage::kBCastByType);
-        pMsg1->SetControlCode(B_SET_CONSOLE_MODE);
-        pMsg1->SetControlActivated(true);
-        plgDispatch::MsgSend( pMsg1 );  // whoosh... off it goes
-        // create message to send to the console
-        plControlEventMsg* pMsg2 = new plControlEventMsg;
-        pMsg2->SetBCastFlag(plMessage::kBCastByType);
-        pMsg2->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
-        pMsg2->SetControlActivated(true);
-        pMsg2->SetCmdString(command);
-        plgDispatch::MsgSend( pMsg2 );  // whoosh... off it goes
-    }
+    // create message to send to the console
+    plControlEventMsg* pMsg1 = new plControlEventMsg;
+    pMsg1->SetBCastFlag(plMessage::kBCastByType);
+    pMsg1->SetControlCode(B_SET_CONSOLE_MODE);
+    pMsg1->SetControlActivated(true);
+    plgDispatch::MsgSend( pMsg1 );  // whoosh... off it goes
+    // create message to send to the console
+    plControlEventMsg* pMsg2 = new plControlEventMsg;
+    pMsg2->SetBCastFlag(plMessage::kBCastByType);
+    pMsg2->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
+    pMsg2->SetControlActivated(true);
+    pMsg2->SetCmdString(std::move(command));
+    plgDispatch::MsgSend( pMsg2 );  // whoosh... off it goes
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1517,7 +1509,7 @@ void cyMisc::SetClearColor(float red, float green, float blue)
     pMsg->SetBCastFlag(plMessage::kBCastByType);
     pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
     pMsg->SetControlActivated(true);
-    pMsg->SetCmdString(command.c_str());
+    pMsg->SetCmdString(command);
     plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
 }
 

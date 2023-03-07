@@ -47,6 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnInputCore/plControlDefinition.h"
 #include "hsGeometry3.h"
 
+#include <utility>
+
 class plKeyEventMsg;
 class plMouseEventMsg;
 
@@ -81,7 +83,7 @@ public:
 class plControlEventMsg : public plInputEventMsg
 {
 private:
-    char*               fCmd;
+    ST::string          fCmd;
 protected:
     
     ControlEventCode    fControlCode;
@@ -94,12 +96,11 @@ public:
     plControlEventMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t);
-    ~plControlEventMsg();
 
     CLASSNAME_REGISTER( plControlEventMsg );
     GETINTERFACE_ANY( plControlEventMsg, plInputEventMsg );
 
-    void SetCmdString(const char* cs)       { delete [] fCmd; fCmd=hsStrcpy(cs); }
+    void SetCmdString(ST::string cs)        { fCmd = std::move(cs); }
     void SetControlCode(ControlEventCode c) { fControlCode = c; }
     void SetControlActivated(bool b)        { fControlActivated = b; }
     void SetTurnToPt(const hsPoint3& pt)    { fTurnToPt = pt; }
@@ -109,7 +110,7 @@ public:
     bool                ControlActivated()  const { return fControlActivated; }
     hsPoint3            GetTurnToPt()       const { return fTurnToPt; }
     float               GetPct()            const { return fControlPct; }
-    char*               GetCmdString()      const { return fCmd; }
+    ST::string          GetCmdString()      const { return fCmd; }
 
     // IO
     void Read(hsStream* stream, hsResMgr* mgr) override;

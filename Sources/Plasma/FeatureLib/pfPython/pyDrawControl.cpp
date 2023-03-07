@@ -49,6 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 #include "pyDrawControl.h"
+
+#include <string_theory/format>
+
 #ifndef BUILDING_PYPLASMA
 #   include "plAvatar/plArmatureMod.h"
 #   include "plGLight/plShadowCaster.h"
@@ -61,8 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void pyDrawControl::SetGamma2(float gamma)
 {
 #ifndef BUILDING_PYPLASMA
-    char command[256];
-    sprintf(command,"Graphics.Renderer.Gamma2 %f",gamma);
+    ST::string command = ST::format("Graphics.Renderer.Gamma2 {}", gamma);
     // create message to send to the console
     plControlEventMsg* pMsg = new plControlEventMsg;
     pMsg->SetBCastFlag(plMessage::kBCastByType);

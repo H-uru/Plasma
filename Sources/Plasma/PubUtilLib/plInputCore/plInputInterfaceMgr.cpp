@@ -317,7 +317,7 @@ bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
             pMsg->SetControlCode(ctrlMsg->fControlCode);
             pMsg->SetControlPct(ctrlMsg->fPct);
             pMsg->SetTurnToPt(ctrlMsg->fPt);
-            pMsg->SetCmdString(ctrlMsg->GetCmdString().c_str());
+            pMsg->SetCmdString(ctrlMsg->GetCmdString());
             pMsg->SetSender( GetKey() );    
             plgDispatch::MsgSend( pMsg );
 
@@ -337,7 +337,7 @@ bool plInputInterfaceMgr::IEval( double secs, float del, uint32_t dirty )
                     pMsg->SetControlCode(ctrlMsg->fControlCode);
                     pMsg->SetControlPct(ctrlMsg->fPct);
                     pMsg->SetTurnToPt(ctrlMsg->fPt);
-                    pMsg->SetCmdString(ctrlMsg->GetCmdString().c_str());
+                    pMsg->SetCmdString(ctrlMsg->GetCmdString());
                     pMsg->SetSender( GetKey() );
                     pMsg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kPropagateToModifiers | 
                         plMessage::kNetUseRelevanceRegions);    // bcast only to other players who care about the region I'm in
