@@ -1279,6 +1279,7 @@ class nxusBookMachine(ptModifier):
             if ageData.maxPop == 0:
                 # maxPop == 0 means don't show it
                 description = ""
+                entryEnabled = True
             else:
                 #check if selected instance is full
                 entryEnabled = (ageData.selected.population <= ageData.maxPop)
