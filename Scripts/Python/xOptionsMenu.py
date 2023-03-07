@@ -1498,7 +1498,8 @@ class xOptionsMenu(ptModifier):
         videoField.setValue(int(opts[xIniDisplay.kGraphicsTextureQuality]))
 
         shadows = ptGUIControlCheckBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoShadowsCheckTag))
-        if opts[xIniDisplay.kGraphicsShadows] == 1:
+        shadowsOpt = opts[xIniDisplay.kGraphicsShadows]
+        if shadowsOpt == 1 or (isinstance(shadowsOpt, str) and shadowsOpt.casefold() == "true"):
             shadows.setChecked(1)
         else:
             shadows.setChecked(0)
@@ -1635,6 +1636,7 @@ class xOptionsMenu(ptModifier):
                 break
 
         shadows = ptGUIControlCheckBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoShadowsCheckTag)).isChecked()
+        shadowsstr = "true" if shadows else "false"
 
         vsync = ptGUIControlCheckBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoVerticalSyncCheckTag)).isChecked()
         if vsync:
@@ -1645,7 +1647,7 @@ class xOptionsMenu(ptModifier):
         gammaField = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kGSDisplayGammaSlider))
         gamma = gammaField.getValue()
 
-        xIniDisplay.SetGraphicsOptions(width, height, colordepth, windowed, tex_quality, antialias, aniso, quality, shadows, vsyncstr, shadow_quality)
+        xIniDisplay.SetGraphicsOptions(width, height, colordepth, windowed, tex_quality, antialias, aniso, quality, shadowsstr, vsyncstr, shadow_quality)
         xIniDisplay.WriteIni()
         self.setNewChronicleVar("gamma", gamma)
 
