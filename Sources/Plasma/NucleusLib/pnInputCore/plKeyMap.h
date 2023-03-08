@@ -54,6 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputMap.h"
 #include "plControlEventCodes.h"
 
+#include <map>
+#include <string_theory/string>
 #include <vector>
 
 //// plKeyCombo //////////////////////////////////////////////////////////////
@@ -225,11 +227,11 @@ class plKeyMap : public plInputMap
         static ST::string ConvertVKeyToChar(uint32_t vk);
         static plKeyDef ConvertCharToVKey(const ST::string& c);
 
-        static Win32keyConvert  fKeyConversionEnglish[];
-        static Win32keyConvert  fKeyConversionFrench[];
-        static Win32keyConvert  fKeyConversionGerman[];
-        static Win32keyConvert  fKeyConversionSpanish[];
-        static Win32keyConvert  fKeyConversionItalian[];
+        static const std::map<uint32_t, ST::string> fKeyConversionEnglish;
+        static const std::map<uint32_t, ST::string> fKeyConversionFrench;
+        static const std::map<uint32_t, ST::string> fKeyConversionGerman;
+        static const std::map<uint32_t, ST::string> fKeyConversionSpanish;
+        static const std::map<uint32_t, ST::string> fKeyConversionItalian;
 
 };
 

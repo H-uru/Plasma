@@ -50,22 +50,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ControlEventCode plInputMap::ConvertCharToControlCode(const ST::string& c)
 {
-    for (int i = 0; fCmdConvert[i].fCode != END_CONTROLS; i++)
+    for (const auto& [code, desc] : fCmdConvert)
     {
-        if (fCmdConvert[i].fDesc.compare_i(c) == 0)
-            return (fCmdConvert[i].fCode);
+        if (desc.compare_i(c) == 0)
+            return code;
     }
     return (END_CONTROLS);
 }
 
 ST::string plInputMap::ConvertControlCodeToString(ControlEventCode code)
 {
-    for( int i = 0; fCmdConvert[ i ].fCode != END_CONTROLS; i++ )
-    {
-        if( fCmdConvert[ i ].fCode == code )
-            return fCmdConvert[ i ].fDesc;
+    auto it = fCmdConvert.find(code);
+    if (it == fCmdConvert.end()) {
+        return {};
+    } else {
+        return it->second;
     }
-    return {};
 }
 
 //
@@ -490,61 +490,61 @@ void    plKeyMap::EraseBinding( ControlEventCode code )
 
 ST::string plKeyMap::ConvertVKeyToChar(uint32_t vk)
 {
-    Win32keyConvert* keyConvert = &fKeyConversionEnglish[0];
+    const std::map<uint32_t, ST::string>* keyConvert = &fKeyConversionEnglish;
     switch (plLocalization::GetLanguage())
     {
         case plLocalization::kFrench:
-            keyConvert = &fKeyConversionFrench[0];
+            keyConvert = &fKeyConversionFrench;
             break;
         case plLocalization::kGerman:
-            keyConvert = &fKeyConversionGerman[0];
+            keyConvert = &fKeyConversionGerman;
             break;
         case plLocalization::kSpanish:
-            keyConvert = &fKeyConversionSpanish[0];
+            keyConvert = &fKeyConversionSpanish;
             break;
         case plLocalization::kItalian:
-            keyConvert = &fKeyConversionItalian[0];
+            keyConvert = &fKeyConversionItalian;
             break;
 
         // default is English
         default:
             break;
     }
-    for (int i = 0; keyConvert[i].fVKey != 0xffffffff; i++)
-    {
-        if (keyConvert[i].fVKey == vk)
-            return (keyConvert[i].fKeyName);
-    }
 
-    return {};
+    auto it = keyConvert->find(vk);
+    if (it == keyConvert->end()) {
+        return {};
+    } else {
+        return it->second;
+    }
 }
 
 plKeyDef plKeyMap::ConvertCharToVKey(const ST::string& c)
 {
-    Win32keyConvert* keyConvert = &fKeyConversionEnglish[0];
+    const std::map<uint32_t, ST::string>* keyConvert = &fKeyConversionEnglish;
     switch (plLocalization::GetLanguage())
     {
         case plLocalization::kFrench:
-            keyConvert = &fKeyConversionFrench[0];
+            keyConvert = &fKeyConversionFrench;
             break;
         case plLocalization::kGerman:
-            keyConvert = &fKeyConversionGerman[0];
+            keyConvert = &fKeyConversionGerman;
             break;
         case plLocalization::kSpanish:
-            keyConvert = &fKeyConversionSpanish[0];
+            keyConvert = &fKeyConversionSpanish;
             break;
         case plLocalization::kItalian:
-            keyConvert = &fKeyConversionItalian[0];
+            keyConvert = &fKeyConversionItalian;
             break;
 
         // default is English
         default:
             break;
     }
-    for (int i = 0; keyConvert[i].fVKey != 0xffffffff; i++)
+    for (const auto& [vKey, keyName] : *keyConvert)
     {
-        if (keyConvert[i].fKeyName.compare_i(c) == 0)
-            return (plKeyDef)(keyConvert[i].fVKey);
+        if (keyName.compare_i(c) == 0)
+            return (plKeyDef)vKey;
     }
 
     // Is it just a single character?
@@ -558,42 +558,42 @@ plKeyDef plKeyMap::ConvertCharToVKey(const ST::string& c)
     // ...just in case they keep switching languages on us
     if ( plLocalization::GetLanguage() != plLocalization::kEnglish)
     {
-        for (int i = 0; fKeyConversionEnglish[i].fVKey != 0xffffffff; i++)
+        for (const auto& [vKey, keyName] : fKeyConversionEnglish)
         {
-            if (fKeyConversionEnglish[i].fKeyName.compare_i(c) == 0)
-                return (plKeyDef)(fKeyConversionEnglish[i].fVKey);
+            if (keyName.compare_i(c) == 0)
+                return (plKeyDef)vKey;
         }
     }
     if ( plLocalization::GetLanguage() != plLocalization::kFrench)
     {
-        for (int i = 0; fKeyConversionFrench[i].fVKey != 0xffffffff; i++)
+        for (const auto& [vKey, keyName] : fKeyConversionFrench)
         {
-            if (fKeyConversionFrench[i].fKeyName.compare_i(c) == 0)
-                return (plKeyDef)(fKeyConversionFrench[i].fVKey);
+            if (keyName.compare_i(c) == 0)
+                return (plKeyDef)vKey;
         }
     }
     if ( plLocalization::GetLanguage() != plLocalization::kGerman)
     {
-        for (int i = 0; fKeyConversionGerman[i].fVKey != 0xffffffff; i++)
+        for (const auto& [vKey, keyName] : fKeyConversionGerman)
         {
-            if (fKeyConversionGerman[i].fKeyName.compare_i(c) == 0)
-                return (plKeyDef)(fKeyConversionGerman[i].fVKey);
+            if (keyName.compare_i(c) == 0)
+                return (plKeyDef)vKey;
         }
     }
     if ( plLocalization::GetLanguage() != plLocalization::kSpanish)
     {
-        for (int i = 0; fKeyConversionSpanish[i].fVKey != 0xffffffff; i++)
+        for (const auto& [vKey, keyName] : fKeyConversionSpanish)
         {
-            if (fKeyConversionSpanish[i].fKeyName.compare_i(c) == 0)
-                return (plKeyDef)(fKeyConversionSpanish[i].fVKey);
+            if (keyName.compare_i(c) == 0)
+                return (plKeyDef)vKey;
         }
     }
     if ( plLocalization::GetLanguage() != plLocalization::kItalian)
     {
-        for (int i = 0; fKeyConversionItalian[i].fVKey != 0xffffffff; i++)
+        for (const auto& [vKey, keyName] : fKeyConversionItalian)
         {
-            if (fKeyConversionItalian[i].fKeyName.compare_i(c) == 0)
-                return (plKeyDef)(fKeyConversionItalian[i].fVKey);
+            if (keyName.compare_i(c) == 0)
+                return (plKeyDef)vKey;
         }
     }
 
@@ -700,7 +700,7 @@ void plKeyMap::ICheckAndBindDupe(plKeyDef origKey, plKeyDef dupeKey)
     }   
 }
 
-Win32keyConvert plKeyMap::fKeyConversionEnglish[] =
+const std::map<uint32_t, ST::string> plKeyMap::fKeyConversionEnglish =
 { 
 #ifdef HS_BUILD_FOR_WIN32
     { VK_F1,    ST_LITERAL("F1") },
@@ -762,11 +762,9 @@ Win32keyConvert plKeyMap::fKeyConversionEnglish[] =
     { VK_OEM_6,     ST_LITERAL("RightBracket") },
     { VK_OEM_7,     ST_LITERAL("Quote") },
 #endif
-                
-    { 0xffffffff,   ST_LITERAL("Unused") },
 };
 
-Win32keyConvert  plKeyMap::fKeyConversionFrench[] =
+const std::map<uint32_t, ST::string> plKeyMap::fKeyConversionFrench =
 {
 #ifdef HS_BUILD_FOR_WIN32
     { VK_F1,    ST_LITERAL("F1") },
@@ -828,11 +826,9 @@ Win32keyConvert  plKeyMap::fKeyConversionFrench[] =
     { VK_OEM_6,     ST_LITERAL("ParenthèseD") },
     { VK_OEM_7,     ST_LITERAL("Guillemet") },
 #endif
-                
-    { 0xffffffff,   ST_LITERAL("Unused") },
 };
 
-Win32keyConvert  plKeyMap::fKeyConversionGerman[] =
+const std::map<uint32_t, ST::string> plKeyMap::fKeyConversionGerman =
 {
 #ifdef HS_BUILD_FOR_WIN32
     { VK_F1,    ST_LITERAL("F1") },
@@ -894,11 +890,9 @@ Win32keyConvert  plKeyMap::fKeyConversionGerman[] =
     { VK_OEM_6,     ST_LITERAL("Akzent") },
     { VK_OEM_7,     ST_LITERAL("Ä") },
 #endif
-                
-    { 0xffffffff,   ST_LITERAL("Unused") },
 };
 
-Win32keyConvert  plKeyMap::fKeyConversionSpanish[] =
+const std::map<uint32_t, ST::string> plKeyMap::fKeyConversionSpanish =
 {
 #ifdef HS_BUILD_FOR_WIN32
     { VK_F1,    ST_LITERAL("F1") },
@@ -960,11 +954,9 @@ Win32keyConvert  plKeyMap::fKeyConversionSpanish[] =
     { VK_OEM_6,     ST_LITERAL("CerrarParéntesis") },
     { VK_OEM_7,     ST_LITERAL("Comillas") },
 #endif
-                
-    { 0xffffffff,   ST_LITERAL("Unused") },
 };
 
-Win32keyConvert  plKeyMap::fKeyConversionItalian[] =
+const std::map<uint32_t, ST::string> plKeyMap::fKeyConversionItalian =
 {
 #ifdef HS_BUILD_FOR_WIN32
     { VK_F1,    ST_LITERAL("F1") },
@@ -1026,13 +1018,11 @@ Win32keyConvert  plKeyMap::fKeyConversionItalian[] =
     { VK_OEM_6,     ST_LITERAL("ì") },
     { VK_OEM_7,     ST_LITERAL("à") },
 #endif
-                
-    { 0xffffffff,   ST_LITERAL("Unused") },
 };
 
 
 
-CommandConvert plInputMap::fCmdConvert[] =
+const std::map<ControlEventCode, ST::string> plInputMap::fCmdConvert =
 {
 
     { B_CONTROL_ACTION, ST_LITERAL("Use Key") },
@@ -1087,8 +1077,4 @@ CommandConvert plInputMap::fCmdConvert[] =
     { B_CONTROL_OPEN_BOOK, ST_LITERAL("Open Player Book") },
     { B_CONTROL_EXIT_GUI_MODE, ST_LITERAL("Exit GUI Mode") },
     { B_CONTROL_MODIFIER_STRAFE, ST_LITERAL("Strafe Modifier") },
-
-
-    { END_CONTROLS, {} },
- 
 };

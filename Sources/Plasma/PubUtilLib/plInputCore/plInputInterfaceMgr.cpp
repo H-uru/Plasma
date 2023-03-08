@@ -788,39 +788,37 @@ void    plInputInterfaceMgr::WriteKeyMap()
         fprintf(gKeyFile, "# Available game commands:\n");
         fprintf(gKeyFile, "#\n");
         
-        for( int j = 0; plKeyMap::fCmdConvert[ j ].fCode != END_CONTROLS; j++ )
+        for (const auto& [code, desc] : plKeyMap::fCmdConvert)
         {
-            fprintf(gKeyFile, "#  %s\n", plKeyMap::fCmdConvert[j].fDesc.c_str());
+            fprintf(gKeyFile, "#  %s\n", desc.c_str());
         }
 
         fprintf(gKeyFile, "#\n");
         fprintf(gKeyFile, "# Key name list (for a-z or 0-9 just use the character)\n");
         fprintf(gKeyFile, "#\n");
 
-        Win32keyConvert* keyConvert = &plKeyMap::fKeyConversionEnglish[0];
+        const std::map<uint32_t, ST::string>* keyConvert = &plKeyMap::fKeyConversionEnglish;
         switch (plLocalization::GetLanguage())
         {
             case plLocalization::kFrench:
-                keyConvert = &plKeyMap::fKeyConversionFrench[0];
+                keyConvert = &plKeyMap::fKeyConversionFrench;
                 break;
             case plLocalization::kGerman:
-                keyConvert = &plKeyMap::fKeyConversionGerman[0];
+                keyConvert = &plKeyMap::fKeyConversionGerman;
                 break;
             case plLocalization::kSpanish:
-                keyConvert = &plKeyMap::fKeyConversionSpanish[0];
+                keyConvert = &plKeyMap::fKeyConversionSpanish;
                 break;
             case plLocalization::kItalian:
-                keyConvert = &plKeyMap::fKeyConversionItalian[0];
+                keyConvert = &plKeyMap::fKeyConversionItalian;
                 break;
             // default is English
             default:
                 break;
         }
-        for (size_t i = 0; keyConvert[i].fVKey != 0xffffffff; i++)
+        for (const auto& [vKey, keyName] : *keyConvert)
         {   
-//              if (stricmp(fKeyMap->fKeyConversion[i].fKeyName, "Shift") == 0)
-//                  continue;
-            fprintf(gKeyFile, "#  %s\n", keyConvert[i].fKeyName.c_str());
+            fprintf(gKeyFile, "#  %s\n", keyName.c_str());
         }
         fclose(gKeyFile);
     }
