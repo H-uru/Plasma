@@ -47,6 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputDevice.h"
 #include "plInputManager.h"
 #include "plAvatarInputInterface.h"
+
+#include <utility>
+
 #include "plMessage/plInputEventMsg.h"
 #include "pnMessage/plTimeMsg.h"
 
@@ -231,7 +234,7 @@ plMouseDevice* plMouseDevice::fInstance = nullptr;
 
 plMouseDevice::plMouseDevice()
     : fXPos(), fYPos(), fOpacity(1.f), fButtonState(),
-      fCursor(), fCursorID(CURSOR_UP),
+      fCursor(), fCursorID(ST_LITERAL(CURSOR_UP)),
       fXMsg(), fYMsg(), fB2Msg(),
       fLeftBMsg(), fMiddleBMsg(), fRightBMsg(),
       fWXPos(), fWYPos()
@@ -253,7 +256,7 @@ void plMouseDevice::SetDisplayResolution(float Width, float Height)
     IUpdateCursorSize();
 }
 
-void    plMouseDevice::CreateCursor( const char* cursor )
+void    plMouseDevice::CreateCursor(const ST::string& cursor)
 {
     if (fCursor == nullptr)
     {
@@ -301,9 +304,7 @@ void plMouseDevice::AddIDNumToCursor(uint32_t idNum)
     if (fInstance && idNum)
     {
         plDebugText     &txt = plDebugText::Instance();
-        char str[256];
-        sprintf(str, "%d",idNum);
-        txt.DrawString(fInstance->fWXPos + 12 ,fInstance->fWYPos + 3,str);
+        txt.DrawString(fInstance->fWXPos + 12, fInstance->fWYPos + 3, ST::string::from_uint(idNum));
     }
 }
         
@@ -365,10 +366,10 @@ void plMouseDevice::ShowCursor(bool override)
     }
 }
 
-void plMouseDevice::NewCursor(const char* cursor)
+void plMouseDevice::NewCursor(ST::string cursor)
 {
-    fInstance->fCursorID = cursor;
-    fInstance->CreateCursor(cursor);
+    fInstance->fCursorID = std::move(cursor);
+    fInstance->CreateCursor(fInstance->fCursorID);
     fInstance->SetCursorX(fInstance->GetCursorX());
     fInstance->SetCursorY(fInstance->GetCursorY());
 }

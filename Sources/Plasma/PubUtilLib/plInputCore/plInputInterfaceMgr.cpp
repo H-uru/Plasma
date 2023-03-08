@@ -246,38 +246,37 @@ void plInputInterfaceMgr::ResetClickableState()
 
 void    plInputInterfaceMgr::IUpdateCursor( int32_t newCursor )
 {
-    const char*     mouseCursorResID;
-
-
     if (newCursor == plInputInterface::kCursorHidden) {
         plMouseDevice::HideCursor();
     } else {
         if (fCurrentCursor == plInputInterface::kCursorHidden)
             plMouseDevice::ShowCursor();
+
+        ST::string mouseCursorResID;
         switch (newCursor) {
-            case plInputInterface::kCursorUp:                   mouseCursorResID = CURSOR_UP;                   break;
-            case plInputInterface::kCursorLeft:                 mouseCursorResID = CURSOR_LEFT;                 break;
-            case plInputInterface::kCursorRight:                mouseCursorResID = CURSOR_RIGHT;                break;
-            case plInputInterface::kCursorDown:                 mouseCursorResID = CURSOR_DOWN;                 break;
-            case plInputInterface::kCursorPoised:               mouseCursorResID = CURSOR_POISED;               break;
-            case plInputInterface::kCursorClicked:              mouseCursorResID = CURSOR_CLICKED;              break;
-            case plInputInterface::kCursorUnClicked:            mouseCursorResID = CURSOR_POISED;               break;
-            case plInputInterface::kCursorOpen:                 mouseCursorResID = CURSOR_OPEN;                 break;
-            case plInputInterface::kCursorGrab:                 mouseCursorResID = CURSOR_GRAB;                 break;
-            case plInputInterface::kCursorArrow:                mouseCursorResID = CURSOR_ARROW;                break;
-            case plInputInterface::kCursor4WayDraggable:        mouseCursorResID = CURSOR_4WAY_OPEN;            break;
-            case plInputInterface::kCursor4WayDragging:         mouseCursorResID = CURSOR_4WAY_CLOSED;          break;
-            case plInputInterface::kCursorUpDownDraggable:      mouseCursorResID = CURSOR_UPDOWN_OPEN;          break;
-            case plInputInterface::kCursorUpDownDragging:       mouseCursorResID = CURSOR_UPDOWN_CLOSED;        break;
-            case plInputInterface::kCursorLeftRightDraggable:   mouseCursorResID = CURSOR_LEFTRIGHT_OPEN;       break;
-            case plInputInterface::kCursorLeftRightDragging:    mouseCursorResID = CURSOR_LEFTRIGHT_CLOSED;     break;
-            case plInputInterface::kCursorOfferBook:            mouseCursorResID = CURSOR_OFFER_BOOK;           break;
-            case plInputInterface::kCursorOfferBookHilite:      mouseCursorResID = CURSOR_OFFER_BOOK_HI;        break;
-            case plInputInterface::kCursorOfferBookClicked:     mouseCursorResID = CURSOR_OFFER_BOOK_CLICKED;   break;
-            case plInputInterface::kCursorClickDisabled:        mouseCursorResID = CURSOR_CLICK_DISABLED;       break;
-            case plInputInterface::kCursorHand:                 mouseCursorResID = CURSOR_HAND;                 break;
-            case plInputInterface::kCursorUpward:               mouseCursorResID = CURSOR_UPWARD;               break;
-            default:                                            mouseCursorResID = CURSOR_OPEN;                 break;
+            case plInputInterface::kCursorUp:                 mouseCursorResID = ST_LITERAL(CURSOR_UP);                 break;
+            case plInputInterface::kCursorLeft:               mouseCursorResID = ST_LITERAL(CURSOR_LEFT);               break;
+            case plInputInterface::kCursorRight:              mouseCursorResID = ST_LITERAL(CURSOR_RIGHT);              break;
+            case plInputInterface::kCursorDown:               mouseCursorResID = ST_LITERAL(CURSOR_DOWN);               break;
+            case plInputInterface::kCursorPoised:             mouseCursorResID = ST_LITERAL(CURSOR_POISED);             break;
+            case plInputInterface::kCursorClicked:            mouseCursorResID = ST_LITERAL(CURSOR_CLICKED);            break;
+            case plInputInterface::kCursorUnClicked:          mouseCursorResID = ST_LITERAL(CURSOR_POISED);             break;
+            case plInputInterface::kCursorOpen:               mouseCursorResID = ST_LITERAL(CURSOR_OPEN);               break;
+            case plInputInterface::kCursorGrab:               mouseCursorResID = ST_LITERAL(CURSOR_GRAB);               break;
+            case plInputInterface::kCursorArrow:              mouseCursorResID = ST_LITERAL(CURSOR_ARROW);              break;
+            case plInputInterface::kCursor4WayDraggable:      mouseCursorResID = ST_LITERAL(CURSOR_4WAY_OPEN);          break;
+            case plInputInterface::kCursor4WayDragging:       mouseCursorResID = ST_LITERAL(CURSOR_4WAY_CLOSED);        break;
+            case plInputInterface::kCursorUpDownDraggable:    mouseCursorResID = ST_LITERAL(CURSOR_UPDOWN_OPEN);        break;
+            case plInputInterface::kCursorUpDownDragging:     mouseCursorResID = ST_LITERAL(CURSOR_UPDOWN_CLOSED);      break;
+            case plInputInterface::kCursorLeftRightDraggable: mouseCursorResID = ST_LITERAL(CURSOR_LEFTRIGHT_OPEN);     break;
+            case plInputInterface::kCursorLeftRightDragging:  mouseCursorResID = ST_LITERAL(CURSOR_LEFTRIGHT_CLOSED);   break;
+            case plInputInterface::kCursorOfferBook:          mouseCursorResID = ST_LITERAL(CURSOR_OFFER_BOOK);         break;
+            case plInputInterface::kCursorOfferBookHilite:    mouseCursorResID = ST_LITERAL(CURSOR_OFFER_BOOK_HI);      break;
+            case plInputInterface::kCursorOfferBookClicked:   mouseCursorResID = ST_LITERAL(CURSOR_OFFER_BOOK_CLICKED); break;
+            case plInputInterface::kCursorClickDisabled:      mouseCursorResID = ST_LITERAL(CURSOR_CLICK_DISABLED);     break;
+            case plInputInterface::kCursorHand:               mouseCursorResID = ST_LITERAL(CURSOR_HAND);               break;
+            case plInputInterface::kCursorUpward:             mouseCursorResID = ST_LITERAL(CURSOR_UPWARD);             break;
+            default:                                          mouseCursorResID = ST_LITERAL(CURSOR_OPEN);               break;
         }
 
         plMouseDevice::NewCursor(mouseCursorResID);
