@@ -123,7 +123,12 @@ class plDebugText
             DrawString_TEMP(x, y, string, hex, style);
         }
 
-        void DrawString(uint16_t x, uint16_t y, const ST::string &string, uint8_t r = 255, uint8_t g = 255, uint8_t b = 255, uint8_t a = 255, uint8_t style = 0)
+        void DrawString(uint16_t x, uint16_t y, const ST::string& string)
+        {
+            DrawString_TEMP(x, y, string, 0xffffffff, 0);
+        }
+
+        void DrawString(uint16_t x, uint16_t y, const ST::string &string, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255, uint8_t style = 0)
         {
             DrawString_TEMP(x, y, string, (uint32_t)( ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b ) ), style);
         }
