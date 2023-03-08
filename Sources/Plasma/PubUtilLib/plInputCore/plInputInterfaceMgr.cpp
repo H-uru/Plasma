@@ -790,8 +790,6 @@ void    plInputInterfaceMgr::WriteKeyMap()
         
         for( int j = 0; plKeyMap::fCmdConvert[ j ].fCode != END_CONTROLS; j++ )
         {
-            if (plKeyMap::fCmdConvert[j].fDesc.compare_i("Run Modifier") == 0)
-                continue;
             fprintf(gKeyFile, "#  %s\n", plKeyMap::fCmdConvert[j].fDesc.c_str());
         }
 
