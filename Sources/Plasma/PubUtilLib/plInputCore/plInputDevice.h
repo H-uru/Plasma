@@ -72,8 +72,6 @@ public:
     { }
     virtual ~plInputDevice() { }
 
-    virtual const char* GetInputName() = 0;
-
     uint32_t GetFlags() { return fFlags; }
     void SetFlags(uint32_t f) { fFlags = f; }
     virtual void HandleKeyEvent(plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = 0) { }
@@ -116,7 +114,6 @@ public:
 
     void SetControlMode(int i) { fControlMode = i; }
 
-    const char* GetInputName() override { return "keyboard"; }
     void HandleKeyEvent(plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = 0) override;
     void HandleWindowActivate(bool bActive, hsWindowHndl hWnd) override;
     virtual bool IsCapsLockKeyOn();
@@ -159,8 +156,6 @@ class plMouseDevice : public plInputDevice
 public:
     plMouseDevice();
     ~plMouseDevice();
-
-    const char* GetInputName() override { return "mouse"; }
 
     bool    HasControlFlag(int f) const { return fControlFlags.IsBitSet(f); }
     void    SetControlFlag(int f) 
