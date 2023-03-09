@@ -58,10 +58,6 @@ class pyKeyMap
 protected:
     pyKeyMap() {};
 
-private:
-    plKeyCombo IBindKeyToVKey(ST::string keyStr);
-
-
 public:
     enum
     {

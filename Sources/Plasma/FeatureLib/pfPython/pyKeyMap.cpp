@@ -51,54 +51,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnInputCore/plKeyMap.h"
 
 // conversion functions
-// FIXME This method duplicates plInputInterfaceMgr::IKeyComboToString
 ST::string pyKeyMap::ConvertVKeyToChar(uint32_t vk, uint32_t flags)
 {
-    ST::string key = plKeyMap::ConvertVKeyToChar(vk);
-    if (key.empty())
-    {
-        if( isalnum( vk ) )
-        {
-            char c = (char)vk;
-            key = ST::string::from_latin_1(&c, 1);
-        }
-        else
-            return ST_LITERAL("(unmapped)");
-    }
-
-    if( flags & kShift )
-        key += "_S";
-    if( flags & kCtrl )
-        key += "_C";
-
-    return key;
+    return plKeyMap::KeyComboToString(plKeyCombo(static_cast<plKeyDef>(vk), flags));
 }
-
-// FIXME These two methods duplicate IBindKeyToVKey
 
 uint32_t pyKeyMap::ConvertCharToVKey(const ST::string& charVKey)
 {
-    // FIXME The closing parenthesis is missing - it's been this way for at least 12 years, so I'm afraid to fix it
-    if (charVKey == "(unmapped")
-        return KEY_UNMAPPED;
-
-    // Get rid of modififers
-    ST::string str = charVKey.before_first('_');
-
-    // Convert raw key and return
-    return plKeyMap::ConvertCharToVKey( str );
+    return plKeyMap::StringToKeyCombo(charVKey).fKey;
 }
 
 uint32_t pyKeyMap::ConvertCharToFlags(const ST::string& charVKey)
 {
-    // Find modifiers to set flags with
-    uint32_t keyFlags = 0;
-    if (charVKey.find("_S", ST::case_insensitive) != -1)
-        keyFlags |= plKeyCombo::kShift;
-    if (charVKey.find("_C", ST::case_insensitive) != -1)
-        keyFlags |= plKeyCombo::kCtrl;
-
-    return keyFlags;
+    return plKeyMap::StringToKeyCombo(charVKey).fFlags;
 }
 
 
@@ -127,8 +92,8 @@ void pyKeyMap::BindKey(const ST::string& keyStr1, const ST::string& keyStr2, con
 
     if (plInputInterfaceMgr::GetInstance() != nullptr)
     {
-        plKeyCombo key1 = IBindKeyToVKey( keyStr1 );
-        plKeyCombo key2 = IBindKeyToVKey( keyStr2 );
+        plKeyCombo key1 = plKeyMap::StringToKeyCombo(keyStr1);
+        plKeyCombo key2 = plKeyMap::StringToKeyCombo(keyStr2);
         plInputInterfaceMgr::GetInstance()->BindAction( key1, key2, code );
     }
 }
@@ -138,33 +103,9 @@ void pyKeyMap::BindKeyToConsoleCommand(const ST::string& keyStr1, const ST::stri
 {
     if (plInputInterfaceMgr::GetInstance() != nullptr)
     {
-        plKeyCombo key1 = IBindKeyToVKey(keyStr1);
+        plKeyCombo key1 = plKeyMap::StringToKeyCombo(keyStr1);
         plInputInterfaceMgr::GetInstance()->BindConsoleCmd( key1, command, plKeyMap::kFirstAlways);
     }
-}
-
-// FIXME This method duplicates IBindKeyToVKey in pfConsoleCommands.cpp
-plKeyCombo pyKeyMap::IBindKeyToVKey(ST::string keyStr)
-{
-    plKeyCombo  combo;
-
-    // Find modifiers to set flags with
-    combo.fFlags = 0;
-    if (keyStr.find("_S", ST::case_insensitive) != -1)
-        combo.fFlags |= plKeyCombo::kShift;
-    if (keyStr.find("_C", ST::case_insensitive) != -1)
-        combo.fFlags |= plKeyCombo::kCtrl;
-    
-    // Get rid of modififers
-    keyStr = keyStr.before_first('_');
-
-    // Convert raw key
-    combo.fKey = plKeyMap::ConvertCharToVKey(keyStr);
-    if( combo.fKey == KEY_UNMAPPED )
-        combo = plKeyCombo::kUnmapped;
-
-    // And return!
-    return combo;
 }
 
 uint32_t pyKeyMap::GetBindingKey1(uint32_t code)

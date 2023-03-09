@@ -818,42 +818,6 @@ void plInputInterfaceMgr::ReleaseCurrentFocus(plInputInterface *focus)
 }
 
 
-//// IKeyComboToString ///////////////////////////////////////////////////////
-
-ST::string plInputInterfaceMgr::IKeyComboToString(const plKeyCombo &combo)
-{
-    bool            unmapped = false;
-
-
-    if( combo == plKeyCombo::kUnmapped )
-        return ST_LITERAL("(unmapped)");
-    else
-    {
-        ST::string str = plKeyMap::ConvertVKeyToChar( combo.fKey );
-        if (str.empty())
-        {
-            if( isalnum( combo.fKey ) )
-            {
-                char c = (char)combo.fKey;
-                str = ST::string(&c, 1);
-            }
-            else
-            {
-                str = ST_LITERAL("(unmapped)");
-                unmapped = true;
-            }
-        }
-        if( !unmapped )
-        {
-            if( combo.fFlags & plKeyCombo::kCtrl )
-                str += "_C";
-            if( combo.fFlags & plKeyCombo::kShift )
-                str += "_S";
-        }
-        return str;
-    }
-}
-
 //// IWriteNonConsoleCmdKeys /////////////////////////////////////////////////
 
 void    plInputInterfaceMgr::IWriteNonConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFile )
@@ -868,8 +832,8 @@ void    plInputInterfaceMgr::IWriteNonConsoleCmdKeys( plKeyMap *keyMap, FILE *ke
         if( binding.GetCode() == B_CONTROL_CONSOLE_COMMAND )
             continue;
 
-        ST::string key1 = IKeyComboToString(binding.GetKey1());
-        ST::string key2 = IKeyComboToString(binding.GetKey2());
+        ST::string key1 = plKeyMap::KeyComboToString(binding.GetKey1());
+        ST::string key2 = plKeyMap::KeyComboToString(binding.GetKey2());
         ST::string desc = plInputMap::ConvertControlCodeToString(binding.GetCode());
 
         ST::string line = ST::format("Keyboard.BindAction \t\t{}\t{}\t\t\t\t\"{}\"\n", key1, key2, desc);
@@ -897,14 +861,14 @@ void    plInputInterfaceMgr::IWriteConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFi
         // 2 commands, which is perfectly valid
 //      if( binding.GetKey1() != plKeyCombo::kUnmapped )
 //      {
-            ST::string key = IKeyComboToString(binding.GetKey1());
+            ST::string key = plKeyMap::KeyComboToString(binding.GetKey1());
             ST::string line = ST::format("Keyboard.BindConsoleCmd\t{}\t\t\t\"{}\"\n", key, binding.GetExtendedString());
             fputs(line.c_str(), keyFile);
 //      }
 
         if( binding.GetKey2() != plKeyCombo::kUnmapped )
         {
-            ST::string key2 = IKeyComboToString(binding.GetKey2());
+            ST::string key2 = plKeyMap::KeyComboToString(binding.GetKey2());
             ST::string line2 = ST::format("Keyboard.BindConsoleCmd\t{}\t\t\t\"{}\"\n", key2, binding.GetExtendedString());
             fputs(line2.c_str(), keyFile);
         }

@@ -108,8 +108,6 @@ class plInputInterfaceMgr : public plSingleModifier
         plKeyMap    *IGetRoutedKeyMap( ControlEventCode code ); // Null for console commands
         void        IUnbind( const plKeyCombo &key );
 
-        ST::string IKeyComboToString(const plKeyCombo &combo);
-        
     public:
 
         plInputInterfaceMgr();

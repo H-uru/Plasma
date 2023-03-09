@@ -231,6 +231,9 @@ class plKeyMap : public plInputMap
         static ST::string ConvertVKeyToChar(uint32_t vk);
         static plKeyDef ConvertCharToVKey(const ST::string& c);
 
+        static ST::string KeyComboToString(const plKeyCombo &combo);
+        static plKeyCombo StringToKeyCombo(const ST::string& keyStr);
+
         static const std::map<uint32_t, ST::string> fKeyConversionEnglish;
         static const std::map<uint32_t, ST::string> fKeyConversionFrench;
         static const std::map<uint32_t, ST::string> fKeyConversionGerman;

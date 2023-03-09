@@ -3187,31 +3187,6 @@ PF_CONSOLE_CMD( Keyboard, ClearBindings, "", "Resets the keyboard bindings to em
     PrintString( "Keyboard bindings destroyed" );
 }
 
-// FIXME This function duplicates IBindKeyToVKey in pyKeyMap.cpp
-static plKeyCombo   IBindKeyToVKey(ST::string str)
-{
-    plKeyCombo  combo;
-
-    // Find modifiers to set flags with
-    combo.fFlags = 0;
-    if (str.find("_S", ST::case_insensitive) != -1)
-        combo.fFlags |= plKeyCombo::kShift;
-    if (str.find("_C", ST::case_insensitive) != -1)
-        combo.fFlags |= plKeyCombo::kCtrl;
-    
-    // Get rid of modififers
-    str = str.before_first('_');
-
-    // Convert raw key
-    combo.fKey = plKeyMap::ConvertCharToVKey( str );
-    if( combo.fKey == KEY_UNMAPPED )
-        combo = plKeyCombo::kUnmapped;
-
-    // And return!
-    return combo;
-
-}
-
 PF_CONSOLE_CMD( Keyboard,       // groupName
                BindKey,     // fxnName
                "string key1, string action", // paramList
@@ -3226,7 +3201,7 @@ PF_CONSOLE_CMD( Keyboard,       // groupName
 
     if (plInputInterfaceMgr::GetInstance() != nullptr)
     {
-        plKeyCombo key1 = IBindKeyToVKey(ST::string(params[0]));
+        plKeyCombo key1 = plKeyMap::StringToKeyCombo(ST::string(params[0]));
         plInputInterfaceMgr::GetInstance()->BindAction( key1, code );
     }
 }
@@ -3245,8 +3220,8 @@ PF_CONSOLE_CMD( Keyboard,       // groupName
 
     if (plInputInterfaceMgr::GetInstance() != nullptr)
     {
-        plKeyCombo key1 = IBindKeyToVKey(ST::string(params[0]));
-        plKeyCombo key2 = IBindKeyToVKey(ST::string(params[1]));
+        plKeyCombo key1 = plKeyMap::StringToKeyCombo(ST::string(params[0]));
+        plKeyCombo key2 = plKeyMap::StringToKeyCombo(ST::string(params[1]));
         plInputInterfaceMgr::GetInstance()->BindAction( key1, key2, code );
     }
 }
@@ -3256,7 +3231,7 @@ PF_CONSOLE_CMD( Keyboard,       // groupName
                "string key, string command", // paramList
                "Bind console command to key" )  // helpString
 {
-    plKeyCombo key = IBindKeyToVKey(ST::string(params[0]));
+    plKeyCombo key = plKeyMap::StringToKeyCombo(ST::string(params[0]));
 
     if (plInputInterfaceMgr::GetInstance() != nullptr)
         plInputInterfaceMgr::GetInstance()->BindConsoleCmd(key, ST::string(params[1]), plKeyMap::kFirstAlways);

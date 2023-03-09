@@ -540,6 +540,47 @@ plKeyDef plKeyMap::ConvertCharToVKey(const ST::string& c)
     return KEY_UNMAPPED;
 }
 
+ST::string plKeyMap::KeyComboToString(const plKeyCombo &combo)
+{
+    ST::string str = ConvertVKeyToChar(combo.fKey);
+    if (str.empty()) {
+        if (isalnum(combo.fKey)) {
+            char c = (char)combo.fKey;
+            str = ST::string(&c, 1);
+        } else {
+            return ST_LITERAL("(unmapped)");
+        }
+    }
+    if (combo.fFlags & plKeyCombo::kCtrl) {
+        str += "_C";
+    }
+    if (combo.fFlags & plKeyCombo::kShift) {
+        str += "_S";
+    }
+    return str;
+}
+
+plKeyCombo plKeyMap::StringToKeyCombo(const ST::string& keyStr)
+{
+    plKeyCombo combo;
+    
+    // Find modifiers to set flags with
+    combo.fFlags = 0;
+    if (keyStr.find("_S", ST::case_insensitive) != -1) {
+        combo.fFlags |= plKeyCombo::kShift;
+    }
+    if (keyStr.find("_C", ST::case_insensitive) != -1) {
+        combo.fFlags |= plKeyCombo::kCtrl;
+    }
+    
+    // Convert raw key without modifiers
+    combo.fKey = plKeyMap::ConvertCharToVKey(keyStr.before_first('_'));
+    if (combo.fKey == KEY_UNMAPPED)
+        combo = plKeyCombo::kUnmapped;
+    
+    return combo;
+}
+
 ST::string plKeyMap::GetStringCtrl()
 {
     switch (plLocalization::GetLanguage())
