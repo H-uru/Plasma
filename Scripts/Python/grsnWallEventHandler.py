@@ -105,22 +105,18 @@ class grsnWallEventHandler(ptResponder):
         if id == 1:
             self.BlockerSfxBlock = True
             PtClearTimerCallbacks(self.key)
-            
-    def IAmMaster(self):
-        return (self.sceneobject.isLocallyOwned())
 
     def Handle(self, event):
-        if(self.IAmMaster()):
-            if random.randint(0, 100) <= dniSndChance:
-                idx = 1
-            else:
-                idx = random.randint(2, 4)
-            (stage, sndResp) = getattr(self, event)(idx)
+        if random.randint(0, 100) <= dniSndChance:
+            idx = 1
+        else:
+            idx = random.randint(2, 4)
+        (stage, sndResp) = getattr(self, event)(idx)
 
-            sndResp.run(self.key, state=stage)
+        sndResp.run(self.key, state=stage)
 
     def HandleBlocker(self):
-        if(self.IAmMaster() and self.BlockerSfxBlock):
+        if(self.BlockerSfxBlock):
             self.BlockerSfxBlock = False
             self.BlockersHit += 1
 

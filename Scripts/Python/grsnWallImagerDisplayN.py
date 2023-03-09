@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from Plasma import *
 from PlasmaTypes import *
 from grsnWallConstants import *
+from itertools import takewhile
 
 
 ##############################################################
@@ -61,33 +62,28 @@ class grsnWallImagerDisplayN(ptResponder):
         ptResponder.__init__(self)
         self.id = 52398
         self.version = 2
+        self.oldNorthWall = []
 
     def OnServerInitComplete(self):
         PtDebugPrint("grsnWallImagerDisplayN::OnServerInitComplete")
         ageSDL = PtGetAgeSDL()
+        self.oldNorthWall = ageSDL["northWall"]
         
         ageSDL.setNotify(self.key, "nState", 0.0)
         
-        if not PtIsSolo() and ageSDL["nState"] >= kWait:
-            for blocker in ageSDL["northWall"]:
-                if(blocker == -1):
-                    return
+        if not PtIsSolo() and ageSDL["nState"][0] >= kWait:
+            for blocker in takewhile(lambda x: x!= -1, ageSDL["northWall"]):
                 northImager.value[blocker].runAttachedResponder(kBlockerOn)
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         ageSDL = PtGetAgeSDL()
         #We only get a notify from nState
         value = ageSDL[VARname][0]
-        if(value == kWait):
-            for blocker in ageSDL["northWall"]:
-                if(blocker == -1):
-                    break
+        if(value == kEnd):
+            self.oldNorthWall = ageSDL["northWall"]
+        elif(value == kWait):
+            for blocker in takewhile(lambda x: x!= -1, ageSDL["northWall"]):
                 northImager.value[blocker].runAttachedResponder(kBlockerOn)
-        if(value == kSelectCount):
-            for i in range(0,171):
-                northImager.value[i].runAttachedResponder(kBlockerOff)
-
-
-
-
-
+        elif(value == kSelectCount):
+            for blocker in self.oldNorthWall:
+                northImager.value[blocker].runAttachedResponder(kBlockerOff)
