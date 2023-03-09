@@ -488,31 +488,21 @@ void    plKeyMap::EraseBinding( ControlEventCode code )
 }
 
 
+const std::map<uint32_t, ST::string>& plKeyMap::GetKeyConversion() {
+    auto langIter = fKeyConversions.find(plLocalization::GetLanguage());
+    if (langIter == fKeyConversions.end()) {
+        // default is English
+        return fKeyConversionEnglish;
+    } else {
+        return *langIter->second;
+    }
+}
+
 ST::string plKeyMap::ConvertVKeyToChar(uint32_t vk)
 {
-    const std::map<uint32_t, ST::string>* keyConvert = &fKeyConversionEnglish;
-    switch (plLocalization::GetLanguage())
-    {
-        case plLocalization::kFrench:
-            keyConvert = &fKeyConversionFrench;
-            break;
-        case plLocalization::kGerman:
-            keyConvert = &fKeyConversionGerman;
-            break;
-        case plLocalization::kSpanish:
-            keyConvert = &fKeyConversionSpanish;
-            break;
-        case plLocalization::kItalian:
-            keyConvert = &fKeyConversionItalian;
-            break;
-
-        // default is English
-        default:
-            break;
-    }
-
-    auto it = keyConvert->find(vk);
-    if (it == keyConvert->end()) {
+    const std::map<uint32_t, ST::string>& keyConvert = GetKeyConversion();
+    auto it = keyConvert.find(vk);
+    if (it == keyConvert.end()) {
         return {};
     } else {
         return it->second;
@@ -521,27 +511,8 @@ ST::string plKeyMap::ConvertVKeyToChar(uint32_t vk)
 
 plKeyDef plKeyMap::ConvertCharToVKey(const ST::string& c)
 {
-    const std::map<uint32_t, ST::string>* keyConvert = &fKeyConversionEnglish;
-    switch (plLocalization::GetLanguage())
-    {
-        case plLocalization::kFrench:
-            keyConvert = &fKeyConversionFrench;
-            break;
-        case plLocalization::kGerman:
-            keyConvert = &fKeyConversionGerman;
-            break;
-        case plLocalization::kSpanish:
-            keyConvert = &fKeyConversionSpanish;
-            break;
-        case plLocalization::kItalian:
-            keyConvert = &fKeyConversionItalian;
-            break;
-
-        // default is English
-        default:
-            break;
-    }
-    for (const auto& [vKey, keyName] : *keyConvert)
+    const std::map<uint32_t, ST::string>& keyConvert = GetKeyConversion();
+    for (const auto& [vKey, keyName] : keyConvert)
     {
         if (keyName.compare_i(c) == 0)
             return (plKeyDef)vKey;
@@ -556,44 +527,12 @@ plKeyDef plKeyMap::ConvertCharToVKey(const ST::string& c)
     // if we didn't find anything yet...
     // ...then look thru all the other language mappings that we know about,
     // ...just in case they keep switching languages on us
-    if ( plLocalization::GetLanguage() != plLocalization::kEnglish)
-    {
-        for (const auto& [vKey, keyName] : fKeyConversionEnglish)
-        {
-            if (keyName.compare_i(c) == 0)
-                return (plKeyDef)vKey;
-        }
-    }
-    if ( plLocalization::GetLanguage() != plLocalization::kFrench)
-    {
-        for (const auto& [vKey, keyName] : fKeyConversionFrench)
-        {
-            if (keyName.compare_i(c) == 0)
-                return (plKeyDef)vKey;
-        }
-    }
-    if ( plLocalization::GetLanguage() != plLocalization::kGerman)
-    {
-        for (const auto& [vKey, keyName] : fKeyConversionGerman)
-        {
-            if (keyName.compare_i(c) == 0)
-                return (plKeyDef)vKey;
-        }
-    }
-    if ( plLocalization::GetLanguage() != plLocalization::kSpanish)
-    {
-        for (const auto& [vKey, keyName] : fKeyConversionSpanish)
-        {
-            if (keyName.compare_i(c) == 0)
-                return (plKeyDef)vKey;
-        }
-    }
-    if ( plLocalization::GetLanguage() != plLocalization::kItalian)
-    {
-        for (const auto& [vKey, keyName] : fKeyConversionItalian)
-        {
-            if (keyName.compare_i(c) == 0)
-                return (plKeyDef)vKey;
+    for (const auto& [lang, langKeyConvert] : fKeyConversions) {
+        if (lang != plLocalization::GetLanguage()) {
+            for (const auto& [vKey, keyName] : *langKeyConvert) {
+                if (keyName.compare_i(c) == 0)
+                    return (plKeyDef)vKey;
+            }
         }
     }
 
@@ -1020,6 +959,14 @@ const std::map<uint32_t, ST::string> plKeyMap::fKeyConversionItalian =
 #endif
 };
 
+
+const std::map<plLocalization::Language, const std::map<uint32_t, ST::string>*> plKeyMap::fKeyConversions = {
+    { plLocalization::kEnglish, &fKeyConversionEnglish },
+    { plLocalization::kFrench, &fKeyConversionFrench },
+    { plLocalization::kGerman, &fKeyConversionGerman },
+    { plLocalization::kSpanish, &fKeyConversionSpanish },
+    { plLocalization::kItalian, &fKeyConversionItalian },
+};
 
 
 const std::map<ControlEventCode, ST::string> plInputMap::fCmdConvert =

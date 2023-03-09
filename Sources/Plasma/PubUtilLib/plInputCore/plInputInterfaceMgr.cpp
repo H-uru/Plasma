@@ -797,26 +797,8 @@ void    plInputInterfaceMgr::WriteKeyMap()
         fprintf(gKeyFile, "# Key name list (for a-z or 0-9 just use the character)\n");
         fprintf(gKeyFile, "#\n");
 
-        const std::map<uint32_t, ST::string>* keyConvert = &plKeyMap::fKeyConversionEnglish;
-        switch (plLocalization::GetLanguage())
-        {
-            case plLocalization::kFrench:
-                keyConvert = &plKeyMap::fKeyConversionFrench;
-                break;
-            case plLocalization::kGerman:
-                keyConvert = &plKeyMap::fKeyConversionGerman;
-                break;
-            case plLocalization::kSpanish:
-                keyConvert = &plKeyMap::fKeyConversionSpanish;
-                break;
-            case plLocalization::kItalian:
-                keyConvert = &plKeyMap::fKeyConversionItalian;
-                break;
-            // default is English
-            default:
-                break;
-        }
-        for (const auto& [vKey, keyName] : *keyConvert)
+        const std::map<uint32_t, ST::string> keyConvert = plKeyMap::GetKeyConversion();
+        for (const auto& [vKey, keyName] : keyConvert)
         {   
             fprintf(gKeyFile, "#  %s\n", keyName.c_str());
         }
