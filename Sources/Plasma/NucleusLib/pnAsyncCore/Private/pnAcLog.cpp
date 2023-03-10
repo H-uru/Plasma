@@ -55,12 +55,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 //===========================================================================
-void CDECL LogMsg (ELogSeverity severity, const char* line) {
+void LogMsg(ELogSeverity severity, const char* line) {
     ASSERT(line);
     plStatusLog::AddLineS("OLD_ASYNC_LOG.log", line);
 }
 
 //===========================================================================
-void CDECL LogMsg (ELogSeverity severity, const ST::string& line) {
+void LogMsg(ELogSeverity severity, const ST::string& line) {
     plStatusLog::AddLineS("OLD_ASYNC_LOG.log", line);
 }

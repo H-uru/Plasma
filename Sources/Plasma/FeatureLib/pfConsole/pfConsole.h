@@ -117,7 +117,7 @@ class pfConsole : public hsKeyedObject
 
         static uint32_t       fConsoleTextColor;
         static pfConsole    *fTheConsole;
-        static void CDECL IAddLineCallback( const char *string );
+        static void IAddLineCallback( const char *string );
 
         static plPipeline   *fPipeline;
 
