@@ -180,7 +180,8 @@ enum ParamTypes
     kTypeSwimCurrentInterface,  // 21
     kTypeClusterComponent,  // 22
     kTypeMaterialAnimation, // 23
-    kTypeGrassComponent, // 24
+    kTypeGrassComponent,    // 24
+    kTypeLayer,             // 25
 };
 
 bool IGetTupleInt(PyObject *tuple, int pos, int& val)
@@ -451,6 +452,9 @@ bool plPythonMgr::IQueryPythonFile(const ST::string& fileName)
                             case kTypeGrassComponent:
                                 IAddGrassComponent(autoUI, ret, paramName, paramID, ddlParamID, vec);
                                 break;
+                            case kTypeLayer:
+                                IAddLayerComponent(autoUI, ret, paramName, paramID, ddlParamID, vec);
+                                break;
                             }
                         }
                     }
@@ -622,6 +626,11 @@ void plPythonMgr::IAddMaterialAnimation(plAutoUIBlock *autoUI, PyObject *tuple, 
 void plPythonMgr::IAddGrassComponent(plAutoUIBlock *autoUI, PyObject *objTuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
 {
     autoUI->AddPickGrassComponentButton(id, {}, paramName, vid, std::move(vstates));
+}
+
+void plPythonMgr::IAddLayerComponent(plAutoUIBlock* autoUI, PyObject* objTuple, const ST::string& paramName, int id, int vid, std::unordered_set<ST::string> vstates)
+{
+    autoUI->AddPickLayerButton(id, {}, paramName, vid, std::move(vstates));
 }
 
 void plPythonMgr::LoadPythonFiles()
