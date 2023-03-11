@@ -48,8 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plControlDefinition.h"
 
 #include <map>
-#include <string_theory/string>
 #include <vector>
+
+namespace ST { class string; }
 
 class plInputMap
 {

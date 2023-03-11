@@ -308,7 +308,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
             // pfConsoleEngine::RunCommand requires a writable C string...
             ST::char_buffer cmdBuf;
             ctrlMsg->GetCmdString().to_buffer(cmdBuf);
-            fEngine->RunCommand(cmdBuf.data(), IAddLineCallback );
+            fEngine->RunCommand(cmdBuf.data(), IAddLineCallback);
             return true;
         }
         return false;

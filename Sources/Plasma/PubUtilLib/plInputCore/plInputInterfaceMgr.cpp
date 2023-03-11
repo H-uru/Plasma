@@ -797,7 +797,7 @@ void    plInputInterfaceMgr::WriteKeyMap()
         fprintf(gKeyFile, "# Key name list (for a-z or 0-9 just use the character)\n");
         fprintf(gKeyFile, "#\n");
 
-        const std::map<uint32_t, ST::string> keyConvert = plKeyMap::GetKeyConversion();
+        const std::map<uint32_t, ST::string>& keyConvert = plKeyMap::GetKeyConversion();
         for (const auto& [vKey, keyName] : keyConvert)
         {   
             fprintf(gKeyFile, "#  %s\n", keyName.c_str());

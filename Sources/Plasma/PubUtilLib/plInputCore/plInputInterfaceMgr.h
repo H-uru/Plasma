@@ -163,7 +163,7 @@ class plCtrlCmd
               fControlCode(), fControlActivated(), fNetPropagateToPlayers()
         { }
 
-        ST::string GetCmdString() { return fCmd; }
+        ST::string GetCmdString() const { return fCmd; }
         void SetCmdString(ST::string cs) { fCmd = std::move(cs); }
 
         ControlEventCode    fControlCode;

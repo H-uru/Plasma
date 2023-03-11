@@ -122,7 +122,6 @@ plKeyBinding::plKeyBinding()
     fCodeFlags = 0;
     fKey1 = plKeyCombo::kUnmapped;
     fKey2 = plKeyCombo::kUnmapped;
-    fString = ST::string();
 }
 
 plKeyBinding::plKeyBinding(ControlEventCode code, uint32_t codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, ST::string string)
@@ -488,7 +487,8 @@ void    plKeyMap::EraseBinding( ControlEventCode code )
 }
 
 
-const std::map<uint32_t, ST::string>& plKeyMap::GetKeyConversion() {
+const std::map<uint32_t, ST::string>& plKeyMap::GetKeyConversion()
+{
     auto langIter = fKeyConversions.find(plLocalization::GetLanguage());
     if (langIter == fKeyConversions.end()) {
         // default is English
