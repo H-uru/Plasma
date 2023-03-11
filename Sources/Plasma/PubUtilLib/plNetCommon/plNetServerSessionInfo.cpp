@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetServerSessionInfo.h"
 #include "plNetCommon.h"
 
+#include <utility>
+
 #include "hsStream.h"
 
 #include "pnMessage/plMessage.h"
@@ -411,12 +413,12 @@ void plAgeLinkStruct::Write( hsStream * s, hsResMgr* m)
         plMsgStdStringHelper::Poke(fParentAgeFilename,s);
 }
 
-void plAgeLinkStruct::SetParentAgeFilename( const char * v )
+void plAgeLinkStruct::SetParentAgeFilename(ST::string v)
 {
-    if ( v )
+    if (!v.empty())
     {
         SetFlag( kHasParentAgeFilename );
-        fParentAgeFilename=v;
+        fParentAgeFilename = std::move(v);
     }
     else
     {

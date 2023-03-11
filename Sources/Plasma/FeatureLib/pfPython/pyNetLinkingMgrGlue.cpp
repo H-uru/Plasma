@@ -82,11 +82,11 @@ PYTHON_METHOD_DEFINITION_WKEY(ptNetLinkingMgr, linkToAge, args, kwargs)
 {
     const char* kwlist[] = { "ageLink", "anim", "linkInSfx", "linkOutSfx", nullptr };
     PyObject* ageLinkObj = nullptr;
-    char* linkAnim = nullptr;
+    ST::string linkAnim;
     bool linkInSfx = true;
     bool linkOutSfx = true;
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|sbb", const_cast<char **>(kwlist),
-                                     &ageLinkObj, &linkAnim, &linkInSfx, &linkOutSfx))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|O&bb", const_cast<char **>(kwlist),
+                                     &ageLinkObj, PyUnicode_STStringConverter, &linkAnim, &linkInSfx, &linkOutSfx))
     {
         PyErr_SetString(PyExc_TypeError, "linkToAge expects a ptAgeLinkStruct and an optional link anim name");
         PYTHON_RETURN_ERROR;

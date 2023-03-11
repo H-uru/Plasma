@@ -84,8 +84,8 @@ public:
     const plAgeLinkStruct * GetAgeLink() const { return &fAgeLink; }
     PyObject * GetAgeInfo(); // returns pyAgeInfoStructRef
     void    SetAgeInfo( pyAgeInfoStruct & info );
-    const char* GetParentAgeFilename();
-    void    SetParentAgeFilename( const char* parentname );
+    ST::string GetParentAgeFilename();
+    void    SetParentAgeFilename(ST::string parentname);
     void    CopyFrom( const pyAgeLinkStruct & other );
     void    CopyFromRef( const pyAgeLinkStructRef & other );
     void    SetLinkingRules( int v );

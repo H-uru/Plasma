@@ -130,7 +130,7 @@ public:
 
     // Link to an age.
     void LinkToAge( plAgeLinkStruct * link, bool linkInSfx=true, bool linkOutSfx=true, uint32_t playerID=kInvalidPlayerID );
-    void LinkToAge( plAgeLinkStruct * link, const char* linkAnim, bool linkInSfx=true, bool linkOutSfx=true, uint32_t playerID=kInvalidPlayerID );
+    void LinkToAge( plAgeLinkStruct * link, const ST::string& linkAnim, bool linkInSfx=true, bool linkOutSfx=true, uint32_t playerID=kInvalidPlayerID );
 
     // Link to my last age.
     void LinkToPrevAge( uint32_t playerID=kInvalidPlayerID );

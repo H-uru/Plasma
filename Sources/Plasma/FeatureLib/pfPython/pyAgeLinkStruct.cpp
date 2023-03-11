@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include <utility>
 
 #include "pyAgeLinkStruct.h"
 #include "pyAgeInfoStruct.h"
@@ -79,14 +80,14 @@ void pyAgeLinkStruct::SetAgeInfo( pyAgeInfoStruct & info )
     fAgeLink.GetAgeInfo()->CopyFrom( info.GetAgeInfo() );
 }
 
-const char* pyAgeLinkStruct::GetParentAgeFilename()
+ST::string pyAgeLinkStruct::GetParentAgeFilename()
 {
     return fAgeLink.GetParentAgeFilename();
 }
 
-void pyAgeLinkStruct::SetParentAgeFilename( const char* parentname )
+void pyAgeLinkStruct::SetParentAgeFilename(ST::string parentname)
 {
-    fAgeLink.SetParentAgeFilename(parentname);
+    fAgeLink.SetParentAgeFilename(std::move(parentname));
 }
 
 void pyAgeLinkStruct::CopyFrom( const pyAgeLinkStruct & other )

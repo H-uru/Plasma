@@ -265,7 +265,7 @@ plMessage *plResponderCmdLink::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, I
     if (!parentageFilename.empty())
     {
         if (parentageFilename != "<None>") // <None> is our special string to denote no parent age
-            msg->GetAgeLink()->SetParentAgeFilename(parentageFilename.c_str());
+            msg->GetAgeLink()->SetParentAgeFilename(parentageFilename);
     }
 
     return msg;
