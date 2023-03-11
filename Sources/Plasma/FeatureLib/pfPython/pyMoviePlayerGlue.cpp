@@ -57,9 +57,9 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptMoviePlayer)
 
 PYTHON_INIT_DEFINITION(ptMoviePlayer, args, keywords)
 {
-    char* movieName;
+    ST::string movieName;
     PyObject* selfKeyObj = nullptr;
-    if (!PyArg_ParseTuple(args, "sO", &movieName, &selfKeyObj))
+    if (!PyArg_ParseTuple(args, "O&O", PyUnicode_STStringConverter, &movieName, &selfKeyObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a string and ptKey");
         PYTHON_RETURN_INIT_ERROR;
