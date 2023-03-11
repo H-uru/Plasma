@@ -181,15 +181,15 @@ public:
     
     // some animation commands for s.o.'s w/ multiple animations attached
 
-    void RewindAnim(const char* animName);
-    void PlayAnim(const char* animName);
-    void StopAnim(const char* animName);
+    void RewindAnim(const ST::string& animName);
+    void PlayAnim(const ST::string& animName);
+    void StopAnim(const ST::string& animName);
 
     void RunResponder(int state);
     void FFResponder(int state);
     
-    void SetSoundFilename(int index, const char* filename, bool isCompressed);
-    int GetSoundObjectIndex(const char* sndObj);
+    void SetSoundFilename(int index, const ST::string& filename, bool isCompressed);
+    int GetSoundObjectIndex(const ST::string& sndObj);
 
     // hack for garrison
     void VolumeSensorIgnoreExtraEnters(bool ignore);

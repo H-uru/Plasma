@@ -147,13 +147,13 @@ PYTHON_METHOD_DEFINITION(ptSceneobject, netForce, args)
 
 PYTHON_METHOD_DEFINITION(ptSceneobject, findObject, args)
 {
-    char *name = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "findObject expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return self->fThis->findObj(ST::string::from_utf8(name));
+    return self->fThis->findObj(name);
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSceneobject, getName)
@@ -359,8 +359,8 @@ PYTHON_BASIC_METHOD_DEFINITION(ptSceneobject, animate, Animate)
 
 PYTHON_METHOD_DEFINITION(ptSceneobject, rewindAnimNamed, args)
 {
-    char *name = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "rewindAnimNamed expects a string");
         PYTHON_RETURN_ERROR;
@@ -371,8 +371,8 @@ PYTHON_METHOD_DEFINITION(ptSceneobject, rewindAnimNamed, args)
 
 PYTHON_METHOD_DEFINITION(ptSceneobject, playAnimNamed, args)
 {
-    char *name = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "playAnimNamed expects a string");
         PYTHON_RETURN_ERROR;
@@ -383,8 +383,8 @@ PYTHON_METHOD_DEFINITION(ptSceneobject, playAnimNamed, args)
 
 PYTHON_METHOD_DEFINITION(ptSceneobject, stopAnimNamed, args)
 {
-    char *name = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "stopAnimNamed expects a string");
         PYTHON_RETURN_ERROR;
@@ -420,9 +420,9 @@ PYTHON_METHOD_DEFINITION(ptSceneobject, fastForwardAttachedResponder, args)
 PYTHON_METHOD_DEFINITION(ptSceneobject, setSoundFilename, args)
 {
     int index;
-    char *filename = nullptr;
+    ST::string filename;
     char isCompressed;
-    if (!PyArg_ParseTuple(args, "isb", &index, &filename, &isCompressed))
+    if (!PyArg_ParseTuple(args, "iO&b", &index, PyUnicode_STStringConverter, &filename, &isCompressed))
     {
         PyErr_SetString(PyExc_TypeError, "setSoundFilename expects an integer, string and boolean");
         PYTHON_RETURN_ERROR;
@@ -433,8 +433,8 @@ PYTHON_METHOD_DEFINITION(ptSceneobject, setSoundFilename, args)
 
 PYTHON_METHOD_DEFINITION(ptSceneobject, getSoundIndex, args)
 {
-    char *sndComponentName = nullptr;
-    if (!PyArg_ParseTuple(args, "s", &sndComponentName))
+    ST::string sndComponentName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &sndComponentName))
     {
         PyErr_SetString(PyExc_TypeError, "getSoundIndex expects a string");
         PYTHON_RETURN_ERROR;
