@@ -99,7 +99,6 @@ set(pfPython_HEADERS
     plPythonConvert.h
     pfPythonCreatable.h
     plPythonFileMod.h
-    plPythonHelpers.h
     plPythonPack.h
     plPythonParameter.h
     plPythonSDLModifier.h
