@@ -92,6 +92,7 @@ public:
         kTypeClusterComponent,
         kTypeMaterialAnimation,
         kTypeGrassComponent,
+        kTypeLayer
     };
 
     plAutoUIParam(ParamID id, ST::string name);
