@@ -167,6 +167,14 @@ bool    plKeyBinding::HasUnmappedKey() const
 //// plKeyMap Implementation /////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+static const std::map<plLocalization::Language, const std::map<uint32_t, ST::string>*> keyConversions = {
+    { plLocalization::kEnglish, &plKeyMap::fKeyConversionEnglish },
+    { plLocalization::kFrench, &plKeyMap::fKeyConversionFrench },
+    { plLocalization::kGerman, &plKeyMap::fKeyConversionGerman },
+    { plLocalization::kSpanish, &plKeyMap::fKeyConversionSpanish },
+    { plLocalization::kItalian, &plKeyMap::fKeyConversionItalian },
+};
+
 plKeyMap::~plKeyMap()
 {
     ClearAll();
@@ -489,8 +497,8 @@ void    plKeyMap::EraseBinding( ControlEventCode code )
 
 const std::map<uint32_t, ST::string>& plKeyMap::GetKeyConversion()
 {
-    auto langIter = fKeyConversions.find(plLocalization::GetLanguage());
-    if (langIter == fKeyConversions.end()) {
+    auto langIter = keyConversions.find(plLocalization::GetLanguage());
+    if (langIter == keyConversions.end()) {
         // default is English
         return fKeyConversionEnglish;
     } else {
@@ -527,7 +535,7 @@ plKeyDef plKeyMap::ConvertCharToVKey(const ST::string& c)
     // if we didn't find anything yet...
     // ...then look thru all the other language mappings that we know about,
     // ...just in case they keep switching languages on us
-    for (const auto& [lang, langKeyConvert] : fKeyConversions) {
+    for (const auto& [lang, langKeyConvert] : keyConversions) {
         if (lang != plLocalization::GetLanguage()) {
             for (const auto& [vKey, keyName] : *langKeyConvert) {
                 if (keyName.compare_i(c) == 0)
@@ -998,15 +1006,6 @@ const std::map<uint32_t, ST::string> plKeyMap::fKeyConversionItalian =
     { VK_OEM_6,     ST_LITERAL("ì") },
     { VK_OEM_7,     ST_LITERAL("à") },
 #endif
-};
-
-
-const std::map<plLocalization::Language, const std::map<uint32_t, ST::string>*> plKeyMap::fKeyConversions = {
-    { plLocalization::kEnglish, &fKeyConversionEnglish },
-    { plLocalization::kFrench, &fKeyConversionFrench },
-    { plLocalization::kGerman, &fKeyConversionGerman },
-    { plLocalization::kSpanish, &fKeyConversionSpanish },
-    { plLocalization::kItalian, &fKeyConversionItalian },
 };
 
 

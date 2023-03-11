@@ -58,8 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/string>
 #include <vector>
 
-#include "plResMgr/plLocalization.h"
-
 //// plKeyCombo //////////////////////////////////////////////////////////////
 //  Tiny class/data type representing a single key combo. Ex. shift+C
 
@@ -239,8 +237,6 @@ class plKeyMap : public plInputMap
         static const std::map<uint32_t, ST::string> fKeyConversionGerman;
         static const std::map<uint32_t, ST::string> fKeyConversionSpanish;
         static const std::map<uint32_t, ST::string> fKeyConversionItalian;
-
-        static const std::map<plLocalization::Language, const std::map<uint32_t, ST::string>*> fKeyConversions;
 };
 
 
