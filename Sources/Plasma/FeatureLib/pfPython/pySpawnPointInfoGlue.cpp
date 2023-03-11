@@ -52,19 +52,19 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptSpawnPointInfo)
 
 PYTHON_INIT_DEFINITION(ptSpawnPointInfo, args, keywords)
 {
-    char* title = nullptr;
-    char* spawnPt = nullptr;
-    if (!PyArg_ParseTuple(args, "|ss", &title, &spawnPt))
+    ST::string title;
+    ST::string spawnPt;
+    if (!PyArg_ParseTuple(args, "|O&O&", PyUnicode_STStringConverter, &title, PyUnicode_STStringConverter, &spawnPt))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects two optional strings, or no parameters");
         PYTHON_RETURN_INIT_ERROR;
     }
-    if (!title && !spawnPt)
+    if (title.empty() && spawnPt.empty())
     {
         // default init
         PYTHON_RETURN_INIT_OK;
     }
-    else if (title && spawnPt)
+    else if (!title.empty() && !spawnPt.empty())
     {
         self->fThis->SetTitle(title);
         self->fThis->SetName(spawnPt);
@@ -82,8 +82,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getTitle)
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setTitle, args)
 {
-    char* title;
-    if (!PyArg_ParseTuple(args, "s", &title))
+    ST::string title;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &title))
     {
         PyErr_SetString(PyExc_TypeError, "setTitle expects a string");
         PYTHON_RETURN_ERROR;
@@ -99,8 +99,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getName)
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setName, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "setName expects a string");
         PYTHON_RETURN_ERROR;
@@ -116,8 +116,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getCameraStack)
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setCameraStack, args)
 {
-    char* camStack;
-    if (!PyArg_ParseTuple(args, "s", &camStack))
+    ST::string camStack;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &camStack))
     {
         PyErr_SetString(PyExc_TypeError, "setCameraStack expects a string");
         PYTHON_RETURN_ERROR;
@@ -148,11 +148,11 @@ PyObject *pySpawnPointInfo::New(const plSpawnPointInfo& info)
     return (PyObject*)newObj;
 }
 
-PyObject *pySpawnPointInfo::New(const char* title, const char* spawnPt)
+PyObject *pySpawnPointInfo::New(const ST::string& title, const ST::string& spawnPt)
 {
     ptSpawnPointInfo *newObj = (ptSpawnPointInfo*)ptSpawnPointInfo_type.tp_new(&ptSpawnPointInfo_type, nullptr, nullptr);
-    newObj->fThis->fInfo.fTitle = title;
-    newObj->fThis->fInfo.fSpawnPt = spawnPt;
+    newObj->fThis->fInfo.SetTitle(title);
+    newObj->fThis->fInfo.SetName(spawnPt);
     return (PyObject*)newObj;
 }
 
@@ -197,8 +197,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getTitle)
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setTitle, args)
 {
-    char* title;
-    if (!PyArg_ParseTuple(args, "s", &title))
+    ST::string title;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &title))
     {
         PyErr_SetString(PyExc_TypeError, "setTitle expects a string");
         PYTHON_RETURN_ERROR;
@@ -214,8 +214,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getName)
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setName, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "setName expects a string");
         PYTHON_RETURN_ERROR;
@@ -231,8 +231,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getCameraStack)
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setCameraStack, args)
 {
-    char* camStack;
-    if (!PyArg_ParseTuple(args, "s", &camStack))
+    ST::string camStack;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &camStack))
     {
         PyErr_SetString(PyExc_TypeError, "setCameraStack expects a string");
         PYTHON_RETURN_ERROR;

@@ -49,11 +49,8 @@ pySpawnPointInfo::pySpawnPointInfo()
 {
 }
 
-pySpawnPointInfo::pySpawnPointInfo( const char * title, const char * spawnPt )
-{
-    fInfo.fTitle = title;
-    fInfo.fSpawnPt = spawnPt;
-}
+pySpawnPointInfo::pySpawnPointInfo(const ST::string& title, const ST::string& spawnPt)
+    : fInfo(title, spawnPt) {}
 
 PyObject *pySpawnPointInfo::GetDefaultSpawnPoint()
 {
