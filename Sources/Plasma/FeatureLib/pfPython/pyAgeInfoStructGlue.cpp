@@ -119,8 +119,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeFilename)
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeFilename, args)
 {
-    char* filename;
-    if (!PyArg_ParseTuple(args, "s", &filename))
+    ST::string filename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &filename))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeFilename expects a string");
         PYTHON_RETURN_ERROR;
@@ -136,8 +136,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeInstanceName)
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeInstanceName, args)
 {
-    char* instanceName;
-    if (!PyArg_ParseTuple(args, "s", &instanceName))
+    ST::string instanceName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &instanceName))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeInstanceName expects a string");
         PYTHON_RETURN_ERROR;
@@ -153,8 +153,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeUserDefinedName)
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeUserDefinedName, args)
 {
-    char* userName;
-    if (!PyArg_ParseTuple(args, "s", &userName))
+    ST::string userName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &userName))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeUserDefinedName expects a string");
         PYTHON_RETURN_ERROR;
@@ -170,8 +170,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeDescription)
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeDescription, args)
 {
-    char* desc;
-    if (!PyArg_ParseTuple(args, "s", &desc))
+    ST::string desc;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &desc))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeDescription expects a string");
         PYTHON_RETURN_ERROR;
@@ -182,13 +182,13 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeDescription, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeInstanceGuid)
 {
-    return PyUnicode_FromString(self->fThis->GetAgeInstanceGuid());
+    return PyUnicode_FromSTString(self->fThis->GetAgeInstanceGuid());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeInstanceGuid, args)
 {
-    char* guid;
-    if (!PyArg_ParseTuple(args, "s", &guid))
+    ST::string guid;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeInstanceGuid expects a string");
         PYTHON_RETURN_ERROR;
@@ -330,8 +330,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeFilename)
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeFilename, args)
 {
-    char* filename;
-    if (!PyArg_ParseTuple(args, "s", &filename))
+    ST::string filename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &filename))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeFilename expects a string");
         PYTHON_RETURN_ERROR;
@@ -347,8 +347,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeInstanceName)
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeInstanceName, args)
 {
-    char* instanceName;
-    if (!PyArg_ParseTuple(args, "s", &instanceName))
+    ST::string instanceName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &instanceName))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeInstanceName expects a string");
         PYTHON_RETURN_ERROR;
@@ -364,8 +364,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeUserDefinedName)
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeUserDefinedName, args)
 {
-    char* userName;
-    if (!PyArg_ParseTuple(args, "s", &userName))
+    ST::string userName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &userName))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeUserDefinedName expects a string");
         PYTHON_RETURN_ERROR;
@@ -376,13 +376,13 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeUserDefinedName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeInstanceGuid)
 {
-    return PyUnicode_FromString(self->fThis->GetAgeInstanceGuid());
+    return PyUnicode_FromSTString(self->fThis->GetAgeInstanceGuid());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeInstanceGuid, args)
 {
-    char* guid;
-    if (!PyArg_ParseTuple(args, "s", &guid))
+    ST::string guid;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid))
     {
         PyErr_SetString(PyExc_TypeError, "setAgeInstanceGuid expects a string");
         PYTHON_RETURN_ERROR;

@@ -121,15 +121,15 @@ void pyAgeInfoStruct::SetAgeDescription( const ST::string & v )
     fAgeInfo.SetAgeDescription( v );
 }
 
-const char * pyAgeInfoStruct::GetAgeInstanceGuid() const
+ST::string pyAgeInfoStruct::GetAgeInstanceGuid() const
 {
     fAgeInstanceGuidStr = fAgeInfo.GetAgeInstanceGuid()->AsString();
-    return fAgeInstanceGuidStr.c_str();
+    return fAgeInstanceGuidStr;
 }
 
-void pyAgeInfoStruct::SetAgeInstanceGuid( const char * guid )
+void pyAgeInfoStruct::SetAgeInstanceGuid(const ST::string& guid)
 {
-    if ( guid[0] == '@' )
+    if (!guid.empty() && guid[0] == '@')
     {
         // if it starts with an @ then do a meta kind of GUID
         ST::string curInst = fAgeInfo.GetAgeInstanceName();
@@ -241,13 +241,13 @@ void pyAgeInfoStructRef::SetAgeUserDefinedName( const ST::string & v )
     fAgeInfo.SetAgeUserDefinedName( v );
 }
 
-const char * pyAgeInfoStructRef::GetAgeInstanceGuid() const
+ST::string pyAgeInfoStructRef::GetAgeInstanceGuid() const
 {
     fAgeInstanceGuidStr = fAgeInfo.GetAgeInstanceGuid()->AsString();
-    return fAgeInstanceGuidStr.c_str();
+    return fAgeInstanceGuidStr;
 }
 
-void pyAgeInfoStructRef::SetAgeInstanceGuid( const char * guid )
+void pyAgeInfoStructRef::SetAgeInstanceGuid(const ST::string& guid)
 {
     plUUID tmp(guid);
     fAgeInfo.SetAgeInstanceGuid( &tmp );
