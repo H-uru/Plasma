@@ -1333,18 +1333,17 @@ bool cyMisc::IsFirstPerson()
 //
 //  PURPOSE    : Send a petition to the CCR for help or questions
 //
-void cyMisc::SendPetitionToCCR(const char* message)
+void cyMisc::SendPetitionToCCR(ST::string message)
 {
-    SendPetitionToCCRI(message, plNetCommon::PetitionTypes::kGeneralHelp, nullptr);
+    SendPetitionToCCRI(std::move(message), plNetCommon::PetitionTypes::kGeneralHelp, {});
 }
-void cyMisc::SendPetitionToCCRI(const char* message, uint8_t reason,const char* title)
+void cyMisc::SendPetitionToCCRI(ST::string message, uint8_t reason, ST::string title)
 {
     // create the mesage to send
     plCCRPetitionMsg *msg = new plCCRPetitionMsg();
-    msg->SetNote(message);
+    msg->SetNote(std::move(message));
     msg->SetType(reason);
-    if (title)
-        msg->SetTitle(title);
+    msg->SetTitle(std::move(title));
     // send it off
     plgDispatch::MsgSend( msg );
 }
@@ -1357,11 +1356,11 @@ void cyMisc::SendPetitionToCCRI(const char* message, uint8_t reason,const char* 
 //
 //  PURPOSE    : Send a chat message to the CCR for help or questions
 //
-void cyMisc::SendChatToCCR(const char* message,int32_t CCRPlayerID)
+void cyMisc::SendChatToCCR(ST::string message, int32_t CCRPlayerID)
 {
     // create the mesage to send
     plCCRCommunicationMsg *msg = new plCCRCommunicationMsg();
-    msg->SetMessageText(message);
+    msg->SetMessageText(std::move(message));
     msg->SetType(plCCRCommunicationMsg::kReturnChatMsg);
     msg->SetBCastFlag(plMessage::kNetAllowInterAge);
     msg->SetBCastFlag(plMessage::kNetPropagate);

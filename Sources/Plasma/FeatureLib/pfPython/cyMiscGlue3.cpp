@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include <utility>
 #include "pyKey.h"
 
 #include "cyMisc.h"
@@ -51,28 +52,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendPetitionToCCR, args, "Params: message,reason=0,title=\"\"\nSends a petition with a message to the CCR group")
 {
-    char* message;
+    ST::string message;
     unsigned char reason = 0;
-    char* title = nullptr;
-    if (!PyArg_ParseTuple(args, "s|bs", &message, &reason, &title))
+    ST::string title;
+    if (!PyArg_ParseTuple(args, "O&|bO&", PyUnicode_STStringConverter, &message, &reason, PyUnicode_STStringConverter, &title))
     {
         PyErr_SetString(PyExc_TypeError, "PtSendPetitionToCCR expects a string, and an optional unsigned 8-bit int and optional string");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::SendPetitionToCCRI(message, reason, title);
+    cyMisc::SendPetitionToCCRI(std::move(message), reason, std::move(title));
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendChatToCCR, args, "Params: message,CCRPlayerID\nSends a chat message to a CCR that has contacted this player")
 {
-    char* message;
+    ST::string message;
     long CCRPlayerID;
-    if (!PyArg_ParseTuple(args, "sl", &message, &CCRPlayerID))
+    if (!PyArg_ParseTuple(args, "O&l", PyUnicode_STStringConverter, &message, &CCRPlayerID))
     {
         PyErr_SetString(PyExc_TypeError, "PtSendChatToCCR expects a string and a long");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::SendChatToCCR(message, CCRPlayerID);
+    cyMisc::SendChatToCCR(std::move(message), CCRPlayerID);
     PYTHON_RETURN_NONE;
 }
 

@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsTimer.h"
 
+#include <string_theory/char_buffer>
+
 #include "pnMessage/plCameraMsg.h"
 #include "pnNetCommon/plSDLTypes.h"
 #include "pnNetCommon/plSynchedObject.h"
@@ -144,12 +146,8 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
 {
     // petition msg info
     uint8_t type = petMsg->GetType();
-    const char* title = petMsg->GetTitle();
-    const char* note = petMsg->GetNote();
-
-    std::string work = note;
-    std::replace( work.begin(), work.end(), '\n', '\t' );
-    note = work.c_str();
+    ST::string title = petMsg->GetTitle();
+    ST::string note = petMsg->GetNote().replace("\n", "\t");
 
     // stuff petition info fields into a config info object
     plConfigInfo info;
@@ -157,10 +155,8 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
     info.AddValue( "Petition", "Content", note );
     info.AddValue( "Petition", "Title", title );
     info.AddValue( "Petition", "Language", plLocalization::GetLanguageName( plLocalization::GetLanguage() ) );
-    info.AddValue( "Petition", "AcctName", NetCommGetAccount()->accountName.c_str() );
-    char buffy[20];
-    sprintf(buffy, "%u", GetPlayerID());
-    info.AddValue( "Petition", "PlayerID", buffy );
+    info.AddValue("Petition", "AcctName", NetCommGetAccount()->accountName);
+    info.AddValue("Petition", "PlayerID", ST::string::from_uint(GetPlayerID()));
     info.AddValue( "Petition", "PlayerName", GetPlayerName() );
 
     // write config info formatted like an ini file to a buffer
@@ -169,11 +165,11 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
     info.WriteTo(&src);
     int size = ram.GetPosition();
     ram.Rewind();
-    std::string buf;
-    buf.resize( size );
-    ram.CopyToMem( (void*)buf.data() );
+    ST::char_buffer buf;
+    buf.allocate(size);
+    ram.CopyToMem(buf.data());
 
-    NetCliAuthSendCCRPetition(buf.c_str());
+    NetCliAuthSendCCRPetition(buf);
 }
 
 //

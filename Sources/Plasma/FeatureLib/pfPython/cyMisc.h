@@ -563,8 +563,8 @@ public:
     //
     //  PURPOSE    : Send a petition to the CCR for help or questions
     //
-    static void SendPetitionToCCR(const char* message);
-    static void SendPetitionToCCRI(const char* message, uint8_t reason,const char* title);
+    static void SendPetitionToCCR(ST::string message);
+    static void SendPetitionToCCRI(ST::string message, uint8_t reason, ST::string title);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -573,7 +573,7 @@ public:
     //
     //  PURPOSE    : Send a petition to the CCR for help or questions
     //
-    static void SendChatToCCR(const char* message,int32_t CCRPlayerID);
+    static void SendChatToCCR(ST::string message, int32_t CCRPlayerID);
 
     /////////////////////////////////////////////////////////////////////////////
     //
