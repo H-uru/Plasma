@@ -853,7 +853,7 @@ int8_t pySceneObject::GetResponderState()
     return -1;
 }
 
-void pySceneObject::RewindAnim(const char* animName)
+void pySceneObject::RewindAnim(const ST::string& animName)
 {
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
@@ -867,7 +867,7 @@ void pySceneObject::RewindAnim(const char* animName)
     }
 }
 
-void pySceneObject::PlayAnim(const char* animName)
+void pySceneObject::PlayAnim(const ST::string& animName)
 {
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
@@ -881,7 +881,7 @@ void pySceneObject::PlayAnim(const char* animName)
     }
 }
 
-void pySceneObject::StopAnim(const char* animName)
+void pySceneObject::StopAnim(const ST::string& animName)
 {
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
@@ -935,7 +935,7 @@ void pySceneObject::FFResponder(int state)
     }
 }
 
-void pySceneObject::SetSoundFilename(int index, const char* filename, bool isCompressed)
+void pySceneObject::SetSoundFilename(int index, const ST::string& filename, bool isCompressed)
 {
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
@@ -946,13 +946,13 @@ void pySceneObject::SetSoundFilename(int index, const char* filename, bool isCom
             plAudible* au = ai->GetAudible();
             if (au)
             {
-                au->SetFilename(index, filename, isCompressed);
+                au->SetFilename(index, filename.c_str(), isCompressed);
             }
         }
     }
 }
 
-int pySceneObject::GetSoundObjectIndex(const char* sndObj)
+int pySceneObject::GetSoundObjectIndex(const ST::string& sndObj)
 {
     plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
     if ( obj )
@@ -963,7 +963,7 @@ int pySceneObject::GetSoundObjectIndex(const char* sndObj)
             plAudible* au = ai->GetAudible();
             if (au)
             {
-                return au->GetSoundIndex(sndObj);
+                return au->GetSoundIndex(sndObj.c_str());
             }
         }
     }

@@ -297,26 +297,6 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDetachObject, args, "Params: child,parent,netF
     PYTHON_RETURN_NONE;
 }
 
-/*PYTHON_GLOBAL_METHOD_DEFINITION(PtLinkToAge, args, "Params: selfKey,ageName,spawnPointName\nDEPRECIATED: Links you to the specified age and spawnpoint")
-{
-    PyObject* keyObj = nullptr;
-    char* ageName;
-    char* spawnPointName;
-    if (!PyArg_ParseTuple(args, "Oss", &keyObj, &ageName, &spawnPointName))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtLinkToAge expects a ptKey, and two strings");
-        PYTHON_RETURN_ERROR;
-    }
-    if (!pyKey::Check(keyObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtLinkToAge expects a ptKey, and two strings");
-        PYTHON_RETURN_ERROR;
-    }
-    pyKey* key = pyKey::ConvertFrom(keyObj);
-    cyMisc::LinkToAge(*key, ageName, spawnPointName);
-    PYTHON_RETURN_NONE;
-}*/
-
 PYTHON_GLOBAL_METHOD_DEFINITION(PtDirtySynchState, args, "Params: selfKey,SDLStateName,flags\nDO NOT USE - handled by ptSDL")
 {
     PyObject* keyObj = nullptr;
@@ -701,8 +681,6 @@ void cyMisc::AddPlasmaMethods3(PyObject* m)
 
         PYTHON_GLOBAL_METHOD(PtAttachObject)
         PYTHON_GLOBAL_METHOD(PtDetachObject)
-
-        //PYTHON_GLOBAL_METHOD(PtLinkToAge)
 
         PYTHON_GLOBAL_METHOD(PtDirtySynchState)
         PYTHON_GLOBAL_METHOD(PtDirtySynchClients)

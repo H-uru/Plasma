@@ -198,9 +198,9 @@ PYTHON_METHOD_DEFINITION(ptNotify, addControlKeyEvent, args)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addVarNumber, args)
 {
-    char* name;
+    ST::string name;
     PyObject* number = nullptr;
-    if (!PyArg_ParseTuple(args, "s|O", &name, &number))
+    if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &name, &number))
     {
         PyErr_SetString(PyExc_TypeError, "addVarNumber expects a string and optional number");
         PYTHON_RETURN_ERROR;
@@ -241,9 +241,9 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarNumber, args)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addVarFloat, args)
 {
-    char* name;
+    ST::string name;
     float number;
-    if (!PyArg_ParseTuple(args, "sf", &name, &number))
+    if (!PyArg_ParseTuple(args, "O&f", PyUnicode_STStringConverter, &name, &number))
     {
         PyErr_SetString(PyExc_TypeError, "addVarFloat expects a string and a float");
         PYTHON_RETURN_ERROR;
@@ -254,9 +254,9 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarFloat, args)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addVarInt, args)
 {
-    char* name;
+    ST::string name;
     int number;
-    if (!PyArg_ParseTuple(args, "si", &name, &number))
+    if (!PyArg_ParseTuple(args, "O&i", PyUnicode_STStringConverter, &name, &number))
     {
         PyErr_SetString(PyExc_TypeError, "addVarInt expects a string and a integer");
         PYTHON_RETURN_ERROR;
@@ -267,8 +267,8 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarInt, args)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addVarNull, args)
 {
-    char* name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    ST::string name;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "addVarNull expects a string");
         PYTHON_RETURN_ERROR;
@@ -279,9 +279,9 @@ PYTHON_METHOD_DEFINITION(ptNotify, addVarNull, args)
 
 PYTHON_METHOD_DEFINITION(ptNotify, addVarKey, args)
 {
-    char* name;
+    ST::string name;
     PyObject* keyObj = nullptr;
-    if (!PyArg_ParseTuple(args, "sO", &name, &keyObj))
+    if (!PyArg_ParseTuple(args, "O&O", PyUnicode_STStringConverter, &name, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "addVarKey expects a string and a ptKey");
         PYTHON_RETURN_ERROR;

@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include <string>
 #include <string_theory/string>
 
 #include "plSpawnPointInfo.h"
@@ -169,7 +168,7 @@ class plAgeLinkStruct : public plCreatable
 
     // If this is a child age link, who is the parent
     //    ...Age dataset name  like "Neighborhood"
-    std::string         fParentAgeFilename;
+    ST::string         fParentAgeFilename;
 
     enum
     {
@@ -194,8 +193,8 @@ public:
     plAgeInfoStruct * GetAgeInfo() { return &fAgeInfo; }
     const plAgeInfoStruct * GetAgeInfo() const { return &fAgeInfo; }
 
-    const char * GetParentAgeFilename() const { return fParentAgeFilename.c_str(); }
-    void    SetParentAgeFilename( const char * v );
+    ST::string GetParentAgeFilename() const { return fParentAgeFilename; }
+    void    SetParentAgeFilename(ST::string v);
 
     void    CopyFrom( const plAgeLinkStruct * other );
     void    CopyFrom( const plVaultAgeLinkNode * node );

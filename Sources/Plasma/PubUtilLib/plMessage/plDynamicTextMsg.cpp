@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "hsResMgr.h"
 
+#include <utility>
+
 #include "plDynamicTextMsg.h"
 
 void    plDynamicTextMsg::SetTextColor( hsColorRGBA &c, bool blockRGB )
@@ -61,12 +63,12 @@ void    plDynamicTextMsg::SetTextColor( hsColorRGBA &c, bool blockRGB )
     fBlockRGB = blockRGB;
 }
 
-void    plDynamicTextMsg::SetFont( const char *face, int16_t size, bool isBold )
+void    plDynamicTextMsg::SetFont(ST::string face, int16_t size, bool isBold)
 {
     hsAssert( ( fCmd & ( kPosCmds | kStringCmds | kFlagCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kPosCmds | kStringCmds | kFlagCmds );
     fCmd |= kSetFont; 
-    fString = face;
+    fString = std::move(face);
     fX = size;
     fFlags = (uint32_t)isBold;
 }

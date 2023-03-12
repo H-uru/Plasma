@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include <utility>
 
 #include "pyAgeLinkStruct.h"
 #include "pyAgeInfoStruct.h"
@@ -139,18 +140,18 @@ PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, setAgeInfo, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeLinkStruct, getParentAgeFilename)
 {
-    return PyUnicode_FromString(self->fThis->GetParentAgeFilename());
+    return PyUnicode_FromSTString(self->fThis->GetParentAgeFilename());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, setParentAgeFilename, args)
 {
-    char* filename;
-    if (!PyArg_ParseTuple(args, "s", &filename))
+    ST::string filename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &filename))
     {
         PyErr_SetString(PyExc_TypeError, "setParentAgeFilename expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetParentAgeFilename(filename);
+    self->fThis->SetParentAgeFilename(std::move(filename));
     PYTHON_RETURN_NONE;
 }
 

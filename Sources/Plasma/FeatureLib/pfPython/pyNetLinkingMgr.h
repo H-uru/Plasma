@@ -80,7 +80,7 @@ public:
     void SetEnabled( bool b ) const;
 
     // Link to a public instance. PLS will load balance.
-    void LinkToAge( pyAgeLinkStruct & link, const char* linkAnim, bool linkInSfx, bool linkOutSfx );
+    void LinkToAge(pyAgeLinkStruct & link, const ST::string& linkAnim, bool linkInSfx, bool linkOutSfx);
     // Link to my Personal Age
     void LinkToMyPersonalAge();
     // link to my personal age with the YeehsaBook

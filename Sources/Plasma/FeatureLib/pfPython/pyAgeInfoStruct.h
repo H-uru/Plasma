@@ -94,8 +94,8 @@ public:
     void    SetAgeUserDefinedName( const ST::string & v );
     ST::string GetAgeDescription() const;
     void    SetAgeDescription( const ST::string & v );
-    const char * GetAgeInstanceGuid() const;
-    void    SetAgeInstanceGuid( const char * guid );
+    ST::string GetAgeInstanceGuid() const;
+    void    SetAgeInstanceGuid(const ST::string& guid);
     int32_t   GetAgeSequenceNumber() const;
     void    SetAgeSequenceNumber( int32_t v );
     int32_t   GetAgeLanguage() const;
@@ -137,8 +137,8 @@ public:
     void    SetAgeInstanceName( const ST::string & v );
     ST::string GetAgeUserDefinedName() const;
     void    SetAgeUserDefinedName( const ST::string & v );
-    const char * GetAgeInstanceGuid() const;
-    void    SetAgeInstanceGuid( const char * guid );
+    ST::string GetAgeInstanceGuid() const;
+    void    SetAgeInstanceGuid(const ST::string& guid);
     int32_t   GetAgeSequenceNumber() const;
     void    SetAgeSequenceNumber( int32_t v );
     ST::string GetDisplayName() const;

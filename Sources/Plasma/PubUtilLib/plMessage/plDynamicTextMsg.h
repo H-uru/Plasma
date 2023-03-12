@@ -125,7 +125,7 @@ public:
 
     // The following are mutually exclusive commands 'cause they share some parameters
     void    SetTextColor( hsColorRGBA &c, bool blockRGB = false );
-    void    SetFont( const char *face, int16_t size, bool isBold = false );
+    void    SetFont(ST::string face, int16_t size, bool isBold = false);
     void    SetLineSpacing( int16_t spacing );
     void    FillRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, hsColorRGBA &c );
     void    FrameRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, hsColorRGBA &c );

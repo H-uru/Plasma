@@ -132,22 +132,22 @@ void pyNotify::AddControlKeyEvent( int32_t key, bool down )
     fBuildMsg.AddControlKeyEvent(key,down);
 }
 
-void pyNotify::AddVarNumber(const char* name, float number)
+void pyNotify::AddVarNumber(const ST::string& name, float number)
 {
     fBuildMsg.AddVariableEvent(name, number);
 }
 
-void pyNotify::AddVarNumber(const char* name, int32_t number)
+void pyNotify::AddVarNumber(const ST::string& name, int32_t number)
 {
     fBuildMsg.AddVariableEvent(name, number);
 }
 
-void pyNotify::AddVarNull(const char* name)
+void pyNotify::AddVarNull(const ST::string& name)
 {
     fBuildMsg.AddVariableEvent(name);
 }
 
-void pyNotify::AddVarKey(const char* name, pyKey* key)
+void pyNotify::AddVarKey(const ST::string& name, pyKey* key)
 {
     fBuildMsg.AddVariableEvent(name, key ? key->getKey() : plKey() );
 }

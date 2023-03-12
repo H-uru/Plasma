@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include <Python.h>
+#include <utility>
 #include "plgDispatch.h"
 #include "pyKey.h"
 
@@ -190,13 +191,13 @@ void pyDynamicText::SetTextColor2( pyColor& color, bool blockRGB )
     }
 }
 
-void pyDynamicText::SetFont( const char *facename, int16_t size )
+void pyDynamicText::SetFont(ST::string facename, int16_t size)
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
     if ( pMsg )
     {
-        pMsg->SetFont(facename,size);
+        pMsg->SetFont(std::move(facename), size);
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
 }

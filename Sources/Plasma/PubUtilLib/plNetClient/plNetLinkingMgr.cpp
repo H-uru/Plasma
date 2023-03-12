@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCliAgeLeaver.h"
 
 #include <list>
+#include <string_theory/string>
 
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plClientMsg.h"
@@ -583,10 +584,10 @@ bool plNetLinkingMgr::IDispatchMsg( plMessage* msg, uint32_t playerID )
 
 void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, bool linkInSfx, bool linkOutSfx, uint32_t playerID )
 {
-    LinkToAge(link, nullptr, linkInSfx, linkOutSfx, playerID);
+    LinkToAge(link, {}, linkInSfx, linkOutSfx, playerID);
 }
 
-void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, bool linkInSfx, bool linkOutSfx, uint32_t playerID )
+void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const ST::string& linkAnim, bool linkInSfx, bool linkOutSfx, uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -595,8 +596,7 @@ void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, b
     }
 
     plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( link );
-    if (linkAnim)
-        pMsg->SetLinkInAnimName(linkAnim);
+    pMsg->SetLinkInAnimName(linkAnim);
     pMsg->PlayLinkSfx(linkInSfx, linkOutSfx);
     IDispatchMsg( pMsg, playerID );
 }
