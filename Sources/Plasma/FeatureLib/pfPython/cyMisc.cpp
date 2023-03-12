@@ -1181,12 +1181,12 @@ void cyMisc::SendKIMessage(uint32_t command, float value)
 //
 //  RETURNS    : nothing
 //
-void cyMisc::SendKIMessageS(uint32_t command, const wchar_t* value)
+void cyMisc::SendKIMessageS(uint32_t command, const ST::string& value)
 {
     // create the mesage to send
     pfKIMsg *msg = new pfKIMsg( (uint8_t)command );
 
-    msg->SetString( ST::string::from_wchar( value ) );
+    msg->SetString(value);
 
     // send it off
     plgDispatch::MsgSend( msg );
@@ -1256,7 +1256,7 @@ void cyMisc::SendKIRegisterImagerMsg(const char* imagerName, pyKey& sender)
 //
 //  RETURNS    : nothing
 //
-void cyMisc::RateIt(const char* chronicleName, const char* thestring, bool onceFlag)
+void cyMisc::RateIt(const ST::string& chronicleName, const ST::string& thestring, bool onceFlag)
 {
     // create the mesage to send
     pfKIMsg *msg = new pfKIMsg( pfKIMsg::kRateIt );
@@ -1390,7 +1390,7 @@ int cyMisc::GetNumRemotePlayers()
 //  PURPOSE    : page in, hold or out a particular node
 //
 
-void cyMisc::PageInNodes(const std::vector<std::string> & nodeNames, const char* age, bool netForce)
+void cyMisc::PageInNodes(const std::vector<ST::string>& nodeNames, const ST::string& age, bool netForce)
 {
     if (hsgResMgr::ResMgr())
     {
@@ -1404,15 +1404,14 @@ void cyMisc::PageInNodes(const std::vector<std::string> & nodeNames, const char*
             msg->SetBCastFlag(plMessage::kNetForce);
         }
 
-        int numNames = nodeNames.size();
-        for (int i = 0; i < numNames; i++)
-            msg->AddRoomLoc(plKeyFinder::Instance().FindLocation(age ? age : NetCommGetAge()->ageDatasetName, nodeNames[i].c_str()));
+        for (const auto& nodeName : nodeNames)
+            msg->AddRoomLoc(plKeyFinder::Instance().FindLocation(!age.empty() ? age : NetCommGetAge()->ageDatasetName, nodeName));
 
         msg->Send();
     }
 }
 
-void cyMisc::PageOutNode(const char* nodeName, bool netForce)
+void cyMisc::PageOutNode(const ST::string& nodeName, bool netForce)
 {
     if ( hsgResMgr::ResMgr() )
     {
@@ -1700,7 +1699,7 @@ bool cyMisc::AmCCR()
 //
 // PURPOSE    : Send's a VaultTask to the server to perform the invite
 //
-void cyMisc::AcceptInviteInGame(const char* friendName, const char* inviteKey)
+void cyMisc::AcceptInviteInGame(const ST::string& friendName, const ST::string& inviteKey)
 {
     hsAssert(false, "eric, implement me");
 #if 0
@@ -2575,9 +2574,9 @@ void cyMisc::FakeLinkToObjectNamed(const ST::string& name)
     plgDispatch::MsgSend(msg);
 }
 
-PyObject* cyMisc::LoadAvatarModel(const char* modelName, pyKey& spawnPoint, const ST::string& userStr)
+PyObject* cyMisc::LoadAvatarModel(ST::string modelName, pyKey& spawnPoint, const ST::string& userStr)
 {
-    plKey SpawnedKey = plAvatarMgr::GetInstance()->LoadAvatar(modelName, "", false, spawnPoint.getKey(), nullptr, userStr);
+    plKey SpawnedKey = plAvatarMgr::GetInstance()->LoadAvatar(std::move(modelName), "", false, spawnPoint.getKey(), nullptr, userStr);
     return pyKey::New(SpawnedKey);
 }
 

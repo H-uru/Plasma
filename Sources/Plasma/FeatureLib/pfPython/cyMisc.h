@@ -496,7 +496,7 @@ public:
     //
     //  RETURNS    : nothing
     //
-    static void SendKIMessageS(uint32_t command, const wchar_t* value);
+    static void SendKIMessageS(uint32_t command, const ST::string& value);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -523,7 +523,7 @@ public:
     //
     //  RETURNS    : nothing
     //
-    static void RateIt(const char* chronicleName, const char* thestring, bool onceFlag);
+    static void RateIt(const ST::string& chronicleName, const ST::string& thestring, bool onceFlag);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -590,8 +590,8 @@ public:
     //  
     //  PURPOSE    : page in, or out a paritcular node
     //
-    static void PageInNodes(const std::vector<std::string> & nodeNames, const char* age, bool netForce);
-    static void PageOutNode(const char* nodeName, bool netForce);
+    static void PageInNodes(const std::vector<ST::string>& nodeNames, const ST::string& age, bool netForce);
+    static void PageOutNode(const ST::string& nodeName, bool netForce);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -668,7 +668,7 @@ public:
     //
     // PURPOSE    : Send's a VaultTask to the server to perform the invite
     //
-    static void AcceptInviteInGame(const char* friendName, const char* inviteKey);
+    static void AcceptInviteInGame(const ST::string& friendName, const ST::string& inviteKey);
     
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -907,7 +907,7 @@ public:
     // PURPOSE    : takes the name of an avatar model and a sceneobject key and
     //              spawns the avatar at that point
     //
-    static PyObject* LoadAvatarModel(const char* modelName, pyKey& object, const ST::string& userStr); // returns pyKey
+    static PyObject* LoadAvatarModel(ST::string modelName, pyKey& object, const ST::string& userStr); // returns pyKey
     static void UnLoadAvatarModel(pyKey& avatar);
     
     ///////////////////////////////////////////////////////////////////////////////

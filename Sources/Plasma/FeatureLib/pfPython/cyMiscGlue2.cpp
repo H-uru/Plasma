@@ -193,10 +193,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtLocalizedYesNoDialog, args, kwargs,
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtRateIt, args, "Params: chronicleName,dialogPrompt,onceFlag\nShows a dialog with dialogPrompt and stores user input rating into chronicleName")
 {
-    char* chronicleName;
-    char* dialogPrompt;
+    ST::string chronicleName;
+    ST::string dialogPrompt;
     char onceFlag;
-    if (!PyArg_ParseTuple(args, "ssb", &chronicleName, &dialogPrompt, &onceFlag))
+    if (!PyArg_ParseTuple(args, "O&O&b", PyUnicode_STStringConverter, &chronicleName, PyUnicode_STStringConverter, &dialogPrompt, &onceFlag))
     {
         PyErr_SetString(PyExc_TypeError, "PtRateIt expects two strings and a boolean");
         PYTHON_RETURN_ERROR;
@@ -255,9 +255,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtExcludeRegionSetNow, args, "Params: senderKey,
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtAcceptInviteInGame, args, "Params: friendName,inviteKey\nSends a VaultTask to the server to perform the invite")
 {
-    char* friendName;
-    char* inviteKey;
-    if (!PyArg_ParseTuple(args, "ss", &friendName, &inviteKey))
+    ST::string friendName;
+    ST::string inviteKey;
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_STStringConverter, &friendName, PyUnicode_STStringConverter, &inviteKey))
     {
         PyErr_SetString(PyExc_TypeError, "PtAcceptInviteInGame expects two strings");
         PYTHON_RETURN_ERROR;
@@ -284,17 +284,17 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetFrameDeltaTime, "Returns the amount 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=false, ageName=\"\"\nPages in node, or a list of nodes")
 {
     PyObject* nodeNameObj = nullptr;
-    char* ageName = nullptr;
+    ST::string ageName;
     char netForce = 0;
-    if (!PyArg_ParseTuple(args, "O|bs", &nodeNameObj, &netForce, &ageName))
+    if (!PyArg_ParseTuple(args, "O|bO&", &nodeNameObj, &netForce, PyUnicode_STStringConverter, &ageName))
     {
         PyErr_SetString(PyExc_TypeError, "PtPageInNode expects a string or list of strings, and optionally a string");
         PYTHON_RETURN_ERROR;
     }
-    std::vector<std::string> nodeNames;
+    std::vector<ST::string> nodeNames;
     if (PyUnicode_Check(nodeNameObj))
     {
-        nodeNames.emplace_back(PyUnicode_AsUTF8(nodeNameObj));
+        nodeNames.emplace_back(PyUnicode_AsSTString(nodeNameObj));
     }
     else if (PyList_Check(nodeNameObj))
     {
@@ -307,7 +307,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
                 PyErr_SetString(PyExc_TypeError, "PtPageInNode expects a string or list of strings, and optionally a string");
                 PYTHON_RETURN_ERROR;
             }
-            nodeNames.emplace_back(PyUnicode_AsUTF8(listItem));
+            nodeNames.emplace_back(PyUnicode_AsSTString(listItem));
         }
     }
     else
@@ -322,9 +322,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtPageOutNode, args, "Params: nodeName, netForce = false\nPages out a node")
 {
-    char* nodeName;
+    ST::string nodeName;
     char netForce = 0;
-    if (!PyArg_ParseTuple(args, "s|b", &nodeName, &netForce))
+    if (!PyArg_ParseTuple(args, "O&|b", PyUnicode_STStringConverter, &nodeName, &netForce))
     {
         PyErr_SetString(PyExc_TypeError, "PtPageOutNode expects a string and bool");
         PYTHON_RETURN_ERROR;

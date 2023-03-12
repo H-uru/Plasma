@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyMisc.h"
 
 #include <Python.h>
+#include <utility>
 
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
@@ -289,9 +290,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessage, args, "Params: command,value\nS
     }
     if (PyUnicode_Check(val))
     {
-        wchar_t* buffer = PyUnicode_AsWideCharString(val, nullptr);
-        cyMisc::SendKIMessageS(command, buffer);
-        PyMem_Free(buffer);
+        cyMisc::SendKIMessageS(command, PyUnicode_AsSTString(val));
     }
     else if (PyFloat_Check(val))
     {
@@ -328,17 +327,17 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessageInt, args, "Params: command,value
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadAvatarModel, args, "Params: modelName, spawnPoint, userStr = \"\"\nLoads an avatar model at the given spawn point. Assigns the user specified string to it.")
 {
-    char* modelName;
+    ST::string modelName;
     PyObject* keyObj;
     ST::string userStr;
-    if (!PyArg_ParseTuple(args, "sO|O&", &modelName, &keyObj, PyUnicode_STStringConverter, &userStr) ||
+    if (!PyArg_ParseTuple(args, "O&O|O&", PyUnicode_STStringConverter, &modelName, &keyObj, PyUnicode_STStringConverter, &userStr) ||
         !pyKey::Check(keyObj)) {
         PyErr_SetString(PyExc_TypeError, "PtLoadAvatarModel expects a string, a ptKey, and an optional string");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
 
-    return cyMisc::LoadAvatarModel(modelName, *key, userStr);
+    return cyMisc::LoadAvatarModel(std::move(modelName), *key, userStr);
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtUnLoadAvatarModel, args, "Params: avatarKey\nForcibly unloads the specified avatar model.\n"
