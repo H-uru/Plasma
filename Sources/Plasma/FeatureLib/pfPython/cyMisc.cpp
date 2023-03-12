@@ -1333,11 +1333,7 @@ bool cyMisc::IsFirstPerson()
 //
 //  PURPOSE    : Send a petition to the CCR for help or questions
 //
-void cyMisc::SendPetitionToCCR(ST::string message)
-{
-    SendPetitionToCCRI(std::move(message), plNetCommon::PetitionTypes::kGeneralHelp, {});
-}
-void cyMisc::SendPetitionToCCRI(ST::string message, uint8_t reason, ST::string title)
+void cyMisc::SendPetitionToCCR(ST::string message, uint8_t reason, ST::string title)
 {
     // create the mesage to send
     plCCRPetitionMsg *msg = new plCCRPetitionMsg();

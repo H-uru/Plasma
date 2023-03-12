@@ -60,7 +60,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendPetitionToCCR, args, "Params: message,reas
         PyErr_SetString(PyExc_TypeError, "PtSendPetitionToCCR expects a string, and an optional unsigned 8-bit int and optional string");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::SendPetitionToCCRI(std::move(message), reason, std::move(title));
+    cyMisc::SendPetitionToCCR(std::move(message), reason, std::move(title));
     PYTHON_RETURN_NONE;
 }
 

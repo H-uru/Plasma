@@ -563,8 +563,7 @@ public:
     //
     //  PURPOSE    : Send a petition to the CCR for help or questions
     //
-    static void SendPetitionToCCR(ST::string message);
-    static void SendPetitionToCCRI(ST::string message, uint8_t reason, ST::string title);
+    static void SendPetitionToCCR(ST::string message, uint8_t reason, ST::string title);
 
     /////////////////////////////////////////////////////////////////////////////
     //
