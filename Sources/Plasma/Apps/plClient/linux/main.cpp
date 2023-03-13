@@ -87,6 +87,7 @@ static plClientLoader gClient;
 static xcb_connection_t* gXConn;
 static xcb_key_symbols_t* keysyms;
 static pcSmallRect gWindowSize;
+static bool gHasXFixes = false;
 static hsSemaphore statusFlag;
 
 enum
@@ -348,6 +349,21 @@ static bool XInit(xcb_connection_t* connection)
     xcb_screen_iterator_t iter = xcb_setup_roots_iterator(setup);
     xcb_screen_t* screen = iter.data;
 
+    /* Check for XFixes support for hiding the cursor */
+    const xcb_query_extension_reply_t* qe_reply = xcb_get_extension_data(gXConn, &xcb_xfixes_id);
+    if (qe_reply && qe_reply->present)
+    {
+        /* We *must* negotiate the XFixes version with the server */
+        xcb_xfixes_query_version_cookie_t qv_cookie = xcb_xfixes_query_version(gXConn, XCB_XFIXES_MAJOR_VERSION, XCB_XFIXES_MINOR_VERSION);
+        xcb_xfixes_query_version_reply_t* qv_reply = xcb_xfixes_query_version_reply(gXConn, qv_cookie, nullptr);
+
+//#ifndef HS_DEBUGGING // Don't hide the cursor when debugging
+        gHasXFixes = qv_reply->major_version >= 4;
+//#endif
+
+        free(qv_reply);
+    }
+
     const uint32_t event_mask = XCB_EVENT_MASK_EXPOSURE
                               | XCB_EVENT_MASK_KEY_PRESS
                               | XCB_EVENT_MASK_KEY_RELEASE
@@ -561,6 +577,28 @@ static void PumpMessageQueueProc()
                 delete(pXMsg);
                 delete(pYMsg);
                 delete(pBMsg);
+            }
+            break;
+
+        case XCB_ENTER_NOTIFY: // Mouse over windows
+            {
+                if (gHasXFixes)
+                {
+                    xcb_enter_notify_event_t* ene = reinterpret_cast<xcb_enter_notify_event_t*>(event);
+                    xcb_xfixes_hide_cursor(gXConn, ene->root);
+                    xcb_flush(gXConn);
+                }
+            }
+            break;
+
+        case XCB_LEAVE_NOTIFY: // Mouse off windows
+            {
+                if (gHasXFixes)
+                {
+                    xcb_leave_notify_event_t* lne = reinterpret_cast<xcb_leave_notify_event_t*>(event);
+                    xcb_xfixes_show_cursor(gXConn, lne->root);
+                    xcb_flush(gXConn);
+                }
             }
             break;
 
