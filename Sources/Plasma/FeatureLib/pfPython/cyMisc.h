@@ -201,17 +201,6 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////
     //
-    //  Function   : LinkToAge
-    //  PARAMETERS : 
-    //
-    //  PURPOSE    : LinkToAge
-    //
-    //  STATUS     : Depreciated. Use plNetLinkingMgr or pyNetLinkingMgr instead.
-    //
-/// static void LinkToAge(pyKey &selfkey, const char *AgeName,const char *SpawnPointName);
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
     //  Function   : SetDirtySyncStateServer
     //  PARAMETERS : 
     //

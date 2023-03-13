@@ -398,33 +398,6 @@ void cyMisc::DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj, bool netFo
 
 /////////////////////////////////////////////////////////////////////////////
 //
-//  Function   : LinkToAge
-//  PARAMETERS : 
-//
-//  PURPOSE    : LinkToAge
-//
-//  STATUS     : Depreciated. Use plNetLinkingMgr or pyNetLinkingMgr instead.
-//
-
-//void cyMisc::LinkToAge(pyKey &selfkey, const char *AgeName,const char *SpawnPointName)
-//{
-//  // find the Modifier that called us
-//  hsStatusMessage("PY: LinkToAge\n");
-//      // Ask the Modifier if it was Local or Network
-//  if (selfkey.WasLocalNotify())
-//  {
-//      hsStatusMessage("PY:LOCAL NOTIFY\n");
-//      plNetLinkingMgr::GetInstance()->LinkToPublicAge( AgeName, SpawnPointName );
-//  }
-//  else
-//  {
-//      hsStatusMessage("PY:REMOTE NOTIFY\n");
-//  }
-//}
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 //  Function   : SetDirtySyncStateServer
 //  PARAMETERS : 
 //
