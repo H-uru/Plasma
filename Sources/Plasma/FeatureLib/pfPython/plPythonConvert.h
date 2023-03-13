@@ -63,16 +63,6 @@ namespace plPython
         return result;
     }
 
-    inline PyObject* ConvertFrom(char value)
-    {
-        return PyUnicode_FromFormat("%c", (int)value);
-    }
-
-    inline PyObject* ConvertFrom(const char* value)
-    {
-        return PyUnicode_FromString(value);
-    }
-
     inline PyObject* ConvertFrom(double value)
     {
         return PyFloat_FromDouble(value);
