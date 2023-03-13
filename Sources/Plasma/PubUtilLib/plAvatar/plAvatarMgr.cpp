@@ -747,7 +747,7 @@ plArmatureMod *plAvatarMgr::FindAvatarByModelName(const ST::string& name)
     return nullptr;
 }
 
-void plAvatarMgr::FindAllAvatarsByModelName(const char* name, plArmatureModPtrVec& outVec)
+void plAvatarMgr::FindAllAvatarsByModelName(const ST::string& name, plArmatureModPtrVec& outVec)
 {
     plAvatarVec::iterator it;
     for (it = fAvatars.begin(); it != fAvatars.end(); ++it)

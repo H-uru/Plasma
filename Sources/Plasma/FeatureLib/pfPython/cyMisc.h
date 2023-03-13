@@ -59,7 +59,6 @@ class pyPoint3;
 
 #include "HeadSpin.h"
 #include <vector>
-#include <string>
 
 class pyGUIDialog;
 class plPipeline;
@@ -147,7 +146,7 @@ public:
     //  PURPOSE    : Execute a console command from a python script,
     //                  optionally propagate over the net
     //
-    static PyObject* FindSceneObject(const ST::string& name, const char* ageName); // returns pySceneObject
+    static PyObject* FindSceneObject(const ST::string& name, const ST::string& ageName); // returns pySceneObject
     static PyObject* FindSceneObjects(const ST::string& name);
     static PyObject* FindActivator(const ST::string& name); // returns pyKey
 
@@ -510,7 +509,7 @@ public:
     //
     static void SendKIMessageI(uint32_t command, int32_t value);
     static void SendKIGZMarkerMsg(int32_t markerNumber, pyKey& sender);
-    static void SendKIRegisterImagerMsg(const char* imagerName, pyKey& sender);
+    static void SendKIRegisterImagerMsg(const ST::string& imagerName, pyKey& sender);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -633,13 +632,13 @@ public:
     //
     //  PURPOSE    :  
     //
-    static void EnableOfferBookMode(pyKey& selfkey, const char* ageFileName, const char* ageInstanceName);
+    static void EnableOfferBookMode(pyKey& selfkey, const ST::string& ageFileName, const ST::string& ageInstanceName);
     static void DisableOfferBookMode();
     static void NotifyOffererPublicLinkAccepted(uint32_t offerer);
     static void NotifyOffererPublicLinkRejected(uint32_t offerer);
     static void NotifyOffererPublicLinkCompleted(uint32_t offerer);
     static void ToggleAvatarClickability(bool on);
-    static void SetShareSpawnPoint(const char* spawnPoint);
+    static void SetShareSpawnPoint(const ST::string& spawnPoint);
     static void SetShareAgeInstanceGuid(const plUUID& guid);
     
     //////////////////////////////////////////////////////////////////////////////
@@ -781,7 +780,7 @@ public:
     //
     // PURPOSE    : Get the list of public ages for the given age name.
     //
-    static void GetPublicAgeList(const char * ageName, PyObject * cbObject = nullptr);
+    static void GetPublicAgeList(const ST::string& ageName, PyObject * cbObject = nullptr);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -799,7 +798,7 @@ public:
     //
     // PURPOSE    : Remove a public age from the list of available ones.
     //
-    static void RemovePublicAge(const char * ageInstanceGuid, PyObject * cbObject = nullptr);
+    static void RemovePublicAge(const ST::string& ageInstanceGuid, PyObject * cbObject = nullptr);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -817,7 +816,7 @@ public:
 
     static int GetNumCameras();
     static ST::string GetCameraNumber(int number);
-    static void RebuildCameraStack(const ST::string& name, const char* ageName);
+    static void RebuildCameraStack(const ST::string& name, const ST::string& ageName);
     static void PyClearCameraStack();
     static void RecenterCamera();
     static bool IsFirstPerson();
@@ -847,7 +846,7 @@ public:
     //
     // PURPOSE    : debugging
     //
-    static void DebugAssert( bool cond, const char * msg );
+    static void DebugAssert(bool cond, const ST::string& msg);
     static void DebugPrint(const ST::string& msg, uint32_t level);
 
 
@@ -866,7 +865,7 @@ public:
     //
     // PURPOSE    : captures the screen and saves it as a jpeg
     //
-    static void SaveScreenShot(const char* fileName, int x = 640, int y = 480, int quality = 75);
+    static void SaveScreenShot(const plFileName& fileName, int x = 640, int y = 480, int quality = 75);
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -948,7 +947,7 @@ public:
     static void SetBehaviorNetFlags(pyKey & behKey, bool netForce, bool netProp);
     static void SendFriendInvite(const ST::string& email, const ST::string& toName);
     static PyObject* PyGuidGenerate();
-    static PyObject* GetAIAvatarsByModelName(const char* name);
+    static PyObject* GetAIAvatarsByModelName(const ST::string& name);
     static void ForceVaultNodeUpdate(unsigned nodeId);
     static void VaultDownload(unsigned nodeId);
     static PyObject* CloneKey(pyKey* object, bool netForce);

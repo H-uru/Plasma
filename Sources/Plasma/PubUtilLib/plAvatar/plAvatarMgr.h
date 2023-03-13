@@ -146,7 +146,7 @@ public:
     plArmatureMod *FindAvatarByPlayerID(uint32_t pid);
     plArmatureMod *FindAvatarByModelName(const ST::string& name); // Probably only useful for custom NPCs. All players are
                                                       // either "Male" or "Female".
-    void FindAllAvatarsByModelName(const char* name, plArmatureModPtrVec& outVec);
+    void FindAllAvatarsByModelName(const ST::string& name, plArmatureModPtrVec& outVec);
     plArmatureMod *GetFirstRemoteAvatar();
 
     // \{
