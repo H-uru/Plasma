@@ -569,11 +569,6 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLanguage, "Returns the current langu
     return PyLong_FromLong(cyMisc::GetLanguage());
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtUsingUnicode, "Returns true if the current language is a unicode language (like Japanese)")
-{
-    PYTHON_RETURN_BOOL(cyMisc::UsingUnicode());
-}
-
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFakeLinkAvatarToObject, args, "Params: avatar,object\nPseudo-links avatar to object within the same age\n")
 {
     PyObject* avatarObj = nullptr;
@@ -713,7 +708,6 @@ void cyMisc::AddPlasmaMethods3(PyObject* m)
         PYTHON_GLOBAL_METHOD(PtGetControlEvents)
 
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetLanguage)
-        PYTHON_GLOBAL_METHOD_NOARGS(PtUsingUnicode)
 
         PYTHON_GLOBAL_METHOD(PtFakeLinkAvatarToObject)
 

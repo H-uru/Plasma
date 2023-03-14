@@ -78,16 +78,6 @@ const char* plLocalization::fLangNames[] =
     "Japanese" // kJapanese
 };
 
-bool plLocalization::fUsesUnicode[] =
-{
-    false,  // kEnglish
-    false,  // kFrench
-    false,  // kGerman
-    false,  // kSpanish
-    false,  // kItalian
-    true    // kJapanese
-};
-
 plLocalization::encodingTypes plLocalization::fUnicodeEncoding[] =
 {
     Enc_Unencoded,  // kEnglish

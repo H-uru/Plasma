@@ -681,15 +681,6 @@ public:
     
     //////////////////////////////////////////////////////////////////////////////
     //
-    // Function   : UsingUnicode
-    // PARAMETERS :
-    //
-    // PURPOSE    : Returns true if the current language uses Unicode (like Japanese)
-    //
-    static bool UsingUnicode();
-
-    //////////////////////////////////////////////////////////////////////////////
-    //
     // Function   : RequestLOSScreen
     // PARAMETERS : lots...
     //

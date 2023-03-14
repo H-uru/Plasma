@@ -1731,18 +1731,6 @@ int cyMisc::GetLanguage()
 
 //////////////////////////////////////////////////////////////////////////////
 //
-// Function   : UsingUnicode
-// PARAMETERS :
-//
-// PURPOSE    : Returns true if the current language uses Unicode (like Japanese)
-//
-bool cyMisc::UsingUnicode()
-{
-    return plLocalization::UsingUnicode();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
 //
 //  particle system management
 //
