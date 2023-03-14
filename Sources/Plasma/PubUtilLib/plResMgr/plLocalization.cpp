@@ -78,16 +78,6 @@ const char* plLocalization::fLangNames[] =
     "Japanese" // kJapanese
 };
 
-plLocalization::encodingTypes plLocalization::fUnicodeEncoding[] =
-{
-    Enc_Unencoded,  // kEnglish
-    Enc_Unencoded,  // kFrench
-    Enc_Unencoded,  // kGerman
-    Enc_Unencoded,  // kSpanish
-    Enc_Unencoded,  // kItalian
-    Enc_UTF8,       // kJapanese
-};
-
 plFileName plLocalization::IGetLocalized(const plFileName& name, Language lang)
 {
     ST_ssize_t underscore = name.AsString().find_last('_');

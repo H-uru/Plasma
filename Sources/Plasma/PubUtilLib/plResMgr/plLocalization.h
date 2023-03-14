@@ -61,27 +61,12 @@ public:
 
         kNumLanguages,
     };
-    
-    enum encodingTypes
-    {
-        Enc_Unencoded,  // This can also mean that python did the decoding for us and we don't need to tweak it on our end
-        Enc_Split_String,
-        Enc_Hybrid_Split_String,
-        Enc_UTF8,
-        Enc_UTF16,
-        Enc_Unicode_Escape,
-        Enc_Raw_Unicode_Escape,
-        Enc_Latin_1,
-        Enc_ASCII,
-        Enc_MBCS
-    };
 
 protected:
     static Language fLanguage;
     static const char* fLangTags[kNumLanguages];
     static std::set<ST::string> fLangCodes[kNumLanguages];
     static const char* fLangNames[kNumLanguages];
-    static encodingTypes fUnicodeEncoding[kNumLanguages];
 
     static plFileName IGetLocalized(const plFileName& name, Language lang);
 
@@ -91,8 +76,6 @@ public:
 
     static const char* GetLanguageName(Language lang) { return fLangNames[lang]; }
     static std::set<ST::string> GetLanguageCodes(Language lang) { return fLangCodes[lang]; }
-
-    static encodingTypes UnicodeEncoding() { return fUnicodeEncoding[fLanguage]; }
 
     // Returns true if we're using localized assets.  If it returns false, you
     // don't need to bother calling GetLocalized
