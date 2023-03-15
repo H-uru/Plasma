@@ -273,9 +273,6 @@ inline char *hsStrncpy(char *strDest, const char *strSource, size_t count)
     return temp;
 }
 
-wchar_t *hsStringToWString( const char *str );
-char    *hsWStringToString( const wchar_t *str );
-
 // Use "correct" non-standard string functions based on the
 // selected compiler / library
 #if HS_BUILD_FOR_WIN32
@@ -341,12 +338,8 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wcha
 #    ifndef fileno
 #        define fileno(__F)       _fileno(__F)
 #    endif
-
-#   define hsWFopen(name, mode)     _wfopen(name, mode)
 #else
      // This is for Unix, Linux, OSX, etc.
-#   define hsWFopen(name, mode)     fopen(hsWStringToString(name), hsWStringToString(mode))
-
 #   include <limits.h>
 #   define MAX_PATH PATH_MAX
 #endif

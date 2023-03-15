@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "hsWindows.h"
-#include <wchar.h>
 
 #ifdef _MSC_VER
 #   include <crtdbg.h>
@@ -436,43 +435,4 @@ char* hsStrcpy(char* dst, const char* src)
     }
 
     return dst;
-}
-
-//// IStringToWString /////////////////////////////////////////////////////////
-// Converts a char * string to a wchar_t * string
-
-wchar_t *hsStringToWString( const char *str )
-{
-    // convert the char string to a wchar_t string
-    size_t len = strlen(str);
-    wchar_t *wideString = new wchar_t[len+1];
-    for (size_t i = 0; i < len; i++)
-        wideString[i] = btowc(str[i]);
-    wideString[len] = L'\0';
-    return wideString;
-}
-
-//// IWStringToString /////////////////////////////////////////////////////////
-// Converts a wchar_t * string to a char * string
-
-char    *hsWStringToString( const wchar_t *str )
-{
-    // convert the wchar_t string to a char string
-    size_t len = wcslen(str);
-    char *sStr = new char[len+1];
-
-    for (size_t i = 0; i < len; i++)
-    {
-        char temp = wctob(str[i]);
-        if (temp == EOF)
-        {
-            sStr[i] = '\0';
-            i = len;
-        }
-        else
-            sStr[i] = temp;
-    }
-    sStr[len] = '\0';
-
-    return sStr;
 }
