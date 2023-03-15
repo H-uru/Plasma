@@ -278,15 +278,9 @@ inline char *hsStrncpy(char *strDest, const char *strSource, size_t count)
 #if HS_BUILD_FOR_WIN32
 #    define stricmp     _stricmp
 #    define strnicmp    _strnicmp
-#    define wcsicmp     _wcsicmp
-#    define wcsnicmp    _wcsnicmp
-#    define strdup      _strdup
-#    define wcsdup      _wcsdup
 #else
 #    define stricmp     strcasecmp
 #    define strnicmp    strncasecmp
-#    define wcsicmp     wcscasecmp
-#    define wcsnicmp    wcsncasecmp
 #endif
 
 enum {              // Kind of MessageBox...passed to hsMessageBox
@@ -333,7 +327,6 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wcha
 #if HS_BUILD_FOR_WIN32
      // This is for Windows
 #    define snprintf        _snprintf
-#    define swprintf        _snwprintf
 
 #    ifndef fileno
 #        define fileno(__F)       _fileno(__F)
