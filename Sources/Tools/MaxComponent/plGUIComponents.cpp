@@ -3056,9 +3056,9 @@ public:
 class plGUITextBoxProc : public ParamMap2UserDlgProc
 {
 private:
-    std::vector<M_STD_STRING> fTranslations;
+    std::vector<ST::string> fTranslations;
     int fCurLanguage;
-    void ISetTranslation(int lang, M_STD_STRING text)
+    void ISetTranslation(int lang, ST::string text)
     {
         while (lang >= fTranslations.size())
             fTranslations.emplace_back();
@@ -3080,14 +3080,14 @@ public:
                 if ( pmap->GetParamBlock()->GetStr( plGUITextBoxComponent::kRefInitText ) )
                 {
                     fTranslations = plLocalization::StringToLocal(pmap->GetParamBlock()->GetStr( plGUITextBoxComponent::kRefInitText ) );
-                    SetDlgItemText( hWnd, IDC_GUI_INITTEXT, fTranslations[0].c_str() );
+                    SetDlgItemText(hWnd, IDC_GUI_INITTEXT, ST2T(fTranslations[0]));
                 }
                 else
                     // if there is no text, then there is nothing to translate
                     SetDlgItemText( hWnd, IDC_GUI_INITTEXT, pmap->GetParamBlock()->GetStr( plGUITextBoxComponent::kRefInitText ) );
                 SendMessage( GetDlgItem( hWnd, IDC_GUI_LANGUAGE ), CB_RESETCONTENT, 0, 0 );
                 for (i=0; i<plLocalization::kNumLanguages; i++)
-                    SendMessageA( GetDlgItem( hWnd, IDC_GUI_LANGUAGE ), CB_ADDSTRING, 0, (LPARAM)plLocalization::GetLanguageName((plLocalization::Language)i) );
+                    SendMessage(GetDlgItem(hWnd, IDC_GUI_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)ST2T(plLocalization::GetLanguageName((plLocalization::Language)i)));
                 SendMessage( GetDlgItem( hWnd, IDC_GUI_LANGUAGE ), CB_SETCURSEL, 0, 0 );
                 fCurLanguage = 0;
 
@@ -3121,20 +3121,16 @@ public:
                 {
                     if( HIWORD( wParam ) == EN_CHANGE )
                     {
-                        int strLen = (int)SendDlgItemMessage(hWnd, IDC_GUI_INITTEXT, WM_GETTEXTLENGTH, 0, 0);
+                        int strLen = (int)SendDlgItemMessageW(hWnd, IDC_GUI_INITTEXT, WM_GETTEXTLENGTH, 0, 0);
                         if( strLen > 0 )
                         {
-                            auto str = std::make_unique<TCHAR[]>(strLen + 1);
-                            GetDlgItemText( hWnd, IDC_GUI_INITTEXT, str.get(), strLen + 1 );
-                            str[ strLen ] = 0;
-                            ISetTranslation(fCurLanguage, str.get());
+                            ST::wchar_buffer strBuf;
+                            strBuf.allocate(strLen);
+                            GetDlgItemTextW(hWnd, IDC_GUI_INITTEXT, strBuf.data(), strLen + 1);
+                            ISetTranslation(fCurLanguage, strBuf);
 
-                            auto translation = plLocalization::LocalToString(fTranslations);
-                            str = std::make_unique<TCHAR[]>(translation.length() + 1);
-                            _tcsncpy(str.get(), translation.c_str(), strLen + 1);
-                            str[translation.length()] = 0;
-                
-                            pmap->GetParamBlock()->SetValue( plGUITextBoxComponent::kRefInitText, 0, str.get() );
+                            ST::string translation = plLocalization::LocalToString(fTranslations);
+                            pmap->GetParamBlock()->SetValue(plGUITextBoxComponent::kRefInitText, 0, ST2M(translation));
                         }
                     }
                     else if( HIWORD( wParam ) == EN_KILLFOCUS )
@@ -3177,7 +3173,7 @@ public:
                         if (idx >= fTranslations.size())
                             SetDlgItemText( hWnd, IDC_GUI_INITTEXT, _T("") );
                         else
-                            SetDlgItemText( hWnd, IDC_GUI_INITTEXT, fTranslations[idx].c_str() );
+                            SetDlgItemText(hWnd, IDC_GUI_INITTEXT, ST2T(fTranslations[idx]));
                         fCurLanguage = idx;
                     }
                 }

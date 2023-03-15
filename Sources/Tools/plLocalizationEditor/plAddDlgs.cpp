@@ -161,10 +161,7 @@ std::vector<ST::string> IGetAllLanguageNames()
 
     for (int curLocale = 0; curLocale <= numLocales; curLocale++)
     {
-        const char *name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
-        wchar_t *wName = hsStringToWString(name);
-        retVal.push_back(ST::string::from_wchar(wName));
-        delete [] wName;
+        retVal.emplace_back(plLocalization::GetLanguageName((plLocalization::Language)curLocale));
     }
 
     return retVal;

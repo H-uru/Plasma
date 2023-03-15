@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStream.h"
 
-#include <string>
 #include <vector>
 
 #include "plAnimation/plAGModifier.h"
@@ -111,12 +110,12 @@ void    pfGUITextBoxMod::IUpdate()
 
     fDynTextMap->ClearToColor( GetColorScheme()->fBackColor );
 
-    std::wstring drawStr;
+    ST::string drawStr;
     if (fUseLocalizationPath && !fLocalizationPath.empty() && pfLocalizationMgr::InstanceValid()) {
-        drawStr = pfLocalizationMgr::Instance().GetString(fLocalizationPath).to_std_wstring();
+        drawStr = pfLocalizationMgr::Instance().GetString(fLocalizationPath);
     } else if (!fText.empty()) {
         plLocalization::Language lang = plLocalization::GetLanguage();
-        std::vector<std::wstring> translations = plLocalization::StringToLocal(fText.to_std_wstring());
+        std::vector<ST::string> translations = plLocalization::StringToLocal(fText);
 
         // if the translations doesn't exist, draw English
         if (translations[lang].empty())
@@ -126,7 +125,7 @@ void    pfGUITextBoxMod::IUpdate()
     }
 
     if (!drawStr.empty())
-        fDynTextMap->DrawWrappedString( 4, 4, drawStr.c_str(), fDynTextMap->GetVisibleWidth() - 8, fDynTextMap->GetVisibleHeight() - 8 );
+        fDynTextMap->DrawWrappedString(4, 4, drawStr, fDynTextMap->GetVisibleWidth() - 8, fDynTextMap->GetVisibleHeight() - 8);
 
     fDynTextMap->FlushToHost();
 }

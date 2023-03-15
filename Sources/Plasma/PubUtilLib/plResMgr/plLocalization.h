@@ -42,9 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLocalization_h_inc
 #define plLocalization_h_inc
 
-#include <vector>
-#include <string>
 #include <set>
+#include <string_theory/string>
+#include <vector>
 #include "plFileSystem.h"
 
 class plLocalization
@@ -64,9 +64,9 @@ public:
 
 protected:
     static Language fLanguage;
-    static const char* fLangTags[kNumLanguages];
+    static const ST::string fLangTags[kNumLanguages];
     static std::set<ST::string> fLangCodes[kNumLanguages];
-    static const char* fLangNames[kNumLanguages];
+    static const ST::string fLangNames[kNumLanguages];
 
     static plFileName IGetLocalized(const plFileName& name, Language lang);
 
@@ -74,7 +74,7 @@ public:
     static void SetLanguage(Language lang) { fLanguage = lang; }
     static Language GetLanguage() { return fLanguage; }
 
-    static const char* GetLanguageName(Language lang) { return fLangNames[lang]; }
+    static ST::string GetLanguageName(Language lang) { return fLangNames[lang]; }
     static std::set<ST::string> GetLanguageCodes(Language lang) { return fLangCodes[lang]; }
 
     // Returns true if we're using localized assets.  If it returns false, you
@@ -107,11 +107,9 @@ public:
 
     // Converts a vector of translated strings to a encoded string that can be decoded by StringToLocal()
     // The index in the vector of a string is it's language
-    static std::string LocalToString(const std::vector<std::string> & localizedText);
-    static std::wstring LocalToString(const std::vector<std::wstring> & localizedText);
+    static ST::string LocalToString(const std::vector<ST::string>& localizedText);
     // Converts a string encoded by LocalToString to a vector of translated strings
-    static std::vector<std::string> StringToLocal(const std::string & localizedText);
-    static std::vector<std::wstring> StringToLocal(const std::wstring & localizedText);
+    static std::vector<ST::string> StringToLocal(const ST::string& localizedText);
 };
 
 #endif // plLocalization_h_inc
