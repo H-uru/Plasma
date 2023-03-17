@@ -437,6 +437,15 @@ bool plAvBrainSwim::IsSwimming()
     return (fMode == kSwimming2D || fMode == kSwimming3D);
 }
 
+bool plAvBrainSwim::IsMovingForward() const
+{
+    if (fBehaviors.size() > kSwimForward && fBehaviors[kSwimForward]->GetStrength() > 0.0f)
+        return true;
+    if (fBehaviors.size() > kSwimForwardFast && fBehaviors[kSwimForwardFast]->GetStrength() > 0.0f)
+        return true;
+    return false;
+}
+
 void plAvBrainSwim::IStartWading()
 {
     plArmatureBrain *nextBrain = fAvMod->GetNextBrain(this);
