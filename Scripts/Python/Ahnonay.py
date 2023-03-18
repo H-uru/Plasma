@@ -87,6 +87,8 @@ class Ahnonay(ptResponder):
         ageLinkNode = agevault.getSubAgeLink(ageStruct)
         if ageLinkNode:
             localCathedralGuid = ageLinkNode.getAgeInfo().getAgeInstanceGuid()
+        else:
+            localCathedralGuid = None
 
         folder = vault.getAgesIOwnFolder()
         cathedralInfoTemplate = ptVaultAgeInfoNode(0)
