@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plAvBrainHuman.h"
+#include "plAvatar/plAvBrainSwim.h"
 #include "plAvatar/plAvBrainDrive.h"
 #include "plAvatar/plPhysicalControllerCore.h"
 #include "plMessage/plActivatorMsg.h"
@@ -444,16 +445,18 @@ void plObjectInVolumeAndFacingDetector::ICheckForTrigger()
         bool facing = dot >= fFacingTolerance;
 
         bool movingForward = false;
-        if (fNeedWalkingForward)
-        {
-            // And are we walking towards it?
-            plArmatureBrain* abrain =  armMod->FindBrainByClass(plAvBrainHuman::Index()); //armMod->GetCurrentBrain();
-            plAvBrainHuman* brain = plAvBrainHuman::ConvertNoRef(abrain);
-            if (brain && brain->IsMovingForward() && brain->fWalkingStrategy->IsOnGround())
+        if (fNeedWalkingForward) {
+            plAvBrainHuman* hbrain = plAvBrainHuman::ConvertNoRef(armMod->FindBrainByClass(plAvBrainHuman::Index()));
+            plAvBrainSwim* sbrain = plAvBrainSwim::ConvertNoRef(armMod->FindBrainByClass(plAvBrainSwim::Index()));
+
+            // And are we walking or swimming toward it?
+            if (hbrain && hbrain->IsMovingForward() && hbrain->fWalkingStrategy->IsOnGround())
                 movingForward = true;
-        }
-        else
+            else if (sbrain && sbrain->IsMovingForward() && sbrain->IsSwimming())
+                movingForward = true;
+        } else {
             movingForward = true;
+        }
 
         if (facing && movingForward && !fTriggered)
         {

@@ -69,6 +69,7 @@ public:
     bool IsWalking();
     bool IsWading();
     bool IsSwimming();
+    bool IsMovingForward() const;
     float GetSurfaceDistance() { return fSurfaceDistance; }
 
     plSwimStrategy *fSwimStrategy;
