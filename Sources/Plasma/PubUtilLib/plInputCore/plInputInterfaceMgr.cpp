@@ -59,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDebugInputInterface.h"
 #include "plTelescopeInputInterface.h"
 
-#include <string_theory/format>
+#include <string_theory/stdio>
 
 #include "pnInputCore/plKeyMap.h"
 #include "plMessage/plInputEventMsg.h"
@@ -790,7 +790,7 @@ void    plInputInterfaceMgr::WriteKeyMap()
         
         for (const auto& [code, desc] : plKeyMap::fCmdConvert)
         {
-            fprintf(gKeyFile, "#  %s\n", desc.c_str());
+            ST::printf(gKeyFile, "#  {}\n", desc);
         }
 
         fprintf(gKeyFile, "#\n");
@@ -800,7 +800,7 @@ void    plInputInterfaceMgr::WriteKeyMap()
         const std::map<uint32_t, ST::string>& keyConvert = plKeyMap::GetKeyConversion();
         for (const auto& [vKey, keyName] : keyConvert)
         {   
-            fprintf(gKeyFile, "#  %s\n", keyName.c_str());
+            ST::printf(gKeyFile, "#  {}\n", keyName);
         }
         fclose(gKeyFile);
     }
@@ -835,9 +835,7 @@ void    plInputInterfaceMgr::IWriteNonConsoleCmdKeys( plKeyMap *keyMap, FILE *ke
         ST::string key1 = plKeyMap::KeyComboToString(binding.GetKey1());
         ST::string key2 = plKeyMap::KeyComboToString(binding.GetKey2());
         ST::string desc = plInputMap::ConvertControlCodeToString(binding.GetCode());
-
-        ST::string line = ST::format("Keyboard.BindAction \t\t{}\t{}\t\t\t\t\"{}\"\n", key1, key2, desc);
-        fputs(line.c_str(), keyFile);
+        ST::printf(keyFile, "Keyboard.BindAction \t\t{}\t{}\t\t\t\t\"{}\"\n", key1, key2, desc);
     }
 
 }
@@ -862,15 +860,13 @@ void    plInputInterfaceMgr::IWriteConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFi
 //      if( binding.GetKey1() != plKeyCombo::kUnmapped )
 //      {
             ST::string key = plKeyMap::KeyComboToString(binding.GetKey1());
-            ST::string line = ST::format("Keyboard.BindConsoleCmd\t{}\t\t\t\"{}\"\n", key, binding.GetExtendedString());
-            fputs(line.c_str(), keyFile);
+            ST::printf(keyFile, "Keyboard.BindConsoleCmd\t{}\t\t\t\"{}\"\n", key, binding.GetExtendedString());
 //      }
 
         if( binding.GetKey2() != plKeyCombo::kUnmapped )
         {
             ST::string key2 = plKeyMap::KeyComboToString(binding.GetKey2());
-            ST::string line2 = ST::format("Keyboard.BindConsoleCmd\t{}\t\t\t\"{}\"\n", key2, binding.GetExtendedString());
-            fputs(line2.c_str(), keyFile);
+            ST::printf(keyFile, "Keyboard.BindConsoleCmd\t{}\t\t\t\"{}\"\n", key2, binding.GetExtendedString());
         }
     }
 }
