@@ -1454,8 +1454,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
 
     auto sn = IScriptWantsMsg<plSDLNotificationMsg>(kfunc_SDLNotify, msg);
     if (sn) {
-        ICallScriptMethod(kfunc_SDLNotify, sn->fVar->GetName().c_str(), sn->fSDLName.c_str(),
-                          sn->fPlayerID, sn->fHintString.c_str());
+        ICallScriptMethod(kfunc_SDLNotify, sn->fVar->GetName(), sn->fSDLName,
+                          sn->fPlayerID, sn->fHintString);
         return true;
     }
 
@@ -1490,7 +1490,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     // are they looking for a pfBackdoorMsg message?
     auto dt = IScriptWantsMsg<pfBackdoorMsg>(kfunc_OnBackdoorMsg, msg);
     if (dt) {
-        ICallScriptMethod(kfunc_OnBackdoorMsg, dt->GetTarget().c_str(), dt->GetString().c_str());
+        ICallScriptMethod(kfunc_OnBackdoorMsg, dt->GetTarget(), dt->GetString());
         return true;
     }
 #endif  //PLASMA_EXTERNAL_RELEASE
@@ -1543,7 +1543,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     // are they looking for a pfMovieEventMsg message?
     auto moviemsg = IScriptWantsMsg<pfMovieEventMsg>(kfunc_OnMovieEvent, msg);
     if (moviemsg) {
-        ICallScriptMethod(kfunc_OnMovieEvent, moviemsg->fMovieName.AsString().c_str(),
+        ICallScriptMethod(kfunc_OnMovieEvent, moviemsg->fMovieName.AsString(),
                           (int)moviemsg->fReason);
         return true;
     }
@@ -1635,7 +1635,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             kfunc_OnAIMsg,
             std::move(brainObj),
             msgType,
-            aiMsg->BrainUserString().c_str(),
+            aiMsg->BrainUserString(),
             std::move(args)
         );
         return true;
