@@ -66,7 +66,6 @@ target_link_libraries(
         pfAudio
         pfAnimation
         pfCamera
-        pfGameGUIMgr
         pfMessage
         pfPython
         pfSurface

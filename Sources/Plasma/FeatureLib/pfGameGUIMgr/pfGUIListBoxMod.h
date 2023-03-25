@@ -57,7 +57,6 @@ class pfGUIListElement;
 class pfGUIValueCtrl;
 class plMessage;
 class pfScrollProc;
-class plTextGenerator;
 
 namespace ST { class string; }
 

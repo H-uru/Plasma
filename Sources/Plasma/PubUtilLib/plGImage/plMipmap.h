@@ -73,12 +73,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// Class Definition /////////////////////////////////////////////////////////
 
 class plBitmapCreator;
-class plTextGenerator;
 
 class plMipmap : public plBitmap
 {
     friend class plBitmapCreator;
-    friend class plTextGenerator;
 
     public:
         //// Public Flags ////

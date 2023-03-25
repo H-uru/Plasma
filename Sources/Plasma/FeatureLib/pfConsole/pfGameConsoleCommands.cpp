@@ -81,11 +81,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvatarMgr.h"
 #include "plGImage/plMipmap.h"
 #include "plMessage/plAvatarMsg.h"
-#include "plMessage/plConfirmationMsg.h"
 #include "plPipeline/plCaptureRender.h"
 
 #include "pfConsoleCore/pfConsoleCmd.h"
-#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
 #include "pfMessage/pfGameGUIMsg.h"
 #include "pfMessage/pfKIMsg.h"
 
@@ -180,75 +178,6 @@ PF_CONSOLE_CMD( Game, SwitchDialog, "string olddlgName, string newdlgName", "Hid
         msg2->SetString( (const char *)params[ 1 ] );
         plgDispatch::MsgSend( msg2 );
     }
-}
-
-PF_CONSOLE_SUBGROUP( Game, GUI )
-
-static hsColorRGBA  sDynCtrlColor = hsColorRGBA().Set( 1, 1, 1, 1 ), sDynCtrlTextColor = hsColorRGBA().Set( 0, 0, 0, 1 );
-
-PF_CONSOLE_CMD( Game_GUI, SetDynamicCtrlColor, "float bgRed, float bgGreen, float bgBlue, float textRed, float textGreen, float textBlue", "" )
-{
-    sDynCtrlColor.Set( params[ 0 ], params[ 1 ], params[ 2 ], 1.f );
-    sDynCtrlTextColor.Set( params[ 3 ], params[ 4 ], params[ 5 ], 1.f );
-}
-
-
-PF_CONSOLE_CMD( Game_GUI, CreateRectButton, "string title, float x, float y, float width, float height, string command", "" )
-{
-    pfGUICtrlGenerator::Instance().GenerateRectButton( ST::string(params[0]), params[ 1 ], params[ 2 ],
-                                            params[ 3 ], params[ 4 ], 
-                                            ST::string(params[5]), 
-                                            sDynCtrlColor, sDynCtrlTextColor );
-}
-
-PF_CONSOLE_CMD( Game_GUI, CreateRoundButton, "float x, float y, float radius, string command", "" )
-{
-    pfGUICtrlGenerator::Instance().GenerateSphereButton( params[ 0 ], params[ 1 ], params[ 2 ], 
-                                            ST::string(params[3]), 
-                                            sDynCtrlColor );
-}
-
-PF_CONSOLE_CMD( Game_GUI, CreateDragBar, "float x, float y, float width, float height", "")
-{
-    pfGUICtrlGenerator::Instance().GenerateDragBar( params[ 0 ], params[ 1 ], params[ 2 ], params[ 3 ], sDynCtrlColor );
-}
-
-PF_CONSOLE_CMD( Game_GUI, CreateDialog, "string name", "" )
-{
-    pfGUICtrlGenerator::Instance().GenerateDialog(ST::string(params[0]));
-}
-
-PF_CONSOLE_CMD(Game_GUI, Confirm, "int type", "Shows a sample confirmation dialog")
-{
-    plConfirmationMsg* msg;
-    auto type = (plConfirmationMsg::Type)(int32_t)params[0];
-
-    switch (type) {
-    case plConfirmationMsg::Type::ConfirmQuit:
-        msg = new plLocalizedConfirmationMsg("KI.Messages.LeaveGame");
-        break;
-    case plConfirmationMsg::Type::ForceQuit:
-        msg = new plConfirmationMsg("Time to die, my friend.");
-        break;
-    case plConfirmationMsg::Type::YesNo:
-        msg = new plConfirmationMsg("Do you understand me?");
-        msg->SetCallback(
-            [PrintString](plConfirmationMsg::Result result) {
-                if (result == plConfirmationMsg::Result::No) {
-                    PrintString("Well that's too bad.");
-                } else {
-                    PrintString("Woo-hoo!");
-                }
-            }
-        );
-        break;
-    default:
-        msg = new plConfirmationMsg("Whatever, man.");
-        break;
-    }
-
-    msg->SetType(type);
-    msg->Send();
 }
 
 #endif

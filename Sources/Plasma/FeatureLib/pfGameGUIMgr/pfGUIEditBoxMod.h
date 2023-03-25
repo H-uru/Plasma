@@ -59,7 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsGMaterial;
 class plMessage;
-class plTextGenerator;
 
 class pfGUIEditBoxMod : public pfGUIControlMod
 {

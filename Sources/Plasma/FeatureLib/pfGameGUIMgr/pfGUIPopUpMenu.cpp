@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string_theory/format>
 
-#include "pfGUIButtonMod.h"
 #include "pfGUIControlHandlers.h"
 #include "pfGUICtrlGenerator.h"
 #include "pfGUIDialogHandlers.h"
@@ -544,7 +543,7 @@ bool    pfGUIPopUpMenu::IBuildMenu()
         float thisMargin = (i == 0 || i == fMenuItems.size() - 1) ? topMargin : 0.f;
         float thisOffset = (i == fMenuItems.size() - 1) ? topMargin : 0.f;
 
-        pfGUIMenuItem *button = pfGUIMenuItem::ConvertNoRef(pfGUICtrlGenerator::Instance().CreateRectButton(this, x, y + thisOffset, width, height + thisMargin, mat, true));
+        pfGUIMenuItem *button = pfGUICtrlGenerator::Instance().CreateRectButton(this, x, y + thisOffset, width, height + thisMargin, mat);
         if (button != nullptr)
         {
             button->SetColorScheme( scheme );
