@@ -39,9 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
+
 #include "plLocalization.h"
 
+#include "HeadSpin.h"
+#include "plFileSystem.h"
+
+#include <string_theory/string>
 #include <string_theory/string_stream>
 
 plLocalization::Language plLocalization::fLanguage = plLocalization::kEnglish;
@@ -91,6 +95,21 @@ plFileName plLocalization::IGetLocalized(const plFileName& name, Language lang)
     }
 
     return plFileName();
+}
+
+ST::string plLocalization::GetLanguageName(plLocalization::Language lang)
+{
+    return fLangNames[lang];
+}
+
+std::set<ST::string> plLocalization::GetLanguageCodes(plLocalization::Language lang)
+{
+    return fLangCodes[lang];
+}
+
+plFileName plLocalization::GetLocalized(plFileName const &name)
+{
+    return IGetLocalized(name, fLanguage);
 }
 
 plFileName plLocalization::ExportGetLocalized(const plFileName& name, int lang)

@@ -43,9 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLocalization_h_inc
 
 #include <set>
-#include <string_theory/string>
 #include <vector>
-#include "plFileSystem.h"
+
+class plFileName;
+namespace ST { class string; }
 
 class plLocalization
 {
@@ -74,8 +75,8 @@ public:
     static void SetLanguage(Language lang) { fLanguage = lang; }
     static Language GetLanguage() { return fLanguage; }
 
-    static ST::string GetLanguageName(Language lang) { return fLangNames[lang]; }
-    static std::set<ST::string> GetLanguageCodes(Language lang) { return fLangCodes[lang]; }
+    static ST::string GetLanguageName(Language lang);
+    static std::set<ST::string> GetLanguageCodes(Language lang);
 
     // Returns true if we're using localized assets.  If it returns false, you
     // don't need to bother calling GetLocalized
@@ -83,7 +84,7 @@ public:
 
     // Pass in a key name and this will give you the localized name
     // Returns an invalid filename if the original keyname is not for a localized asset
-    static plFileName GetLocalized(const plFileName& name) { return IGetLocalized(name, fLanguage); }
+    static plFileName GetLocalized(const plFileName& name);
 
     //
     // Export only
