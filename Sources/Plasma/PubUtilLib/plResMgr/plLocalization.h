@@ -102,8 +102,6 @@ public:
     //
     static int GetNumLocales() { return kNumLanguages - 1; }
     static plFileName ExportGetLocalized(const plFileName& name, int lang);
-    // Just tells us if this is localized, doesn't actually convert it for us
-    static bool IsLocalizedName(const plFileName& name) { return IGetLocalized(name, kEnglish).IsValid(); }
 
     // Converts a vector of translated strings to a encoded string that can be decoded by StringToLocal()
     // The index in the vector of a string is it's language
