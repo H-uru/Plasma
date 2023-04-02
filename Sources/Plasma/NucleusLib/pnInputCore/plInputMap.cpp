@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 // plInputMap.cpp
+#include <algorithm>
 #include <cctype>
 #include <utility>
 
