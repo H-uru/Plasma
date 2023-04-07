@@ -338,7 +338,7 @@ class xLinkingBookGUIPopup(ptModifier):
                                         #PtDebugPrint("agePanel = ",agePanel)
                                         if agePanel in xLinkingBookDefs.CityBookLinks:
                                             self.IDoCityLinksChron(agePanel)
-                                        respLinkResponder.run(self.key,avatar=PtGetLocalAvatar())
+                                        respLinkResponder.run(self.key,avatar=PtGetLocalAvatar(),netPropagate=0)
 
                                 else:  #Bookshelf Book
                                     if ptVault().amOwnerOfCurrentAge():
@@ -490,7 +490,7 @@ class xLinkingBookGUIPopup(ptModifier):
                     sdl["CleftVisited"] = (1,)
                     vault.addChronicleEntry("TomahnaLoad",1,"yes")
                     PtDebugPrint("Chronicle entry TomahnaLoad not present, adding entry and setting to yes")
-                respLinkResponder.run(self.key,avatar=PtGetLocalAvatar())
+                respLinkResponder.run(self.key,avatar=PtGetLocalAvatar(),netPropagate=0)
                 return
             elif agePanel == "grsnTeamRmPurple" or agePanel == "grsnTeamRmYellow":
                 PtAtTimeCallback(self.key,5,kGrsnTeamBook)
