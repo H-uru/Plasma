@@ -239,7 +239,7 @@ public:
 
     size_t GetBrainCount() const { return fBrains.size(); }
     plArmatureBrain *GetNextBrain(plArmatureBrain *brain);
-    plArmatureBrain *GetBrain(size_t index) const { if (index <= fBrains.size()) return fBrains.at(index); else return nullptr; }
+    plArmatureBrain *GetBrain(size_t index) const { if (index < fBrains.size()) return fBrains.at(index); else return nullptr; }
     plArmatureBrain *FindBrainByClass(uint32_t classID) const;
 
     void TurnToPoint(hsPoint3 &point);
