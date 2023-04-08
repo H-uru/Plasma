@@ -167,12 +167,12 @@ bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg) const
             return true;
         }
     default:
+        // Toss non-attach plRefMsgs
+        if (plFactory::DerivesFrom(CLASS_INDEX_SCOPED(plRefMsg), msg->ClassIndex()))
+            return false;
+
         // Default allow everything else, otherweise we
         // might break something that we really shouldn't...
         return true;
     }
-
-    // Toss non-attach plRefMsgs
-    if (plFactory::DerivesFrom(CLASS_INDEX_SCOPED(plRefMsg), msg->ClassIndex()))
-        return false;
 }
