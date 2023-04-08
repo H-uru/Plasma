@@ -127,6 +127,7 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
     va_list args;
     va_start(args, fmt);
     vsnprintf(msg, std::size(msg), fmt, args);
+    va_end(args);
 #if defined(HS_DEBUGGING)
 #if defined(_MSC_VER)
     if (s_GuiAsserts)
@@ -221,6 +222,7 @@ void DebugMsg(const char* fmt, ...)
     va_list args;
     va_start(args, fmt);
     vsnprintf(msg, std::size(msg), fmt, args);
+    va_end(args);
     fprintf(stderr, "%s\n", msg);
 
 #ifdef _MSC_VER
