@@ -424,11 +424,11 @@ protected:
     void                ISetupDecal(hsGMaterial* mat);
     void                ICheckDecalEnvLayers(hsGMaterial* mat);
 
-    void                IAddGraphPShader(hsGMaterial* mat, int iPass);
-    void                IAddGraphVShader(hsGMaterial* mat, int iPass);
-    void                IUpdateGraphShader(float dt, int iPass);
-    void                IInitGraph(int iPass);
-    void                IShuffleDownGraphs(int iPass);
+    void                IAddGraphPShader(hsGMaterial* mat, size_t iPass);
+    void                IAddGraphVShader(hsGMaterial* mat, size_t iPass);
+    void                IUpdateGraphShader(float dt, size_t iPass);
+    void                IInitGraph(size_t iPass);
+    void                IShuffleDownGraphs(size_t iPass);
 
     // type is either plLayRefMsg::kVertexShader or plLayRefMsg::kPixelShader.
     void                IAddShaderToLayers(hsGMaterial* mat, int iFirst, int iLast, uint8_t type, plShader* shader);
