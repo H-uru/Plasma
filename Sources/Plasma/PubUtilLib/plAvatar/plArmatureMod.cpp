@@ -859,6 +859,16 @@ void plArmatureMod::SpawnAt(int spawnNum, double time)
 
 void plArmatureMod::SetFollowerParticleSystemSO(plSceneObject *follower)
 {
+    if (!follower) {
+        if (fFollowerParticleSystemSO) {
+            plAttachMsg* attMsg = new plAttachMsg(GetTarget(0)->GetKey(), fFollowerParticleSystemSO, plRefMsg::kOnRemove, GetKey());
+            plgDispatch::MsgSend(attMsg);
+        }
+
+        fFollowerParticleSystemSO = follower;
+        return;
+    }
+
     // TODO: Check for old one and clean up.
     hsPoint3 trans = GetTarget(0)->GetLocalToWorld().GetTranslate() - follower->GetLocalToWorld().GetTranslate();
     
