@@ -476,16 +476,14 @@ bool plPageTreeMgr::IBuildSpaceTree()
 bool plPageTreeMgr::IRefreshTree(plPipeline* pipe)
 {
     hsAssert(fNodes.size() < std::numeric_limits<uint16_t>::max(), "Too many nodes");
-    for (uint16_t i = 0; i < fNodes.size(); ++i)
-    {
+    for (uint16_t i = 0; i < uint16_t(fNodes.size()); ++i) {
         plSceneNode* node = fNodes[i];
-        if (node->GetSpaceTree()->IsDirty())
-        {
+        if (node->GetSpaceTree()->IsDirty()) {
             node->GetSpaceTree()->Refresh();
 
             GetSpaceTree()->MoveLeaf(i, node->GetSpaceTree()->GetWorldBounds());
 
-            if (!node->GetSpaceTree()->IsEmpty() && fSpaceTree->HasLeafFlag(i, plSpaceTreeNode::kDisabled) )
+            if (!node->GetSpaceTree()->IsEmpty() && fSpaceTree->HasLeafFlag(i, plSpaceTreeNode::kDisabled))
                 fSpaceTree->SetLeafFlag(i, plSpaceTreeNode::kDisabled, false);
         }
     }
