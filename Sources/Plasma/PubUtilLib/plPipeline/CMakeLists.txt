@@ -71,6 +71,7 @@ target_link_libraries(plPipeline
         plSurface
         pfCamera # plCaptureRender, plDynamicEnvMap, plDXPipeline
         pfGameGUIMgr # plCaptureRender
+        freetype
     INTERFACE
         pnFactory
 )
