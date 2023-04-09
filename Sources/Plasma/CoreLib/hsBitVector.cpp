@@ -160,15 +160,15 @@ int hsBitIterator::Begin()
 {
     fCurrent = -1;
     fCurrVec = -1;
-    int i;
+    unsigned int i;
     for( i = 0; i < fBits.fNumBitVectors; i++ )
     {
         if( fBits.fBitVectors[i] )
         {
-            int j;
+            unsigned int j;
             for( j = 0; j < 32; j++ )
             {
-                if( fBits.fBitVectors[i] & (1 << j) )
+                if (fBits.fBitVectors[i] & (1u << j))
                 {
                     fCurrVec = i;
                     fCurrBit = j;
