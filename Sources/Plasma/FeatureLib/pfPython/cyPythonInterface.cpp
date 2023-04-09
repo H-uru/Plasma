@@ -594,6 +594,12 @@ public:
 
     void Write(const ST::string& data) {fData << data;}
 
+    void Flush()
+    {
+        // Currently a no-op - the actual printing happens externally
+        // and is not controlled by the Python side.
+    }
+
     // accessor functions for the PyObject*
 
     // returns the current data stored
@@ -640,8 +646,15 @@ PYTHON_METHOD_DEFINITION(ptOutputRedirector, write, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptOutputRedirector, flush)
+{
+    self->fThis->Flush();
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_START_METHODS_TABLE(ptOutputRedirector)
     PYTHON_METHOD(ptOutputRedirector, write, "Adds text to the output object"),
+    PYTHON_METHOD(ptOutputRedirector, flush, "Flushes the output (currently a no-op)"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
@@ -715,6 +728,17 @@ public:
         if (fLog)
             fData.erase(SIZE_MAX);
     }
+
+    void Flush()
+    {
+        PyObject* stdOut = PythonInterface::GetStdOut();
+
+        if (stdOut && pyOutputRedirector::Check(stdOut))
+        {
+            pyOutputRedirector *obj = pyOutputRedirector::ConvertFrom(stdOut);
+            obj->Flush();
+        }
+    }
 };
 
 bool pyErrorRedirector::fTypeCreated = false;
@@ -753,9 +777,16 @@ PYTHON_METHOD_DEFINITION(ptErrorRedirector, excepthook, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptErrorRedirector, flush)
+{
+    self->fThis->Flush();
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_START_METHODS_TABLE(ptErrorRedirector)
     PYTHON_METHOD(ptErrorRedirector, write, "Adds text to the output object"),
     PYTHON_METHOD(ptErrorRedirector, excepthook, "Handles exceptions"),
+    PYTHON_METHOD(ptErrorRedirector, flush, "Flushes the output (currently a no-op)"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
