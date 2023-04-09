@@ -54,6 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputMap.h"
 #include "plControlEventCodes.h"
 
+#include <map>
+#include <string_theory/string>
 #include <vector>
 
 //// plKeyCombo //////////////////////////////////////////////////////////////
@@ -116,19 +118,18 @@ class plKeyBinding
         uint32_t              fCodeFlags; // Needed?
         plKeyCombo          fKey1;      // KEY_UNMAPPED for not-used
         plKeyCombo          fKey2;
-        char                *fString;
+        ST::string          fString;
 
     public:
 
         plKeyBinding();
-        plKeyBinding(ControlEventCode code, uint32_t codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string = nullptr);
-        virtual ~plKeyBinding();
+        plKeyBinding(ControlEventCode code, uint32_t codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, ST::string string = {});
 
         ControlEventCode    GetCode() const { return fCode; }
         uint32_t              GetCodeFlags() const { return fCodeFlags; }
         const plKeyCombo    &GetKey1() const { return fKey1; }
         const plKeyCombo    &GetKey2() const { return fKey2; }
-        const char          *GetExtendedString() const { return fString; }
+        ST::string          GetExtendedString() const { return fString; }
         const plKeyCombo    &GetMatchingKey( plKeyDef keyDef ) const;
 
         void    SetKey1( const plKeyCombo &newCombo );
@@ -160,7 +161,7 @@ class plKeyMap : public plInputMap
         plKeyBinding    *IFindBindingByKey( const plKeyCombo &combo ) const;
         void             IFindAllBindingsByKey(const plKeyCombo &combo, std::vector<plKeyBinding*> &result) const;
         plKeyBinding    *IFindBinding( ControlEventCode code ) const;
-        plKeyBinding    *IFindConsoleBinding( const char *command ) const;
+        plKeyBinding    *IFindConsoleBinding(const ST::string& command) const;
 
         void            IActuallyBind( plKeyBinding *binding, const plKeyCombo &combo, BindPref pref );
         void            ICheckAndBindDupe( plKeyDef origKey, plKeyDef dupeKey );
@@ -174,14 +175,14 @@ class plKeyMap : public plInputMap
         bool    AddCode( ControlEventCode code, uint32_t codeFlags );
 
         // Same but for console commands. No flags b/c console commands always use the same flags
-        bool    AddConsoleCommand( const char *command );
+        bool    AddConsoleCommand(ST::string command);
 
 
         // Adds a key binding to a given code. Returns false if the code isn't in this map or if key is already mapped.
         bool    BindKey( const plKeyCombo &combo, ControlEventCode code, BindPref pref = kNoPreference );
 
         // Console command version
-        bool    BindKeyToConsoleCmd( const plKeyCombo &combo, const char *command, BindPref pref = kNoPreference );
+        bool    BindKeyToConsoleCmd(const plKeyCombo &combo, const ST::string& command, BindPref pref = kNoPreference);
 
 
         // Searches for the binding for a given code. Returns nil if not found
@@ -194,7 +195,7 @@ class plKeyMap : public plInputMap
         void FindAllBindingsByKey(const plKeyCombo &combo, std::vector<const plKeyBinding*> &result) const;
         
         // Searches for the binding by console command. Returns nil if not found
-        const plKeyBinding* FindConsoleBinding( const char *command ) const;
+        const plKeyBinding* FindConsoleBinding(const ST::string& command) const;
 
         // Make sure the given keys are clear of bindings, i.e. not used
         void    EnsureKeysClear( const plKeyCombo &key1, const plKeyCombo &key2 );
@@ -214,24 +215,28 @@ class plKeyMap : public plInputMap
         // Clears ALL bindings
         void    ClearAll();
 
-        static const char* GetStringCtrl();
-        static const char* GetStringShift();
-        static const char* GetStringUnmapped();
+        static ST::string GetStringCtrl();
+        static ST::string GetStringShift();
+        static ST::string GetStringUnmapped();
 
 
         size_t              GetNumBindings() const { return fBindings.size(); }
         const plKeyBinding  &GetBinding(size_t i) const { return *fBindings[i]; }
         void                HandleAutoDualBinding( plKeyDef key1, plKeyDef key2 );
 
-        static const char* ConvertVKeyToChar( uint32_t vk );
-        static plKeyDef ConvertCharToVKey( const char *c );
+        static const std::map<uint32_t, ST::string>& GetKeyConversion();
 
-        static Win32keyConvert  fKeyConversionEnglish[];
-        static Win32keyConvert  fKeyConversionFrench[];
-        static Win32keyConvert  fKeyConversionGerman[];
-        //static Win32keyConvert  fKeyConversionSpanish[];
-        //static Win32keyConvert  fKeyConversionItalian[];
+        static ST::string ConvertVKeyToChar(uint32_t vk);
+        static plKeyDef ConvertCharToVKey(const ST::string& c);
 
+        static ST::string KeyComboToString(const plKeyCombo &combo);
+        static plKeyCombo StringToKeyCombo(const ST::string& keyStr);
+
+        static const std::map<uint32_t, ST::string> fKeyConversionEnglish;
+        static const std::map<uint32_t, ST::string> fKeyConversionFrench;
+        static const std::map<uint32_t, ST::string> fKeyConversionGerman;
+        static const std::map<uint32_t, ST::string> fKeyConversionSpanish;
+        static const std::map<uint32_t, ST::string> fKeyConversionItalian;
 };
 
 

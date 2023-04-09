@@ -47,14 +47,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plControlDefinition.h"
 
+#include <map>
 #include <vector>
+
+namespace ST { class string; }
 
 class plInputMap
 {
 public:
-    static CommandConvert   fCmdConvert[];
-    static ControlEventCode ConvertCharToControlCode(const char* c);
-    static const char       *ConvertControlCodeToString( ControlEventCode code );
+    static const std::map<ControlEventCode, ST::string> fCmdConvert;
+    static ControlEventCode ConvertCharToControlCode(const ST::string& c);
+    static ST::string ConvertControlCodeToString(ControlEventCode code);
 };
 
 class plMouseMap : public plInputMap

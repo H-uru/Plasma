@@ -58,10 +58,6 @@ class pyKeyMap
 protected:
     pyKeyMap() {};
 
-private:
-    plKeyCombo IBindKeyToVKey( const char *keyStr );
-
-
 public:
     enum
     {
@@ -78,25 +74,25 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // conversion functions
-    const char* ConvertVKeyToChar( uint32_t vk, uint32_t flags );
-    uint32_t ConvertCharToVKey( const char *charVKey );
-    uint32_t ConvertCharToFlags( const char *charVKey );
+    ST::string ConvertVKeyToChar(uint32_t vk, uint32_t flags);
+    uint32_t ConvertCharToVKey(const ST::string& charVKey);
+    uint32_t ConvertCharToFlags(const ST::string& charVKey);
 
-    uint32_t ConvertCharToControlCode(const char* charCode);
-    const char* ConvertControlCodeToString( uint32_t code );
+    uint32_t ConvertCharToControlCode(const ST::string& charCode);
+    ST::string ConvertControlCodeToString(uint32_t code);
 
 
     // bind a key to an action
-    void BindKey( const char* keyStr1, const char* keyStr2, const char* act);
-    void BindKeyToConsoleCommand( const char* keyStr1, const char* command);
+    void BindKey(const ST::string& keyStr1, const ST::string& keyStr2, const ST::string& act);
+    void BindKeyToConsoleCommand(const ST::string& keyStr1, const ST::string& command);
 
     uint32_t GetBindingKey1(uint32_t code);
     uint32_t GetBindingFlags1(uint32_t code);
     uint32_t GetBindingKey2(uint32_t code);
     uint32_t GetBindingFlags2(uint32_t code);
 
-    uint32_t GetBindingKeyConsole(const char* command);
-    uint32_t GetBindingFlagsConsole(const char* command);
+    uint32_t GetBindingKeyConsole(const ST::string& command);
+    uint32_t GetBindingFlagsConsole(const ST::string& command);
 
     void WriteKeyMap();
 

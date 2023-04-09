@@ -305,7 +305,10 @@ bool    pfConsole::MsgReceive( plMessage *msg )
     {
         if( ctrlMsg->ControlActivated() && ctrlMsg->GetControlCode() == B_CONTROL_CONSOLE_COMMAND && plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kPlayingGame))
         {
-            fEngine->RunCommand( ctrlMsg->GetCmdString(), IAddLineCallback );
+            // pfConsoleEngine::RunCommand requires a writable C string...
+            ST::char_buffer cmdBuf;
+            ctrlMsg->GetCmdString().to_buffer(cmdBuf);
+            fEngine->RunCommand(cmdBuf.data(), IAddLineCallback);
             return true;
         }
         return false;

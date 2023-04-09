@@ -59,6 +59,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDebugInputInterface.h"
 #include "plTelescopeInputInterface.h"
 
+#include <string_theory/stdio>
+
 #include "pnInputCore/plKeyMap.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
@@ -244,38 +246,37 @@ void plInputInterfaceMgr::ResetClickableState()
 
 void    plInputInterfaceMgr::IUpdateCursor( int32_t newCursor )
 {
-    const char*     mouseCursorResID;
-
-
     if (newCursor == plInputInterface::kCursorHidden) {
         plMouseDevice::HideCursor();
     } else {
         if (fCurrentCursor == plInputInterface::kCursorHidden)
             plMouseDevice::ShowCursor();
+
+        ST::string mouseCursorResID;
         switch (newCursor) {
-            case plInputInterface::kCursorUp:                   mouseCursorResID = CURSOR_UP;                   break;
-            case plInputInterface::kCursorLeft:                 mouseCursorResID = CURSOR_LEFT;                 break;
-            case plInputInterface::kCursorRight:                mouseCursorResID = CURSOR_RIGHT;                break;
-            case plInputInterface::kCursorDown:                 mouseCursorResID = CURSOR_DOWN;                 break;
-            case plInputInterface::kCursorPoised:               mouseCursorResID = CURSOR_POISED;               break;
-            case plInputInterface::kCursorClicked:              mouseCursorResID = CURSOR_CLICKED;              break;
-            case plInputInterface::kCursorUnClicked:            mouseCursorResID = CURSOR_POISED;               break;
-            case plInputInterface::kCursorOpen:                 mouseCursorResID = CURSOR_OPEN;                 break;
-            case plInputInterface::kCursorGrab:                 mouseCursorResID = CURSOR_GRAB;                 break;
-            case plInputInterface::kCursorArrow:                mouseCursorResID = CURSOR_ARROW;                break;
-            case plInputInterface::kCursor4WayDraggable:        mouseCursorResID = CURSOR_4WAY_OPEN;            break;
-            case plInputInterface::kCursor4WayDragging:         mouseCursorResID = CURSOR_4WAY_CLOSED;          break;
-            case plInputInterface::kCursorUpDownDraggable:      mouseCursorResID = CURSOR_UPDOWN_OPEN;          break;
-            case plInputInterface::kCursorUpDownDragging:       mouseCursorResID = CURSOR_UPDOWN_CLOSED;        break;
-            case plInputInterface::kCursorLeftRightDraggable:   mouseCursorResID = CURSOR_LEFTRIGHT_OPEN;       break;
-            case plInputInterface::kCursorLeftRightDragging:    mouseCursorResID = CURSOR_LEFTRIGHT_CLOSED;     break;
-            case plInputInterface::kCursorOfferBook:            mouseCursorResID = CURSOR_OFFER_BOOK;           break;
-            case plInputInterface::kCursorOfferBookHilite:      mouseCursorResID = CURSOR_OFFER_BOOK_HI;        break;
-            case plInputInterface::kCursorOfferBookClicked:     mouseCursorResID = CURSOR_OFFER_BOOK_CLICKED;   break;
-            case plInputInterface::kCursorClickDisabled:        mouseCursorResID = CURSOR_CLICK_DISABLED;       break;
-            case plInputInterface::kCursorHand:                 mouseCursorResID = CURSOR_HAND;                 break;
-            case plInputInterface::kCursorUpward:               mouseCursorResID = CURSOR_UPWARD;               break;
-            default:                                            mouseCursorResID = CURSOR_OPEN;                 break;
+            case plInputInterface::kCursorUp:                 mouseCursorResID = ST_LITERAL(CURSOR_UP);                 break;
+            case plInputInterface::kCursorLeft:               mouseCursorResID = ST_LITERAL(CURSOR_LEFT);               break;
+            case plInputInterface::kCursorRight:              mouseCursorResID = ST_LITERAL(CURSOR_RIGHT);              break;
+            case plInputInterface::kCursorDown:               mouseCursorResID = ST_LITERAL(CURSOR_DOWN);               break;
+            case plInputInterface::kCursorPoised:             mouseCursorResID = ST_LITERAL(CURSOR_POISED);             break;
+            case plInputInterface::kCursorClicked:            mouseCursorResID = ST_LITERAL(CURSOR_CLICKED);            break;
+            case plInputInterface::kCursorUnClicked:          mouseCursorResID = ST_LITERAL(CURSOR_POISED);             break;
+            case plInputInterface::kCursorOpen:               mouseCursorResID = ST_LITERAL(CURSOR_OPEN);               break;
+            case plInputInterface::kCursorGrab:               mouseCursorResID = ST_LITERAL(CURSOR_GRAB);               break;
+            case plInputInterface::kCursorArrow:              mouseCursorResID = ST_LITERAL(CURSOR_ARROW);              break;
+            case plInputInterface::kCursor4WayDraggable:      mouseCursorResID = ST_LITERAL(CURSOR_4WAY_OPEN);          break;
+            case plInputInterface::kCursor4WayDragging:       mouseCursorResID = ST_LITERAL(CURSOR_4WAY_CLOSED);        break;
+            case plInputInterface::kCursorUpDownDraggable:    mouseCursorResID = ST_LITERAL(CURSOR_UPDOWN_OPEN);        break;
+            case plInputInterface::kCursorUpDownDragging:     mouseCursorResID = ST_LITERAL(CURSOR_UPDOWN_CLOSED);      break;
+            case plInputInterface::kCursorLeftRightDraggable: mouseCursorResID = ST_LITERAL(CURSOR_LEFTRIGHT_OPEN);     break;
+            case plInputInterface::kCursorLeftRightDragging:  mouseCursorResID = ST_LITERAL(CURSOR_LEFTRIGHT_CLOSED);   break;
+            case plInputInterface::kCursorOfferBook:          mouseCursorResID = ST_LITERAL(CURSOR_OFFER_BOOK);         break;
+            case plInputInterface::kCursorOfferBookHilite:    mouseCursorResID = ST_LITERAL(CURSOR_OFFER_BOOK_HI);      break;
+            case plInputInterface::kCursorOfferBookClicked:   mouseCursorResID = ST_LITERAL(CURSOR_OFFER_BOOK_CLICKED); break;
+            case plInputInterface::kCursorClickDisabled:      mouseCursorResID = ST_LITERAL(CURSOR_CLICK_DISABLED);     break;
+            case plInputInterface::kCursorHand:               mouseCursorResID = ST_LITERAL(CURSOR_HAND);               break;
+            case plInputInterface::kCursorUpward:             mouseCursorResID = ST_LITERAL(CURSOR_UPWARD);             break;
+            default:                                          mouseCursorResID = ST_LITERAL(CURSOR_OPEN);               break;
         }
 
         plMouseDevice::NewCursor(mouseCursorResID);
@@ -685,7 +686,7 @@ const plKeyBinding* plInputInterfaceMgr::FindBinding( ControlEventCode code )\
     return nullptr;
 }
 
-void plInputInterfaceMgr::BindConsoleCmd( const plKeyCombo &key, const char *cmd, plKeyMap::BindPref pref /*= kNoPreference*/  )
+void plInputInterfaceMgr::BindConsoleCmd(const plKeyCombo &key, const ST::string& cmd, plKeyMap::BindPref pref /*= kNoPreference*/)
 {
 // not sure why this is not for external...since its done thru the different interfaces?
 //#ifdef PLASMA_EXTERNAL_RELEASE
@@ -707,7 +708,7 @@ void plInputInterfaceMgr::BindConsoleCmd( const plKeyCombo &key, const char *cmd
     RefreshInterfaceKeyMaps();
 }
 
-const plKeyBinding* plInputInterfaceMgr::FindBindingByConsoleCmd( const char *cmd )
+const plKeyBinding* plInputInterfaceMgr::FindBindingByConsoleCmd(const ST::string& cmd)
 {
     plKeyMap *map = IGetRoutedKeyMap( B_CONTROL_CONSOLE_COMMAND );
     if (map != nullptr)
@@ -787,41 +788,19 @@ void    plInputInterfaceMgr::WriteKeyMap()
         fprintf(gKeyFile, "# Available game commands:\n");
         fprintf(gKeyFile, "#\n");
         
-        for( int j = 0; plKeyMap::fCmdConvert[ j ].fCode != END_CONTROLS; j++ )
+        for (const auto& [code, desc] : plKeyMap::fCmdConvert)
         {
-            if( stricmp( plKeyMap::fCmdConvert[ j ].fDesc, "Run Modifier" ) == 0)
-                continue;
-            fprintf( gKeyFile, "#  %s\n", plKeyMap::fCmdConvert[ j ].fDesc );
+            ST::printf(gKeyFile, "#  {}\n", desc);
         }
 
         fprintf(gKeyFile, "#\n");
         fprintf(gKeyFile, "# Key name list (for a-z or 0-9 just use the character)\n");
         fprintf(gKeyFile, "#\n");
 
-        Win32keyConvert* keyConvert = &plKeyMap::fKeyConversionEnglish[0];
-        switch (plLocalization::GetLanguage())
-        {
-            case plLocalization::kFrench:
-                keyConvert = &plKeyMap::fKeyConversionFrench[0];
-                break;
-            case plLocalization::kGerman:
-                keyConvert = &plKeyMap::fKeyConversionGerman[0];
-                break;
-            //case plLocalization::kSpanish:
-            //  keyConvert = &plKeyMap::fKeyConversionSpanish[0];
-            //  break;
-            //case plLocalization::kItalian:
-            //  keyConvert = &plKeyMap::fKeyConversionItalian[0];
-            //  break;
-            // default is English
-            default:
-                break;
-        }
-        for (size_t i = 0; keyConvert[i].fVKey != 0xffffffff; i++)
+        const std::map<uint32_t, ST::string>& keyConvert = plKeyMap::GetKeyConversion();
+        for (const auto& [vKey, keyName] : keyConvert)
         {   
-//              if (stricmp(fKeyMap->fKeyConversion[i].fKeyName, "Shift") == 0)
-//                  continue;
-            fprintf(gKeyFile, "#  %s\n", keyConvert[i].fKeyName);
+            ST::printf(gKeyFile, "#  {}\n", keyName);
         }
         fclose(gKeyFile);
     }
@@ -839,48 +818,6 @@ void plInputInterfaceMgr::ReleaseCurrentFocus(plInputInterface *focus)
 }
 
 
-//// IKeyComboToString ///////////////////////////////////////////////////////
-//  Uses static string, so don't call twice and expect the first result to
-//  be still valid!
-
-const char  *plInputInterfaceMgr::IKeyComboToString( const plKeyCombo &combo )
-{
-    static char     str[ 64 ];
-    bool            unmapped = false;
-
-
-    if( combo == plKeyCombo::kUnmapped )
-        sprintf( str, "(unmapped)" );
-    else
-    {
-        const char *c = plKeyMap::ConvertVKeyToChar( combo.fKey );
-        if (c != nullptr)
-            strncpy( str, c, sizeof( str ) );
-        else
-        {
-            if( isalnum( combo.fKey ) )
-            {
-                str[ 0 ] = (char)combo.fKey;
-                str[ 1 ] = 0;
-            }
-            else
-            {
-                strcpy( str, "(unmapped)" );
-                unmapped = true;
-            }
-        }
-        if( !unmapped )
-        {
-            if( combo.fFlags & plKeyCombo::kCtrl )
-                strcat( str, "_C" );
-            if( combo.fFlags & plKeyCombo::kShift )
-                strcat( str, "_S" );
-        }
-    }
-
-    return str;
-}
-
 //// IWriteNonConsoleCmdKeys /////////////////////////////////////////////////
 
 void    plInputInterfaceMgr::IWriteNonConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFile )
@@ -895,14 +832,10 @@ void    plInputInterfaceMgr::IWriteNonConsoleCmdKeys( plKeyMap *keyMap, FILE *ke
         if( binding.GetCode() == B_CONTROL_CONSOLE_COMMAND )
             continue;
 
-        char    key1[ 64 ];
-        strcpy( key1, IKeyComboToString( binding.GetKey1() ) );
-
-        const char *key2 = IKeyComboToString( binding.GetKey2() );
-
-        const char *desc = plInputMap::ConvertControlCodeToString( binding.GetCode() );
-
-        fprintf( keyFile, "Keyboard.BindAction \t\t%s\t%s\t\t\t\t\"%s\"\n", key1, key2, desc );
+        ST::string key1 = plKeyMap::KeyComboToString(binding.GetKey1());
+        ST::string key2 = plKeyMap::KeyComboToString(binding.GetKey2());
+        ST::string desc = plInputMap::ConvertControlCodeToString(binding.GetCode());
+        ST::printf(keyFile, "Keyboard.BindAction \t\t{}\t{}\t\t\t\t\"{}\"\n", key1, key2, desc);
     }
 
 }
@@ -926,14 +859,14 @@ void    plInputInterfaceMgr::IWriteConsoleCmdKeys( plKeyMap *keyMap, FILE *keyFi
         // 2 commands, which is perfectly valid
 //      if( binding.GetKey1() != plKeyCombo::kUnmapped )
 //      {
-            const char *key = IKeyComboToString( binding.GetKey1() );
-            fprintf( keyFile, "Keyboard.BindConsoleCmd\t%s\t\t\t\"%s\"\n", key, binding.GetExtendedString() );
+            ST::string key = plKeyMap::KeyComboToString(binding.GetKey1());
+            ST::printf(keyFile, "Keyboard.BindConsoleCmd\t{}\t\t\t\"{}\"\n", key, binding.GetExtendedString());
 //      }
 
         if( binding.GetKey2() != plKeyCombo::kUnmapped )
         {
-            const char *key = IKeyComboToString( binding.GetKey2() );
-            fprintf( keyFile, "Keyboard.BindConsoleCmd\t%s\t\t\t\"%s\"\n", key, binding.GetExtendedString() );
+            ST::string key2 = plKeyMap::KeyComboToString(binding.GetKey2());
+            ST::printf(keyFile, "Keyboard.BindConsoleCmd\t{}\t\t\t\"{}\"\n", key2, binding.GetExtendedString());
         }
     }
 }

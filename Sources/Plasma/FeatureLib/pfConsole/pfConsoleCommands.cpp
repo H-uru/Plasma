@@ -3187,48 +3187,12 @@ PF_CONSOLE_CMD( Keyboard, ClearBindings, "", "Resets the keyboard bindings to em
     PrintString( "Keyboard bindings destroyed" );
 }
 
-static plKeyCombo   IBindKeyToVKey( const char *string )
-{
-    char    str[ 16 ];
-    int     i;
-
-    plKeyCombo  combo;
-
-
-    strcpy( str, string );
-
-    // Find modifiers to set flags with
-    combo.fFlags = 0;
-    if( strstr( str, "_S" ) || strstr( str, "_s" ) )
-        combo.fFlags |= plKeyCombo::kShift;
-    if( strstr( str, "_C" ) || strstr( str, "_c" ) )
-        combo.fFlags |= plKeyCombo::kCtrl;
-    
-    // Get rid of modififers
-    for( i = 0; str[ i ] != 0 && str[ i ] != '_'; i++ );
-    str[ i ] = 0;
-
-    // Convert raw key
-    combo.fKey = plKeyMap::ConvertCharToVKey( str );
-    if( combo.fKey == KEY_UNMAPPED )
-        combo = plKeyCombo::kUnmapped;
-
-    // And return!
-    return combo;
-
-}
-
-static ControlEventCode IBindStringToCmdCode( const char *string )
-{
-    return plKeyMap::ConvertCharToControlCode( string );
-}
-
 PF_CONSOLE_CMD( Keyboard,       // groupName
                BindKey,     // fxnName
                "string key1, string action", // paramList
                "Binds the given single key combo to the given action" ) // helpString
 {
-    ControlEventCode code = IBindStringToCmdCode( params[ 1 ] );
+    ControlEventCode code = plKeyMap::ConvertCharToControlCode(ST::string(params[1]));
     if( code == END_CONTROLS )
     {
         PrintString( "ERROR: Invalid command name" );
@@ -3237,7 +3201,7 @@ PF_CONSOLE_CMD( Keyboard,       // groupName
 
     if (plInputInterfaceMgr::GetInstance() != nullptr)
     {
-        plKeyCombo key1 = IBindKeyToVKey( params[ 0 ] );
+        plKeyCombo key1 = plKeyMap::StringToKeyCombo(ST::string(params[0]));
         plInputInterfaceMgr::GetInstance()->BindAction( key1, code );
     }
 }
@@ -3247,7 +3211,7 @@ PF_CONSOLE_CMD( Keyboard,       // groupName
                "string key1, string key2, string action", // paramList
                "Binds the given two keys to the given action (you can specify 'UNDEFINED' for either key if you wish)" )    // helpString
 {
-    ControlEventCode code = IBindStringToCmdCode( params[ 2 ] );
+    ControlEventCode code = plKeyMap::ConvertCharToControlCode(ST::string(params[2]));
     if( code == END_CONTROLS )
     {
         PrintString( "ERROR: Invalid command name" );
@@ -3256,8 +3220,8 @@ PF_CONSOLE_CMD( Keyboard,       // groupName
 
     if (plInputInterfaceMgr::GetInstance() != nullptr)
     {
-        plKeyCombo key1 = IBindKeyToVKey( params[ 0 ] );
-        plKeyCombo key2 = IBindKeyToVKey( params[ 1 ] );
+        plKeyCombo key1 = plKeyMap::StringToKeyCombo(ST::string(params[0]));
+        plKeyCombo key2 = plKeyMap::StringToKeyCombo(ST::string(params[1]));
         plInputInterfaceMgr::GetInstance()->BindAction( key1, key2, code );
     }
 }
@@ -3267,10 +3231,10 @@ PF_CONSOLE_CMD( Keyboard,       // groupName
                "string key, string command", // paramList
                "Bind console command to key" )  // helpString
 {
-    plKeyCombo key = IBindKeyToVKey( params[ 0 ] );
+    plKeyCombo key = plKeyMap::StringToKeyCombo(ST::string(params[0]));
 
     if (plInputInterfaceMgr::GetInstance() != nullptr)
-        plInputInterfaceMgr::GetInstance()->BindConsoleCmd( key, params[ 1 ], plKeyMap::kFirstAlways );
+        plInputInterfaceMgr::GetInstance()->BindConsoleCmd(key, ST::string(params[1]), plKeyMap::kFirstAlways);
 }
 
 

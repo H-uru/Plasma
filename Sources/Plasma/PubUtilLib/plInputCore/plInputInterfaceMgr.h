@@ -53,6 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plInputInterfaceMgr_h
 
 #include "hsGeometry3.h"
+
+#include <string_theory/string>
+#include <utility>
 #include <vector>
 
 #include "pnModifier/plSingleModifier.h"
@@ -105,8 +108,6 @@ class plInputInterfaceMgr : public plSingleModifier
         plKeyMap    *IGetRoutedKeyMap( ControlEventCode code ); // Null for console commands
         void        IUnbind( const plKeyCombo &key );
 
-        const char  *IKeyComboToString( const plKeyCombo &combo );
-        
     public:
 
         plInputInterfaceMgr();
@@ -137,10 +138,10 @@ class plInputInterfaceMgr : public plSingleModifier
         // Binding routers
         void    BindAction( const plKeyCombo &key, ControlEventCode code );
         void    BindAction( const plKeyCombo &key1, const plKeyCombo &key2, ControlEventCode code );
-        void    BindConsoleCmd( const plKeyCombo &key, const char *cmd, plKeyMap::BindPref pref = plKeyMap::kNoPreference );
+        void    BindConsoleCmd(const plKeyCombo &key, const ST::string& cmd, plKeyMap::BindPref pref = plKeyMap::kNoPreference);
 
         const plKeyBinding* FindBinding( ControlEventCode code );
-        const plKeyBinding* FindBindingByConsoleCmd( const char *cmd );
+        const plKeyBinding* FindBindingByConsoleCmd(const ST::string& cmd);
 
         void    ClearAllKeyMaps();
         void    ResetClickableState();
@@ -153,7 +154,7 @@ class plInputInterfaceMgr : public plSingleModifier
 class plCtrlCmd
 {
     private:
-        char*               fCmd;
+        ST::string          fCmd;
         plInputInterface    *fSource;
 
     public:
@@ -161,10 +162,9 @@ class plCtrlCmd
             : fCmd(), fPct(1.f), fSource(source),
               fControlCode(), fControlActivated(), fNetPropagateToPlayers()
         { }
-        ~plCtrlCmd() { delete [] fCmd; }
 
-        const char* GetCmdString()          { return fCmd; }
-        void SetCmdString(const char* cs)   { delete [] fCmd; fCmd=hsStrcpy(cs); }
+        ST::string GetCmdString() const { return fCmd; }
+        void SetCmdString(ST::string cs) { fCmd = std::move(cs); }
 
         ControlEventCode    fControlCode;
         bool                fControlActivated;

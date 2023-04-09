@@ -135,8 +135,8 @@ public:
     //  PURPOSE    : Execute a console command from a python script,
     //                  optionally propagate over the net
     //
-    static void Console(const char* command);
-    static void ConsoleNet(const char* command, bool netForce); 
+    static void Console(ST::string command);
+    static void ConsoleNet(ST::string command, bool netForce); 
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -158,7 +158,7 @@ public:
     //
     //  PURPOSE    : Execute a console command from a python script
     //
-    static void PopUpConsole(const char* command);
+    static void PopUpConsole(ST::string command);
 
     /////////////////////////////////////////////////////////////////////////////
     //

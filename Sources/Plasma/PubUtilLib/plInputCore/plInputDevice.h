@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <string_theory/string>
+
 //#include "pnInputCore/plControlDefinition.h"
 #include "pnInputCore/plKeyDef.h"
 #include "hsBitVector.h"
@@ -53,8 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plMessage;
 struct plMouseInfo;
 class plPipeline;
-
-namespace ST { class string; }
 
 class plInputDevice 
 {
@@ -71,8 +71,6 @@ public:
         : fFlags()
     { }
     virtual ~plInputDevice() { }
-
-    virtual const char* GetInputName() = 0;
 
     uint32_t GetFlags() { return fFlags; }
     void SetFlags(uint32_t f) { fFlags = f; }
@@ -116,7 +114,6 @@ public:
 
     void SetControlMode(int i) { fControlMode = i; }
 
-    const char* GetInputName() override { return "keyboard"; }
     void HandleKeyEvent(plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = 0) override;
     void HandleWindowActivate(bool bActive, hsWindowHndl hWnd) override;
     virtual bool IsCapsLockKeyOn();
@@ -160,8 +157,6 @@ public:
     plMouseDevice();
     ~plMouseDevice();
 
-    const char* GetInputName() override { return "mouse"; }
-
     bool    HasControlFlag(int f) const { return fControlFlags.IsBitSet(f); }
     void    SetControlFlag(int f) 
     { 
@@ -182,7 +177,7 @@ public:
     
     static void SetMsgAlways(bool b) { plMouseDevice::bMsgAlways = b; }
     static void ShowCursor(bool override = false);
-    static void NewCursor(const char* cursor);
+    static void NewCursor(ST::string cursor);
     static void HideCursor(bool override = false);
     static bool GetHideCursor() { return plMouseDevice::bCursorHidden; }
     static void SetCursorOpacity( float opacity = 1.f );
@@ -212,11 +207,11 @@ protected:
     
     
     plPlate *fCursor;
-    const char*    fCursorID;
+    ST::string fCursorID;
 
     static plMouseDevice* fInstance;
     static plMouseInfo  fDefaultMouseControlMap[];
-    void    CreateCursor(const char* cursor );
+    void CreateCursor(const ST::string& cursor);
     void IUpdateCursorSize();
     static bool bMsgAlways;
     static bool bCursorHidden;
