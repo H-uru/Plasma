@@ -217,7 +217,7 @@ void plGeometrySpan::IUnShareData()
     {
         uint8_t* oldVtxData = fVertexData;
 
-        uint32_t size = GetVertexSize( fFormat );
+        size_t size = GetVertexSize( fFormat );
 
         fVertexData = new uint8_t[ size * fNumVerts ];
         memcpy( fVertexData, oldVtxData, size * fNumVerts );
@@ -445,9 +445,6 @@ void    plGeometrySpan::IDuplicateUniqueData( const plGeometrySpan *source )
 
 void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
 {
-    uint32_t      size;
-
-
     // Just to make sure
     ClearBuffers();
 
@@ -458,7 +455,7 @@ void    plGeometrySpan::CopyFrom( const plGeometrySpan *source )
 
     if (source->fVertexData != nullptr)
     {
-        size = GetVertexSize( fFormat );
+        size_t size = GetVertexSize( fFormat );
 
         fVertexData = new uint8_t[ size * fNumVerts ];
         memcpy( fVertexData, source->fVertexData, size * fNumVerts );
