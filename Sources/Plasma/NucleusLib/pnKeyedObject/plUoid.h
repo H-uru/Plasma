@@ -79,7 +79,7 @@ protected:
     uint32_t fSequenceNumber;
     uint16_t fFlags;
 
-    enum 
+    enum : uint32_t
     {
         kGlobalFixedLocIdx = 0,     // Fixed keys go here, think of as "global,fixed,keys"
         kSceneViewerLocIdx = 1,
