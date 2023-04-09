@@ -88,10 +88,11 @@ void plShadowMaster::SetGlobalMaxSize(uint32_t s)
         int i;
         for( i = 31; i >= 0; i-- )
         {
-            if( (1 << i) & s )
+            if ((1u << i) & s)
                 break;
         }
-        s = 1 << i;
+        hsAssert(i >= 0, "Invalid non-POT shadow size");
+        s = 1u << i;
     }
 
     if( s > kMaxMaxGlobalSize )
