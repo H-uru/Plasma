@@ -167,7 +167,7 @@ private:
 
     friend class plDispatch;
 
-    virtual int ISendGameMessage(plMessage* msg) { hsAssert(false, "stub"); return hsFail; }
+    virtual hsError ISendGameMessage(plMessage* msg) { hsAssert(false, "stub"); return hsFail; }
 
 public:
     enum ClientFlagBits
@@ -216,7 +216,7 @@ public:
     static void UnInheritNetMsgFlags(plMessage* msg);
 
     // functions that all net client apps should implement
-    virtual int SendMsg(plNetMessage* msg) = 0;
+    virtual hsError SendMsg(plNetMessage* msg) = 0;
     virtual uint32_t GetPlayerID() const = 0;
     virtual ST::string GetPlayerName(const plKey avKey={}) const = 0;
 
@@ -231,7 +231,7 @@ public:
     virtual int IsLocallyOwned(const plSynchedObject* obj) const { hsAssert(false, "stub"); return 0; }
     virtual int IsLocallyOwned(const plUoid&) const { hsAssert(false, "stub"); return 0; }  
     virtual plNetGroupId GetEffectiveNetGroup(const plSynchedObject* obj) const { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }
-    virtual int Update(double secs) { return hsOK;}
+    virtual hsError Update(double secs) { return hsOK; }
     virtual const char* GetServerLogTimeAsString(ST::string& ts) const { hsAssert(false, "stub"); return nullptr; }
     virtual plUoid GetAgeSDLObjectUoid(const ST::string& ageName) const { hsAssert(false, "stub"); return plUoid(); }
     virtual void StayAlive(double secs) {}

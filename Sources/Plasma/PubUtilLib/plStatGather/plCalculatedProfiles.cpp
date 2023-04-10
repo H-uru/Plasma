@@ -87,7 +87,7 @@ void CalculateProfiles()
 
 static plGraphPlate* fFPSPlate = nullptr;
 
-static int ICreateStdPlate(plGraphPlate** graph)
+static hsError ICreateStdPlate(plGraphPlate** graph)
 {
     if (plPlateManager::InstanceValid())
     {

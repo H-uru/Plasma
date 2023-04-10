@@ -109,7 +109,7 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( uint32_t 
 }
 
 
-void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete( uint32_t context, int resultCode )
+void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete(uint32_t context, hsError resultCode)
 {
     if (fCbObject) {
         // Call the callback.

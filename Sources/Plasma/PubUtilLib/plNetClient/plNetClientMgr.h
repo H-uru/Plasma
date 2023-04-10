@@ -84,7 +84,7 @@ class plNetMsgPagingRoom;
 
 
 struct plNetClientCommMsgHandler : plNetClientComm::MsgHandler {
-    int HandleMessage(plNetMessage* msg) override;
+    hsError HandleMessage(plNetMessage* msg) override;
 };
 
 class plNetClientMgr : public plNetClientApp
@@ -204,9 +204,9 @@ private:
     void IShowAvatars();
     void IShowRelevanceRegions();
     
-    int ISendDirtyState(double secs);
-    int ISendMembersListRequest();
-    int ISendRoomsReset();
+    hsError ISendDirtyState(double secs);
+    hsError ISendMembersListRequest();
+    hsError ISendRoomsReset();
     void ISendCCRPetition(plCCRPetitionMsg* petMsg);    
     void ISendCameraReset(bool bEnteringAge);
     
@@ -235,7 +235,7 @@ private:
 
     void    IDumpOSVersionInfo() const;
 
-    int ISendGameMessage(plMessage* msg) override;
+    hsError ISendGameMessage(plMessage* msg) override;
     void IDisableNet ();
 
     void ICreateStatusLog() const override;
@@ -251,12 +251,12 @@ public:
 
     bool MsgReceive(plMessage* msg) override;
     void Shutdown() override;
-    int  Init();
+    hsError Init();
 
     void QueueDisableNet(bool showDlg, const char msg[]) override;
 
-    int SendMsg(plNetMessage* msg) override;
-    int Update(double secs) override;
+    hsError SendMsg(plNetMessage* msg) override;
+    hsError Update(double secs) override;
     int IsLocallyOwned(const plSynchedObject* obj) const override;   // returns yes/no/maybe
     int IsLocallyOwned(const plUoid&) const override;        // for special cases, like sceneNodes. returns yes/no/maybe
     plNetGroupId GetEffectiveNetGroup(const plSynchedObject*& obj) const;
@@ -387,8 +387,8 @@ private:
     plNetClientComm             fNetClientComm;
     plNetClientCommMsgHandler   fNetClientCommMsgHandler;
     
-    int IInitNetClientComm();
-    int IDeInitNetClientComm();
+    hsError IInitNetClientComm();
+    hsError IDeInitNetClientComm();
     void INetClientCommOpStarted(uint32_t context);
     void INetClientCommOpComplete(uint32_t context, int resultCode);
 

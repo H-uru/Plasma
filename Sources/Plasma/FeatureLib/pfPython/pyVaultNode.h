@@ -96,8 +96,8 @@ public:
         explicit pyVaultNodeOperationCallback(pyObjectRef cbObject) noexcept;
 
         void VaultOperationStarted(uint32_t context);
-        void VaultOperationComplete(uint32_t context, int resultCode);
-        void VaultOperationComplete(int resultCode) { VaultOperationComplete(fContext, resultCode); }
+        void VaultOperationComplete(uint32_t context, hsError resultCode);
+        void VaultOperationComplete(hsError resultCode) { VaultOperationComplete(fContext, resultCode); }
         
         void SetNode(hsRef<RelVaultNode> rvn);
         hsRef<RelVaultNode> GetNode() const;

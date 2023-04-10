@@ -77,7 +77,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // request members list from server
 //
-int plNetClientMgr::ISendMembersListRequest()
+hsError plNetClientMgr::ISendMembersListRequest()
 {
     plNetMsgMembersListReq  msg;
     msg.SetNetProtocol(kNetProtocolCli2Game);
@@ -87,7 +87,7 @@ int plNetClientMgr::ISendMembersListRequest()
 //
 // reset paged in rooms list on server
 //
-int plNetClientMgr::ISendRoomsReset()
+hsError plNetClientMgr::ISendRoomsReset()
 {
     plNetMsgPagingRoom msg;
     msg.SetPageFlags(plNetMsgPagingRoom::kResetList);
@@ -99,7 +99,7 @@ int plNetClientMgr::ISendRoomsReset()
 // Make sure all dirty objects save their state.
 // Mark those objects as clean and clear the dirty list.
 //
-int plNetClientMgr::ISendDirtyState(double secs)
+hsError plNetClientMgr::ISendDirtyState(double secs)
 {
     std::vector<plSynchedObject::StateDefn> carryOvers;
 
@@ -225,7 +225,7 @@ void plNetClientMgr::SendLocalPlayerAvatarCustomizations()
 // Called to send a plasma msg out over the network.  Called by the dispatcher.
 // return hsOK if ok
 //
-int plNetClientMgr::ISendGameMessage(plMessage* msg)
+hsError plNetClientMgr::ISendGameMessage(plMessage* msg)
 {
     if (GetFlagsBit(kDisabled))
         return hsOK;
@@ -381,7 +381,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
 
     netMsgWrap->SetPlayerID(GetPlayerID());
     netMsgWrap->SetNetProtocol(kNetProtocolCli2Game);
-    int ret = SendMsg(netMsgWrap);
+    hsError ret = SendMsg(netMsgWrap);
 
     if (plNetObjectDebugger::GetInstance()->IsDebugObject(msg->GetSender() ? msg->GetSender()->ObjectIsLoaded() : nullptr))
     {
@@ -401,7 +401,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
 //
 // Send a net msg.  Delivers to transport mgr who sends p2p or to server
 //
-int plNetClientMgr::SendMsg(plNetMessage* msg)
+hsError plNetClientMgr::SendMsg(plNetMessage* msg)
 {
     if (GetFlagsBit(kDisabled))
         return hsOK;
@@ -420,7 +420,7 @@ int plNetClientMgr::SendMsg(plNetMessage* msg)
     
 //  hsLogEntry( DebugMsg( "<SND> {} {}", msg->ClassName(), msg->AsStdString()) );
     
-    int ret=fTransport.SendMsg(channel, msg);
+    hsError ret = fTransport.SendMsg(channel, msg);
 
     // Debug
     if (plNetMsgVoice::ConvertNoRef(msg))

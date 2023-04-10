@@ -151,9 +151,9 @@ void NetCommActivateMsgDispatchers();
 
 // Return this value from your registered msg handler
 // to stop further dispatching of incoming msg.
-const unsigned kOK_MsgConsumed  = hsOK + 1;
+static constexpr hsError kOK_MsgConsumed = hsOK + 1;
 
-typedef int (FNetCommMsgHandler)(
+typedef hsError (FNetCommMsgHandler)(
     plNetMessage *  msg,
     void *          userState
 );
@@ -326,8 +326,8 @@ public:
     class MsgHandler
     {
     public:
-        static int StaticMsgHandler(plNetMessage * msg, void * userState);
-        virtual int HandleMessage( plNetMessage* msg ) = 0;
+        static hsError StaticMsgHandler(plNetMessage* msg, void* userState);
+        virtual hsError HandleMessage(plNetMessage* msg) = 0;
     };
 
     ////////////////////////////////////////////////////////////////

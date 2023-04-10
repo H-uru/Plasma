@@ -803,7 +803,7 @@ int plAvatarMgr::FindSpawnPoint( const char *name ) const
     return -1;
 }
 
-int plAvatarMgr::WarpPlayerToAnother(bool iMove, uint32_t remoteID)
+hsError plAvatarMgr::WarpPlayerToAnother(bool iMove, uint32_t remoteID)
 {
     plNetTransport &mgr = plNetClientMgr::GetInstance()->TransportMgr();
     plNetTransportMember* mbr = mgr.GetMemberByID(remoteID);
@@ -831,7 +831,7 @@ int plAvatarMgr::WarpPlayerToAnother(bool iMove, uint32_t remoteID)
     return hsOK;
 }
 
-int plAvatarMgr::WarpPlayerToXYZ(float x, float y, float z)
+hsError plAvatarMgr::WarpPlayerToXYZ(float x, float y, float z)
 {
     plSceneObject *localSO = plSceneObject::ConvertNoRef(plNetClientMgr::GetInstance()->GetLocalPlayer());
     if (!localSO)
@@ -848,7 +848,7 @@ int plAvatarMgr::WarpPlayerToXYZ(float x, float y, float z)
     return hsOK;
 }
 
-int plAvatarMgr::WarpPlayerToXYZ(int pid, float x, float y, float z)
+hsError plAvatarMgr::WarpPlayerToXYZ(int pid, float x, float y, float z)
 {
     plNetClientMgr* nc=plNetClientMgr::GetInstance();
     plNetTransportMember* mbr = nc->TransportMgr().GetMemberByID(pid);

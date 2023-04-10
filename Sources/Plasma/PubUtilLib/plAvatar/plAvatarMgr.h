@@ -160,9 +160,9 @@ public:
     int NumSpawnPoints() { return fSpawnPoints.size(); }
     int FindSpawnPoint( const char *name ) const;
     // \}
-    static int WarpPlayerToAnother(bool iMove, uint32_t remoteID);
-    static int WarpPlayerToXYZ(float x, float y, float z);
-    static int WarpPlayerToXYZ(int pid, float x, float y, float z);
+    static hsError WarpPlayerToAnother(bool iMove, uint32_t remoteID);
+    static hsError WarpPlayerToXYZ(float x, float y, float z);
+    static hsError WarpPlayerToXYZ(int pid, float x, float y, float z);
 
     static plAvatarMgr *GetInstance();
     static void ShutDown();

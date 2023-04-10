@@ -1080,7 +1080,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink()
                           info,
                           &childLink))
                 {
-                    case static_cast<uint8_t>(hsFail):
+                    case hsFail:
                         success = kLinkFailed;
                         break;
                     case false:

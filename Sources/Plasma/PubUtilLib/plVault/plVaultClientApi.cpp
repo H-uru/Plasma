@@ -4537,7 +4537,7 @@ namespace _VaultCreateChildAge {
     }
 }; // namespace _VaultCreateAge
 
-uint8_t VaultAgeFindOrCreateChildAgeLink(
+hsError VaultAgeFindOrCreateChildAgeLink(
     const ST::string&      parentAgeName,
     const plAgeInfoStruct* info,
     plAgeLinkStruct*       link) 
@@ -4561,7 +4561,7 @@ uint8_t VaultAgeFindOrCreateChildAgeLink(
     }
 
     // Still here? Try to find the Child Ages folder
-    uint8_t retval = hsFail;
+    hsError retval = hsFail;
     if (hsRef<RelVaultNode> rvnChildAges = rvnParentInfo->GetChildAgeInfoListNode(plVault::kChildAgesFolder, 1)) {
         // Search for our age
         NetVaultNode temp;

@@ -1304,7 +1304,7 @@ void plNetClientComm::SetDefaultHandler( MsgHandler* handler) {
 }
 
 // MsgHandler::StaticMsgHandler ----------------------------------------------
-int plNetClientComm::MsgHandler::StaticMsgHandler (plNetMessage * msg, void * userState) {
+hsError plNetClientComm::MsgHandler::StaticMsgHandler(plNetMessage* msg, void* userState) {
     plNetClientComm::MsgHandler * handler = (plNetClientComm::MsgHandler *) userState;
     return handler->HandleMessage(msg);
 }

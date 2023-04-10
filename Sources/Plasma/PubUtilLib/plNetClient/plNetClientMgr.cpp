@@ -287,9 +287,9 @@ void plNetClientMgr::IDumpOSVersionInfo() const
 //
 // initialize net client. returns hsFail on err.
 //
-int plNetClientMgr::Init()
+hsError plNetClientMgr::Init()
 {
-    int ret=hsOK;
+    hsError ret = hsOK;
     hsLogEntry( DebugMsg("*** plNetClientMgr::Init GMT:{}", plUnifiedTime::GetCurrent().Print()) );
     
     IDumpOSVersionInfo();
@@ -474,9 +474,9 @@ float plNetClientMgr::GetCurrentAgeTimeOfDayPercent() const
 //
 // main update fxn for net client code, return hsFail on err
 //
-int plNetClientMgr::Update(double secs)
+hsError plNetClientMgr::Update(double secs)
 {
-    int ret=hsOK;   // ret code is unchecked, but what the hay
+    hsError ret = hsOK; // ret code is unchecked, but what the hay
     
     if (GetFlagsBit(kDisableOnNextUpdate)) {
         SetFlagsBit(kDisableOnNextUpdate, false);
