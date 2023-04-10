@@ -51,20 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plUoid.h"
 
-#define plVerifyConditionRet(NetApp,cond,ret,str)   \
-    do {    \
-        if (!(cond)) {  \
-            char * _str_ = str; \
-            (NetApp)->ErrorMsg(_str_);  \
-            hsAssert(cond,_str_);   \
-            return ret; \
-        }   \
-    } while (0)
-
-#define plVerifyCondition(NetApp,cond,str)  \
-    plVerifyConditionRet(NetApp,cond,hsFail,str)
-
-
 class plNetMember;
 class plSynchedObject;
 class plKey;
