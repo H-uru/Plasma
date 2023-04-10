@@ -86,10 +86,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMessage/pfKIMsg.h"  // for KI level constants =(
 #undef KI_CONSTANTS_ONLY
 
-#ifdef HS_BUILD_FOR_MACOS
-#include <malloc/malloc.h>
-#else
-#include <malloc.h>
-#endif
-
 #endif

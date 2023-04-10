@@ -51,10 +51,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtCoreLib.h"    // must be first in list
 #include "hsWindows.h"
 
-#ifdef HS_BUILD_FOR_MACOS
-#include <malloc/malloc.h>
-#else
-#include <malloc.h>
-#endif
-
 #endif
