@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsGlobalSemaphore::hsGlobalSemaphore(int initialValue)
 {
-    OSStatus    status = MPCreateSemaphore(kPosInfinity32, initialValue, &fSemaId);
+    OSStatus    status = MPCreateSemaphore(std::numeric_limits<MPSemaphoreCount>::max(), initialValue, &fSemaId);
     hsThrowIfOSErr(status);
 }
 
@@ -58,7 +58,7 @@ bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
 {
     Duration    duration;
 
-    if (timeToWait == kPosInfinity32)
+    if (timeToWait == kWaitForever)
         duration = kDurationForever;
     else
         duration = 0;   // THEY DON'T IMPLEMENT delay times yet !!!

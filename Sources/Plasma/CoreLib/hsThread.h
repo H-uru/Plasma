@@ -47,12 +47,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <atomic>
 #include <condition_variable>
+#include <limits>
 #include <mutex>
 #include <thread>
 
 #include <string_theory/string>
 
 typedef uint32_t hsMilliseconds;
+static constexpr hsMilliseconds kWaitForever = std::numeric_limits<hsMilliseconds>::max();
 
 #ifdef HS_BUILD_FOR_UNIX
     #include <pthread.h>
@@ -163,7 +165,7 @@ public:
     HANDLE GetHandle() const { return fSemaH; }
 #endif
 
-    bool Wait(hsMilliseconds timeToWait = kPosInfinity32);
+    bool Wait(hsMilliseconds timeToWait = kWaitForever);
     void Signal();
 };
 

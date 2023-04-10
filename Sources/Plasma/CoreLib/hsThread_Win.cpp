@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const ST::string& name)
 {
-    fSemaH = ::CreateSemaphoreW(nullptr, initialValue, kPosInfinity32, name.to_wchar().data());
+    fSemaH = ::CreateSemaphoreW(nullptr, initialValue, std::numeric_limits<LONG>::max(), name.to_wchar().data());
     if (fSemaH == nullptr)
         throw hsOSException(-1);
 }
@@ -60,7 +60,7 @@ hsGlobalSemaphore::~hsGlobalSemaphore()
 
 bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
 {
-    if (timeToWait == kPosInfinity32)
+    if (timeToWait == kWaitForever)
         timeToWait = INFINITE;
     
     DWORD result =::WaitForSingleObject(fSemaH, timeToWait);

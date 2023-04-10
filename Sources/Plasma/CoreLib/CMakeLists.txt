@@ -17,7 +17,6 @@ set(CoreLib_SOURCES
     hsStringTokenizer.cpp
     hsSystemInfo.cpp
     hsThread.cpp
-    hsWide.cpp
     pcSmallRect.cpp
     plCmdParser.cpp
     plFileSystem.cpp
@@ -62,7 +61,6 @@ set(CoreLib_HEADERS
     hsStringTokenizer.h
     hsSystemInfo.h
     hsThread.h
-    hsWide.h
     hsWindows.h
     pcSmallRect.h
     plCmdParser.h
