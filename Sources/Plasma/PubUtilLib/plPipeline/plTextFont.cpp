@@ -57,6 +57,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDebugText.h"
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
+
+#include <memory>
+
 #if defined(HS_BUILD_FOR_APPLE)
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreText/CoreText.h>
@@ -121,12 +127,27 @@ uint16_t  *plTextFont::IInitFontTexture()
     nHeight = -MulDiv( fSize, GetDeviceCaps( hDC, LOGPIXELSY ), 72 );
     fFontHeight = -nHeight;
 
+    FT_Library  library;
+    FT_Face     face;
+    FT_Error ftError = FT_Init_FreeType(&library);
+    hsAssert(ftError == FT_Err_Ok, "FreeType did not initialize");
+
     hFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
                         CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, fFace );
     hsAssert(hFont != nullptr, "Cannot create Windows font");
 
     SelectObject( hDC, hBitmap );
     SelectObject( hDC, hFont );
+
+    // Get the font data
+
+    DWORD fontDataSize = GetFontData( hDC, 0, 0, 0, 0 );
+    void* fontData = std::malloc( fontDataSize );
+    GetFontData(hDC, 0, 0, fontData, fontDataSize);
+    ftError = FT_New_Memory_Face(library, (FT_Byte *) fontData, fontDataSize, 0, &face);
+
+    FT_UInt freeTypeResolution = GetDeviceCaps(hDC, LOGPIXELSY);
+    ftError = FT_Set_Char_Size(face, 0, fSize * 64, freeTypeResolution, freeTypeResolution);
 
     // Set text colors
     SetTextColor( hDC, RGB( 255, 255, 255 ) );
@@ -136,7 +157,8 @@ uint16_t  *plTextFont::IInitFontTexture()
     // Loop through characters, drawing them one at a time
     RECT    r;
     r.left = r.top = 0;
-    r.right = r.bottom = 10;
+    r.right = 1;
+    r.bottom = 10;
     FillRect( hDC, &r, (HBRUSH)GetStockObject( GRAY_BRUSH ) );
 
     // (Make first character a black dot, for filling rectangles)
@@ -144,15 +166,48 @@ uint16_t  *plTextFont::IInitFontTexture()
     for( c = 32, x = 1, y = 0; c < 127; c++ )
     {
         myChar[ 0 ] = c;
-        GetTextExtentPoint32( hDC, myChar, 1, &size );
+        ftError = FT_Load_Char(face, c, FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME );
+
+        FT_GlyphSlot slot = face->glyph;
+
+        FT_Glyph glyph;
+        FT_Get_Glyph(slot, &glyph);
+
+        FT_BBox bbox;
+        FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_TRUNCATE, &bbox);
+
+        size.cx = slot->metrics.horiAdvance / 64;
+        size.cy = face->height/ 64;
+
+        FT_Bitmap bitmap = slot->bitmap;
 
         if( (uint32_t)( x + size.cx + 1 ) > fTextureWidth )
         {
             x = 0;
             y += size.cy + 1;
         }
+        int offset = size.cy - face->glyph->bitmap_top - ceil( - face->descender / 64 );
 
-        ExtTextOut(hDC, x, y, ETO_OPAQUE, nullptr, myChar, 1, nullptr);
+        //blit the bitmap into place
+        for (int glyphY = bitmap.rows - 1; glyphY >= 0 ; glyphY--) {
+            for (int glyphX = 0; glyphX < bitmap.width; glyphX++) {
+                //1 bit Bitmap as source
+                int pitch = abs(slot->bitmap.pitch);
+                unsigned char* row = &slot->bitmap.buffer[pitch * glyphY];
+                unsigned char cValue = row[glyphX >> 3];
+
+                uint8_t src = 0;
+
+                if ((cValue & (128 >> (glyphX & 7))) != 0) {
+                    src = UINT8_MAX;
+                }
+                int destY = y + glyphY + offset;
+                int destX = glyphX + x + face->glyph->bitmap_left;
+                int destIndex = (destY * fTextureWidth) + destX;
+
+                bitmapBits[(destIndex )] = src;
+            }
+        }
 
         fCharInfo[ c ].fW = (uint16_t)size.cx;
         fCharInfo[ c ].fH = (uint16_t)size.cy;
@@ -190,6 +245,9 @@ uint16_t  *plTextFont::IInitFontTexture()
             tBits++;
         }
     }
+
+    FT_Done_Face(face);
+    FT_Done_FreeType(library);
 
     // Cleanup and return
     DeleteObject( hBitmap );
