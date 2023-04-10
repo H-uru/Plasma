@@ -857,11 +857,6 @@ def PtUnloadDialog(dialogName):
     """This will unload the GUI dialog by name. If not loaded then nothing will happen"""
     pass
 
-
-def PtUsingUnicode():
-    """Returns true if the current language is a unicode language (like Japanese)"""
-    pass
-
 def PtValidateKey(key):
     """Returns true(1) if 'key' is valid and loaded,
 otherwise returns false(0)"""

@@ -42,10 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLocalization_h_inc
 #define plLocalization_h_inc
 
-#include <vector>
-#include <string>
 #include <set>
-#include "plFileSystem.h"
+#include <vector>
+
+class plFileName;
+namespace ST { class string; }
 
 class plLocalization
 {
@@ -61,28 +62,12 @@ public:
 
         kNumLanguages,
     };
-    
-    enum encodingTypes
-    {
-        Enc_Unencoded,  // This can also mean that python did the decoding for us and we don't need to tweak it on our end
-        Enc_Split_String,
-        Enc_Hybrid_Split_String,
-        Enc_UTF8,
-        Enc_UTF16,
-        Enc_Unicode_Escape,
-        Enc_Raw_Unicode_Escape,
-        Enc_Latin_1,
-        Enc_ASCII,
-        Enc_MBCS
-    };
 
 protected:
     static Language fLanguage;
-    static const char* fLangTags[kNumLanguages];
+    static const ST::string fLangTags[kNumLanguages];
     static std::set<ST::string> fLangCodes[kNumLanguages];
-    static const char* fLangNames[kNumLanguages];
-    static bool fUsesUnicode[kNumLanguages];
-    static encodingTypes fUnicodeEncoding[kNumLanguages];
+    static const ST::string fLangNames[kNumLanguages];
 
     static plFileName IGetLocalized(const plFileName& name, Language lang);
 
@@ -90,11 +75,8 @@ public:
     static void SetLanguage(Language lang) { fLanguage = lang; }
     static Language GetLanguage() { return fLanguage; }
 
-    static const char* GetLanguageName(Language lang) { return fLangNames[lang]; }
-    static std::set<ST::string> GetLanguageCodes(Language lang) { return fLangCodes[lang]; }
-
-    static bool UsingUnicode() { return fUsesUnicode[fLanguage]; }
-    static encodingTypes UnicodeEncoding() { return fUnicodeEncoding[fLanguage]; }
+    static ST::string GetLanguageName(Language lang);
+    static std::set<ST::string> GetLanguageCodes(Language lang);
 
     // Returns true if we're using localized assets.  If it returns false, you
     // don't need to bother calling GetLocalized
@@ -102,7 +84,7 @@ public:
 
     // Pass in a key name and this will give you the localized name
     // Returns an invalid filename if the original keyname is not for a localized asset
-    static plFileName GetLocalized(const plFileName& name) { return IGetLocalized(name, fLanguage); }
+    static plFileName GetLocalized(const plFileName& name);
 
     //
     // Export only
@@ -121,16 +103,12 @@ public:
     //
     static int GetNumLocales() { return kNumLanguages - 1; }
     static plFileName ExportGetLocalized(const plFileName& name, int lang);
-    // Just tells us if this is localized, doesn't actually convert it for us
-    static bool IsLocalizedName(const plFileName& name) { return IGetLocalized(name, kEnglish).IsValid(); }
 
     // Converts a vector of translated strings to a encoded string that can be decoded by StringToLocal()
     // The index in the vector of a string is it's language
-    static std::string LocalToString(const std::vector<std::string> & localizedText);
-    static std::wstring LocalToString(const std::vector<std::wstring> & localizedText);
+    static ST::string LocalToString(const std::vector<ST::string>& localizedText);
     // Converts a string encoded by LocalToString to a vector of translated strings
-    static std::vector<std::string> StringToLocal(const std::string & localizedText);
-    static std::vector<std::wstring> StringToLocal(const std::wstring & localizedText);
+    static std::vector<ST::string> StringToLocal(const ST::string& localizedText);
 };
 
 #endif // plLocalization_h_inc

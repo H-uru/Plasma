@@ -428,15 +428,7 @@ void    plDynamicTextMap::SetFont( const ST::string &face, uint16_t size, uint8_
 //  if( !IIsValid() )
 //      return;
 
-    if (plLocalization::UsingUnicode())
-    {
-        // unicode has a bunch of chars that most fonts don't have, so we override the font choice with one
-        // that will work with the desired language
-        hsStatusMessageF("We are using a unicode language, overriding font choice of %s", face.c_str("nil"));
-        fFontFace = "Unicode";
-    }
-    else
-        fFontFace = face;
+    fFontFace = face;
     fFontSize = size;
     fFontFlags = fontFlags;
     fFontAntiAliasRGB = antiAliasRGB;
