@@ -151,7 +151,7 @@ bool plAvBrainCoop::RelayNotifyMsg(plNotifyMsg *msg)
 
     proMultiStageEventData * mtevt = static_cast<proMultiStageEventData *>(msg->FindEventRecord(proEventData::kMultiStage));
     if(mtevt)
-        DebugMsg("COOP: Relaying multi-stage event to %d recipients (via plAvBrainCoop)", fRecipients.size());
+        DebugMsg("COOP: Relaying multi-stage event to %zu recipients (via plAvBrainCoop)", fRecipients.size());
 
     if(fRecipients.size() != 0)
     {
