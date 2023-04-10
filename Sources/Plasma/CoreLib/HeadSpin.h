@@ -89,9 +89,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define CDECL
 #endif
 
-#define kPosInfinity32      (0x7fffffff)
-#define kNegInfinity32      (0x80000000)
-
 // Based on std::numbers from C++20
 namespace hsConstants
 {
