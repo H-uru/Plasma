@@ -2407,7 +2407,7 @@ bool VaultSetAgePublicAndWait(hsWeakRef<NetVaultNode> ageInfoNode, bool publicOr
         msg->SetType(plVaultNotifyMsg::kPublicAgeCreated);
     else
         msg->SetType(plVaultNotifyMsg::kPublicAgeRemoved);
-    msg->SetResultCode(true);
+    msg->SetResultCode(kNetSuccess);
     msg->GetArgs()->AddString(plNetCommon::VaultTaskArgs::kAgeFilename, access.GetAgeFilename().c_str());
     msg->Send();
     return true;
@@ -2521,20 +2521,21 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
     unsigned ageInfoId;
     unsigned agesIOwnId;
     
-    bool result = false;
+    ENetError result = kNetPending;
     
     for (;;) {
         if (hsRef<RelVaultNode> rvn = VaultGetAgesIOwnFolder())
             agesIOwnId = rvn->GetNodeId();
         else {
             LogMsg(kLogError, "RegisterOwnedAge: Failed to get player's AgesIOwnFolder");
+            result = kNetErrVaultNodeNotFound;
             break;
         }
 
         // Check for existing link to this age  
         plAgeLinkStruct existing;
         if (VaultGetOwnedAgeLink(link->GetAgeInfo(), &existing)) {
-            result = true;
+            result = kNetSuccess;
             break;
         }
         
@@ -2558,6 +2559,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             
             if (IS_NET_ERROR(param.result)) {
                 LogMsg(kLogError, "RegisterOwnedAge: Failed to init age {}", link->GetAgeInfo()->GetAgeFilename());
+                result = param.result;
                 break;
             }
                 
@@ -2583,6 +2585,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             
             if (IS_NET_ERROR(param.result)) {
                 LogMsg(kLogError, "RegisterOwnedAge: Failed create age link node");
+                result = param.result;
                 break;
             }
                 
@@ -2610,6 +2613,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             
             if (IS_NET_ERROR(param.result)) {
                 LogMsg(kLogError, "RegisterOwnedAge: Failed to download age info vault");
+                result = param.result;
                 break;
             }
         }
@@ -2667,14 +2671,17 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             
             if (IS_NET_ERROR(param1.result)) {
                 LogMsg(kLogError, "RegisterOwnedAge: Failed to add link to player's bookshelf");
+                result = param1.result;
                 break;
             }
             if (IS_NET_ERROR(param2.result)) {
                 LogMsg(kLogError, "RegisterOwnedAge: Failed to add info to link");
+                result = param2.result;
                 break;
             }
             if (IS_NET_ERROR(param3.result)) {
                 LogMsg(kLogError, "RegisterOwnedAge: Failed to add playerInfo to ageOwners");
+                result = param3.result;
                 break;
             }
         }
@@ -2685,17 +2692,19 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             access.AddSpawnPoint(link->SpawnPoint());
         }
         
-        result = true;
+        result = kNetSuccess;
         break;
     }
-        
+
+    hsAssert(result != kNetPending, "Result code was not set");
+
     plVaultNotifyMsg * msg = new plVaultNotifyMsg;
     msg->SetType(plVaultNotifyMsg::kRegisteredOwnedAge);
     msg->SetResultCode(result);
     msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, ageLinkId);
     msg->Send();
 
-    return result;
+    return IS_NET_SUCCESS(result);
 }
 
 //============================================================================
@@ -2881,19 +2890,20 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
     unsigned ageInfoId;
     unsigned agesICanVisitId;
     
-    bool result = false;
+    ENetError result = kNetPending;
     for (;;) {
         if (hsRef<RelVaultNode> rvn = VaultGetAgesICanVisitFolder())
             agesICanVisitId = rvn->GetNodeId();
         else {
             LogMsg(kLogError, "RegisterVisitAge: Failed to get player's AgesICanVisitFolder");
+            result = kNetErrVaultNodeNotFound;
             break;
         }
 
         // Check for existing link to this age  
         plAgeLinkStruct existing;
         if (VaultGetVisitAgeLink(link->GetAgeInfo(), &existing)) {
-            result = true;
+            result = kNetSuccess;
             break;
         }
         
@@ -2918,6 +2928,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             
             if (IS_NET_ERROR(param.result)) {
                 LogMsg(kLogError, "RegisterVisitAge: Failed to init age {}", link->GetAgeInfo()->GetAgeFilename());
+                result = param.result;
                 break;
             }
                 
@@ -2943,6 +2954,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             
             if (IS_NET_ERROR(param.result)) {
                 LogMsg(kLogError, "RegisterVisitAge: Failed create age link node");
+                result = param.result;
                 break;
             }
                 
@@ -2970,6 +2982,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             
             if (IS_NET_ERROR(param.result)) {
                 LogMsg(kLogError, "RegisterVisitAge: Failed to download age info vault");
+                result = param.result;
                 break;
             }
         }
@@ -3026,14 +3039,17 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             
             if (IS_NET_ERROR(param1.result)) {
                 LogMsg(kLogError, "RegisterVisitAge: Failed to add link to folder");
+                result = param1.result;
                 break;
             }
             if (IS_NET_ERROR(param2.result)) {
                 LogMsg(kLogError, "RegisterVisitAge: Failed to add info to link");
+                result = param2.result;
                 break;
             }
             if (IS_NET_ERROR(param3.result)) {
                 LogMsg(kLogError, "RegisterVisitAge: Failed to add playerInfo to canVisit folder");
+                result = param3.result;
                 break;
             }
         }
@@ -3044,9 +3060,11 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             access.AddSpawnPoint(link->SpawnPoint());
         }
 
-        result = true;
+        result = kNetSuccess;
         break;
     }
+
+    hsAssert(result != kNetPending, "Result code was not set");
 
     plVaultNotifyMsg * msg = new plVaultNotifyMsg;
     msg->SetType(plVaultNotifyMsg::kRegisteredVisitAge);
@@ -3054,7 +3072,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
     msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, ageLinkId);
     msg->Send();
 
-    return result;
+    return IS_NET_SUCCESS(result);
 }
 
 //============================================================================
@@ -3098,7 +3116,7 @@ namespace _VaultRegisterVisitAge {
         // Send out the VaultNotify msg
         plVaultNotifyMsg * msg = new plVaultNotifyMsg;
         msg->SetType(plVaultNotifyMsg::kRegisteredVisitAge);
-        msg->SetResultCode(true);
+        msg->SetResultCode(result);
         msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->GetNodeId());
         msg->Send();
 
@@ -3166,11 +3184,11 @@ bool VaultUnregisterOwnedAgeAndWait (const plAgeInfoStruct * info) {
     unsigned ageLinkId = 0;
     unsigned agesIOwnId;
 
-    bool result = false;
+    ENetError result = kNetPending;
     for (;;) {  
         hsRef<RelVaultNode> rvnLink = VaultGetOwnedAgeLink(info);
         if (!rvnLink) {
-            result = true;
+            result = kNetSuccess;
             break;  // we aren't an owner of the age, just return true
         }
 
@@ -3178,6 +3196,7 @@ bool VaultUnregisterOwnedAgeAndWait (const plAgeInfoStruct * info) {
             agesIOwnId = rvn->GetNodeId();
         else {
             LogMsg(kLogError, "UnregisterOwnedAge: Failed to get player's AgesIOwnFolder");
+            result = kNetErrVaultNodeNotFound;
             break;  // something's wrong with the player vault, it doesn't have a required folder node
         }
 
@@ -3202,17 +3221,19 @@ bool VaultUnregisterOwnedAgeAndWait (const plAgeInfoStruct * info) {
         // delete the link node since link nodes aren't shared with anyone else
     //  VaultDeleteNode(ageLinkId);
 
-        result = true;
+        result = kNetSuccess;
         break;
     }
-    
+
+    hsAssert(result != kNetPending, "Result code was not set");
+
     plVaultNotifyMsg * msg = new plVaultNotifyMsg;
     msg->SetType(plVaultNotifyMsg::kUnRegisteredOwnedAge);
     msg->SetResultCode(result);
     msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, ageLinkId);
     msg->Send();
     
-    return result;
+    return IS_NET_SUCCESS(result);
 }
 
 //============================================================================
@@ -3221,11 +3242,11 @@ bool VaultUnregisterVisitAgeAndWait (const plAgeInfoStruct * info) {
     unsigned ageLinkId = 0;
     unsigned agesICanVisitId;
     
-    bool result = false;
+    ENetError result = kNetPending;
     for (;;) {
         hsRef<RelVaultNode> rvnLink = VaultGetVisitAgeLink(info);
         if (!rvnLink) {
-            result = true;
+            result = kNetSuccess;
             break;  // we aren't an owner of the age, just return true
         }
 
@@ -3233,6 +3254,7 @@ bool VaultUnregisterVisitAgeAndWait (const plAgeInfoStruct * info) {
             agesICanVisitId = rvn->GetNodeId();
         else {
             LogMsg(kLogError, "UnregisterOwnedAge: Failed to get player's AgesICanVisitFolder");
+            result = kNetErrVaultNodeNotFound;
             break;  // something's wrong with the player vault, it doesn't have a required folder node
         }
 
@@ -3257,17 +3279,19 @@ bool VaultUnregisterVisitAgeAndWait (const plAgeInfoStruct * info) {
         // delete the link node since link nodes aren't shared with anyone else
     //  VaultDeleteNode(ageLinkId);
     
-        result = true;
+        result = kNetSuccess;
         break;
     }
-    
+
+    hsAssert(result != kNetPending, "Result code was not set");
+
     plVaultNotifyMsg * msg = new plVaultNotifyMsg;
     msg->SetType(plVaultNotifyMsg::kUnRegisteredVisitAge);
     msg->SetResultCode(result);
     msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, ageLinkId);
     msg->Send();
 
-    return result;
+    return IS_NET_SUCCESS(result);
 }
 
 //============================================================================

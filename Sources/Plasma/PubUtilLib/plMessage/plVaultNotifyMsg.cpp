@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plVaultNotifyMsg::plVaultNotifyMsg()
 : fType( kNothing )
-, fResultCode( hsOK )
+, fResultCode(kNetSuccess)
 {
     SetBCastFlag( kBCastByType );
 }
@@ -58,14 +58,16 @@ plVaultNotifyMsg::~plVaultNotifyMsg()
 void plVaultNotifyMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     stream->ReadLE16(&fType);
-    stream->ReadByte(&fResultCode);
+    int8_t resultCode;
+    stream->ReadByte(&resultCode);
+    fResultCode = static_cast<ENetError>(resultCode);
     fArgs.Read( stream, mgr );
 }
 
 void plVaultNotifyMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     stream->WriteLE16(fType);
-    stream->WriteByte(fResultCode);
+    stream->WriteByte(static_cast<int8_t>(fResultCode));
     fArgs.Write( stream, mgr );
 }
 
