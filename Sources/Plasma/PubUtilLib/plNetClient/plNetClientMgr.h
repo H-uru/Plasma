@@ -400,12 +400,6 @@ private:
     friend struct plNetClientCommMsgHandler;
 };
 
-#define plCheckNetMgrResult_VoidReturn(r,s)     if (hsFailed(r)) { ErrorMsg(s); hsAssert(false,s); return; }
-// returns int
-#define plCheckNetMgrResult_ValReturn(r,s)      if (hsFailed(r)) { ErrorMsg(s); hsAssert(false,s); return r; }
-// returns bool
-#define plCheckNetMgrResult_BoolReturn(r,s)     if (hsFailed(r)) { ErrorMsg(s); hsAssert(false,s); return false; }
-
 #endif  // PL_NET_CLIENT_inc
 
 
