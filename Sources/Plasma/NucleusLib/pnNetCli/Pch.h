@@ -58,9 +58,3 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnNetCli.h"
 #include "Intern.h"
-
-#ifdef HS_BUILD_FOR_MACOS
-#include <malloc/malloc.h>
-#else
-#include <malloc.h>
-#endif
