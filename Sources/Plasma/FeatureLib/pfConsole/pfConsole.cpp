@@ -1104,13 +1104,3 @@ void pfConsole::AddLineF(const char * fmt, ...) {
     va_end(args);
     AddLine(str);
 }
-
-//============================================================================
-void pfConsole::RunCommandAsync (const char cmd[]) {
-
-    plConsoleMsg * consoleMsg = new plConsoleMsg;
-    consoleMsg->SetCmd(plConsoleMsg::kExecuteLine);
-    consoleMsg->SetString(cmd);
-//  consoleMsg->SetBreakBeforeDispatch(true);
-    consoleMsg->Send(nullptr, true);
-}

@@ -160,8 +160,6 @@ class pfConsole : public hsKeyedObject
 
         static void         SetPipeline( plPipeline *pipe ) { fPipeline = pipe; }
         static plPipeline   *GetPipeline() { return fPipeline; }
-        
-        static void RunCommandAsync (const char cmd[]);
 };
 
 #endif //_pfConsole_h
