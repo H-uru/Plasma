@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 """ *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
