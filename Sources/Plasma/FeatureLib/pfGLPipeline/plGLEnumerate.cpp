@@ -100,12 +100,18 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
         if (!eglBindAPI(EGL_OPENGL_API))
             break;
 
-        GLint numConfigs = 0;
-        if (!eglGetConfigs(display, nullptr, 0, &numConfigs) || numConfigs == 0)
-            break;
+        /* Set up the config attributes for EGL */
+        EGLConfig config;
+        EGLint config_count;
+        EGLint config_attrs[] = {
+            EGL_BUFFER_SIZE, 24,
+            EGL_DEPTH_SIZE, 24,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
+            EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
+            EGL_NONE
+        };
 
-        std::vector<EGLConfig> configs(numConfigs);
-        if (!eglGetConfigs(display, configs.data(), configs.size(), &numConfigs))
+        if (!eglChooseConfig(display, config_attrs, &config, 1, &config_count) || config_count != 1)
             break;
 
         EGLint ctx_attrs[] = {
@@ -114,11 +120,17 @@ void plEGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
             EGL_NONE
         };
 
-        context = eglCreateContext(display, configs[0], EGL_NO_CONTEXT, ctx_attrs);
+        context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctx_attrs);
         if (context == EGL_NO_CONTEXT)
             break;
 
-        surface = eglCreatePbufferSurface(display, configs[0], nullptr);
+        EGLint pbuf_attrs[] = {
+            EGL_WIDTH, 800,
+            EGL_HEIGHT, 600,
+            EGL_NONE
+        };
+
+        surface = eglCreatePbufferSurface(display, config, pbuf_attrs);
         if (surface == EGL_NO_SURFACE)
             break;
 
