@@ -49,11 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pfConsoleCmd_h
 
 #include "HeadSpin.h"
-#include "hsBiExpander.h"
 #include "plFileSystem.h"
 
 #include <string_theory/format>
-
+#include <vector>
 
 //// pfConsoleCmdGroup Class Definition //////////////////////////////////////
 
@@ -189,8 +188,8 @@ class pfConsoleCmd
 
         pfConsoleCmdGroup   *fParentGroup;
 
-        hsExpander<uint8_t>   fSignature;
-        hsExpander<char *>  fSigLabels;
+        std::vector<uint8_t> fSignature;
+        std::vector<char *> fSigLabels;
 
         void    ICreateSignature(const char *paramList );
 
@@ -229,7 +228,7 @@ class pfConsoleCmd
 
         pfConsoleCmdGroup   *GetParent() { return fParentGroup; }
 
-        uint8_t           GetSigEntry( uint8_t i );
+        uint8_t GetSigEntry(size_t i);
 };
 
 

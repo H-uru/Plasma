@@ -386,17 +386,14 @@ pfConsoleCmd::pfConsoleCmd(const char *group, const char *name,
 
 pfConsoleCmd::~pfConsoleCmd()
 {
-    int     i;
-
-
-    for( i = 0; i < fSigLabels.GetCount(); i++ )
+    for (size_t i = 0; i < fSigLabels.size(); i++)
     {
         delete [] fSigLabels[ i ];
     }
     Unregister();
     
-    fSignature.Reset();
-    fSigLabels.Reset();
+    fSignature.clear();
+    fSigLabels.clear();
 }
 
 //// ICreateSignature ////////////////////////////////////////////////////////
@@ -408,14 +405,12 @@ void    pfConsoleCmd::ICreateSignature(const char *paramList )
 
     char    params[ 256 ];
     char    *ptr, *nextPtr, *tok, *tok2;
-    int     i;
-
 
     /// Simple check
     if (paramList == nullptr)
     {
-        fSignature.Push( kAny );
-        fSigLabels.Push(nullptr);
+        fSignature.push_back(kAny);
+        fSigLabels.push_back(nullptr);
         return;
     }
 
@@ -423,8 +418,8 @@ void    pfConsoleCmd::ICreateSignature(const char *paramList )
     hsAssert( strlen( paramList ) < sizeof( params ), "Make the (#*$& params string larger!" );
     hsStrcpy( params, paramList );
 
-    fSignature.Reset();
-    fSigLabels.Reset();
+    fSignature.clear();
+    fSigLabels.clear();
 
     /// Loop through all the types given in the list
     ptr = params;
@@ -449,17 +444,18 @@ void    pfConsoleCmd::ICreateSignature(const char *paramList )
         if (tok2 != nullptr)
         {
             // Type and label: assume label second
-            fSigLabels.Push( hsStrcpy( tok2 ) );            
+            fSigLabels.push_back(hsStrcpy(tok2));
         }
         else
-            fSigLabels.Push(nullptr);
+            fSigLabels.push_back(nullptr);
 
         // Find type
+        uint8_t i;
         for( i = 0; i < kNumTypes; i++ )
         {
             if( strcmp( fSigTypes[ i ], tok ) == 0 )
             {
-                fSignature.Push( (uint8_t)i );
+                fSignature.push_back(i);
                 break;
             }
         }
@@ -533,12 +529,12 @@ void    pfConsoleCmd::Unlink()
 
 //// GetSigEntry /////////////////////////////////////////////////////////////
 
-uint8_t   pfConsoleCmd::GetSigEntry( uint8_t i )
+uint8_t pfConsoleCmd::GetSigEntry(size_t i)
 {
-    if( fSignature.GetCount() == 0 )
+    if (fSignature.empty())
         return kNone;
 
-    if( i < fSignature.GetCount() )
+    if (i < fSignature.size())
     {
         if( fSignature[ i ] == kEtc )
             return kAny;
@@ -546,7 +542,7 @@ uint8_t   pfConsoleCmd::GetSigEntry( uint8_t i )
         return fSignature[ i ];
     }
 
-    if( fSignature[ fSignature.GetCount() - 1 ] == kEtc )
+    if (fSignature.back() == kEtc)
         return kAny;
 
     return kNone;
@@ -562,12 +558,11 @@ const char  *pfConsoleCmd::GetSignature()
 {
     static char string[256];
     
-    int     i;
     char    pStr[ 128 ];
 
 
     strcpy( string, fName );
-    for( i = 0; i < fSignature.GetCount(); i++ )
+    for(size_t i = 0; i < fSignature.size(); i++)
     {
         if (fSigLabels[i] == nullptr)
             sprintf( pStr, "[%s]", fSigTypes[ fSignature[ i ] ] );

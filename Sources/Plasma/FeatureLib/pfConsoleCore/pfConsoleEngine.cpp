@@ -359,13 +359,13 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
         }
 
         if( !valid )
-            valid = IConvertToParam( cmd->GetSigEntry( (uint8_t)numParams ), ptr, &paramArray[ numParams ] );
+            valid = IConvertToParam(cmd->GetSigEntry(numParams), ptr, &paramArray[numParams]);
     }
     for( i = numParams; i < fMaxNumParams + 1; i++ )
         paramArray[ i ].SetNone();
 
-    if( !valid || ( cmd->GetSigEntry( (uint8_t)numParams ) != pfConsoleCmd::kAny && 
-                    cmd->GetSigEntry( (uint8_t)numParams ) != pfConsoleCmd::kNone ) )
+    if (!valid || (cmd->GetSigEntry(numParams) != pfConsoleCmd::kAny &&
+                   cmd->GetSigEntry(numParams) != pfConsoleCmd::kNone))
     {
         // Print help string and return
         ISetErrorMsg( "" ); // Printed on next line
