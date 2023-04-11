@@ -439,7 +439,13 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
 );
-hsError VaultAgeFindOrCreateChildAgeLink(const ST::string& parentAgeName, const plAgeInfoStruct* info, plAgeLinkStruct* link);
+enum class plVaultChildAgeLinkResult
+{
+    kFailed,
+    kCreatingNew,
+    kFoundExisting,
+};
+plVaultChildAgeLinkResult VaultAgeFindOrCreateChildAgeLink(const ST::string& parentAgeName, const plAgeInfoStruct* info, plAgeLinkStruct* link);
 
 
 

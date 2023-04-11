@@ -4537,7 +4537,7 @@ namespace _VaultCreateChildAge {
     }
 }; // namespace _VaultCreateAge
 
-hsError VaultAgeFindOrCreateChildAgeLink(
+plVaultChildAgeLinkResult VaultAgeFindOrCreateChildAgeLink(
     const ST::string&      parentAgeName,
     const plAgeInfoStruct* info,
     plAgeLinkStruct*       link) 
@@ -4557,11 +4557,11 @@ hsError VaultAgeFindOrCreateChildAgeLink(
     // Test to make sure nothing went horribly wrong...
     if (rvnParentInfo == nullptr) {
         LogMsg(kLogError, "CreateChildAge: Couldn't find the parent ageinfo (async)");
-        return hsFail;
+        return plVaultChildAgeLinkResult::kFailed;
     }
 
     // Still here? Try to find the Child Ages folder
-    hsError retval = hsFail;
+    plVaultChildAgeLinkResult retval = plVaultChildAgeLinkResult::kFailed;
     if (hsRef<RelVaultNode> rvnChildAges = rvnParentInfo->GetChildAgeInfoListNode(plVault::kChildAgesFolder, 1)) {
         // Search for our age
         NetVaultNode temp;
@@ -4577,7 +4577,7 @@ hsError VaultAgeFindOrCreateChildAgeLink(
             VaultAgeInfoNode accAgeInfo(rvnAgeInfo);
             accAgeInfo.CopyTo(link->GetAgeInfo());
 
-            retval = true;
+            retval = plVaultChildAgeLinkResult::kFoundExisting;
         } else {
             _Params* p = new _Params;
             p->fChildAgesFldr = (void*)(uintptr_t)rvnChildAges->GetNodeId();
@@ -4589,7 +4589,7 @@ hsError VaultAgeFindOrCreateChildAgeLink(
                          nullptr,
                          p
             );
-            retval = false;
+            retval = plVaultChildAgeLinkResult::kCreatingNew;
         }
     }
 
