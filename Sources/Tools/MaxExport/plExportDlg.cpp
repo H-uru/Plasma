@@ -122,7 +122,7 @@ plExportDlgImp::plExportDlgImp()
 BOOL WritePrivateProfileIntW(LPCWSTR lpAppName, LPCWSTR lpKeyName, int val, LPCWSTR lpFileName)
 {
     wchar_t buf[12];
-    swprintf(buf, 12, L"%d", val);
+    _snwprintf(buf, 12, L"%d", val);
 
     return WritePrivateProfileStringW(lpAppName, lpKeyName, buf, lpFileName);
 }

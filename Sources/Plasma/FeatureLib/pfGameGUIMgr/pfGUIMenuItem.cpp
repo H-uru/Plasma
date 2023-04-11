@@ -342,7 +342,7 @@ void    pfGUIMenuItem::IUpdate()
             else
             {
                 fDynTextMap->SetJustify( plDynamicTextMap::kRightJustify );
-                fDynTextMap->DrawString( x + fDynTextMap->GetVisibleWidth() - 2, y, ">>" );
+                fDynTextMap->DrawString(x + fDynTextMap->GetVisibleWidth() - 2, y, L">>");
             }
         }
     }

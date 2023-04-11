@@ -487,13 +487,6 @@ void    plDynamicTextMap::SetTextColor( hsColorRGBA &color, bool blockRGB )
 
 //// DrawString ///////////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::DrawString( uint16_t x, uint16_t y, const char *text )
-{
-    wchar_t *wText = hsStringToWString(text);
-    DrawString(x,y,wText);
-    delete [] wText;
-}
-
 void    plDynamicTextMap::DrawString( uint16_t x, uint16_t y, const wchar_t *text )
 {
     if( !IIsValid() )

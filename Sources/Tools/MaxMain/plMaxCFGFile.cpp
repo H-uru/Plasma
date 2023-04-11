@@ -101,7 +101,7 @@ bool plMaxConfig::AssetManInterfaceDisabled()
         uint32_t len = GetPrivateProfileStringW(L"AssetMan", L"Disable", L"", configstr, MAX_PATH,
                                                 plugDir.WideString().data());
 
-        if (wcscmp(configstr, L"1") == 0 || wcsicmp(configstr, L"true") == 0)
+        if (wcscmp(configstr, L"1") == 0 || _wcsicmp(configstr, L"true") == 0)
             disabled = true;
         else
             disabled = false;
