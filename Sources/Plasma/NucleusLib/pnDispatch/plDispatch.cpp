@@ -435,7 +435,7 @@ bool plDispatch::IMsgNetPropagate(plMessage* msg)
     {
         // send it off...
         hsAssert(!msg->HasBCastFlag(plMessage::kNetStartCascade), "initial net cascade msg getting sent over the net again?");
-        if (plNetClientApp::GetInstance() && plNetClientApp::GetInstance()->ISendGameMessage(msg)>=0)
+        if (plNetClientApp::GetInstance() && hsSucceeded(plNetClientApp::GetInstance()->ISendGameMessage(msg)))
             msg->SetBCastFlag(plMessage::kNetSent);
     }
 

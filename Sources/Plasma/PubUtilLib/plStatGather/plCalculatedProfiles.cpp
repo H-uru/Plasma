@@ -105,7 +105,7 @@ void CreateStandardGraphs(const char* groupName, bool create)
     {
         if (create)
         {
-            if (ICreateStdPlate(&fFPSPlate) == hsOK)
+            if (hsSucceeded(ICreateStdPlate(&fFPSPlate)))
             {
                 fFPSPlate->SetTitle("mSecs");       
                 fFPSPlate->SetLabelText("Tot", "Draw", "Upd");
