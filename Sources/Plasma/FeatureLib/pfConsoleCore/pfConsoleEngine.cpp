@@ -62,7 +62,7 @@ static const char *console_strtok( char *&line, bool haveCommand )
 {
     char *begin = line;
 
-    while (*begin && isspace(*begin))
+    while (*begin && isspace(static_cast<unsigned char>(*begin)))
         ++begin;
 
     for (line = begin; *line; ++line) {
@@ -394,7 +394,7 @@ bool    pfConsoleEngine::IConvertToParam( uint8_t type, const char *string, pfCo
 
     for( c = string; *c != 0; c++ )
     {
-        if( !isdigit( *c ) )
+        if (!isdigit(static_cast<unsigned char>(*c)))
         {
             if( c == string && ( *c == '-' || *c == '+' ) )
             {

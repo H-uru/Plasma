@@ -864,7 +864,7 @@ uint32_t UserPropMgr::QuickPair::GetHash() const
     int h;
     for (h=len; len--;) 
     {
-        h = ((h<<5)^(h>>27))^tolower(*k++);
+        h = ((h<<5)^(h>>27))^tolower(static_cast<unsigned char>(*k++));
     }
     return h;
 }

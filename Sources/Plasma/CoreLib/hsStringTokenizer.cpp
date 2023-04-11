@@ -68,7 +68,7 @@ inline bool hsStringTokenizer::IsSep(char c)
 {
     if (!fQAsTok || !fInQuote) 
     {
-        if ( fCheckAlphaNum || !isalnum(c) )
+        if (fCheckAlphaNum || !isalnum(static_cast<unsigned char>(c)))
         {
             for (int32_t i=0; i<fNumSeps; i++) 
             {
@@ -142,7 +142,7 @@ void hsStringTokenizer::Reset(const char *string, const char *seps)
     fCheckAlphaNum = false;
     for (int32_t i=0; i<fNumSeps; i++)
     {
-        if (isalnum(fSeps[i]))
+        if (isalnum(static_cast<unsigned char>(fSeps[i])))
         {
             fCheckAlphaNum=true;
             break;

@@ -639,9 +639,9 @@ namespace pvt_strptime
         {
         /* A white space in the format string matches 0 more or white
             space in the input string.  */
-            if (isspace (*fmt))
+            if (isspace(static_cast<unsigned char>(*fmt)))
             {
-                while (isspace (*rp))
+                while (isspace(static_cast<unsigned char>(*rp)))
                     ++rp;
                 ++fmt;
                 continue;
@@ -770,7 +770,7 @@ start_over:
             case 'n':
             case 't':
                 /* Match any white space.  */
-                while (isspace (*rp))
+                while (isspace(static_cast<unsigned char>(*rp)))
                     ++rp;
                 break;
             case 'p':

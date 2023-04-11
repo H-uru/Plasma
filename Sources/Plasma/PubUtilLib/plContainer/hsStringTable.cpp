@@ -115,7 +115,7 @@ hsStringTable::Node* hsStringTable::FindRecur(Node* root, const char* str, bool 
 {
     if (!root || !str)
         return nullptr;
-    if (tolower(root->chr)==tolower(*str)) 
+    if (tolower(static_cast<unsigned char>(root->chr)) == tolower(static_cast<unsigned char>(*str))) 
     {
         if (*(str+1)) 
         {
@@ -144,7 +144,7 @@ hsStringTable::Node* hsStringTable::FindPartialRecur(Node* root, char* str, int3
         return nullptr;
     }
 
-    if (tolower(root->chr)==tolower(*str)) 
+    if (tolower(static_cast<unsigned char>(root->chr)) == tolower(static_cast<unsigned char>(*str))) 
     {
         if (len) 
         {

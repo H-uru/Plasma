@@ -445,7 +445,7 @@ void pfGUIEditBoxMod::SetLastKeyCapture(uint32_t key, uint8_t modifiers)
 
     if(keyStr.empty())
     {
-        if( isalnum( key ) )
+        if (key < 0x80 && isalnum(key))
         {
             char keyChar = (char)key;
             keyStr = ST::string::from_latin_1(&keyChar, 1);

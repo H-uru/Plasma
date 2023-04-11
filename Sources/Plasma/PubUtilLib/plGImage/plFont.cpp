@@ -1535,7 +1535,7 @@ class plLineParser
             *fCursor = fRestore;
 
             // Scan for the start of the next token
-            while( *fCursor != 0 && (*tester)( *fCursor ) )
+            while (*fCursor != 0 && (*tester)(static_cast<unsigned char>(*fCursor)))
                 fCursor++;
 
             if( *fCursor == 0 )
@@ -1555,7 +1555,7 @@ class plLineParser
             *fCursor = fRestore;
 
             // Scan for the start of the next token
-            while( *fCursor != 0 && (*tester)( *fCursor ) )
+            while (*fCursor != 0 && (*tester)(static_cast<unsigned char>(*fCursor)))
                 fCursor++;
 
             if( *fCursor == 0 )
@@ -1563,7 +1563,7 @@ class plLineParser
 
             // This is the start of our token; find the end
             const char *start = fCursor;
-            while( *fCursor != 0 && !(*tester)( *fCursor ) )
+            while (*fCursor != 0 && !(*tester)(static_cast<unsigned char>(*fCursor)))
                 fCursor++;
 
             // Put a stopper here

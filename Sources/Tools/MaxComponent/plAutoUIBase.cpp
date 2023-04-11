@@ -73,7 +73,7 @@ ST::string plAutoUIBase::IMakeScriptName(const ST::string& fullName)
 
     ST::string_stream ss;
     for (auto chr : fullName) {
-        if (isalpha(chr) || isdigit(chr))
+        if (isalpha(static_cast<unsigned char>(chr)) || isdigit(static_cast<unsigned char>(chr)))
             ss.append_char(chr);
     }
     return ss.to_string();
