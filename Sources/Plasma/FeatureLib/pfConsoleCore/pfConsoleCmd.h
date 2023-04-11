@@ -181,7 +181,6 @@ class pfConsoleCmd
         const char*     fHelpString;
 
         pfConsoleCmdPtr fFunction;
-        bool            fLocalOnly;
 
         pfConsoleCmd    *fNext;
         pfConsoleCmd    **fPrevPtr;
@@ -211,7 +210,7 @@ class pfConsoleCmd
         static char         fSigTypes[ kNumTypes ][ 8 ];
 
 
-        pfConsoleCmd(const char *group, const char *name, const char *paramList, const char *help, pfConsoleCmdPtr func, bool localOnly = false );
+        pfConsoleCmd(const char *group, const char *name, const char *paramList, const char *help, pfConsoleCmdPtr func);
         ~pfConsoleCmd();
 
         void    Register(const char *group, const char *name );
@@ -249,9 +248,6 @@ public:
 //        as a parameter
 //      - The start of the function itself, so that the {} after the macro
 //        define the body of that function.
-//
-//  PF_LOCAL_CONSOLE_CMD is identical, only it passes true for the localOnly flag.
-//  This isn't used currently and is here only for legacy.
 
 //  PF_CONSOLE_BASE_CMD doesn't belong to a group; it creates a global console function.
 
@@ -264,11 +260,6 @@ public:
 #define PF_CONSOLE_CMD( grp, name, p, help ) \
     void    pfConsoleCmd_##grp##_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) ); \
     pfConsoleCmd    conCmd_##grp##_##name( #grp, #name, p, help, pfConsoleCmd_##grp##_##name##_proc ); \
-    void    pfConsoleCmd_##grp##_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) )
-
-#define PF_LOCAL_CONSOLE_CMD( grp, name, p, help ) \
-    void    pfConsoleCmd_##grp##_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) ); \
-    pfConsoleCmd    conCmd_##grp##_##name( #grp, #name, p, help, pfConsoleCmd_##grp##_##name##_proc, true ); \
     void    pfConsoleCmd_##grp##_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) )
 
 //// pfConsoleCmdGroup Creation Macro ////////////////////////////////////////

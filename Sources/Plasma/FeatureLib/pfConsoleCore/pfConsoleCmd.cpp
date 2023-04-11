@@ -369,13 +369,12 @@ char    pfConsoleCmd::fSigTypes[ kNumTypes ][ 8 ] = { "int", "float", "bool", "s
 
 pfConsoleCmd::pfConsoleCmd(const char *group, const char *name,
                             const char *paramList, const char *help, 
-                            pfConsoleCmdPtr func, bool localOnly )
+                            pfConsoleCmdPtr func)
 {
     fNext = nullptr;
     fPrevPtr = nullptr;
 
     fFunction = func;
-    fLocalOnly = localOnly;
     
     hsStrncpy( fName, name, sizeof( fName ) );
     fHelpString = help;
