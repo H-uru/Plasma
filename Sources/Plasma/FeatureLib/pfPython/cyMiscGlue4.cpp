@@ -230,9 +230,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtShootBulletFromObject, args, "Params: selfkey,
 PYTHON_GLOBAL_METHOD_DEFINITION(PtGetPublicAgeList, args, "Params: ageName, cbObject=None\nGet list of public ages for the given age name.\n"
             "cbObject, if supplied should have a method called gotPublicAgeList(self,ageList). ageList is a list of tuple(ptAgeInfoStruct,nPlayersInAge)")
 {
-    char* ageName;
+    ST::string ageName;
     PyObject* cbObject = nullptr;
-    if (!PyArg_ParseTuple(args, "s|O", &ageName, &cbObject))
+    if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &ageName, &cbObject))
     {
         PyErr_SetString(PyExc_TypeError, "PtGetPublicAgeList expects a string and an optional object with a gotPublicAgeList() method");
         PYTHON_RETURN_ERROR;
@@ -264,9 +264,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCreatePublicAge, args, "Params: ageInfo, cbObj
 PYTHON_GLOBAL_METHOD_DEFINITION(PtRemovePublicAge, args, "Params: ageInstanceGuid, cbObject=None\nRemove a public instance of the given age.\n"
             "cbObject, if supplied should have a member called publicAgeRemoved(self,ageInstanceGuid)")
 {
-    char* ageInstanceGUID;
+    ST::string ageInstanceGUID;
     PyObject* cbObject = nullptr;
-    if (!PyArg_ParseTuple(args, "s|O", &ageInstanceGUID, &cbObject))
+    if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &ageInstanceGUID, &cbObject))
     {
         PyErr_SetString(PyExc_TypeError, "PtRemovePublicAge expects a string and an optional object with a publicAgeRemoved() method");
         PYTHON_RETURN_ERROR;
@@ -312,14 +312,14 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetNumCameras, "returns camera stack si
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtRebuildCameraStack, args, "Params: name,ageName\nPush camera with this name on the stack")
 {
-    char* name;
-    char* ageName;
-    if (!PyArg_ParseTuple(args, "ss", &name, &ageName))
+    ST::string name;
+    ST::string ageName;
+    if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_STStringConverter, &name, PyUnicode_STStringConverter, &ageName))
     {
         PyErr_SetString(PyExc_TypeError, "PtRebuildCameraStack expects two strings");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::RebuildCameraStack(ST::string::from_utf8(name), ageName);
+    cyMisc::RebuildCameraStack(name, ageName);
     PYTHON_RETURN_NONE;
 }
 
@@ -371,8 +371,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetGlobalClickability, args, "Params: enable\n
 PYTHON_GLOBAL_METHOD_DEFINITION(PtDebugAssert, args, "Params: cond, msg\nDebug only: Assert if condition is false.")
 {
     char cond;
-    char* msg;
-    if (!PyArg_ParseTuple(args, "bs", &cond, &msg))
+    ST::string msg;
+    if (!PyArg_ParseTuple(args, "bO&", &cond, PyUnicode_STStringConverter, &msg))
     {
         PyErr_SetString(PyExc_TypeError, "PtDebugAssert expects a boolean and a string");
         PYTHON_RETURN_ERROR;
@@ -464,9 +464,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetAlarm, args, "Params: secs, cbObject, cbCon
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSaveScreenShot, args, "Params: fileName,width=640,height=480,quality=75\nTakes a screenshot with the specified filename, size, and quality")
 {
-    char* fileName;
+    plFileName fileName;
     int width = 640, height = 480, quality = 75;
-    if (!PyArg_ParseTuple(args, "s|iii", &fileName, &width, &height, &quality))
+    if (!PyArg_ParseTuple(args, "O&|iii", PyUnicode_PlFileNameDecoder, &fileName, &width, &height, &quality))
     {
         PyErr_SetString(PyExc_TypeError, "PtSaveScreenShot expects a string, and three optional integers");
         PYTHON_RETURN_ERROR;
@@ -515,9 +515,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIGZMarkerMsg, args, "Params: markerNumber
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIRegisterImagerMsg, args, "Params: imagerName, sender\nSends a message to the KI to register the specified imager")
 {
-    char* name;
+    ST::string name;
     PyObject* keyObj = nullptr;
-    if (!PyArg_ParseTuple(args, "sO", &name, &keyObj))
+    if (!PyArg_ParseTuple(args, "O&O", PyUnicode_STStringConverter, &name, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtSendKIRegisterImagerMsg expects a string and a ptKey");
         PYTHON_RETURN_ERROR;
@@ -720,8 +720,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGuidGenerate, "Returns string represent
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtGetAIAvatarsByModelName, args, "Params: modelName\nReturns a list of tuples representing the matching ai avatars")
 {
-    char* modelName;
-    if (!PyArg_ParseTuple(args, "s", &modelName))
+    ST::string modelName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &modelName))
     {
         PyErr_SetString(PyExc_TypeError, "PtGetAIAvatarsByModelName expects a string");
         PYTHON_RETURN_ERROR;

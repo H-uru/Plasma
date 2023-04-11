@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <functional>
 #include <locale>
 #include <memory>
-#include <string>
 
 // Platform Library Includes
 #include <ctime>
