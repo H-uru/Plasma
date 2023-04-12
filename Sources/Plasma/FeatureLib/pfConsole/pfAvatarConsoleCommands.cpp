@@ -112,10 +112,10 @@ PF_CONSOLE_FILE_DUMMY(Avatar)
 //
 /////////////////////////////////////////////////////////////////
 
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, const char** statusStr, bool subString=false);
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, const char** statusStr, bool subString=false);
+plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, ST::string& statusStr, bool subString=false);
+plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, ST::string& statusStr, bool subString=false);
 plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                              const char** statusStr, bool subString=false);
+                              ST::string& statusStr, bool subString=false);
 
 PF_CONSOLE_GROUP( Avatar )
 
@@ -353,8 +353,8 @@ PF_CONSOLE_CMD( Avatar_Turn, SetMouseTurnSensitivity, "float sensitivity", "Set 
 // MULTISTAGE.TRIGGER
 PF_CONSOLE_CMD( Avatar_Multistage, Trigger, "string multiComp", "Triggers the named Multistage Animation component")
 {
-    const char *status = "";
-    plKey key = FindObjectByNameAndType(params[0], "plMultistageBehMod", {}, &status, true);
+    ST::string status;
+    plKey key = FindObjectByNameAndType(params[0], "plMultistageBehMod", {}, status, true);
     PrintString(status);
 
     if (key)
@@ -485,7 +485,8 @@ PF_CONSOLE_CMD( Avatar, SeekPoint, "string seekpoint", "Move to the given seekpo
     
     if(avatar)
     {
-        plKey seekKey = FindSceneObjectByName(spName, "", nullptr);
+        ST::string status;
+        plKey seekKey = FindSceneObjectByName(spName, {}, status);
         plSeekPointMod *mod = plAvatarMgr::GetInstance()->FindSeekPoint(spName);
         
         if(mod)
@@ -574,10 +575,11 @@ PF_CONSOLE_CMD( Avatar, ClickToTurn, "bool b", "Set click-to-turn functionality.
 PF_CONSOLE_CMD( Avatar, FakeLinkToObj, "string objName", "Pseudo-Link the avatar to the specified object's location")
 {
     const ST::string& spName = params[0];
-    plKey seekKey = FindSceneObjectByName(spName, "", nullptr);
+    ST::string status;
+    plKey seekKey = FindSceneObjectByName(spName, {}, status);
     if (!seekKey)
     {
-        PrintString("Can't find object with that name, fake link failed.");
+        PrintString("Can't find object with that name, fake link failed: " + status);
         return;
     }
     plPseudoLinkEffectMsg* msg = new plPseudoLinkEffectMsg;

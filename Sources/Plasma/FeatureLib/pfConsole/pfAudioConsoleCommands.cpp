@@ -84,10 +84,10 @@ PF_CONSOLE_FILE_DUMMY(Audio)
 /////////////////////////////////////////////////////////////////
 
 // External Helpers (see pfConsoleCommands.cpp)
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, const char** statusStr, bool subString=false);
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, const char** statusStr, bool subString=false);
+plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, ST::string& statusStr, bool subString=false);
+plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, ST::string& statusStr, bool subString=false);
 plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                              const char** statusStr, bool subString=false);
+                              ST::string& statusStr, bool subString=false);
 
 PF_CONSOLE_GROUP(Audio)
 
@@ -196,7 +196,7 @@ Valid channels are: SoundFX, BgndMusic, Voice, GUI, NPCVoice and Ambience.")
         case plgAudioSys::kNPCVoice:    msg = ST::format("Setting NPC Voice master volume to {4.2f}", vol); break;
         default: break;
     }
-    PrintString(msg.c_str());
+    PrintString(msg);
 }
 
 PF_CONSOLE_CMD(Audio, ShowNumActiveBuffers, "bool b", "Shows the number of Direct sounds buffers in use")
@@ -293,8 +293,10 @@ PF_CONSOLE_CMD(Audio, NextDebugPlate, "", "Cycles through the volume displays fo
 
 PF_CONSOLE_CMD(Audio, ShowDebugPlate, "string object, int soundIdx", "Shows the volume display for a registered sound")
 {
-    plKey key = FindSceneObjectByName(params[0], {}, nullptr);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     if (!key) {
+        PrintString(status);
         plSound::SetCurrDebugPlate(nullptr);
         return;
     }
@@ -332,9 +334,12 @@ PF_CONSOLE_CMD(Audio, SetTwoStageLOD, "bool on", "Enables or disables two-stage 
 
 PF_CONSOLE_CMD(Audio, SetVolume, "string obj, float vol", "Sets the volume on a given object. 1 is max volume, 0 is silence" )
 {
-    plKey key = FindSceneObjectByName(params[0], {}, nullptr);
-    if (key == nullptr)
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
+    if (key == nullptr) {
+        PrintString(status);
         return;
+    }
 
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
@@ -357,10 +362,11 @@ PF_CONSOLE_CMD(Audio, IsolateSound, "string soundComponentName", "Mutes all soun
     plKey           key;
     plAudioSysMsg   *asMsg;
 
-    key = FindSceneObjectByName(soundComponentName, {}, nullptr);
+    ST::string status;
+    key = FindSceneObjectByName(soundComponentName, {}, status);
     if (key == nullptr)
     {
-        pfConsolePrintF(PrintString, "Cannot find sound {}", soundComponentName);
+        pfConsolePrintF(PrintString, "Cannot find sound {}: {}", soundComponentName, status);
         return;
     }
 

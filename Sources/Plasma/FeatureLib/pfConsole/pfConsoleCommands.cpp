@@ -220,8 +220,7 @@ PF_CONSOLE_FILE_DUMMY(Main)
 //        name isn't obvious (i.e. SetFogColor doesn't really need one)
 //  
 //  The actual C code prototype looks like:
-//      void    pfConsoleCmd_groupName_functionName( uint32_t numParams, pfConsoleCmdParam *params, 
-//                                                      void (*PrintString)( char * ) );
+//      void pfConsoleCmd_groupName_functionName(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&));
 //
 //  numParams is exactly what it sounds like. params is an array of console
 //  parameter objects, each of which are rather nifty in that they can be cast
@@ -279,19 +278,17 @@ PF_CONSOLE_FILE_DUMMY(Main)
 // Name can be an alias specified by saying $foo
 //
 plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName,
-                       const char** statusStr, bool subString = false)
+                       ST::string& statusStr, bool subString = false)
 {
     if (name.empty())
     {
-        if (statusStr)
-            *statusStr = "Object name is nil";
+        statusStr = "Object name is nil";
         return nullptr;
     }
     
     if (type<0 || type>=plFactory::GetNumClasses())
     {
-        if (statusStr)
-            *statusStr = "Illegal class type val";
+        statusStr = "Illegal class type val";
         return nullptr;
     }
 
@@ -307,8 +304,7 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
             key = plKeyFinder::Instance().StupidSearch(thisAge, ST::string(), type, name, subString);
             if (key != nullptr)
             {
-                if (statusStr)
-                    *statusStr = "Found Object";
+                statusStr = "Found Object";
                 return key;
             }
         }
@@ -318,19 +314,16 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
 
     if (!key)
     {
-        if (statusStr)
-            *statusStr = "Can't find object";
+        statusStr = "Can't find object";
         return nullptr;
     }
     
     if (!key->ObjectIsLoaded())
     {
-        if (statusStr)
-            *statusStr = "Object is not loaded";
+        statusStr = "Object is not loaded";
     }
 
-    if (statusStr)
-        *statusStr = "Found Object";
+    statusStr = "Found Object";
 
     return key;
 }
@@ -341,14 +334,13 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
 // Will load the object if necessary.
 //
 plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName,
-                            const char** statusStr, bool subString = false)
+                            ST::string& statusStr, bool subString = false)
 {
     plKey key=FindObjectByName(name, plSceneObject::Index(), ageName, statusStr, subString);
 
     if (!plSceneObject::ConvertNoRef(key ? key->ObjectIsLoaded() : nullptr))
     {
-        if (statusStr)
-            *statusStr = "Can't find SceneObject";
+        statusStr = "Can't find SceneObject";
         return nullptr;
     }
 
@@ -360,12 +352,11 @@ plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName,
 // Name can be an alias specified by saying $foo
 //
 plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                              const char** statusStr, bool subString = false)
+                              ST::string& statusStr, bool subString = false)
 {
     if (!typeName)
     {
-        if (statusStr)
-            *statusStr = "TypeName is nil";
+        statusStr = "TypeName is nil";
         return nullptr;
     }
     
@@ -526,7 +517,7 @@ PF_CONSOLE_CMD(Stats, ListGroups, "", "Prints the names of all the stat groups t
 
     plProfileManagerFull::GroupSet::iterator it;
     for (it = groups.begin(); it != groups.end(); it++)
-        PrintString(it->c_str());
+        PrintString(*it);
 }
 
 PF_CONSOLE_CMD(Stats, ListLaps, "", "Prints the names of all the stats with laps to the console")
@@ -807,7 +798,7 @@ PF_CONSOLE_CMD( Console, CreateDocumentation, "string fileName",
                 "Writes HTML documentation for the current console commands" )
 {
     plFileName fileName = params[0];
-    PrintString(fileName.AsString().c_str());
+    PrintString(fileName.AsString());
 
     FILE* f = plFileSystem::Open(fileName, "wt");
     if (f == nullptr) {
@@ -830,7 +821,7 @@ PF_CONSOLE_CMD( Console, CreateBriefDocumentation, "string fileName",
                 "Writes brief HTML documentation for the current console commands" )
 {
     plFileName fileName = params[0];
-    PrintString(fileName.AsString().c_str());
+    PrintString(fileName.AsString());
 
 
     pfConsoleCmdGroup   *group;
@@ -1576,9 +1567,9 @@ PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeMap,
                "string sceneObject, string prefix", 
                "Take cubemap from sceneObject's position and name it prefix_XX.jpg")
 {
-    const char *status = "";
+    ST::string status;
     ST::string objName = params[0];
-    plKey key = FindSceneObjectByName(objName, "", &status);
+    plKey key = FindSceneObjectByName(objName, {}, status);
     PrintString(status);
     if( !key )
         return;
@@ -1784,11 +1775,12 @@ PF_CONSOLE_CMD( Graphics_Show, SingleSound,
     const ST::string& objName = params[0];
     ST::string ageName = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
 
-    plKey key = FindSceneObjectByName(objName, ageName, nullptr, true);
+    ST::string status;
+    plKey key = FindSceneObjectByName(objName, ageName, status, true);
     plSceneObject *obj = (key != nullptr) ? plSceneObject::ConvertNoRef(key->GetObjectPtr()) : nullptr;
     if( !obj )
     {
-        pfConsolePrintF(PrintString, "Cannot find sceneObject {}", objName);
+        pfConsolePrintF(PrintString, "Cannot find sceneObject {}: {}", objName, status);
         return;
     }
 
@@ -2088,8 +2080,8 @@ PF_CONSOLE_CMD( App,
                 "string obj, string evType, float s, int reps" )
 {
     const ST::string& objName = params[0];
-    const char *status = "";
-    plKey key = FindSceneObjectByName(objName, "", &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(objName, {}, status);
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
@@ -2162,8 +2154,8 @@ PF_CONSOLE_CMD( App,
                 "string obj, string evType, float s, int reps" )
 {
     const ST::string& objName = params[0];
-    const char *status = "";
-    plKey key = FindSceneObjectByName(objName, "", &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(objName, {}, status);
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
@@ -2209,16 +2201,17 @@ PF_CONSOLE_CMD( App,
                 "Enable/Disable/Toggle display of named CamView object" )
 {
     const ST::string& name = params[0];
-    plKey key = FindSceneObjectByName(name, {}, nullptr);
+    ST::string status;
+    plKey key = FindSceneObjectByName(name, {}, status);
     if( !key )
     {
-        pfConsolePrintF(PrintString, "{} - Not Found!", name);
+        pfConsolePrintF(PrintString, "{} - Not Found: {}", name, status);
         return;
     }
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
-        pfConsolePrintF(PrintString, "{} - Not Found!", name);
+        pfConsolePrintF(PrintString, "{} - Not Found: {}", name, status);
         return;
     }
 
@@ -2257,7 +2250,7 @@ PF_CONSOLE_CMD( App,
         str += " - Toggled";
     }
     plgDispatch::MsgSend(cmd);
-    PrintString(str.c_str());
+    PrintString(str);
 }
 
 PF_CONSOLE_CMD( App,        // groupName
@@ -2332,7 +2325,7 @@ PF_CONSOLE_CMD( App,        // groupName
                "", // paramList
                "Show object LOS hits" ) // helpString
 {
-    const char *str;
+    ST::string str;
     if (plSceneInputInterface::fShowLOS)
     {
         plSceneInputInterface::fShowLOS = false;
@@ -2588,7 +2581,7 @@ class plActiveRefPeekerKey : public plKeyImp
 };
 
 // Not static so others can call it - making it even handier
-void    MyHandyPrintFunction( const plKey &obj, void (*PrintString)( const char * ) )
+void MyHandyPrintFunction(const plKey &obj, void (*PrintString)(const ST::string&))
 {
     plActiveRefPeekerKey *peeker = (plActiveRefPeekerKey *)(plKeyImp *)obj;
 
@@ -2645,8 +2638,8 @@ PF_CONSOLE_CMD( Registry, ListRefs, "string keyType, string keyName", "For the g
 {
     const ST::string& keyType = params[0];
     const ST::string& keyName = params[1];
-    const char *result = "";
-    plKey obj = FindObjectByNameAndType(keyName, keyType.c_str(), {}, &result);
+    ST::string result;
+    plKey obj = FindObjectByNameAndType(keyName, keyType.c_str(), {}, result);
     if (obj == nullptr)
     {
         PrintString( result );
@@ -2820,9 +2813,9 @@ PF_CONSOLE_CMD( Camera,     // groupName
 
 PF_CONSOLE_CMD( Camera, SwitchTo, "string cameraName", "Switch to the named camera")
 {
-    const char *status = "";
+    ST::string status;
     const ST::string& cameraName = params[0];
-    plKey key = FindObjectByNameAndType(cameraName + "_", "plCameraModifier1", {}, &status, true);
+    plKey key = FindObjectByNameAndType(cameraName + "_", "plCameraModifier1", {}, status, true);
     PrintString(status);
 
     if (key)
@@ -2947,8 +2940,8 @@ PF_CONSOLE_GROUP( Logic )
 
 static plLogicModBase *FindLogicMod(const ST::string &name)
 {
-    const char *status = "";
-    plKey key = FindObjectByNameAndType(name, "plLogicModifier", "", &status, true);
+    ST::string status;
+    plKey key = FindObjectByNameAndType(name, "plLogicModifier", "", status, true);
     pfConsole::AddLine(status);
 
     if (key)
@@ -3044,8 +3037,8 @@ PF_CONSOLE_CMD( Logic, TriggerResponderNum, "int responderNum, ...", "Triggers t
         responderState = params[1];
     }
 
-    const char *status = "";
-    plKey key = FindObjectByNameAndType(responderNames[responderNum-1], "plResponderModifier", "", &status, true);
+    ST::string status;
+    plKey key = FindObjectByNameAndType(responderNames[responderNum-1], "plResponderModifier", "", status, true);
     PrintString(status);
 
     if (key)
@@ -3060,8 +3053,8 @@ PF_CONSOLE_CMD( Logic, TriggerResponder, "string responderComp, ...", "Triggers 
         return;
     }
     
-    const char *status = "";
-    plKey key = FindObjectByNameAndType(params[0], "plResponderModifier", "", &status, true);
+    ST::string status;
+    plKey key = FindObjectByNameAndType(params[0], "plResponderModifier", "", status, true);
     PrintString(status);
 
     int responderState = -1;
@@ -3082,8 +3075,8 @@ PF_CONSOLE_CMD( Logic, FastForwardResponder, "string responderComp, ...", "Fastf
         return;
     }
     
-    const char *status = "";
-    plKey key = FindObjectByNameAndType(params[0], "plResponderModifier", "", &status, true);
+    ST::string status;
+    plKey key = FindObjectByNameAndType(params[0], "plResponderModifier", "", status, true);
     PrintString(status);
 
     int responderState = -1;
@@ -3253,7 +3246,8 @@ PF_CONSOLE_CMD( Nav, UnloadPlayer,  // Group name, Function name
                 "string objName",           // Params
                 "unloads a named player" )  // Help string
 {
-    plKey key = FindSceneObjectByName(params[0], {}, nullptr);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     PrintString("UnloadPlayer (console version) is currently broken. Hassle Matt.");
     // plNetClientMgr::UnloadPlayer(key);
 }
@@ -3264,13 +3258,13 @@ PF_CONSOLE_CMD( Nav, MovePlayer,    // Group name, Function name
 {
     const ST::string& playerName = params[0];
     const ST::string& destPage = params[1];
-    const char *status = "";
-    plKey playerKey = FindSceneObjectByName(playerName, {}, &status);
+    ST::string status;
+    plKey playerKey = FindSceneObjectByName(playerName, {}, status);
     PrintString(status);
     if( !playerKey )
         return;
 
-    plKey nodeKey = FindObjectByName(destPage, plSceneNode::Index(), {}, &status);
+    plKey nodeKey = FindObjectByName(destPage, plSceneNode::Index(), {}, status);
     PrintString(status);
     if( !nodeKey )
         return;
@@ -3554,10 +3548,10 @@ PF_CONSOLE_CMD( Access,
                    "string morphMod, int iLay, int iDel, float wgt",
                    "Set the weight for a morphMod" )
 {
-    const char *status = "";
+    ST::string status;
     const ST::string& preFix = params[0];
     ST::string name = ST::format("{}_plMorphSequence_0", preFix);
-    plKey key = FindObjectByName(name, plMorphSequence::Index(), "", &status);
+    plKey key = FindObjectByName(name, plMorphSequence::Index(), {}, status);
     PrintString(status);
     if (!key)
         return;
@@ -3578,10 +3572,10 @@ PF_CONSOLE_CMD( Access,
                    "string morphMod",
                    "Activate a morphMod" )
 {
-    const char *status = "";
+    ST::string status;
     const ST::string& preFix = params[0];
     ST::string name = ST::format("{}_plMorphSequence_2", preFix);
-    plKey key = FindObjectByName(name, plMorphSequence::Index(), "", &status);
+    plKey key = FindObjectByName(name, plMorphSequence::Index(), {}, status);
     PrintString(status);
     if (!key)
         return;
@@ -3598,10 +3592,10 @@ PF_CONSOLE_CMD( Access,
                    "string morphMod",
                    "Activate a morphMod" )
 {
-    const char *status = "";
+    ST::string status;
     const ST::string& preFix = params[0];
     ST::string name = ST::format("{}_plMorphSequence_2", preFix);
-    plKey key = FindObjectByName(name, plMorphSequence::Index(), "", &status);
+    plKey key = FindObjectByName(name, plMorphSequence::Index(), {}, status);
     PrintString(status);
     if (!key)
         return;
@@ -3807,8 +3801,8 @@ PF_CONSOLE_CMD( Access,
                    "string obj, float fadeUp, float fadeDown",
                    "Test fading on visibility" )
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[0], {}, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     PrintString(status);
     if( !key )
         return;
@@ -3837,8 +3831,8 @@ PF_CONSOLE_CMD( Access,
                    "string losObj",
                    "Set the los test marker" )
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[0], {}, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     PrintString(status);
     if( !key )
         return;
@@ -3851,8 +3845,8 @@ PF_CONSOLE_CMD( Access,
                    "string marker",
                    "Set the Los hack marker" )
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[0], {}, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     PrintString(status);
 
     plSceneObject* so = nullptr;
@@ -3922,8 +3916,8 @@ PF_CONSOLE_CMD( Access,
                    "string gun, float radius, ...",
                    "Fire shot along gun's z-axis, creating decal of radius <radius>, with optional max-range (def 1000)" )
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[0], {}, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     PrintString(status);
     if( !key )
         return;
@@ -4003,8 +3997,8 @@ PF_CONSOLE_CMD( Access,
                "string bull, string psys",
                "Add particle system <psys> to bulletMgr <bull>")
 {
-    const char *status = "";
-    plKey bullKey = FindObjectByName(params[0], plDynaBulletMgr::Index(), {}, &status, false);
+    ST::string status;
+    plKey bullKey = FindObjectByName(params[0], plDynaBulletMgr::Index(), {}, status, false);
     PrintString(status);
     if( !(bullKey && bullKey->GetObjectPtr()) )
     {
@@ -4012,7 +4006,7 @@ PF_CONSOLE_CMD( Access,
         return;
     }
 
-    plKey sysKey = FindSceneObjectByName(params[1], {}, &status);
+    plKey sysKey = FindSceneObjectByName(params[1], {}, status);
     if( !(sysKey && sysKey->GetObjectPtr()) )
     {
         PrintString("Psys not found");
@@ -4073,7 +4067,7 @@ namespace plWaveCmd {
     };
 };
 
-typedef void PrintFunk(const char* str);
+typedef void PrintFunk(const ST::string& str);
 
 static constexpr float FracToPercent(float f) { return 100.f * f; }
 static constexpr float PercentToFrac(float f) { return f / 100.f; }
@@ -4200,13 +4194,13 @@ static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::
         msg = "Unknown parameter";
         break;
     }
-    PrintString(msg.c_str());
+    PrintString(msg);
 }
 
 static plWaveSet7* IGetWaveSet(PrintFunk PrintString, const ST::string& name)
 {
-    const char *status = "";
-    plKey waveKey = FindObjectByName(name, plWaveSet7::Index(), "", &status, false);
+    ST::string status;
+    plKey waveKey = FindObjectByName(name, plWaveSet7::Index(), {}, status, false);
     PrintString(status);
     if (!waveKey)
         return nullptr;
@@ -4646,8 +4640,8 @@ PF_CONSOLE_CMD( Wave_Set, AddBuoy,  // Group name, Function name
                 "string waveSet, string buoyObj", // Params
                 "Add the object as a buoy to the waveset") // Help string
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[1], {}, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[1], {}, status);
     PrintString(status);
     if (!key)
         return;
@@ -4664,8 +4658,8 @@ PF_CONSOLE_CMD( Wave_Set, RemoveBuoy,  // Group name, Function name
                 "string waveSet, string buoyObj", // Params
                 "Remove the object as a buoy to the waveset") // Help string
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[1], {}, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[1], {}, status);
     PrintString(status);
     if (!key)
         return;
@@ -4698,8 +4692,8 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, Drawable,    // Group name, Function name
                 "string objName, bool on",          // Params none
                 "Enable or disable drawing of a sceneobject" )  // Help string
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[0], {}, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     PrintString(status);
     if (!key)
         return;
@@ -4717,8 +4711,8 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, Physical,    // Group name, Function name
                 "string objName, bool on",          // Params none
                 "Enable or disable the physical of a sceneobject" ) // Help string
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[0], {}, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     PrintString(status);
     if (!key)
         return;
@@ -4736,8 +4730,8 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, PhysicalT,   // Group name, Function name
                 "string objName, bool on",          // Params none
                 "Enable or disable the physical of a sceneobject" ) // Help string
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[0], nullptr, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     PrintString(status);
     if (!key)
         return;
@@ -4759,8 +4753,8 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, Audible,     // Group name, Function name
                 "string objName, bool on",          // Params none
                 "Enable or disable the audible of a sceneobject" )  // Help string
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[0], {}, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     PrintString(status);
     if (!key)
         return;
@@ -4778,8 +4772,8 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, All,         // Group name, Function name
                 "string objName, bool on",          // Params none
                 "Enable or disable all fxns of a sceneobject" ) // Help string
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[0], {}, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     PrintString(status);
     if (!key)
         return;
@@ -4797,12 +4791,12 @@ PF_CONSOLE_CMD( SceneObject, Attach,            // Group name, Function name
                 "string childName, string parentName",          // Params none
                 "Attach child to parent" )  // Help string
 {
-    const char *status = "";
+    ST::string status;
 
     ST::string childName = params[0];
     ST::string parentName = params[1];
 
-    plKey childKey = FindSceneObjectByName(childName, "", &status);
+    plKey childKey = FindSceneObjectByName(childName, {}, status);
     if( !childKey )
     {
         PrintString(status);
@@ -4815,7 +4809,7 @@ PF_CONSOLE_CMD( SceneObject, Attach,            // Group name, Function name
         return;
     }
 
-    plKey parentKey = FindSceneObjectByName(parentName, "", &status);
+    plKey parentKey = FindSceneObjectByName(parentName, {}, status);
     if( !parentKey )
     {
         PrintString(status);
@@ -4832,11 +4826,11 @@ PF_CONSOLE_CMD( SceneObject, Detach,            // Group name, Function name
                 "string childName",         // Params none
                 "Detach a child from parent (if any)" ) // Help string
 {
-    const char *status = "";
+    ST::string status;
 
     ST::string childName = params[0];
 
-    plKey childKey = FindSceneObjectByName(childName, "", &status);
+    plKey childKey = FindSceneObjectByName(childName, {}, status);
     if( !childKey )
     {
         PrintString(status);
@@ -4977,13 +4971,16 @@ PF_CONSOLE_CMD( Physics, ApplyTorque, "string Object, float axisX, float axisY, 
 
 PF_CONSOLE_CMD( Physics, ApplyImpulse, "string Object, float x, float y, float z", "Apply an impulse to a scene object.")
 {
-    plKey key = FindSceneObjectByName(params[0], {}, nullptr);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
 
     if (key)
     {
         hsVector3 impulse(params[1], params[2], params[3]);
         plImpulseMsg *m = new plImpulseMsg(nullptr, key, impulse);
         plgDispatch::MsgSend(m);
+    } else {
+        PrintString(status);
     }
 }
 
@@ -5016,13 +5013,16 @@ PF_CONSOLE_CMD( Physics, ApplyAngularImpulse, "string Object, float x, float y, 
 
 PF_CONSOLE_CMD( Physics, ApplyDamping, "string Object, float dampFactor", "Reduce the velocity and spin of the object to the given percentage.")
 {
-    plKey key = FindSceneObjectByName(params[0], {}, nullptr);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
 
     if (key)
     {
         float dampFactor = params[1];
         plDampMsg *m = new plDampMsg(nullptr, key, dampFactor);
         plgDispatch::MsgSend(m);
+    } else {
+        PrintString(status);
     }
 }
 
@@ -5108,7 +5108,7 @@ PF_CONSOLE_CMD(Physics, LogSDL, "int level", "Turn logging of physics SDL state 
 
 PF_CONSOLE_CMD(Physics, ExtraProfile, "", "Toggle extra simulation profiling")
 {
-    const char *str;
+    ST::string str;
     if (plSimulationMgr::fExtraProfile)
     {
         plSimulationMgr::fExtraProfile = false;
@@ -5229,7 +5229,7 @@ void IShowSDL(const plStateDataRecord* rec, _PrintStringT&& PrintString)
                 ss << ',';
             }
             ST::string line = ss.to_string();
-            PrintString(line.c_str());
+            PrintString(line);
             plStatusLog::AddLineS("ShowSDL.log", line);
         }
     }
@@ -5358,10 +5358,10 @@ PF_CONSOLE_CMD( Age, SetSDLBool, "string varName, bool value, int index", "Set t
 
 PF_CONSOLE_GROUP( ParticleSystem ) // Defines a main command group
 
-void UpdateParticleParam(const ST::string &objName, int32_t paramID, float value, void (*PrintString)(const char *))
+void UpdateParticleParam(const ST::string &objName, int32_t paramID, float value, void (*PrintString)(const ST::string&))
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(objName, "", &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(objName, {}, status);
     PrintString(status);
     if (key == nullptr)
         return;
@@ -5484,9 +5484,12 @@ PF_CONSOLE_CMD( ParticleSystem,
                "string objName, int numParticles",
                "Creates a system (if necessary) on the avatar, and transfers particles" )
 {
-    plKey key = FindSceneObjectByName(params[0], {}, nullptr);
-    if (key == nullptr)
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
+    if (key == nullptr) {
+        PrintString(status);
         return;
+    }
     
     plSceneObject* so = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if (so == nullptr)
@@ -5502,9 +5505,12 @@ PF_CONSOLE_CMD( ParticleSystem,
                "string objName, float timeLeft, float num, bool useAsPercentage",
                "Flag some particles for death." )
 {
-    plKey key = FindSceneObjectByName(params[0], {}, nullptr);
-    if (key == nullptr)
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
+    if (key == nullptr) {
+        PrintString(status);
         return;
+    }
     
     plSceneObject* so = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if (so == nullptr)
@@ -5523,7 +5529,8 @@ PF_CONSOLE_SUBGROUP( ParticleSystem, Flock )
 
 static plParticleFlockEffect *FindFlock(const ST::string &objName)
 {
-    plKey key = FindSceneObjectByName(objName, "", nullptr);
+    ST::string status;
+    plKey key = FindSceneObjectByName(objName, {}, status);
     
     if (key == nullptr)
         return nullptr;
@@ -5700,7 +5707,8 @@ PF_CONSOLE_GROUP( Animation ) // Defines a main command group
 
 void SendAnimCmdMsg(const ST::string &objName, plMessage *msg)
 {
-    plKey key = FindSceneObjectByName(objName, "", nullptr);
+    ST::string status;
+    plKey key = FindSceneObjectByName(objName, {}, status);
     if (key != nullptr)
     {
         msg->AddReceiver(key);
@@ -6141,8 +6149,7 @@ PF_CONSOLE_CMD( Python,
     PythonInterface::RunFunctionSafe("xCheat", function.c_str(), args.c_str());
 
     // get the messages
-    ST::string output = PythonInterface::getOutputAndReset();
-    PrintString(output.c_str());
+    PrintString(PythonInterface::getOutputAndReset());
 }
 
 PF_CONSOLE_CMD( Python,
@@ -6155,8 +6162,7 @@ PF_CONSOLE_CMD( Python,
 
     PythonInterface::RunString("import xCheat;xc=[x for x in dir(xCheat) if not x.startswith('_')]\nfor i in range((len(xc)//4)+1): print(xc[i*4:(i*4)+4])\n",mymod);
     // get the messages
-    ST::string output = PythonInterface::getOutputAndReset();
-    PrintString(output.c_str());
+    PrintString(PythonInterface::getOutputAndReset());
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS

@@ -57,6 +57,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <string_theory/string>
+
 #include "pnKeyedObject/hsKeyedObject.h"
 
 class pfConsoleEngine;
@@ -117,12 +119,12 @@ class pfConsole : public hsKeyedObject
 
         static uint32_t       fConsoleTextColor;
         static pfConsole    *fTheConsole;
-        static void IAddLineCallback( const char *string );
+        static void IAddLineCallback(const ST::string& string);
 
         static plPipeline   *fPipeline;
 
         void    IAddLine( const char *string, short leftMargin = 0 );
-        void    IAddParagraph( const char *string, short margin = 0 );
+        void    IAddParagraph(const ST::string& string, short margin = 0);
         void    IClear();
 
         void    ISetMode( uint8_t mode );
@@ -148,8 +150,7 @@ class pfConsole : public hsKeyedObject
         void    Init( pfConsoleEngine *engine );
         void    Draw( plPipeline *p );
 
-        static void AddLine( const char *string ) { fTheConsole->IAddParagraph( string ); }
-        static void AddLineF(const char * fmt, ...);
+        static void AddLine(const ST::string& string) { fTheConsole->IAddParagraph(string); }
         static void Clear() { fTheConsole->IClear(); }
         static void Hide() { fTheConsole->ISetMode(kModeHidden); }
 

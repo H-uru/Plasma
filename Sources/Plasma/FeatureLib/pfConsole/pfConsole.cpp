@@ -296,7 +296,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
         plFileName fn = ST::format("{}{04}.png", prefix, num);
         plPNG::Instance().WriteToFile(plFileName::Join(screenshots, fn), capMsg->GetMipmap());
 
-        AddLineF("Saved screenshot as '%s'", fn.AsString().c_str());
+        AddLine(ST::format("Saved screenshot as '{}'", fn.AsString()));
         return true;
     }
 
@@ -334,14 +334,14 @@ bool    pfConsole::MsgReceive( plMessage *msg )
             }
         }
         else if( cmd->GetCmd() == plConsoleMsg::kAddLine )
-            IAddParagraph( cmd->GetString().c_str() );
+            IAddParagraph(cmd->GetString());
         else if( cmd->GetCmd() == plConsoleMsg::kExecuteLine )
         {
             if( !fEngine->RunCommand(cmd->GetString(), IAddLineCallback))
             {
                 // Change the following line once we have a better way of reporting
                 // errors in the parsing
-                AddLineF("%s:\n\nCommand: '%s'\n", fEngine->GetErrorMsg().to_latin_1().c_str(), fEngine->GetLastErrorLine().to_latin_1().c_str());
+                AddLine(ST::format("{}:\n\nCommand: '{}'\n", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine()));
             }
         }
             
@@ -614,8 +614,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
                     IAddLine( "" );     // add a blank line
                     PythonInterface::RunStringInteractive("import sys;print(f'Python {sys.version}')", nullptr);
                     // get the messages
-                    ST::string output = PythonInterface::getOutputAndReset();
-                    AddLine( output.c_str() );
+                    AddLine(PythonInterface::getOutputAndReset());
                     fPythonFirstTime = false;       // do this only once!
                 }
             }
@@ -658,7 +657,7 @@ void    pfConsole::IHandleCharacter(const char c)
 
 //// IAddLineCallback ////////////////////////////////////////////////////////
 
-void    pfConsole::IAddLineCallback( const char *string )
+void pfConsole::IAddLineCallback(const ST::string& string)
 {
     fTheConsole->IAddParagraph( string, 0 );
 }
@@ -696,10 +695,10 @@ void    pfConsole::IAddLine( const char *string, short leftMargin )
 
 //// IAddParagraph ///////////////////////////////////////////////////////////
 
-void    pfConsole::IAddParagraph( const char *s, short margin )
+void pfConsole::IAddParagraph(const ST::string& s, short margin)
 {
-    char        *ptr, *ptr2, *ptr3, *string=(char*)s;
-
+    ST::char_buffer buf = s.to_latin_1();
+    char* string = buf.data();
 
     // Special character: if \i is in front of the string, indent it
     while( strncmp( string, "\\i", 2 ) == 0 )
@@ -708,9 +707,10 @@ void    pfConsole::IAddParagraph( const char *s, short margin )
         string += 2;
     }
 
-    for (ptr = string; ptr != nullptr && *ptr != 0; )
+    for (char* ptr = string; ptr != nullptr && *ptr != 0; )
     {
         // Go as far as possible
+        char* ptr2;
         if( strlen( ptr ) < kMaxCharsWide - margin - margin - 1 )
             ptr2 = ptr + strlen( ptr );
         else
@@ -721,7 +721,7 @@ void    pfConsole::IAddParagraph( const char *s, short margin )
         }
 
         // Check for carriage return
-        ptr3 = strchr( ptr, '\n' );
+        char* ptr3 = strchr( ptr, '\n' );
         if( ptr3 == ptr )
         {
             IAddLine( "", margin );
@@ -989,7 +989,7 @@ void    pfConsole::IExecuteWorkingLine()
             char empty[] = "";
             fEngine->PrintCmdHelp(empty, IAddLineCallback);
         } else if (!fEngine->PrintCmdHelp(fWorkingLine, IAddLineCallback)) {
-            AddLine(fEngine->GetErrorMsg().to_latin_1().c_str());
+            AddLine(fEngine->GetErrorMsg());
         }
 
         fHelpMode = false;
@@ -998,14 +998,14 @@ void    pfConsole::IExecuteWorkingLine()
         if (fPythonMultiLines > 0) {
             // if there was a line then bump num lines
             if (fWorkingLine[0] != 0) {
-                AddLineF("... %s", fWorkingLine);
+                AddLine(ST_LITERAL("... ") + ST::string::from_latin_1(fWorkingLine));
                 fPythonMultiLines++;
             }
 
             // is it time to evaluate all the multi lines that are saved?
             if (fWorkingLine[0] == 0 || fPythonMultiLines >= kNumHistoryItems) {
                 if (fPythonMultiLines >= kNumHistoryItems)
-                    AddLine("Python Multi-line buffer full!");
+                    AddLine(ST_LITERAL("Python Multi-line buffer full!"));
                 // get the lines and stuff them in our buffer
                 char biglines[kNumHistoryItems * (kMaxCharsWide + 1)];
                 biglines[0] = 0;
@@ -1021,8 +1021,7 @@ void    pfConsole::IExecuteWorkingLine()
                 PyObject* mymod = PythonInterface::FindModule("__main__");
                 PythonInterface::RunStringInteractive(biglines, mymod);
                 // get the messages
-                ST::string output = PythonInterface::getOutputAndReset();
-                AddLine(output.c_str());
+                AddLine(PythonInterface::getOutputAndReset());
                 // all done doing multi lines...
                 fPythonMultiLines = 0;
             }
@@ -1030,7 +1029,7 @@ void    pfConsole::IExecuteWorkingLine()
             // else we are just doing single lines
             // was there actually anything in the input buffer?
             if (fWorkingLine[0] != 0) {
-                AddLineF(">>> %s", fWorkingLine);
+                AddLine(ST_LITERAL(">>> ") + ST::string::from_latin_1(fWorkingLine));
                 // check to see if this is going to be a multi line mode ( a ':' at the end)
                 if (fWorkingLine[eol - 1] == ':') {
                     fPythonMultiLines = 1;
@@ -1040,11 +1039,10 @@ void    pfConsole::IExecuteWorkingLine()
                     PyObject* mymod = PythonInterface::FindModule("__main__");
                     PythonInterface::RunStringInteractive(fWorkingLine, mymod);
                     // get the messages
-                    ST::string output = PythonInterface::getOutputAndReset();
-                    AddLine(output.c_str());
+                    AddLine(PythonInterface::getOutputAndReset());
                 }
             } else {
-                AddLine(">>> ");
+                AddLine(ST_LITERAL(">>> "));
             }
         }
         // find the end of the line
@@ -1053,7 +1051,7 @@ void    pfConsole::IExecuteWorkingLine()
         if (!fEngine->RunCommand(ST::string::from_latin_1(fWorkingLine), IAddLineCallback)) {
             ST::string errorMsg = fEngine->GetErrorMsg();
             if (!errorMsg.empty())
-                AddLine(errorMsg.to_latin_1().c_str());
+                AddLine(errorMsg);
         }
     }
 
@@ -1065,36 +1063,25 @@ void    pfConsole::IExecuteWorkingLine()
 
 void    pfConsole::IPrintSomeHelp()
 {
-    char    msg1[] = "The console contains commands arranged under groups and subgroups. \
+    ST::string msg1 = ST_LITERAL("The console contains commands arranged under groups and subgroups. \
 To use a command, you type the group name plus the command, such as 'Console.Clear' or \
-'Console Clear'.";
+'Console Clear'.");
     
-    char    msg2[] = "To get help on a command or group, type '?' followed by the command or \
+    ST::string msg2 = ST_LITERAL("To get help on a command or group, type '?' followed by the command or \
 group name. Typing '?' and just hitting enter will bring up this message. Typing '?' and \
-then 'commands' will bring up a list of all base groups and commands.";
+then 'commands' will bring up a list of all base groups and commands.");
 
-    char    msg3[] = "You can also have the console auto-complete a command by pressing tab. \
+    ST::string msg3 = ST_LITERAL("You can also have the console auto-complete a command by pressing tab. \
 This will search for a group or command that starts with what you have typed. If there is more \
-than one match, pressing tab repeatedly will cycle through all the matches.";
+than one match, pressing tab repeatedly will cycle through all the matches.");
 
 
-    AddLine( "" );
-    AddLine( "How to use the console:" );
-    IAddParagraph( msg1, 2 );
-    AddLine( "" );
-    IAddParagraph( msg2, 2 );
-    AddLine( "" );
-    IAddParagraph( msg3, 2 );
-    AddLine( "" );
-}
-
-
-//============================================================================
-void pfConsole::AddLineF(const char * fmt, ...) {
-    char str[1024];
-    va_list args;
-    va_start(args, fmt);
-    vsnprintf(str, std::size(str), fmt, args);
-    va_end(args);
-    AddLine(str);
+    AddLine({});
+    AddLine(ST_LITERAL("How to use the console:"));
+    IAddParagraph(msg1, 2);
+    AddLine({});
+    IAddParagraph(msg2, 2);
+    AddLine({});
+    IAddParagraph(msg3, 2);
+    AddLine({});
 }

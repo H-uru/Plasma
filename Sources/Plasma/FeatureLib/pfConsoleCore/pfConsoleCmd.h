@@ -212,7 +212,7 @@ class pfConsoleCmdParam
 
 //// pfConsoleCmd Class Definition ///////////////////////////////////////////
 
-typedef void (*pfConsoleCmdPtr)( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) );
+typedef void (*pfConsoleCmdPtr)(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&));
 
 class pfConsoleCmd
 {
@@ -255,7 +255,7 @@ class pfConsoleCmd
 
         void    Register(const char *group, const char *name );
         void    Unregister();
-        void    Execute(int32_t numParams, pfConsoleCmdParam *params, void (*PrintFn)(const char *) = nullptr);
+        void    Execute(int32_t numParams, pfConsoleCmdParam *params, void (*PrintFn)(const ST::string&) = nullptr);
 
         void    Link( pfConsoleCmd **prevPtr );
         void    Unlink();
@@ -293,14 +293,14 @@ public:
 
 
 #define PF_CONSOLE_BASE_CMD( name, p, help ) \
-    void    pfConsoleCmd_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) ); \
-    pfConsoleCmd    conCmd_##name(nullptr, #name, p, help, pfConsoleCmd_##name##_proc); \
-    void    pfConsoleCmd_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) )
+    void pfConsoleCmd_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&)); \
+    pfConsoleCmd conCmd_##name(nullptr, #name, p, help, pfConsoleCmd_##name##_proc); \
+    void pfConsoleCmd_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&))
 
 #define PF_CONSOLE_CMD( grp, name, p, help ) \
-    void    pfConsoleCmd_##grp##_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) ); \
-    pfConsoleCmd    conCmd_##grp##_##name( #grp, #name, p, help, pfConsoleCmd_##grp##_##name##_proc ); \
-    void    pfConsoleCmd_##grp##_##name##_proc( int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)( const char * ) )
+    void pfConsoleCmd_##grp##_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&)); \
+    pfConsoleCmd conCmd_##grp##_##name( #grp, #name, p, help, pfConsoleCmd_##grp##_##name##_proc ); \
+    void pfConsoleCmd_##grp##_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&))
 
 //// pfConsoleCmdGroup Creation Macro ////////////////////////////////////////
 
@@ -317,9 +317,9 @@ public:
     void _console_##name##_file_dummy() { }
 
 template <typename... Args>
-void pfConsolePrintF(void pfun(const char *), const char *fmt, Args &&...args)
+void pfConsolePrintF(void pfun(const ST::string&), const char *fmt, Args &&...args)
 {
-    pfun(ST::format(fmt, std::forward<Args>(args)...).c_str());
+    pfun(ST::format(fmt, std::forward<Args>(args)...));
 }
 
 #endif //_pfConsoleCmd_h

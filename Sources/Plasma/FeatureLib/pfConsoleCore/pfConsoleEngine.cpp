@@ -121,7 +121,7 @@ pfConsoleEngine::~pfConsoleEngine()
 
 //// PrintCmdHelp ////////////////////////////////////////////////////////////
 
-bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char * ) )
+bool pfConsoleEngine::PrintCmdHelp(char *name, void (*PrintFn)(const ST::string&))
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
@@ -155,11 +155,11 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
         if( group == pfConsoleCmdGroup::GetBaseGroup() )
             PrintFn("Base commands and groups:");
         else
-            PrintFn(ST::format("Group {}:", group->GetName()).c_str());
+            PrintFn(ST::format("Group {}:", group->GetName()));
         PrintFn("  Subgroups:");
         for (subGrp = group->GetFirstSubGroup(); subGrp != nullptr; subGrp = subGrp->GetNext())
         {
-            PrintFn(ST::format("    {}", subGrp->GetName()).c_str());
+            PrintFn(ST::format("    {}", subGrp->GetName()));
         }
         PrintFn("  Commands:");
         for (cmd = group->GetFirstCommand(); cmd != nullptr; cmd = cmd->GetNext())
@@ -170,7 +170,7 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
             }
             tempString[ i ] = 0;
 
-            PrintFn(ST::format("    {}: {}", cmd->GetName(), tempString).c_str());
+            PrintFn(ST::format("    {}: {}", cmd->GetName(), tempString));
         }
 
         return true;
@@ -185,9 +185,9 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
     }
 
     /// That's it!
-    PrintFn(ST::format("\nHelp for the command {}:", cmd->GetName()).c_str());
-    PrintFn(ST::format("\\i{}", cmd->GetHelp()).c_str());
-    PrintFn(ST::format("\\iUsage: {}", cmd->GetSignature()).c_str());
+    PrintFn(ST::format("\nHelp for the command {}:", cmd->GetName()));
+    PrintFn(ST::format("\\i{}", cmd->GetHelp()));
+    PrintFn(ST::format("\\iUsage: {}", cmd->GetSignature()));
 
     return true;
 }
@@ -235,7 +235,7 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
 
 //// Dummy Local Function ////////////////////////////////////////////////////
 
-void    DummyPrintFn( const char *line )
+void DummyPrintFn(const ST::string& line)
 {
 }
 
@@ -284,7 +284,7 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 //  requires tokenizing the entire line and searching the tokens one by one,
 //  parsing them first as groups, then commands and then params.
 
-bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const char*))
+bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const ST::string&))
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
@@ -370,8 +370,8 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const c
     {
         // Print help string and return
         fErrorMsg.clear(); // Printed on next line
-        PrintFn("Invalid parameters to command");
-        PrintFn(ST::format("Usage: {}", cmd->GetSignature()).c_str());
+        PrintFn(ST_LITERAL("Invalid parameters to command"));
+        PrintFn(ST::format("Usage: {}", cmd->GetSignature()));
         return false;
     }
 

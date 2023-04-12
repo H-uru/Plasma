@@ -131,8 +131,7 @@ PF_CONSOLE_FILE_DUMMY(Net)
 //        name isn't obvious (i.e. SetFogColor doesn't really need one)
 //  
 //  The actual C code prototype looks like:
-//      void    pfConsoleCmd_groupName_functionName( uint32_t numParams, pfConsoleCmdParam *params, 
-//                                                      void (*PrintString)( char * ) );
+//      void pfConsoleCmd_groupName_functionName(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&));
 //
 //  numParams is exactly what it sounds like. params is an array of console
 //  parameter objects, each of which are rather nifty in that they can be cast
@@ -184,10 +183,10 @@ PF_CONSOLE_FILE_DUMMY(Net)
 // utility functions
 //
 //////////////////////////////////////////////////////////////////////////////
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, const char** statusStr, bool subString=false);
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, const char** statusStr, bool subString=false);
+plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, ST::string& statusStr, bool subString=false);
+plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, ST::string& statusStr, bool subString=false);
 plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                              const char** statusStr, bool subString=false);
+                              ST::string statusStr, bool subString=false);
 
 //////////////////////////////////////////////////////////////////////////////
 //// Network Group Commands //////////////////////////////////////////////////
@@ -229,7 +228,7 @@ PF_CONSOLE_CMD( Net,        // groupName
     cMsg->SetBCastFlag(plMessage::kLocalPropagate, 0);
     plgDispatch::MsgSend( cMsg );
     
-    PrintString(const_cast<char*>(text.c_str()));   // show locally too
+    PrintString(text); // show locally too
 }
 
 
@@ -495,8 +494,8 @@ PF_CONSOLE_CMD( Net,            // groupName
                "string objName, float freqInSecs", // paramList
                "Instructs the server to only send me updates about this object periodically" )  // helpString
 {
-    const char *status = "";
-    plKey key = FindSceneObjectByName(params[0], {}, &status);
+    ST::string status;
+    plKey key = FindSceneObjectByName(params[0], {}, status);
     PrintString(status);
     if (!key)
         return;
