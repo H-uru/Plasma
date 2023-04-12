@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pfConsoleCmd.h"
 
-namespace ST { class string; }
+#include <string_theory/string>
 
 //// Class Definition ////////////////////////////////////////////////////////
 
@@ -61,44 +61,43 @@ class pfConsoleContext
 
         bool    fAddWhenNotFound;       // Controls whether we add variables on Set() calls if they're not found
 
-        char    *fName;
+        ST::string fName;
 
-        std::vector<char *>            fVarNames;
+        std::vector<ST::string> fVarNames;
         std::vector<pfConsoleCmdParam> fVarValues;
 
-        void    IAddVar( const char *name, const pfConsoleCmdParam &value );
+        void IAddVar(ST::string name, const pfConsoleCmdParam &value);
 
         static pfConsoleContext fRootContext;
 
     public:
 
-        pfConsoleContext( const char *name );
-        virtual ~pfConsoleContext();
+        pfConsoleContext(ST::string name);
 
         void    Clear();
 
         size_t              GetNumVars() const;
-        const char          *GetVarName(size_t idx) const;
+        ST::string GetVarName(size_t idx) const;
         const pfConsoleCmdParam   &GetVarValue(size_t idx) const;
 
-        hsSsize_t FindVar(const char *name) const;
+        hsSsize_t FindVar(const ST::string& name) const;
         void    RemoveVar(size_t idx);
 
-        void    AddVar( const char *name, const pfConsoleCmdParam &value );
-        void    AddVar( const char *name, int value );
-        void    AddVar( const char *name, float value );
-        void    AddVar(const char *name, ST::string value);
-        void    AddVar( const char *name, char value );
-        void    AddVar( const char *name, bool value );
+        void AddVar(ST::string name, const pfConsoleCmdParam& value);
+        void AddVar(ST::string name, int value);
+        void AddVar(ST::string name, float value);
+        void AddVar(ST::string name, ST::string value);
+        void AddVar(ST::string name, char value);
+        void AddVar(ST::string name, bool value);
 
         bool    SetVar(size_t idx, const pfConsoleCmdParam &value);
 
-        bool    SetVar( const char *name, const pfConsoleCmdParam &value );
-        bool    SetVar( const char *name, int value );
-        bool    SetVar( const char *name, float value );
-        bool    SetVar(const char *name, ST::string value);
-        bool    SetVar( const char *name, char value );
-        bool    SetVar( const char *name, bool value );
+        bool SetVar(const ST::string& name, const pfConsoleCmdParam& value);
+        bool SetVar(const ST::string& name, int value);
+        bool SetVar(const ST::string& name, float value);
+        bool SetVar(const ST::string& name, ST::string value);
+        bool SetVar(const ST::string& name, char value);
+        bool SetVar(const ST::string& name, bool value);
 
         // Decide whether Sets() on nonexistant variables will fail or add a new variable
         void    SetAddWhenNotFound( bool f ) { fAddWhenNotFound = f; }

@@ -864,7 +864,7 @@ PF_CONSOLE_CMD( Console, SetVar, "string name, string value",
     const ST::string& varName = params[0];
     bool oldF = ctx.GetAddWhenNotFound();
     ctx.SetAddWhenNotFound( true );
-    ctx.SetVar(varName.c_str(), params[1]);
+    ctx.SetVar(varName, params[1]);
     ctx.SetAddWhenNotFound( oldF );
 }
 
@@ -873,7 +873,7 @@ PF_CONSOLE_CMD( Console, PrintVar, "string name", "Prints the value of a given g
     pfConsoleContext &ctx = pfConsoleContext::GetRootContext();
 
     const ST::string& varName = params[0];
-    hsSsize_t idx = ctx.FindVar(varName.c_str());
+    hsSsize_t idx = ctx.FindVar(varName);
     if( idx == -1 )
         PrintString( "Variable not found" );
     else
