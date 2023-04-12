@@ -122,21 +122,19 @@ class pfConsoleCmdParam
 
         uint8_t   fType;
 
-        typedef char* CharPtr;
-
         union
         {
             int     i;
             float   f;
             bool    b;
-            CharPtr s;
+            const char* s;
             char    c;
         } fValue;
 
         int IToInt() const;
         float IToFloat() const;
         bool IToBool() const;
-        CharPtr IToString() const;
+        const char* IToString() const;
         char IToChar() const;
 
     public:
@@ -155,7 +153,7 @@ class pfConsoleCmdParam
         operator int() const { return IToInt(); }
         operator float() const { return IToFloat(); }
         operator bool() const { return IToBool(); }
-        operator CharPtr() const { return IToString(); }
+        operator const char*() const { return IToString(); }
         operator char() const { return IToChar(); }
         operator plFileName() const { return IToString(); }
 
@@ -164,9 +162,9 @@ class pfConsoleCmdParam
         void    SetInt( int i )         { fValue.i = i; fType = kInt; }
         void    SetFloat( float f )     { fValue.f = f; fType = kFloat; }
         void    SetBool( bool b )       { fValue.b = b; fType = kBool; }
-        void    SetString( CharPtr s )  { fValue.s = s; fType = kString; }
+        void    SetString(const char* s) { fValue.s = s; fType = kString; }
         void    SetChar( char c )       { fValue.c = c; fType = kChar; }
-        void    SetAny( CharPtr s )     { fValue.s = s; fType = kAny; }
+        void    SetAny(const char* s) { fValue.s = s; fType = kAny; }
         void    SetNone()         { fType = kNone; }
 };
 

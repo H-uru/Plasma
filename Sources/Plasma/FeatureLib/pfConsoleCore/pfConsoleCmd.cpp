@@ -623,7 +623,7 @@ bool pfConsoleCmdParam::IToBool() const
     return fValue.b;
 }
 
-pfConsoleCmdParam::CharPtr pfConsoleCmdParam::IToString() const
+const char* pfConsoleCmdParam::IToString() const
 {
     hsAssert( fType == kString || fType == kAny, "Trying to use a non-string parameter as a string!" );
 

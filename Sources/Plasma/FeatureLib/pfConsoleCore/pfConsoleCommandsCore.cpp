@@ -72,7 +72,7 @@ PF_CONSOLE_CMD(
     "string url",
     "Set the server's status URL"
 ) {
-    SetServerStatusUrl((char*)params[0]);
+    SetServerStatusUrl(static_cast<const char*>(params[0]));
 }
 
 //============================================================================
@@ -82,7 +82,7 @@ PF_CONSOLE_CMD(
     "string url",
     "Set the server's new user sign-up URL"
 ) {
-    SetServerSignupUrl((char*)params[0]);
+    SetServerSignupUrl(static_cast<const char*>(params[0]));
 }
 
 //============================================================================
@@ -92,7 +92,7 @@ PF_CONSOLE_CMD(
     "string name",
     "Set the displayable server name"
 ) {
-    SetServerDisplayName((char*)params[0]);
+    SetServerDisplayName(static_cast<const char*>(params[0]));
 }
 
 //============================================================================
@@ -117,7 +117,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the File Server address"
 ) {
-    SetFileSrvHostname((char*)params[0]);
+    SetFileSrvHostname(static_cast<const char*>(params[0]));
 }
 
 
@@ -132,7 +132,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the Auth Server address"
 ) {
-    SetAuthSrvHostname((char*)params[0]);
+    SetAuthSrvHostname(static_cast<const char*>(params[0]));
 }
 
 //============================================================================
@@ -248,7 +248,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the GateKeeper Server address"
 ) {
-    SetGateKeeperSrvHostname((char*)params[0]);
+    SetGateKeeperSrvHostname(static_cast<const char*>(params[0]));
 }
 
 //============================================================================

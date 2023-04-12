@@ -427,7 +427,7 @@ PF_CONSOLE_BASE_CMD( SampleCmd3, "int, ...", "Sample command #3" )
     if( numParams > 1 )
     {
         // This is okay--any parameters via ... are strings
-        char    *str = params[ 1 ];
+        const char* str = params[1];
 
         // This is also okay, since ... allows the params to be cast
         // to any valid type. Note that if the parameter isn't actually
@@ -816,7 +816,7 @@ public:
 PF_CONSOLE_CMD( Console, CreateDocumentation, "string fileName",
                 "Writes HTML documentation for the current console commands" )
 {
-    PrintString((char*)params[0]);
+    PrintString(params[0]);
 
     FILE* f = fopen(params[0], "wt");
     if (f == nullptr) {
@@ -839,7 +839,7 @@ PF_CONSOLE_CMD( Console, CreateBriefDocumentation, "string fileName",
                 "Writes brief HTML documentation for the current console commands" )
 {
 
-    PrintString((char*)params[0]);
+    PrintString(params[0]);
 
 
     pfConsoleCmdGroup   *group;
@@ -873,7 +873,7 @@ PF_CONSOLE_CMD( Console, SetVar, "string name, string value",
 
     bool oldF = ctx.GetAddWhenNotFound();
     ctx.SetAddWhenNotFound( true );
-    ctx.SetVar((char*)params[ 0 ], (char*)params[ 1 ] );
+    ctx.SetVar(static_cast<const char*>(params[0]), static_cast<const char*>(params[1]));
     ctx.SetAddWhenNotFound( oldF );
 }
 
@@ -1620,7 +1620,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, AVIWrite, "...", "Saves each frame to an AVI 
         return;
     }
     else if( numParams > 0 )
-        strcpy( fileName, (char *)params[ 0 ] );
+        strcpy(fileName, params[0]);
     else
     {
         // Think up a filename
@@ -1791,14 +1791,14 @@ PF_CONSOLE_CMD( Graphics_Show, SingleSound,
     plSceneObject *obj = (key != nullptr) ? plSceneObject::ConvertNoRef(key->GetObjectPtr()) : nullptr;
     if( !obj )
     {
-        pfConsolePrintF(PrintString, "Cannot find sceneObject {}", (char *)params[0]);
+        pfConsolePrintF(PrintString, "Cannot find sceneObject {}", static_cast<const char*>(params[0]));
         return;
     }
 
     const plAudioInterface  *ai = obj->GetAudioInterface();
     if (ai == nullptr)
     {
-        pfConsolePrintF(PrintString, "sceneObject {} has no audio interface", (char *)params[0]);
+        pfConsolePrintF(PrintString, "sceneObject {} has no audio interface", static_cast<const char*>(params[0]));
         return;
     }
     plKey   aiKey = ai->GetKey();
@@ -1813,7 +1813,7 @@ PF_CONSOLE_CMD( Graphics_Show, SingleSound,
     // is, imho, acceptable.
     pfConsole::GetPipeline()->SetDrawableTypeMask( pfConsole::GetPipeline()->GetDrawableTypeMask() | plDrawableSpans::kAudibleProxy );
 
-    pfConsolePrintF(PrintString, "Toggling proxies on sceneObject {}", (char *)params[0]);
+    pfConsolePrintF(PrintString, "Toggling proxies on sceneObject {}", static_cast<const char*>(params[0]));
 }
 
 PF_CONSOLE_CMD( Graphics_Show, SoundOnly, "", "Toggle only sound fields visible")
@@ -2129,7 +2129,7 @@ PF_CONSOLE_CMD( App,
     float secs = 0;
     int reps = 1;
 
-    char* eventStr = params[1];
+    const char* eventStr = params[1];
     CallbackEvent event;
     if( !stricmp(eventStr, "Start") )
     {
@@ -2192,7 +2192,7 @@ PF_CONSOLE_CMD( App,
     float secs = 0;
     int reps = -1;
 
-    char* eventStr = params[1];
+    const char* eventStr = params[1];
     CallbackEvent event;
     if( !stricmp(eventStr, "Start") )
     {
@@ -2418,7 +2418,7 @@ PF_CONSOLE_CMD(App,
                "Verify the given age is really unloaded into logfile logs/<age>.log")
 {
     hsAssert(0, "Fixme");
-    char* age = params[0];
+    const char* age = params[0];
     char str[256];
     sprintf(str, "%s.log", age);
 //  hsgResMgr::ResMgr()->VerifyAgeUnloaded(str, age);
@@ -2834,7 +2834,7 @@ PF_CONSOLE_CMD( Camera,     // groupName
 PF_CONSOLE_CMD( Camera, SwitchTo, "string cameraName", "Switch to the named camera")
 {
     const char *status = "";
-    ST::string foo = ST::format("{}_", (char*)params[0]);
+    ST::string foo = ST::format("{}_", static_cast<const char*>(params[0]));
     plKey key = FindObjectByNameAndType(foo, "plCameraModifier1", "", &status, true);
     PrintString(status);
 
@@ -3296,7 +3296,7 @@ PF_CONSOLE_CMD( Nav, MovePlayer,    // Group name, Function name
 
     plNodeChangeMsg* msg = new plNodeChangeMsg(nullptr, playerKey, nodeKey);
     plgDispatch::MsgSend(msg);
-    pfConsolePrintF(PrintString, "{} moved to {}", (char*)params[0], (char*)params[1]);
+    pfConsolePrintF(PrintString, "{} moved to {}", static_cast<const char*>(params[0]), static_cast<const char*>(params[1]));
 }
 
 PF_CONSOLE_CMD( Nav, ExcludePage, "string pageName", "Excludes the given page from ever being loaded. Useful for debugging." )
@@ -3305,8 +3305,8 @@ PF_CONSOLE_CMD( Nav, ExcludePage, "string pageName", "Excludes the given page fr
         PrintString( "Unable to exclude page--NetClientMgr not loaded" );
     else
     {
-        plAgeLoader::GetInstance()->AddExcludedPage( (char*)params[ 0 ] );
-        pfConsolePrintF(PrintString, "Page {} excluded from load", (char *)params[0]);
+        plAgeLoader::GetInstance()->AddExcludedPage(static_cast<const char*>(params[0]));
+        pfConsolePrintF(PrintString, "Page {} excluded from load", static_cast<const char*>(params[0]));
     }
 }
 
@@ -3325,7 +3325,7 @@ PF_CONSOLE_CMD( Movie,
                    "string filename",
                    "Start movie with this filename" )
 {
-    char* filename = params[0];
+    const char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kStart);
 
     mov->Send();
@@ -3338,7 +3338,7 @@ PF_CONSOLE_CMD( Movie,
                    "string filename",
                    "Stop movie with this filename" )
 {
-    char* filename = params[0];
+    const char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kStop);
     mov->Send();
 
@@ -3350,7 +3350,7 @@ PF_CONSOLE_CMD( Movie,
                    "string filename",
                    "Pause movie with this filename" )
 {
-    char* filename = params[0];
+    const char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kPause);
     mov->Send();
 
@@ -3362,7 +3362,7 @@ PF_CONSOLE_CMD( Movie,
                    "string filename",
                    "Resume movie with this filename" )
 {
-    char* filename = params[0];
+    const char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kResume);
     mov->Send();
 
@@ -3374,7 +3374,7 @@ PF_CONSOLE_CMD( Movie,
                    "string filename, float x, float y",
                    "Move center of movie with this filename to x,y" )
 {
-    char* filename = params[0];
+    const char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kMove);
     float x = params[1];
     float y = params[2];
@@ -3389,7 +3389,7 @@ PF_CONSOLE_CMD( Movie,
                    "string filename, float x, float y",
                    "Scale movie with this filename by x,y" )
 {
-    char* filename = params[0];
+    const char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kScale);
     float x = params[1];
     float y = params[2];
@@ -3404,7 +3404,7 @@ PF_CONSOLE_CMD( Movie,
                    "string filename, float a",
                    "Set opacity of movie with this filename to a" )
 {
-    char* filename = params[0];
+    const char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kOpacity);
     float a = params[1];
     mov->SetOpacity(a);
@@ -3418,7 +3418,7 @@ PF_CONSOLE_CMD( Movie,
                    "string filename, float r, float g, float b",
                    "Color movie with this filename as r,g,b" )
 {
-    char* filename = params[0];
+    const char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kColor);
     float r = params[1];
     float g = params[2];
@@ -3434,7 +3434,7 @@ PF_CONSOLE_CMD( Movie,
                    "string filename, float v",
                    "Set volume of movie with this filename to v" )
 {
-    char* filename = params[0];
+    const char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kVolume);
     float v = params[1];
     mov->SetVolume(v);
@@ -3448,7 +3448,7 @@ PF_CONSOLE_CMD( Movie,
                    "string filename, float secs, float r, float g, float b, float a",
                    "Fade in movie with this filename from r,g,b,a over secs seconds" )
 {
-    char* filename = params[0];
+    const char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kFadeIn);
     float secs = params[1];
     float r = params[2];
@@ -3467,7 +3467,7 @@ PF_CONSOLE_CMD( Movie,
                    "string filename, float secs, float r, float g, float b, float a",
                    "Fade out movie with this filename to r,g,b,a over secs seconds" )
 {
-    char* filename = params[0];
+    const char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kFadeOut);
     float secs = params[1];
     float r = params[2];
@@ -3573,7 +3573,7 @@ PF_CONSOLE_CMD( Access,
                    "Set the weight for a morphMod" )
 {
     const char *status = "";
-    char* preFix = params[0];
+    const char* preFix = params[0];
     ST::string name = ST::format("{}_plMorphSequence_0", preFix);
     plKey key = FindObjectByName(name, plMorphSequence::Index(), "", &status);
     PrintString(status);
@@ -3597,7 +3597,7 @@ PF_CONSOLE_CMD( Access,
                    "Activate a morphMod" )
 {
     const char *status = "";
-    char* preFix = params[0];
+    const char* preFix = params[0];
     ST::string name = ST::format("{}_plMorphSequence_2", preFix);
     plKey key = FindObjectByName(name, plMorphSequence::Index(), "", &status);
     PrintString(status);
@@ -3617,7 +3617,7 @@ PF_CONSOLE_CMD( Access,
                    "Activate a morphMod" )
 {
     const char *status = "";
-    char* preFix = params[0];
+    const char* preFix = params[0];
     ST::string name = ST::format("{}_plMorphSequence_2", preFix);
     plKey key = FindObjectByName(name, plMorphSequence::Index(), "", &status);
     PrintString(status);
@@ -3804,7 +3804,7 @@ PF_CONSOLE_CMD( Access,
     seq->SetUseSharedMesh(true);
     seq->AddSharedMesh(item->fMeshes[plClothingItem::kLODHigh]);
 
-    pfConsolePrintF(PrintString, "{} on item {}\n", seq->GetKey()->GetName(), (char *)params[0]);
+    pfConsolePrintF(PrintString, "{} on item {}\n", seq->GetKey()->GetName(), static_cast<const char*>(params[0]));
 }
 
 PF_CONSOLE_CMD( Access,
@@ -6151,7 +6151,7 @@ PF_CONSOLE_CMD( Python,
     ST::string args;
     if (numParams > 1) 
     {
-        args = ST::format("({},)", (char*)params[1]);
+        args = ST::format("({},)", static_cast<const char*>(params[1]));
     }
     else
         args = "()";

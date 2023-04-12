@@ -410,12 +410,12 @@ bool    pfConsoleEngine::IConvertToParam( uint8_t type, const char *string, pfCo
     if( type == pfConsoleCmd::kAny )
     {
         /// Want "any"
-        param->SetAny( (char*)string );
+        param->SetAny(string);
     }
     else if( type == pfConsoleCmd::kString )
     {
         /// Want just a string
-        param->SetString( (char*)string );
+        param->SetString(string);
     }
     else if( type == pfConsoleCmd::kFloat )
     {

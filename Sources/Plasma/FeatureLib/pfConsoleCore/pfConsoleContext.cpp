@@ -141,7 +141,7 @@ void    pfConsoleContext::RemoveVar(size_t idx)
     delete [] fVarNames[ idx ];
     if( fVarValues[ idx ].GetType() == pfConsoleCmdParam::kString )
         // Necessary because the params won't delete the data themselves
-        delete [] ( (char *)fVarValues[ idx ] );
+        delete[] static_cast<const char*>(fVarValues[idx]);
 
     fVarNames.erase(fVarNames.begin() + idx);
     fVarValues.erase(fVarValues.begin() + idx);
@@ -188,7 +188,7 @@ void    pfConsoleContext::AddVar( const char *name, float value )
 void    pfConsoleContext::AddVar( const char *name, const char *value )
 {
     pfConsoleCmdParam   param;
-    param.SetString( (char *)value );   // It's ok, we'll be copying it soon 'nuf
+    param.SetString(value); // It's ok, we'll be copying it soon 'nuf
     AddVar( name, param );
 }
 
@@ -220,7 +220,7 @@ bool    pfConsoleContext::SetVar(size_t idx, const pfConsoleCmdParam &value)
     if( fVarValues[ idx ].GetType() == pfConsoleCmdParam::kString )
     {
         // Remember, params won't know any better, since by default they don't own a copy of their string
-        delete [] ( (char *)fVarValues[ idx ] );
+        delete[] static_cast<const char*>(fVarValues[idx]);
     }
 
     fVarValues[ idx ] = value;
@@ -264,7 +264,7 @@ bool    pfConsoleContext::SetVar( const char *name, float value )
 bool    pfConsoleContext::SetVar( const char *name, const char *value )
 {
     pfConsoleCmdParam   param;
-    param.SetString( (char *)value );   // Don't worry, we'll be copying it soon 'nuf
+    param.SetString(value); // Don't worry, we'll be copying it soon 'nuf
     return SetVar( name, param );
 }
 

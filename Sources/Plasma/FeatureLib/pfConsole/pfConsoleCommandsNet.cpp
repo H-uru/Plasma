@@ -221,7 +221,7 @@ PF_CONSOLE_CMD( Net,        // groupName
     int i;
     for(i=0;i<numParams;i++)
     {
-        text += ST::string::from_utf8( (char*)params[i] );
+        text += ST::string::from_utf8(params[i]);
         text += " ";
     }
     plConsoleMsg    *cMsg = new plConsoleMsg( plConsoleMsg::kAddLine, text );
@@ -781,7 +781,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "string stationName, string mtSpawnPt",
                "Register an MT Station with your Nexus" )
 {
-    VaultRegisterMTStationAndWait((char*)params[0], (char*)params[1]);
+    VaultRegisterMTStationAndWait(static_cast<const char*>(params[0]), static_cast<const char*>(params[1]));
     PrintString("Registered MT Station.");
 }
 
