@@ -47,6 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfConsoleContext.h"
 
+#include <string_theory/string>
+#include <utility>
 
 //// Static Root Context /////////////////////////////////////////////////////
 
@@ -139,9 +141,6 @@ void    pfConsoleContext::RemoveVar(size_t idx)
     }
 
     delete [] fVarNames[ idx ];
-    if( fVarValues[ idx ].GetType() == pfConsoleCmdParam::kString )
-        // Necessary because the params won't delete the data themselves
-        delete[] static_cast<const char*>(fVarValues[idx]);
 
     fVarNames.erase(fVarNames.begin() + idx);
     fVarValues.erase(fVarValues.begin() + idx);
@@ -153,10 +152,6 @@ void    pfConsoleContext::IAddVar( const char *name, const pfConsoleCmdParam &va
 {
     fVarNames.emplace_back(hsStrcpy(name));
     fVarValues.emplace_back(value);
-    
-    // Remember, params won't know any better, since by default they don't own a copy of their string
-    if (fVarValues.back().GetType() == pfConsoleCmdParam::kString)
-        fVarValues.back().SetString(hsStrcpy(fVarValues.back()));
 }
 
 void    pfConsoleContext::AddVar( const char *name, const pfConsoleCmdParam &value )
@@ -185,10 +180,10 @@ void    pfConsoleContext::AddVar( const char *name, float value )
     AddVar( name, param );
 }
 
-void    pfConsoleContext::AddVar( const char *name, const char *value )
+void    pfConsoleContext::AddVar(const char *name, ST::string value)
 {
     pfConsoleCmdParam   param;
-    param.SetString(value); // It's ok, we'll be copying it soon 'nuf
+    param.SetString(std::move(value));
     AddVar( name, param );
 }
 
@@ -217,15 +212,7 @@ bool    pfConsoleContext::SetVar(size_t idx, const pfConsoleCmdParam &value)
         return false;
     }
 
-    if( fVarValues[ idx ].GetType() == pfConsoleCmdParam::kString )
-    {
-        // Remember, params won't know any better, since by default they don't own a copy of their string
-        delete[] static_cast<const char*>(fVarValues[idx]);
-    }
-
     fVarValues[ idx ] = value;
-    if( fVarValues[ idx ].GetType() == pfConsoleCmdParam::kString )
-        fVarValues[ idx ].SetString( hsStrcpy( fVarValues[ idx ] ) );
 
     return true;
 }
@@ -261,10 +248,10 @@ bool    pfConsoleContext::SetVar( const char *name, float value )
     return SetVar( name, param );
 }
 
-bool    pfConsoleContext::SetVar( const char *name, const char *value )
+bool    pfConsoleContext::SetVar(const char *name, ST::string value)
 {
     pfConsoleCmdParam   param;
-    param.SetString(value); // Don't worry, we'll be copying it soon 'nuf
+    param.SetString(std::move(value));
     return SetVar( name, param );
 }
 

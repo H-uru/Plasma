@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 class plFileName;
-
+namespace ST { class string; }
 
 //// pfConsoleEngine Class Definition ////////////////////////////////////////
 
@@ -70,7 +70,7 @@ class pfConsoleEngine
 
         static const int32_t      fMaxNumParams;
 
-        bool    IConvertToParam( uint8_t type, const char *string, pfConsoleCmdParam *param );
+        bool IConvertToParam(uint8_t type, ST::string string, pfConsoleCmdParam *param);
 
         char    fErrorMsg[ 128 ];
         char    fLastErrorLine[ 512 ];

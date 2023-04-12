@@ -49,6 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCmd.h"
 #include "pfConsoleContext.h"
 
+#include <string_theory/string>
+#include <utility>
+
 #include "plFile/plEncryptedStream.h"
 
 
@@ -351,8 +354,6 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
             }
             else
             {
-                // Just copy. Note that this will copy string pointers, but so long as the variable in
-                // question doesn't change, we'll be OK...
                 paramArray[ numParams ] = context.GetVarValue( idx );
                 valid = true;
             }
@@ -383,64 +384,50 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
 //  Converts a null-terminated string representing a parameter to a 
 //  pfConsoleCmdParam argument.
 
-bool    pfConsoleEngine::IConvertToParam( uint8_t type, const char *string, pfConsoleCmdParam *param )
+bool pfConsoleEngine::IConvertToParam(uint8_t type, ST::string string, pfConsoleCmdParam *param)
 {
-    const char *c, expChars[] = "dDeE+-.";
-    bool    hasDecimal = false, hasLetters = false;
-
-
     if( type == pfConsoleCmd::kNone )
         return false;
-
-    for( c = string; *c != 0; c++ )
-    {
-        if (!isdigit(static_cast<unsigned char>(*c)))
-        {
-            if( c == string && ( *c == '-' || *c == '+' ) )
-            {
-                // Do nothing--perfectly legal to have these at the beginning of an int
-            }
-            else if (strchr(expChars, *c) != nullptr)
-                hasDecimal = true;
-            else
-                hasLetters = true;
-        }
-    }
 
     if( type == pfConsoleCmd::kAny )
     {
         /// Want "any"
-        param->SetAny(string);
+        param->SetAny(std::move(string));
     }
     else if( type == pfConsoleCmd::kString )
     {
         /// Want just a string
-        param->SetString(string);
+        param->SetString(std::move(string));
     }
     else if( type == pfConsoleCmd::kFloat )
     {
-        if( hasLetters )
+        ST::conversion_result res;
+        float value = string.to_float(res);
+        if (!res.ok() || !res.full_match()) {
             return false;
+        }
 
-        param->SetFloat( (float)atof( string ) );
+        param->SetFloat(value);
     }
     else if( type == pfConsoleCmd::kInt )
     {
-        if( hasLetters || hasDecimal )
+        ST::conversion_result res;
+        int value = string.to_int(res, 10);
+        if (!res.ok() || !res.full_match()) {
             return false;
+        }
 
-        param->SetInt( atoi( string ) );
+        param->SetInt(value);
     }
     else if( type == pfConsoleCmd::kBool )
     {
-        if( stricmp( string, "true" ) == 0 || stricmp( string, "t" ) == 0 )
-            param->SetBool( true );
-        else if( stricmp( string, "false" ) == 0 || stricmp( string, "f" ) == 0 )
-            param->SetBool( false );
-        else if( atoi( string ) == 0 )
-            param->SetBool( false );
-        else
-            param->SetBool( true );
+        if (string.compare_i("t") == 0) {
+            param->SetBool(true);
+        } else if (string.compare_i("f") == 0) {
+            param->SetBool(false);
+        } else {
+            param->SetBool(string.to_bool());
+        }
     }
 
     return true;

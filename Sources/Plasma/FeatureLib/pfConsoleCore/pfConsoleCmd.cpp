@@ -590,8 +590,7 @@ int pfConsoleCmdParam::IToInt() const
 
     if( fType == kAny )
     {
-        hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
-        return atoi(fValue.s);
+        return fStringValue.to_int(10);
     }
     
     return fValue.i;
@@ -603,8 +602,7 @@ float pfConsoleCmdParam::IToFloat() const
 
     if( fType == kAny )
     {
-        hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
-        return static_cast<float>(atof(fValue.s));
+        return fStringValue.to_float();
     }
     
     return fValue.f;
@@ -616,18 +614,17 @@ bool pfConsoleCmdParam::IToBool() const
 
     if( fType == kAny )
     {
-        hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
-        return atoi(fValue.s) > 0 || stricmp(fValue.s, "true") == 0;
+        return fStringValue.to_bool();
     }
     
     return fValue.b;
 }
 
-const char* pfConsoleCmdParam::IToString() const
+const ST::string& pfConsoleCmdParam::IToString() const
 {
     hsAssert( fType == kString || fType == kAny, "Trying to use a non-string parameter as a string!" );
 
-    return fValue.s;
+    return fStringValue;
 }
 
 char pfConsoleCmdParam::IToChar() const
@@ -636,8 +633,7 @@ char pfConsoleCmdParam::IToChar() const
 
     if( fType == kAny )
     {
-        hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
-        return fValue.s[0];
+        return *fStringValue.c_str();
     }
     
     return fValue.c;

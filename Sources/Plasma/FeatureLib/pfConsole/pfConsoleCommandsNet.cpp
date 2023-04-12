@@ -221,7 +221,7 @@ PF_CONSOLE_CMD( Net,        // groupName
     int i;
     for(i=0;i<numParams;i++)
     {
-        text += ST::string::from_utf8(params[i]);
+        text += static_cast<const ST::string&>(params[i]);
         text += " ";
     }
     plConsoleMsg    *cMsg = new plConsoleMsg( plConsoleMsg::kAddLine, text );
@@ -325,7 +325,7 @@ PF_CONSOLE_CMD( Net,        // groupName
                "Link to an age." )  // helpString
 {   
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
+    link.GetAgeInfo()->SetAgeFilename(params[0]);
     link.SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age...");
@@ -339,10 +339,10 @@ PF_CONSOLE_CMD( Net,        // groupName
                "Link to a specific age by guid." )  // helpString
 {   
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
+    link.GetAgeInfo()->SetAgeFilename(params[0]);
     //link.GetAgeInfo()->SetAgeInstanceName( params[0] );
     //link.GetAgeInfo()->SetAgeUserDefinedName( params[0] );
-    plUUID guid( (const char *)params[1] );
+    plUUID guid(params[1]);
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid );
     link.SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
@@ -364,8 +364,8 @@ PF_CONSOLE_CMD( Net,
                "Link to specified age using Original Age Linking Book rules" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
-    link.SpawnPoint() = plSpawnPointInfo( (const char *)params[1], (const char *)params[1] );
+    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.SpawnPoint() = plSpawnPointInfo(params[1], params[1]);
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age with original book...");
@@ -377,7 +377,7 @@ PF_CONSOLE_CMD( Net,
                "Link to specified age using Personal Age Linking Book rules" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
+    link.GetAgeInfo()->SetAgeFilename(params[0]);
     link.SetLinkingRules( plNetCommon::LinkingRules::kOwnedBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age I own...");
@@ -389,7 +389,7 @@ PF_CONSOLE_CMD( Net,
                "Link to specified age using Personal Age Linking Book rules" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
+    link.GetAgeInfo()->SetAgeFilename(params[0]);
     link.SetLinkingRules( plNetCommon::LinkingRules::kVisitBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age I can visit...");
@@ -401,7 +401,7 @@ PF_CONSOLE_CMD( Net,
                "Link to a sub-age of the current age" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
+    link.GetAgeInfo()->SetAgeFilename(params[0]);
     link.SetLinkingRules( plNetCommon::LinkingRules::kSubAgeBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to a sub-age...");
@@ -470,7 +470,7 @@ PF_CONSOLE_CMD( Net,
     plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
 
     plAgeInfoStruct info;
-    info.SetAgeFilename( (const char *)params[0] );
+    info.SetAgeFilename(params[0]);
     
     plAgeLinkStruct link;
     if (!VaultGetOwnedAgeLink(&info, &link)) {
@@ -496,7 +496,7 @@ PF_CONSOLE_CMD( Net,            // groupName
                "Instructs the server to only send me updates about this object periodically" )  // helpString
 {
     const char *status = "";
-    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", &status);
+    plKey key = FindSceneObjectByName(params[0], {}, &status);
     PrintString(status);
     if (!key)
         return;
@@ -585,9 +585,8 @@ PF_CONSOLE_CMD( Net_DebugObject,        // groupName
                "string objName, ...", // paramList
                "Create a debug log about the specified object. AddObject objName [pageName], wildcards allowed" )   // helpString
 {
-    ST::string objName = ST::string::from_utf8(params[0], ST_AUTO_SIZE, ST::substitute_invalid);
-    ST::string pageName = (numParams > 1) ? ST::string::from_utf8(params[1], ST_AUTO_SIZE, ST::substitute_invalid)
-                                          : ST::string();
+    const ST::string& objName = params[0];
+    const ST::string& pageName = numParams > 1 ? params[1] : ST::string();
     if (plNetObjectDebugger::GetInstance())
         plNetObjectDebugger::GetInstance()->AddDebugObject(objName, pageName);
 }
@@ -597,9 +596,8 @@ PF_CONSOLE_CMD( Net_DebugObject,        // groupName
                "string objName, ...", // paramList
                "Stop focused debugging about the specified object. RemoveObject objName [pageName], wildcards allowed" )    // helpString
 {
-    ST::string objName = ST::string::from_utf8(params[0], ST_AUTO_SIZE, ST::substitute_invalid);
-    ST::string pageName = (numParams > 1) ? ST::string::from_utf8(params[1], ST_AUTO_SIZE, ST::substitute_invalid)
-                                          : ST::string();
+    const ST::string& objName = params[0];
+    const ST::string& pageName = numParams > 1 ? params[1] : ST::string();
     if (plNetObjectDebugger::GetInstance())
         plNetObjectDebugger::GetInstance()->RemoveDebugObject(objName, pageName);
 }
@@ -664,7 +662,7 @@ PF_CONSOLE_CMD( Net_Auth,       // groupName
                "Sets account name." )   // helpString
 {   
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
-    nc->SetIniAccountName(params[0]);
+    nc->SetIniAccountName(static_cast<const ST::string&>(params[0]).c_str());
 }
 
 PF_CONSOLE_CMD( Net_Auth,       // groupName
@@ -673,7 +671,7 @@ PF_CONSOLE_CMD( Net_Auth,       // groupName
                "Sets account password." )   // helpString
 {   
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
-    nc->SetIniAccountPass(params[0]);
+    nc->SetIniAccountPass(static_cast<const ST::string&>(params[0]).c_str());
 }
 
 #ifndef LIMIT_CONSOLE_COMMANDS
@@ -753,7 +751,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "string stationName, string mtSpawnPt",
                "Register an MT Station with your Nexus" )
 {
-    VaultRegisterMTStationAndWait(static_cast<const char*>(params[0]), static_cast<const char*>(params[1]));
+    VaultRegisterMTStationAndWait(params[0], params[1]);
     PrintString("Registered MT Station.");
 }
 
@@ -765,8 +763,8 @@ PF_CONSOLE_CMD( Net_Vault,
                "Add an instance of the specified age to your bookshelf" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
-    link.GetAgeInfo()->SetAgeInstanceName( (const char *)params[0] );
+    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeInstanceName(params[0]);
     plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
@@ -781,7 +779,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "Remove the specified age from your bookshelf" )
 {
     plAgeInfoStruct info;
-    info.SetAgeFilename( (const char *)params[0] );
+    info.SetAgeFilename(params[0]);
     bool success = VaultUnregisterOwnedAgeAndWait(&info);
     pfConsolePrintF(PrintString, "Operation {}.", success ? "Successful" : "Failed");
 }
@@ -793,8 +791,8 @@ PF_CONSOLE_CMD( Net_Vault,
                "Add an instance of the specified age to your private links" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
-    link.GetAgeInfo()->SetAgeInstanceName( (const char *)params[0] );
+    link.GetAgeInfo()->SetAgeFilename(params[0]);
+    link.GetAgeInfo()->SetAgeInstanceName(params[0]);
     plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
@@ -809,7 +807,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "Remove all instances of the specified age from your private links" )
 {
     plAgeInfoStruct info;
-    info.SetAgeFilename( (const char *)params[0] );
+    info.SetAgeFilename(params[0]);
 
     unsigned count = 0;
     while (VaultUnregisterVisitAgeAndWait(&info))

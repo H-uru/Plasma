@@ -158,18 +158,18 @@ Valid channels are: SoundFX, BgndMusic, Voice, GUI, NPCVoice and Ambience.")
 {
     plgAudioSys::ASChannel  chan;
 
-
-    if( stricmp( params[ 0 ], "SoundFX" ) == 0 )
+    const ST::string& channelName = params[0];
+    if (channelName.compare_i("SoundFX") == 0)
         chan = plgAudioSys::kSoundFX;
-    else if( stricmp( params[ 0 ], "BgndMusic" ) == 0 )
+    else if (channelName.compare_i("BgndMusic") == 0)
         chan = plgAudioSys::kBgndMusic;
-    else if( stricmp( params[ 0 ], "Voice" ) == 0 )
+    else if (channelName.compare_i("Voice") == 0)
         chan = plgAudioSys::kVoice;
-    else if( stricmp( params[ 0 ], "Ambience" ) == 0 )
+    else if (channelName.compare_i("Ambience") == 0)
         chan = plgAudioSys::kAmbience;
-    else if( stricmp( params[ 0 ], "GUI" ) == 0 )
+    else if (channelName.compare_i("GUI") == 0)
         chan = plgAudioSys::kGUI;
-    else if( stricmp( params[ 0 ], "NPCVoice" ) == 0 )
+    else if (channelName.compare_i("NPCVoice") == 0)
         chan = plgAudioSys::kNPCVoice;
     else
     {
@@ -206,12 +206,12 @@ PF_CONSOLE_CMD(Audio, ShowNumActiveBuffers, "bool b", "Shows the number of Direc
 
 PF_CONSOLE_CMD(Audio, SetDeviceName, "string deviceName", "Meant for plClient init only")
 {
-    plgAudioSys::SetPlaybackDevice(ST::string::from_utf8(params[0]));
+    plgAudioSys::SetPlaybackDevice(params[0]);
 }
 
 PF_CONSOLE_CMD(Audio, SetCaptureDeviceName, "string deviceName", "Sets the audio capture device name")
 {
-    plgAudioSys::SetCaptureDevice(ST::string::from_utf8(params[0]));
+    plgAudioSys::SetCaptureDevice(params[0]);
 }
 
 PF_CONSOLE_CMD(Audio, ShowIcons, "bool b", "turn voice recording icons on and off")
@@ -238,12 +238,12 @@ PF_CONSOLE_CMD(Audio, PushToTalk, "bool b", "turn push-to-talk on or off")
 
 PF_CONSOLE_CMD(Audio, SetVoiceCodec, "string codec", "Sets the codec used for voice chat")
 {
-    const char* codec = params[0];
-    if (stricmp(codec, "none") == 0)
+    const ST::string& codec = params[0];
+    if (codec.compare_i("none") == 0)
         plVoiceRecorder::SetVoiceFlags(0);
-    else if (stricmp(codec, "speex") == 0)
+    else if (codec.compare_i("speex") == 0)
         plVoiceRecorder::SetVoiceFlags(plVoiceFlags::kEncoded | plVoiceFlags::kEncodedSpeex);
-    else if (stricmp(codec, "opus") == 0)
+    else if (codec.compare_i("opus") == 0)
         plVoiceRecorder::SetVoiceFlags(plVoiceFlags::kEncoded | plVoiceFlags::kEncodedOpus);
     else
         PrintString("Invalid codec specified");
@@ -293,7 +293,7 @@ PF_CONSOLE_CMD(Audio, NextDebugPlate, "", "Cycles through the volume displays fo
 
 PF_CONSOLE_CMD(Audio, ShowDebugPlate, "string object, int soundIdx", "Shows the volume display for a registered sound")
 {
-    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[0]), "", nullptr);
+    plKey key = FindSceneObjectByName(params[0], {}, nullptr);
     if (!key) {
         plSound::SetCurrDebugPlate(nullptr);
         return;
@@ -332,7 +332,7 @@ PF_CONSOLE_CMD(Audio, SetTwoStageLOD, "bool on", "Enables or disables two-stage 
 
 PF_CONSOLE_CMD(Audio, SetVolume, "string obj, float vol", "Sets the volume on a given object. 1 is max volume, 0 is silence" )
 {
-    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[ 0 ]), "", nullptr);
+    plKey key = FindSceneObjectByName(params[0], {}, nullptr);
     if (key == nullptr)
         return;
 
@@ -353,27 +353,28 @@ PF_CONSOLE_CMD(Audio, SetVolume, "string obj, float vol", "Sets the volume on a 
 
 PF_CONSOLE_CMD(Audio, IsolateSound, "string soundComponentName", "Mutes all sounds except the given sound. Use Audio.MuteAll false to remove the isolation.")
 {
+    const ST::string& soundComponentName = params[0];
     plKey           key;
     plAudioSysMsg   *asMsg;
 
-    key = FindSceneObjectByName(ST::string::from_utf8(params[0]), "", nullptr);
+    key = FindSceneObjectByName(soundComponentName, {}, nullptr);
     if (key == nullptr)
     {
-        pfConsolePrintF(PrintString, "Cannot find sound {}", static_cast<const char*>(params[0]));
+        pfConsolePrintF(PrintString, "Cannot find sound {}", soundComponentName);
         return;
     }
 
     plSceneObject *obj = plSceneObject::ConvertNoRef( key->GetObjectPtr() );
     if( !obj )
     {
-        pfConsolePrintF(PrintString, "Cannot get sceneObject {}", static_cast<const char*>(params[0]));
+        pfConsolePrintF(PrintString, "Cannot get sceneObject {}", soundComponentName);
         return;
     }
 
     const plAudioInterface  *ai = obj->GetAudioInterface();
     if (ai == nullptr)
     {
-        pfConsolePrintF(PrintString, "sceneObject {} has no audio interface", static_cast<const char*>(params[0]));
+        pfConsolePrintF(PrintString, "sceneObject {} has no audio interface", soundComponentName);
         return;
     }
 
@@ -386,7 +387,7 @@ PF_CONSOLE_CMD(Audio, IsolateSound, "string soundComponentName", "Mutes all soun
     plgDispatch::MsgSend( asMsg );
 
 
-    pfConsolePrintF(PrintString, "Sounds on sceneObject {} isolated.", static_cast<const char*>(params[0]));
+    pfConsolePrintF(PrintString, "Sounds on sceneObject {} isolated.", soundComponentName);
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS

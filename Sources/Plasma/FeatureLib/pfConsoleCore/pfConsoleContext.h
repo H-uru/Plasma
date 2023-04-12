@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pfConsoleCmd.h"
 
+namespace ST { class string; }
 
 //// Class Definition ////////////////////////////////////////////////////////
 
@@ -86,7 +87,7 @@ class pfConsoleContext
         void    AddVar( const char *name, const pfConsoleCmdParam &value );
         void    AddVar( const char *name, int value );
         void    AddVar( const char *name, float value );
-        void    AddVar( const char *name, const char *value );
+        void    AddVar(const char *name, ST::string value);
         void    AddVar( const char *name, char value );
         void    AddVar( const char *name, bool value );
 
@@ -95,7 +96,7 @@ class pfConsoleContext
         bool    SetVar( const char *name, const pfConsoleCmdParam &value );
         bool    SetVar( const char *name, int value );
         bool    SetVar( const char *name, float value );
-        bool    SetVar( const char *name, const char *value );
+        bool    SetVar(const char *name, ST::string value);
         bool    SetVar( const char *name, char value );
         bool    SetVar( const char *name, bool value );
 

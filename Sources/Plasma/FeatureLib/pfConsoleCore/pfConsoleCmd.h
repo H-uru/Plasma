@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFileSystem.h"
 
 #include <string_theory/format>
+#include <utility>
 #include <vector>
 
 //// pfConsoleCmdGroup Class Definition //////////////////////////////////////
@@ -127,14 +128,17 @@ class pfConsoleCmdParam
             int     i;
             float   f;
             bool    b;
-            const char* s;
             char    c;
         } fValue;
+        // Supposedly it's *possible* to use a non-trivial class in a union,
+        // but it seems complex and hard to do correctly,
+        // so let's just put this in its own field.
+        ST::string fStringValue;
 
         int IToInt() const;
         float IToFloat() const;
         bool IToBool() const;
-        const char* IToString() const;
+        const ST::string& IToString() const;
         char IToChar() const;
 
     public:
@@ -153,19 +157,57 @@ class pfConsoleCmdParam
         operator int() const { return IToInt(); }
         operator float() const { return IToFloat(); }
         operator bool() const { return IToBool(); }
-        operator const char*() const { return IToString(); }
+        operator const ST::string&() const { return IToString(); }
         operator char() const { return IToChar(); }
         operator plFileName() const { return IToString(); }
 
         uint8_t   GetType() { return fType; }
 
-        void    SetInt( int i )         { fValue.i = i; fType = kInt; }
-        void    SetFloat( float f )     { fValue.f = f; fType = kFloat; }
-        void    SetBool( bool b )       { fValue.b = b; fType = kBool; }
-        void    SetString(const char* s) { fValue.s = s; fType = kString; }
-        void    SetChar( char c )       { fValue.c = c; fType = kChar; }
-        void    SetAny(const char* s) { fValue.s = s; fType = kAny; }
-        void    SetNone()         { fType = kNone; }
+        void SetInt(int i)
+        {
+            fValue.i = i;
+            fStringValue.clear();
+            fType = kInt;
+        }
+
+        void SetFloat(float f)
+        {
+            fValue.f = f;
+            fStringValue.clear();
+            fType = kFloat;
+        }
+
+        void SetBool(bool b)
+        {
+            fValue.b = b;
+            fStringValue.clear();
+            fType = kBool;
+        }
+
+        void SetString(ST::string s)
+        {
+            fStringValue = std::move(s);
+            fType = kString;
+        }
+
+        void SetChar(char c)
+        {
+            fValue.c = c;
+            fStringValue.clear();
+            fType = kChar;
+        }
+
+        void SetAny(ST::string s)
+        {
+            fStringValue = std::move(s);
+            fType = kAny;
+        }
+
+        void SetNone()
+        {
+            fStringValue.clear();
+            fType = kNone;
+        }
 };
 
 //// pfConsoleCmd Class Definition ///////////////////////////////////////////
