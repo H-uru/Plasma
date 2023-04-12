@@ -57,8 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <string_theory/string>
+
 class plFileName;
-namespace ST { class string; }
 
 //// pfConsoleEngine Class Definition ////////////////////////////////////////
 
@@ -72,10 +73,8 @@ class pfConsoleEngine
 
         bool IConvertToParam(uint8_t type, ST::string string, pfConsoleCmdParam *param);
 
-        char    fErrorMsg[ 128 ];
-        char    fLastErrorLine[ 512 ];
-
-        void    ISetErrorMsg(const char *msg ) { hsStrncpy( fErrorMsg, msg, sizeof( fErrorMsg ) ); }
+        ST::string fErrorMsg;
+        ST::string fLastErrorLine;
 
         // Recursive function to build a string of the groups a command is in
         void        IBuildCmdNameRecurse( pfConsoleCmdGroup *group, char *string );
@@ -92,16 +91,16 @@ class pfConsoleEngine
         bool    PrintCmdHelp( char *name, void (*PrintFn)( const char * ) );
 
         // Breaks the given line into a command and parameters and runs the command
-        bool    RunCommand( char *line, void (*PrintFn)( const char * ) );
+        bool RunCommand(const ST::string& line, void (*PrintFn)(const char*));
 
         // Executes the given file as a sequence of console commands
         bool    ExecuteFile( const plFileName &fileName );
 
         // Get the last reported error
-        const char  *GetErrorMsg() { return fErrorMsg; }
+        ST::string GetErrorMsg() { return fErrorMsg; }
 
         // Get the line for which the last reported error was for
-        const char  *GetLastErrorLine() { return fLastErrorLine; }
+        ST::string GetLastErrorLine() { return fLastErrorLine; }
 
         // Does command completion on a partially-complete console line
         bool        FindPartialCmd( char *line, bool findAgain = false, bool perserveParams = false );

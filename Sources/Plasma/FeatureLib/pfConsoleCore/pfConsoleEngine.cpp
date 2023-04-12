@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCmd.h"
 #include "pfConsoleContext.h"
 
-#include <string_theory/string>
+#include <string_theory/format>
 #include <utility>
 
 #include "plFile/plEncryptedStream.h"
@@ -147,7 +147,7 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
     {
         if (group == nullptr)
         {
-            ISetErrorMsg( "Invalid command syntax" );
+            fErrorMsg = "Invalid command syntax";
             return false;
         }
 
@@ -180,7 +180,7 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
     cmd = group->FindCommandNoCase( ptr );
     if (cmd == nullptr)
     {
-        ISetErrorMsg( "Invalid syntax: command not found" );
+        fErrorMsg = "Invalid syntax: command not found";
         return false;
     }
 
@@ -217,7 +217,7 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
 
     if (ptr == nullptr)
     {
-        ISetErrorMsg( "Invalid command syntax" );
+        fErrorMsg = "Invalid command syntax";
         return nullptr;
     }
 
@@ -225,7 +225,7 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
     cmd = group->FindCommandNoCase( ptr );
     if (cmd == nullptr)
     {
-        ISetErrorMsg( "Invalid syntax: command not found" );
+        fErrorMsg = "Invalid syntax: command not found";
         return nullptr;
     }
 
@@ -243,14 +243,13 @@ void    DummyPrintFn( const char *line )
 
 bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 {
-    char    string[ 512 ];
     int     line;
 
     hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileName);
 
     if( !stream )
     {
-        ISetErrorMsg( "Cannot open given file" );
+        fErrorMsg = "Cannot open given file";
 //      return false;
         /// THIS IS BAD: because of the asserts we throw after this if we return false, a missing
         /// file will throw an assert. This is all well and good except for the age-specific .fni files,
@@ -259,15 +258,15 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
         return true;
     }
 
-    for (line = 1; stream->ReadLn(string, std::size(string)); line++)
+    ST::string string;
+    for (line = 1; stream->ReadLn(string); line++)
     {
-        strncpy(fLastErrorLine, string, std::size(fLastErrorLine));
+        fLastErrorLine = string;
 
         if( !RunCommand( string, DummyPrintFn ) )
         {
-            snprintf(string, std::size(string), "Error in console file %s, command line %d: %s",
-                     fileName.AsString().c_str(), line, fErrorMsg);
-            ISetErrorMsg( string );
+            fErrorMsg = ST::format("Error in console file {}, command line {}: {}",
+                     fileName.AsString(), line, fErrorMsg);
             stream->Close();
             delete stream;
             return false;
@@ -275,7 +274,7 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
     }
     stream->Close();
     delete stream;
-    fLastErrorLine[ 0 ] = 0;
+    fLastErrorLine.clear();
 
     return true;
 }
@@ -285,7 +284,7 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 //  requires tokenizing the entire line and searching the tokens one by one,
 //  parsing them first as groups, then commands and then params.
 
-bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * ) )
+bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const char*))
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
@@ -294,12 +293,13 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
     const char          *ptr;
     bool                valid = true;
 
-
-    hsAssert(line != nullptr, "Bad parameter to RunCommand()");
+    // console_strtok requires a writable C string...
+    ST::char_buffer lineBuf = line.to_utf8();
+    char* linePtr = lineBuf.data();
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = console_strtok( line, false );
+    ptr = console_strtok(linePtr, false);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
@@ -308,12 +308,12 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
         else
             break;
 
-        ptr = console_strtok( line, false );
+        ptr = console_strtok(linePtr, false);
     }
 
     if (ptr == nullptr)
     {
-        ISetErrorMsg( "Invalid command syntax" );
+        fErrorMsg = "Invalid command syntax";
         return false;
     }
 
@@ -321,7 +321,7 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
     cmd = group->FindCommandNoCase( ptr );
     if (cmd == nullptr)
     {
-        ISetErrorMsg( "Invalid syntax: command not found" );
+        fErrorMsg = "Invalid syntax: command not found";
         return false;
     }
 
@@ -330,12 +330,12 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
     /// params
 
     for( numParams = numQuotedParams = 0; numParams < fMaxNumParams 
-                        && (ptr = console_strtok(line, true)) != nullptr
+                        && (ptr = console_strtok(linePtr, true)) != nullptr
                         && valid; numParams++ )
     {
         if( ptr[ 0 ] == '\xFF' )
         {
-            ISetErrorMsg( "Invalid syntax: unterminated quoted parameter" );
+            fErrorMsg = "Invalid syntax: unterminated quoted parameter";
             return false;
         }
 
@@ -350,7 +350,7 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
             hsSsize_t idx = context.FindVar( ptr + 1 );
             if( idx == -1 )
             {
-                ISetErrorMsg( "Invalid console variable name" );
+                fErrorMsg = "Invalid console variable name";
             }
             else
             {
@@ -369,7 +369,7 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
                    cmd->GetSigEntry(numParams) != pfConsoleCmd::kNone))
     {
         // Print help string and return
-        ISetErrorMsg( "" ); // Printed on next line
+        fErrorMsg.clear(); // Printed on next line
         PrintFn("Invalid parameters to command");
         PrintFn(ST::format("Usage: {}", cmd->GetSignature()).c_str());
         return false;

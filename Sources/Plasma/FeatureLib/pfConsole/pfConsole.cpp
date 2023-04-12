@@ -305,10 +305,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
     {
         if( ctrlMsg->ControlActivated() && ctrlMsg->GetControlCode() == B_CONTROL_CONSOLE_COMMAND && plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kPlayingGame))
         {
-            // pfConsoleEngine::RunCommand requires a writable C string...
-            ST::char_buffer cmdBuf;
-            ctrlMsg->GetCmdString().to_buffer(cmdBuf);
-            fEngine->RunCommand(cmdBuf.data(), IAddLineCallback);
+            fEngine->RunCommand(ctrlMsg->GetCmdString(), IAddLineCallback);
             return true;
         }
         return false;
@@ -340,13 +337,11 @@ bool    pfConsole::MsgReceive( plMessage *msg )
             IAddParagraph( cmd->GetString().c_str() );
         else if( cmd->GetCmd() == plConsoleMsg::kExecuteLine )
         {
-            ST::char_buffer cmdBuf;
-            cmd->GetString().to_buffer(cmdBuf);
-            if( !fEngine->RunCommand(cmdBuf.data(), IAddLineCallback))
+            if( !fEngine->RunCommand(cmd->GetString(), IAddLineCallback))
             {
                 // Change the following line once we have a better way of reporting
                 // errors in the parsing
-                AddLineF("%s:\n\nCommand: '%s'\n", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine());
+                AddLineF("%s:\n\nCommand: '%s'\n", fEngine->GetErrorMsg().to_latin_1().c_str(), fEngine->GetLastErrorLine().to_latin_1().c_str());
             }
         }
             
@@ -994,8 +989,7 @@ void    pfConsole::IExecuteWorkingLine()
             char empty[] = "";
             fEngine->PrintCmdHelp(empty, IAddLineCallback);
         } else if (!fEngine->PrintCmdHelp(fWorkingLine, IAddLineCallback)) {
-            c = (char*)fEngine->GetErrorMsg();
-            AddLine(c);
+            AddLine(fEngine->GetErrorMsg().to_latin_1().c_str());
         }
 
         fHelpMode = false;
@@ -1056,10 +1050,10 @@ void    pfConsole::IExecuteWorkingLine()
         // find the end of the line
         for (c = fWorkingLine, eol = 0; *c != 0; eol++, c++);
     } else {
-        if (!fEngine->RunCommand(fWorkingLine, IAddLineCallback)) {
-            c = (char*)fEngine->GetErrorMsg();
-            if (c[0] != 0)
-                AddLine(c);
+        if (!fEngine->RunCommand(ST::string::from_latin_1(fWorkingLine), IAddLineCallback)) {
+            ST::string errorMsg = fEngine->GetErrorMsg();
+            if (!errorMsg.empty())
+                AddLine(errorMsg.to_latin_1().c_str());
         }
     }
 
