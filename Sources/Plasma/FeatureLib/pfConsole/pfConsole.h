@@ -103,7 +103,7 @@ class pfConsole : public hsKeyedObject
         uint32_t  fMsgTimeoutTimer;
 
         struct _fHistory {
-            char fData[ kNumHistoryItems ][ kMaxCharsWide ];
+            ST::string fData[kNumHistoryItems];
             uint32_t  fCursor, fRecallCursor;
         } fHistory[ kNumHistoryTypes ];
         char    *fDisplayBuffer;

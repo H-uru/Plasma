@@ -121,7 +121,7 @@ pfConsoleEngine::~pfConsoleEngine()
 
 //// PrintCmdHelp ////////////////////////////////////////////////////////////
 
-bool pfConsoleEngine::PrintCmdHelp(char *name, void (*PrintFn)(const ST::string&))
+bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const ST::string&))
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
@@ -129,9 +129,13 @@ bool pfConsoleEngine::PrintCmdHelp(char *name, void (*PrintFn)(const ST::string&
     static char         tempString[ 512 ];
     uint32_t              i;
 
+    // console_strtok requires a writable C string...
+    ST::char_buffer nameBuf = name.to_utf8();
+    char* namePtr = nameBuf.data();
+
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = console_strtok( name, false );
+    ptr = console_strtok(namePtr, false);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
@@ -140,7 +144,7 @@ bool pfConsoleEngine::PrintCmdHelp(char *name, void (*PrintFn)(const ST::string&
         else
             break;
 
-        ptr = console_strtok( name, false );
+        ptr = console_strtok(namePtr, false);
     }
 
     if (ptr == nullptr)
