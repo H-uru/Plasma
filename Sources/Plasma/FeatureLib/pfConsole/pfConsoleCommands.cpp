@@ -3271,14 +3271,6 @@ PF_CONSOLE_CMD( Nav, UnloadPlayer,  // Group name, Function name
     // plNetClientMgr::UnloadPlayer(key);
 }
 
-PF_CONSOLE_CMD( Nav, UnloadSceneObject, // Group name, Function name
-                "string objName",           // Params
-                "unloads a named scene object" )    // Help string
-{
-
-    PrintString("OBSOLETE");
-}
-
 PF_CONSOLE_CMD( Nav, MovePlayer,    // Group name, Function name
                 "string playerName, string destPage",           // Params
                 "moves a player from one paging unit to another" )  // Help string

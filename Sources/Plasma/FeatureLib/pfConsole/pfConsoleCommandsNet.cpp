@@ -549,20 +549,6 @@ PF_CONSOLE_CMD( Net, DownloadViaManifest,
         PrintString( "DownloadViaManifest failed: resManager not initialized. This command must be used in an .fni file or later." );
 }
 
-#endif
-
-
-// must be in 'INI' file
-PF_CONSOLE_CMD( Net, SetProxyAddr,
-               "string proxyHostAddr", // paramList
-               "Sets the address of a proxy host to send all messages to" ) // helpString
-{
-    // plNetClientMgr::GetInstance()->SetProxyAddr((const char*)params[0]);
-    PrintString("OBSOLETE");
-}
-
-#ifndef LIMIT_CONSOLE_COMMANDS
-
 PF_CONSOLE_CMD( Net, GetCCRAwayStatus,
                "", // paramList
                "Find out if CCR's are offline" )    // helpString
@@ -667,20 +653,6 @@ PF_CONSOLE_CMD( Net_Voice,                  // groupName
     int max = params[0];
     plNetClientMgr::GetInstance()->GetListenList()->kMaxListenListSize=max;
 }
-
-///////////////////////////////////////
-#ifndef LIMIT_CONSOLE_COMMANDS
-
-PF_CONSOLE_SUBGROUP( Net, Log )     // Creates a LOG sub-group under a given group
-
-PF_CONSOLE_CMD( Net_Log,        // groupName
-               Create,      // fxnName
-               "string fileName", // paramList
-               "obsolete" ) // helpString
-{   
-}
-
-#endif
 
 ///////////////////////////////////////
 // Account Authentication
