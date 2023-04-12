@@ -526,7 +526,7 @@ PF_CONSOLE_CMD(Stats, ListLaps, "", "Prints the names of all the stats with laps
     plProfileManagerFull::Instance().GetLaps(laps);
 
     for (int i = 0; i < laps.size(); i++)
-        pfConsolePrintF(PrintString, "{} - {}", laps[i].group, laps[i].varName);
+        PrintString(ST::format("{} - {}", laps[i].group, laps[i].varName));
 }
 
 PF_CONSOLE_CMD(Stats, SetLapMin, "int min", "Sets the minimum index of which lap will display")
@@ -869,7 +869,7 @@ PF_CONSOLE_CMD( Console, PrintVar, "string name", "Prints the value of a given g
         PrintString( "Variable not found" );
     else
     {
-        pfConsolePrintF(PrintString, "The value of {} is {}", varName, static_cast<const ST::string&>(ctx.GetVarValue(idx)));
+        PrintString(ST::format("The value of {} is {}", varName, static_cast<const ST::string&>(ctx.GetVarValue(idx))));
     }
 }
 
@@ -880,7 +880,7 @@ PF_CONSOLE_CMD( Console, PrintAllVars, "", "Prints the values of all global cons
     PrintString( "Global console variables:" );
     for (size_t i = 0; i < ctx.GetNumVars(); i++)
     {
-        pfConsolePrintF(PrintString, "  {}: {}", ctx.GetVarName(i), static_cast<const ST::string&>(ctx.GetVarValue(i)));
+        PrintString(ST::format("  {}: {}", ctx.GetVarName(i), static_cast<const ST::string&>(ctx.GetVarValue(i))));
     }
 }
 
@@ -1028,7 +1028,7 @@ PF_CONSOLE_CMD( Graphics,           // Group name
 
     pfConsole::GetPipeline()->SetDebugFlag( flag, on );
 
-    pfConsolePrintF(PrintString, "{} is now {}", name, on ? "enabled" : "disabled");
+    PrintString(ST::format("{} is now {}", name, on ? "enabled" : "disabled"));
 }
 
 
@@ -1040,7 +1040,7 @@ PF_CONSOLE_CMD( Graphics_VisSet, Toggle, "", "Toggle using VisSets" )
     bool turnOn = !plPageTreeMgr::VisMgrEnabled();
     plPageTreeMgr::EnableVisMgr(turnOn);
 
-    pfConsolePrintF(PrintString, "Visibility Sets {}", turnOn ? "Enabled" : "Disabled");
+    PrintString(ST::format("Visibility Sets {}", turnOn ? "Enabled" : "Disabled"));
 }
 
 PF_CONSOLE_CMD( Graphics, BumpNormal, "", "Set bump mapping method to default for your hardware." )
@@ -1151,7 +1151,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     bool on = !pfConsole::GetPipeline()->IsDebugFlagSet(plPipeDbg::kFlagShowShadowBounds);
     pfConsole::GetPipeline()->SetDebugFlag( plPipeDbg::kFlagShowShadowBounds, on );
 
-    pfConsolePrintF(PrintString, "Shadow bounds now {}", on ? "visible" : "invisible");
+    PrintString(ST::format("Shadow bounds now {}", on ? "visible" : "invisible"));
 }
 
 PF_CONSOLE_CMD( Graphics_Shadow, 
@@ -1162,7 +1162,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     bool on = !pfConsole::GetPipeline()->IsDebugFlagSet(plPipeDbg::kFlagNoShadowApply);
     pfConsole::GetPipeline()->SetDebugFlag( plPipeDbg::kFlagNoShadowApply, on );
 
-    pfConsolePrintF(PrintString, "Shadow apply now {}", on ? "disabled" : "enabled");
+    PrintString(ST::format("Shadow apply now {}", on ? "disabled" : "enabled"));
 }
 
 PF_CONSOLE_CMD( Graphics_Shadow, 
@@ -1181,7 +1181,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     {
         size = plShadowMaster::GetGlobalMaxSize();
     }
-    pfConsolePrintF(PrintString, "Max shadowmap size {}", size);
+    PrintString(ST::format("Max shadowmap size {}", size));
 }
 
 PF_CONSOLE_CMD( Graphics_Shadow, 
@@ -1200,7 +1200,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     {
         dist = plShadowMaster::GetGlobalMaxDist();
     }
-    pfConsolePrintF(PrintString, "Max shadowmap vis dist {f}", dist);
+    PrintString(ST::format("Max shadowmap vis dist {f}", dist));
 }
 
 PF_CONSOLE_CMD( Graphics_Shadow, 
@@ -1219,7 +1219,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     {
         parm = plShadowMaster::GetGlobalShadowQuality();
     }
-    pfConsolePrintF(PrintString, "Shadow quality {f}", parm);
+    PrintString(ST::format("Shadow quality {f}", parm));
 }
 
 PF_CONSOLE_CMD( Graphics_Shadow, 
@@ -1234,7 +1234,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     } else {
         blurScale = plShadowMaster::GetGlobalMaxBlur();
     }
-    pfConsolePrintF(PrintString, "Max shadowmap Blur {f}", blurScale);
+    PrintString(ST::format("Max shadowmap Blur {f}", blurScale));
 }
 
 //// Graphics.DebugText SubGroup /////////////////////////////////////////////
@@ -1294,7 +1294,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, mfTest, "int mfDbgTest", "Reserved for intern
 
     mfCurrentTest = (int) params[0];
 
-    pfConsolePrintF(PrintString, "Current test {}.", mfCurrentTest);
+    PrintString(ST::format("Current test {}.", mfCurrentTest));
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
@@ -1309,7 +1309,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma, "float g, ...", "Set gamma value (g or
     {
         pfConsole::GetPipeline()->SetGamma(g);
 
-//      pfConsolePrintF(PrintString, "Gamma set to {}.", g);
+//      PrintString(ST::format("Gamma set to {}.", g));
     }
     else
     {
@@ -1323,7 +1323,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma, "float g, ...", "Set gamma value (g or
 
         pfConsole::GetPipeline()->SetGamma(eR, eG, eB);
 
-//      pfConsolePrintF(PrintString, "Gamma set to ({}, {}, {}).", eR, eG, eB);
+//      PrintString(ST::format("Gamma set to ({}, {}, {}).", eR, eG, eB));
     }
 }
 
@@ -1365,7 +1365,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternat
         pfConsole::GetPipeline()->SetGamma(ramp.data());
     }
 
-//  pfConsolePrintF(PrintString, "Gamma set to <alt> {}.", g);
+//  PrintString(ST::format("Gamma set to <alt> {}.", g));
 }
 
 #ifndef LIMIT_CONSOLE_COMMANDS
@@ -1385,7 +1385,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, MaxCullNodes, "...", "Limit occluder processi
         maxCullNodes = pfConsole::GetPipeline()->GetMaxCullNodes();
     }
 
-    pfConsolePrintF(PrintString, "Max Cull Nodes now {}.", maxCullNodes);
+    PrintString(ST::format("Max Cull Nodes now {}.", maxCullNodes));
 }
 
 
@@ -1403,7 +1403,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, SetYon, "float yon, ...", "Sets the view yon"
     pfConsole::GetPipeline()->SetDepth( hither, (float)params[ 0 ] );
     pfConsole::GetPipeline()->RefreshMatrices();
     
-    pfConsolePrintF(PrintString, "Yon set to {4.1f}.", (float)params[0]);
+    PrintString(ST::format("Yon set to {4.1f}.", (float)params[0]));
 }
 
 #ifndef LIMIT_CONSOLE_COMMANDS
@@ -1418,7 +1418,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, TweakZBiasScale, "float deltaScale", "Adjusts
     scale += (float)params[ 0 ];
     pfConsole::GetPipeline()->SetZBiasScale( scale );
     
-    pfConsolePrintF(PrintString, "Z bias scale now set to {4.2f}.", (float)scale);
+    PrintString(ST::format("Z bias scale now set to {4.2f}.", (float)scale));
 }
 
 PF_CONSOLE_CMD( Graphics_Renderer, SetZBiasScale, "float scale", "Sets the device-dependent scale value for upper-layer z biasing" )
@@ -1427,7 +1427,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, SetZBiasScale, "float scale", "Sets the devic
 
     pfConsole::GetPipeline()->SetZBiasScale( (float)params[ 0 ] );
     
-    pfConsolePrintF(PrintString, "Z bias scale now set to {4.2f}.", (float)params[0]);
+    PrintString(ST::format("Z bias scale now set to {4.2f}.", (float)params[0]));
 }
 
 
@@ -1445,7 +1445,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Overwire, "...", "Turn on (off) overlay wire 
 
     pfConsole::GetPipeline()->SetDebugFlag( flag, on );
 
-    pfConsolePrintF(PrintString, "OverlayWire is now {}", on ? "enabled" : "disabled");
+    PrintString(ST::format("OverlayWire is now {}", on ? "enabled" : "disabled"));
 }
 
 PF_CONSOLE_CMD( Graphics_Renderer, Overdraw, "bool on", "Turn on (off) overdraw rendering" )
@@ -1502,7 +1502,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Wireframe, "...", "Toggle or set wireframe vi
     else
         pfConsole::GetPipeline()->RemoveLayerInterface( &wireLayer );
 
-    pfConsolePrintF(PrintString, "Wireframe view mode is now {}.", wireOn ? "enabled" : "disabled");
+    PrintString(ST::format("Wireframe view mode is now {}.", wireOn ? "enabled" : "disabled"));
 }
 
 PF_CONSOLE_CMD( Graphics_Renderer, TwoSided, "...", "Toggle or set force two-sided." )
@@ -1533,7 +1533,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, TwoSided, "...", "Toggle or set force two-sid
     else
         pfConsole::GetPipeline()->RemoveLayerInterface( &twoSideLayer );
 
-    pfConsolePrintF(PrintString, "Two-sided mode is now {}.", twoSideOn ? "enabled" : "disabled");
+    PrintString(ST::format("Two-sided mode is now {}.", twoSideOn ? "enabled" : "disabled"));
 }
 
 PF_CONSOLE_CMD( Graphics_Renderer, ResetDevice,
@@ -1753,7 +1753,7 @@ PF_CONSOLE_CMD( Graphics_Show, Bounds, "", "Toggle object bounds display")
     bool on = !pfConsole::GetPipeline()->IsDebugFlagSet( plPipeDbg::kFlagShowAllBounds );
     pfConsole::GetPipeline()->SetDebugFlag( plPipeDbg::kFlagShowAllBounds, on );
 
-    pfConsolePrintF(PrintString, "Bounds now {}", on ? "visible" : "invisible");
+    PrintString(ST::format("Bounds now {}", on ? "visible" : "invisible"));
 }
 
 PF_CONSOLE_CMD( Graphics_Show, Sound, "", "Toggle sound fields visible")
@@ -1766,7 +1766,7 @@ PF_CONSOLE_CMD( Graphics_Show, Sound, "", "Toggle sound fields visible")
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kAudibleProxy);
 
-    pfConsolePrintF(PrintString, "Sounds now {}", on ? "visible" : "invisible");
+    PrintString(ST::format("Sounds now {}", on ? "visible" : "invisible"));
 }
 
 PF_CONSOLE_CMD( Graphics_Show, SingleSound,
@@ -1780,14 +1780,14 @@ PF_CONSOLE_CMD( Graphics_Show, SingleSound,
     plSceneObject *obj = (key != nullptr) ? plSceneObject::ConvertNoRef(key->GetObjectPtr()) : nullptr;
     if( !obj )
     {
-        pfConsolePrintF(PrintString, "Cannot find sceneObject {}: {}", objName, status);
+        PrintString(ST::format("Cannot find sceneObject {}: {}", objName, status));
         return;
     }
 
     const plAudioInterface  *ai = obj->GetAudioInterface();
     if (ai == nullptr)
     {
-        pfConsolePrintF(PrintString, "sceneObject {} has no audio interface", objName);
+        PrintString(ST::format("sceneObject {} has no audio interface", objName));
         return;
     }
     plKey   aiKey = ai->GetKey();
@@ -1802,7 +1802,7 @@ PF_CONSOLE_CMD( Graphics_Show, SingleSound,
     // is, imho, acceptable.
     pfConsole::GetPipeline()->SetDrawableTypeMask( pfConsole::GetPipeline()->GetDrawableTypeMask() | plDrawableSpans::kAudibleProxy );
 
-    pfConsolePrintF(PrintString, "Toggling proxies on sceneObject {}", objName);
+    PrintString(ST::format("Toggling proxies on sceneObject {}", objName));
 }
 
 PF_CONSOLE_CMD( Graphics_Show, SoundOnly, "", "Toggle only sound fields visible")
@@ -1834,7 +1834,7 @@ PF_CONSOLE_CMD( Graphics_Show, OccSnap, "", "Take snapshot of current occlusion 
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kOccSnapProxy);
 
-    pfConsolePrintF(PrintString, "Active Occluders now {}", on ? "visible" : "invisible");
+    PrintString(ST::format("Active Occluders now {}", on ? "visible" : "invisible"));
 }
 
 PF_CONSOLE_CMD( Graphics_Show, OccSnapOnly, "", "Take snapshot of current occlusion and render (or toggle)")
@@ -1850,7 +1850,7 @@ PF_CONSOLE_CMD( Graphics_Show, OccSnapOnly, "", "Take snapshot of current occlus
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(oldMask);
 
-    pfConsolePrintF(PrintString, "Active Occluders now {}", on ? "visible" : "invisible");
+    PrintString(ST::format("Active Occluders now {}", on ? "visible" : "invisible"));
 }
 
 PF_CONSOLE_CMD( Graphics_Show, Occluders, "", "Toggle occluder geometry visible")
@@ -1864,7 +1864,7 @@ PF_CONSOLE_CMD( Graphics_Show, Occluders, "", "Toggle occluder geometry visible"
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kOccluderProxy);
 
-    pfConsolePrintF(PrintString, "Occluders now {}", on ? "visible" : "invisible");
+    PrintString(ST::format("Occluders now {}", on ? "visible" : "invisible"));
 }
 
 PF_CONSOLE_CMD( Graphics_Show, OccludersOnly, "", "Toggle only occluder geometry visible")
@@ -1895,7 +1895,7 @@ PF_CONSOLE_CMD( Graphics_Show, Physicals, "", "Toggle Physical geometry visible"
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kPhysicalProxy);
 
-    pfConsolePrintF(PrintString, "Physicals now {}", on ? "visible" : "invisible");
+    PrintString(ST::format("Physicals now {}", on ? "visible" : "invisible"));
 }
 
 PF_CONSOLE_CMD( Graphics_Show, PhysicalsOnly, "", "Toggle only Physical geometry visible")
@@ -1927,7 +1927,7 @@ PF_CONSOLE_CMD( Graphics_Show, Normal, "", "Toggle normal geometry visible")
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kNormal);
     }
 
-    pfConsolePrintF(PrintString, "Normal geometry now {}", on ? "visible" : "invisible");
+    PrintString(ST::format("Normal geometry now {}", on ? "visible" : "invisible"));
 }
 
 PF_CONSOLE_CMD( Graphics_Show, NormalOnly, "", "Toggle only normal geometry visible")
@@ -1956,7 +1956,7 @@ PF_CONSOLE_CMD( Graphics_Show, Lights, "", "Toggle visible proxies for lights")
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kLightProxy);
 
-    pfConsolePrintF(PrintString, "Lights now {}", on ? "visible" : "invisible");
+    PrintString(ST::format("Lights now {}", on ? "visible" : "invisible"));
 }
 
 PF_CONSOLE_CMD( Graphics_Show, LightsOnly, "", "Toggle visible proxies for lights and everything else invisible")
@@ -1987,7 +1987,7 @@ PF_CONSOLE_CMD( Graphics_Show, Clicks, "", "Toggle visible proxies for clicks")
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
 
-    pfConsolePrintF(PrintString, "Clicks now {}", on ? "visible" : "invisible");
+    PrintString(ST::format("Clicks now {}", on ? "visible" : "invisible"));
 }
 
 
@@ -2085,7 +2085,7 @@ PF_CONSOLE_CMD( App,
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
-        pfConsolePrintF(PrintString, "{} - Not Found!", status);
+        PrintString(ST::format("{} - Not Found!", status));
         return;
     }
 
@@ -2102,7 +2102,7 @@ PF_CONSOLE_CMD( App,
     }
     if( !receiver )
     {
-        pfConsolePrintF(PrintString, "{} - Modifier Not Found!", status);
+        PrintString(ST::format("{} - Modifier Not Found!", status));
         return;
     }
 
@@ -2159,7 +2159,7 @@ PF_CONSOLE_CMD( App,
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
-        pfConsolePrintF(PrintString, "{} - Not Found!", status);
+        PrintString(ST::format("{} - Not Found!", status));
         return;
     }
 
@@ -2205,13 +2205,13 @@ PF_CONSOLE_CMD( App,
     plKey key = FindSceneObjectByName(name, {}, status);
     if( !key )
     {
-        pfConsolePrintF(PrintString, "{} - Not Found: {}", name, status);
+        PrintString(ST::format("{} - Not Found: {}", name, status));
         return;
     }
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
-        pfConsolePrintF(PrintString, "{} - Not Found: {}", name, status);
+        PrintString(ST::format("{} - Not Found: {}", name, status));
         return;
     }
 
@@ -2223,7 +2223,7 @@ PF_CONSOLE_CMD( App,
     }
     if( i >= obj->GetNumModifiers() )
     {
-        pfConsolePrintF(PrintString, "{} - No CamView Modifier found!", name);
+        PrintString(ST::format("{} - No CamView Modifier found!", name));
         return;
     }
     ST::string str = name;
@@ -2261,7 +2261,7 @@ PF_CONSOLE_CMD( App,        // groupName
     float s = params[0];
     hsTimer::SetTimeClamp( s );
 
-    pfConsolePrintF(PrintString, "Time clamped to {f} secs", s);
+    PrintString(ST::format("Time clamped to {f} secs", s));
 }
 
 PF_CONSOLE_CMD( App,        // groupName
@@ -2272,7 +2272,7 @@ PF_CONSOLE_CMD( App,        // groupName
     float s = params[0];
     hsTimer::SetTimeSmoothingClamp( s );
 
-    pfConsolePrintF(PrintString, "Time smoothing clamped to {f} secs", s);
+    PrintString(ST::format("Time smoothing clamped to {f} secs", s));
 }
 
 PF_CONSOLE_CMD( App,        // groupName
@@ -2284,7 +2284,7 @@ PF_CONSOLE_CMD( App,        // groupName
     s *= 1.e-3f;
     hsTimer::SetFrameTimeInc( s );
 
-    pfConsolePrintF(PrintString, "Frame advancing {f} per frame (in frame time)", s * 1.e3f );
+    PrintString(ST::format("Frame advancing {f} per frame (in frame time)", s * 1.e3f ));
 }
 
 PF_CONSOLE_CMD( App,        // groupName
@@ -2315,7 +2315,7 @@ PF_CONSOLE_CMD( App,        // groupName
     float s = params[0];
     hsTimer::SetTimeScale( s );
 
-    pfConsolePrintF(PrintString, "Time scaled to {4.4f} percent", s * 100.f);
+    PrintString(ST::format("Time scaled to {4.4f} percent", s * 100.f));
 }
 
 
@@ -2369,8 +2369,7 @@ PF_CONSOLE_CMD( App,        // groupName
                "", // paramList
                "Prints the date and time this build was created" )  // helpString
 {
-    pfConsolePrintF(PrintString, "This Plasma 2.0 client built at {} on {}.",
-                                 plProduct::BuildTime(), plProduct::BuildDate());
+    PrintString(ST::format("This Plasma 2.0 client built at {} on {}.", plProduct::BuildTime(), plProduct::BuildDate()));
 }
 
 PF_CONSOLE_CMD(App,
@@ -2397,7 +2396,7 @@ PF_CONSOLE_CMD(App,
     ST::string str = age + ".log";
 //  hsgResMgr::ResMgr()->VerifyAgeUnloaded(str, age);
 
-    pfConsolePrintF(PrintString, "Verification of age {} complete", age);
+    PrintString(ST::format("Verification of age {} complete", age));
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
@@ -2564,11 +2563,11 @@ PF_CONSOLE_CMD( Registry, SetLoggingLevel, "int level", "Sets the logging level 
 
     plResMgrSettings::Get().SetLoggingLevel( (uint8_t)newLevel );
     {
-        pfConsolePrintF(PrintString, "Registry logging set to {}",
-                        (newLevel == 0) ? "none" :
-                        (newLevel == 1) ? "basic" :
-                        (newLevel == 2) ? "detailed" :
-                        (newLevel == 3) ? "object-level" : "object-read-level");
+        PrintString(ST::format("Registry logging set to {}",
+            (newLevel == 0) ? "none" :
+            (newLevel == 1) ? "basic" :
+            (newLevel == 2) ? "detailed" :
+            (newLevel == 3) ? "object-level" : "object-read-level"));
     }
 }
 
@@ -2586,14 +2585,14 @@ void MyHandyPrintFunction(const plKey &obj, void (*PrintString)(const ST::string
     plActiveRefPeekerKey *peeker = (plActiveRefPeekerKey *)(plKeyImp *)obj;
 
     if( peeker->GetUoid().IsClone() )
-        pfConsolePrintF(PrintString, "{} refs on {}, clone {}:{}: loaded={}",
+        PrintString(ST::format("{} refs on {}, clone {}:{}: loaded={}",
             peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName(),
             peeker->GetUoid().GetCloneID(), peeker->GetUoid().GetClonePlayerID(),
-            obj->ObjectIsLoaded() ? 1 : 0);
+            obj->ObjectIsLoaded() ? 1 : 0));
     else
-        pfConsolePrintF(PrintString, "{} refs on {}: loaded={}",
+        PrintString(ST::format("{} refs on {}: loaded={}",
             peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName(),
-            obj->ObjectIsLoaded() ? 1 : 0);
+            obj->ObjectIsLoaded() ? 1 : 0));
 
     if( peeker->PeekNumNotifies() == 0 )
         return;
@@ -2619,9 +2618,9 @@ void MyHandyPrintFunction(const plKey &obj, void (*PrintString)(const ST::string
                             limit--;
 
                             const plKey& rcvr = msg->GetReceiver( j );
-                            pfConsolePrintF(PrintString, "    {}:{}",
-                                            plFactory::GetNameOfClass(rcvr->GetUoid().GetClassType()),
-                                            rcvr->GetUoid().GetObjectName());
+                            PrintString(ST::format("    {}:{}",
+                                plFactory::GetNameOfClass(rcvr->GetUoid().GetClassType()),
+                                rcvr->GetUoid().GetObjectName()));
                         }
                     }
                 }
@@ -2630,7 +2629,7 @@ void MyHandyPrintFunction(const plKey &obj, void (*PrintString)(const ST::string
     }
 
     if( count > 0 )
-        pfConsolePrintF(PrintString, "...and {} others", count);
+        PrintString(ST::format("...and {} others", count));
 }
 
 PF_CONSOLE_CMD( Registry, ListRefs, "string keyType, string keyName", "For the given key (referenced by type and name), lists all of "
@@ -3095,7 +3094,7 @@ PF_CONSOLE_CMD(Logic, ListDetectors, "", "Prints the names of the loaded detecto
     plKeyFinder::Instance().GetActivatorNames(activatorNames);
 
     for (int i = 0; i < activatorNames.size(); i++)
-        pfConsolePrintF(PrintString, "{}. {}", i+1, activatorNames[i]);
+        PrintString(ST::format("{}. {}", i+1, activatorNames[i]));
 }
 
 PF_CONSOLE_CMD(Logic, ListResponders, "", "Prints the names of the loaded responders to the console")
@@ -3104,7 +3103,7 @@ PF_CONSOLE_CMD(Logic, ListResponders, "", "Prints the names of the loaded respon
     plKeyFinder::Instance().GetResponderNames(responderNames);
 
     for (int i = 0; i < responderNames.size(); i++)
-        pfConsolePrintF(PrintString, "{}. {}", i+1, responderNames[i]);
+        PrintString(ST::format("{}. {}", i+1, responderNames[i]));
 }
 
 PF_CONSOLE_CMD(Logic, ResponderAnimCue, "", "Toggle box being drawn on screen when a responder starts an anim")
@@ -3271,7 +3270,7 @@ PF_CONSOLE_CMD( Nav, MovePlayer,    // Group name, Function name
 
     plNodeChangeMsg* msg = new plNodeChangeMsg(nullptr, playerKey, nodeKey);
     plgDispatch::MsgSend(msg);
-    pfConsolePrintF(PrintString, "{} moved to {}", playerName, destPage);
+    PrintString(ST::format("{} moved to {}", playerName, destPage));
 }
 
 PF_CONSOLE_CMD( Nav, ExcludePage, "string pageName", "Excludes the given page from ever being loaded. Useful for debugging." )
@@ -3282,7 +3281,7 @@ PF_CONSOLE_CMD( Nav, ExcludePage, "string pageName", "Excludes the given page fr
     {
         const ST::string& pageName = params[0];
         plAgeLoader::GetInstance()->AddExcludedPage(pageName);
-        pfConsolePrintF(PrintString, "Page {} excluded from load", pageName);
+        PrintString(ST::format("Page {} excluded from load", pageName));
     }
 }
 
@@ -3306,7 +3305,7 @@ PF_CONSOLE_CMD( Movie,
 
     mov->Send();
 
-    pfConsolePrintF(PrintString, "{} now playing", filename);
+    PrintString(ST::format("{} now playing", filename));
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -3318,7 +3317,7 @@ PF_CONSOLE_CMD( Movie,
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kStop);
     mov->Send();
 
-    pfConsolePrintF(PrintString, "{} now stopping", filename);
+    PrintString(ST::format("{} now stopping", filename));
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -3330,7 +3329,7 @@ PF_CONSOLE_CMD( Movie,
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kPause);
     mov->Send();
 
-    pfConsolePrintF(PrintString, "{} now pausing", filename);
+    PrintString(ST::format("{} now pausing", filename));
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -3342,7 +3341,7 @@ PF_CONSOLE_CMD( Movie,
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kResume);
     mov->Send();
 
-    pfConsolePrintF(PrintString, "{} now resuming", filename);
+    PrintString(ST::format("{} now resuming", filename));
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -3357,7 +3356,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetCenter(x, y);
     mov->Send();
 
-    pfConsolePrintF(PrintString, "{} now at {},{}", filename, x, y);
+    PrintString(ST::format("{} now at {},{}", filename, x, y));
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -3372,7 +3371,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetScale(x, y);
     mov->Send();
 
-    pfConsolePrintF(PrintString, "{} now scaled to {},{}", filename, x, y);
+    PrintString(ST::format("{} now scaled to {},{}", filename, x, y));
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -3386,7 +3385,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetOpacity(a);
     mov->Send();
 
-    pfConsolePrintF(PrintString, "{} opacity now at {}", filename, a);
+    PrintString(ST::format("{} opacity now at {}", filename, a));
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -3402,7 +3401,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetColor(r, g, b, 1.f);
     mov->Send();
 
-    pfConsolePrintF(PrintString, "{} now tinted to {},{},{}", filename, r, g, b);
+    PrintString(ST::format("{} now tinted to {},{},{}", filename, r, g, b));
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -3416,7 +3415,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetVolume(v);
     mov->Send();
 
-    pfConsolePrintF(PrintString, "{} volume now at {}", filename, v);
+    PrintString(ST::format("{} volume now at {}", filename, v));
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -3435,7 +3434,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetFadeInColor(r, g, b, a);
     mov->Send();
 
-    pfConsolePrintF(PrintString, "{} now fading from {},{},{},{} over {} secs", filename, r, g, b, a, secs);
+    PrintString(ST::format("{} now fading from {},{},{},{} over {} secs", filename, r, g, b, a, secs));
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -3454,7 +3453,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetFadeOutColor(r, g, b, a);
     mov->Send();
 
-    pfConsolePrintF(PrintString, "{} now fading to {},{},{},{} over {} secs", filename, r, g, b, a, secs);
+    PrintString(ST::format("{} now fading to {},{},{},{} over {} secs", filename, r, g, b, a, secs));
 }
 
 
@@ -3476,7 +3475,7 @@ PF_CONSOLE_CMD( Quality,
         q = 3;
     plClient::GetInstance()->SetQuality(q);
 
-    pfConsolePrintF(PrintString, "Quality slider to {}", q);
+    PrintString(ST::format("Quality slider to {}", q));
 }
 
 PF_CONSOLE_CMD( Quality,
@@ -3492,7 +3491,7 @@ PF_CONSOLE_CMD( Quality,
     else
         plClient::GetInstance()->SetClampCap(c);
 
-    pfConsolePrintF(PrintString, "Graphics capability clamped to {}", c);
+    PrintString(ST::format("Graphics capability clamped to {}", c));
 }
 
 
@@ -3564,7 +3563,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->SetWeight(iLay, iDel, wgt);
 
-    pfConsolePrintF(PrintString, "Layer[{}][{}] = {}\n", iLay, iDel, wgt);
+    PrintString(ST::format("Layer[{}][{}] = {}\n", iLay, iDel, wgt));
 }
 
 PF_CONSOLE_CMD( Access,
@@ -3584,7 +3583,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->Activate();
 
-    pfConsolePrintF(PrintString, "{} Active\n", name);
+    PrintString(ST::format("{} Active\n", name));
 }
 
 PF_CONSOLE_CMD( Access,
@@ -3604,7 +3603,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->DeActivate();
 
-    pfConsolePrintF(PrintString, "{} Unactive\n", name);
+    PrintString(ST::format("{} Unactive\n", name));
 }
 //////////////////
 PF_CONSOLE_CMD( Access,
@@ -3625,7 +3624,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->SetWeight(iLay, iDel, wgt);
     
-    pfConsolePrintF(PrintString, "Layer[{}][{}] = {}\n", iLay, iDel, wgt);
+    PrintString(ST::format("Layer[{}][{}] = {}\n", iLay, iDel, wgt));
 }
 
 
@@ -3720,8 +3719,8 @@ PF_CONSOLE_CMD( Access,
     seq->SetWeight(iLay, 0, wgtPlus, meshKey);
     seq->SetWeight(iLay, 1, wgtMinus, meshKey);
 
-    pfConsolePrintF(PrintString, "Layer[{}][{}] = {}\n", iLay, 0, wgtPlus);
-    pfConsolePrintF(PrintString, "Layer[{}][{}] = {}\n", iLay, 1, wgtMinus);
+    PrintString(ST::format("Layer[{}][{}] = {}\n", iLay, 0, wgtPlus));
+    PrintString(ST::format("Layer[{}][{}] = {}\n", iLay, 1, wgtMinus));
 }
 
 
@@ -3741,7 +3740,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->Activate();
 
-    pfConsolePrintF(PrintString, "{} Active\n", seq->GetKey()->GetName());
+    PrintString(ST::format("{} Active\n", seq->GetKey()->GetName()));
 }
 
 PF_CONSOLE_CMD( Access,
@@ -3758,7 +3757,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->DeActivate();
 
-    pfConsolePrintF(PrintString, "{} Unactive\n", seq->GetKey()->GetName());
+    PrintString(ST::format("{} Unactive\n", seq->GetKey()->GetName()));
 }
 
 PF_CONSOLE_CMD( Access,
@@ -3781,7 +3780,7 @@ PF_CONSOLE_CMD( Access,
     seq->SetUseSharedMesh(true);
     seq->AddSharedMesh(item->fMeshes[plClothingItem::kLODHigh]);
 
-    pfConsolePrintF(PrintString, "{} on item {}\n", seq->GetKey()->GetName(), clothItem);
+    PrintString(ST::format("{} on item {}\n", seq->GetKey()->GetName(), clothItem));
 }
 
 PF_CONSOLE_CMD( Access,
@@ -3793,7 +3792,7 @@ PF_CONSOLE_CMD( Access,
 
     plFadeOpacityMod::SetLOSCheckDisabled(disabled);
 
-    pfConsolePrintF(PrintString, "LOS check now {}", disabled ? "disabled" : "enabled");
+    PrintString(ST::format("LOS check now {}", disabled ? "disabled" : "enabled"));
 }
 
 PF_CONSOLE_CMD( Access,
@@ -3890,7 +3889,7 @@ PF_CONSOLE_CMD( Access,
     plVisHit hit;
     if( plVisLOSMgr::Instance()->Check(from, targ, hit) )
     {
-        pfConsolePrintF(PrintString, "({}, {}, {})", hit.fPos.fX, hit.fPos.fY, hit.fPos.fZ);
+        PrintString(ST::format("({}, {}, {})", hit.fPos.fX, hit.fPos.fY, hit.fPos.fZ));
 
         if( losObj )
         {
@@ -4436,7 +4435,7 @@ PF_CONSOLE_CMD( Wave, Log,  // Group name, Function name
         else
             waveSet->StopLog();
 
-        pfConsolePrintF(PrintString, "Logging for {} now {}", name, logging ? "on" : "off");
+        PrintString(ST::format("Logging for {} now {}", name, logging ? "on" : "off"));
     }
 }
 
@@ -4454,7 +4453,7 @@ PF_CONSOLE_CMD( Wave, Graph,    // Group name, Function name
         else
             waveSet->StopGraph();
 
-        pfConsolePrintF(PrintString, "Graphing for {} now {}", name, graphing ? "on" : "off");
+        PrintString(ST::format("Graphing for {} now {}", name, graphing ? "on" : "off"));
     }
 }
 
@@ -4819,7 +4818,7 @@ PF_CONSOLE_CMD( SceneObject, Attach,            // Group name, Function name
     plAttachMsg* attMsg = new plAttachMsg(parentKey, child, plRefMsg::kOnRequest, nullptr);
     plgDispatch::MsgSend(attMsg);
 
-    pfConsolePrintF(PrintString, "{} now child of {}", childName, parentName);
+    PrintString(ST::format("{} now child of {}", childName, parentName));
 }
 
 PF_CONSOLE_CMD( SceneObject, Detach,            // Group name, Function name
@@ -4852,12 +4851,12 @@ PF_CONSOLE_CMD( SceneObject, Detach,            // Group name, Function name
         plAttachMsg* attMsg = new plAttachMsg(parentKey, child, plRefMsg::kOnRemove, nullptr);
         plgDispatch::MsgSend(attMsg);
 
-        pfConsolePrintF(PrintString, "{} detached from {}", childName, parentKey->GetName());
+        PrintString(ST::format("{} detached from {}", childName, parentKey->GetName()));
         return;
     }
     else
     {
-        pfConsolePrintF(PrintString, "{} not attached to anything", childName);
+        PrintString(ST::format("{} not attached to anything", childName));
         return;
     }
 }
@@ -4885,7 +4884,7 @@ PF_CONSOLE_CMD( Physics, GetStepsPerSecond, "", "Prints the number of physics su
 {
     int steps = plSimulationMgr::GetInstance()->GetStepsPerSecond();
 
-    pfConsolePrintF(PrintString, "Current physics resolution is {} frames per second.", steps);
+    PrintString(ST::format("Current physics resolution is {} frames per second.", steps));
 }
 
 PF_CONSOLE_CMD(Physics, SetMaxDelta, "float maxDelta", "Sets the largest frame-to-frame delta that physics will try to resolve before giving up and freezing.")
@@ -4898,7 +4897,7 @@ PF_CONSOLE_CMD(Physics, GetMaxDelta, "", "Prints the largest frame-to-frame delt
 {
     float oldMaxDelta = plSimulationMgr::GetInstance()->GetMaxDelta();
 
-    pfConsolePrintF(PrintString, "When (delta > {f}), physics is suspended for that frame.", oldMaxDelta);
+    PrintString(ST::format("When (delta > {f}), physics is suspended for that frame.", oldMaxDelta));
 }
 
 PF_CONSOLE_CMD(Physics, SetDeactivateFreq, "float freq", "")
@@ -5193,14 +5192,14 @@ PF_CONSOLE_CMD(Mouse, Show, nullptr, "hide mouse cursor")
 /*PF_CONSOLE_CMD( Mouse, SetScale, "float scale", "Sets the mouse scaling factor (sensitivity)" )
 {
     plInputManager::GetInstance()->SetMouseScale( params[ 0 ] );
-    pfConsolePrintF(PrintString, "Mouse scale factor set to {4.2f}", params[0]);
+    PrintString(ST::format("Mouse scale factor set to {4.2f}", params[0]));
 }
 */
 
 PF_CONSOLE_CMD( Mouse, ForceHide, "bool force", "Forces the mouse to be hidden (or doesn't)" )
 {
     plInputInterfaceMgr::GetInstance()->ForceCursorHidden( (bool)params[ 0 ] );
-    pfConsolePrintF(PrintString, "Mouse cursor {}", params[0] ? "forced to be hidden" : "back to normal");
+    PrintString(ST::format("Mouse cursor {}", params[0] ? "forced to be hidden" : "back to normal"));
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
@@ -5303,7 +5302,7 @@ PF_CONSOLE_CMD( Age, GetElapsedDays, "string agedefnfile", "Gets the elapsed day
     
     plUnifiedTime current;
     current.SetToUTC();
-    pfConsolePrintF(PrintString, "ElapsedTime: {f} Days", age.GetAgeElapsedDays(current));
+    PrintString(ST::format("ElapsedTime: {f} Days", age.GetAgeElapsedDays(current)));
 
     s.Close();
 }
@@ -5322,7 +5321,7 @@ PF_CONSOLE_CMD( Age, GetTimeOfDay, "string agedefnfile", "Gets the elapsed days 
     
     plUnifiedTime current;
     current.SetToUTC();
-    pfConsolePrintF(PrintString, "TimeOfDay: {f} percent", age.GetAgeTimeOfDayPercent(current));
+    PrintString(ST::format("TimeOfDay: {f} percent", age.GetAgeTimeOfDayPercent(current)));
 
     s.Close();
 }
@@ -5823,7 +5822,7 @@ PF_CONSOLE_CMD( Animation,
     bool enabled = !plCoordinateInterface::GetDelayedTransformsEnabled();
     plCoordinateInterface::SetDelayedTransformsEnabled(enabled);
 
-    pfConsolePrintF(PrintString, "Potential delay of transform eval is now {}", (enabled ? "ENABLED" : "DISABLED"));
+    PrintString(ST::format("Potential delay of transform eval is now {}", (enabled ? "ENABLED" : "DISABLED")));
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS

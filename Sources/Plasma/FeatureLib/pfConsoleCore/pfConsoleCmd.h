@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plFileSystem.h"
 
-#include <string_theory/format>
+#include <string_theory/string>
 #include <utility>
 #include <vector>
 
@@ -315,11 +315,5 @@ public:
 
 #define PF_CONSOLE_FILE_DUMMY( name ) \
     void _console_##name##_file_dummy() { }
-
-template <typename... Args>
-void pfConsolePrintF(void pfun(const ST::string&), const char *fmt, Args &&...args)
-{
-    pfun(ST::format(fmt, std::forward<Args>(args)...));
-}
 
 #endif //_pfConsoleCmd_h

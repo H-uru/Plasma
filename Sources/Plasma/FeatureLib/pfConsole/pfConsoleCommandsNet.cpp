@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define LIMIT_CONSOLE_COMMANDS 1
 #endif
 
+#include <string_theory/format>
+
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
@@ -523,8 +525,7 @@ PF_CONSOLE_CMD( Net,        // groupName
                "", // paramList
                "returns the current server clock" ) // helpString
 {
-    pfConsolePrintF(PrintString, "Current server time = {}",
-        plNetClientMgr::GetInstance()->GetServerTime().Print());
+    PrintString(ST::format("Current server time = {}", plNetClientMgr::GetInstance()->GetServerTime().Print()));
 }
 
 PF_CONSOLE_CMD( Net,        // groupName
@@ -532,8 +533,8 @@ PF_CONSOLE_CMD( Net,        // groupName
                "", // paramList
                "returns the age of the age" )   // helpString
 {
-    pfConsolePrintF(PrintString, "Current age is {}, elapsed time since birth = {f} secs",
-        NetCommGetAge()->ageDatasetName, plNetClientMgr::GetInstance()->GetCurrentAgeElapsedSeconds());
+    PrintString(ST::format("Current age is {}, elapsed time since birth = {f} secs",
+        NetCommGetAge()->ageDatasetName, plNetClientMgr::GetInstance()->GetCurrentAgeElapsedSeconds()));
 }
 
 PF_CONSOLE_CMD( Net, DownloadViaManifest,
@@ -552,7 +553,7 @@ PF_CONSOLE_CMD( Net, GetCCRAwayStatus,
                "", // paramList
                "Find out if CCR's are offline" )    // helpString
 {
-    pfConsolePrintF(PrintString, "The CCR dept is {}", VaultGetCCRStatus() ? "online" : "away");
+    PrintString(ST::format("The CCR dept is {}", VaultGetCCRStatus() ? "online" : "away"));
 }
 
 PF_CONSOLE_CMD( Net,            // groupName
@@ -718,7 +719,7 @@ PF_CONSOLE_CMD( Net_Vault,      // groupName
                "" ) // helpString
 {
     bool in = VaultAmInMyPersonalAge();
-    pfConsolePrintF(PrintString, "You are {}in your personal age", in ? "" : "not ");
+    PrintString(ST::format("You are {}in your personal age", in ? "" : "not "));
 }
 PF_CONSOLE_CMD( Net_Vault,      // groupName
                InMyNeighborhoodAge,     // fxnName
@@ -726,7 +727,7 @@ PF_CONSOLE_CMD( Net_Vault,      // groupName
                "" ) // helpString
 {
     bool in = VaultAmInMyNeighborhoodAge();
-    pfConsolePrintF(PrintString, "You are {}in your neighborhood age", in ? "" : "not ");
+    PrintString(ST::format("You are {}in your neighborhood age", in ? "" : "not "));
 }
 PF_CONSOLE_CMD( Net_Vault,      // groupName
                AmOwnerOfCurrentAge,     // fxnName
@@ -734,7 +735,7 @@ PF_CONSOLE_CMD( Net_Vault,      // groupName
                "" ) // helpString
 {
     bool in = VaultAmOwnerOfCurrentAge();
-    pfConsolePrintF(PrintString,"You are {}an owner of the current age", in ? "" : "not ");
+    PrintString(ST::format("You are {}an owner of the current age", in ? "" : "not "));
 }
 PF_CONSOLE_CMD( Net_Vault,      // groupName
                AmCzarOfCurrentAge,      // fxnName
@@ -742,7 +743,7 @@ PF_CONSOLE_CMD( Net_Vault,      // groupName
                "" ) // helpString
 {
     bool in = VaultAmCzarOfCurrentAge();
-    pfConsolePrintF(PrintString, "You are {}czar of the current age", in ? "" : "not ");
+    PrintString(ST::format("You are {}czar of the current age", in ? "" : "not "));
 }
 // REGISTER MT STATION
 PF_CONSOLE_CMD( Net_Vault,
@@ -768,7 +769,7 @@ PF_CONSOLE_CMD( Net_Vault,
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
     bool success = VaultRegisterOwnedAgeAndWait(&link);
-    pfConsolePrintF(PrintString, "Operation {}.", success ? "Successful" : "Failed");
+    PrintString(ST::format("Operation {}.", success ? "Successful" : "Failed"));
 }
 
 // UNREGISTER OWNED AGE
@@ -780,7 +781,7 @@ PF_CONSOLE_CMD( Net_Vault,
     plAgeInfoStruct info;
     info.SetAgeFilename(params[0]);
     bool success = VaultUnregisterOwnedAgeAndWait(&info);
-    pfConsolePrintF(PrintString, "Operation {}.", success ? "Successful" : "Failed");
+    PrintString(ST::format("Operation {}.", success ? "Successful" : "Failed"));
 }
 
 // REGISTER VISIT AGE
@@ -796,7 +797,7 @@ PF_CONSOLE_CMD( Net_Vault,
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
     bool success = VaultRegisterOwnedAgeAndWait(&link);
-    pfConsolePrintF(PrintString, "Operation {}.", success ? "Successful" : "Failed");
+    PrintString(ST::format("Operation {}.", success ? "Successful" : "Failed"));
 }
 
 // UNREGISTER VISIT AGE
@@ -812,7 +813,7 @@ PF_CONSOLE_CMD( Net_Vault,
     while (VaultUnregisterVisitAgeAndWait(&info))
         ++count;
         
-    pfConsolePrintF(PrintString, "Operation {}.", count > 0 ? "Successful" : "Failed");
+    PrintString(ST::format("Operation {}.", count > 0 ? "Successful" : "Failed"));
 }
 
 #endif

@@ -366,21 +366,21 @@ PF_CONSOLE_CMD(Audio, IsolateSound, "string soundComponentName", "Mutes all soun
     key = FindSceneObjectByName(soundComponentName, {}, status);
     if (key == nullptr)
     {
-        pfConsolePrintF(PrintString, "Cannot find sound {}: {}", soundComponentName, status);
+        PrintString(ST::format("Cannot find sound {}: {}", soundComponentName, status));
         return;
     }
 
     plSceneObject *obj = plSceneObject::ConvertNoRef( key->GetObjectPtr() );
     if( !obj )
     {
-        pfConsolePrintF(PrintString, "Cannot get sceneObject {}", soundComponentName);
+        PrintString(ST::format("Cannot get sceneObject {}", soundComponentName));
         return;
     }
 
     const plAudioInterface  *ai = obj->GetAudioInterface();
     if (ai == nullptr)
     {
-        pfConsolePrintF(PrintString, "sceneObject {} has no audio interface", soundComponentName);
+        PrintString(ST::format("sceneObject {} has no audio interface", soundComponentName));
         return;
     }
 
@@ -393,7 +393,7 @@ PF_CONSOLE_CMD(Audio, IsolateSound, "string soundComponentName", "Mutes all soun
     plgDispatch::MsgSend( asMsg );
 
 
-    pfConsolePrintF(PrintString, "Sounds on sceneObject {} isolated.", soundComponentName);
+    PrintString(ST::format("Sounds on sceneObject {} isolated.", soundComponentName));
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
