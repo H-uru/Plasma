@@ -584,72 +584,60 @@ const char  *pfConsoleCmd::GetSignature()
 
 //// Conversion Functions ////////////////////////////////////////////////////
 
-const int & pfConsoleCmdParam::IToInt() const
+int pfConsoleCmdParam::IToInt() const
 {
     hsAssert( fType == kInt || fType == kAny, "Trying to use a non-int parameter as an int!" );
 
-    static int  i;
     if( fType == kAny )
     {
         hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
-        i = atoi( fValue.s );
-        return i;
+        return atoi(fValue.s);
     }
     
     return fValue.i;
 }
 
-const float &   pfConsoleCmdParam::IToFloat() const
+float pfConsoleCmdParam::IToFloat() const
 {
     hsAssert( fType == kFloat || fType == kAny, "Trying to use a non-float parameter as a float!" );
 
-    static float f;
     if( fType == kAny )
     {
         hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
-        f = (float)atof( fValue.s );
-        return f;
+        return static_cast<float>(atof(fValue.s));
     }
     
     return fValue.f;
 }
 
-const bool &    pfConsoleCmdParam::IToBool() const
+bool pfConsoleCmdParam::IToBool() const
 {
     hsAssert( fType == kBool || fType == kAny, "Trying to use a non-bool parameter as a bool!" );
 
-    static bool b;
     if( fType == kAny )
     {
         hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
-        if( atoi( fValue.s ) > 0 || stricmp( fValue.s, "true" ) == 0 )
-            b = true;
-        else
-            b = false;
-
-        return b;
+        return atoi(fValue.s) > 0 || stricmp(fValue.s, "true") == 0;
     }
     
     return fValue.b;
 }
 
-const pfConsoleCmdParam::CharPtr &  pfConsoleCmdParam::IToString() const
+pfConsoleCmdParam::CharPtr pfConsoleCmdParam::IToString() const
 {
     hsAssert( fType == kString || fType == kAny, "Trying to use a non-string parameter as a string!" );
 
     return fValue.s;
 }
 
-const char &    pfConsoleCmdParam::IToChar() const
+char pfConsoleCmdParam::IToChar() const
 {
     hsAssert( fType == kChar || fType == kAny, "Trying to use a non-char parameter as a char!" );
 
-    static char     c;
     if( fType == kAny )
     {
         hsAssert(fValue.s != nullptr, "Weird parameter during conversion");
-        c = fValue.s[ 0 ];
-        return c;
+        return fValue.s[0];
     }
     
     return fValue.c;

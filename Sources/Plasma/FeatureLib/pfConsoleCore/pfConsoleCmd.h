@@ -133,11 +133,11 @@ class pfConsoleCmdParam
             char    c;
         } fValue;
 
-        const int       &IToInt() const;
-        const float     &IToFloat() const;
-        const bool      &IToBool() const;
-        const CharPtr   &IToString() const;
-        const char      &IToChar() const;
+        int IToInt() const;
+        float IToFloat() const;
+        bool IToBool() const;
+        CharPtr IToString() const;
+        char IToChar() const;
 
     public:
 
