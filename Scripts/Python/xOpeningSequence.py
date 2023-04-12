@@ -74,8 +74,9 @@ OrientationPBIcon01Zandi = ptAttribSceneobject(6, "Zandi Icon")
 #--------
 
 gIntroMovie = None
+gMovieFilePath = None
 kAtrusIntroMovie = "avi/AtrusIntro.webm"
-kYeeshaIntroMovie = "avi/URULiveIntro.webm"
+kReltoIntroMovie = "avi/NewPlayerIntro.webm"
 
 gIntroStarted = 0
 
@@ -152,7 +153,7 @@ class xOpeningSequence(ptModifier):
         self.version = MaxVersionNumber
         PtDebugPrint("__xOpeningSequence: Max version %d - minor version %d" % (MaxVersionNumber,MinorVersionNumber))
 
-    def OnFirstUpdate(self):
+    def OnServerInitComplete(self):
         "First update, load our dialogs"
         global gCurrentTick
         global gIntroByTimer
@@ -194,6 +195,7 @@ class xOpeningSequence(ptModifier):
         global gOriginalAmbientVolume
         global gOriginalSFXVolume
         global gIntroMovie
+        global gMovieFilePath
         PtDebugPrint("xOpeningSequence::OnGUINotify id=%d, event=%d control=" % (id,event),control,level=kDebugDumpLevel)
 ###############################################
 ##
@@ -221,32 +223,11 @@ class xOpeningSequence(ptModifier):
         elif id == OrientationDlg.id:
             if event == kDialogLoaded:
                 # see if the there actually is a movie to play
-                skipMovie = 1
-                try:
-                    if IsTutorialPath():
-                        os.stat(kAtrusIntroMovie)
-                    else:
-                        os.stat(kYeeshaIntroMovie)
+                if self.CheckMovie():
                     # its there! show the background, which will start the movie
                     PtShowDialog("IntroBahroBgGUI")
-                    skipMovie = 0
-                except:
-                    skipMovie = 1
-                if skipMovie:
-                    # no movie... just show the help screen
-                    # start rendering the scene again
-                    PtEnableRenderScene()
-                    PtGUICursorOn()
-                    OrientationDlg.dialog.show()
-                    PtDebugPrint("xOpeningSequence - no intro movie!!!",level=kDebugDumpLevel)
-                    if IsTutorialPath():
-                        OrientationPBIcon01.value.draw.disable()
-                        OrientationPBIcon02.value.draw.disable()
-                        OrientationPBIcon01Zandi.value.draw.enable()
-                        ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setString(PtGetLocalizedString("GUI.OrientationGUI.OrientPBTextZandi"))
-                    else:
-                        OrientationPBIcon01Zandi.value.draw.disable()
-                        ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setString(PtGetLocalizedString("GUI.OrientationGUI.OrientPBText"))
+                else:
+                    self.IFinishStartOrientation()
             elif event == kAction or event == kValueChanged:
                 orientationID = control.getTagID()
                 if orientationID == kFirstHelpOkBtn:
@@ -328,13 +309,13 @@ class xOpeningSequence(ptModifier):
         elif id == -1:
             if event == kShowHide:
                 if control.isEnabled():
-                    if StartInCleft():
-                        gIntroMovie = ptMoviePlayer(kAtrusIntroMovie, self.key)
+                    if self.CheckMovie():
+                        gIntroMovie = ptMoviePlayer(gMovieFilePath, self.key)
+                        gIntroMovie.playPaused()
+                        if gIntroByTimer:
+                            PtAtTimeCallback(self.key, kIntroPauseSeconds, kIntroPauseID)
                     else:
-                        gIntroMovie = ptMoviePlayer(kYeeshaIntroMovie, self.key)
-                    gIntroMovie.playPaused()
-                    if gIntroByTimer:
-                        PtAtTimeCallback(self.key, kIntroPauseSeconds, kIntroPauseID)
+                        self.IStartOrientation()
 
     def OnBehaviorNotify(self,type,id,state):
         global playScene
@@ -476,3 +457,18 @@ class xOpeningSequence(ptModifier):
             audio.setAmbienceVolume(gOriginalAmbientVolume*(gCurrentTick/gTotalTickTime))
             audio.setSoundFXVolume(gOriginalSFXVolume*(gCurrentTick/gTotalTickTime))
             PtAtTimeCallback(self.key, kSoundTickTime, kSoundFadeInID)
+
+    def CheckMovie(self):
+        global gMovieFilePath
+        try:
+            ageSDL = PtGetAgeSDL()
+            if StartInCleft():
+                gMovieFilePath = kAtrusIntroMovie
+            elif ageSDL["psnlIntroMovie"][0]:
+                gMovieFilePath = ageSDL["psnlIntroMovie"][0]
+            else:
+                gMovieFilePath = kReltoIntroMovie
+            os.stat(gMovieFilePath)
+            return True
+        except:
+            return False
