@@ -39,23 +39,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// These take a long time to compile so I'm putting them here so they won't be
-// rebuilt unless completely necessary -Colin
 
-#include "HeadSpin.h"
+#ifndef _pnGmHeekConst_h_
+#define _pnGmHeekConst_h_
 
-#include "pnNucleusCreatables.h"
-#include "plAllCreatables.h"
+#include <cstdint>
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+enum class EHeekChoice : uint8_t
+{
+    kHeekRock,
+    kHeekPaper,
+    kHeekScissors,
+    kNumHeekChoices
+};
+
+enum class EHeekSeqFinished : uint8_t
+{
+    kHeekCountdownSeq,
+    kHeekChoiceAnimSeq,
+    kHeekGameWinAnimSeq,
+    kNumHeekSeq
+};
+
+enum class EHeekLightState : uint8_t
+{
+    kHeekLightOn,
+    kHeekLightOff,
+    kHeekLightFlash,
+    kNumHeekLightStates
+};
+
+enum class EHeekCountdownState : uint8_t
+{
+    kHeekCountdownStart,
+    kHeekCountdownStop,
+    kHeekCountdownIdle,
+    kNumHeekCountdownStates
+};
+
+#endif

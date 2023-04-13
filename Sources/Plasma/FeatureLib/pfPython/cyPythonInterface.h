@@ -102,6 +102,12 @@ public:
     // Initialize the PlasmaConstants module
     static void AddPlasmaConstantsClasses(PyObject* m);
 
+    // Initialize the PlasmaGame module
+    static void AddPlasmaGameClasses(PyObject* m);
+
+    // Initialize the PlasmaGameConstants module
+    static void AddPlasmaGameConstantsClasses(PyObject* m);
+
     // Initialize the PlasmaNetConstants module;
     static void AddPlasmaNetConstantsClasses(PyObject* m);
 

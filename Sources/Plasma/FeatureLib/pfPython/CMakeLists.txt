@@ -28,10 +28,12 @@ set(pfPython_SOURCES
     pyDrawControl.cpp
     pyDynamicText.cpp
     pyEnum.cpp
+    pyGameCli.cpp
     pyGameScore.cpp
     pyGameScoreMsg.cpp
     pyGeometry3.cpp
     pyGlueHelpers.cpp
+    pyGmBlueSpiral.cpp
     pyGrassShader.cpp
     pyGUIControl.cpp
     pyGUIControlButton.cpp
@@ -116,9 +118,13 @@ set(pfPython_HEADERS
     pyDrawControl.h
     pyDynamicText.h
     pyEnum.h
+    pyGameCli.h
+    pyGameHandler.h
+    pyGameMgr.h
     pyGameScore.h
     pyGameScoreMsg.h
     pyGeometry3.h
+    pyGmBlueSpiral.h
     pyGrassShader.h
     pyGUIControl.h
     pyGUIControlButton.h
@@ -197,10 +203,13 @@ set(pfPython_GLUE
     pyDniInfoSourceGlue.cpp
     pyDrawControlGlue.cpp
     pyDynamicTextGlue.cpp
+    pyGameCliGlue.cpp
+    pyGameMgrGlue.cpp
     pyGameScoreGlue.cpp
     pyGameScoreMsgGlue.cpp
     pyGeometry3Glue.cpp
     pyGlueHelpers.h
+    pyGmBlueSpiralGlue.cpp
     pyGrassShaderGlue.cpp
     pyGUIControlButtonGlue.cpp
     pyGUIControlCheckBoxGlue.cpp
@@ -297,6 +306,7 @@ target_link_libraries(
         pfCamera
         pfCharacter
         pfGameGUIMgr
+        pfGameMgr
         pfGameScoreMgr
         pfJournalBook
         pfLocalizationMgr

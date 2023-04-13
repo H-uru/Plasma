@@ -1,4 +1,5 @@
-/*==LICENSE==*
+# -*- coding: utf-8 -*-
+""" *==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
 Copyright (C) 2011  Cyan Worlds, Inc.
@@ -38,24 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       14617 N Newport Hwy
       Mead, WA   99021
 
-*==LICENSE==*/
-// These take a long time to compile so I'm putting them here so they won't be
-// rebuilt unless completely necessary -Colin
+ *==LICENSE==* """
 
-#include "HeadSpin.h"
+from __future__ import annotations
 
-#include "pnNucleusCreatables.h"
-#include "plAllCreatables.h"
-
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+class PtGameJoinError:
+    kGameJoinSuccess = 0
+    kGameJoinErrNotExist = 1
+    kGameJoinErrInitFailed = 2
+    kGameJoinErrGameStarted = 3
+    kGameJoinErrGameOver = 4
+    kGameJoinErrMaxPlayers = 5
+    kGameJoinErrAlreadyJoined = 6
+    kGameJoinErrNoInvite = 7
+    kNumGameJoinErrors = 8
+    kGameJoinPending = -1

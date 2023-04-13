@@ -39,71 +39,103 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef _pnGmBlueSpiral_h_
+#define _pnGmBlueSpiral_h_
+
+#include "pnGameMgr.h"
+
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglGame.h
-*   
+*   BlueSpiral
+*
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGAME_H
-#error "Header $/Plasma20/Sources/Plasma/PubUtilLib/plNetGameLib/Private/plNglGame.h included more than once"
+//============================================================================
+//  Game type id
+//============================================================================
+
+const plUUID kGameTypeId_BlueSpiral("5ff98165-913e-4fd1-a2c2-9c7f31be2cc8");
+
+//============================================================================
+//  Network message ids
+//============================================================================
+
+// Cli2Srv message ids
+enum
+{
+    kCli2Srv_BlueSpiral_StartGame = kCli2Srv_NumGameMsgIds,
+    kCli2Srv_BlueSpiral_HitCloth,
+};
+
+// Srv2Cli message ids
+enum
+{
+    kSrv2Cli_BlueSpiral_ClothOrder = kSrv2Cli_NumGameMsgIds,
+    kSrv2Cli_BlueSpiral_SuccessfulHit,
+    kSrv2Cli_BlueSpiral_GameWon,
+    kSrv2Cli_BlueSpiral_GameOver, // sent on time out and incorrect entry
+    kSrv2Cli_BlueSpiral_GameStarted,
+};
+
+
+//============================================================================
+// Begin networked data scructures
+#pragma pack(push, 1)
+//============================================================================
+
+    //========================================================================
+    // Message parameters
+    //========================================================================
+    struct BlueSpiral_CreateParam
+    {
+        // empty
+    };
+
+    //========================================================================
+    // Tic-Tac-Toe message structures
+    //========================================================================
+
+    // Cli2Srv
+    struct Cli2Srv_BlueSpiral_StartGame : GameMsgHeader
+    {
+        // empty
+    };
+
+    struct Cli2Srv_BlueSpiral_HitCloth : GameMsgHeader
+    {
+        uint8_t clothNum; // the cloth we hit, 0..6
+    };
+
+    // Srv2Cli
+    struct Srv2Cli_BlueSpiral_ClothOrder : GameMsgHeader
+    {
+        uint8_t order[7]; // each value is the cloth to hit, 0..6, the order is the order in the array
+    };
+
+    struct Srv2Cli_BlueSpiral_SuccessfulHit : GameMsgHeader
+    {
+        // empty
+    };
+
+    struct Srv2Cli_BlueSpiral_GameWon : GameMsgHeader
+    {
+        // empty
+    };
+
+    struct Srv2Cli_BlueSpiral_GameOver : GameMsgHeader
+    {
+        // empty
+    };
+
+    struct Srv2Cli_BlueSpiral_GameStarted : GameMsgHeader
+    {
+        bool startSpin; // if true, start spinning the door thingy
+    };
+
+//============================================================================
+// End networked data structures
+#pragma pack(pop)
+//============================================================================
+
 #endif
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGAME_H
-
-
-/*****************************************************************************
-*
-*   Client-side Game functions
-*
-***/
-
-//============================================================================
-// Connect
-//============================================================================
-void NetCliGameStartConnect (
-    const uint32_t node
-);
-
-//============================================================================
-// Disconnect
-//============================================================================
-void NetCliGameDisconnect ();
-
-//============================================================================
-// Join Age
-//============================================================================
-typedef void (*FNetCliGameJoinAgeRequestCallback)(
-    ENetError       result,
-    void *          param
-);
-void NetCliGameJoinAgeRequest (
-    unsigned                            ageMcpId,
-    const plUUID&                       accountUuid,
-    unsigned                            playerInt,
-    FNetCliGameJoinAgeRequestCallback   callback,
-    void *                              param
-);
-
-//============================================================================
-// Propagate app-specific data
-//============================================================================
-typedef void (*FNetCliGameRecvBufferHandler)(
-    unsigned                        type,
-    unsigned                        bytes,
-    const uint8_t                      buffer[]
-);
-void NetCliGameSetRecvBufferHandler (
-    FNetCliGameRecvBufferHandler    handler
-);
-void NetCliGamePropagateBuffer (
-    unsigned                        type,
-    unsigned                        bytes,
-    const uint8_t                      buffer[]
-);
-
-//============================================================================
-// GameMgrMsg
-//============================================================================
-typedef void (*FNetCliGameRecvGameMgrMsgHandler)(struct GameMsgHeader* msg);
-void NetCliGameSetRecvGameMgrMsgHandler(FNetCliGameRecvGameMgrMsgHandler handler);
-void NetCliGameSendGameMgrMsg(const struct GameMsgHeader* msg);

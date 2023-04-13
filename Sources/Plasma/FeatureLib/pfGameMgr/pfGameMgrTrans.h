@@ -39,23 +39,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// These take a long time to compile so I'm putting them here so they won't be
-// rebuilt unless completely necessary -Colin
+
+#ifndef _pfGameMgrTrans_h_
+#define _pfGameMgrTrans_h_
 
 #include "HeadSpin.h"
 
-#include "pnNucleusCreatables.h"
-#include "plAllCreatables.h"
+class pfGameCli;
+class pfGameHandler;
+class pfGameMgr;
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+class pfGameMgrTrans
+{
+    friend class pfGameMgr;
+
+protected:
+    uint32_t fTransId;
+    uint32_t fGameId;
+
+protected:
+    void ISend(struct GameMsgHeader* msg, size_t bufsz);
+
+public:
+    pfGameMgrTrans()
+        : fTransId(), fGameId()
+    { }
+    pfGameMgrTrans(const pfGameMgrTrans&) = delete;
+
+    virtual ~pfGameMgrTrans() = default;
+
+    virtual void Send() = 0;
+    virtual void Recv(const struct GameMsgHeader* msg) = 0;
+    virtual void Post() = 0;
+};
+
+#endif

@@ -39,23 +39,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// These take a long time to compile so I'm putting them here so they won't be
-// rebuilt unless completely necessary -Colin
 
-#include "HeadSpin.h"
+#ifndef _pyGmBlueSpiral_h_
+#define _pyGmBlueSpiral_h_
 
-#include "pnNucleusCreatables.h"
-#include "plAllCreatables.h"
+#include "pyGameCli.h"
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+class pfGmBlueSpiral;
+class pyGmBlueSpiralHandler;
+
+class pyGmBlueSpiral : public pyGameCli
+{
+public:
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGmBlueSpiral);
+    PYTHON_CLASS_GMCLI_NEW_DEFINITION(pfGmBlueSpiral);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyGmBlueSpiral object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGmBlueSpiral); // converts a PyObject to a pyGmBlueSpiral (throws error if not correct type)
+
+protected:
+    pfGmBlueSpiral* GetGameCli() const { return (pfGmBlueSpiral*)fCli; }
+
+public:
+    void StartGame() const;
+    void HitCloth(uint8_t cloth) const;
+
+public:
+    static void Join(
+        PyObject* handler,
+        uint32_t tableID
+    );
+
+    static bool IsSupported();
+
+public:
+    static void AddPlasmaGameClasses(PyObject* m);
+};
+
+#endif

@@ -85,6 +85,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pySDL.h"
 #include "cyAccountManagement.h"
 
+// GameMgr
+#include "pyGameCli.h"
+#include "pyGameMgr.h"
+#include "pyGmBlueSpiral.h"
+
 // GUIDialog and its controls
 #include "pyGUIDialog.h"
 #include "pyGUIControlButton.h"
@@ -931,6 +936,8 @@ void PythonInterface::initPython()
     // we get complaints about these modules being leaked :(
     IInitBuiltinModule("Plasma", "Plasma 2.0 Game Library", dbgLog, AddPlasmaClasses, AddPlasmaMethods);
     IInitBuiltinModule("PlasmaConstants", "Plasma 2.0 Constants", dbgLog, AddPlasmaConstantsClasses);
+    IInitBuiltinModule("PlasmaGame", "Plasma 2.0 GameMgr Library", dbgLog, AddPlasmaGameClasses);
+    IInitBuiltinModule("PlasmaGameConstants", "Plasma 2.0 Game Constants", dbgLog, AddPlasmaGameConstantsClasses);
     IInitBuiltinModule("PlasmaNetConstants", "Plasma 2.0 Net Constants", dbgLog, AddPlasmaNetConstantsClasses);
     IInitBuiltinModule("PlasmaVaultConstants", "Plasma 2.0 Vault Constants", dbgLog, AddPlasmaVaultConstantsClasses);
 
@@ -1185,6 +1192,30 @@ void PythonInterface::AddPlasmaConstantsClasses(PyObject* plasmaConstantsMod)
     //pyVault::AddPlasmaConstantsClasses(plasmaConstantsMod);
 }
 
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : AddPlasmaGameClasses
+//  PARAMETERS : none
+//
+//  PURPOSE    : Initialize the PlasmaGame module
+//
+void PythonInterface::AddPlasmaGameClasses(PyObject* plasmaGameMod)
+{
+    pyGameCli::AddPlasmaGameClasses(plasmaGameMod);
+    pyGmBlueSpiral::AddPlasmaGameClasses(plasmaGameMod);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : AddPlasmaGameConstantsClasses
+//  PARAMETERS : none
+//
+//  PURPOSE    : Initialize the PlasmaGameConstants module
+//
+void PythonInterface::AddPlasmaGameConstantsClasses(PyObject* plasmaGameConstantsMod)
+{
+    pyGameMgr::AddPlasmaGameConstantsClasses(plasmaGameConstantsMod);
+}
 
 /////////////////////////////////////////////////////////////////////////////
 //

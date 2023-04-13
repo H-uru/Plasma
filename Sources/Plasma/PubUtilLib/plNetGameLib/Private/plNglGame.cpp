@@ -126,6 +126,23 @@ struct RcvdPropagatedBufferTrans : NetNotifyTrans {
     void Post() override;
 };
 
+//============================================================================
+// RcvdGameMgrMsgTrans
+//============================================================================
+struct RcvdGameMgrMsgTrans : NetNotifyTrans
+{
+
+    unsigned bufferBytes;
+    uint8_t* bufferData;
+
+    RcvdGameMgrMsgTrans()
+        : NetNotifyTrans(kGmRcvdGameMgrMsgTrans),
+          bufferBytes(), bufferData()
+    { }
+    ~RcvdGameMgrMsgTrans();
+    void Post() override;
+};
+
 /*****************************************************************************
 *
 *   Private data
@@ -143,6 +160,7 @@ static std::recursive_mutex             s_critsect;
 static LISTDECL(CliGmConn, link)        s_conns;
 static CliGmConn *                      s_active;
 static FNetCliGameRecvBufferHandler     s_bufHandler;
+static FNetCliGameRecvGameMgrMsgHandler s_gameMgrMsgHandler;
 static std::atomic<long>                s_perf[kNumPerf];
 
 
@@ -267,6 +285,19 @@ static void NotifyConnSocketDisconnect (CliGmConn * conn) {
     NetTransCancelByConnId(conn->seq, kNetErrTimeout);
     conn->UnRef("Connected");
     conn->UnRef("Lifetime");
+
+    // Send a fake GameMgr transaction telling all the GameClis to die.
+    {
+        Srv2Cli_Game_PlayerLeft msg{};
+        msg.messageId = kSrv2Cli_Game_PlayerLeft;
+        msg.messageBytes = sizeof(msg);
+
+        RcvdGameMgrMsgTrans* trans = new RcvdGameMgrMsgTrans;
+        trans->bufferBytes = msg.messageBytes;
+        trans->bufferData = new uint8_t[msg.messageBytes];
+        memcpy(trans->bufferData, &msg, msg.messageBytes);
+        NetTransSend(trans);
+    }
 
     if (notify)
         ReportNetError(kNetProtocolCli2Game, kNetErrDisconnected);
@@ -488,7 +519,14 @@ bool RecvMsg<Game2Cli_PropagateBuffer>(const uint8_t msg[], unsigned bytes, void
 template<>
 bool RecvMsg<Game2Cli_GameMgrMsg>(const uint8_t msg[], unsigned bytes, void* param)
 {
-    // What do you expect me to do with this crap?
+    const Game2Cli_GameMgrMsg& reply = *(const Game2Cli_GameMgrMsg*)msg;
+
+    RcvdGameMgrMsgTrans* trans = new RcvdGameMgrMsgTrans;
+    trans->bufferBytes = reply.bytes;
+    trans->bufferData = new uint8_t[reply.bytes];
+    memcpy(trans->bufferData, reply.buffer, reply.bytes);
+    NetTransSend(trans);
+
     return true;
 }
 
@@ -591,6 +629,25 @@ void RcvdPropagatedBufferTrans::Post () {
         s_bufHandler(bufferType, bufferBytes, bufferData);
 }
 
+/*****************************************************************************
+*
+*   RcvdGameMgrMsgTrans
+*
+***/
+
+//============================================================================
+RcvdGameMgrMsgTrans::~RcvdGameMgrMsgTrans()
+{
+    delete[] bufferData;
+}
+
+//============================================================================
+void RcvdGameMgrMsgTrans::Post()
+{
+    if (s_gameMgrMsgHandler)
+        s_gameMgrMsgHandler((GameMsgHeader*)bufferData);
+}
+
 } using namespace Game;
 
 
@@ -652,6 +709,7 @@ void GameInitialize () {
 void GameDestroy (bool wait) {
     s_running = false;
     s_bufHandler = nullptr;
+    s_gameMgrMsgHandler = nullptr;
 
     NetTransCancelByProtocol(
         kNetProtocolCli2Game,
@@ -777,3 +835,26 @@ void NetCliGamePropagateBuffer (
     conn->UnRef("PropBuffer");
 }
 
+//============================================================================
+void NetCliGameSetRecvGameMgrMsgHandler(FNetCliGameRecvGameMgrMsgHandler handler)
+{
+    s_gameMgrMsgHandler = handler;
+}
+
+//============================================================================
+void NetCliGameSendGameMgrMsg(const GameMsgHeader* msgHdr)
+{
+    CliGmConn* conn = GetConnIncRef("GameMgrMsg");
+    if (!conn)
+        return;
+
+    const uintptr_t msg[] = {
+        kCli2Game_GameMgrMsg,
+        msgHdr->messageBytes,
+        (uintptr_t)msgHdr,
+    };
+
+    conn->Send(msg, std::size(msg));
+
+    conn->UnRef("GameMgrMsg");
+}

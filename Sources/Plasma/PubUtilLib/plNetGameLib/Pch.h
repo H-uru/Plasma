@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 
 #include "pnAsyncCore/pnAsyncCore.h"
+#include "pnGameMgr/pnGameMgr.h"
 #include "pnEncryption/plBigNum.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnNetCli/pnNetCli.h"

@@ -1618,6 +1618,15 @@ CliAuConn::CliAuConn ()
     , cancelId(), abandoned()
 {
     ++s_perf[kPerfConnCount];
+
+    // Servers that don't send any caps are assumed to be legacy and
+    // therefore support all game mgr games.
+    caps.SetBit(kCapsGameMgrBlueSpiral);
+    // NOTE: climbing wall's status is currently unknown, omitting...
+    caps.SetBit(kCapsGameMgrHeek);
+    caps.SetBit(kCapsGameMgrMarker);
+    caps.SetBit(kCapsGameMgrTTT);
+    caps.SetBit(kCapsGameMgrVarSync);
 }
 
 //============================================================================

@@ -106,6 +106,7 @@ target_link_libraries(
         pfCamera
         pfCharacter
         pfConditional
+        pfGameMgr
         pfGameGUIMgr
         pfJournalBook
         pfLocalizationMgr
