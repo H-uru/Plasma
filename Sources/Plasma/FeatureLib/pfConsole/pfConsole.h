@@ -95,7 +95,7 @@ class pfConsole : public hsKeyedObject
         int32_t   fEffectCounter;
         float   fLastTime;
         uint32_t  fHelpTimer;
-        char    fLastHelpMsg[ kWorkingLineSize ];
+        ST::string fLastHelpMsg;
         uint8_t   fMode;      // 0 - invisible, 1 - single line, 2 - full
         bool    fInited, fHelpMode, fPythonMode, fPythonFirstTime, fFXEnabled;
         uint32_t  fPythonMultiLines;

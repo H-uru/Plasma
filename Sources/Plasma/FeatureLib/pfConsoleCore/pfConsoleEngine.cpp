@@ -198,16 +198,19 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
 
 //// GetCmdSignature /////////////////////////////////////////////////////////
 
-const char  *pfConsoleEngine::GetCmdSignature( char *name )
+ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
     const char          *ptr;
 
+    // console_strtok requires a writable C string...
+    ST::char_buffer nameBuf = name.to_utf8();
+    char* namePtr = nameBuf.data();
     
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = console_strtok( name, false );
+    ptr = console_strtok(namePtr, false);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
@@ -216,13 +219,13 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
         else
             break;
 
-        ptr = console_strtok( name, false );
+        ptr = console_strtok(namePtr, false);
     }
 
     if (ptr == nullptr)
     {
         fErrorMsg = "Invalid command syntax";
-        return nullptr;
+        return {};
     }
 
     /// OK, so what we found wasn't a group. Which means we need a command...
@@ -230,7 +233,7 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
     if (cmd == nullptr)
     {
         fErrorMsg = "Invalid syntax: command not found";
-        return nullptr;
+        return {};
     }
 
     /// That's it!

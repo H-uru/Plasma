@@ -85,7 +85,7 @@ class pfConsoleEngine
         ~pfConsoleEngine();
 
         // Gets the signature for the command given (NO groups!)
-        const char  *GetCmdSignature( char *name );
+        ST::string GetCmdSignature(const ST::string& name);
 
         // Prints out the help for a given command (or group)
         bool PrintCmdHelp(const ST::string& name, void (*PrintFn)(const ST::string&));

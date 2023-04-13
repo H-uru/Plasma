@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfConsoleCmd.h"
 
-
+#include <string_theory/string_stream>
 
 //////////////////////////////////////////////////////////////////////////////
 //// pfConsoleCmdGroup Stuff /////////////////////////////////////////////////
@@ -550,31 +550,26 @@ uint8_t pfConsoleCmd::GetSigEntry(size_t i)
 //// GetSignature ////////////////////////////////////////////////////////////
 //  Gets the signature of the command as a string. Format is:
 //      name [ type param [, type param ... ] ]
-//  WARNING: uses a static buffer, so don't rely on the contents if you call
-//  it more than once! (You shouldn't need to, though)
 
-const char  *pfConsoleCmd::GetSignature()
+ST::string pfConsoleCmd::GetSignature()
 {
-    static char string[256];
-    
-    char    pStr[ 128 ];
+    ST::string_stream string;
+    string << fName << " ";
 
-
-    strcpy( string, fName );
     for(size_t i = 0; i < fSignature.size(); i++)
     {
-        if (fSigLabels[i] == nullptr)
-            sprintf( pStr, "[%s]", fSigTypes[ fSignature[ i ] ] );
-        else
-            sprintf( pStr, "[%s %s]", fSigTypes[ fSignature[ i ] ], fSigLabels[ i ] );
+        if (i > 0) {
+            string << ", ";
+        }
 
-        hsAssert( strlen( string ) + strlen( pStr ) + 2 < sizeof( string ), "Not enough room for signature string" );
-        strcat( string, ( i > 0 ) ? ", " : " " );
-
-        strcat( string, pStr );
+        string << "[" << fSigTypes[fSignature[i]];
+        if (fSigLabels[i] != nullptr) {
+            string << " " << fSigLabels[i];
+        }
+        string << "]";
     }
 
-    return string;
+    return string.to_string();
 }
 
 

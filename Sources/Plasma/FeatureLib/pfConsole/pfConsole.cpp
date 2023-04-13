@@ -244,7 +244,7 @@ void    pfConsole::Init( pfConsoleEngine *engine )
     fPythonMultiLines = 0;
     fHelpTimer = 0;
     fCursorTicks = 0;
-    memset( fLastHelpMsg, 0, sizeof( fLastHelpMsg ) );
+    fLastHelpMsg.clear();
     fEngine = engine;
 
     fInputInterface = new pfConsoleInputInterface( this );
@@ -794,7 +794,7 @@ void    pfConsole::Draw( plPipeline *p )
     else
         height = yOff * ( fNumDisplayLines + 2 ) + 14;
 
-    if( fHelpTimer == 0 && !fHelpMode && fLastHelpMsg[ 0 ] != 0 )
+    if (fHelpTimer == 0 && !fHelpMode && !fLastHelpMsg.empty())
         showTooltip = true;
     
     if( fEffectCounter > 0 )
@@ -931,10 +931,15 @@ void    pfConsole::Draw( plPipeline *p )
     if( fCursorTicks < -kCursorBlinkRate )
         fCursorTicks = kCursorBlinkRate;
 
-    if( showTooltip )
-        drawText.DrawString( i, y - yOff, fLastHelpMsg, 255, 255, 0 );
-    else
+    if (showTooltip) {
+        ST::char_buffer helpMsgBuf = fLastHelpMsg.to_latin_1();
+        if (helpMsgBuf.size() > kMaxCharsWide - 2) {
+            helpMsgBuf[kMaxCharsWide - 2] = 0;
+        }
+        drawText.DrawString(i, y - yOff, helpMsgBuf.c_str(), 255, 255, 0);
+    } else {
         fHelpTimer--;
+    }
 
     drawText.SetDrawOnTopMode( false );
 }
@@ -943,17 +948,12 @@ void    pfConsole::Draw( plPipeline *p )
 
 void    pfConsole::IUpdateTooltip()
 {
-    char    tmpStr[ kWorkingLineSize ];
-    char    *c;
-
-
-    strcpy( tmpStr, fWorkingLine );
-    c = (char *)fEngine->GetCmdSignature( tmpStr );
-    if (c == nullptr || strcmp(c, fLastHelpMsg) != 0)
+    ST::string c = fEngine->GetCmdSignature(ST::string::from_latin_1(fWorkingLine));
+    if (c.empty() || c != fLastHelpMsg)
     {
         /// Different--update timer to wait
         fHelpTimer = kHelpDelay;
-        strncpy( fLastHelpMsg, c ? c : "", kMaxCharsWide - 2 );
+        fLastHelpMsg = c;
     }
 }
 

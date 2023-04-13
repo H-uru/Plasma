@@ -263,7 +263,7 @@ class pfConsoleCmd
         pfConsoleCmd    *GetNext() { return fNext; }
         char            *GetName() { return fName; }
         const char      *GetHelp() { return fHelpString; }
-        const char      *GetSignature();
+        ST::string GetSignature();
 
         pfConsoleCmdGroup   *GetParent() { return fParentGroup; }
 
