@@ -126,8 +126,6 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
     const char          *ptr;
-    static char         tempString[ 512 ];
-    uint32_t              i;
 
     // console_strtok requires a writable C string...
     ST::char_buffer nameBuf = name.to_utf8();
@@ -168,13 +166,7 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
         PrintFn("  Commands:");
         for (cmd = group->GetFirstCommand(); cmd != nullptr; cmd = cmd->GetNext())
         {
-            const char* p = cmd->GetHelp();
-            for(i = 0; p[ i ] != 0 && p[ i ] != '\n'; i++) {
-                tempString[ i ] = p[ i ];
-            }
-            tempString[ i ] = 0;
-
-            PrintFn(ST::format("    {}: {}", cmd->GetName(), tempString));
+            PrintFn(ST::format("    {}: {}", cmd->GetName(), cmd->GetHelp().before_first('\n')));
         }
 
         return true;
@@ -518,15 +510,15 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
 ST::string pfConsoleEngine::FindNestedPartialCmd(const ST::string& line, uint32_t numToSkip, bool preserveParams)
 {
     /// Somewhat easier than FindPartialCmd...
-    pfConsoleCmd* cmd = pfConsoleCmdGroup::GetBaseGroup()->FindNestedPartialCommand(line.c_str(), &numToSkip);
+    pfConsoleCmd* cmd = pfConsoleCmdGroup::GetBaseGroup()->FindNestedPartialCommand(line, &numToSkip);
     if (cmd == nullptr)
         return {};
 
     /// Recurse back up and get the group hierarchy
-    ST::string name = cmd->GetName() + ST_LITERAL(" ");
+    ST::string name = cmd->GetName() + ' ';
     pfConsoleCmdGroup* group = cmd->GetParent();
     while (group != nullptr && group != pfConsoleCmdGroup::GetBaseGroup()) {
-        name = group->GetName() + ST_LITERAL(".") + name;
+        name = group->GetName() + '.' + name;
         group = group->GetParent();
     }
 

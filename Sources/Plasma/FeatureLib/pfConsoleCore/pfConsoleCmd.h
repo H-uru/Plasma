@@ -68,7 +68,7 @@ class pfConsoleCmdGroup
         static pfConsoleCmdGroup    *fBaseCmdGroup;
         static uint32_t               fBaseCmdGroupRef;
 
-        char    fName[ 128 ];
+        ST::string fName;
 
         pfConsoleCmdGroup   *fNext;
         pfConsoleCmdGroup   **fPrevPtr;
@@ -84,7 +84,7 @@ class pfConsoleCmdGroup
             kFindPartial = 0x01
         };
 
-        pfConsoleCmdGroup(const char *name, const char *parent );
+        pfConsoleCmdGroup(ST::string name, const ST::string& parent);
         ~pfConsoleCmdGroup();
 
         void    AddCommand( pfConsoleCmd *cmd );
@@ -94,24 +94,24 @@ class pfConsoleCmdGroup
         void    Unlink();
 
         pfConsoleCmdGroup   *GetNext() { return fNext; }
-        char                *GetName() { return fName; }
+        ST::string GetName() { return fName; }
         pfConsoleCmdGroup   *GetParent() { return fParentGroup; }
 
         static pfConsoleCmdGroup    *GetBaseGroup();
 
-        pfConsoleCmd        *FindCommand( const char *name );
-        pfConsoleCmd        *FindCommandNoCase(const char *name, uint8_t flags = 0, pfConsoleCmd *start = nullptr);
-        pfConsoleCmd        *FindNestedPartialCommand(const char *name, uint32_t *counter);
+        pfConsoleCmd* FindCommand(const ST::string& name);
+        pfConsoleCmd* FindCommandNoCase(const ST::string& name, uint8_t flags = 0, pfConsoleCmd* start = nullptr);
+        pfConsoleCmd* FindNestedPartialCommand(const ST::string& name, uint32_t* counter);
 
-        pfConsoleCmdGroup   *FindSubGroup( const char *name );
-        pfConsoleCmdGroup   *FindSubGroupNoCase(const char *name, uint8_t flags = 0, pfConsoleCmdGroup *start = nullptr);
+        pfConsoleCmdGroup* FindSubGroup(const ST::string& name);
+        pfConsoleCmdGroup* FindSubGroupNoCase(const ST::string& name, uint8_t flags = 0, pfConsoleCmdGroup* start = nullptr);
 
         pfConsoleCmd        *GetFirstCommand() { return fCommands; }
         pfConsoleCmdGroup   *GetFirstSubGroup() { return fSubGroups; }
 
         int                 IterateCommands(pfConsoleCmdIterator*, int depth=0);
 
-        static pfConsoleCmdGroup    *FindSubGroupRecurse( const char *name );
+        static pfConsoleCmdGroup* FindSubGroupRecurse(const ST::string& name);
         static void                 DecBaseCmdGroupRef();
 };
 
@@ -217,8 +217,8 @@ typedef void (*pfConsoleCmdPtr)(int32_t numParams, pfConsoleCmdParam *params, vo
 class pfConsoleCmd
 {
     protected:
-        char            fName[ 128 ];
-        const char*     fHelpString;
+        ST::string fName;
+        ST::string fHelpString;
 
         pfConsoleCmdPtr fFunction;
 
@@ -228,9 +228,9 @@ class pfConsoleCmd
         pfConsoleCmdGroup   *fParentGroup;
 
         std::vector<uint8_t> fSignature;
-        std::vector<char *> fSigLabels;
+        std::vector<ST::string> fSigLabels;
 
-        void    ICreateSignature(const char *paramList );
+        void ICreateSignature(const ST::string& paramList);
 
     public:
 
@@ -250,10 +250,10 @@ class pfConsoleCmd
         static char         fSigTypes[ kNumTypes ][ 8 ];
 
 
-        pfConsoleCmd(const char *group, const char *name, const char *paramList, const char *help, pfConsoleCmdPtr func);
+        pfConsoleCmd(const ST::string& group, ST::string name, const ST::string& paramList, ST::string help, pfConsoleCmdPtr func);
         ~pfConsoleCmd();
 
-        void    Register(const char *group, const char *name );
+        void Register(const ST::string& group);
         void    Unregister();
         void    Execute(int32_t numParams, pfConsoleCmdParam *params, void (*PrintFn)(const ST::string&) = nullptr);
 
@@ -261,8 +261,8 @@ class pfConsoleCmd
         void    Unlink();
 
         pfConsoleCmd    *GetNext() { return fNext; }
-        char            *GetName() { return fName; }
-        const char      *GetHelp() { return fHelpString; }
+        ST::string GetName() { return fName; }
+        ST::string GetHelp() { return fHelpString; }
         ST::string GetSignature();
 
         pfConsoleCmdGroup   *GetParent() { return fParentGroup; }
@@ -294,21 +294,21 @@ public:
 
 #define PF_CONSOLE_BASE_CMD( name, p, help ) \
     void pfConsoleCmd_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&)); \
-    pfConsoleCmd conCmd_##name(nullptr, #name, p, help, pfConsoleCmd_##name##_proc); \
+    pfConsoleCmd conCmd_##name({}, ST_LITERAL(#name), ST_LITERAL(p), ST_LITERAL(help), pfConsoleCmd_##name##_proc); \
     void pfConsoleCmd_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&))
 
 #define PF_CONSOLE_CMD( grp, name, p, help ) \
     void pfConsoleCmd_##grp##_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&)); \
-    pfConsoleCmd conCmd_##grp##_##name( #grp, #name, p, help, pfConsoleCmd_##grp##_##name##_proc ); \
+    pfConsoleCmd conCmd_##grp##_##name(ST_LITERAL(#grp), ST_LITERAL(#name), ST_LITERAL(p), ST_LITERAL(help), pfConsoleCmd_##grp##_##name##_proc); \
     void pfConsoleCmd_##grp##_##name##_proc(int32_t numParams, pfConsoleCmdParam *params, void (*PrintString)(const ST::string&))
 
 //// pfConsoleCmdGroup Creation Macro ////////////////////////////////////////
 
 #define PF_CONSOLE_GROUP( name ) \
-    pfConsoleCmdGroup   conGroup_##name(#name, nullptr);
+    pfConsoleCmdGroup conGroup_##name(ST_LITERAL(#name), {});
 
 #define PF_CONSOLE_SUBGROUP( parent, name ) \
-    pfConsoleCmdGroup   conGroup_##parent##_##name( #name, #parent );
+    pfConsoleCmdGroup conGroup_##parent##_##name(ST_LITERAL(#name), ST_LITERAL(#parent));
 
 
 //// Force the console sources to generate a linkable output /////////////////

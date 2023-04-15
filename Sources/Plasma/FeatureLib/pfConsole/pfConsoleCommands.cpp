@@ -665,7 +665,7 @@ public:
 
     void ProcessCmd(pfConsoleCmd* c, int depth) override
     {
-        if (strncmp("SampleCmd", c->GetName(), 9) == 0)
+        if (c->GetName().starts_with("SampleCmd"))
             return;
 
         if (!fFirstGroupPrinted)
@@ -760,17 +760,16 @@ public:
 class BriefDocGenIterator : public pfConsoleCmdIterator
 {
     FILE *fFile;    
-    char fGrpName[200];
+    ST::string fGrpName;
 
 public:
-    BriefDocGenIterator(FILE *f) { fFile = f; strcpy(fGrpName,"");}
+    BriefDocGenIterator(FILE *f) : fFile(f) {}
     void ProcessCmd(pfConsoleCmd* c, int depth) override
     {
 
-        if(strncmp("SampleCmd",c->GetName(), 9) != 0)
+        if (!c->GetName().starts_with("SampleCmd"))
         {
-                fprintf(fFile, "<em>%s.%s </em> - %s <br />\n",fGrpName,c->GetSignature(),
-                        c->GetHelp());
+            ST::printf(fFile, "<em>{}.{}</em> - {}<br />\n", fGrpName, c->GetSignature(), c->GetHelp());
         }
     }
     bool ProcessGroup(pfConsoleCmdGroup *g, int depth) override
@@ -779,14 +778,12 @@ public:
         {
             fprintf(fFile, "<br />\n");
             if(depth <1)
-                strcpy(fGrpName, g->GetName());
+                fGrpName = g->GetName();
             else 
             {
                 pfConsoleCmdGroup *parentGrp;
                 parentGrp = g->GetParent();	
-                strcpy(fGrpName, parentGrp->GetName());
-                strcat(fGrpName,".");
-                strcat(fGrpName,g->GetName());
+                fGrpName = parentGrp->GetName() + '.' + g->GetName();
             }
 
         }
@@ -5147,12 +5144,12 @@ PF_CONSOLE_CMD(Physics,
 
 PF_CONSOLE_GROUP( Mouse )
 
-PF_CONSOLE_CMD(Mouse, Invert, nullptr, "invert the mouse")
+PF_CONSOLE_CMD(Mouse, Invert, "", "invert the mouse")
 {
     plMouseDevice::SetInverted(true);
 }
 
-PF_CONSOLE_CMD(Mouse, UnInvert, nullptr, "un-invert the mouse")
+PF_CONSOLE_CMD(Mouse, UnInvert, "", "un-invert the mouse")
 {
     plMouseDevice::SetInverted(false);
 }
@@ -5164,11 +5161,11 @@ PF_CONSOLE_CMD( Mouse, SetDeadZone, "float zone", "Sets the dead zone for the mo
     float f = params[0];
 }
 
-PF_CONSOLE_CMD(Mouse, Enable, nullptr, "Enable mouse input")
+PF_CONSOLE_CMD(Mouse, Enable, "", "Enable mouse input")
 {
 //  plCommandInterfaceModifier::GetInstance()->EnableMouseInput();
 }
-PF_CONSOLE_CMD(Mouse, Disable, nullptr, "Disable mouse input")
+PF_CONSOLE_CMD(Mouse, Disable, "", "Disable mouse input")
 {
 //  plCommandInterfaceModifier::GetInstance()->DisableMouseInput();
 }
@@ -5179,12 +5176,12 @@ PF_CONSOLE_CMD( Mouse, SetFadeDelay, "float delayInSecs", "Set how long the curs
         plAvatarInputInterface::GetInstance()->SetCursorFadeDelay( params[ 0 ] );
 }
 
-PF_CONSOLE_CMD(Mouse, Hide, nullptr, "hide mouse cursor")
+PF_CONSOLE_CMD(Mouse, Hide, "", "hide mouse cursor")
 {
     plMouseDevice::HideCursor(true);
 }
 
-PF_CONSOLE_CMD(Mouse, Show, nullptr, "hide mouse cursor")
+PF_CONSOLE_CMD(Mouse, Show, "", "hide mouse cursor")
 {
     plMouseDevice::ShowCursor(true);
 }
