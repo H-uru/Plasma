@@ -441,22 +441,13 @@ bool pfConsoleEngine::IConvertToParam(uint8_t type, ST::string string, pfConsole
 }
 
 //// FindPartialCmd //////////////////////////////////////////////////////////
-//  Given a string which is the beginning of a console command, modifies the
-//  string to represent the best match of command (or group) for that string.
-//  WARNING: modifies the string passed to it.
+//  Given a string which is the beginning of a console command,
+//  returns the best match of command (or group) for that string.
 
-bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preserveParams )
+ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgain, bool preserveParams)
 {
-    pfConsoleCmd        *cmd = nullptr;
-    pfConsoleCmdGroup   *group, *subGrp;
-
-    static const char           *ptr = nullptr;
-    static char                 *insertLoc = nullptr;
     static pfConsoleCmd         *lastCmd = nullptr;
     static pfConsoleCmdGroup    *lastGroup = nullptr;
-    static char                 newStr[ 256 ];
-    static char                 *originalLine = line;
-
 
     /// Repeat search
     if( !findAgain )
@@ -466,51 +457,44 @@ bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preser
     }
 
     /// New search
-    if( strlen( line ) > sizeof( newStr ) )
-        return false;
-
-    newStr[ 0 ] = 0;
-    insertLoc = newStr;
+    ST::string_stream newStr;
+    // console_strtok requires a writable C string...
+    ST::char_buffer lineBuf = line.to_utf8();
+    char* linePtr = lineBuf.data();
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
-    group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = console_strtok( line, false );
+    pfConsoleCmdGroup* group = pfConsoleCmdGroup::GetBaseGroup();
+    const char* ptr = console_strtok(linePtr, false);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
-        if( ( subGrp = group->FindSubGroupNoCase( ptr, 0/*pfConsoleCmdGroup::kFindPartial*/
-            , /*lastGroup*/nullptr)) != nullptr)
-        {
-            group = subGrp;
-            strcat( newStr, group->GetName() );
-            insertLoc += strlen( group->GetName() );
-        }
-        else
+        pfConsoleCmdGroup* subGrp = group->FindSubGroupNoCase(ptr, 0, nullptr);
+        if (subGrp == nullptr) {
             break;
+        }
 
-        ptr = console_strtok( line, false );
-        strcat( newStr, "." );
-        insertLoc++;
+        group = subGrp;
+        newStr << group->GetName() << '.';
+        ptr = console_strtok(linePtr, false);
     }
 
     if (ptr != nullptr)
     {
         // Still got at least one token left. Try to match to either
         // a partial group or a partial command
-        if ((subGrp = group->FindSubGroupNoCase(ptr, pfConsoleCmdGroup::kFindPartial, lastGroup)) != nullptr)
+        pfConsoleCmdGroup* subGrp = group->FindSubGroupNoCase(ptr, pfConsoleCmdGroup::kFindPartial, lastGroup);
+        if (subGrp != nullptr)
         {
             lastGroup = group = subGrp;
-            strcat( newStr, group->GetName() );
-            strcat( newStr, "." );
+            newStr << group->GetName()  << '.';
         }
         else 
         {
-            cmd = group->FindCommandNoCase( ptr, pfConsoleCmdGroup::kFindPartial, lastCmd );
+            pfConsoleCmd* cmd = group->FindCommandNoCase(ptr, pfConsoleCmdGroup::kFindPartial, lastCmd);
             if (cmd == nullptr)
-                return false;
+                return {};
 
-            strcat( newStr, cmd->GetName() );
-            strcat( newStr, " " );
+            newStr << cmd->GetName()  << ' ';
             lastCmd = cmd;
         }
     }
@@ -518,14 +502,11 @@ bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preser
     if( preserveParams )
     {
         /// Preserve the rest of the string after the matched command
-        if (line != nullptr)
-            strcat( newStr, line );
+        if (linePtr != nullptr)
+            newStr << linePtr;
     }
 
-    // Copy back!
-    strcpy( originalLine, newStr );
-
-    return true;
+    return newStr.to_string();
 }
 
 //// FindNestedPartialCmd ////////////////////////////////////////////////////
@@ -534,40 +515,25 @@ bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preser
 //  groups. numToSkip specifies how many matches to skip before returning one
 //  (so if numToSkip = 1, then this will return the second match found).
 
-bool    pfConsoleEngine::FindNestedPartialCmd( char *line, uint32_t numToSkip, bool preserveParams )
+ST::string pfConsoleEngine::FindNestedPartialCmd(const ST::string& line, uint32_t numToSkip, bool preserveParams)
 {
-    pfConsoleCmd        *cmd;
-
-    
     /// Somewhat easier than FindPartialCmd...
-    cmd = pfConsoleCmdGroup::GetBaseGroup()->FindNestedPartialCommand( line, &numToSkip );
+    pfConsoleCmd* cmd = pfConsoleCmdGroup::GetBaseGroup()->FindNestedPartialCommand(line.c_str(), &numToSkip);
     if (cmd == nullptr)
-        return false;
+        return {};
 
     /// Recurse back up and get the group hierarchy
-    line[ 0 ] = 0;
-    IBuildCmdNameRecurse( cmd->GetParent(), line );
-    strcat( line, cmd->GetName() );
-    strcat( line, " " );
+    ST::string name = cmd->GetName() + ST_LITERAL(" ");
+    pfConsoleCmdGroup* group = cmd->GetParent();
+    while (group != nullptr && group != pfConsoleCmdGroup::GetBaseGroup()) {
+        name = group->GetName() + ST_LITERAL(".") + name;
+        group = group->GetParent();
+    }
 
     if( preserveParams )
     {
         /// Preserve the rest of the string after the matched command
     }
 
-    return true;
-}
-
-//// IBuildCmdNameRecurse ////////////////////////////////////////////////////
-
-void    pfConsoleEngine::IBuildCmdNameRecurse( pfConsoleCmdGroup *group, char *string )
-{
-    if (group == nullptr || group == pfConsoleCmdGroup::GetBaseGroup())
-        return;
-
-
-    IBuildCmdNameRecurse( group->GetParent(), string );
-
-    strcat( string, group->GetName() );
-    strcat( string, "." );
+    return name;
 }

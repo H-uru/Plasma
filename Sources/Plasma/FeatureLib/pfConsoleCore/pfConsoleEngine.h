@@ -76,9 +76,6 @@ class pfConsoleEngine
         ST::string fErrorMsg;
         ST::string fLastErrorLine;
 
-        // Recursive function to build a string of the groups a command is in
-        void        IBuildCmdNameRecurse( pfConsoleCmdGroup *group, char *string );
-
     public:
 
         pfConsoleEngine();
@@ -103,10 +100,10 @@ class pfConsoleEngine
         ST::string GetLastErrorLine() { return fLastErrorLine; }
 
         // Does command completion on a partially-complete console line
-        bool        FindPartialCmd( char *line, bool findAgain = false, bool perserveParams = false );
+        ST::string FindPartialCmd(const ST::string& line, bool findAgain = false, bool perserveParams = false);
 
         // Does command completion without restrictions to any group, skipping the number of matches given
-        bool        FindNestedPartialCmd( char *line, uint32_t numToSkip, bool perserveParams = false );
+        ST::string FindNestedPartialCmd(const ST::string& line, uint32_t numToSkip, bool perserveParams = false);
 };
 
 

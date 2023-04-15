@@ -101,7 +101,7 @@ class pfConsoleCmdGroup
 
         pfConsoleCmd        *FindCommand( const char *name );
         pfConsoleCmd        *FindCommandNoCase(const char *name, uint8_t flags = 0, pfConsoleCmd *start = nullptr);
-        pfConsoleCmd        *FindNestedPartialCommand( char *name, uint32_t *counter );
+        pfConsoleCmd        *FindNestedPartialCommand(const char *name, uint32_t *counter);
 
         pfConsoleCmdGroup   *FindSubGroup( const char *name );
         pfConsoleCmdGroup   *FindSubGroupNoCase(const char *name, uint8_t flags = 0, pfConsoleCmdGroup *start = nullptr);

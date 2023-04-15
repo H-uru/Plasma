@@ -160,7 +160,7 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindCommand( const char *name )
 //  how many matches it skips before returning a match. (That way you can
 //  cycle through matches by sending 1 + the last counter every time).
 
-pfConsoleCmd    *pfConsoleCmdGroup::FindNestedPartialCommand( char *name, uint32_t *counter )
+pfConsoleCmd    *pfConsoleCmdGroup::FindNestedPartialCommand(const char *name, uint32_t *counter)
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group;

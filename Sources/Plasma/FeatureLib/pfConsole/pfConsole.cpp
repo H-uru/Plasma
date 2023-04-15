@@ -391,59 +391,55 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
         }
         else
         {
-            static char     lastSearch[ kMaxCharsWide ];
-            char            search[ kMaxCharsWide ];
+            static ST::string lastSearch;
 
             if( !findAgain && findCounter == 0 )
-                strcpy( lastSearch, fWorkingLine );
-            strcpy( search, lastSearch );
+                lastSearch = ST::string::from_latin_1(fWorkingLine);
 
-            if( findCounter > 0 )
-            {
+            ST::string found;
+            if (findCounter > 0) {
                 // Not found the normal way; try using an unrestricted search
-                if( fEngine->FindNestedPartialCmd( search, findCounter, true ) )
-                {
-                    strcpy( fWorkingLine, search );
+                found = fEngine->FindNestedPartialCmd(lastSearch, findCounter, true);
+                if (!found.empty()) {
                     findCounter++;
-                }
-                else
-                {
+                } else {
                     /// Try starting over...?
                     findCounter = 0;
-                    if( fEngine->FindNestedPartialCmd( search, findCounter, true ) )
-                    { 
-                        strcpy( fWorkingLine, search );
+                    found = fEngine->FindNestedPartialCmd(lastSearch, findCounter, true);
+                    if (!found.empty()) {
+                        findCounter++;
+                    }
+                }
+            } else {
+                found = fEngine->FindPartialCmd(lastSearch, findAgain, true);
+                if (!found.empty()) {
+                    findAgain = true;
+                } else if (findAgain) {
+                    /// Try starting over
+                    found = fEngine->FindPartialCmd(lastSearch, findAgain = false, true);
+                    if (!found.empty()) {
+                        findAgain = true;
+                    }
+                } else {
+                    // Not found the normal way; start an unrestricted search
+                    found = fEngine->FindNestedPartialCmd(lastSearch, findCounter, true);
+                    if (!found.empty()) {
                         findCounter++;
                     }
                 }
             }
-            else if( fEngine->FindPartialCmd( search, findAgain, true ) )
-            {
-                strcpy( fWorkingLine, search );
-                findAgain = true;
-            }
-            else if( findAgain )
-            {
-                /// Try starting over
-                strcpy( search, lastSearch );
-                if( fEngine->FindPartialCmd( search, findAgain = false, true ) )
-                {
-                    strcpy( fWorkingLine, search );
-                    findAgain = true;
+
+            if (!found.empty()) {
+                ST::char_buffer foundBuf = found.to_latin_1();
+                if (foundBuf.size() >= sizeof(fWorkingLine)) {
+                    foundBuf[sizeof(fWorkingLine) - 1] = 0;
+                    memcpy(fWorkingLine, foundBuf.c_str(), sizeof(fWorkingLine));
+                    fWorkingCursor = sizeof(fWorkingLine) - 1;
+                } else {
+                    memcpy(fWorkingLine, foundBuf.c_str(), foundBuf.size() + 1);
+                    fWorkingCursor = foundBuf.size();
                 }
             }
-
-            else
-            {
-                // Not found the normal way; start an unrestricted search
-                if( fEngine->FindNestedPartialCmd( search, findCounter, true ) )
-                {
-                    strcpy( fWorkingLine, search );
-                    findCounter++;
-                }
-            }
-
-            fWorkingCursor = strlen( fWorkingLine );
             IUpdateTooltip();
         }
     }
