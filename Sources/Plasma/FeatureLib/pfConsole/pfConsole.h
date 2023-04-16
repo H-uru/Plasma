@@ -114,6 +114,10 @@ class pfConsole : public hsKeyedObject
 
         pfConsoleEngine     *fEngine;
 
+        ST::string IGetWorkingLine();
+        void ISetWorkingLine(const ST::string& workingLine);
+        void IClearWorkingLine();
+
         void    IHandleKey( plKeyEventMsg *msg );
         void    IHandleCharacter(const char c);
 

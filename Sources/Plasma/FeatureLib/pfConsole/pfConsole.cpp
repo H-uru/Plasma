@@ -221,6 +221,34 @@ pfConsole * pfConsole::GetInstance () {
     return fTheConsole;
 }
 
+ST::string pfConsole::IGetWorkingLine()
+{
+    // FIXME: Support more Unicode than just Latin-1
+    return ST::string::from_latin_1(fWorkingLine);
+}
+
+void pfConsole::ISetWorkingLine(const ST::string& workingLine)
+{
+    // FIXME: Support more Unicode than just Latin-1
+    ST::char_buffer buf = workingLine.to_latin_1();
+    size_t size;
+    if (buf.size() >= sizeof(fWorkingLine)) {
+        size = sizeof(fWorkingLine);
+        buf[size - 1] = 0;
+    } else {
+        size = buf.size() + 1;
+    }
+    hsAssert(size <= sizeof(fWorkingLine), "Miscalculated size of buffer for working line!");
+    memcpy(fWorkingLine, buf.c_str(), size);
+    fWorkingCursor = size - 1;
+}
+
+void pfConsole::IClearWorkingLine()
+{
+    fWorkingLine[0] = 0;
+    fWorkingCursor = 0;
+}
+
 //// Init ////////////////////////////////////////////////////////////////////
 
 void    pfConsole::Init( pfConsoleEngine *engine )
@@ -228,8 +256,7 @@ void    pfConsole::Init( pfConsoleEngine *engine )
     fDisplayBuffer = new char[ fNumDisplayLines * kMaxCharsWide ];
     memset( fDisplayBuffer, 0, fNumDisplayLines * kMaxCharsWide );
 
-    memset( fWorkingLine, 0, sizeof( fWorkingLine ) );
-    fWorkingCursor = 0;
+    IClearWorkingLine();
 
     for (size_t i = 0; i < kNumHistoryTypes; i++) {
         fHistory[i] = {};
@@ -370,7 +397,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
 
     if( msg->GetKeyCode() == KEY_ESCAPE )
     {
-        fWorkingLine[ fWorkingCursor = 0 ] = 0;
+        IClearWorkingLine();
         findAgain = false;
         findCounter = 0;
         fHelpMode = false;
@@ -394,7 +421,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
             static ST::string lastSearch;
 
             if( !findAgain && findCounter == 0 )
-                lastSearch = ST::string::from_latin_1(fWorkingLine);
+                lastSearch = IGetWorkingLine();
 
             ST::string found;
             if (findCounter > 0) {
@@ -430,15 +457,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
             }
 
             if (!found.empty()) {
-                ST::char_buffer foundBuf = found.to_latin_1();
-                if (foundBuf.size() >= sizeof(fWorkingLine)) {
-                    foundBuf[sizeof(fWorkingLine) - 1] = 0;
-                    memcpy(fWorkingLine, foundBuf.c_str(), sizeof(fWorkingLine));
-                    fWorkingCursor = sizeof(fWorkingLine) - 1;
-                } else {
-                    memcpy(fWorkingLine, foundBuf.c_str(), foundBuf.size() + 1);
-                    fWorkingCursor = foundBuf.size();
-                }
+                ISetWorkingLine(found);
             }
             IUpdateTooltip();
         }
@@ -449,12 +468,9 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
         if (!fHistory[fPythonMode].fData[i].empty())
         {
             fHistory[ fPythonMode ].fRecallCursor = i;
-            ST::char_buffer historyLineBuf = fHistory[fPythonMode].fData[fHistory[fPythonMode].fRecallCursor].to_latin_1();
-            hsAssert(historyLineBuf.size() < sizeof(fWorkingLine), "Console history entry longer than working line?!");
-            memcpy(fWorkingLine, historyLineBuf.c_str(), historyLineBuf.size() + 1);
+            ISetWorkingLine(fHistory[fPythonMode].fData[fHistory[fPythonMode].fRecallCursor]);
             findAgain = false;
             findCounter = 0;
-            fWorkingCursor = historyLineBuf.size();
             IUpdateTooltip();
         }
     }
@@ -466,15 +482,11 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
             if( i != fHistory[ fPythonMode ].fCursor )
             {
                 fHistory[ fPythonMode ].fRecallCursor = i;
-                ST::char_buffer historyLineBuf = fHistory[fPythonMode].fData[fHistory[fPythonMode].fRecallCursor].to_latin_1();
-                hsAssert(historyLineBuf.size() < sizeof(fWorkingLine), "Console history entry longer than working line?!");
-                memcpy(fWorkingLine, historyLineBuf.c_str(), historyLineBuf.size() + 1);
-                fWorkingCursor = historyLineBuf.size();
+                ISetWorkingLine(fHistory[fPythonMode].fData[fHistory[fPythonMode].fRecallCursor]);
             }
             else
             {
-                memset( fWorkingLine, 0, sizeof( fWorkingLine ) );
-                fWorkingCursor = 0;
+                IClearWorkingLine();
                 fHistory[ fPythonMode ].fRecallCursor = fHistory[ fPythonMode ].fCursor;
             }
             findAgain = false;
@@ -543,14 +555,12 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     }
     else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_C)
     {
-        // FIXME: console unicode friendly
-        plClipboard::GetInstance().SetClipboardText(ST::string::from_latin_1(fWorkingLine));
+        plClipboard::GetInstance().SetClipboardText(IGetWorkingLine());
     }
     else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_X)
     {
-        // FIXME: console unicode friendly
-        plClipboard::GetInstance().SetClipboardText(ST::string::from_latin_1(fWorkingLine));
-        fWorkingLine[fWorkingCursor = 0] = 0;
+        plClipboard::GetInstance().SetClipboardText(IGetWorkingLine());
+        IClearWorkingLine();
         findAgain = false;
         findCounter = 0;
         IUpdateTooltip();
@@ -944,7 +954,7 @@ void    pfConsole::Draw( plPipeline *p )
 
 void    pfConsole::IUpdateTooltip()
 {
-    ST::string c = fEngine->GetCmdSignature(ST::string::from_latin_1(fWorkingLine));
+    ST::string c = fEngine->GetCmdSignature(IGetWorkingLine());
     if (c.empty() || c != fLastHelpMsg)
     {
         /// Different--update timer to wait
@@ -957,7 +967,7 @@ void    pfConsole::IUpdateTooltip()
 
 void    pfConsole::IExecuteWorkingLine()
 {
-    ST::string line = ST::string::from_latin_1(fWorkingLine);
+    ST::string line = IGetWorkingLine();
 
     // leave leading space for Python multi lines (need the indents!)
     if (fPythonMultiLines == 0) {
@@ -1048,8 +1058,7 @@ void    pfConsole::IExecuteWorkingLine()
         }
     }
 
-    // Clear
-    fWorkingLine[fWorkingCursor = 0] = 0;
+    IClearWorkingLine();
 }
 
 //// IPrintSomeHelp //////////////////////////////////////////////////////////
