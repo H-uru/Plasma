@@ -576,7 +576,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
 
         // FIXME: Unfortunately, the console is currently limited to single byte
         //        characters. Remove this when the console is unicode safe.
-        ST::char_buffer buf = text.to_latin_1(ST::utf_validation_t::substitute_invalid);
+        ST::char_buffer buf = text.to_latin_1();
 
         // If there are any embedded newlines, we will need to execute the commands
         // or Python code, otherwise we will get a mess in the working line. However,
