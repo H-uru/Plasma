@@ -91,12 +91,9 @@ uint16_t  *plTextFont::IInitFontTexture()
 #ifdef HS_BUILD_FOR_WIN32
     int     nHeight, x, y, c;
     char    myChar[ 2 ] = "x";
-    uint16_t  *tBits;
 
-    DWORD       *bitmapBits;
     BITMAPINFO  bmi;
     HDC         hDC;
-    HBITMAP     hBitmap;
     HFONT       hFont;
     SIZE        size;
     BYTE        bAlpha;
@@ -110,18 +107,10 @@ uint16_t  *plTextFont::IInitFontTexture()
     else
         fTextureWidth = fTextureHeight = 256;
 
-
-    // Create a new DC and bitmap that we can draw characters to
-    memset( &bmi.bmiHeader, 0, sizeof( BITMAPINFOHEADER ) );
-    bmi.bmiHeader.biSize = sizeof( BITMAPINFOHEADER );
-    bmi.bmiHeader.biWidth = fTextureWidth;
-    bmi.bmiHeader.biHeight = -(int)fTextureHeight;
-    bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biCompression = BI_RGB;
-    bmi.bmiHeader.biBitCount = 32;
+    /// Now create the data block
+    uint16_t* data = new uint16_t[fTextureWidth * fTextureHeight]();
     
     hDC = CreateCompatibleDC(nullptr);
-    hBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (void **)&bitmapBits, nullptr, 0);
     SetMapMode( hDC, MM_TEXT );
 
     nHeight = -MulDiv( fSize, GetDeviceCaps( hDC, LOGPIXELSY ), 72 );
@@ -136,9 +125,7 @@ uint16_t  *plTextFont::IInitFontTexture()
                         CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, fFace );
     hsAssert(hFont != nullptr, "Cannot create Windows font");
 
-    SelectObject( hDC, hBitmap );
     SelectObject( hDC, hFont );
-
     // Get the font data
 
     DWORD fontDataSize = GetFontData( hDC, 0, 0, 0, 0 );
@@ -154,30 +141,23 @@ uint16_t  *plTextFont::IInitFontTexture()
     SetBkColor( hDC, 0 );
     SetTextAlign( hDC, TA_TOP );
 
-    // Loop through characters, drawing them one at a time
-    RECT    r;
-    r.left = r.top = 0;
-    r.right = 1;
-    r.bottom = 10;
-    FillRect( hDC, &r, (HBRUSH)GetStockObject( GRAY_BRUSH ) );
+    fFontHeight = face->size->metrics.height / 64;
+    
+    data[0] = 0xffff;
 
-    // (Make first character a black dot, for filling rectangles)
-    SetPixel( hDC, 0, 0, RGB( 255, 255, 255 ) );
+    // Loop through characters, drawing them one at a time
     for( c = 32, x = 1, y = 0; c < 127; c++ )
     {
         myChar[ 0 ] = c;
-        ftError = FT_Load_Char(face, c, FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME );
+        ftError = FT_Load_Char(face, c, FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_NO_AUTOHINT | FT_LOAD_NO_HINTING );
 
         FT_GlyphSlot slot = face->glyph;
 
         FT_Glyph glyph;
         FT_Get_Glyph(slot, &glyph);
 
-        FT_BBox bbox;
-        FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_TRUNCATE, &bbox);
-
         size.cx = slot->metrics.horiAdvance / 64;
-        size.cy = face->height/ 64;
+        size.cy = face->ascender / 64;
 
         FT_Bitmap bitmap = slot->bitmap;
 
@@ -196,16 +176,16 @@ uint16_t  *plTextFont::IInitFontTexture()
                 unsigned char* row = &slot->bitmap.buffer[pitch * glyphY];
                 unsigned char cValue = row[glyphX >> 3];
 
-                uint8_t src = 0;
+                uint16_t src = 0;
 
                 if ((cValue & (128 >> (glyphX & 7))) != 0) {
-                    src = UINT8_MAX;
+                    src = UINT16_MAX;
                 }
                 int destY = y + glyphY + offset;
                 int destX = glyphX + x + face->glyph->bitmap_left;
                 int destIndex = (destY * fTextureWidth) + destX;
 
-                bitmapBits[(destIndex )] = src;
+                data[(destIndex )] = src;
             }
         }
 
@@ -228,29 +208,10 @@ uint16_t  *plTextFont::IInitFontTexture()
     fCharInfo[ '\t' ].fW = fCharInfo[ 32 ].fW * 4;
     fCharInfo[ '\t' ].fH = fCharInfo[ 32 ].fH;
 
-    /// Now create the data block
-    uint16_t  *data = new uint16_t[ fTextureWidth * fTextureHeight ];
-    tBits = data;
-    for( y = 0; y < fTextureHeight; y++ )
-    {
-        for( x = 0; x < fTextureWidth; x++ )
-        {
-            bAlpha = (BYTE)( ( bitmapBits[ fTextureWidth * y + x ] & 0xff ) >> 4 );
-
-            if( bitmapBits[ fTextureWidth * y + x ] )
-                *tBits = 0xffff;
-            else
-                *tBits = 0;
-
-            tBits++;
-        }
-    }
-
     FT_Done_Face(face);
     FT_Done_FreeType(library);
 
     // Cleanup and return
-    DeleteObject( hBitmap );
     DeleteDC( hDC );
     DeleteObject( hFont );
 
