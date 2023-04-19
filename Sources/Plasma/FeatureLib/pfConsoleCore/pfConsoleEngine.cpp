@@ -149,21 +149,21 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
     {
         if (group == nullptr)
         {
-            fErrorMsg = "Invalid command syntax";
+            fErrorMsg = ST_LITERAL("Invalid command syntax");
             return false;
         }
 
         // Print help for this group
         if( group == pfConsoleCmdGroup::GetBaseGroup() )
-            PrintFn("Base commands and groups:");
+            PrintFn(ST_LITERAL("Base commands and groups:"));
         else
             PrintFn(ST::format("Group {}:", group->GetName()));
-        PrintFn("  Subgroups:");
+        PrintFn(ST_LITERAL("  Subgroups:"));
         for (subGrp = group->GetFirstSubGroup(); subGrp != nullptr; subGrp = subGrp->GetNext())
         {
             PrintFn(ST::format("    {}", subGrp->GetName()));
         }
-        PrintFn("  Commands:");
+        PrintFn(ST_LITERAL("  Commands:"));
         for (cmd = group->GetFirstCommand(); cmd != nullptr; cmd = cmd->GetNext())
         {
             PrintFn(ST::format("    {}: {}", cmd->GetName(), cmd->GetHelp().before_first('\n')));
@@ -176,7 +176,7 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
     cmd = group->FindCommandNoCase( ptr );
     if (cmd == nullptr)
     {
-        fErrorMsg = "Invalid syntax: command not found";
+        fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
         return false;
     }
 
@@ -216,7 +216,7 @@ ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
 
     if (ptr == nullptr)
     {
-        fErrorMsg = "Invalid command syntax";
+        fErrorMsg = ST_LITERAL("Invalid command syntax");
         return {};
     }
 
@@ -224,7 +224,7 @@ ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
     cmd = group->FindCommandNoCase( ptr );
     if (cmd == nullptr)
     {
-        fErrorMsg = "Invalid syntax: command not found";
+        fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
         return {};
     }
 
@@ -248,7 +248,7 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 
     if( !stream )
     {
-        fErrorMsg = "Cannot open given file";
+        fErrorMsg = ST_LITERAL("Cannot open given file");
 //      return false;
         /// THIS IS BAD: because of the asserts we throw after this if we return false, a missing
         /// file will throw an assert. This is all well and good except for the age-specific .fni files,
@@ -312,7 +312,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
 
     if (ptr == nullptr)
     {
-        fErrorMsg = "Invalid command syntax";
+        fErrorMsg = ST_LITERAL("Invalid command syntax");
         return false;
     }
 
@@ -320,7 +320,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     cmd = group->FindCommandNoCase( ptr );
     if (cmd == nullptr)
     {
-        fErrorMsg = "Invalid syntax: command not found";
+        fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
         return false;
     }
 
@@ -334,7 +334,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     {
         if( ptr[ 0 ] == '\xFF' )
         {
-            fErrorMsg = "Invalid syntax: unterminated quoted parameter";
+            fErrorMsg = ST_LITERAL("Invalid syntax: unterminated quoted parameter");
             return false;
         }
 
@@ -349,7 +349,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
             hsSsize_t idx = context.FindVar( ptr + 1 );
             if( idx == -1 )
             {
-                fErrorMsg = "Invalid console variable name";
+                fErrorMsg = ST_LITERAL("Invalid console variable name");
             }
             else
             {

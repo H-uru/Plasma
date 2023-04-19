@@ -282,13 +282,13 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
 {
     if (name.empty())
     {
-        statusStr = "Object name is nil";
+        statusStr = ST_LITERAL("Object name is nil");
         return nullptr;
     }
     
     if (type<0 || type>=plFactory::GetNumClasses())
     {
-        statusStr = "Illegal class type val";
+        statusStr = ST_LITERAL("Illegal class type val");
         return nullptr;
     }
 
@@ -304,7 +304,7 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
             key = plKeyFinder::Instance().StupidSearch(thisAge, ST::string(), type, name, subString);
             if (key != nullptr)
             {
-                statusStr = "Found Object";
+                statusStr = ST_LITERAL("Found Object");
                 return key;
             }
         }
@@ -314,16 +314,16 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
 
     if (!key)
     {
-        statusStr = "Can't find object";
+        statusStr = ST_LITERAL("Can't find object");
         return nullptr;
     }
     
     if (!key->ObjectIsLoaded())
     {
-        statusStr = "Object is not loaded";
+        statusStr = ST_LITERAL("Object is not loaded");
     }
 
-    statusStr = "Found Object";
+    statusStr = ST_LITERAL("Found Object");
 
     return key;
 }
@@ -340,7 +340,7 @@ plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName,
 
     if (!plSceneObject::ConvertNoRef(key ? key->ObjectIsLoaded() : nullptr))
     {
-        statusStr = "Can't find SceneObject";
+        statusStr = ST_LITERAL("Can't find SceneObject");
         return nullptr;
     }
 
@@ -356,7 +356,7 @@ plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, cons
 {
     if (!typeName)
     {
-        statusStr = "TypeName is nil";
+        statusStr = ST_LITERAL("TypeName is nil");
         return nullptr;
     }
     
