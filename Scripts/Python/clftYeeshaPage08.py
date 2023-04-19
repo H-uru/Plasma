@@ -69,31 +69,9 @@ DialogName="YeeshaPageGUI"
 
 kPageButton = 100
 
-kYeeshaPage01 = 201
-kYeeshaPage02 = 202
-kYeeshaPage03 = 203
-kYeeshaPage04 = 204
-kYeeshaPage05 = 205
-kYeeshaPage06 = 206
-kYeeshaPage07 = 207
-kYeeshaPage08 = 208
-kYeeshaPage09 = 209
-kYeeshaPage10 = 210
-kYeeshaPage12 = 212
-kYeeshaPage13 = 213
-kYeeshaPage14 = 214
-kYeeshaPage15 = 215
-kYeeshaPage16 = 216
-kYeeshaPage17 = 217
-kYeeshaPage18 = 218
-kYeeshaPage19 = 219
-kYeeshaPage20 = 220
-kYeeshaPage21 = 221
-kYeeshaPage22 = 222
-kYeeshaPage23 = 223
-kYeeshaPage24 = 224
-kYeeshaPage25 = 225
-kYeeshaPage26 = 226
+kYeeshaPage = []
+for x in range(0,99):
+    kYeeshaPage.insert(x,200+x)
 kYeeshaPageCancel = 299
 
 isOpen = 0
@@ -146,7 +124,7 @@ class clftYeeshaPage08(ptModifier):
         if isinstance(control,ptGUIControlButton):
             btnID = control.getTagID()
 
-        if event == kAction and btnID == kYeeshaPage08:
+        if event == kAction and btnID == kYeeshaPage[8]:
             PtDebugPrint("DEBUG: clftYeeshaPage08.OnGUINotify():\tPicked up page")
 
             RespClose.run(self.key)
@@ -166,7 +144,7 @@ class clftYeeshaPage08(ptModifier):
                 if psnlSDL:
                     YeeshaPageVar = psnlSDL.findVar("YeeshaPage8")    
                     YeeshaPageVar.setInt(4)
-                    vault.updatePsnlAgeSDL (psnlSDL)
+                    vault.updatePsnlAgeSDL(psnlSDL)
                     mydialog = PtGetDialogFromString(DialogName)
                     PtSendKIMessageInt(kStartBookAlert,0)
 
@@ -201,31 +179,13 @@ class clftYeeshaPage08(ptModifier):
         else:
             mydialog = PtGetDialogFromString(DialogName)
 
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage01)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage02)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage03)).hide() 
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage04)).hide() 
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage05)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage06)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage07)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage09)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage10)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage12)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage13)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage14)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage15)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage16)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage17)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage18)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage19)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage20)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage21)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage22)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage23)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage24)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage25)).hide()
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage26)).hide()
+            for x in kYeeshaPage:
+                try:
+                    ptGUIControlButton(mydialog.getControlFromTag(x)).hide()
+                except:
+                    continue
 
-            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage08)).show()
+            ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage[8])).show()
 
             GUIDialogObject.value.draw.disable()
+
