@@ -72,9 +72,7 @@ kFadeOutSecs = 2.0
 kReltoLinkSecs = 4.0
 
 #Note: when adding more Ages to this script, be sure to also update IDrawLinkPanel() module below
-kYeeshaPage = []
-for x in range(0,99):
-    kYeeshaPage.insert(x,200+x)
+kYeeshaPage = list(range(200, 298, 1))
 kYeeshaPageCancel = 299
 
 class xYeeshaPages(ptModifier):
@@ -184,9 +182,11 @@ class xYeeshaPages(ptModifier):
 #        PtDebugPrint("PageNumber = ", PageNumber.value)
         for x in kYeeshaPage:
             try:
-                ptGUIControlButton(mydialog.getControlFromTag(x)).hide()
-            except:
+                ctrl = mydialog.getControlFromTag(x)
+            except KeyError:
                 continue
+            else:
+                ptGUIControlButton(ctrl).hide()
 
         #now draw correct panel
         ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage[PageNumber.value])).show()

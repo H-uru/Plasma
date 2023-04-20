@@ -69,9 +69,7 @@ DialogName="YeeshaPageGUI"
 
 kPageButton = 100
 
-kYeeshaPage = []
-for x in range(0,99):
-    kYeeshaPage.insert(x,200+x)
+kYeeshaPage = list(range(200, 298, 1))
 kYeeshaPageCancel = 299
 
 isOpen = 0
