@@ -145,9 +145,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // audio setting stuff
 #include "pyAudioControl.h"
 
-//CCR stufff
-#include "pyCCRMgr.h"
-
 // spawn point def
 #include "pySpawnPointInfo.h"
 

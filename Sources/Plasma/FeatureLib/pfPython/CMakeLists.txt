@@ -19,7 +19,6 @@ set(pfPython_SOURCES
     pyAgeVault.cpp
     pyAlarm.cpp
     pyAudioControl.cpp
-    pyCCRMgr.cpp
     pyCluster.cpp
     pyColor.cpp
     pyCritterBrain.cpp
@@ -109,7 +108,6 @@ set(pfPython_HEADERS
     pyAgeVault.h
     pyAlarm.h
     pyAudioControl.h
-    pyCCRMgr.h
     pyCluster.h
     pyColor.h
     pyCritterBrain.h
