@@ -179,9 +179,11 @@ class clftYeeshaPage08(ptModifier):
 
             for x in kYeeshaPage:
                 try:
-                    ptGUIControlButton(mydialog.getControlFromTag(x)).hide()
-                except:
+                    ctrl = mydialog.getControlFromTag(x)
+                except KeyError:
                     continue
+                else:
+                    ptGUIControlButton(ctrl).hide()
 
             ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage[8])).show()
 
