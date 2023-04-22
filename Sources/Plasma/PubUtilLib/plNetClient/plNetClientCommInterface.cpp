@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 
-hsError plNetClientCommMsgHandler::HandleMessage(plNetMessage* msg) 
+plNetMsgHandler::Status plNetClientCommMsgHandler::HandleMessage(plNetMessage* msg) 
 {
     plNetClientMgr* nc=plNetClientMgr::GetInstance();
     return nc->fMsgHandler.ReceiveMsg(msg);

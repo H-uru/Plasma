@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_NET_CLIENT_inc
 #define PL_NET_CLIENT_inc
 
-#include "HeadSpin.h"
-
 #include <list>
 #include <string>
 #include <vector>
@@ -84,7 +82,7 @@ class plNetMsgPagingRoom;
 
 
 struct plNetClientCommMsgHandler : plNetClientComm::MsgHandler {
-    hsError HandleMessage(plNetMessage* msg) override;
+    plNetMsgHandler::Status HandleMessage(plNetMessage* msg) override;
 };
 
 class plNetClientMgr : public plNetClientApp
