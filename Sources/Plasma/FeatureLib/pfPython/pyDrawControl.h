@@ -59,7 +59,6 @@ protected:
 
 public:
     static void AddPlasmaMethods(PyObject* m);
-    //static void AddPlasmaConstantsClasses(PyObject* m);
 
     // static python functions
     static void SetGamma2(float gamma);

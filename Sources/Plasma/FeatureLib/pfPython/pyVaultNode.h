@@ -133,11 +133,8 @@ public:
     // public getters
     uint32_t  GetID();
     uint32_t GetType();
-    uint32_t  GetPermissions();
     uint32_t  GetOwnerNodeID();
     PyObject* GetOwnerNode(); // returns pyVaultPlayerInfoNode
-    uint32_t  GetGroupNodeID();
-    PyObject* GetGroupNode(); // returns pyVaultNode
     uint32_t GetModifyTime();
     uint32_t GetCreatorNodeID();
     PyObject* GetCreatorNode(); // returns pyVaultPlayerInfoNode

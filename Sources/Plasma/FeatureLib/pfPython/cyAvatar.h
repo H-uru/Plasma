@@ -80,7 +80,6 @@ public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAvatar);
     PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject* New(PyObject* sender, PyObject* recvr = nullptr);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a cyAvatar object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(cyAvatar); // converts a PyObject to a cyAvatar (throws error if not correct type)
 

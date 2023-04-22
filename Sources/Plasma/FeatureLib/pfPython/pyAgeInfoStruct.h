@@ -81,7 +81,6 @@ public:
     bool operator!=(const pyAgeInfoStruct &other) const { return !(other==*this); }
     plAgeInfoStruct * GetAgeInfo() { return &fAgeInfo; }
     const plAgeInfoStruct * GetAgeInfo() const { return &fAgeInfo; }
-    static void PythonModDef();
     void    CopyFrom( const pyAgeInfoStruct & other );
     void    CopyFromRef( const pyAgeInfoStructRef & other );
     ST::string GetAgeFilename() const;
