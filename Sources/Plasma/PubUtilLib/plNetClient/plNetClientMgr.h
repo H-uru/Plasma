@@ -251,12 +251,12 @@ public:
 
     bool MsgReceive(plMessage* msg) override;
     void Shutdown() override;
-    hsError Init();
+    void Init();
 
     void QueueDisableNet(bool showDlg, const char msg[]) override;
 
     hsError SendMsg(plNetMessage* msg) override;
-    hsError Update(double secs) override;
+    void Update(double secs) override;
     int IsLocallyOwned(const plSynchedObject* obj) const override;   // returns yes/no/maybe
     int IsLocallyOwned(const plUoid&) const override;        // for special cases, like sceneNodes. returns yes/no/maybe
     plNetGroupId GetEffectiveNetGroup(const plSynchedObject*& obj) const;
@@ -387,8 +387,8 @@ private:
     plNetClientComm             fNetClientComm;
     plNetClientCommMsgHandler   fNetClientCommMsgHandler;
     
-    hsError IInitNetClientComm();
-    hsError IDeInitNetClientComm();
+    void IInitNetClientComm();
+    void IDeInitNetClientComm();
     void INetClientCommOpStarted(uint32_t context);
     void INetClientCommOpComplete(uint32_t context, int resultCode);
 

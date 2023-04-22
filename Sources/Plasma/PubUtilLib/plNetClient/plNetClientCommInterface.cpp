@@ -62,7 +62,7 @@ hsError plNetClientCommMsgHandler::HandleMessage(plNetMessage* msg)
     return nc->fMsgHandler.ReceiveMsg(msg);
 }
 
-hsError plNetClientMgr::IInitNetClientComm()
+void plNetClientMgr::IInitNetClientComm()
 {
     NetCommActivatePostInitErrorHandler();
     NetCommActivateMsgDispatchers();
@@ -71,15 +71,12 @@ hsError plNetClientMgr::IInitNetClientComm()
     fNetClientComm.SetDefaultHandler(&fNetClientCommMsgHandler);
 
     SetFlagsBit(kNetClientCommInited);
-    
-    return hsOK;
 }
 
 //
 // Cleanup netClientComm related stuff
 //
-hsError plNetClientMgr::IDeInitNetClientComm()
+void plNetClientMgr::IDeInitNetClientComm()
 {
     SetFlagsBit(kNetClientCommInited, false);
-    return hsOK;
 }

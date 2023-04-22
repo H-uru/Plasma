@@ -285,11 +285,10 @@ void plNetClientMgr::IDumpOSVersionInfo() const
 }
 
 //
-// initialize net client. returns hsFail on err.
+// initialize net client.
 //
-hsError plNetClientMgr::Init()
+void plNetClientMgr::Init()
 {
-    hsError ret = hsOK;
     hsLogEntry( DebugMsg("*** plNetClientMgr::Init GMT:{}", plUnifiedTime::GetCurrent().Print()) );
     
     IDumpOSVersionInfo();
@@ -322,8 +321,6 @@ hsError plNetClientMgr::Init()
     plgDispatch::Dispatch()->RegisterForExactType(plResPatcherMsg::Index(), GetKey());
 
     IInitNetClientComm();
-
-    return ret; 
 }
 
 //
@@ -472,12 +469,10 @@ float plNetClientMgr::GetCurrentAgeTimeOfDayPercent() const
 }
 
 //
-// main update fxn for net client code, return hsFail on err
+// main update fxn for net client code
 //
-hsError plNetClientMgr::Update(double secs)
+void plNetClientMgr::Update(double secs)
 {
-    hsError ret = hsOK; // ret code is unchecked, but what the hay
-    
     if (GetFlagsBit(kDisableOnNextUpdate)) {
         SetFlagsBit(kDisableOnNextUpdate, false);
         IDisableNet();
@@ -514,8 +509,6 @@ hsError plNetClientMgr::Update(double secs)
     VaultUpdate();
 
     plNetLinkingMgr::GetInstance()->Update();
-
-    return ret;
 }
 
 //

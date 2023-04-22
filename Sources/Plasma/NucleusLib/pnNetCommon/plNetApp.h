@@ -217,7 +217,7 @@ public:
     virtual int IsLocallyOwned(const plSynchedObject* obj) const { hsAssert(false, "stub"); return 0; }
     virtual int IsLocallyOwned(const plUoid&) const { hsAssert(false, "stub"); return 0; }  
     virtual plNetGroupId GetEffectiveNetGroup(const plSynchedObject* obj) const { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }
-    virtual hsError Update(double secs) { return hsOK; }
+    virtual void Update(double secs) {}
     virtual const char* GetServerLogTimeAsString(ST::string& ts) const { hsAssert(false, "stub"); return nullptr; }
     virtual plUoid GetAgeSDLObjectUoid(const ST::string& ageName) const { hsAssert(false, "stub"); return plUoid(); }
     virtual void StayAlive(double secs) {}
