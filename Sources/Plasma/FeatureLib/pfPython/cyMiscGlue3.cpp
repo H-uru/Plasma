@@ -620,12 +620,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCreateDir, args, "Params: directory\nCreates t
     PYTHON_RETURN_BOOL(cyMisc::CreateDir(directory));
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetUserPath, "Returns the unicode path to the client's root user directory. Do NOT convert to a standard string.")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetUserPath, "Returns the path to the client's root user directory.")
 {
     return PyUnicode_FromSTString(cyMisc::GetUserPath().AsString());
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetInitPath, "Returns the unicode path to the client's init directory. Do NOT convert to a standard string.")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetInitPath, "Returns the path to the client's init directory.")
 {
     return PyUnicode_FromSTString(cyMisc::GetInitPath().AsString());
 }

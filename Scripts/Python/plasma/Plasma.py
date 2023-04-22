@@ -453,7 +453,7 @@ def PtGetGameTime():
     pass
 
 def PtGetInitPath():
-    """Returns the unicode path to the client's init directory. Do NOT convert to a standard string."""
+    """Returns the path to the client's init directory."""
     pass
 
 def PtGetLanguage():
@@ -547,7 +547,7 @@ def PtGetTime():
     pass
 
 def PtGetUserPath():
-    """Returns the unicode path to the client's root user directory. Do NOT convert to a standard string."""
+    """Returns the path to the client's root user directory."""
     pass
 
 def PtHideDialog(dialogName):

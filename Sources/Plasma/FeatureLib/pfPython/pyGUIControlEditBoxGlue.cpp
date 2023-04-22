@@ -96,7 +96,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setString, args)
     ST::string text;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
-        PyErr_SetString(PyExc_TypeError, "setString expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setString expects a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->SetText(text);

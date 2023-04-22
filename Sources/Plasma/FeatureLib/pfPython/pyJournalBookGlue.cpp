@@ -65,7 +65,7 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
     if (!PyArg_ParseTupleAndKeywords(args, keywords, "O&|OOO&", const_cast<char **>(kwlist),
                                      PyUnicode_STStringConverter, &source, &coverObj, &callbackObj, PyUnicode_STStringConverter, &guiName))
     {
-        PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
+        PyErr_SetString(PyExc_TypeError, "__init__ expects a string and optionally a ptImage, ptKey, and string");
         PYTHON_RETURN_INIT_ERROR;
     }
 
@@ -78,7 +78,7 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
             // this is really the callback key
             if (callbackObj) // callbackObj was already defined, can't have two keys
             {
-                PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
+                PyErr_SetString(PyExc_TypeError, "__init__ expects a string and optionally a ptImage, ptKey, and string");
                 PYTHON_RETURN_INIT_ERROR;
             }
             callbackObj = coverObj;
@@ -86,7 +86,7 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
         }
         else if (!pyImage::Check(coverObj))
         {
-            PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
+            PyErr_SetString(PyExc_TypeError, "__init__ expects a string and optionally a ptImage, ptKey, and string");
             PYTHON_RETURN_INIT_ERROR;
         }
         else
@@ -98,7 +98,7 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
     {
         if (!pyKey::Check(callbackObj))
         {
-            PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
+            PyErr_SetString(PyExc_TypeError, "__init__ expects a string and optionally a ptImage, ptKey, and string");
             PYTHON_RETURN_INIT_ERROR;
         }
         callbackKey = pyKey::ConvertFrom(callbackObj)->getKey();

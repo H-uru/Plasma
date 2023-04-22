@@ -70,7 +70,7 @@ PYTHON_METHOD_DEFINITION(ptVaultImageNode, setTitle, args)
     ST::string title;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &title))
     {
-        PyErr_SetString(PyExc_TypeError, "setTitle expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setTitle expects a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->Image_SetTitle(title);

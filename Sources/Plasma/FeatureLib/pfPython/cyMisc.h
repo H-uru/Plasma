@@ -895,8 +895,8 @@ public:
     // Function   : GetLocalizedString
     //
     // PURPOSE    : Returns the specified localized string with the parameters
-    //              properly replaced (the list is a list of unicode strings) Name
-    //              is in "Age.Set.Name" format
+    //              properly replaced (the list is a list of strings).
+    //              Name is in "Age.Set.Name" format
     //
     static ST::string GetLocalizedString(const ST::string& name, const std::vector<ST::string> & arguments);
 

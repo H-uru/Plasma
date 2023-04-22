@@ -61,7 +61,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTitle, args)
     ST::string title;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &title))
     {
-        PyErr_SetString(PyExc_TypeError, "setTitle expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setTitle expects a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->Note_SetTitle(title);
@@ -78,7 +78,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setText, args)
     ST::string text;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
-        PyErr_SetString(PyExc_TypeError, "setText expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setText expects a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->Note_SetText(text);

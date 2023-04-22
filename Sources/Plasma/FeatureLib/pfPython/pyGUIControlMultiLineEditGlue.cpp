@@ -124,7 +124,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setString, args)
     ST::string text;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
-        PyErr_SetString(PyExc_TypeError, "setString expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setString expects a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->SetText(text);
@@ -163,7 +163,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertChar, args)
     PyObject* textObj;
     if (!PyArg_ParseTuple(args, "O", &textObj))
     {
-        PyErr_SetString(PyExc_TypeError, "insertChar expects a single unicode character");
+        PyErr_SetString(PyExc_TypeError, "insertChar expects a single character");
         PYTHON_RETURN_ERROR;
     }
     if (PyUnicode_Check(textObj))
@@ -172,7 +172,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertChar, args)
         wchar_t* temp = PyUnicode_AsWideCharString(textObj, &strLen);
         if (strLen != 1)
         {
-            PyErr_SetString(PyExc_TypeError, "insertChar expects a single unicode character");
+            PyErr_SetString(PyExc_TypeError, "insertChar expects a single character");
             PyMem_Free(temp);
             PYTHON_RETURN_ERROR;
         }
@@ -183,7 +183,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertChar, args)
     }
     else
     {
-        PyErr_SetString(PyExc_TypeError, "insertChar expects a single unicode character");
+        PyErr_SetString(PyExc_TypeError, "insertChar expects a single character");
         PYTHON_RETURN_ERROR;
     }
 }
@@ -193,7 +193,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertString, args)
     ST::string string;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &string))
     {
-        PyErr_SetString(PyExc_TypeError, "insertString expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "insertString expects a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->InsertString(string);

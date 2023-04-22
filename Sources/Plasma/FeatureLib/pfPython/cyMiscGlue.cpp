@@ -371,7 +371,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
     PyObject* argObj = nullptr;
     if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &name, &argObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a unicode string and a list of unicode strings");
+        PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a string and a list of strings");
         PYTHON_RETURN_ERROR;
     }
     std::vector<ST::string> argList;
@@ -379,16 +379,16 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
     // convert name from a string
     if (name.empty())
     {
-        PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a unicode string and a list of unicode strings");
+        PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a string and a list of strings");
         PYTHON_RETURN_ERROR;
     }
 
     if (argObj != nullptr) // NULL is valid... but won't fill the args vector
     {
-        // convert args from a list of strings or unicode strings
+        // convert args from a list of strings
         if (!PyList_Check(argObj))
         {
-            PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a unicode string and a list of unicode strings");
+            PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a string and a list of strings");
             PYTHON_RETURN_ERROR;
         }
 

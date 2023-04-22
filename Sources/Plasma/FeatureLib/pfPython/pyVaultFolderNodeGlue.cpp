@@ -86,7 +86,7 @@ PYTHON_METHOD_DEFINITION(ptVaultFolderNode, setFolderName, args)
     ST::string name;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
-        PyErr_SetString(PyExc_TypeError, "setFolderName expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "setFolderName expects a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->Folder_SetName(name);

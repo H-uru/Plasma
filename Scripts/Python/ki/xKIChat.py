@@ -629,8 +629,6 @@ class xKIChat(object):
                 wasAtEnd = chatArea.isAtEnd()
                 chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
                 chatArea.insertColor(headerColor)
-
-                # Added unicode support here.
                 chatArea.insertString(f"\n{contextPrefix if self.chatTextColor else ''}{chatHeaderFormatted}")
                 chatArea.insertColor(bodyColor)
 
