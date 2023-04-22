@@ -65,7 +65,7 @@ protected:
     pyStatusLog(plStatusLog* log = nullptr);
 
 public:
-    virtual ~pyStatusLog();
+    ~pyStatusLog();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptStatusLog);
@@ -77,12 +77,12 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    virtual bool Open(const ST::string &logName, uint32_t numLines, uint32_t flags);
-    virtual bool Write(const ST::string &text);
-    virtual bool WriteColor(const ST::string &text, pyColor& color);
-    virtual void Close();
+    bool Open(const ST::string &logName, uint32_t numLines, uint32_t flags);
+    bool Write(const ST::string &text);
+    bool WriteColor(const ST::string &text, pyColor& color);
+    void Close();
 
-    virtual bool IsOpen() { return (fLog != nullptr); }
+    bool IsOpen() { return (fLog != nullptr); }
 };
 
 

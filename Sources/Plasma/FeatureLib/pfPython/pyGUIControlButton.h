@@ -73,9 +73,9 @@ public:
 
     static bool IsGUIControlButton(pyKey& gckey);
     
-    virtual void    SetNotifyType(int32_t kind);
-    virtual int32_t   GetNotifyType();
-    virtual bool    IsButtonDown();
+    void SetNotifyType(int32_t kind);
+    int32_t GetNotifyType();
+    bool IsButtonDown();
 };
 
 #endif // _pyGUIControlButton_h_

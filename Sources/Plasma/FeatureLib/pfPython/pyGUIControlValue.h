@@ -72,13 +72,13 @@ public:
 
     static bool IsGUIControlValue(pyKey& gckey);
 
-    virtual float    GetValue();
-    virtual void        SetValue( float v );
-    virtual float    GetMin();
-    virtual float    GetMax();
-    virtual float    GetStep();
-    virtual void        SetRange( float min, float max );
-    virtual void        SetStep( float step );
+    float GetValue();
+    void SetValue(float v);
+    float GetMin();
+    float GetMax();
+    float GetStep();
+    void SetRange(float min, float max);
+    void SetStep(float step);
 };
 
 class pyGUIControlKnob : public pyGUIControlValue

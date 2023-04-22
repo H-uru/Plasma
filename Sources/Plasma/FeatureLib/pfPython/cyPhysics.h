@@ -66,7 +66,7 @@ protected:
     cyPhysics(plKey sender = {}, plKey recvr = {});
 
 public:
-    virtual ~cyPhysics() { }
+    ~cyPhysics() { }
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptPhysics);
@@ -80,68 +80,68 @@ public:
     void SetSender(plKey sender);
     void AddRecvr(plKey recvr);
 
-    virtual void SetNetForce(bool state) { fNetForce = state; }
+    void SetNetForce(bool state) { fNetForce = state; }
 
     // Enable physics (must already be there)
-    virtual void EnableT(bool state);
-    virtual void Enable() { EnableT(true); }
-    virtual void Disable() { EnableT(false); }
+    void EnableT(bool state);
+    void Enable() { EnableT(true); }
+    void Disable() { EnableT(false); }
     
-    virtual void EnableCollision();
-    virtual void DisableCollision();
+    void EnableCollision();
+    void DisableCollision();
 
     // Suggest to physics engine where you want to place something
-    virtual void Warp(pyPoint3& pos);
-    virtual void WarpObj(pyKey& obj);
+    void Warp(pyPoint3& pos);
+    void WarpObj(pyKey& obj);
 
     // Suggest to physics engine where you want to place something
-    virtual void WarpMat(pyMatrix44& mat);
+    void WarpMat(pyMatrix44& mat);
 
     // Move the object in a direction and distance
     // if the object is physical then warp it
     // otherwise just use the coordinate interface and set the transform
-    virtual void Move(pyVector3& direction, float distance);
+    void Move(pyVector3& direction, float distance);
 
     //  Rotate the object
     //  if the object is physical then warp it
     //  otherwise just use the coordinate interface and set the transform
-    virtual void Rotate(float rad, pyVector3& axis);
+    void Rotate(float rad, pyVector3& axis);
 
     // apply a force to the center of mass of the receiver
-    virtual void Force(pyVector3& force);
+    void Force(pyVector3& force);
 
     // apply a force to the receiver as though it were being impacted at the
     // given point in global space
-    virtual void ForceWithOffset(pyVector3& force, pyPoint3& offset);
+    void ForceWithOffset(pyVector3& force, pyPoint3& offset);
 
     // Apply the given torque force to the body
     // The vector indicates the axes, and the magnitude indicates the strength
-    virtual void Torque(pyVector3& torque);
+    void Torque(pyVector3& torque);
 
     // Add the given vector to the objects velocity
-    virtual void Impulse(pyVector3& impulse);
+    void Impulse(pyVector3& impulse);
 
     // Apply the given impulse to the object at the given point in global space
     // Will impart torque if not applied to center of mass
-    virtual void ImpulseWithOffset(pyVector3& impulse, pyPoint3& offset);
+    void ImpulseWithOffset(pyVector3& impulse, pyPoint3& offset);
 
     // Add the given vector (representing a rotation axis and magnitude)
-    virtual void AngularImpulse(pyVector3& impulse);
+    void AngularImpulse(pyVector3& impulse);
 
     // Decrease all velocities on the given object.
     // A damp factor of 0 nulls them all entirely;
     // A damp factor of 1 leaves them alone.
-    virtual void Damp(float damp);
+    void Damp(float damp);
 
     // Shift the center of mass of the given object by the given
     // amount in the given direction.
-    virtual void ShiftMass(pyVector3& offset);
+    void ShiftMass(pyVector3& offset);
     
-    virtual void Suppress(bool doSuppress);
+    void Suppress(bool doSuppress);
     
     //Set the Linear Velocity of the Object
-    virtual void SetLinearVelocity(pyVector3& velocity);
-    virtual void SetAngularVelocity(pyVector3& angVel);
+    void SetLinearVelocity(pyVector3& velocity);
+    void SetAngularVelocity(pyVector3& angVel);
 };
 
 #endif  // cyPhysics_h

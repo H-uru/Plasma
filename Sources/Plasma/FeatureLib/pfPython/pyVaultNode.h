@@ -132,7 +132,7 @@ public:
 
     // public getters
     uint32_t  GetID();
-    virtual uint32_t  GetType();
+    uint32_t GetType();
     uint32_t  GetPermissions();
     uint32_t  GetOwnerNodeID();
     PyObject* GetOwnerNode(); // returns pyVaultPlayerInfoNode
@@ -186,8 +186,8 @@ public:
     PyObject* FindNode( pyVaultNode * templateNode, unsigned int maxDepth = 1 );   // returns pyVaultNode
 
     // Get all child nodes.
-    virtual PyObject* GetChildNodeRefList(); // for legacy compatibility
-    virtual int GetChildNodeCount();
+    PyObject* GetChildNodeRefList(); // for legacy compatibility
+    int GetChildNodeCount();
 
     // Get the client ID from my Vault client.
     uint32_t  GetClientID();

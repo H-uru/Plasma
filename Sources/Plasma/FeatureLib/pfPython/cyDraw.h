@@ -63,7 +63,7 @@ protected:
     cyDraw(plKey sender = {}, plKey recvr = {});
 
 public:
-    virtual ~cyDraw() { }
+    ~cyDraw() { }
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptDraw);
@@ -79,9 +79,9 @@ public:
     void SetNetForce(bool state) { fNetForce = state; }
 
     // Enable draw
-    virtual void EnableT(bool state);
-    virtual void Enable() { EnableT(true); }
-    virtual void Disable() { EnableT(false); }
+    void EnableT(bool state);
+    void Enable() { EnableT(true); }
+    void Disable() { EnableT(false); }
 };
 
 #endif  // cyDraw_h

@@ -71,7 +71,7 @@ protected:
     pyNotify(const pyKey& selfkey);
 
 public:
-    virtual ~pyNotify();
+    ~pyNotify();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptNotify);
@@ -85,28 +85,28 @@ public:
     void SetSender(const pyKey& selfkey); // only used by python glue, do NOT call
 
     // methods that will be exposed to Python
-    virtual void ClearReceivers();
-    virtual void AddReceiver(pyKey* key);
-    virtual void SetNetPropagate(bool propagate) { fNetPropagate = propagate; }
-    virtual void SetNetForce(bool state) { fNetForce = state; }
-    virtual void SetActivateState(float state);
-    virtual void SetType(int32_t type);
+    void ClearReceivers();
+    void AddReceiver(pyKey* key);
+    void SetNetPropagate(bool propagate) { fNetPropagate = propagate; }
+    void SetNetForce(bool state) { fNetForce = state; }
+    void SetActivateState(float state);
+    void SetType(int32_t type);
 
     // add event record helpers
-    virtual void AddCollisionEvent( bool enter, pyKey* other, pyKey* self );
-    virtual void AddPickEvent(bool enabled, pyKey* other, pyKey* self, pyPoint3 hitPoint);
-    virtual void AddControlKeyEvent( int32_t key, bool down );
-    virtual void AddVarNumber(const ST::string& name, float number);
-    virtual void AddVarNumber(const ST::string& name, int32_t number);
-    virtual void AddVarNull(const ST::string& name);
-    virtual void AddVarKey(const ST::string& name, pyKey* key);
-    virtual void AddFacingEvent( bool enabled, pyKey* other, pyKey* self, float dot);
-    virtual void AddContainerEvent( bool entering, pyKey* container, pyKey* contained);
-    virtual void AddActivateEvent( bool active, bool activate );
-    virtual void AddCallbackEvent( int32_t event );
-    virtual void AddResponderState(int32_t state);
+    void AddCollisionEvent(bool enter, pyKey* other, pyKey* self);
+    void AddPickEvent(bool enabled, pyKey* other, pyKey* self, pyPoint3 hitPoint);
+    void AddControlKeyEvent(int32_t key, bool down);
+    void AddVarNumber(const ST::string& name, float number);
+    void AddVarNumber(const ST::string& name, int32_t number);
+    void AddVarNull(const ST::string& name);
+    void AddVarKey(const ST::string& name, pyKey* key);
+    void AddFacingEvent(bool enabled, pyKey* other, pyKey* self, float dot);
+    void AddContainerEvent(bool entering, pyKey* container, pyKey* contained);
+    void AddActivateEvent(bool active, bool activate);
+    void AddCallbackEvent(int32_t event);
+    void AddResponderState(int32_t state);
 
-    virtual void Send();
+    void Send();
 
 };
 

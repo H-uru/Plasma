@@ -74,7 +74,7 @@ protected:
 #endif
 
 public:
-    virtual ~pyKey() { }
+    ~pyKey() { }
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptKey);
@@ -95,46 +95,46 @@ public:
     bool operator!=(const pyKey &key) const { return !(key == *this); }
 
     // getter and setters
-    virtual plKey getKey() const { return fKey; }
-    virtual void setKey(plKey key) { fKey = std::move(key); }
-    virtual ST::string getName() const;
+    plKey getKey() const { return fKey; }
+    void setKey(plKey key) { fKey = std::move(key); }
+    ST::string getName() const;
 #ifndef BUILDING_PYPLASMA
     PyObject* GetPySceneObject();
 
-    virtual void SetNetForce(bool state) { fNetForce = state; }
+    void SetNetForce(bool state) { fNetForce = state; }
 
     // methods to be sent to the plKey
     // send enable message to the plKey
-    virtual void Enable() { IEnable(true); }
+    void Enable() { IEnable(true); }
     // send disable message to the plKey
-    virtual void Disable() { IEnable(false); }
+    void Disable() { IEnable(false); }
     // if this is a modifier then get the (first) object its attached to
-    virtual PyObject* GetParentObject();
+    PyObject* GetParentObject();
 
     // special functions when the plKey is a pointer to the PythonModifier
     // (Only called from C++, not from Python directly)
     //
     // Was the last plNotifyMsg a locally sent?
-    virtual bool WasLocalNotify();
+    bool WasLocalNotify();
     // Is this python file mod attached to a clone?
-    virtual bool IsAttachedToClone();
+    bool IsAttachedToClone();
     // (old style - Used in pyNotify)
     // get the notify list count
-    virtual size_t NotifyListCount() const;
+    size_t NotifyListCount() const;
     // (old style - Used in pyNotify)
     // get a notify list item
-    virtual plKey GetNotifyListItem(size_t i) const;
+    plKey GetNotifyListItem(size_t i) const;
     // Set the dirty state on the PythonModifier
-    virtual void DirtySynchState(const ST::string& SDLStateName, uint32_t sendFlags);
+    void DirtySynchState(const ST::string& SDLStateName, uint32_t sendFlags);
 
     // register and unregister for control key envents
-    virtual void EnableControlKeyEvents();
-    virtual void DisableControlKeyEvents();
+    void EnableControlKeyEvents();
+    void DisableControlKeyEvents();
 
-    virtual plPipeline* GetPipeline();
+    plPipeline* GetPipeline();
 private:
     // build and send enable message to the plKey
-    virtual void IEnable(bool state);
+    void IEnable(bool state);
 #endif // BUILDING_PYPLASMA
 };
 

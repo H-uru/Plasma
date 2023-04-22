@@ -81,12 +81,12 @@ public:
 
     void SetText(ST::string text);
     ST::string GetText() const;
-    virtual void    SetFontSize( uint8_t size );
-    virtual void    SetForeColor( pyColor& color );
-    virtual void    SetBackColor( pyColor& color );
-    virtual void    SetJustify( uint8_t justify );
+    void SetFontSize(uint8_t size);
+    void SetForeColor(pyColor& color);
+    void SetBackColor(pyColor& color);
+    void SetJustify(uint8_t justify);
     
-    virtual uint8_t   GetJustify();
+    uint8_t GetJustify();
     PyObject* GetForeColor() const override; // returns pyColor
 };
 

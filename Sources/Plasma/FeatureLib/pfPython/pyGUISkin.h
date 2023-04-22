@@ -64,7 +64,7 @@ protected:
     pyGUISkin();
 
 public:
-    virtual ~pyGUISkin() { }
+    ~pyGUISkin() { }
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptGUISkin);
@@ -85,8 +85,8 @@ public:
     bool operator!=(const pyGUISkin &gdobj) const { return !(gdobj == *this); }
 
     // getter and setters
-    virtual plKey getObjKey();
-    virtual PyObject* getObjPyKey(); // returns pyKey
+    plKey getObjKey();
+    PyObject* getObjPyKey(); // returns pyKey
 
 };
 

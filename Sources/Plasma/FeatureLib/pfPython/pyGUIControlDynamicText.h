@@ -76,8 +76,8 @@ public:
     static bool IsGUIControlDynamicText(pyKey& gckey);
 
     //specific interface functions
-    virtual uint32_t  GetNumMaps();
-    virtual PyObject* GetMap(uint32_t i); // returns pyDynamicText
+    uint32_t GetNumMaps();
+    PyObject* GetMap(uint32_t i); // returns pyDynamicText
 };
 
 #endif // _pyGUIControlButton_h_
