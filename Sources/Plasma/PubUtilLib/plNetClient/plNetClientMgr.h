@@ -204,9 +204,9 @@ private:
     void IShowAvatars();
     void IShowRelevanceRegions();
     
-    hsError ISendDirtyState(double secs);
-    hsError ISendMembersListRequest();
-    hsError ISendRoomsReset();
+    void ISendDirtyState(double secs);
+    void ISendMembersListRequest();
+    void ISendRoomsReset();
     void ISendCCRPetition(plCCRPetitionMsg* petMsg);    
     void ISendCameraReset(bool bEnteringAge);
     
@@ -235,7 +235,7 @@ private:
 
     void    IDumpOSVersionInfo() const;
 
-    hsError ISendGameMessage(plMessage* msg) override;
+    void ISendGameMessage(plMessage* msg) override;
     void IDisableNet ();
 
     void ICreateStatusLog() const override;
@@ -255,7 +255,7 @@ public:
 
     void QueueDisableNet(bool showDlg, const char msg[]) override;
 
-    hsError SendMsg(plNetMessage* msg) override;
+    void SendMsg(plNetMessage* msg) override;
     void Update(double secs) override;
     int IsLocallyOwned(const plSynchedObject* obj) const override;   // returns yes/no/maybe
     int IsLocallyOwned(const plUoid&) const override;        // for special cases, like sceneNodes. returns yes/no/maybe

@@ -153,7 +153,7 @@ private:
 
     friend class plDispatch;
 
-    virtual hsError ISendGameMessage(plMessage* msg) { hsAssert(false, "stub"); return hsFail; }
+    virtual void ISendGameMessage(plMessage* msg) { hsAssert(false, "stub"); }
 
 public:
     enum ClientFlagBits
@@ -202,7 +202,7 @@ public:
     static void UnInheritNetMsgFlags(plMessage* msg);
 
     // functions that all net client apps should implement
-    virtual hsError SendMsg(plNetMessage* msg) = 0;
+    virtual void SendMsg(plNetMessage* msg) = 0;
     virtual uint32_t GetPlayerID() const = 0;
     virtual ST::string GetPlayerName(const plKey avKey={}) const = 0;
 

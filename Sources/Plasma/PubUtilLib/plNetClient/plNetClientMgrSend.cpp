@@ -77,29 +77,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // request members list from server
 //
-hsError plNetClientMgr::ISendMembersListRequest()
+void plNetClientMgr::ISendMembersListRequest()
 {
     plNetMsgMembersListReq  msg;
     msg.SetNetProtocol(kNetProtocolCli2Game);
-    return SendMsg(&msg);
+    SendMsg(&msg);
 }
 
 //
 // reset paged in rooms list on server
 //
-hsError plNetClientMgr::ISendRoomsReset()
+void plNetClientMgr::ISendRoomsReset()
 {
     plNetMsgPagingRoom msg;
     msg.SetPageFlags(plNetMsgPagingRoom::kResetList);
     msg.SetNetProtocol(kNetProtocolCli2Game);
-    return SendMsg(&msg);
+    SendMsg(&msg);
 }
 
 //
 // Make sure all dirty objects save their state.
 // Mark those objects as clean and clear the dirty list.
 //
-hsError plNetClientMgr::ISendDirtyState(double secs)
+void plNetClientMgr::ISendDirtyState(double secs)
 {
     std::vector<plSynchedObject::StateDefn> carryOvers;
 
@@ -134,8 +134,6 @@ hsError plNetClientMgr::ISendDirtyState(double secs)
     }
 
     plSynchedObject::ClearDirtyState(carryOvers);
-
-    return hsOK;
 }
 
 //
@@ -223,17 +221,16 @@ void plNetClientMgr::SendLocalPlayerAvatarCustomizations()
 
 //
 // Called to send a plasma msg out over the network.  Called by the dispatcher.
-// return hsOK if ok
 //
-hsError plNetClientMgr::ISendGameMessage(plMessage* msg)
+void plNetClientMgr::ISendGameMessage(plMessage* msg)
 {
     if (GetFlagsBit(kDisabled))
-        return hsOK;
+        return;
 
     if (!fScreener.AllowOutgoingMessage(msg))
     {
         if (GetFlagsBit(kScreenMessages))
-            return hsOK;        // filter out illegal messages
+            return; // filter out illegal messages
     }
     
     // TEMP
@@ -241,7 +238,7 @@ hsError plNetClientMgr::ISendGameMessage(plMessage* msg)
     {
         pfKIMsg* kiMsg = pfKIMsg::ConvertNoRef(msg);
         if (kiMsg && kiMsg->GetCommand()==pfKIMsg::kHACKChatMsg)
-            return hsOK;
+            return;
     }
 
     plNetPlayerIDList* dstIDs = msg->GetNetReceivers();
@@ -258,7 +255,7 @@ hsError plNetClientMgr::ISendGameMessage(plMessage* msg)
 
     // if sender is flagged as localOnly, he shouldn't talk to the network
     if (synchedObj && !synchedObj->IsNetSynched() )
-        return hsOK;
+        return;
 
     // choose appropriate type of net game msg wrapper
     plNetMsgGameMessage* netMsgWrap = nullptr;
@@ -381,7 +378,7 @@ hsError plNetClientMgr::ISendGameMessage(plMessage* msg)
 
     netMsgWrap->SetPlayerID(GetPlayerID());
     netMsgWrap->SetNetProtocol(kNetProtocolCli2Game);
-    hsError ret = SendMsg(netMsgWrap);
+    SendMsg(netMsgWrap);
 
     if (plNetObjectDebugger::GetInstance()->IsDebugObject(msg->GetSender() ? msg->GetSender()->ObjectIsLoaded() : nullptr))
     {
@@ -395,19 +392,18 @@ hsError plNetClientMgr::ISendGameMessage(plMessage* msg)
     }
 
     delete netMsgWrap;
-    return ret;
 }
 
 //
 // Send a net msg.  Delivers to transport mgr who sends p2p or to server
 //
-hsError plNetClientMgr::SendMsg(plNetMessage* msg)
+void plNetClientMgr::SendMsg(plNetMessage* msg)
 {
     if (GetFlagsBit(kDisabled))
-        return hsOK;
+        return;
 
     if (!CanSendMsg(msg))
-        return hsOK;
+        return;
 
     // If we're recording messages, set an identifying flag and echo the message back to ourselves
     if (fMsgRecorder && fMsgRecorder->IsRecordableMsg(msg))
@@ -420,21 +416,11 @@ hsError plNetClientMgr::SendMsg(plNetMessage* msg)
     
 //  hsLogEntry( DebugMsg( "<SND> {} {}", msg->ClassName(), msg->AsStdString()) );
     
-    hsError ret = fTransport.SendMsg(channel, msg);
+    fTransport.SendMsg(channel, msg);
 
     // Debug
     if (plNetMsgVoice::ConvertNoRef(msg))
         SetFlagsBit(kSendingVoice);
     if (plNetMsgGameMessage::ConvertNoRef(msg))
         SetFlagsBit(kSendingActions);
-    
-    if (hsFailed(ret)) {
-        ST::string err = ST::format("Failed to send {}, NC ret={}",
-            msg->ClassName(), ret);
-        ErrorMsg(err);
-        hsAssert(false, err.c_str());
-        return ret;
-    }
-
-    return ret;
 }

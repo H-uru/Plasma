@@ -93,7 +93,7 @@ public:
     void ClearChannelGrp(int channel);
     void SetNumChannels(int n);
 
-    hsError SendMsg(int channel, plNetMessage* msg) const;
+    void SendMsg(int channel, plNetMessage* msg) const;
 };
 
 #endif  // plNetTransport_h

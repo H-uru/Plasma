@@ -195,15 +195,15 @@ void plNetTransport::GetSubscriptions(plNetTransportMember* mbr, std::vector<int
 //
 // Send Msg to all members in the given channelGrp.
 // Here's where multicasting would be used.
-// Returns neg number (NetCore::RetCode) on send error, 1, if not sent, and 0 if sent
 //
-hsError plNetTransport::SendMsg(int chan, plNetMessage* netMsg) const
+void plNetTransport::SendMsg(int chan, plNetMessage* netMsg) const
 {
     NetCommSendMsg(netMsg);
-    return hsOK;
+    return;
     
     plNetClientMgr* nc=plNetClientMgr::GetInstance();
-    hsError ret = 1; // didn't send
+    // Returns neg number (NetCore::RetCode) on send error, 1, if not sent, and 0 if sent
+    int ret = 1; // didn't send
 
     if (chan < fChannelGroups.size())
     {
@@ -232,7 +232,7 @@ hsError plNetTransport::SendMsg(int chan, plNetMessage* netMsg) const
                 bool ok=rl->RemoveReceiverPlayerID(tm->GetPlayerID());
                 hsAssert(ok, "couldn't find rcvr to remove?");
             }
-            ret = hsOK; // sent ok   
+            ret = 0; // sent ok   
         } // for      
 #endif
 
@@ -241,14 +241,14 @@ hsError plNetTransport::SendMsg(int chan, plNetMessage* netMsg) const
         {           
 //          if ((ncRet=nc->GetNetClientComm().SendMsg(netMsg, nc->GetServerPeerID(), sendFlags, msgSize)) != plNetCore::kNetOK)
             NetCommSendMsg(netMsg);
-            ret = hsOK; // sent
+            ret = 0; // sent
         }
     }
     else
     {
         hsStatusMessage("EMPTY TRANSPORT GROUP\n");
     }
-    return ret;
+    //return ret;
 }
 
 
