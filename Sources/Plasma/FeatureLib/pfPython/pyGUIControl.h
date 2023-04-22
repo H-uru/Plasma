@@ -110,13 +110,13 @@ public:
     bool IsVisible();
     bool IsInteresting();
     void SetNotifyOnInteresting(bool state);
-    virtual void    Refresh();
+    void Refresh();
     void SetObjectCenter(pyPoint3& pt);
     PyObject* GetObjectCenter(); // returns pyPoint3
     PyObject* GetOwnerDlg(); // returns pyGUIDialog
 
     // get color schemes
-    virtual PyObject*   GetForeColor() const; // returns pyColor
+    PyObject* GetForeColor() const; // returns pyColor
     PyObject* GetSelColor() const; // returns pyColor
     PyObject* GetBackColor() const; // returns pyColor
     PyObject* GetBackSelColor() const; // returns pyColor

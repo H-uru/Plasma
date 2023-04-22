@@ -375,17 +375,6 @@ void pyGUIControlListBox::SetSelection( int32_t item )
     }
 }
 
-void pyGUIControlListBox::Refresh()
-{
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( plbmod )
-            plbmod->Refresh();
-    }
-}
-
 void pyGUIControlListBox::RemoveElement( uint16_t index )
 {
     if ( fGCkey )

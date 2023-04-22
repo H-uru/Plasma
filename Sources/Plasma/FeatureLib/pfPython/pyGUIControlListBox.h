@@ -85,7 +85,6 @@ public:
     void Unclickable();
     int32_t GetSelection();
     void SetSelection(int32_t item);
-    void Refresh() override;
     void SetElement(uint16_t idx, ST::string text);
     void RemoveElement(uint16_t index);
     void ClearAllElements();

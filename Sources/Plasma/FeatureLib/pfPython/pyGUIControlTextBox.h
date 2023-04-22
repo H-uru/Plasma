@@ -87,7 +87,6 @@ public:
     void SetJustify(uint8_t justify);
     
     uint8_t GetJustify();
-    PyObject* GetForeColor() const override; // returns pyColor
 };
 
 #endif // _pyGUIControlTextBox_h_
