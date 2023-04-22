@@ -112,6 +112,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
 
+#include "plStatusLog/plStatusLog.h"
+
 //// Static Class Stuff //////////////////////////////////////////////////////
 plPipeline* cyMisc::fPipeline = nullptr;
 uint32_t  cyMisc::fUniqueNumber = 0;
@@ -941,24 +943,6 @@ PyObject* cyMisc::GetNPCCount()
 {
     return PyLong_FromLong(plNetClientMgr::GetInstance()->NPCKeys().size());
 }
-
-#if 1
-#include "plStatusLog/plStatusLog.h"
-//
-// TEMP SCREEN PRINT CODE FOR NON-DBG TEXT DISPLAY
-//
-void cyMisc::PrintToScreen(const ST::string& msg)
-{
-    static plStatusLog* gStatusLog = nullptr;
-    if (gStatusLog == nullptr)
-    {
-        gStatusLog = plStatusLogMgr::GetInstance().CreateStatusLog( 32, "", 
-            plStatusLog::kDontWriteFile | plStatusLog::kDeleteForMe | plStatusLog::kFilledBackground );
-        plStatusLogMgr::GetInstance().ToggleStatusLog(gStatusLog);
-    }
-    gStatusLog->AddLine(plStatusLog::kBlue, msg);
-}
-#endif
 
 #include "plPipeline.h"
 #include "plGImage/plMipmap.h"

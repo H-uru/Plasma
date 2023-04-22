@@ -98,14 +98,6 @@ public:
     static plPipeline   *GetPipeline() { return fPipeline; }
 
 
-#if 1
-    //
-    // TEMP SCREEN PRINT CODE FOR NON-DBG TEXT DISPLAY
-    //
-public:
-    static void PrintToScreen(const ST::string& msg);
-#endif
-
     enum PythonDebugPrintLevels
     {
         kNoLevel = 0,

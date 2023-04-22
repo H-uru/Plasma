@@ -674,10 +674,6 @@ def PtPageOutNode(nodeName):
     """Pages out a node"""
     pass
 
-def PtPrintToScreen(message):
-    """Prints 'message' to the status log, for debug only."""
-    pass
-
 def PtRateIt(chronicleName,dialogPrompt,onceFlag):
     """Shows a dialog with dialogPrompt and stores user input rating into chronicleName"""
     pass

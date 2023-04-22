@@ -120,21 +120,6 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtConsoleNet, args, "Params: command,netForce\nT
     PYTHON_RETURN_NONE;
 }
 
-#if 1
-// TEMP
-PYTHON_GLOBAL_METHOD_DEFINITION(PtPrintToScreen, args, "Params: message\nPrints 'message' to the status log, for debug only.")
-{
-    ST::string message;
-    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &message))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtPrintToScreen expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    cyMisc::PrintToScreen(message);
-    PYTHON_RETURN_NONE;
-}
-#endif
-
 PYTHON_GLOBAL_METHOD_DEFINITION(PtAtTimeCallback, args, "Params: selfkey,time,id\nThis will create a timer callback that will call OnTimer when complete\n"
             "- 'selfkey' is the ptKey of the PythonFile component\n"
             "- 'time' is how much time from now (in seconds) to call back\n"
@@ -661,11 +646,6 @@ void cyMisc::AddPlasmaMethods3(PyObject* m)
 
         PYTHON_GLOBAL_METHOD(PtConsole)
         PYTHON_GLOBAL_METHOD(PtConsoleNet)
-
-#if 1
-        // TEMP
-        PYTHON_GLOBAL_METHOD(PtPrintToScreen)
-#endif
 
         PYTHON_GLOBAL_METHOD(PtAtTimeCallback)
         PYTHON_GLOBAL_METHOD(PtClearTimerCallbacks)
