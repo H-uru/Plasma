@@ -87,16 +87,16 @@ void CalculateProfiles()
 
 static plGraphPlate* fFPSPlate = nullptr;
 
-static hsError ICreateStdPlate(plGraphPlate** graph)
+static bool ICreateStdPlate(plGraphPlate** graph)
 {
     if (plPlateManager::InstanceValid())
     {
         plPlateManager::Instance().CreateGraphPlate(graph);
         (*graph)->SetSize(0.25, 0.25);
         (*graph)->SetDataRange(0, 100, 100);
-        return hsOK;
+        return true;
     }
-    return hsFail;
+    return false;
 }
 
 void CreateStandardGraphs(const char* groupName, bool create)
@@ -105,7 +105,7 @@ void CreateStandardGraphs(const char* groupName, bool create)
     {
         if (create)
         {
-            if (hsSucceeded(ICreateStdPlate(&fFPSPlate)))
+            if (ICreateStdPlate(&fFPSPlate))
             {
                 fFPSPlate->SetTitle("mSecs");       
                 fFPSPlate->SetLabelText("Tot", "Draw", "Upd");

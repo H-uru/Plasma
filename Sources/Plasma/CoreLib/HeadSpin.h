@@ -110,13 +110,6 @@ namespace hsConstants
     inline constexpr T inv_sqrt2 = T(1.0) / hsConstants::sqrt2<T>;
 }
 
-typedef int32_t   hsError;
-
-#define hsOK                0
-#define hsFail              -1
-#define hsFailed(r)         ((hsError)(r)<hsOK)
-#define hsSucceeded(r)      ((hsError)(r)>=hsOK)
-
 // Indirection required for joining preprocessor macros together
 #define _hsMacroJoin_(lhs, rhs) lhs ## rhs
 #define hsMacroJoin(lhs, rhs)   _hsMacroJoin_(lhs, rhs)
