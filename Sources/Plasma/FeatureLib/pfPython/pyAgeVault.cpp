@@ -75,9 +75,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 pyAgeVault::pyAgeVault() {
 }
 
-pyAgeVault::~pyAgeVault() {
-}
-
 //////////////////////////////////////////////////
 
 PyObject* pyAgeVault::GetAgeInfo()

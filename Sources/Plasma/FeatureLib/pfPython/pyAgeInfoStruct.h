@@ -68,8 +68,6 @@ protected:
     pyAgeInfoStruct(plAgeInfoStruct * info);
 
 public:
-    ~pyAgeInfoStruct();
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAgeInfoStruct);
     PYTHON_CLASS_NEW_DEFINITION;
@@ -117,8 +115,6 @@ protected:
     pyAgeInfoStructRef(plAgeInfoStruct & info): fAgeInfo( info ){}
 
 public:
-    ~pyAgeInfoStructRef() {}
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAgeInfoStructRef);
     static PyObject *New(plAgeInfoStruct &info);

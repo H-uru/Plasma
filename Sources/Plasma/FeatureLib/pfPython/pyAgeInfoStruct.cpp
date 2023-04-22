@@ -60,10 +60,6 @@ pyAgeInfoStruct::pyAgeInfoStruct(plAgeInfoStruct * info)
     fAgeInfo.CopyFrom( info );
 }
 
-pyAgeInfoStruct::~pyAgeInfoStruct()
-{
-}
-
 bool pyAgeInfoStruct::operator==(const pyAgeInfoStruct &other) const
 {
     return fAgeInfo.IsEqualTo( other.GetAgeInfo() );

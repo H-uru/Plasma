@@ -63,8 +63,6 @@ protected:
     cyCamera();
 
 public:
-    ~cyCamera() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptCamera);
     PYTHON_CLASS_NEW_DEFINITION;

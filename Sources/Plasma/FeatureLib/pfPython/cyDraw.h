@@ -63,8 +63,6 @@ protected:
     cyDraw(plKey sender = {}, plKey recvr = {});
 
 public:
-    ~cyDraw() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptDraw);
     static PyObject *New(PyObject *sender = nullptr, PyObject* recvr = nullptr);

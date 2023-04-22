@@ -63,8 +63,6 @@ protected:
     pyVaultChronicleNode();
 
 public:
-    ~pyVaultChronicleNode() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultChronicleNode);
     PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;

@@ -66,8 +66,6 @@ protected:
     cyPhysics(plKey sender = {}, plKey recvr = {});
 
 public:
-    ~cyPhysics() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptPhysics);
     static PyObject *New(PyObject *sender = nullptr, PyObject *recvr = nullptr);

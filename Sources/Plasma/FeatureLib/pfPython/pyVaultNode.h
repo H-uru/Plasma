@@ -113,7 +113,7 @@ protected:
     pyVaultNode(std::nullptr_t);
 
 public:
-    virtual ~pyVaultNode();
+    virtual ~pyVaultNode() = default;
 
     // required functions for PyObject interoperability
     PYTHON_EXPOSE_TYPE; // so we can subclass

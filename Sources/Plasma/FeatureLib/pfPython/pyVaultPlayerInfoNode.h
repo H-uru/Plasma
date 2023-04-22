@@ -60,8 +60,6 @@ protected:
     pyVaultPlayerInfoNode();
 
 public:
-    ~pyVaultPlayerInfoNode() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultPlayerInfoNode);
     PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;

@@ -66,7 +66,6 @@ class pyAlarmMgr
     std::list<Alarm>  fAlarms;
 
 public:
-    ~pyAlarmMgr();
     static pyAlarmMgr * GetInstance();
     void    Update(double secs);
     void    SetAlarm(float secs, PyObject* cb, uint32_t cbContext);

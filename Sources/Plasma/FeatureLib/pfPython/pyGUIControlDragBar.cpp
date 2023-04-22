@@ -57,11 +57,6 @@ pyGUIControlDragBar::pyGUIControlDragBar(plKey objkey) : pyGUIControl(std::move(
 {
 }
 
-pyGUIControlDragBar::~pyGUIControlDragBar()
-{
-}
-
-
 bool pyGUIControlDragBar::IsGUIControlDragBar(pyKey& gckey)
 {
     if ( gckey.getKey() && pfGUIDragBarCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )

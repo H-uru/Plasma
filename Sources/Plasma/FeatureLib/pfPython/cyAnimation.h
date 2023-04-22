@@ -68,10 +68,6 @@ protected:
     cyAnimation(const pyKey& sender);
 
 public:
-
-    // clean up on the way out
-    ~cyAnimation();
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAnimation);
     PYTHON_CLASS_NEW_DEFINITION;

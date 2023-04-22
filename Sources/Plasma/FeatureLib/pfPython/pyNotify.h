@@ -71,8 +71,6 @@ protected:
     pyNotify(const pyKey& selfkey);
 
 public:
-    ~pyNotify();
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptNotify);
     static PyObject *New(const pyKey& selfkey);

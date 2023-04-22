@@ -72,8 +72,6 @@ protected:
     pyAgeVault();
 
 public:
-    ~pyAgeVault();
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAgeVault);
     PYTHON_CLASS_NEW_DEFINITION;

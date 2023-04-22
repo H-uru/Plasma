@@ -66,12 +66,6 @@ cyAnimation::cyAnimation(const pyKey& sender)
     SetSender(sender);
 }
 
-// clean up on the way out
-cyAnimation::~cyAnimation()
-{
-}
-
-
 // setters
 void cyAnimation::SetSender(const pyKey& sender)
 {

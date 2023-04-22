@@ -59,10 +59,6 @@ pyAgeLinkStruct::pyAgeLinkStruct( plAgeLinkStruct * link )
     fAgeLink.CopyFrom( link );
 }
 
-pyAgeLinkStruct::~pyAgeLinkStruct()
-{
-}
-
 bool pyAgeLinkStruct::operator==(const pyAgeLinkStruct &other) const
 {
     return fAgeLink.IsEqualTo( other.GetAgeLink() );

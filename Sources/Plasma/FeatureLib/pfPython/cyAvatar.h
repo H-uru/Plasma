@@ -77,8 +77,6 @@ protected:
     cyAvatar(plKey sender, plKey recvr=nullptr);
 
 public:
-    ~cyAvatar() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAvatar);
     PYTHON_CLASS_NEW_DEFINITION;

@@ -73,10 +73,6 @@ pyNotify::pyNotify(const pyKey& selfkey)
         fReceivers.emplace_back(selfkey.GetNotifyListItem(j));
 }
 
-pyNotify::~pyNotify()
-{
-}
-
 void pyNotify::SetSender(const pyKey& selfKey)
 {
     fSenderKey = selfKey.getKey();

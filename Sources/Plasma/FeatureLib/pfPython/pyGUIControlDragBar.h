@@ -64,8 +64,6 @@ protected:
     pyGUIControlDragBar(plKey objkey);
 
 public:
-    ~pyGUIControlDragBar();
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptGUIControlDragBar);
     static PyObject *New(pyKey& gckey);

@@ -144,10 +144,6 @@ pyVaultNode::pyVaultNode(std::nullptr_t)
 {
 }
 
-pyVaultNode::~pyVaultNode()
-{
-}
-
 hsRef<RelVaultNode> pyVaultNode::GetNode() const
 {
     return fNode;

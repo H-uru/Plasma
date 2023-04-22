@@ -93,10 +93,6 @@ pyAlarmMgr * pyAlarmMgr::GetInstance()
     return &inst;
 }
 
-pyAlarmMgr::~pyAlarmMgr()
-{
-}
-
 void pyAlarmMgr::Update( double secs )
 {
     for (auto it = fAlarms.begin(); it != fAlarms.end();) {

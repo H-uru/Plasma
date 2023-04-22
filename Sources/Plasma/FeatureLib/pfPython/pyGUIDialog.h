@@ -65,8 +65,6 @@ protected:
     pyGUIDialog();
 
 public:
-    ~pyGUIDialog() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptGUIDialog);
     PYTHON_CLASS_NEW_DEFINITION;

@@ -54,8 +54,6 @@ protected:
     pyDniInfoSource() { }
 
 public:
-    ~pyDniInfoSource() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptDniInfoSource);
     PYTHON_CLASS_NEW_DEFINITION;
