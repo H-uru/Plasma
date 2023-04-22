@@ -109,7 +109,7 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( uint32_t 
 }
 
 
-void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete(uint32_t context, hsError resultCode)
+void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete(uint32_t context, ENetError result)
 {
     if (fCbObject) {
         // Call the callback.
@@ -119,7 +119,7 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete(uint32_t 
                 pyObjectRef tup = PyTuple_New(2);
                 PyTuple_SET_ITEM(tup.Get(), 0, pyVaultNode::New(fNode));
                 PyTuple_SET_ITEM(tup.Get(), 1, fPyNodeRef.Release());
-                plPython::CallObject(func, context, std::move(tup), resultCode);
+                plPython::CallObject(func, context, std::move(tup), static_cast<int32_t>(result));
             }
         }
     }
@@ -326,10 +326,7 @@ void pyVaultNode::SetCreateAgeGuid(const ST::string& v)
 // Add child node
 void _AddNodeCallback(ENetError result, void* param) {
     pyVaultNode::pyVaultNodeOperationCallback* cb = (pyVaultNode::pyVaultNodeOperationCallback*)param;
-    if (IS_NET_SUCCESS(result))
-        cb->VaultOperationComplete(hsOK);
-    else
-        cb->VaultOperationComplete(hsFail);
+    cb->VaultOperationComplete(result);
 }
 
 PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, uint32_t cbContext)
@@ -374,7 +371,7 @@ PyObject* pyVaultNode::AddNode(pyVaultNode* pynode, PyObject* cbObject, uint32_t
     {
         // manually make the callback
         cb->VaultOperationStarted( cbContext );
-        cb->VaultOperationComplete(hsFail);
+        cb->VaultOperationComplete(kNetErrInternalError);
     }
 
     // just return a None object
@@ -407,8 +404,14 @@ void pyVaultNode::LinkToNode(int nodeID, PyObject* cbObject, uint32_t cbContext)
     {
         // manually make the callback
         cb->VaultOperationStarted( cbContext );
-        cb->VaultOperationComplete( cbContext, hsFail );
+        cb->VaultOperationComplete(cbContext, kNetErrInternalError);
     }
+}
+
+static void _RemoveNodeCallback(ENetError result, void* param)
+{
+    auto cb = static_cast<pyVaultNode::pyVaultNodeOperationCallback*>(param);
+    cb->VaultOperationComplete(result);
 }
 
 // Remove child node
@@ -420,19 +423,18 @@ bool pyVaultNode::RemoveNode( pyVaultNode& pynode, PyObject* cbObject, uint32_t 
     {
         // Hack the callbacks until vault notification is in place
         cb->VaultOperationStarted( cbContext );
-
-        VaultRemoveChildNode(fNode->GetNodeId(), pynode.fNode->GetNodeId(), nullptr, nullptr);
-
         cb->SetNode(pynode.fNode);
         cb->fPyNodeRef = pyVaultNodeRef::New(fNode, pynode.fNode);
-        cb->VaultOperationComplete( cbContext, hsOK );
+
+        VaultRemoveChildNode(fNode->GetNodeId(), pynode.fNode->GetNodeId(), _RemoveNodeCallback, cb);
+
         return true;
     }
     else
     {
         // manually make the callback
         cb->VaultOperationStarted( cbContext );
-        cb->VaultOperationComplete( cbContext, hsFail );
+        cb->VaultOperationComplete(cbContext, kNetErrInternalError);
     }
 
     return false;
@@ -455,15 +457,17 @@ void pyVaultNode::Save(PyObject* cbObject, uint32_t cbContext)
 {
     // If the node doesn't have an id, then use it as a template to create the node in the vault,
     // otherwise just ignore the save request since vault nodes are now auto-saved.
+    ENetError result = kNetPending;
     if (!fNode->GetNodeId() && fNode->GetNodeType()) {
-        ENetError result;
         if (hsRef<RelVaultNode> node = VaultCreateNodeAndWait(fNode, &result))
             fNode = node;
+    } else {
+        result = kNetSuccess;
     }
     pyVaultNodeOperationCallback * cb = new pyVaultNodeOperationCallback( cbObject );
     cb->SetNode(fNode);
     cb->VaultOperationStarted( cbContext );
-    cb->VaultOperationComplete( cbContext, hsOK );
+    cb->VaultOperationComplete(cbContext, result);
 }
 
 // Save this node and all child nodes that need saving.
@@ -472,7 +476,7 @@ void pyVaultNode::SaveAll(PyObject* cbObject, uint32_t cbContext)
     // Nodes are now auto-saved
     pyVaultNodeOperationCallback * cb = new pyVaultNodeOperationCallback( cbObject );
     cb->VaultOperationStarted( cbContext );
-    cb->VaultOperationComplete( cbContext, hsOK );
+    cb->VaultOperationComplete(cbContext, kNetSuccess);
 }
 
 void pyVaultNode::ForceSave()
@@ -494,24 +498,26 @@ void pyVaultNode::SendTo(uint32_t destClientNodeID, PyObject* cbObject, uint32_t
     if (fNode)
     {
         // If the node doesn't have an id, then use it as a template to create the node in the vault,
+        ENetError result = kNetPending;
         if (!fNode->GetNodeId() && fNode->GetNodeType()) {
-            ENetError result;
             if (hsRef<RelVaultNode> node = VaultCreateNodeAndWait(fNode, &result))
                 fNode = node;
-        }   
+        } else {
+            result = kNetSuccess;
+        }
 
         // Hack the callbacks until vault notification is in place
         cb->VaultOperationStarted( cbContext );
 
         VaultSendNode(fNode, destClientNodeID);
 
-        cb->VaultOperationComplete( cbContext, hsOK );
+        cb->VaultOperationComplete(cbContext, result);
     }
     else
     {
         // manually make the callback
         cb->VaultOperationStarted( cbContext );
-        cb->VaultOperationComplete( cbContext, hsFail );
+        cb->VaultOperationComplete(cbContext, kNetErrInternalError);
     }
 }
 
