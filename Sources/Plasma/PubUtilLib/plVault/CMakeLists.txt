@@ -8,7 +8,6 @@ set(plVault_SOURCES
 set(plVault_HEADERS
     Intern.h
     Pch.h
-    plAgeInfoSource.h
     plDniCoordinateInfo.h
     plVault.h
     plVaultClientApi.h
