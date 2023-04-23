@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyAgeInfoStruct_h_inc
 #define pyAgeInfoStruct_h_inc
 
+#include <string_theory/string>
+
 #include "plNetCommon/plNetServerSessionInfo.h"
 
 #include "pyGlueHelpers.h"
@@ -52,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-class pyVaultAgeInfoNode;
 class pyAgeInfoStructRef;
 
 

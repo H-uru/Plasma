@@ -30,7 +30,6 @@ set(pfPython_SOURCES
     pyGameCli.cpp
     pyGameScore.cpp
     pyGameScoreMsg.cpp
-    pyGeometry3.cpp
     pyGlueHelpers.cpp
     pyGmBlueSpiral.cpp
     pyGrassShader.cpp

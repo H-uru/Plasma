@@ -48,14 +48,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////
 
 #include <Python.h>
-#include <locale>
+
 #include "HeadSpin.h"
 #include "plgDispatch.h"
 #include "pyGeometry3.h"
 #include "pyKey.h"
 #include "pyObjectRef.h"
 #include "plPythonCallable.h"
-#include "plPythonConvert.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 
@@ -82,6 +81,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plPlayerPageMsg.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetTransport/plNetTransportMember.h"
+#include "pnMessage/plNotifyMsg.h"
 #include "pnMessage/plSDLNotificationMsg.h"
 #include "plMessage/plNetOwnershipMsg.h"
 #include "plSDL/plSDL.h"
@@ -89,7 +89,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plCCRMsg.h"
 #include "plMessage/plVaultNotifyMsg.h"
 #include "plInputCore/plInputInterfaceMgr.h"
-#include "plInputCore/plInputDevice.h"
 #include "pfMessage/pfMarkerMsg.h"
 #include "pfMessage/pfBackdoorMsg.h"
 #include "plMessage/plAvatarMsg.h"
@@ -98,7 +97,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMessage/pfMovieEventMsg.h"
 #include "plMessage/plClimbEventMsg.h"
 #include "plMessage/plCaptureRenderMsg.h"
-#include "plGImage/plMipmap.h"
 #include "plMessage/plAccountUpdateMsg.h"
 #include "plAgeLoader/plAgeLoader.h"
 #include "plMessage/plAIMsg.h"
@@ -110,21 +108,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 
 #include "cyPythonInterface.h"
-#include "cyDraw.h"
-#include "cyPhysics.h"
 #include "pySceneObject.h"
-#include "cyMisc.h"
-#include "cyCamera.h"
-#include "pyNotify.h"
-#include "cyAvatar.h"
 #include "pyVault.h"
 #include "pyVaultNode.h"
 #include "pyVaultNodeRef.h"
 #include "pyVaultAgeLinkNode.h"
 #include "pyPlayer.h"
-#include "pyNetLinkingMgr.h"
 #include "pyAgeInfoStruct.h"
-#include "pyAgeLinkStruct.h"
 #include "pyImage.h"
 #include "pyCritterBrain.h"
 

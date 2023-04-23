@@ -55,6 +55,11 @@ pySwimCurrentInterface::pySwimCurrentInterface(pyKey& key)
     fSwimCurrentKey = key.getKey();
 }
 
+void pySwimCurrentInterface::setKey(pyKey& key)
+{
+    fSwimCurrentKey = key.getKey();
+}
+
 float pySwimCurrentInterface::getNearDist()
 {
     hsKeyedObject* obj = fSwimCurrentKey->ObjectIsLoaded();

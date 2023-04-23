@@ -48,12 +48,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                   attached to a GUIControlRadioGroup
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
 
-#include "pyKey.h"
 #include "pyGUIControl.h"
 
 #include "pyGlueHelpers.h"
+
+class plKey;
+class pyKey;
 
 class pyGUIControlRadioGroup :public pyGUIControl
 {

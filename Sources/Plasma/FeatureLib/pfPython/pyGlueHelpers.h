@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pyGlueHelpers_h_
 
 namespace ST { class string; }
-class pyKey;
 typedef struct _object PyObject;
 typedef struct _typeobject PyTypeObject;
 typedef struct PyMethodDef PyMethodDef;

@@ -40,9 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "plgDispatch.h"
-
 #include "cyInputInterface.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
 #include "plInputCore/plTelescopeInputInterface.h"

@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map draw functions to plasma2 message
 //
 
+#include <vector>
+
 #include "pnKeyedObject/plKey.h"
 
 #include "pyGlueHelpers.h"

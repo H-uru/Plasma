@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <string_theory/string>
+
 #include "plgDispatch.h"
 #include "pyGeometry3.h"
 #include "pyKey.h"

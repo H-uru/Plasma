@@ -53,12 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultNode.h"
 #include "plNetCommon/plNetServerSessionInfo.h" // for plAgeLinkStruct
 
-class pyVaultAgeInfoNode;
-struct RelVaultNode;
-class pyAgeLinkStruct;
 class pySpawnPointInfo;
 class pySpawnPointInfoRef;
-
+namespace ST { class string; }
 
 class pyVaultAgeLinkNode : public pyVaultNode
 {
@@ -78,9 +75,6 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
     PyObject*   GetAgeInfo() const; // returns pyVaultAgeInfoNode
     // locked on psnl age bookshelf
     void    SetLocked( bool v );

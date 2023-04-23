@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include <utility>
+#include <vector>
+
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "pyKey.h"
@@ -53,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKeyImp.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "plMessage/plLinkToAgeMsg.h"
-#include "plMessage/plConsoleMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plExcludeRegionMsg.h"
 #include "plMessage/plInputEventMsg.h"
@@ -67,27 +68,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plCameraMsg.h"
 #include "plTimerCallbackManager.h"
 #include "plVault/plVault.h"
-#include "pnNetCommon/plCreatableUuid.h"
 #include "pnNetCommon/pnNetCommon.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
 #include "plNetTransport/plNetTransport.h"
 #include "plNetTransport/plNetTransportMember.h"
-#include "plResMgr/plKeyFinder.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plMultistageBehMod.h"
 #include "plAvatar/plAvBrainCritter.h"
 #include "pyCritterBrain.h"
-#include "cyPythonInterface.h"
 #include "pySceneObject.h"
 #include "pyPlayer.h"
-#include "pyImage.h"
-#include "pyDniCoordinates.h"
-#include "pyDniInfoSource.h"
 #include "pyColor.h"
-#include "pyNetLinkingMgr.h"
 #include "pyAgeInfoStruct.h"
-#include "pyAgeLinkStruct.h"
 #include "pyAlarm.h"
 #include "pyGeometry3.h"
 #include "pfMessage/pfKIMsg.h"
@@ -107,8 +100,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plInputCore/plAvatarInputInterface.h"
 #include "plInputCore/plInputDevice.h"
-
-#include "plVault/plAgeInfoSource.h"
 
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
 

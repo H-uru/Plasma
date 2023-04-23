@@ -49,13 +49,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "pyGlueHelpers.h"
-#include <vector>
 
-class cyAnimation;
 class pyImage;
-class pyColor;
 class pfJournalBook;
 class plKey;
+class pyKey;
+namespace ST { class string; }
 
 class pyJournalBook
 {

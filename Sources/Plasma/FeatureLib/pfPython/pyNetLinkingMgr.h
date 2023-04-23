@@ -51,9 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-class pyAgeInfoStruct;
 class pyAgeLinkStruct;
-class pyAgeLinkStructRef;
+namespace ST { class string; }
 
 class pyNetLinkingMgr
 {

@@ -50,11 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultPlayerInfoListNode.h"
 #include "pyVaultFolderNode.h"
 #include "pyVaultPlayerInfoNode.h"
-#include "pyVaultNodeRef.h"
 #include "plVault/plVault.h"
-#ifndef BUILDING_PYPLASMA
-#   include "pyVault.h"
-#endif
 
 //create from the Python side
 pyVaultPlayerInfoListNode::pyVaultPlayerInfoListNode()

@@ -53,8 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 
 class plPythonFileMod;
-class pySceneObject;
 class plPipeline;
+namespace ST { class string; }
 
 class pyKey
 {

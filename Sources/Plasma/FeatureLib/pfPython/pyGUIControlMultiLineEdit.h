@@ -54,8 +54,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <tuple>
 
+class plKey;
 class pyColor;
-
+class pyKey;
 namespace ST { class string; }
 
 class pyGUIControlMultiLineEdit : public pyGUIControl

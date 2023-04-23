@@ -53,7 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include <vector>
 
+class pyKey;
 class pyMatrix44;
+namespace ST { class string; }
 
 class pySceneObject
 {

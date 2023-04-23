@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include <string_theory/string>
+
+#include "plFileSystem.h"
 #include "plgDispatch.h"
 #include "pyKey.h"
 #include "plPhysical.h"
@@ -50,12 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAvatar/plAvatarMgr.h"
 #include "plMessage/plAvatarMsg.h"
-#include "plMessage/plLinkToAgeMsg.h"
-#include "plMessage/plOneShotCallbacks.h"
 #include "plMessage/plOneShotMsg.h"
 #include "plMessage/plMultistageMsg.h"
 #include "pnMessage/plNotifyMsg.h"
-#include "pnKeyedObject/plFixedKey.h"
 #include "plGImage/plMipmap.h"
 #include "pySceneObject.h"
 #include "pyColor.h"
@@ -76,10 +75,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plSharedMesh.h"
 
 #include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
 #include "plDrawable/plMorphSequence.h"
-#include "pnNetCommon/plNetApp.h"
-
 
 ///////////////////////////////////////////////////////////////////////////
 //

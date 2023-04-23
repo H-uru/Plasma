@@ -46,16 +46,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include <Python.h>
+#include <string_theory/string>
 #include <string_theory/string_stream>
 
 #include "pyVaultAgeInfoNode.h"
 
 #include "pyVaultAgeInfoListNode.h"
 #include "pyVaultPlayerInfoListNode.h"
-#include "pyVaultPlayerInfoNode.h"
-#include "pyVaultSDLNode.h"
 #include "pyVaultAgeLinkNode.h"
-#include "pyNetLinkingMgr.h"
 #include "pyAgeInfoStruct.h"
 
 #include "pnUUID/pnUUID.h"
@@ -94,10 +92,6 @@ static PyObject * GetChildAgeInfoList(hsWeakRef<RelVaultNode> node, unsigned typ
         result = pyVaultAgeInfoListNode::New(rvn);
     return result;
 }
-
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
 
 PyObject * pyVaultAgeInfoNode::GetAgeOwnersFolder() const
 {

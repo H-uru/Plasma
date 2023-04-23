@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-class pyVaultAgeLinkNode;
 class pySpawnPointInfo;
 class pySpawnPointInfoRef;
 class pyAgeLinkStructRef;

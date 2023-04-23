@@ -48,16 +48,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                   attached to a GUIControlDraggable
 //
 //////////////////////////////////////////////////////////////////////
-#include <Python.h>
-
-#include "pyKey.h"
 
 #include "pyGlueHelpers.h"
 
 #include "pyGUIControl.h"
 
-class pyPoint3;
-
+class plKey;
+class pyKey;
 
 class pyGUIControlDraggable : public pyGUIControl
 {

@@ -56,29 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNbError.h"
 
 struct RelVaultNode;
-class plMipmap;
-class pyImage;
 class plUUID;
-
-class pyDniCoordinates;
-
-class pyVaultNodeRef;
-class pyVaultFolderNode;
-class pyVaultPlayerInfoListNode;
-class pyVaultImageNode;
-class pyVaultTextNoteNode;
-class pyVaultAgeLinkNode;
-class pyVaultChronicleNode;
-class pyVaultPlayerInfoNode;
-class pyVaultMarkerNode;
-class pyVaultAgeInfoNode;
-class pyVaultAgeInfoListNode;
-class pyVaultSDLNode;
-class pyVaultPlayerNode;
-class pyVaultMarkerListNode;
-#ifndef BUILDING_PYPLASMA
-class pyVaultSystemNode;
-#endif
 
 class pyVaultNode
 {

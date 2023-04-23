@@ -52,7 +52,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyGUIControl.h"
 
-class pyPoint3;
+class plKey;
+class pyKey;
 
 class pyGUIControlClickMap : public pyGUIControl
 {

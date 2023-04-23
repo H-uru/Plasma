@@ -47,10 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "pyVaultChronicleNode.h"
+
+#include <string_theory/string>
+
 #include "plVault/plVault.h"
-#ifndef BUILDING_PYPLASMA
-#   include "pyVault.h"
-#endif
 
 //create from the Python side
 pyVaultChronicleNode::pyVaultChronicleNode()

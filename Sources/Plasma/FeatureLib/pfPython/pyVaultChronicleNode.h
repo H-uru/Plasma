@@ -52,9 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyVaultNode.h"
 
-#include <string_theory/string>
-
-struct RelVaultNode;
+namespace ST { class string; }
 
 class pyVaultChronicleNode : public pyVaultNode
 {
@@ -71,9 +69,6 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
     void Chronicle_SetName( const ST::string& text );
     ST::string Chronicle_GetName() const;
     void Chronicle_SetValue( const ST::string& text );

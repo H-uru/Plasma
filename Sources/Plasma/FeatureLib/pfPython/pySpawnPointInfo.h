@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pySpawnPointInfo_h_inc
 #define pySpawnPointInfo_h_inc
 
+#include <string_theory/string>
+
 #include "plNetCommon/plSpawnPointInfo.h"
 #include "pyGlueHelpers.h"
 

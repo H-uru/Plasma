@@ -51,14 +51,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyKey;
 class pySceneObject;
 class pyPlayer;
-class pyImage;
-class pyDniCoordinates;
 class pyColor;
 class pyAgeInfoStruct;
 class pyPoint3;
 
 #include "HeadSpin.h"
-#include <vector>
 
 class pyGUIDialog;
 class plPipeline;
@@ -69,7 +66,6 @@ struct PipelineParams;
 namespace ST { class string; }
 
 typedef struct _object PyObject;
-typedef struct PyMethodDef PyMethodDef;
 
 class cyMisc
 {

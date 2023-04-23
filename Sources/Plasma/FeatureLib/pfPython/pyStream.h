@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsStream;
 class plFileName;
+namespace ST { class string; }
 
 class pyStream
 {

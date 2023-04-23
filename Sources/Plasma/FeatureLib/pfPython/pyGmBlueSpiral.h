@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGameCli.h"
 
 class pfGmBlueSpiral;
-class pyGmBlueSpiralHandler;
 
 class pyGmBlueSpiral : public pyGameCli
 {

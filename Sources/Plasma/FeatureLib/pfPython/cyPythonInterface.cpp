@@ -64,7 +64,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPythonCallable.h"
 #include "cyPythonInterface.h"
-#include "plPythonPack.h"
 
 #include "pyEnum.h"
 #include "cyDraw.h"

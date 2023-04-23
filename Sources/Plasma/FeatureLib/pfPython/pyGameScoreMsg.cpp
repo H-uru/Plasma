@@ -41,6 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "pyGameScoreMsg.h"
+
+#include <string_theory/string>
+
 #include "pfMessage/pfGameScoreMsg.h"
 #include "pyGameScore.h"
 

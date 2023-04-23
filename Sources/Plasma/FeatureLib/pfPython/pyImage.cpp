@@ -41,12 +41,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include <string_theory/format>
+
 #include "pyKey.h"
+
+#include "plFileSystem.h"
 #include "hsResMgr.h"
+
+#include "pyColor.h"
 
 #include "pyImage.h"
 #include "pyGeometry3.h"
 #include "plGImage/plJPEG.h"
+#include "plGImage/plMipmap.h"
 #include "plGImage/plPNG.h"
 #include "pnKeyedObject/plUoid.h"
 

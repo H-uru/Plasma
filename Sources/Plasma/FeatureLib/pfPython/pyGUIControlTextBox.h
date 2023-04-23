@@ -52,7 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGUIControl.h"
 #include "pyGlueHelpers.h"
 
+class plKey;
 class pyColor;
+class pyKey;
 class pfGUIColorScheme;
 
 namespace ST { class string; }

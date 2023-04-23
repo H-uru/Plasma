@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <list>
 
-struct pyAlarm;
 typedef struct _object PyObject;
 
 class pyAlarmMgr

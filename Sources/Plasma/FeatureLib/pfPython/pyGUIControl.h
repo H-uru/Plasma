@@ -52,8 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
 
-class pyGUIDialog;
-class pyColor;
+class pyKey;
 class pyPoint3;
 
 class pyGUIControl

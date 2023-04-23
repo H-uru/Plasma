@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
 
-class plKeyCombo;
+namespace ST { class string; }
 
 class pyKeyMap
 {

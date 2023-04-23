@@ -52,8 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyVaultFolderNode.h"
 
-struct RelVaultNode;
-
 class pyVaultAgeInfoListNode : public pyVaultFolderNode
 {
 protected:
@@ -69,9 +67,6 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class RelVaultNode : public plVaultFolderNode
-//
     bool  HasAge( uint32_t ageID );
     bool  AddAge( uint32_t ageID );
     void  RemoveAge( uint32_t ageID );

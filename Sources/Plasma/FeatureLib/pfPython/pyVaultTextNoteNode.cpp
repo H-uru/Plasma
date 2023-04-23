@@ -46,15 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include <Python.h>
+#include <string_theory/string>
 
 #include "pyVaultTextNoteNode.h"
-#include "pyVaultAgeLinkNode.h"
-#include "pyVaultFolderNode.h"
 #include "pnNetBase/pnNbError.h"
 #include "plVault/plVault.h"
-#ifndef BUILDING_PYPLASMA
-#   include "pyVault.h"
-#endif
 
 //create from the Python side
 pyVaultTextNoteNode::pyVaultTextNoteNode()

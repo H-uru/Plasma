@@ -65,6 +65,7 @@ class pyVaultChronicleNode;
 class pySDLStateDataRecord;
 class pyVaultTextNoteNode;
 class plUUID;
+namespace ST { class string; }
 
 class pyAgeVault
 {

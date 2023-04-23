@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 
 class plUUID;
+namespace ST { class string; }
 
 class pyVaultPlayerInfoNode : public pyVaultNode
 {
@@ -68,9 +69,6 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class plVaultPlayerInfoNode : public plVaultNode
-//
     void    Player_SetPlayerID( uint32_t plyrid );
     uint32_t  Player_GetPlayerID();
     void    Player_SetPlayerName(const ST::string& name);

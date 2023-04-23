@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 
 class pyColor;
+class pyKey;
 
 class pyGUISkin
 {

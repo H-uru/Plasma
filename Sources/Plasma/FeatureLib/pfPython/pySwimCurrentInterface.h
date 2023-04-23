@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
 
+class pyKey;
+
 class pySwimCurrentInterface
 {
 private:
@@ -65,7 +67,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    void setKey(pyKey& key) {fSwimCurrentKey = key.getKey();} // for python glue only, do NOT call
+    void setKey(pyKey& key); // for python glue only, do NOT call
 
     float getNearDist();
     void setNearDist(float val);

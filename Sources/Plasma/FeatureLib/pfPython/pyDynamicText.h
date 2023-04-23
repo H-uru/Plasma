@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plDynamicTextMsg;
 class pyColor;
 class pyImage;
+class pyKey;
+namespace ST { class string; }
 
 #include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"

@@ -41,11 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
-#include "pyKey.h"
+#include <string_theory/string>
 
-#ifndef BUILDING_PYPLASMA
-#   include "pySceneObject.h"
-#endif
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptKey, pyKey);

@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultNode.h"
 
 class pyAgeInfoStruct;
-struct RelVaultNode;
+namespace ST { class string; }
 
 class pyVaultPlayerNode : public pyVaultNode
 {
@@ -69,9 +69,6 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class plVaultPlayerInfoNode : public plVaultNode
-//
     PyObject *GetInbox(); // returns pyVaultFolderNode
     PyObject *GetPlayerInfo(); // returns pyVaultPlayerInfoNode
     PyObject *GetAvatarOutfitFolder(); // returns pyVaultFolderNode

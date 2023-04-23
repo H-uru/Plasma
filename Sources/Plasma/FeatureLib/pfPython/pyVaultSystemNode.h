@@ -47,11 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // pyVaultSystemNode   - a wrapper class to provide interface to the RelVaultNode
 //
 //////////////////////////////////////////////////////////////////////
-#include "HeadSpin.h"
+
 #include "pyGlueHelpers.h"
 #include "pyVaultNode.h"
-
-struct RelVaultNode;
 
 class pyVaultSystemNode : public pyVaultNode
 {

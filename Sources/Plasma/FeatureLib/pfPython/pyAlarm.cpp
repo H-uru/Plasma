@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyAlarm.h"
 
-#include "pyGlueHelpers.h"
 #include "plPythonCallable.h"
 
 #include "hsTimer.h"

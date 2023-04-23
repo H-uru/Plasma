@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to for Particle System
 //
 
+#include <vector>
+
 #include "pnKeyedObject/plKey.h"
 #include "pyGlueHelpers.h"
 

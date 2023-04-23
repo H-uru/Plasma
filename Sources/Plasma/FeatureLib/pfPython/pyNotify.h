@@ -48,10 +48,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <vector>
+
+#include "pnKeyedObject/plKey.h"
 #include "pnMessage/plNotifyMsg.h"
 #include "pyGlueHelpers.h"
 
+class pyKey;
 class pyPoint3;
+namespace ST { class string; }
 
 class pyNotify
 {
