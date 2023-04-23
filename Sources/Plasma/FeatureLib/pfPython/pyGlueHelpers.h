@@ -610,17 +610,4 @@ static PyObject *methodName(PyObject *self) /* and now for the actual function *
             return; \
     }
 
-/////////////////////////////////////////////////////////////////////
-// Enum glue (these should all be inside a function)
-/////////////////////////////////////////////////////////////////////
-
-// the start of an enum block
-#define PYTHON_ENUM_START(enumName) std::vector<std::tuple<ST::string, Py_ssize_t>> enumName##_enumValues{
-
-// for each element of the enum
-#define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) std::make_tuple(ST_LITERAL(#elementName), (Py_ssize_t)elementValue),
-
-// to finish off and define the enum
-#define PYTHON_ENUM_END(m, enumName) }; pyEnum::MakeEnum(m, #enumName, enumName##_enumValues);
-
 #endif // _pyGlueHelpers_h_

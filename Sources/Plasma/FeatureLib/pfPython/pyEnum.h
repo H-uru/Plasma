@@ -48,8 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 #include <Python.h>
-
-namespace ST { class string; }
+#include <string_theory/string>
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -64,5 +63,18 @@ public:
     static void AddPlasmaConstantsClasses(PyObject *m);
     static void MakeEnum(PyObject *m, const char* name, const std::vector<std::tuple<ST::string, Py_ssize_t>>& values);
 };
+
+/////////////////////////////////////////////////////////////////////
+// Enum glue (these should all be inside a function)
+/////////////////////////////////////////////////////////////////////
+
+// the start of an enum block
+#define PYTHON_ENUM_START(enumName) std::vector<std::tuple<ST::string, Py_ssize_t>> enumName##_enumValues{
+
+// for each element of the enum
+#define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) std::make_tuple(ST_LITERAL(#elementName), (Py_ssize_t)elementValue),
+
+// to finish off and define the enum
+#define PYTHON_ENUM_END(m, enumName) }; pyEnum::MakeEnum(m, #enumName, enumName##_enumValues);
 
 #endif  // pyEnum_h
