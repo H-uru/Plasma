@@ -186,4 +186,13 @@ public:
 
 };
 
+#define PYTHON_CLASS_VAULT_NODE_NEW_IMPL(pythonClassName, glueClassName) \
+PyObject* glueClassName::New(hsRef<RelVaultNode> nfsNode) \
+{ \
+    pythonClassName* newObj = (pythonClassName*)pythonClassName##_type.tp_new(&pythonClassName##_type, nullptr, nullptr); \
+    if (nfsNode) \
+        newObj->fThis->fNode = std::move(nfsNode); \
+    return (PyObject*)newObj; \
+}
+
 #endif // _pyVaultNode_h_

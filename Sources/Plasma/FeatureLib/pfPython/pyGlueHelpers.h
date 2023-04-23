@@ -85,15 +85,6 @@ PyObject *glueClassName::New() \
     return (PyObject*)newObj; \
 }
 
-#define PYTHON_CLASS_VAULT_NODE_NEW_IMPL(pythonClassName, glueClassName) \
-PyObject* glueClassName::New(hsRef<RelVaultNode> nfsNode) \
-{ \
-    pythonClassName* newObj = (pythonClassName*)pythonClassName##_type.tp_new(&pythonClassName##_type, nullptr, nullptr); \
-    if (nfsNode) \
-        newObj->fThis->fNode = std::move(nfsNode); \
-    return (PyObject*)newObj; \
-}
-
 // This defines the basic check function for a class
 #define PYTHON_CLASS_CHECK_DEFINITION static bool Check(PyObject *obj)
 
