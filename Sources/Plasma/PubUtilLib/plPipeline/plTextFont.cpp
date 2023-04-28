@@ -113,7 +113,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     hDC = CreateCompatibleDC(nullptr);
     SetMapMode( hDC, MM_TEXT );
 
-    nHeight = -MulDiv( fSize, GetDeviceCaps( hDC, LOGPIXELSY ), 72 );
+    nHeight = -MulDiv( fSize, GetDeviceCaps(hDC, LOGPIXELSY), 72 );
     fFontHeight = -nHeight;
 
     FT_Library  library;
@@ -141,23 +141,30 @@ uint16_t  *plTextFont::IInitFontTexture()
     SetBkColor( hDC, 0 );
     SetTextAlign( hDC, TA_TOP );
 
-    fFontHeight = face->size->metrics.height / 64;
-    
+    FT_Size_Metrics fontMetrics = face->size->metrics;
+
+    fFontHeight = int(fontMetrics.height / 64.f);
+
     data[0] = 0xffff;
+
+    int maxDescent = abs(int(fontMetrics.descender / 64.f));
 
     // Loop through characters, drawing them one at a time
     for( c = 32, x = 1, y = 0; c < 127; c++ )
     {
         myChar[ 0 ] = c;
-        ftError = FT_Load_Char(face, c, FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_NO_AUTOHINT | FT_LOAD_NO_HINTING );
+        ftError = FT_Load_Char( face, c, FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_NO_AUTOHINT | FT_LOAD_NO_HINTING );
 
         FT_GlyphSlot slot = face->glyph;
 
         FT_Glyph glyph;
         FT_Get_Glyph(slot, &glyph);
 
+        FT_BBox cBox;
+        FT_Glyph_Get_CBox( glyph, FT_GLYPH_BBOX_TRUNCATE, &cBox );
+
         size.cx = slot->metrics.horiAdvance / 64;
-        size.cy = face->ascender / 64;
+        size.cy = fFontHeight + maxDescent;
 
         FT_Bitmap bitmap = slot->bitmap;
 
@@ -166,7 +173,7 @@ uint16_t  *plTextFont::IInitFontTexture()
             x = 0;
             y += size.cy + 1;
         }
-        int offset = size.cy - face->glyph->bitmap_top - ceil( - face->descender / 64 );
+        int offset = fFontHeight - cBox.yMax;
 
         //blit the bitmap into place
         for (int glyphY = bitmap.rows - 1; glyphY >= 0 ; glyphY--) {
