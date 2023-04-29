@@ -420,8 +420,8 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
     hsLockGuard(s_connectCrit);
 
     // check for data backlog
-    WriteOperation* firstQueuedWrite = conn->fWriteOps.front();
-    if (firstQueuedWrite) {
+    if (!conn->fWriteOps.empty()) {
+        WriteOperation* firstQueuedWrite = conn->fWriteOps.front();
         unsigned currTimeMs = TimeGetMs();
         if (((long)(currTimeMs - firstQueuedWrite->queueTimeMs) >= (long)kBacklogFailMs) && ((long)(currTimeMs - conn->initTimeMs) >= (long)kBacklogInitMs)) {
             PerfAddCounter(kAsyncPerfSocketDisconnectBacklog, 1);
