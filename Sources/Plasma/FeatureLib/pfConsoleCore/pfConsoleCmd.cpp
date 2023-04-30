@@ -332,7 +332,7 @@ pfConsoleCmd::pfConsoleCmd(const ST::string& group, ST::string name,
                             const ST::string& paramList, ST::string help, 
                             pfConsoleCmdPtr func)
     : fName(std::move(name)), fHelpString(std::move(help)), fFunction(func),
-        fNext(nullptr), fPrevPtr(nullptr), fParentGroup(nullptr)
+      fNext(), fPrevPtr(), fParentGroup()
 {
     ICreateSignature( paramList );
     Register(group);
@@ -369,7 +369,7 @@ void pfConsoleCmd::ICreateSignature(const ST::string& paramList)
         }
 
         // Find type
-        ST::string type = std::move(parts[0]);
+        ST::string& type = parts[0];
         uint8_t i;
         for( i = 0; i < kNumTypes; i++ )
         {
@@ -474,7 +474,7 @@ uint8_t pfConsoleCmd::GetSigEntry(size_t i)
 ST::string pfConsoleCmd::GetSignature()
 {
     ST::string_stream string;
-    string << fName << " ";
+    string << fName << ' ';
 
     for(size_t i = 0; i < fSignature.size(); i++)
     {
@@ -482,11 +482,11 @@ ST::string pfConsoleCmd::GetSignature()
             string << ", ";
         }
 
-        string << "[" << fSigTypes[fSignature[i]];
+        string << '[' << fSigTypes[fSignature[i]];
         if (!fSigLabels[i].empty()) {
-            string << " " << fSigLabels[i];
+            string << ' ' << fSigLabels[i];
         }
-        string << "]";
+        string << ']';
     }
 
     return string.to_string();

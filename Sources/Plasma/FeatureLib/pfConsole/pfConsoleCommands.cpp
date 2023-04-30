@@ -783,7 +783,7 @@ public:
             {
                 pfConsoleCmdGroup *parentGrp;
                 parentGrp = g->GetParent();	
-                fGrpName = parentGrp->GetName() + '.' + g->GetName();
+                fGrpName = ST::format("{}.{}", parentGrp->GetName(), g->GetName());
             }
 
         }
@@ -2390,7 +2390,7 @@ PF_CONSOLE_CMD(App,
 {
     hsAssert(0, "Fixme");
     const ST::string& age = params[0];
-    ST::string str = age + ".log";
+    ST::string str = ST::format("{}.log", age);
 //  hsgResMgr::ResMgr()->VerifyAgeUnloaded(str, age);
 
     PrintString(ST::format("Verification of age {} complete", age));
@@ -2811,7 +2811,7 @@ PF_CONSOLE_CMD( Camera, SwitchTo, "string cameraName", "Switch to the named came
 {
     ST::string status;
     const ST::string& cameraName = params[0];
-    plKey key = FindObjectByNameAndType(cameraName + "_", "plCameraModifier1", {}, status, true);
+    plKey key = FindObjectByNameAndType(ST::format("{}_", cameraName), "plCameraModifier1", {}, status, true);
     PrintString(status);
 
     if (key)

@@ -959,7 +959,7 @@ void    pfConsole::IUpdateTooltip()
     {
         /// Different--update timer to wait
         fHelpTimer = kHelpDelay;
-        fLastHelpMsg = c;
+        fLastHelpMsg = std::move(c);
     }
 }
 
@@ -1020,7 +1020,7 @@ void    pfConsole::IExecuteWorkingLine()
                     int recall = fHistory[fPythonMode].fCursor - i;
                     if (recall < 0)
                         recall += kNumHistoryItems;
-                    biglines << fHistory[fPythonMode].fData[recall] << "\n";
+                    biglines << fHistory[fPythonMode].fData[recall] << '\n';
                 }
                 // now evaluate this mess they made
                 PyObject* mymod = PythonInterface::FindModule("__main__");
