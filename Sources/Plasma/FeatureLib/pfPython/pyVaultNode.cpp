@@ -119,7 +119,7 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete(uint32_t 
                 pyObjectRef tup = PyTuple_New(2);
                 PyTuple_SET_ITEM(tup.Get(), 0, pyVaultNode::New(fNode));
                 PyTuple_SET_ITEM(tup.Get(), 1, fPyNodeRef.Release());
-                plPython::CallObject(func, context, std::move(tup), static_cast<int32_t>(result));
+                plPython::CallObject(func, context, std::move(tup), result);
             }
         }
     }
