@@ -50,7 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleContext.h"
 
 #include <string_theory/format>
+#include <string_theory/string_stream>
 #include <utility>
+#include <vector>
 
 #include "plFile/plEncryptedStream.h"
 
@@ -515,11 +517,21 @@ ST::string pfConsoleEngine::FindNestedPartialCmd(const ST::string& line, uint32_
         return {};
 
     /// Recurse back up and get the group hierarchy
-    ST::string name = cmd->GetName() + ' ';
+    std::vector<ST::string> reverseParts {cmd->GetName()};
     pfConsoleCmdGroup* group = cmd->GetParent();
     while (group != nullptr && group != pfConsoleCmdGroup::GetBaseGroup()) {
-        name = group->GetName() + '.' + name;
+        reverseParts.emplace_back(group->GetName());
         group = group->GetParent();
+    }
+
+    ST::string_stream name;
+    for (auto it = reverseParts.crbegin(); it != reverseParts.crend(); ++it) {
+        name << *it;
+        if (it + 1 == reverseParts.crend()) {
+            name << ' ';
+        } else {
+            name << '.';
+        }
     }
 
     if( preserveParams )
@@ -527,5 +539,5 @@ ST::string pfConsoleEngine::FindNestedPartialCmd(const ST::string& line, uint32_
         /// Preserve the rest of the string after the matched command
     }
 
-    return name;
+    return name.to_string();
 }
