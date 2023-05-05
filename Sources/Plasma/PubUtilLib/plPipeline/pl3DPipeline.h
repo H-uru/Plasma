@@ -198,6 +198,7 @@ protected:
     typename DeviceType::VertexBufferRef*   fVtxBuffRefList;
     typename DeviceType::IndexBufferRef*    fIdxBuffRefList;
     typename DeviceType::TextureRef*        fTextureRefList;
+    plTextFont*                             fTextFontRefList;
 
     hsGDeviceRef*                           fLayerRef[8];
 
@@ -984,6 +985,7 @@ pl3DPipeline<DeviceType>::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
     fVtxBuffRefList(),
     fIdxBuffRefList(),
     fTextureRefList(),
+    fTextFontRefList(),
     fCurrMaterial(),
     fCurrLay(),
     fCurrNumLayers(),
