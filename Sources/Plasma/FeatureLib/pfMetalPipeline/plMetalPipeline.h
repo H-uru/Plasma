@@ -241,8 +241,6 @@ private:
 
     static plMetalEnumerate enumerator;
 
-    plTextFont* fTextFontRefList;
-
     NS::AutoreleasePool* fCurrentPool;
 
     /// Describes the state for the "fixed function" shader.
