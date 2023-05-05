@@ -218,7 +218,6 @@ protected:
     bool                    fDevWasLost;
 
     plDXTextureRef*         fTextureRefList;
-    plTextFont*             fTextFontRefList;
     plDXRenderTargetRef*    fRenderTargetRefList;
     plDXVertexShader*       fVShaderRefList;
     plDXPixelShader*        fPShaderRefList;

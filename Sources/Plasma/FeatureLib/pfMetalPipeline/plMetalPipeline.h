@@ -252,7 +252,6 @@ private:
 
     static plMetalEnumerate enumerator;
 
-    plTextFont* fTextFontRefList;
     plMetalLightRef* fLightRefList;
     bool fLightsDirty;
 

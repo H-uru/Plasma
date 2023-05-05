@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGLMaterialShaderRef.h"
 #include "plGLPipeline.h"
 #include "plGLPlateManager.h"
+#include "plGLTextFont.h"
 
 #include "hsGMatState.inl"
 #include "plPipeDebugFlags.h"
@@ -206,6 +207,9 @@ plGLPipeline::~plGLPipeline()
     if (plGLPlateManager* pm = static_cast<plGLPlateManager*>(fPlateMgr))
         pm->IReleaseGeometry();
 
+    while (fTextFontRefList)
+        delete fTextFontRefList;
+
     fDevice.Shutdown();
 }
 
@@ -264,7 +268,13 @@ bool plGLPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>& vis
 
 plTextFont* plGLPipeline::MakeTextFont(ST::string face, uint16_t size)
 {
-    return nullptr;
+    plTextFont* font = new plGLTextFont(this, nullptr);
+    if (!font)
+        return nullptr;
+
+    font->Create(face, size);
+    font->Link(&fTextFontRefList);
+    return font;
 }
 
 bool plGLPipeline::OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly)
@@ -608,6 +618,8 @@ void plGLPipeline::LoadResources()
         plNetClientApp::StaticDebugMsg("End Device Reload (but no GL Context)");
         return;
     }
+
+    fDebugTextMgr = new plDebugTextManager();
 
     // Create all RenderTargets
     plPipeRTMakeMsg* rtMake = new plPipeRTMakeMsg(this);
