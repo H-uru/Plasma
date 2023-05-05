@@ -5,6 +5,7 @@ set(pfGLPipeline_SOURCES
     plGLMaterialShaderRef.cpp
     plGLPipeline.cpp
     plGLPlateManager.cpp
+    plGLTextFont.cpp
     plShaderNode.cpp
 )
 
@@ -15,6 +16,7 @@ set(pfGLPipeline_HEADERS
     plGLPipeline.h
     pfGLPipelineCreatable.h
     plGLPlateManager.h
+    plGLTextFont.h
     plShaderNode.h
 )
 
