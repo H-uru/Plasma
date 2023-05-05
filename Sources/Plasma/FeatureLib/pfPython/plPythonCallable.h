@@ -104,7 +104,11 @@ namespace plPython
             // Use Python's built-in vectorcall optimization for one argument.
             pyObjectRef arg = ConvertFrom(std::forward<Args>(args)...);
             plProfile_BeginTiming(PythonUpdate);
+#if PY_VERSION_HEX >= 0x03090000
             pyObjectRef result = _PyObject_CallOneArg(callable, arg.Get());
+#else
+            pyObjectRef result = PyObject_CallFunctionObjArgs(callable, arg.Get(), NULL);
+#endif
             plProfile_EndTiming(PythonUpdate);
             return result;
         } else if constexpr (sizeof...(args) == 0) {
