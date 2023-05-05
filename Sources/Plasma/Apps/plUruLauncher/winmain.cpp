@@ -55,6 +55,7 @@ Mead, WA   99021
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shlobj.h>
+#include <ShellScalingApi.h>
 
 // ===================================================
 
@@ -186,6 +187,44 @@ static void PumpMessages()
 
         // Now we need to pump the netcore while we have some spare time...
     } while (s_launcher->PumpNetCore());
+}
+
+void SetDPIAwareness() const
+{
+    plOptionalWinCall<BOOL(DPI_AWARENESS_CONTEXT)> fSetProcessDpiAwarenessContext(L"user32", "SetProcessDpiAwarenessContext");
+    plOptionalWinCall<HRESULT(PROCESS_DPI_AWARENESS)> fSetProcessDpiAwareness(L"user32", "SetProcessDpiAwarenessContext");
+
+    // There are three different levels of DPI awareness that we can deal with,
+    // each was added in newer versions of Windows as monitors became more and
+    // more sexy.
+    // In Vista, the entire system had an adjustable display scale.
+    // In Windows 8, each monitor was allowed to have a separate scale.
+    // In Windows 10, the per-monitor scaling was slowly improved to automatically
+    // scale dialog boxes and things like that.
+    // So we need to try to handle all of that. We will assume the baseline is Vista.
+    // Any API added later than that will need to be called on a provisional basis.
+    do {
+        // Per Monitor V2 for Windows 10 v1703.
+        auto perMonitorV2Result = fSetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+        if (perMonitorV2Result.has_value()) {
+            if (perMonitorV2Result.value() == TRUE) {
+                break;
+            }
+        }
+
+        // Per Monitor v1 for Windows 8.1.
+        auto perMonitorV1Result = fSetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+        if (perMonitorV1Result.has_value()) {
+            if (SUCCEEDED(perMonitorV1Result.value())) {
+                break;
+            }
+        }
+
+        // System DPI Awareness.
+        if (SetProcessDPIAware() != FALSE) {
+            break;
+        }
+    } while (false);
 }
 
 // ===================================================
@@ -380,6 +419,8 @@ static pfPatcher* IPatcherFactory()
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLink, int nCmdShow)
 {
+    SetProcessDPIAware();
+
     plClientLauncher launcher;
     s_launcher = &launcher;
 
