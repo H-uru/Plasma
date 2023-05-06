@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClient.h"
 
 #ifdef HS_BUILD_FOR_WIN32
-#   include "win32/plWinDpi.h"
+#   include "plWinDpi/plWinDpi.h"
 #endif
 
 #include "pnDispatch/plDispatch.h"

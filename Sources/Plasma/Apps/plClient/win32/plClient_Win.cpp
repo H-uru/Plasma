@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <shellapi.h>
 
 #include "plClient.h"
-#include "win32/plWinDpi.h"
+#include "plWinDpi/plWinDpi.h"
 
 #include "pnFactory/plFactory.h"
 #include "pnNetCommon/plNetApp.h"

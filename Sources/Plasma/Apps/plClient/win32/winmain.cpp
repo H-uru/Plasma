@@ -59,7 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClient.h"
 #include "plClientLoader.h"
 #include "res/resource.h"
-#include "plWinDpi.h"
 
 #include "pnEncryption/plChallengeHash.h"
 
@@ -68,12 +67,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputCore/plInputManager.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetGameLib/plNetGameLib.h"
+#include "plMessage/plDisplayScaleChangedMsg.h"
 #include "plPhysX/plPXSimulation.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plResMgr/plLocalization.h"
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plVersion.h"
 #include "plStatusLog/plStatusLog.h"
+#include "plWinDpi/plWinDpi.h"
 
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfCrashHandler/plCrashCli.h"
@@ -172,6 +173,13 @@ static void AuthFailedStrings (ENetError authError,
 
 void DebugMsgF(const char* format, ...);
 
+void HandleDpiChange(HWND hWnd, UINT dpi, float scale, const RECT& rect)
+{
+    // Inform the engine about the new DPI.
+    auto* msg = new plDisplayScaleChangedMsg(scale, plDisplayScaleChangedMsg::ConvertRect(rect));
+    msg->Send();
+}
+
 // Handles all the windows messages we might receive
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -179,7 +187,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static uint8_t mouse_down = 0;
 
     // DPI Helper can eat messages.
-    auto result = plWinDpi::Instance().WndProc(hWnd, message, wParam, lParam);
+    auto result = plWinDpi::Instance().WndProc(hWnd, message, wParam, lParam, HandleDpiChange);
     if (result.has_value())
         return result.value();
 

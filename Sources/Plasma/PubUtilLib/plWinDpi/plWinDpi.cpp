@@ -45,11 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <memory>
 #include <type_traits>
 
-#include "hsResMgr.h"
-
-#include "pnKeyedObject/plFixedKey.h"
-#include "pnMessage/plClientMsg.h"
-
 #ifndef WM_GETDPISCALEDSIZE
 #   define WM_GETDPISCALEDSIZE 0x02E4
 #endif
@@ -252,17 +247,7 @@ void plWinDpi::IEnableNCScaling(HWND hWnd) const
     }
 }
 
-void plWinDpi::IHandleDpiChange(HWND hWnd, UINT dpi, const RECT& rect) const
-{
-    float scale = float(dpi) / 96.0f;
-    LogWhite("Window DPI changed to {} (scale factor: {.02f})", dpi, scale);
-
-    // Inform the engine about the new DPI.
-    auto* msg = new plDisplayScaleChangedMsg(scale, ConvertRect(rect));
-    msg->Send();
-}
-
-std::optional<LRESULT> plWinDpi::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const
+std::optional<LRESULT> plWinDpi::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, const std::function <void (HWND, UINT, FLOAT, RECT&)>& dpiChangedCallback) const
 {
     switch (msg) {
     case WM_NCCREATE:
@@ -272,7 +257,13 @@ std::optional<LRESULT> plWinDpi::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPA
         // For Windows 8.1 and higher. Allows us to handle DPI changes while the game is running,
         // eg by moving the game window to another monitor with a different scale factor or
         // the user changed the scale factor while the game is running.
-        IHandleDpiChange(hWnd, LOWORD(wParam), *((LPRECT)lParam));
+        if (dpiChangedCallback) {
+            UINT dpi = LOWORD(wParam);
+            float scale = float(dpi) / 96.0f;
+            LogWhite("Window DPI changed to {} (scale factor: {.02f})", dpi, scale);
+
+            dpiChangedCallback(hWnd, dpi, scale, *((LPRECT)lParam));
+        }
         return 0;
     case WM_GETDPISCALEDSIZE:
         // For Windows 10 v1703 and higher. This window message allows us to tell the

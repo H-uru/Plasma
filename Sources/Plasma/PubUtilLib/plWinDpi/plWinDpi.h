@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 #include <ShellScalingApi.h>
 
-#include "plMessage/plDisplayScaleChangedMsg.h"
 #include "plStatusLog/plStatusLog.h"
 
 class plWinDpi
@@ -114,23 +113,12 @@ public:
 public:
     float GetScale(HWND hWnd = nullptr) const { return float(GetDpi(hWnd)) / 96.0f; }
 
-    static RECT ConvertRect(const plDisplayScaleChangedMsg::ClientWindow& rect)
-    {
-        return *((const LPRECT)&rect);
-    }
-
-    static plDisplayScaleChangedMsg::ClientWindow ConvertRect(const RECT& rect)
-    {
-        return *((const plDisplayScaleChangedMsg::ClientWindow*)&rect);
-    }
-
 private:
     BOOL ICalcWinSize(HWND hWnd, UINT dpi, SIZE& hWndSize) const;
     void IEnableNCScaling(HWND hWnd) const;
-    void IHandleDpiChange(HWND hWnd, UINT dpi, const RECT& rect) const;
 
 public:
-    std::optional<LRESULT> WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const;
+    std::optional<LRESULT> WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, const std::function <void(HWND, UINT, FLOAT, RECT&)>& dpiChangedCallback) const;
 };
 
 #endif
