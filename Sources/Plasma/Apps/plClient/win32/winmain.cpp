@@ -173,7 +173,7 @@ static void AuthFailedStrings (ENetError authError,
 
 void DebugMsgF(const char* format, ...);
 
-void HandleDpiChange(HWND hWnd, UINT dpi, float scale, const RECT& rect)
+static void HandleDpiChange(HWND hWnd, UINT dpi, float scale, const RECT& rect)
 {
     // Inform the engine about the new DPI.
     auto* msg = new plDisplayScaleChangedMsg(scale, plDisplayScaleChangedMsg::ConvertRect(rect));

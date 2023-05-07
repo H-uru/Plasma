@@ -1,5 +1,3 @@
-if(WIN32)
-
 list(APPEND plWinDpi_HEADERS
     plWinDpi.h
 )
@@ -18,5 +16,3 @@ target_link_libraries(
         CoreLib
         plStatusLog
 )
-
-endif()

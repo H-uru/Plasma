@@ -118,7 +118,7 @@ private:
     void IEnableNCScaling(HWND hWnd) const;
 
 public:
-    std::optional<LRESULT> WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, const std::function <void(HWND, UINT, FLOAT, RECT&)>& dpiChangedCallback) const;
+    std::optional<LRESULT> WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, const std::function<void(HWND, UINT, FLOAT, RECT&)>& dpiChangedCallback) const;
 };
 
 #endif

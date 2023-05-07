@@ -247,7 +247,7 @@ void plWinDpi::IEnableNCScaling(HWND hWnd) const
     }
 }
 
-std::optional<LRESULT> plWinDpi::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, const std::function <void (HWND, UINT, FLOAT, RECT&)>& dpiChangedCallback) const
+std::optional<LRESULT> plWinDpi::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, const std::function<void (HWND, UINT, FLOAT, RECT&)>& dpiChangedCallback) const
 {
     switch (msg) {
     case WM_NCCREATE:
