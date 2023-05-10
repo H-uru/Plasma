@@ -53,6 +53,7 @@ from PlasmaTypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 from xPsnlVaultSDL import *
+import xLinkingBookDefs
 
 PageNumber = ptAttribInt(1, "Yeesha Page Number")
 stringShowStates = ptAttribString(2,"States in which shown")
@@ -61,9 +62,9 @@ respAudioStop = ptAttribResponder(4,"Audio stop responder")
 
 respEnable = ptAttribResponder(5, "Enabled resp (if necessary)")
 respDisable = ptAttribResponder(6, "Disabled resp (if necessary)")
+bushDistrib = ptAttribClusterList(7, "Bush distributor")
 
 #globals
-import xLinkingBookDefs
 TotalPossibleYeeshaPages = len(xLinkingBookDefs.xYeeshaPages)
 HideCleftPole = 0
 
@@ -237,6 +238,9 @@ class psnlYeeshaPageChanges(ptMultiModifier):
 
             respAudioStop.run(self.key,avatar=None,fastforward=0)
             respDisable.run(self.key,avatar=None,fastforward=1)
+            if len(bushDistrib.value) > 0:
+                for x in bushDistrib.value:
+                    x.setVisible(0)
 
 
     def TimeToGrow(self):
