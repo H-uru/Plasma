@@ -62,7 +62,7 @@ respAudioStop = ptAttribResponder(4,"Audio stop responder")
 
 respEnable = ptAttribResponder(5, "Enabled resp (if necessary)")
 respDisable = ptAttribResponder(6, "Disabled resp (if necessary)")
-bushDistrib = ptAttribClusterList(7, "Bush distributor")
+clusterList = ptAttribClusterList(7, "Cluster Group object list")
 
 #globals
 TotalPossibleYeeshaPages = len(xLinkingBookDefs.xYeeshaPages)
@@ -238,9 +238,8 @@ class psnlYeeshaPageChanges(ptMultiModifier):
 
             respAudioStop.run(self.key,avatar=None,fastforward=0)
             respDisable.run(self.key,avatar=None,fastforward=1)
-            if len(bushDistrib.value) > 0:
-                for x in bushDistrib.value:
-                    x.setVisible(0)
+            for i in clusterList.value:
+                i.setVisible(False)
 
 
     def TimeToGrow(self):
