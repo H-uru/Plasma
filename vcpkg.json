@@ -6,6 +6,10 @@
       "asio",
       "curl",
       "expat",
+      {
+        "name": "fontconfig",
+        "platform": "!(osx | windows)"
+      },
       "freetype",
       "libepoxy",
       "libjpeg-turbo",
