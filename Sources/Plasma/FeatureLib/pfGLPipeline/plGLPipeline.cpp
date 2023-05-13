@@ -1517,7 +1517,7 @@ void plGLPipeline::IDrawPlate(plPlate* plate)
     glUniform4f(mRef->uGlobalAmbient,  1.0, 1.0, 1.0, 1.0);
 
     glUniform4f(mRef->uMatAmbientCol,  1.0, 1.0, 1.0, 1.0);
-    glUniform4f(mRef->uMatDiffuseCol,  1.0, 1.0, 1.0, 1.0);
+    glUniform4f(mRef->uMatDiffuseCol,  1.0, 1.0, 1.0, lay->GetOpacity());
     glUniform4f(mRef->uMatEmissiveCol, 1.0, 1.0, 1.0, 1.0);
     glUniform4f(mRef->uMatSpecularCol, 1.0, 1.0, 1.0, 1.0);
 
