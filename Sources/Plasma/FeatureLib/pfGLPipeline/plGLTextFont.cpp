@@ -77,8 +77,8 @@ void plGLTextFont::ICreateTexture(uint16_t* data)
     glGenTextures(1, &fTexture);
     glBindTexture(GL_TEXTURE_2D, fTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fTextureWidth, fTextureHeight, 0, GL_BGRA, GL_UNSIGNED_SHORT_4_4_4_4, data);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     if (plGLVersion() >= 43) {
         glObjectLabel(GL_TEXTURE, fTexture, -1, fFace.c_str());
