@@ -496,7 +496,6 @@ hsGDeviceRef* plGLPipeline::MakeRenderTargetRef(plRenderTarget* owner)
         ref->SetDirty(false);
     else {
         hsStatusMessage("Got an unfilled render target!");
-        ref->SetDirty(false);
     }
 
     return ref;
