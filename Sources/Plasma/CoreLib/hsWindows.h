@@ -153,7 +153,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     >
     class plOptionalWinCall<_ReturnT(_ArgsT...)>
     {
-        using _FuncPtrT = _ReturnT(*)(_ArgsT...);
+        using _FuncPtrT = _ReturnT(WINAPI*)(_ArgsT...);
 
         HMODULE fHModule;
         _FuncPtrT fProc;
