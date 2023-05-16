@@ -177,7 +177,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     for( c = 32, x = 1, y = 0; c < 127; c++ )
     {
         myChar[ 0 ] = c;
-        ftError = FT_Load_Char( face, c, FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_NO_AUTOHINT | FT_LOAD_NO_HINTING );
+        ftError = FT_Load_Char( face, c, FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_NO_AUTOHINT );
 
         FT_GlyphSlot slot = face->glyph;
 
