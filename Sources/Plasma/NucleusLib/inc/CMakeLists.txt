@@ -2,6 +2,7 @@ set(pnNucleusInc_HEADERS
     hsGDeviceRef.h
     hsGMatState.h
     hsGMatState.inl
+    hsGMatStateEnums.h
     hsResMgr.h
     hsTimer.h
     plAudible.h

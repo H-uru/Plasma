@@ -48,127 +48,24 @@ class hsStream;
 
 class hsGMatState {
 public:
-enum hsGMatBlendFlags {
-    kBlendTest  = 0x1,                          // dev
-    // Rest of blends are mutually exclusive
-    kBlendAlpha                     = 0x2,      // dev
-    kBlendMult                      = 0x4,      // dev
-    kBlendAdd                       = 0x8,      // dev
-    kBlendAddColorTimesAlpha        = 0x10,     // dev
-    kBlendAntiAlias                 = 0x20,
-    kBlendDetail                    = 0x40,
-    kBlendNoColor                   = 0x80,     // dev
-    kBlendMADD                      = 0x100,
-    kBlendDot3                      = 0x200,
-    kBlendAddSigned                 = 0x400,
-    kBlendAddSigned2X               = 0x800,
-    kBlendMask                      = kBlendAlpha
-                                    | kBlendMult
-                                    | kBlendAdd
-                                    | kBlendAddColorTimesAlpha
-                                    | kBlendDetail
-                                    | kBlendMADD
-                                    | kBlendDot3
-                                    | kBlendAddSigned
-                                    | kBlendAddSigned2X,
-    kBlendInvertAlpha               = 0x1000,   // dev
-    kBlendInvertColor               = 0x2000,   // dev
-    kBlendAlphaMult                 = 0x4000,
-    kBlendAlphaAdd                  = 0x8000,
-    kBlendNoVtxAlpha                = 0x10000,
-    kBlendNoTexColor                = 0x20000,
-    kBlendNoTexAlpha                = 0x40000,
-    kBlendInvertVtxAlpha            = 0x80000,  // Invert ONLY the vertex alpha source
-    kBlendAlphaAlways               = 0x100000, // Alpha test always passes (even for alpha=0).
-    kBlendInvertFinalColor          = 0x200000,
-    kBlendInvertFinalAlpha          = 0x400000,
-    kBlendEnvBumpNext               = 0x800000,
-    kBlendSubtract                  = 0x1000000,
-    kBlendRevSubtract               = 0x2000000,
-    kBlendAlphaTestHigh             = 0x4000000,
-    kBlendAlphaPremultiplied        = 0x8000000
-};
-enum hsGMatClampFlags {
+    #define GMAT_STATE_ENUM_START(name)       enum name {
+    #define GMAT_STATE_ENUM_VALUE(name, val)    name = val,
+    #define GMAT_STATE_ENUM_END(name)         };
 
-    kClampTextureU  = 0x1,          // dev
-    kClampTextureV  = 0x2,          // dev
-    kClampTexture   = 0x3               // dev
-};
+    #include "hsGMatStateEnums.h"
 
-enum hsGMatShadeFlags {
+    #undef GMAT_STATE_ENUM_START
+    #undef GMAT_STATE_ENUM_VALUE
+    #undef GMAT_STATE_ENUM_END
 
-    kShadeSoftShadow        = 0x1,          // view, dev
-    kShadeNoProjectors      = 0x2,          // projector
-    kShadeEnvironMap        = 0x4,          // dev, load
-    kShadeVertexShade       = 0x20,         // dev
-    kShadeNoShade           = 0x40,         // view,dev
-    kShadeBlack             = kShadeNoShade,
-    kShadeSpecular          = 0x80,         // view, dev
-    //kShadeNoFog               = 0x100,        // dev
-    kShadeWhite             = 0x200,
-    kShadeSpecularAlpha     = 0x400,
-    kShadeSpecularColor     = 0x800,
-    kShadeSpecularHighlight = 0x1000,
-    kShadeVertColShade      = 0x2000,
-    kShadeInherit           = 0x4000,
-    kShadeIgnoreVtxIllum    = 0x8000,
-    kShadeEmissive          = 0x10000,      // Moved here 8.27 mcn. Only really sane to use with kMiscEndPassHere
-    kShadeReallyNoFog       = 0x20000
-};
+    enum StateIdx {
+        kBlend,
+        kClamp,
+        kShade,
+        kZ,
+        kMisc
+    };
 
-enum hsGMatZFlags {
-    kZIncLayer          = 0x1, // dev
-    kZClearZ            = 0x4, // dev
-    kZNoZRead           = 0x8, // dev
-    kZNoZWrite          = 0x10,
-    kZMask              = kZNoZWrite | kZClearZ | kZNoZRead,
-    kZLODBias           = 0x20
-};
-
-enum hsGMatMiscFlags {
-    kMiscWireFrame          = 0x1,          // dev (running out of bits)
-    kMiscDrawMeshOutlines   = 0x2,          // dev, currently unimplemented
-    kMiscTwoSided           = 0x4,          // view,dev
-    kMiscDrawAsSplats       = 0x8,          // dev? bwt
-    kMiscAdjustPlane        = 0x10,
-    kMiscAdjustCylinder     = 0x20,
-    kMiscAdjustSphere       = 0x40,
-    kMiscAdjust             = kMiscAdjustPlane | kMiscAdjustCylinder| kMiscAdjustSphere,
-    kMiscTroubledLoner      = 0x80,
-    kMiscBindSkip           = 0x100,
-    kMiscBindMask           = 0x200,
-    kMiscBindNext           = 0x400,
-    kMiscLightMap           = 0x800,
-    kMiscUseReflectionXform = 0x1000,       // Use the calculated reflection environment 
-                                            // texture transform instead of layer->GetTransform()
-    kMiscPerspProjection    = 0x2000,
-    kMiscOrthoProjection    = 0x4000,
-    kMiscProjection         = kMiscPerspProjection | kMiscOrthoProjection,
-
-    kMiscRestartPassHere    = 0x8000,       // Tells pipeline to start a new pass beginning with this layer
-                                            // Kinda like troubledLoner, but only cuts off lower layers, not 
-                                            // higher ones (kMiscBindNext sometimes does this by implication)
-
-    kMiscBumpLayer          = 0x10000,
-    kMiscBumpDu             = 0x20000,
-    kMiscBumpDv             = 0x40000,
-    kMiscBumpDw             = 0x80000,
-    kMiscBumpChans          = kMiscBumpDu | kMiscBumpDv | kMiscBumpDw,
-
-    kMiscNoShadowAlpha      = 0x100000,
-    kMiscUseRefractionXform = 0x200000, // Use a refraction-like hack.
-    kMiscCam2Screen         = 0x400000, // Expects tex coords to be XYZ in camera space. Does a cam to screen (not NDC) projection
-                                        // and swaps Z with W, so that the texture projection can produce projected 2D screen coordinates.
-
-    kAllMiscFlags           = 0xffffffff
-};
-enum StateIdx {
-    kBlend,
-    kClamp,
-    kShade,
-    kZ,
-    kMisc 
-};
     uint32_t          fBlendFlags;
     uint32_t          fClampFlags;
     uint32_t          fShadeFlags;
@@ -265,6 +162,5 @@ enum StateIdx {
     inline void Clear(const hsGMatState& state);
     inline void Composite(const hsGMatState& want, const hsGMatState& on, const hsGMatState& off);
 };
-
 
 #endif // hsGMatState_inc
