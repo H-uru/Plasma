@@ -98,9 +98,6 @@ uint16_t  *plTextFont::IInitFontTexture()
     else
         fTextureWidth = fTextureHeight = 256;
 
-    /// Now create the data block
-    uint16_t* data = new uint16_t[fTextureWidth * fTextureHeight]();
-
     FT_Library  library;
     FT_Face     face;
     FT_Error ftError = FT_Init_FreeType(&library);
@@ -132,6 +129,10 @@ uint16_t  *plTextFont::IInitFontTexture()
 
     DeleteDC( hDC );
     DeleteObject( hFont );
+    
+    int iScale = int( ceil( GetDeviceCaps(hDC, LOGPIXELSY) / 96.0f ) );
+    fTextureWidth *= iScale;
+    fTextureHeight *= iScale;
 
 #elif defined(HS_BUILD_FOR_APPLE)
     
@@ -154,11 +155,17 @@ uint16_t  *plTextFont::IInitFontTexture()
     CFRelease(fileSystemPath);
     
     FT_UInt freeTypeResolution = 192;
+    
+    fTextureWidth *= 2;
+    fTextureHeight *= 2;
 #else
     FT_Done_FreeType(library);
     FT_UInt freeTypeResolution = 0;
     return nullptr;
 #endif
+    
+    /// Now create the data block
+    uint16_t* data = new uint16_t[fTextureWidth * fTextureHeight]();
 
     ftError = FT_Set_Char_Size(face, 0, fSize * 64, freeTypeResolution, freeTypeResolution);
     FT_Size_Metrics fontMetrics = face->size->metrics;
@@ -215,6 +222,8 @@ uint16_t  *plTextFont::IInitFontTexture()
                 int destY = y + glyphY + offset;
                 int destX = glyphX + x + face->glyph->bitmap_left;
                 int destIndex = (destY * fTextureWidth) + destX;
+                hsAssert( destX < fTextureWidth, "Destination X cannot be out of bounds");
+                hsAssert( destY < fTextureHeight, "Destination Y cannot be out of bounds");
 
                 data[(destIndex )] = src;
             }
