@@ -1080,13 +1080,13 @@ uint8_t plNetLinkingMgr::IPreProcessLink()
                           info,
                           &childLink))
                 {
-                    case static_cast<uint8_t>(hsFail):
+                    case plVaultChildAgeLinkResult::kFailed:
                         success = kLinkFailed;
                         break;
-                    case false:
+                    case plVaultChildAgeLinkResult::kCreatingNew:
                         success = kLinkDeferred;
                         break;
-                    case true:
+                    case plVaultChildAgeLinkResult::kFoundExisting:
                         success = kLinkImmediately;
                 }
 

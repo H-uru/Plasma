@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfAnimation/pfAnimationCreatable.h"
 #include "pfAudio/pfAudioCreatable.h"
 #include "pfCamera/pfCameraCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
 #include "pfCharacter/pfCharacterCreatable.h"
 #include "pfConditional/plConditionalObjectCreatable.h"
 #include "pfGameMgr/pfGameMgrCreatable.h"

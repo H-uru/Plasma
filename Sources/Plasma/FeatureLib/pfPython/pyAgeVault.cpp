@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include <Python.h>
+
+#include "pnNetBase/pnNbError.h"
 #include "pnNetCommon/plNetApp.h"
 
 #include "pyAgeVault.h"
@@ -196,7 +198,8 @@ void pyAgeVault::AddDevice(const ST::string& deviceName, PyObject * cbObject, ui
     if (hsRef<RelVaultNode> rvn = VaultAgeAddDeviceAndWait(deviceName))
         cb->SetNode(rvn);
 
-    cb->VaultOperationComplete( cbContext, cb->GetNode() ? hsOK : hsFail);  // cbHolder deletes itself here.
+    // cb deletes itself here.
+    cb->VaultOperationComplete(cbContext, cb->GetNode() ? kNetSuccess : kNetErrInternalError);
 }
 
 // Remove a device.
@@ -228,7 +231,8 @@ void pyAgeVault::SetDeviceInbox(const ST::string& deviceName, const ST::string& 
     if (hsRef<RelVaultNode> rvn = VaultAgeSetDeviceInboxAndWait(deviceName, inboxName))
         cb->SetNode(rvn);
 
-    cb->VaultOperationComplete( cbContext, cb->GetNode() ? hsOK : hsFail ); // cbHolder deletes itself here.
+    // cb deletes itself here.
+    cb->VaultOperationComplete(cbContext, cb->GetNode() ? kNetSuccess : kNetErrInternalError);
 }
 
 PyObject * pyAgeVault::GetDeviceInbox(const ST::string& deviceName)

@@ -81,8 +81,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "plVault/plDniCoordinateInfo.h"
 
-#include "pfCCR/plCCRMgr.h" // Only included for defined constants. 
-
 #include <algorithm>
 #include <cmath>
 
@@ -803,24 +801,19 @@ int plAvatarMgr::FindSpawnPoint( const char *name ) const
     return -1;
 }
 
-int plAvatarMgr::WarpPlayerToAnother(bool iMove, uint32_t remoteID)
+bool plAvatarMgr::WarpPlayerToAnother(bool iMove, uint32_t remoteID)
 {
     plNetTransport &mgr = plNetClientMgr::GetInstance()->TransportMgr();
     plNetTransportMember* mbr = mgr.GetMemberByID(remoteID);
 
-    if (!mbr)
-        return plCCRError::kCantFindPlayer;
-    
-    if (!mbr->GetAvatarKey())
-        return plCCRError::kPlayerNotInAge;
+    if (!mbr || !mbr->GetAvatarKey())
+        return false;
 
     plSceneObject *remoteSO = plSceneObject::ConvertNoRef(mbr->GetAvatarKey()->ObjectIsLoaded());
     plSceneObject *localSO = plSceneObject::ConvertNoRef(plNetClientMgr::GetInstance()->GetLocalPlayer());
 
-    if (!remoteSO)
-        return plCCRError::kCantFindPlayer;
-    if (!localSO)
-        return plCCRError::kNilLocalAvatar;
+    if (!remoteSO || !localSO)
+        return false;
 
     plWarpMsg *warp = new plWarpMsg(nullptr, (iMove ? localSO->GetKey() : remoteSO->GetKey()),
         plWarpMsg::kFlushTransform, (iMove ? remoteSO->GetLocalToWorld() : localSO->GetLocalToWorld()));
@@ -828,14 +821,14 @@ int plAvatarMgr::WarpPlayerToAnother(bool iMove, uint32_t remoteID)
     warp->SetBCastFlag(plMessage::kNetPropagate);
     plgDispatch::MsgSend(warp);
 
-    return hsOK;
+    return true;
 }
 
-int plAvatarMgr::WarpPlayerToXYZ(float x, float y, float z)
+bool plAvatarMgr::WarpPlayerToXYZ(float x, float y, float z)
 {
     plSceneObject *localSO = plSceneObject::ConvertNoRef(plNetClientMgr::GetInstance()->GetLocalPlayer());
     if (!localSO)
-        return plCCRError::kNilLocalAvatar;
+        return false;
 
     hsMatrix44 m = localSO->GetLocalToWorld();
     hsVector3 v(x, y, z);
@@ -845,17 +838,17 @@ int plAvatarMgr::WarpPlayerToXYZ(float x, float y, float z)
     warp->SetBCastFlag(plMessage::kNetPropagate);
     plgDispatch::MsgSend(warp);
 
-    return hsOK;
+    return true;
 }
 
-int plAvatarMgr::WarpPlayerToXYZ(int pid, float x, float y, float z)
+bool plAvatarMgr::WarpPlayerToXYZ(int pid, float x, float y, float z)
 {
     plNetClientMgr* nc=plNetClientMgr::GetInstance();
     plNetTransportMember* mbr = nc->TransportMgr().GetMemberByID(pid);
     plSceneObject *player = plSceneObject::ConvertNoRef(mbr && mbr->GetAvatarKey() ? 
         mbr->GetAvatarKey()->ObjectIsLoaded() : nullptr);
     if (!player)
-        return plCCRError::kNilLocalAvatar;
+        return false;
 
     hsMatrix44 m = player->GetLocalToWorld();
     hsVector3 v(x, y, z);
@@ -865,7 +858,7 @@ int plAvatarMgr::WarpPlayerToXYZ(int pid, float x, float y, float z)
     warp->SetBCastFlag(plMessage::kNetPropagate);
     plgDispatch::MsgSend(warp);
 
-    return hsOK;
+    return true;
 }
 
 // ADD maintainers marker

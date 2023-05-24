@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultTextNoteNode.h"
 #include "pyVaultAgeLinkNode.h"
 #include "pyVaultFolderNode.h"
+#include "pnNetBase/pnNbError.h"
 #include "plVault/plVault.h"
 #ifndef BUILDING_PYPLASMA
 #   include "pyVault.h"
@@ -158,5 +159,6 @@ void pyVaultTextNoteNode::SetDeviceInbox(const ST::string& devName, PyObject * c
     if (hsRef<RelVaultNode> rvn = VaultAgeSetDeviceInboxAndWait(devName, DEFAULT_DEVICE_INBOX))
         cb->SetNode(rvn);
 
-    cb->VaultOperationComplete( cbContext, cb->GetNode() ? hsOK : hsFail ); // cbHolder deletes itself here.
+    // cb deletes itself here.
+    cb->VaultOperationComplete(cbContext, cb->GetNode() ? kNetSuccess : kNetErrInternalError);
 }

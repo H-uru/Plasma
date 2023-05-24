@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PL_NET_CLIENT_inc
 #define PL_NET_CLIENT_inc
 
-#include "HeadSpin.h"
-
 #include <list>
 #include <string>
 #include <vector>
@@ -84,7 +82,7 @@ class plNetMsgPagingRoom;
 
 
 struct plNetClientCommMsgHandler : plNetClientComm::MsgHandler {
-    int HandleMessage(plNetMessage* msg) override;
+    plNetMsgHandler::Status HandleMessage(plNetMessage* msg) override;
 };
 
 class plNetClientMgr : public plNetClientApp
@@ -204,9 +202,9 @@ private:
     void IShowAvatars();
     void IShowRelevanceRegions();
     
-    int ISendDirtyState(double secs);
-    int ISendMembersListRequest();
-    int ISendRoomsReset();
+    void ISendDirtyState(double secs);
+    void ISendMembersListRequest();
+    void ISendRoomsReset();
     void ISendCCRPetition(plCCRPetitionMsg* petMsg);    
     void ISendCameraReset(bool bEnteringAge);
     
@@ -235,7 +233,7 @@ private:
 
     void    IDumpOSVersionInfo() const;
 
-    int ISendGameMessage(plMessage* msg) override;
+    void ISendGameMessage(plMessage* msg) override;
     void IDisableNet ();
 
     void ICreateStatusLog() const override;
@@ -251,12 +249,12 @@ public:
 
     bool MsgReceive(plMessage* msg) override;
     void Shutdown() override;
-    int  Init();
+    void Init();
 
     void QueueDisableNet(bool showDlg, const char msg[]) override;
 
-    int SendMsg(plNetMessage* msg) override;
-    int Update(double secs) override;
+    void SendMsg(plNetMessage* msg) override;
+    void Update(double secs) override;
     int IsLocallyOwned(const plSynchedObject* obj) const override;   // returns yes/no/maybe
     int IsLocallyOwned(const plUoid&) const override;        // for special cases, like sceneNodes. returns yes/no/maybe
     plNetGroupId GetEffectiveNetGroup(const plSynchedObject*& obj) const;
@@ -387,8 +385,8 @@ private:
     plNetClientComm             fNetClientComm;
     plNetClientCommMsgHandler   fNetClientCommMsgHandler;
     
-    int IInitNetClientComm();
-    int IDeInitNetClientComm();
+    void IInitNetClientComm();
+    void IDeInitNetClientComm();
     void INetClientCommOpStarted(uint32_t context);
     void INetClientCommOpComplete(uint32_t context, int resultCode);
 
@@ -399,12 +397,6 @@ private:
     friend class plNetClientMsgHandler;
     friend struct plNetClientCommMsgHandler;
 };
-
-#define plCheckNetMgrResult_VoidReturn(r,s)     if (hsFailed(r)) { ErrorMsg(s); hsAssert(false,s); return; }
-// returns int
-#define plCheckNetMgrResult_ValReturn(r,s)      if (hsFailed(r)) { ErrorMsg(s); hsAssert(false,s); return r; }
-// returns bool
-#define plCheckNetMgrResult_BoolReturn(r,s)     if (hsFailed(r)) { ErrorMsg(s); hsAssert(false,s); return false; }
 
 #endif  // PL_NET_CLIENT_inc
 

@@ -122,11 +122,11 @@ class xSimpleImager(ptModifier):
     def vaultOperationStarted(self,context):
         PtDebugPrint("xSimpleImager: vaultOperationStarted(%s)"%(context),level=kDebugDumpLevel)
 
-    def vaultOperationComplete(self,context,args,resultCode):
-        PtDebugPrint("xSimpleImager: vaultOperationComplete(%s,%s)"%(context,resultCode),level=kDebugDumpLevel)
+    def vaultOperationComplete(self,context,args,result):
+        PtDebugPrint("xSimpleImager: vaultOperationComplete(%s,%s)"%(context,result),level=kDebugDumpLevel)
         if context==kAddingDevice:
             PtDebugPrint("\tkAddingDevice",level=kDebugDumpLevel)
-            if resultCode>=0:
+            if result == 0:
                 node = args[0].upcastToTextNoteNode()
                 if node:
                     PtDebugPrint("\tAdded device: %s"%(ImagerName.value),level=kDebugDumpLevel)
@@ -152,7 +152,7 @@ class xSimpleImager(ptModifier):
             global kFlipImagesTimerCurrent
             global CurrentContentIdx
             
-            if resultCode>=0:
+            if result == 0:
                 CurrentContentIdx = 0
                 Instance.IRefreshImagerFolder()
                 Instance.IChangeCurrentContent()

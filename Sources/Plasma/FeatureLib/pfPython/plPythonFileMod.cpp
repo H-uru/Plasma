@@ -1365,7 +1365,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     // are they looking for a VaultNotify message?
     auto vaultNotifyMsg = IScriptWantsMsg<plVaultNotifyMsg>(kfunc_OnVaultNotify, msg);
     if (vaultNotifyMsg) {
-        if (hsSucceeded(vaultNotifyMsg->GetResultCode())) {
+        if (IS_NET_SUCCESS(vaultNotifyMsg->GetResultCode())) {
             // Create a tuple for second argument according to msg type.
             // Default to an empty tuple.
             pyObjectRef ptuple;

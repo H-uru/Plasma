@@ -195,60 +195,10 @@ void plNetTransport::GetSubscriptions(plNetTransportMember* mbr, std::vector<int
 //
 // Send Msg to all members in the given channelGrp.
 // Here's where multicasting would be used.
-// Returns neg number (NetCore::RetCode) on send error, 1, if not sent, and 0 if sent
 //
-int plNetTransport::SendMsg(int chan, plNetMessage* netMsg) const
+void plNetTransport::SendMsg(int chan, plNetMessage* netMsg) const
 {
     NetCommSendMsg(netMsg);
-    return hsOK;
-    
-    plNetClientMgr* nc=plNetClientMgr::GetInstance();
-    int ret=1; // didn't send
-
-    if (chan < fChannelGroups.size())
-    {
-        const MembersList* mList = &fChannelGroups[chan];
-                
-        // does this msg have a list of receivers
-        plNetMsgReceiversListHelper* rl = plNetMsgReceiversListHelper::ConvertNoRef(netMsg);
-
-#if 0               
-        // send msg to all subscribers to this channel
-        int size=mList->size();
-        for( int i=0 ; i<size; i++  )
-        {
-            hsAssert(false, "eric, port me");
-
-            plNetTransportMember* tm=(*mList)[i];
-            hsAssert(tm, "nil mbr in sendMsg");
-//          int peerID=tm->GetPeerID();
-//          hsAssert(peerID>=0, "queing message to invalid peer");
-
-//          if ((ncRet=nc->GetNetClientComm().SendMsg(netMsg, peerID, sendFlags, msgSize)) != plNetCore::kNetOK)
-
-            NetCommSendMsg(netMsg);
-            if (rl)
-            {
-                bool ok=rl->RemoveReceiverPlayerID(tm->GetPlayerID());
-                hsAssert(ok, "couldn't find rcvr to remove?");
-            }
-            ret=0; // sent ok   
-        } // for      
-#endif
-
-        // if there are rcvrs left that we couldn't send to, send via server
-        if (rl && rl->GetNumReceivers())
-        {           
-//          if ((ncRet=nc->GetNetClientComm().SendMsg(netMsg, nc->GetServerPeerID(), sendFlags, msgSize)) != plNetCore::kNetOK)
-            NetCommSendMsg(netMsg);
-            ret=0;  // sent
-        }
-    }
-    else
-    {
-        hsStatusMessage("EMPTY TRANSPORT GROUP\n");
-    }
-    return ret;
 }
 
 

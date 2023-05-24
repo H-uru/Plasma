@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyObjectRef.h"
 #include "hsRefCnt.h"
 
+#include "pnNetBase/pnNbError.h"
+
 struct RelVaultNode;
 class plMipmap;
 class pyImage;
@@ -96,8 +98,8 @@ public:
         explicit pyVaultNodeOperationCallback(pyObjectRef cbObject) noexcept;
 
         void VaultOperationStarted(uint32_t context);
-        void VaultOperationComplete(uint32_t context, int resultCode);
-        void VaultOperationComplete(int resultCode) { VaultOperationComplete(fContext, resultCode); }
+        void VaultOperationComplete(uint32_t context, ENetError result);
+        void VaultOperationComplete(ENetError result) { VaultOperationComplete(fContext, result); }
         
         void SetNode(hsRef<RelVaultNode> rvn);
         hsRef<RelVaultNode> GetNode() const;

@@ -117,7 +117,7 @@ void plNetClientMsgHandler::IFillInTransportMember(const plNetMsgMemberInfoHelpe
         mbr->SetAvatarKey(avKey);
 }
 
-int plNetClientMsgHandler::ReceiveMsg(plNetMessage *& netMsg)
+plNetMsgHandler::Status plNetClientMsgHandler::ReceiveMsg(plNetMessage *& netMsg)
 {
 #ifdef HS_DEBUGGING
     //plNetClientMgr::GetInstance()->DebugMsg("<RCV> {}", netMsg->ClassName());
@@ -129,7 +129,7 @@ int plNetClientMsgHandler::ReceiveMsg(plNetMessage *& netMsg)
     {
         default:
             plNetClientMgr::GetInstance()->ErrorMsg( "Unknown msg: {}", netMsg->ClassName() );
-            return hsFail;
+            return plNetMsgHandler::Status::kError;
 
         MSG_HANDLER_CASE(plNetMsgTerminated)
         MSG_HANDLER_CASE(plNetMsgGroupOwner)
@@ -153,7 +153,7 @@ int plNetClientMsgHandler::ReceiveMsg(plNetMessage *& netMsg)
 
 MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgTerminated)
 {
-    return hsOK;
+    return plNetMsgHandler::Status::kHandled;
 }
 
 MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGroupOwner)
@@ -191,7 +191,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGroupOwner)
     plNetOwnershipMsg* netOwnMsg = new plNetOwnershipMsg();
     netOwnMsg->Send();
 
-    return hsOK;
+    return plNetMsgHandler::Status::kHandled;
 }
 
 
@@ -219,12 +219,12 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
         if ( nc->GetFlagsBit( plNetClientApp::kNeedInitialAgeStateCount ) )
         {
             hsLogEntry( nc->DebugMsg( "Ignoring SDL state because we are still joining age and don't have initial age state count yet." ) );
-            return hsOK;
+            return plNetMsgHandler::Status::kHandled;
         }
         if ( nc->GetNumInitialSDLStates()<nc->GetRequiredNumInitialSDLStates() )
         {
             hsLogEntry( nc->DebugMsg( "Ignoring SDL state because we are still joining age and have not received all initial state yet." ) );
-            return hsOK;
+            return plNetMsgHandler::Status::kHandled;
         }
         hsLogEntry( nc->DebugMsg( "We are still joining age, but have all initial states. Accepting this state (risky?)." ) );
     }
@@ -288,7 +288,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
     else
         delete sdRec;
 
-    return hsOK;
+    return plNetMsgHandler::Status::kHandled;
 }
 
 MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
@@ -343,7 +343,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
                         if (idx == -1)
                         {
                             hsLogEntry( nc->DebugMsg( "Ignoring load clone because player isn't in our players list: {}", loadClone->GetOriginatingPlayerID()) );
-                            return hsOK;
+                            return plNetMsgHandler::Status::kHandled;
                         }
                     }
                 }
@@ -366,7 +366,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
             // we cannot nesecarily trust the server because the server trusts
             // the remote client WAY too much.
             if (!IGetNetClientMgr()->fScreener.AllowIncomingMessage(gameMsg))
-                return hsOK;
+                return plNetMsgHandler::Status::kHandled;
 
             plgDispatch::Dispatch()->MsgSend(gameMsg);
             
@@ -377,10 +377,10 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
                 if (mbr)
                     mbr->SetTransportFlags(mbr->GetTransportFlags() | plNetTransportMember::kSendingActions);
             }
-            return hsOK;
+            return plNetMsgHandler::Status::kHandled;
         }
     }
-    return hsFail;
+    return plNetMsgHandler::Status::kError;
 }
 
 MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
@@ -403,7 +403,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
     // Filter ignored sender
     if (VaultAmIgnoringPlayer(m->GetPlayerID())) {
         hsLogEntry(nc->DebugMsg("Ignoring voice chat from ignored player {}", m->GetPlayerID()));
-        return hsOK;
+        return plNetMsgHandler::Status::kHandled;
     }
 
     plNetTransportMember* mbr = nc->fTransport.GetMemberByID(m->GetPlayerID());
@@ -414,7 +414,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
         if (nc->GetListenListMode() == plNetClientMgr::kListenList_Forced) {
             if (nc->GetListenList()->FindMember(mbr)) {
                 hsLogEntry(nc->DebugMsg("Ignoring voice chat from ignored player {}", m->GetPlayerID()));
-                return hsOK;
+                return plNetMsgHandler::Status::kHandled;
             }
         }
         mbr->SetTransportFlags(mbr->GetTransportFlags() | plNetTransportMember::kSendingVoice);
@@ -434,7 +434,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
     } else {
         nc->DebugMsg("\tCan't find loaded object\n");
     }
-    return hsOK;
+    return plNetMsgHandler::Status::kHandled;
 }
 
 
@@ -474,7 +474,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMembersList)
     plMemberUpdateMsg* mu = new plMemberUpdateMsg;
     mu->Send();
 
-    return hsOK;
+    return plNetMsgHandler::Status::kHandled;
 }
 
 MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMemberUpdate)
@@ -522,7 +522,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMemberUpdate)
     plMemberUpdateMsg* mu = new plMemberUpdateMsg;
     mu->Send();
 
-    return hsOK;
+    return plNetMsgHandler::Status::kHandled;
 }
 
 MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgListenListUpdate)
@@ -546,7 +546,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgListenListUpdate)
       hsAssert(idx>=0, "Failed adding member?");
       nc->DebugMsg("ListenListUpdate msg: Adding member on the fly\n");
 #endif
-      return hsOK;
+      return plNetMsgHandler::Status::kHandled;
    }
       
    if (m->GetAdding())
@@ -560,7 +560,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgListenListUpdate)
       nc->GetTalkList()->RemoveMember(tm);
    }
    
-   return hsOK;
+   return plNetMsgHandler::Status::kHandled;
 }
 
 MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgInitialAgeStateSent)
@@ -584,7 +584,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgInitialAgeStateSent)
         nc->NotifyRcvdAllSDLStates();
     }
 
-    return hsOK;
+    return plNetMsgHandler::Status::kHandled;
 }
 
 ////////////////////////////////////////////////////////////////////

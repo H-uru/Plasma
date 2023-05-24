@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <type_traits>
 #include <tuple>
 
+#include "pnNetBase/pnNbError.h"
+
 #include "pyGlueHelpers.h"
 #include "pyObjectRef.h"
 
@@ -146,6 +148,11 @@ namespace plPython
     inline PyObject* ConvertFrom(std::nullptr_t)
     {
         Py_RETURN_NONE;
+    }
+
+    inline PyObject* ConvertFrom(ENetError value)
+    {
+        return ConvertFrom(static_cast<int32_t>(value));
     }
 
     /**

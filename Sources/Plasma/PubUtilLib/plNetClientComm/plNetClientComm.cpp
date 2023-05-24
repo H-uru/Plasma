@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <chrono>
 #include <thread>
 
+#include "HeadSpin.h"
 #include "plProduct.h"
 #include "hsResMgr.h"
 
@@ -63,6 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plNetCommMsgs.h"
 #include "plMessage/plNetClientMgrMsg.h"
 #include "plNetCommon/plNetCommon.h"
+#include "plNetCommon/plNetMsgHandler.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plNetMessage/plNetMessage.h"
 #include "plVault/plVault.h"
@@ -897,7 +899,7 @@ void NetCommRecvMsg (
     plNetMessage * msg
 ) {
     for (;;) {
-        if (s_preHandler.proc && kOK_MsgConsumed == s_preHandler.proc(msg, s_preHandler.state))
+        if (s_preHandler.proc && s_preHandler.proc(msg, s_preHandler.state) == plNetMsgHandler::Status::kConsumed)
             break;
 
         unsigned msgClassIdx = msg->ClassIndex();
@@ -908,7 +910,7 @@ void NetCommRecvMsg (
             break;
         }        
         while (handler) {
-            if (kOK_MsgConsumed == handler->proc(msg, handler->state))
+            if (handler->proc(msg, handler->state) == plNetMsgHandler::Status::kConsumed)
                 break;
             handler = s_handlers.FindNext(msgClassIdx, handler);
         }
@@ -1304,7 +1306,7 @@ void plNetClientComm::SetDefaultHandler( MsgHandler* handler) {
 }
 
 // MsgHandler::StaticMsgHandler ----------------------------------------------
-int plNetClientComm::MsgHandler::StaticMsgHandler (plNetMessage * msg, void * userState) {
+plNetMsgHandler::Status plNetClientComm::MsgHandler::StaticMsgHandler(plNetMessage* msg, void* userState) {
     plNetClientComm::MsgHandler * handler = (plNetClientComm::MsgHandler *) userState;
     return handler->HandleMessage(msg);
 }

@@ -51,20 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plUoid.h"
 
-#define plVerifyConditionRet(NetApp,cond,ret,str)   \
-    do {    \
-        if (!(cond)) {  \
-            char * _str_ = str; \
-            (NetApp)->ErrorMsg(_str_);  \
-            hsAssert(cond,_str_);   \
-            return ret; \
-        }   \
-    } while (0)
-
-#define plVerifyCondition(NetApp,cond,str)  \
-    plVerifyConditionRet(NetApp,cond,hsFail,str)
-
-
 class plNetMember;
 class plSynchedObject;
 class plKey;
@@ -167,7 +153,7 @@ private:
 
     friend class plDispatch;
 
-    virtual int ISendGameMessage(plMessage* msg) { hsAssert(false, "stub"); return hsFail; }
+    virtual void ISendGameMessage(plMessage* msg) { hsAssert(false, "stub"); }
 
 public:
     enum ClientFlagBits
@@ -216,7 +202,7 @@ public:
     static void UnInheritNetMsgFlags(plMessage* msg);
 
     // functions that all net client apps should implement
-    virtual int SendMsg(plNetMessage* msg) = 0;
+    virtual void SendMsg(plNetMessage* msg) = 0;
     virtual uint32_t GetPlayerID() const = 0;
     virtual ST::string GetPlayerName(const plKey avKey={}) const = 0;
 
@@ -231,7 +217,7 @@ public:
     virtual int IsLocallyOwned(const plSynchedObject* obj) const { hsAssert(false, "stub"); return 0; }
     virtual int IsLocallyOwned(const plUoid&) const { hsAssert(false, "stub"); return 0; }  
     virtual plNetGroupId GetEffectiveNetGroup(const plSynchedObject* obj) const { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }
-    virtual int Update(double secs) { return hsOK;}
+    virtual void Update(double secs) {}
     virtual const char* GetServerLogTimeAsString(ST::string& ts) const { hsAssert(false, "stub"); return nullptr; }
     virtual plUoid GetAgeSDLObjectUoid(const ST::string& ageName) const { hsAssert(false, "stub"); return plUoid(); }
     virtual void StayAlive(double secs) {}

@@ -5,7 +5,6 @@ set(pnNucleusInc_HEADERS
     hsResMgr.h
     hsTimer.h
     plAudible.h
-    plCCRMgrBase.h
     plClassIndexMacros.h
     plCreatableIndex.h
     plCreatableStrings.h
