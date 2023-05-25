@@ -63,6 +63,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <memory>
 
+#ifdef HS_BUILD_FOR_WIN32
+#   include "plWinDpi/plWinDpi.h"
+#endif
+
 #if defined(HS_BUILD_FOR_APPLE)
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreText/CoreText.h>
@@ -88,15 +92,6 @@ uint16_t  *plTextFont::IInitFontTexture()
 {
     int     x, y, c;
     char    myChar[ 2 ] = "x";
-
-    
-    // Figure out our texture size
-    if( fSize > 40 )
-        fTextureWidth = fTextureHeight = 1024;
-    else if( fSize > 20 )
-        fTextureWidth = fTextureHeight = 512;
-    else
-        fTextureWidth = fTextureHeight = 256;
 
     FT_Library  library;
     FT_Face     face;
@@ -129,10 +124,6 @@ uint16_t  *plTextFont::IInitFontTexture()
 
     DeleteDC( hDC );
     DeleteObject( hFont );
-    
-    int iScale = int( ceil( GetDeviceCaps(hDC, LOGPIXELSY) / 96.0f ) );
-    fTextureWidth *= iScale;
-    fTextureHeight *= iScale;
 
 #elif defined(HS_BUILD_FOR_APPLE)
     
@@ -171,6 +162,14 @@ uint16_t  *plTextFont::IInitFontTexture()
     FT_Size_Metrics fontMetrics = face->size->metrics;
 
     fFontHeight = int(fontMetrics.height / 64.f);
+
+    // Figure out our texture size
+    if (fFontHeight > 40)
+        fTextureWidth = fTextureHeight = 1024;
+    else if (fFontHeight > 20)
+        fTextureWidth = fTextureHeight = 512;
+    else
+        fTextureWidth = fTextureHeight = 256;
 
     data[0] = 0xffff;
 
