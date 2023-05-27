@@ -166,18 +166,6 @@ plUnifiedTime::plUnifiedTime(int year, int month, int day, int hour, int min, in
     SetTime(year,month,day,hour,min,sec,usec,dst);
 }
 
-plUnifiedTime::plUnifiedTime(const plUnifiedTime & src)
-    : fMode(src.fMode)
-{
-    *this = src;
-}
-
-plUnifiedTime::plUnifiedTime(const plUnifiedTime * src)
-    : fMode(src->fMode)
-{
-    *this = *src;
-}
-
 plUnifiedTime plUnifiedTime::GetCurrent(Mode mode)
 {
     plUnifiedTime t;
@@ -186,19 +174,6 @@ plUnifiedTime plUnifiedTime::GetCurrent(Mode mode)
     return t;
 }
 
-
-const plUnifiedTime & plUnifiedTime::operator=(const plUnifiedTime & src)
-{
-    fSecs = src.fSecs;
-    fMicros = src.fMicros;
-    fMode = src.fMode;
-    return *this;
-}
-
-const plUnifiedTime & plUnifiedTime::operator=(const plUnifiedTime * src)
-{
-    return operator=(*src);
-}
 
 const plUnifiedTime & plUnifiedTime::operator=(time_t src)
 {

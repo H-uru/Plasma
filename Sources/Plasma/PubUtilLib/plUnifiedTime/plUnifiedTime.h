@@ -91,13 +91,9 @@ public:
     plUnifiedTime(time_t t);
     plUnifiedTime(unsigned long t);
     plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec=0, int dst=-1);
-    plUnifiedTime(const plUnifiedTime & src);
-    plUnifiedTime(const plUnifiedTime * src);
+
     static plUnifiedTime GetCurrent(Mode mode=kGmt);
 
-    // assignment
-    const plUnifiedTime & operator=(const plUnifiedTime & src);
-    const plUnifiedTime & operator=(const plUnifiedTime * src);
     const plUnifiedTime & operator=(const struct timeval & src);
     const plUnifiedTime & operator=(time_t src);
     const plUnifiedTime & operator=(unsigned long t);
