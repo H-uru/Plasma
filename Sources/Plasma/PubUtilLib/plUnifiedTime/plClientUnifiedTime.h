@@ -56,7 +56,7 @@ private:
     static plUnifiedTime    fFrameStartTime;
     static double           fSysTimeOffset;
 public:
-    plClientUnifiedTime(const plUnifiedTime& ut) { *this=ut;   }
+    plClientUnifiedTime(const plUnifiedTime& ut) { *static_cast<plUnifiedTime*>(this) = ut; }
     plClientUnifiedTime() {}
 
     static void SetSysTime();
@@ -67,8 +67,6 @@ public:
     // game secs conversions
     void SetFromGameTime(double gameTime, double curGameSecs);
     void ConvertToGameTime(double* gameTimeOut, double curGameSecs);
-
-    const plClientUnifiedTime & operator=(const plUnifiedTime & src);
 };
 
 #endif  // plClientUnifiedTime_inc'

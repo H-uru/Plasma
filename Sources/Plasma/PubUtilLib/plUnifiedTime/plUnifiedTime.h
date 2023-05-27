@@ -83,15 +83,11 @@ public:
     plUnifiedTime() : fSecs(), fMicros(), fMode(kGmt) { }      // set ToEpoch() at start
     plUnifiedTime(double secsDouble) : fMode(kGmt) { SetSecsDouble(secsDouble); }
     plUnifiedTime(const timeval & tv);
-    plUnifiedTime(Mode mode, const struct tm& src);
+    plUnifiedTime(Mode mode, struct tm src);
     plUnifiedTime(time_t t);
     plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec=0, int dst=-1);
 
     static plUnifiedTime GetCurrent(Mode mode=kGmt);
-
-    const plUnifiedTime & operator=(const struct timeval & src);
-    const plUnifiedTime & operator=(time_t src);
-    const plUnifiedTime & operator=(const struct tm & src);
 
     // getters
     time_t GetSecs() const { return fSecs; }

@@ -133,22 +133,17 @@ struct tm * plUnifiedTime::IGetTime(const time_t * timer) const
 
 
 plUnifiedTime::plUnifiedTime(const timeval & tv)
-    : fMode(kGmt)
-{
-    *this = tv;
-}
+    : fSecs(tv.tv_sec), fMicros(tv.tv_usec), fMode(kGmt)
+{}
 
-plUnifiedTime::plUnifiedTime(Mode mode, const struct tm& src)
-    : fMode(mode), fMicros()
-{
-    *this = src;
-}
+// Note: mktime may modify src in place, so src must be passed in by value (i. e. copied).
+plUnifiedTime::plUnifiedTime(Mode mode, struct tm src)
+    : fSecs(mktime(&src)), fMicros(), fMode(mode)
+{}
 
 plUnifiedTime::plUnifiedTime(time_t t)
-    : fMode(kGmt)
-{
-    *this = t;
-}
+    : fSecs(t), fMicros(), fMode(kGmt)
+{}
 
 plUnifiedTime::plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec, int dst)
     : fMode(kGmt), fMicros()
@@ -164,27 +159,6 @@ plUnifiedTime plUnifiedTime::GetCurrent(Mode mode)
     return t;
 }
 
-
-const plUnifiedTime & plUnifiedTime::operator=(time_t src)
-{
-    fSecs = src;
-    fMicros = 0;
-    return *this;
-}
-
-const plUnifiedTime & plUnifiedTime::operator=(const struct timeval & src)
-{
-    fSecs = src.tv_sec;
-    fMicros = src.tv_usec;
-    return *this;
-}
-
-const plUnifiedTime & plUnifiedTime::operator=(const struct tm & src)
-{
-    struct tm atm = src;
-    fSecs = mktime(&atm);
-    return *this;
-}
 
 void plUnifiedTime::SetSecsDouble(double secs)
 {
