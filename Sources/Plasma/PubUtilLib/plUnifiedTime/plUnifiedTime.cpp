@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <cfloat>
+
 #include <cmath>
 #include <ctime>
 #include "plUnifiedTime.h"
@@ -50,11 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <sys/time.h>
 #include <unistd.h>
 #endif
-
-#if HS_BUILD_FOR_WIN32
-#include <sys/timeb.h>  // for timeb
-#endif
-
 
 #if HS_BUILD_FOR_WIN32
 //
