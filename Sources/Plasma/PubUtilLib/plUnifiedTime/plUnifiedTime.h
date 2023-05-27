@@ -85,14 +85,12 @@ public:
     plUnifiedTime(const timeval & tv);
     plUnifiedTime(Mode mode, const struct tm& src);
     plUnifiedTime(time_t t);
-    plUnifiedTime(unsigned long t);
     plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec=0, int dst=-1);
 
     static plUnifiedTime GetCurrent(Mode mode=kGmt);
 
     const plUnifiedTime & operator=(const struct timeval & src);
     const plUnifiedTime & operator=(time_t src);
-    const plUnifiedTime & operator=(unsigned long t);
     const plUnifiedTime & operator=(const struct tm & src);
 
     // getters

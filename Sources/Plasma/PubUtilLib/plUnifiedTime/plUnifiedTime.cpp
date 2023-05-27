@@ -148,12 +148,6 @@ plUnifiedTime::plUnifiedTime(time_t t)
     *this = t;
 }
 
-plUnifiedTime::plUnifiedTime(unsigned long t)
-    : fMode(kGmt)
-{
-    *this = t;
-}
-
 plUnifiedTime::plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec, int dst)
     : fMode(kGmt), fMicros()
 {
@@ -172,13 +166,6 @@ plUnifiedTime plUnifiedTime::GetCurrent(Mode mode)
 const plUnifiedTime & plUnifiedTime::operator=(time_t src)
 {
     fSecs = src;
-    fMicros = 0;
-    return *this;
-}
-
-const plUnifiedTime & plUnifiedTime::operator=(unsigned long src)
-{
-    fSecs = (time_t)src;
     fMicros = 0;
     return *this;
 }
