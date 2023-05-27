@@ -108,7 +108,6 @@ public:
     void SetMicros(const uint32_t micros) { fMicros = micros; }
     bool SetTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0, int dst=-1);
     bool SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec=0);
-    bool SetToUTC();
     void ToCurrentTime();
     void ToEpoch() { fSecs = 0; fMicros = 0;}
     void SetMode(Mode mode) { fMode=mode;}

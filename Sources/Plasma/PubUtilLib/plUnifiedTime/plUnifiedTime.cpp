@@ -47,30 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
-//
-// Sets the unified time to the current UTC time
-//
-bool plUnifiedTime::SetToUTC()
-{
-    struct timespec ts;
-
-#if defined(HS_BUILD_FOR_APPLE)
-    // timespec_get is only supported since macOS 10.15,
-    // but clock_gettime exists since macOS 10.12.
-    if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
-        return false;
-    }
-#else
-    if (timespec_get(&ts, TIME_UTC) == 0) {
-        return false;
-    }
-#endif
-
-    fSecs = ts.tv_sec;
-    fMicros = ts.tv_nsec / 1000;
-    return true;
-}
-
 struct tm * plUnifiedTime::IGetTime(const time_t * timer) const
 {
     struct tm * tm = nullptr;
@@ -128,7 +104,20 @@ void plUnifiedTime::SetSecsDouble(double secs)
 
 void plUnifiedTime::ToCurrentTime()
 {
-    SetToUTC();
+    struct timespec ts;
+
+#if defined(HS_BUILD_FOR_APPLE)
+    // timespec_get is only supported since macOS 10.15,
+    // but clock_gettime exists since macOS 10.12.
+    int res = clock_gettime(CLOCK_REALTIME, &ts);
+    hsAssert(res == 0, "clock_gettime failed");
+#else
+    int res = timespec_get(&ts, TIME_UTC);
+    hsAssert(res != 0, "timespec_get failed");
+#endif
+
+    fSecs = ts.tv_sec;
+    fMicros = ts.tv_nsec / 1000;
 }
 
 bool plUnifiedTime::SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec)
