@@ -2307,12 +2307,12 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
         {
             logMsg << " gameTime:" << s;
             logMsg << " pst:" << fT[i].PrintWMillis();
-            logMsg << " ts:" << fTimeStamp.Format("%c").c_str();
+            logMsg << " ts:" << fTimeStamp.Format("%c");
         }
         else
         {
             logMsg << " value:" << s;
-            logMsg << " ts:" << (fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c").c_str());
+            logMsg << " ts:" << (fTimeStamp.AtEpoch() ? ST_LITERAL("0") : fTimeStamp.Format("%c"));
         }
 
         if (!dirtyOnly)
@@ -2350,12 +2350,12 @@ void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int l
         {
             logMsg << " gameTime:" << s;
             logMsg << " pst:" << fT[i].PrintWMillis();
-            logMsg << " ts:" << fTimeStamp.Format("%c").c_str();
+            logMsg << " ts:" << fTimeStamp.Format("%c");
         }
         else
         {
             logMsg << " value:" << s;
-            logMsg << " ts:" << (fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c").c_str());
+            logMsg << " ts:" << (fTimeStamp.AtEpoch() ? ST_LITERAL("0") : fTimeStamp.Format("%c"));
         }
 
         if (!dirtyOnly)

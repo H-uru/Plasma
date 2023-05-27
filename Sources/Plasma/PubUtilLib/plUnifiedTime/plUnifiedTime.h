@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _PL_UNIFIEDTIME_INC_
 
 #include "HeadSpin.h"
-#include <string>
 
 #if HS_BUILD_FOR_WIN32
     typedef struct _FILETIME FILETIME;
@@ -58,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct timeval;
 class hsStream;
+namespace ST { class string; }
 
 class plUnifiedTime //
 {
@@ -153,10 +153,10 @@ public:
     operator struct tm() const;
 
     // formatting (ala strftime)
-    std::string Format(const char * fmt) const;
+    ST::string Format(const char * fmt) const;
     
-    const char* Print() const;  // print as simple string
-    const char* PrintWMillis() const;   // print as simple string w/ millis
+    ST::string Print() const; // print as simple string
+    ST::string PrintWMillis() const; // print as simple string w/ millis
 };
 
 

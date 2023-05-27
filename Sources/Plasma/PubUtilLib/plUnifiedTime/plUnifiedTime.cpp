@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cmath>
 #include <ctime>
+#include <string_theory/format>
+
 #include "plUnifiedTime.h"
 #include "hsWindows.h"
 #include "hsStream.h"
@@ -244,25 +246,21 @@ bool plUnifiedTime::GetTime(short &year, short &month, short &day, short &hour, 
     return true;
 }
 
-const char* plUnifiedTime::Print() const
+ST::string plUnifiedTime::Print() const
 {
-    static std::string s;
 //  short year, month, day, hour, minute, second;
 //  GetTime(year, month, day, hour, minute, second);
 //
 //  s = ST::format("yr {} mo {} day {} hour {} min {} sec {}",
 //                 year, month, day, hour, minute, second);
 
-    s = Format("%c");
-    return s.c_str();
+    return Format("%c");
 }
 
-const char* plUnifiedTime::PrintWMillis() const
+ST::string plUnifiedTime::PrintWMillis() const
 {
-    static ST::string s;
-    s = ST::format("{},s:{},ms:{}",
+    return ST::format("{},s:{},ms:{}",
         Print(), (unsigned long)GetSecs(), GetMillis() );
-    return s.c_str();
 }
 
 struct tm * plUnifiedTime::GetTm(struct tm * ptm) const
@@ -405,14 +403,14 @@ plUnifiedTime::operator struct tm() const
 }
 
 
-std::string plUnifiedTime::Format(const char * fmt) const
+ST::string plUnifiedTime::Format(const char * fmt) const
 {
     char buf[128];
     struct tm * t = IGetTime(&fSecs);
     if (t == nullptr ||
         !strftime(buf, sizeof(buf), fmt, t))
-        buf[0] = '\0';
-    return std::string(buf);
+        return {};
+    return ST::string::from_utf8(buf);
 }
 
 
