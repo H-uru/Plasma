@@ -83,7 +83,7 @@ public:
     plUnifiedTime() : fSecs(), fMicros(), fMode(kGmt) { }      // set ToEpoch() at start
     plUnifiedTime(double secsDouble) : fMode(kGmt) { SetSecsDouble(secsDouble); }
     plUnifiedTime(const timeval & tv);
-    plUnifiedTime(int mode, const struct tm & src);
+    plUnifiedTime(Mode mode, const struct tm& src);
     plUnifiedTime(time_t t);
     plUnifiedTime(unsigned long t);
     plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec=0, int dst=-1);
@@ -109,7 +109,7 @@ public:
     int GetSecond() const;
     int GetMillis() const;
     int GetDayOfWeek() const;
-    int GetMode() const {return fMode;} // local or gmt.
+    Mode GetMode() const { return fMode; } // local or gmt.
 
     // setters
     void SetSecs(const time_t secs) { fSecs = secs; }

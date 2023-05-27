@@ -136,8 +136,8 @@ plUnifiedTime::plUnifiedTime(const timeval & tv)
     *this = tv;
 }
 
-plUnifiedTime::plUnifiedTime(int mode, const struct tm & src)
-    : fMode((Mode)mode), fMicros()
+plUnifiedTime::plUnifiedTime(Mode mode, const struct tm& src)
+    : fMode(mode), fMicros()
 {
     *this = src;
 }
