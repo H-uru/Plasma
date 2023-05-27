@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <cmath>
-#include <ctime>
 #include <string_theory/format>
 
 #include "plUnifiedTime.h"
