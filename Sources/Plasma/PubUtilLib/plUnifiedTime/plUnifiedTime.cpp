@@ -44,75 +44,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/format>
 
 #include "plUnifiedTime.h"
-#include "hsWindows.h"
+
 #include "hsStream.h"
 
-#if HS_BUILD_FOR_UNIX
-#include <sys/time.h>
-#include <unistd.h>
-#endif
-
-#if HS_BUILD_FOR_WIN32
-//
-// Converts Windows Time to Unified Time
-//
-#define MAGICWINDOWSOFFSET ((__int64)11644473600)  // magic number, taken from Python Source
-//
-bool plUnifiedTime::SetFromWinFileTime(const FILETIME ft)
-{
-    // FILETIME resolution seems to be 0.01 sec
-
-    __int64 ff,ffsecs;
-    ff = *(__int64*)(&ft);
-    ffsecs = ff/(__int64)10000000;
-
-    if (ffsecs >= MAGICWINDOWSOFFSET)  // make sure we won't end up negatice
-    {
-        fSecs = (time_t)(ffsecs-MAGICWINDOWSOFFSET);
-        fMicros = (uint32_t)(ff % 10000000)/10;
-        return true;
-    }
-    else
-        // before the UNIX Epoch
-        return false;
-}
-
 //
 // Sets the unified time to the current UTC time
 //
 bool plUnifiedTime::SetToUTC()
 {
-    FILETIME ft;
+    struct timespec ts;
 
-    GetSystemTimeAsFileTime(&ft);   /* 100 ns blocks since 01-Jan-1641 */
-    return SetFromWinFileTime(ft);
-}
-#elif HS_BUILD_FOR_UNIX
-
-//
-// Sets the unified time to the current UTC time
-//
-bool plUnifiedTime::SetToUTC()
-{
-    struct timeval tv;
-    
-    // get the secs and micros from Jan 1, 1970
-    int ret = gettimeofday(&tv, nullptr);
-    if (ret == 0)
-    {
-        fSecs = tv.tv_sec;
-        fMicros = tv.tv_usec;
-        return true;
-    }
-    else
-    {
+#if defined(HS_BUILD_FOR_APPLE)
+    // timespec_get is only supported since macOS 10.15,
+    // but clock_gettime exists since macOS 10.12.
+    if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
         return false;
     }
-}
 #else
-#error "Unified Time Not Implemented on this platform!"
+    if (timespec_get(&ts, TIME_UTC) == 0) {
+        return false;
+    }
 #endif
 
+    fSecs = ts.tv_sec;
+    fMicros = ts.tv_nsec / 1000;
+    return true;
+}
 
 struct tm * plUnifiedTime::IGetTime(const time_t * timer) const
 {
@@ -131,8 +88,8 @@ struct tm * plUnifiedTime::IGetTime(const time_t * timer) const
 }
 
 
-plUnifiedTime::plUnifiedTime(const timeval & tv)
-    : fSecs(tv.tv_sec), fMicros(tv.tv_usec), fMode(kGmt)
+plUnifiedTime::plUnifiedTime(const struct timespec& tv)
+    : fSecs(tv.tv_sec), fMicros(tv.tv_nsec / 1000), fMode(kGmt)
 {}
 
 // Note: mktime may modify src in place, so src must be passed in by value (i. e. copied).
@@ -358,15 +315,12 @@ bool plUnifiedTime::operator>=(const plUnifiedTime & rhs) const
 }
 
 
-plUnifiedTime::operator timeval() const
+plUnifiedTime::operator struct timespec() const
 {
-#if HS_BUILD_FOR_WIN32
-    // tv_secs should be a time_t, but on Windows it is a long
-    struct timeval t = {(long)fSecs, (long)fMicros};
-#else
-    struct timeval t = {fSecs, (suseconds_t)fMicros};
-#endif
-    return t;
+    struct timespec ts;
+    ts.tv_sec = fSecs;
+    ts.tv_nsec = fMicros * 1000;
+    return ts;
 }
 
 

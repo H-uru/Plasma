@@ -47,17 +47,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <ctime>
 
-#if HS_BUILD_FOR_WIN32
-    typedef struct _FILETIME FILETIME;
-#endif
-
 //
 // Plasma Unified System Time & Data Class
 // the time and date are in secs and micros from
 // Jan 1, 1970 00:00:00
 //
 
-struct timeval;
 class hsStream;
 namespace ST { class string; }
 
@@ -84,7 +79,7 @@ protected:
 public:
     plUnifiedTime() : fSecs(), fMicros(), fMode(kGmt) { }      // set ToEpoch() at start
     plUnifiedTime(double secsDouble) : fMode(kGmt) { SetSecsDouble(secsDouble); }
-    plUnifiedTime(const timeval & tv);
+    plUnifiedTime(const struct timespec& tv);
     plUnifiedTime(Mode mode, struct tm src);
     plUnifiedTime(time_t t);
     plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec=0, int dst=-1);
@@ -117,10 +112,7 @@ public:
     void ToCurrentTime();
     void ToEpoch() { fSecs = 0; fMicros = 0;}
     void SetMode(Mode mode) { fMode=mode;}
-#if HS_BUILD_FOR_WIN32
-    bool SetFromWinFileTime(const FILETIME ft);
-#endif
-    
+
     // query
     bool AtEpoch() const { return fSecs == 0 && fMicros == 0;}
 
@@ -147,7 +139,7 @@ public:
 
     // casting
     operator time_t() const { return fSecs;}
-    operator timeval() const;
+    operator struct timespec() const;
     operator struct tm() const;
 
     // formatting (ala strftime)
