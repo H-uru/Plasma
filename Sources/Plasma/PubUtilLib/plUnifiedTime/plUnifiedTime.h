@@ -91,7 +91,6 @@ public:
     plUnifiedTime(time_t t);
     plUnifiedTime(unsigned long t);
     plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec=0, int dst=-1);
-    plUnifiedTime(int mode, const char * buf, const char * fmt);
     plUnifiedTime(const plUnifiedTime & src);
     plUnifiedTime(const plUnifiedTime * src);
     static plUnifiedTime GetCurrent(Mode mode=kGmt);
@@ -165,72 +164,9 @@ public:
 
     // formatting (ala strftime)
     std::string Format(const char * fmt) const;
-
-    // parsing
-    bool FromString(const char * buf, const char * fmt);
     
     const char* Print() const;  // print as simple string
     const char* PrintWMillis() const;   // print as simple string w/ millis
-/*
-FromString: (from glibc's strptime() man page)
-     Converts the character string pointed to by buf to values which are
-     stored in the ``tm'' structure pointed to by tm, using the format
-     specified by format.
-
-     The following conversion specifications are supported:
-
-     %%    A `%' is written. No argument is converted.
-     %a    the day of week, using the locale's weekday names; either the ab-
-           breviated or full name may be specified.
-     %A    the same as %a.
-     %b    the month, using the locale's month names; either the abbreviated
-           or full name may be specified.
-     %B    the same as %b.
-     %c    the date and time, using the locale's date and time format.
-     %C    the century number [0,99]; leading zeros are permitted but not re-
-           quired.  This conversion should be used in conjunction with the %y
-           conversion.
-     %d    the day of month [1,31]; leading zeros are permitted but not re-
-           quired.
-     %D    the date as %m/%d/%y.
-     %e    the same as %d.
-     %h    the same as %b.
-     %H    the hour (24-hour clock) [0,23]; leading zeros are permitted but
-           not required.
-     %I    the hour (12-hour clock) [1,12]; leading zeros are permitted but
-           not required.
-     %j    the day number of the year [1,366]; leading zeros are permitted but
-           not required.
-     %k    the same as %H.
-     %l    the same as %I.
-     %m    the month number [1,12]; leading zeros are permitted but not re-
-           quired.
-     %M    the minute [0,59]; leading zeros are permitted but not required.
-     %n    any white-space, including none.
-     %p    the locale's equivalent of a.m. or p.m..
-     %r    the time (12-hour clock) with %p, using the locale's time format.
-     %R    the time as %H:%M.
-     %S    the seconds [0,61]; leading zeros are permitted but not required.
-     %t    any white-space, including none.
-     %T    the time as %H:%M:%S.
-     %U    the week number of the year (Sunday as the first day of the week)
-           as a decimal number [0,53]; leading zeros are permitted but not re-
-           quired.  All days in a year preceding the first Sunday are consid-
-           ered to be in week 0.
-     %w    the weekday as a decimal number [0,6], with 0 representing Sunday;
-           leading zeros are permitted but not required.
-     %W    the week number of the year (Monday as the first day of the week)
-           as a decimal number [0,53]; leading zeros are permitted but not re-
-           quired.  All days in a year preceding the first Monday are consid-
-           ered to be in week 0.
-     %x    the date, using the locale's date format.
-     %X    the time, using the locale's time format.
-     %y    the year within the 20th century [69,99] or the 21st century
-           [0,68]; leading zeros are permitted but not required.  If specified
-           in conjunction with %C, specifies the year [0,99] within that cen-
-           tury.
-     %Y    the year, including the century (i.e., 1996).
-*/
 };
 
 
