@@ -125,11 +125,3 @@ const plClientUnifiedTime & plClientUnifiedTime::operator=(const plUnifiedTime &
     *ut=src;
     return *this;
 }
-
-const plClientUnifiedTime & plClientUnifiedTime::operator=(const plClientUnifiedTime & src) 
-{ 
-    plUnifiedTime* ut=this;
-    plUnifiedTime* utSrc=this;
-    *ut=*utSrc;
-    return *this;
-}

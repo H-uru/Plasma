@@ -69,7 +69,6 @@ public:
     void ConvertToGameTime(double* gameTimeOut, double curGameSecs);
 
     const plClientUnifiedTime & operator=(const plUnifiedTime & src);
-    const plClientUnifiedTime & operator=(const plClientUnifiedTime & src);
 };
 
 #endif  // plClientUnifiedTime_inc'
