@@ -65,8 +65,8 @@ public:
     plUnifiedTime& GetAsUnifiedTime() { return *(plUnifiedTime*)this;   }
 
     // game secs conversions
-    void SetFromGameTime(double gameTime, double curGameSecs);
-    void ConvertToGameTime(double* gameTimeOut, double curGameSecs);
+    void SetFromGameTime(double gameTime);
+    double ConvertToGameTime();
 };
 
 #endif  // plClientUnifiedTime_inc'

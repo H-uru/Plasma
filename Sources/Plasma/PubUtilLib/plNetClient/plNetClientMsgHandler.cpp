@@ -354,9 +354,8 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
 
             if (!m->GetDeliveryTime().AtEpoch())
             {
-                double timeStamp;
                 double secs=hsTimer::GetSysSeconds();
-                m->GetDeliveryTime().ConvertToGameTime(&timeStamp, secs);
+                double timeStamp = m->GetDeliveryTime().ConvertToGameTime();
                 hsAssert(timeStamp>=secs, "invalid future timeStamp");
                 gameMsg->SetTimeStamp(timeStamp);
                 nc->DebugMsg("Converting game msg future timeStamp, curT={f}, futT={f}", secs, timeStamp);
