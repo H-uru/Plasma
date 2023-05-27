@@ -129,12 +129,6 @@ struct tm * plUnifiedTime::IGetTime(const time_t * timer) const
     return tm;
 }
 
-plUnifiedTime::plUnifiedTime(plUnifiedTime_CtorNow,int mode)
-{
-    SetMode((Mode)mode);
-    ToCurrentTime();
-}
-
 
 plUnifiedTime::plUnifiedTime(const timeval & tv)
     : fMode(kGmt)

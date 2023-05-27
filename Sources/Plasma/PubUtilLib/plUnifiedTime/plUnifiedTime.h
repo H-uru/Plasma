@@ -59,9 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct timeval;
 class hsStream;
 
-enum plUnifiedTime_CtorNow { kNow };
-
-
 class plUnifiedTime //
 {
 public:
@@ -85,7 +82,6 @@ protected:
 public:
     plUnifiedTime() : fSecs(), fMicros(), fMode(kGmt) { }      // set ToEpoch() at start
     plUnifiedTime(double secsDouble) : fMode(kGmt) { SetSecsDouble(secsDouble); }
-    plUnifiedTime(plUnifiedTime_CtorNow,int mode=kLocal);
     plUnifiedTime(const timeval & tv);
     plUnifiedTime(int mode, const struct tm & src);
     plUnifiedTime(time_t t);
