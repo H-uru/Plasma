@@ -48,14 +48,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
 #include "pyVaultNode.h"
 
-
-struct RelVaultNode;
 class plMipmap;
+class pyImage;
+namespace ST { class string; }
 
 class pyVaultImageNode : public pyVaultNode
 {
@@ -77,9 +76,6 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
     void Image_SetTitle(const ST::string& text);
     ST::string Image_GetTitle() const;
 

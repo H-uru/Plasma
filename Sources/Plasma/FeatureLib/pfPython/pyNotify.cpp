@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <string_theory/string>
+
 #include "plgDispatch.h"
 #include "pyGeometry3.h"
 #include "pyKey.h"
@@ -71,10 +73,6 @@ pyNotify::pyNotify(const pyKey& selfkey)
     // loop though adding the ones that want to be notified of the change
     for (size_t j = 0; j < selfkey.NotifyListCount(); j++)
         fReceivers.emplace_back(selfkey.GetNotifyListItem(j));
-}
-
-pyNotify::~pyNotify()
-{
 }
 
 void pyNotify::SetSender(const pyKey& selfKey)

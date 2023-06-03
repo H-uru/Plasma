@@ -41,13 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include <string_theory/string>
 #include <utility>
 #include "pyKey.h"
 
 #include "cyMisc.h"
 #include "pyGlueHelpers.h"
 #include "pySceneObject.h"
-#include "pnUtils/pnUtils.h"
 #include "pnUUID/pnUUID.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendPetitionToCCR, args, "Params: message,reason=0,title=\"\"\nSends a petition with a message to the CCR group")
@@ -119,21 +119,6 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtConsoleNet, args, "Params: command,netForce\nT
     cyMisc::ConsoleNet(command, netForce != 0);
     PYTHON_RETURN_NONE;
 }
-
-#if 1
-// TEMP
-PYTHON_GLOBAL_METHOD_DEFINITION(PtPrintToScreen, args, "Params: message\nPrints 'message' to the status log, for debug only.")
-{
-    ST::string message;
-    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &message))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtPrintToScreen expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    cyMisc::PrintToScreen(message);
-    PYTHON_RETURN_NONE;
-}
-#endif
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtAtTimeCallback, args, "Params: selfkey,time,id\nThis will create a timer callback that will call OnTimer when complete\n"
             "- 'selfkey' is the ptKey of the PythonFile component\n"
@@ -635,12 +620,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCreateDir, args, "Params: directory\nCreates t
     PYTHON_RETURN_BOOL(cyMisc::CreateDir(directory));
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetUserPath, "Returns the unicode path to the client's root user directory. Do NOT convert to a standard string.")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetUserPath, "Returns the path to the client's root user directory.")
 {
     return PyUnicode_FromSTString(cyMisc::GetUserPath().AsString());
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetInitPath, "Returns the unicode path to the client's init directory. Do NOT convert to a standard string.")
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetInitPath, "Returns the path to the client's init directory.")
 {
     return PyUnicode_FromSTString(cyMisc::GetInitPath().AsString());
 }
@@ -661,11 +646,6 @@ void cyMisc::AddPlasmaMethods3(PyObject* m)
 
         PYTHON_GLOBAL_METHOD(PtConsole)
         PYTHON_GLOBAL_METHOD(PtConsoleNet)
-
-#if 1
-        // TEMP
-        PYTHON_GLOBAL_METHOD(PtPrintToScreen)
-#endif
 
         PYTHON_GLOBAL_METHOD(PtAtTimeCallback)
         PYTHON_GLOBAL_METHOD(PtClearTimerCallbacks)

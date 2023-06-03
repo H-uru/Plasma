@@ -58,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plStatusLog;
 class pyKey;
 typedef struct _object PyObject;
-typedef struct PyMethodDef PyMethodDef;
 namespace ST { class string; }
 
 class  PythonInterface

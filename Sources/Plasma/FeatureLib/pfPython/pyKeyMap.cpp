@@ -47,6 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "pyKeyMap.h"
+
+#include <string_theory/string>
+
 #include "plInputCore/plInputInterfaceMgr.h"
 #include "pnInputCore/plKeyMap.h"
 

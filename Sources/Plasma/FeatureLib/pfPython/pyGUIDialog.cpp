@@ -41,10 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include <string_theory/string>
+
 #include "pyKey.h"
 
 #include "pyColor.h"
-#include "cyPythonInterface.h"
 
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
 #include "pfGameGUIMgr/pfGUIDialogMod.h"
@@ -67,8 +68,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // specific value controls
 #include "pfGameGUIMgr/pfGUIKnobCtrl.h"
 #include "pfGameGUIMgr/pfGUIUpDownPairMod.h"
-
-#include "plInputCore/plInputInterface.h"
 
 pyGUIDialog::pyGUIDialog(pyKey& gckey)
 {

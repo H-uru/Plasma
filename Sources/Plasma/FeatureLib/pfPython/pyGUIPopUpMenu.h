@@ -55,6 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pfGUIPopUpMenu;
 class pyColor;
+class pyKey;
+namespace ST { class string; }
 
 class pyGUIPopUpMenu
 {
@@ -72,7 +74,7 @@ protected:
     pyGUIPopUpMenu(const ST::string& name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY);
 
 public:
-    virtual ~pyGUIPopUpMenu();
+    ~pyGUIPopUpMenu();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptGUIPopUpMenu);
@@ -98,37 +100,37 @@ public:
     bool operator!=(const pyGUIPopUpMenu &gdobj) const { return !(gdobj == *this); }
 
     // getter and setters
-    virtual plKey getObjKey();
-    virtual PyObject* getObjPyKey(); // returns pyKey
+    plKey getObjKey();
+    PyObject* getObjPyKey(); // returns pyKey
 
     // interface functions
-    virtual uint32_t  GetTagID();
+    uint32_t GetTagID();
 
-    virtual void    SetEnabled( bool e );
-    virtual void    Enable() { SetEnabled(true); }
-    virtual void    Disable() { SetEnabled(false); }
-    virtual bool    IsEnabled();
-    virtual ST::string GetName() const;
-    virtual uint32_t     GetVersion();
+    void SetEnabled(bool e);
+    void Enable() { SetEnabled(true); }
+    void Disable() { SetEnabled(false); }
+    bool IsEnabled();
+    ST::string GetName() const;
+    uint32_t GetVersion();
 
-    virtual void        Show();
-    virtual void        Hide();
+    void Show();
+    void Hide();
 
     // get color schemes
-    virtual PyObject*   GetForeColor(); // returns pyColor
-    virtual PyObject*   GetSelColor(); // returns pyColor
-    virtual PyObject*   GetBackColor(); // returns pyColor
-    virtual PyObject*   GetBackSelColor(); // returns pyColor
+    PyObject* GetForeColor(); // returns pyColor
+    PyObject* GetSelColor(); // returns pyColor
+    PyObject* GetBackColor(); // returns pyColor
+    PyObject* GetBackSelColor(); // returns pyColor
     // set color scheme
-    virtual void        SetForeColor( float r, float g, float b, float a );
-    virtual void        SetSelColor( float r, float g, float b, float a );
-    virtual void        SetBackColor( float r, float g, float b, float a );
-    virtual void        SetBackSelColor( float r, float g, float b, float a );
+    void SetForeColor(float r, float g, float b, float a);
+    void SetSelColor(float r, float g, float b, float a);
+    void SetBackColor(float r, float g, float b, float a);
+    void SetBackSelColor(float r, float g, float b, float a);
 
     // Menu item functions
-    virtual void        AddConsoleCmdItem(const ST::string& name, const ST::string& consoleCmd);
-    virtual void        AddNotifyItem(const ST::string& name);
-    virtual void        AddSubMenuItem(const ST::string& name, pyGUIPopUpMenu &subMenu);
+    void AddConsoleCmdItem(const ST::string& name, const ST::string& consoleCmd);
+    void AddNotifyItem(const ST::string& name);
+    void AddSubMenuItem(const ST::string& name, pyGUIPopUpMenu &subMenu);
 };
 
 #endif // _pyGUIPopUpMenu_h_

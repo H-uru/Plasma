@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////
 
 #include <Python.h>
+#include <string_theory/format>
+
 #include "pyKey.h"
 #include "hsResMgr.h"
 
@@ -53,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfJournalBook/pfJournalBook.h"
 
 #include "cyAnimation.h"
-#include "pyColor.h"
 #include "pyImage.h"
 #include "pnKeyedObject/plUoid.h"
 

@@ -41,15 +41,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include <string_theory/string>
+
 #include "pyKey.h"
 
 #include "pfGameGUIMgr/pfGUIListBoxMod.h"
 #include "pfGameGUIMgr/pfGUIListElement.h"
-#include "pfGameGUIMgr/pfGUIDialogMod.h"
 #include "plGImage/plDynamicTextMap.h"
 
 #include "pyGUIControlListBox.h"
-#include "pyGUIDialog.h"
 #include "pyColor.h"
 #include "pyImage.h"
 
@@ -372,17 +372,6 @@ void pyGUIControlListBox::SetSelection( int32_t item )
         pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
         if ( plbmod )
             plbmod->SetSelection(item);
-    }
-}
-
-void pyGUIControlListBox::Refresh()
-{
-    if ( fGCkey )
-    {
-        // get the pointer to the modifier
-        pfGUIListBoxMod* plbmod = pfGUIListBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
-        if ( plbmod )
-            plbmod->Refresh();
     }
 }
 

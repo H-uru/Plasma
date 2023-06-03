@@ -49,14 +49,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <vector>
+
 #include "pyGUIControl.h"
 #include "pyGlueHelpers.h"
 
-
+class plKey;
 class pyColor;
 class pyImage;
+class pyKey;
 
 class pfGUIListTreeRoot;
+namespace ST { class string; }
+
 class pyGUIControlListBox : public pyGUIControl
 {
 private:
@@ -81,37 +86,36 @@ public:
 
     // special case control for the listbox
     // ...this allows the listbox to be used without being selectable
-    virtual void    Clickable();
-    virtual void    Unclickable();
-    virtual int32_t   GetSelection();
-    virtual void    SetSelection( int32_t item );
-    void            Refresh() override;
-    virtual void    SetElement( uint16_t idx, ST::string text );
-    virtual void    RemoveElement( uint16_t index );
-    virtual void    ClearAllElements();
-    virtual uint16_t  GetNumElements();
-    virtual ST::string  GetElement( uint16_t idx );
-    virtual int16_t   AddString( ST::string string );
-    virtual int16_t   AddImage( pyImage& image, bool respectAlpha );
-    virtual int16_t   AddImageInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha );
-    virtual int16_t   AddImageAndSwatchesInBox( pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha,
-                                                        pyColor &primary, pyColor &secondary );
-    virtual void    SetSwatchSize( uint32_t size );
-    virtual void    SetSwatchEdgeOffset( uint32_t size );
-    virtual void    SetStringJustify( uint16_t idx, uint32_t justify);
-    virtual int16_t   FindString( ST::string toCompareTo );
-    virtual int16_t   AddTextWColorW( ST::string str, pyColor& textcolor, uint32_t inheritalpha);
-    virtual int16_t   AddTextWColorWSizeW( ST::string str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
-    virtual void    Add2TextWColorW( ST::string str1, pyColor& textcolor1, ST::string str2, pyColor& textcolor2, uint32_t inheritalpha);
-    virtual int16_t   AddStringInBox( ST::string string, uint32_t min_width, uint32_t min_height );
-    virtual void    ScrollToBegin();
-    virtual void    ScrollToEnd();
-    virtual void    SetScrollPos( int32_t pos );
-    virtual int32_t   GetScrollPos();
-    virtual int32_t   GetScrollRange();
+    void Clickable();
+    void Unclickable();
+    int32_t GetSelection();
+    void SetSelection(int32_t item);
+    void SetElement(uint16_t idx, ST::string text);
+    void RemoveElement(uint16_t index);
+    void ClearAllElements();
+    uint16_t GetNumElements();
+    ST::string GetElement(uint16_t idx);
+    int16_t AddString(ST::string string);
+    int16_t AddImage(pyImage& image, bool respectAlpha);
+    int16_t AddImageInBox(pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha);
+    int16_t AddImageAndSwatchesInBox(pyImage& image, uint32_t x, uint32_t y, uint32_t width, uint32_t height, bool respectAlpha,
+                                     pyColor &primary, pyColor &secondary);
+    void SetSwatchSize(uint32_t size);
+    void SetSwatchEdgeOffset(uint32_t size);
+    void SetStringJustify(uint16_t idx, uint32_t justify);
+    int16_t FindString(ST::string toCompareTo);
+    int16_t AddTextWColorW(ST::string str, pyColor& textcolor, uint32_t inheritalpha);
+    int16_t AddTextWColorWSizeW(ST::string str, pyColor& textcolor, uint32_t inheritalpha, int32_t fontsize);
+    void Add2TextWColorW(ST::string str1, pyColor& textcolor1, ST::string str2, pyColor& textcolor2, uint32_t inheritalpha);
+    int16_t AddStringInBox(ST::string string, uint32_t min_width, uint32_t min_height);
+    void ScrollToBegin();
+    void ScrollToEnd();
+    void SetScrollPos(int32_t pos);
+    int32_t GetScrollPos();
+    int32_t GetScrollRange();
 
-    virtual void    LockList();
-    virtual void    UnlockList();
+    void LockList();
+    void UnlockList();
 
     // To create tree branches, call AddBranch() with a name, then add elements as usual, including new sub-branches
     // via additional AddBranch() calls. Call CloseBranch() to stop writing elements to that branch.

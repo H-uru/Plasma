@@ -53,6 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyGUIControl.h"
 
+class plKey;
+class pyKey;
+
 class pyGUIControlButton : public pyGUIControl
 {
 protected:
@@ -73,9 +76,9 @@ public:
 
     static bool IsGUIControlButton(pyKey& gckey);
     
-    virtual void    SetNotifyType(int32_t kind);
-    virtual int32_t   GetNotifyType();
-    virtual bool    IsButtonDown();
+    void SetNotifyType(int32_t kind);
+    int32_t GetNotifyType();
+    bool IsButtonDown();
 };
 
 #endif // _pyGUIControlButton_h_

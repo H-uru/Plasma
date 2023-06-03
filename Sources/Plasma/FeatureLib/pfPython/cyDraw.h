@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map draw functions to plasma2 message
 //
 
+#include <vector>
+
 #include "pnKeyedObject/plKey.h"
 
 #include "pyGlueHelpers.h"
@@ -63,8 +65,6 @@ protected:
     cyDraw(plKey sender = {}, plKey recvr = {});
 
 public:
-    virtual ~cyDraw() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptDraw);
     static PyObject *New(PyObject *sender = nullptr, PyObject* recvr = nullptr);
@@ -79,9 +79,9 @@ public:
     void SetNetForce(bool state) { fNetForce = state; }
 
     // Enable draw
-    virtual void EnableT(bool state);
-    virtual void Enable() { EnableT(true); }
-    virtual void Disable() { EnableT(false); }
+    void EnableT(bool state);
+    void Enable() { EnableT(true); }
+    void Disable() { EnableT(false); }
 };
 
 #endif  // cyDraw_h

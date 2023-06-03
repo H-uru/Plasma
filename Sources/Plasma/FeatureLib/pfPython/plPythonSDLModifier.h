@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plPythonFileMod;
 class plStateDataRecord;
 class plSimpleStateVariable;
+class pyKey;
 
 #include <map>
 #include "plModifier/plSDLModifier.h"

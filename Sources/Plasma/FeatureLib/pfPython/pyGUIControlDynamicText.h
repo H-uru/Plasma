@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGUIControl.h"
 #include "pyGlueHelpers.h"
 
-class pyDynamicText;
 class pyKey;
 class plKey;
 
@@ -76,8 +75,8 @@ public:
     static bool IsGUIControlDynamicText(pyKey& gckey);
 
     //specific interface functions
-    virtual uint32_t  GetNumMaps();
-    virtual PyObject* GetMap(uint32_t i); // returns pyDynamicText
+    uint32_t GetNumMaps();
+    PyObject* GetMap(uint32_t i); // returns pyDynamicText
 };
 
 #endif // _pyGUIControlButton_h_

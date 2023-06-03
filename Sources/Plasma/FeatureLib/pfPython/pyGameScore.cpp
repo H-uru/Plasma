@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <string_theory/string>
+
 #include "pyKey.h"
 
 #include "pyGameScore.h"

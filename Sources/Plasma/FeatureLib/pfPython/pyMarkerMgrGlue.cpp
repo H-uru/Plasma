@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyMarkerMgr.h"
 #include "pfMessage/pfMarkerMsg.h"
+
+#include "pyGeometry3.h"
 #include "pyEnum.h"
 
 // glue functions

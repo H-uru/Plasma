@@ -55,9 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class PythonVaultCallback;
 class plPythonSDLModifier;
-class pyKey;
 class pfPythonKeyCatcher;
-class plKeyEventMsg;
 class plPipeline;
 
 typedef struct _object PyObject;

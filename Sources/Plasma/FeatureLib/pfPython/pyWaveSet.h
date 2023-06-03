@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 
 class pyColor;
+class pyKey;
 class pyPoint3;
 class pyVector3;
 

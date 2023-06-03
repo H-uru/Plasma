@@ -40,27 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include <string_theory/string>
+
 #include "pyKey.h"
 
 #include "pyColor.h"
 
-#include "pfGameGUIMgr/pfGameGUIMgr.h"
 #include "pfGameGUIMgr/pfGUIControlMod.h"
 #include "pfGameGUIMgr/pfGUIPopUpMenu.h"
 
 #include "pyGUIPopUpMenu.h"
-
-// the rest of the controls
-#include "pyGUIControlButton.h"
-#include "pyGUIControlCheckBox.h"
-#include "pyGUIControlEditBox.h"
-#include "pyGUIControlListBox.h"
-#include "pyGUIControlRadioGroup.h"
-#include "pyGUIControlTextBox.h"
-#include "pyGUIControlValue.h"
-#include "pyGUIControlDynamicText.h"
-#include "pyGUIControlMultiLineEdit.h"
 
 #include "pfGameGUIMgr/pfGUIControlHandlers.h"
 

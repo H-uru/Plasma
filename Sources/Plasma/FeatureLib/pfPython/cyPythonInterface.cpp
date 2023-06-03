@@ -64,7 +64,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPythonCallable.h"
 #include "cyPythonInterface.h"
-#include "plPythonPack.h"
 
 #include "pyEnum.h"
 #include "cyDraw.h"
@@ -641,7 +640,7 @@ PYTHON_METHOD_DEFINITION(ptOutputRedirector, write, args)
     ST::string text;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
-        PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
+        PyErr_SetString(PyExc_TypeError, "write expects a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->Write(text);
@@ -761,7 +760,7 @@ PYTHON_METHOD_DEFINITION(ptErrorRedirector, write, args)
     ST::string text;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &text))
     {
-        PyErr_SetString(PyExc_TypeError, "write expects a string or unicode string");
+        PyErr_SetString(PyExc_TypeError, "write expects a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->Write(text);

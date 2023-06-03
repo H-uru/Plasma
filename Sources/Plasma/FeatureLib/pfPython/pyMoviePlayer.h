@@ -48,10 +48,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <string_theory/string>
+
 #include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
 
 class pyColor;
+class pyKey;
 
 class pyMoviePlayer
 {
@@ -63,7 +66,7 @@ protected:
     pyMoviePlayer(const ST::string& movieName, pyKey& selfKey);
 
 public:
-    virtual ~pyMoviePlayer();
+    ~pyMoviePlayer();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptMoviePlayer);
@@ -77,18 +80,18 @@ public:
     void MakeMovie(const ST::string& movieName, pyKey& selfKey); // only used by python glue, do NOT call
 
     // getters and setters
-    virtual void SetCenter(float x, float y);
-    virtual void SetScale(float width, float height);
-    virtual void SetColor(pyColor color);
-    virtual void SetVolume(float volume);
-    virtual void SetOpacity(float opacity);
+    void SetCenter(float x, float y);
+    void SetScale(float width, float height);
+    void SetColor(pyColor color);
+    void SetVolume(float volume);
+    void SetOpacity(float opacity);
 
     // actions
-    virtual void Play();        // kStart
-    virtual void PlayPaused();  // kStart and kPause
-    virtual void Pause();       // kPause
-    virtual void Resume();      // kResume
-    virtual void Stop();        // kStop
+    void Play();        // kStart
+    void PlayPaused();  // kStart and kPause
+    void Pause();       // kPause
+    void Resume();      // kResume
+    void Stop();        // kStop
 
 };
 

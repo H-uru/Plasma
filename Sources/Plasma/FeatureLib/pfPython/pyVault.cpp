@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <memory>
 #include <Python.h>
+#include <string_theory/format>
 
 #ifdef BUILDING_PYPLASMA
 # error "pyVault is not compatible with pyPlasma.pyd. Use BUILDING_PYPLASMA macro to ifdef out unwanted headers."
@@ -61,19 +62,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultPlayerInfoListNode.h"
 #include "pyVaultPlayerInfoNode.h"
 #include "pyVaultChronicleNode.h"
-#include "pyVaultTextNoteNode.h"
-#include "pyNetLinkingMgr.h"
 #include "pyAgeInfoStruct.h"
 #include "pyAgeLinkStruct.h"
 #include "pySDL.h"
 
-#include "pnKeyedObject/plKey.h"
-
 #include "plVault/plVault.h"
-#include "pnNetCommon/plNetApp.h"
 #include "plNetClient/plNetClientMgr.h"
-#include "plNetClient/plNetLinkingMgr.h"
-#include "plMessage/plVaultNotifyMsg.h"
+#include "plNetCommon/plNetCommon.h"
 
 #include "plSDL/plSDL.h"
 

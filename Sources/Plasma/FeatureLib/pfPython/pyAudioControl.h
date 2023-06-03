@@ -59,8 +59,6 @@ protected:
     pyAudioControl() {};
 
 public:
-    virtual ~pyAudioControl() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAudioControl);
     PYTHON_CLASS_NEW_DEFINITION;

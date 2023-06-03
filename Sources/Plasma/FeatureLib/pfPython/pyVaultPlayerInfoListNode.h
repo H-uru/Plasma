@@ -52,10 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyVaultFolderNode.h"
 
-struct RelVaultNode;
-class pyVaultPlayerInfoNode;
-
-    
 class pyVaultPlayerInfoListNode : public pyVaultFolderNode
 {
 protected:
@@ -71,9 +67,6 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class RelVaultNode : public plVaultFolderNode
-//
     bool    HasPlayer( uint32_t playerID );
     void    AddPlayer( uint32_t playerID );
     void    RemovePlayer( uint32_t playerID );

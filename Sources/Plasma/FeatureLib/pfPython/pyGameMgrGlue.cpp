@@ -43,9 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGameMgr.h"
 
 #include "pyEnum.h"
-#include "plPythonConvert.h"
-
-#include <string_theory/string>
 
 #include "pnGameMgr/pnGameMgrConst.h"
 

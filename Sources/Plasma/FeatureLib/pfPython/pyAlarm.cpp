@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyAlarm.h"
 
-#include "pyGlueHelpers.h"
 #include "plPythonCallable.h"
 
 #include "hsTimer.h"
@@ -91,10 +90,6 @@ pyAlarmMgr * pyAlarmMgr::GetInstance()
 {
     static pyAlarmMgr inst;
     return &inst;
-}
-
-pyAlarmMgr::~pyAlarmMgr()
-{
 }
 
 void pyAlarmMgr::Update( double secs )

@@ -48,13 +48,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "pyGlueHelpers.h"
 #include "pyVaultNode.h"
 
-struct RelVaultNode;
 class pySDLStateDataRecord;
-
+namespace ST { class string; }
 
 class pyVaultSDLNode : public pyVaultNode
 {
@@ -71,9 +69,6 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
     int     GetIdent() const;
     void    SetIdent( int v );
     void InitStateDataRecord(const ST::string& agename, int flags);

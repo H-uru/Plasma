@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 
 class pfGameScore;
+class pyKey;
+namespace ST { class string; }
 
 class pyGameScore
 {

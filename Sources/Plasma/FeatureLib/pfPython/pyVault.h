@@ -51,22 +51,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
 
-class plKey;
-class plDniCoordinateInfo;
-
 class pyVaultNode;
-class pyVaultAgeLinkNode;
-class pyVaultFolderNode;
-class pyVaultPlayerInfoListNode;
-class pyVaultAgeInfoListNode;
 class pyVaultAgeInfoNode;
-class pyVaultChronicleNode;
-class pyVaultTextNoteNode;
-
 class pyAgeInfoStruct;
 class pyAgeLinkStruct;
 
 class pySDLStateDataRecord;
+namespace ST { class string; }
 
 class pyVault
 {

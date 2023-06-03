@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyMisc.h"
 
 #include <Python.h>
-
+#include <string_theory/string>
 #include <string_view>
+#include <vector>
 
 #include "pyEnum.h"
 #include "pyColor.h"

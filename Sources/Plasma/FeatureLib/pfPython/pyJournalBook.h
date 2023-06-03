@@ -49,13 +49,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "pyGlueHelpers.h"
-#include <vector>
 
-class cyAnimation;
 class pyImage;
-class pyColor;
 class pfJournalBook;
 class plKey;
+class pyKey;
+namespace ST { class string; }
 
 class pyJournalBook
 {
@@ -74,7 +73,7 @@ protected:
     pyJournalBook( const ST::string& esHTMLSource, pyImage &coverImage, const pyKey& callbackKey, const ST::string &guiName );
 
 public:
-    virtual ~pyJournalBook();
+    ~pyJournalBook();
 
     // No copy constructor; don't allow copying
 
@@ -92,32 +91,32 @@ public:
     void MakeBook(const ST::string& esHTMLSource, plKey coverImageKey = {}, plKey callbackKey = {}, const ST::string &guiName = {});
 
     // Interface functions per book
-    virtual void    Show( bool startOpened );
-    virtual void    Hide();
-    virtual void    Open( uint32_t startingPage );
-    virtual void    Close();
-    virtual void    CloseAndHide();
+    void Show(bool startOpened);
+    void Hide();
+    void Open(uint32_t startingPage);
+    void Close();
+    void CloseAndHide();
 
-    virtual void    NextPage();
-    virtual void    PreviousPage();
-    virtual void    GoToPage( uint32_t page );
-    virtual uint32_t  GetCurrentPage() const;
-    virtual void    SetPageMargin( uint32_t margin );
-    virtual void    AllowPageTurning( bool allow );
+    void NextPage();
+    void PreviousPage();
+    void GoToPage(uint32_t page);
+    uint32_t GetCurrentPage() const;
+    void SetPageMargin(uint32_t margin);
+    void AllowPageTurning(bool allow);
 
-    virtual void    SetSize( float width, float height );
+    void SetSize(float width, float height);
 
-    virtual void    SetGUI( const ST::string &guiName );
+    void SetGUI(const ST::string &guiName);
 
     static void     LoadGUI( const ST::string &guiName );
     static void     UnloadGUI( const ST::string &guiName );
     static void     UnloadAllGUIs();
 
-    virtual PyObject *GetMovie( uint8_t index ); // returns cyAnimation
+    PyObject *GetMovie(uint8_t index); // returns cyAnimation
     
-    virtual void    SetEditable( bool editable );
-    virtual ST::string GetEditableText() const;
-    virtual void    SetEditableText( const ST::string& text );
+    void SetEditable(bool editable);
+    ST::string GetEditableText() const;
+    void SetEditableText(const ST::string& text);
 };
 
 #endif // _pyJournalBook_h_

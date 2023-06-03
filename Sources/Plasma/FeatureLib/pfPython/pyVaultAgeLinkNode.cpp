@@ -46,10 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include <Python.h>
+#include <string_theory/string>
 
 #include "pyVaultAgeLinkNode.h"
 #include "pyVaultAgeInfoNode.h"
-#include "pyNetLinkingMgr.h"
 #include "pyAgeLinkStruct.h"
 #include "pySpawnPointInfo.h"
 
@@ -63,11 +63,6 @@ pyVaultAgeLinkNode::pyVaultAgeLinkNode()
 {
     fNode->SetNodeType(plVault::kNodeType_AgeLink);
 }
-
-
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
 
 PyObject* pyVaultAgeLinkNode::GetAgeInfo() const
 {

@@ -47,11 +47,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyNetLinkingMgr.h"
 
+#include <string_theory/string>
+
 #include "plNetClient/plNetLinkingMgr.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"
 
-#include "pyAgeInfoStruct.h"
 #include "pyAgeLinkStruct.h"
 
 bool pyNetLinkingMgr::IsEnabled() const

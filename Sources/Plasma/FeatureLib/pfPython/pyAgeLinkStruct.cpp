@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include <string_theory/string>
 #include <utility>
 
 #include "pyAgeLinkStruct.h"
@@ -57,10 +57,6 @@ pyAgeLinkStruct::pyAgeLinkStruct()
 pyAgeLinkStruct::pyAgeLinkStruct( plAgeLinkStruct * link )
 {
     fAgeLink.CopyFrom( link );
-}
-
-pyAgeLinkStruct::~pyAgeLinkStruct()
-{
 }
 
 bool pyAgeLinkStruct::operator==(const pyAgeLinkStruct &other) const

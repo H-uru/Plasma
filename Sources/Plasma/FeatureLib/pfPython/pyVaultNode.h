@@ -56,29 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNbError.h"
 
 struct RelVaultNode;
-class plMipmap;
-class pyImage;
 class plUUID;
-
-class pyDniCoordinates;
-
-class pyVaultNodeRef;
-class pyVaultFolderNode;
-class pyVaultPlayerInfoListNode;
-class pyVaultImageNode;
-class pyVaultTextNoteNode;
-class pyVaultAgeLinkNode;
-class pyVaultChronicleNode;
-class pyVaultPlayerInfoNode;
-class pyVaultMarkerNode;
-class pyVaultAgeInfoNode;
-class pyVaultAgeInfoListNode;
-class pyVaultSDLNode;
-class pyVaultPlayerNode;
-class pyVaultMarkerListNode;
-#ifndef BUILDING_PYPLASMA
-class pyVaultSystemNode;
-#endif
 
 class pyVaultNode
 {
@@ -113,7 +91,7 @@ protected:
     pyVaultNode(std::nullptr_t);
 
 public:
-    virtual ~pyVaultNode();
+    virtual ~pyVaultNode() = default;
 
     // required functions for PyObject interoperability
     PYTHON_EXPOSE_TYPE; // so we can subclass
@@ -132,12 +110,9 @@ public:
 
     // public getters
     uint32_t  GetID();
-    virtual uint32_t  GetType();
-    uint32_t  GetPermissions();
+    uint32_t GetType();
     uint32_t  GetOwnerNodeID();
     PyObject* GetOwnerNode(); // returns pyVaultPlayerInfoNode
-    uint32_t  GetGroupNodeID();
-    PyObject* GetGroupNode(); // returns pyVaultNode
     uint32_t GetModifyTime();
     uint32_t GetCreatorNodeID();
     PyObject* GetCreatorNode(); // returns pyVaultPlayerInfoNode
@@ -186,8 +161,8 @@ public:
     PyObject* FindNode( pyVaultNode * templateNode, unsigned int maxDepth = 1 );   // returns pyVaultNode
 
     // Get all child nodes.
-    virtual PyObject* GetChildNodeRefList(); // for legacy compatibility
-    virtual int GetChildNodeCount();
+    PyObject* GetChildNodeRefList(); // for legacy compatibility
+    int GetChildNodeCount();
 
     // Get the client ID from my Vault client.
     uint32_t  GetClientID();
@@ -210,5 +185,14 @@ public:
 #endif
 
 };
+
+#define PYTHON_CLASS_VAULT_NODE_NEW_IMPL(pythonClassName, glueClassName) \
+PyObject* glueClassName::New(hsRef<RelVaultNode> nfsNode) \
+{ \
+    pythonClassName* newObj = (pythonClassName*)pythonClassName##_type.tp_new(&pythonClassName##_type, nullptr, nullptr); \
+    if (nfsNode) \
+        newObj->fThis->fNode = std::move(nfsNode); \
+    return (PyObject*)newObj; \
+}
 
 #endif // _pyVaultNode_h_

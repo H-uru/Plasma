@@ -46,18 +46,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include <Python.h>
-#include <exception>
+#include <string_theory/string>
 
 #include "pyVaultNode.h"
 
 #ifndef BUILDING_PYPLASMA
 #   include "pyVault.h"
 #   include "pyVaultSystemNode.h"
-#   include "pnNetCommon/plNetApp.h"
 #   include "plNetClientComm/plNetClientComm.h"
 #endif
 
-#include "pyImage.h"
 #include "pyDniCoordinates.h"
 #include "pyObjectRef.h"
 #include "plPythonCallable.h"
@@ -76,7 +74,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultSDLNode.h"
 
 #include "pnUUID/pnUUID.h"
-#include "plGImage/plMipmap.h"
 #include "plVault/plVault.h"
 
 
@@ -141,10 +138,6 @@ pyVaultNode::pyVaultNode()
 }
 
 pyVaultNode::pyVaultNode(std::nullptr_t)
-{
-}
-
-pyVaultNode::~pyVaultNode()
 {
 }
 

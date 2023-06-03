@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
 #include <string_theory/format>
 #include <string_theory/string_stream>
 
@@ -58,10 +57,6 @@ pyAgeInfoStruct::pyAgeInfoStruct()
 pyAgeInfoStruct::pyAgeInfoStruct(plAgeInfoStruct * info)
 {
     fAgeInfo.CopyFrom( info );
-}
-
-pyAgeInfoStruct::~pyAgeInfoStruct()
-{
 }
 
 bool pyAgeInfoStruct::operator==(const pyAgeInfoStruct &other) const

@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGmBlueSpiral.h"
 
-#include "pyEnum.h"
 #include "pyGameCli.h"
 #include "plPythonConvert.h"
 

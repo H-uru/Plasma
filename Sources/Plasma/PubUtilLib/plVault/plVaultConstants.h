@@ -55,11 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // plVault: Plasma Network File System
 //
 
-class plAgeInfoSource;
-
-
-////////////////////////////////////////////////////////////////////
-
 namespace plVault {
     // ONLY APPEND TO THIS ENUM.
     // Many of these values are stored in db.

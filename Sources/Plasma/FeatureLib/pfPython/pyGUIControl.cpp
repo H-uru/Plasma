@@ -52,8 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyColor.h"
 #include "pyGeometry3.h"
 
-#include "pyGUIControlCheckBox.h"
-
 pyGUIControl::pyGUIControl(pyKey& gckey)
 {
     fGCkey = gckey.getKey();

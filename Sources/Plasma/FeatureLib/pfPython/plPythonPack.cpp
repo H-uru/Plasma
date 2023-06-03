@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPythonPack.h"
 
-#include "plFile/plSecureStream.h"
 #include "plFile/plStreamSource.h"
 
 struct plPackOffsetInfo

@@ -50,15 +50,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include "pyGlueHelpers.h"
-#include <vector>
+
 #include <map>
 
 #include "pnKeyedObject/plKey.h"
-#include "pyColor.h"
 
 #ifndef BUILDING_PYPLASMA
 #   include "plGImage/plMipmap.h"
 #endif
+
+class plFileName;
+class pyColor;
+class pyKey;
+namespace ST { class string; }
 
 class pyImage
 {

@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pyGlueHelpers_h_
 
 namespace ST { class string; }
-class pyKey;
 typedef struct _object PyObject;
 typedef struct _typeobject PyTypeObject;
 typedef struct PyMethodDef PyMethodDef;
@@ -83,15 +82,6 @@ struct pythonClassName \
 PyObject *glueClassName::New() \
 { \
     pythonClassName *newObj = (pythonClassName*)pythonClassName##_type.tp_new(&pythonClassName##_type, nullptr, nullptr); \
-    return (PyObject*)newObj; \
-}
-
-#define PYTHON_CLASS_VAULT_NODE_NEW_IMPL(pythonClassName, glueClassName) \
-PyObject* glueClassName::New(hsRef<RelVaultNode> nfsNode) \
-{ \
-    pythonClassName* newObj = (pythonClassName*)pythonClassName##_type.tp_new(&pythonClassName##_type, nullptr, nullptr); \
-    if (nfsNode) \
-        newObj->fThis->fNode = std::move(nfsNode); \
     return (PyObject*)newObj; \
 }
 
@@ -609,18 +599,5 @@ static PyObject *methodName(PyObject *self) /* and now for the actual function *
         if (PyModule_AddFunctions(moduleVarName, name##_globalMethods) < 0) \
             return; \
     }
-
-/////////////////////////////////////////////////////////////////////
-// Enum glue (these should all be inside a function)
-/////////////////////////////////////////////////////////////////////
-
-// the start of an enum block
-#define PYTHON_ENUM_START(enumName) std::vector<std::tuple<ST::string, Py_ssize_t>> enumName##_enumValues{
-
-// for each element of the enum
-#define PYTHON_ENUM_ELEMENT(enumName, elementName, elementValue) std::make_tuple(ST_LITERAL(#elementName), (Py_ssize_t)elementValue),
-
-// to finish off and define the enum
-#define PYTHON_ENUM_END(m, enumName) }; pyEnum::MakeEnum(m, #enumName, enumName##_enumValues);
 
 #endif // _pyGlueHelpers_h_

@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include <string_theory/string>
+
 #include "pyKey.h"
 
 #include "pyGUIPopUpMenu.h"
@@ -278,7 +280,7 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addConsoleCmdItem, args)
     ST::string consoleCmd;
     if (!PyArg_ParseTuple(args, "O&O&", PyUnicode_STStringConverter, &name, PyUnicode_STStringConverter, &consoleCmd))
     {
-        PyErr_SetString(PyExc_TypeError, "addConsoleCmdItem expects a unicode string and a string");
+        PyErr_SetString(PyExc_TypeError, "addConsoleCmdItem expects a string and a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->AddConsoleCmdItem(name, consoleCmd);
@@ -290,7 +292,7 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addNotifyItem, args)
     ST::string name;
     if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &name))
     {
-        PyErr_SetString(PyExc_TypeError, "addNotifyItem expects a unicode string");
+        PyErr_SetString(PyExc_TypeError, "addNotifyItem expects a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->AddNotifyItem(name);
@@ -303,12 +305,12 @@ PYTHON_METHOD_DEFINITION(ptGUIPopUpMenu, addSubMenuItem, args)
     PyObject* subMenuObj = nullptr;
     if (!PyArg_ParseTuple(args, "O&O", PyUnicode_STStringConverter, &name, &subMenuObj))
     {
-        PyErr_SetString(PyExc_TypeError, "addSubMenuItem expects a unicode string and a ptGUIPopUpMenu");
+        PyErr_SetString(PyExc_TypeError, "addSubMenuItem expects a string and a ptGUIPopUpMenu");
         PYTHON_RETURN_ERROR;
     }
     if (!pyGUIPopUpMenu::Check(subMenuObj))
     {
-        PyErr_SetString(PyExc_TypeError, "addSubMenuItem expects a unicode string and a ptGUIPopUpMenu");
+        PyErr_SetString(PyExc_TypeError, "addSubMenuItem expects a string and a ptGUIPopUpMenu");
         PYTHON_RETURN_ERROR;
     }
     pyGUIPopUpMenu* subMenu = pyGUIPopUpMenu::ConvertFrom(subMenuObj);

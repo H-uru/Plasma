@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include <string_theory/string>
 
+class pyKey;
+
 class pyPlayer
 {
 protected:

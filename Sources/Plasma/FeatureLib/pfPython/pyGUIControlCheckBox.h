@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGUIControl.h"
 
 class plKey;
+class pyKey;
 
 class pyGUIControlCheckBox : public pyGUIControl
 {
@@ -74,8 +75,8 @@ public:
 
     static bool IsGUIControlCheckBox(pyKey& gckey);
 
-    virtual void    SetChecked( bool checked );
-    virtual bool    IsChecked();
+    void SetChecked(bool checked);
+    bool IsChecked();
 
 };
 

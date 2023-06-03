@@ -51,14 +51,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pyKey;
 class pySceneObject;
 class pyPlayer;
-class pyImage;
-class pyDniCoordinates;
 class pyColor;
 class pyAgeInfoStruct;
 class pyPoint3;
 
 #include "HeadSpin.h"
-#include <vector>
 
 class pyGUIDialog;
 class plPipeline;
@@ -69,7 +66,6 @@ struct PipelineParams;
 namespace ST { class string; }
 
 typedef struct _object PyObject;
-typedef struct PyMethodDef PyMethodDef;
 
 class cyMisc
 {
@@ -97,14 +93,6 @@ public:
     static void         SetPipeline( plPipeline *pipe ) { fPipeline = pipe; }
     static plPipeline   *GetPipeline() { return fPipeline; }
 
-
-#if 1
-    //
-    // TEMP SCREEN PRINT CODE FOR NON-DBG TEXT DISPLAY
-    //
-public:
-    static void PrintToScreen(const ST::string& msg);
-#endif
 
     enum PythonDebugPrintLevels
     {
@@ -903,8 +891,8 @@ public:
     // Function   : GetLocalizedString
     //
     // PURPOSE    : Returns the specified localized string with the parameters
-    //              properly replaced (the list is a list of unicode strings) Name
-    //              is in "Age.Set.Name" format
+    //              properly replaced (the list is a list of strings).
+    //              Name is in "Age.Set.Name" format
     //
     static ST::string GetLocalizedString(const ST::string& name, const std::vector<ST::string> & arguments);
 

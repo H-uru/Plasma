@@ -52,8 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyVaultNode.h"
 
-struct RelVaultNode;
-class pyVaultAgeLinkNode;
+namespace ST { class string; }
 
 class pyVaultTextNoteNode : public pyVaultNode
 {
@@ -70,10 +69,6 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
     void Note_SetTitle(const ST::string& text);
     ST::string Note_GetTitle() const;
     void Note_SetText(const ST::string& text);

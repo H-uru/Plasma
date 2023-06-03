@@ -88,8 +88,6 @@ public:
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGameCli); // converts a PyObject to a pyVaultNode (throws error if not correct type)
 
-    static PyObject* New(pfGameCli* cli);
-
 public:
     uint32_t GetGameID() const;
     /** Gets a strong reference to the Python handler object. */

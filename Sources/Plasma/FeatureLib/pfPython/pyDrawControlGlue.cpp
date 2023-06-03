@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 
 #include "pyDrawControl.h"
-#include "pyEnum.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetGamma2, args, "Params: gamma\nSet the gamma with gamma2 rules")
 {
@@ -139,11 +138,3 @@ void pyDrawControl::AddPlasmaMethods(PyObject* m)
         PYTHON_GLOBAL_METHOD_NOARGS(PtIsClickToTurn)
     PYTHON_END_GLOBAL_METHOD_TABLE(m, ptDraw)
 }
-
-/*void pyDrawControl::AddPlasmaConstantsClasses(PyObject *m)
-{
-    PYTHON_ENUM_START(PtMovieType)
-    PYTHON_ENUM_ELEMENT(PtMovieType, kUnknownTypeMovie, pyMoviePlayer::kUnknownTypeMovie)
-    PYTHON_ENUM_ELEMENT(PtMovieType, kBinkMovie,        pyMoviePlayer::kBinkMovie)
-    PYTHON_ENUM_END
-}*/

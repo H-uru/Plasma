@@ -52,9 +52,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyGUIControl.h"
 
-#include <string_theory/string>
-
+class plKey;
 class pyColor;
+class pyKey;
+namespace ST { class string; }
 
 class pyGUIControlEditBox : public pyGUIControl
 {
@@ -75,23 +76,23 @@ public:
 
     static bool IsGUIControlEditBox(pyKey& gckey);
 
-    virtual void    SetBufferSize( uint32_t size );
-    virtual ST::string GetBuffer();
-    virtual void    ClearBuffer();
-    virtual void    SetText( const ST::string& str );
-    virtual void    SetCursorToHome();
-    virtual void    SetCursorToEnd();
-    virtual void    SetColor(pyColor& forecolor, pyColor& backcolor);
-    virtual void    SetSelColor(pyColor& forecolor, pyColor& backcolor);
+    void SetBufferSize(uint32_t size);
+    ST::string GetBuffer();
+    void ClearBuffer();
+    void SetText(const ST::string& str);
+    void SetCursorToHome();
+    void SetCursorToEnd();
+    void SetColor(pyColor& forecolor, pyColor& backcolor);
+    void SetSelColor(pyColor& forecolor, pyColor& backcolor);
 
-    virtual bool    WasEscaped();
+    bool WasEscaped();
 
-    virtual void    SetSpecialCaptureKeyMode(bool state);
-    virtual uint32_t  GetLastKeyCaptured();
-    virtual uint32_t  GetLastModifiersCaptured();
-    virtual void    SetLastKeyCapture(uint32_t key, uint32_t modifiers);
+    void SetSpecialCaptureKeyMode(bool state);
+    uint32_t GetLastKeyCaptured();
+    uint32_t GetLastModifiersCaptured();
+    void SetLastKeyCapture(uint32_t key, uint32_t modifiers);
 
-    virtual void    SetChatMode(bool state);
+    void SetChatMode(bool state);
 
 };
 

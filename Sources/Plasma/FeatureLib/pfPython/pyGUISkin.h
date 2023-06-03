@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 
 class pyColor;
+class pyKey;
 
 class pyGUISkin
 {
@@ -64,8 +65,6 @@ protected:
     pyGUISkin();
 
 public:
-    virtual ~pyGUISkin() { }
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptGUISkin);
     PYTHON_CLASS_NEW_DEFINITION;
@@ -85,8 +84,8 @@ public:
     bool operator!=(const pyGUISkin &gdobj) const { return !(gdobj == *this); }
 
     // getter and setters
-    virtual plKey getObjKey();
-    virtual PyObject* getObjPyKey(); // returns pyKey
+    plKey getObjKey();
+    PyObject* getObjPyKey(); // returns pyKey
 
 };
 

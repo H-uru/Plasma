@@ -53,7 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include <vector>
 
+class pyKey;
 class pyMatrix44;
+namespace ST { class string; }
 
 class pySceneObject
 {
@@ -63,8 +65,8 @@ private:
     plKey               fPyMod;         // pyKey that points to modifier
     bool                fNetForce;
 
-    virtual void IAddObjKeyToAll(const plKey& key);
-    virtual void ISetAllSenderKeys();
+    void IAddObjKeyToAll(const plKey& key);
+    void ISetAllSenderKeys();
 
 protected:
     pySceneObject();
@@ -73,7 +75,7 @@ protected:
     pySceneObject(const plKey& objkey);
 
 public:
-    virtual ~pySceneObject();
+    ~pySceneObject();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptSceneobject);
@@ -96,74 +98,74 @@ public:
     PyObject*               fParticle; // cyParticleSys
 
     // getter and setters
-    virtual void addObjKey(const plKey& key);
-    virtual void addObjPyKey(const pyKey& objkey);
-    virtual plKey getObjKey() const;
-    virtual PyObject* getObjPyKey() const; // pyKey
+    void addObjKey(const plKey& key);
+    void addObjPyKey(const pyKey& objkey);
+    plKey getObjKey() const;
+    PyObject* getObjPyKey() const; // pyKey
 
-    virtual void setSenderKey(plKey key);
-    virtual void setPyMod(const pyKey& pymod) { fPyMod = pymod.getKey(); }
-    virtual void setPyMod(const plKey& key) { fPyMod = key; }
+    void setSenderKey(plKey key);
+    void setPyMod(const pyKey& pymod) { fPyMod = pymod.getKey(); }
+    void setPyMod(const plKey& key) { fPyMod = key; }
 
-    virtual void SetNetForce(bool state);
+    void SetNetForce(bool state);
 
-    virtual PyObject* findObj(const ST::string& name); // pySceneObject
+    PyObject* findObj(const ST::string& name); // pySceneObject
 
-    virtual ST::string GetName();
-    virtual std::vector<PyObject*> GetResponders(); // pyKey list
-    virtual std::vector<PyObject*> GetPythonMods(); // pyKey list
+    ST::string GetName();
+    std::vector<PyObject*> GetResponders(); // pyKey list
+    std::vector<PyObject*> GetPythonMods(); // pyKey list
     //
     // deteremine if this object (or the first object in the list)
     // ...is locally owned
-    virtual bool IsLocallyOwned();
+    bool IsLocallyOwned();
     
     //
     // get the local to world matrix
-    virtual PyObject* GetLocalToWorld();
+    PyObject* GetLocalToWorld();
 
     //
     // get the local to world matrix
-    virtual PyObject* GetWorldToLocal();
+    PyObject* GetWorldToLocal();
 
     //
     // get the local to world matrix
-    virtual PyObject* GetLocalToParent();
+    PyObject* GetLocalToParent();
 
     //
     // get the local to world matrix
-    virtual PyObject* GetParentToLocal();
+    PyObject* GetParentToLocal();
 
     //
     // set the local to world matrix
-    virtual void SetTransform(pyMatrix44& l2w, pyMatrix44& w2l);
+    void SetTransform(pyMatrix44& l2w, pyMatrix44& w2l);
 
     //
     // find the position of this object (if there are more than one, just the first one)
-    virtual PyObject* GetWorldPosition(); // pyPoint3
+    PyObject* GetWorldPosition(); // pyPoint3
 
     //
     // find the view vector for this object (if there are more than one, just the first one)
-    virtual PyObject* GetViewVector(); // pyVector3
+    PyObject* GetViewVector(); // pyVector3
 
     //
     // find the up vector for this object (if there are more than one, just the first one)
-    virtual PyObject* GetUpVector(); // pyVector3
+    PyObject* GetUpVector(); // pyVector3
 
     //
     // find the up vector for this object (if there are more than one, just the first one)
-    virtual PyObject* GetRightVector(); // pyVector3
+    PyObject* GetRightVector(); // pyVector3
 
     //
     // deteremine if this object (or any of the object attached)
     // ...is an avatar, of any type
-    virtual bool IsAvatar();
+    bool IsAvatar();
 
-    virtual PyObject* GetAvatarVelocity(); // pyVector3
+    PyObject* GetAvatarVelocity(); // pyVector3
 
     //
     // deteremine if this object (or the first object in the list)
     // ...is a human avatar
-    virtual bool IsHumanAvatar();
+    bool IsHumanAvatar();
 
     //
     // switch to / from this camera (if it is a camera)

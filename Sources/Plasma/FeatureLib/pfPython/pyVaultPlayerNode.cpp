@@ -46,20 +46,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include <Python.h>
+#include <string_theory/string>
 
 #include "pyVaultPlayerNode.h"
 #include "pyAgeInfoStruct.h"
 #include "pyVaultAgeLinkNode.h"
 #include "pyVaultPlayerInfoNode.h"
-#include "pyVaultPlayerInfoListNode.h"
 #include "pyVaultFolderNode.h"
 #include "pyVaultChronicleNode.h"
-#include "pyVaultSDLNode.h"
 #include "pyAgeLinkStruct.h"
 #include "plVault/plVault.h"
-#ifndef BUILDING_PYPLASMA
-#   include "pyVault.h"
-#endif
 
 //============================================================================
 static PyObject * GetPlayerVaultFolder (unsigned folderType) {

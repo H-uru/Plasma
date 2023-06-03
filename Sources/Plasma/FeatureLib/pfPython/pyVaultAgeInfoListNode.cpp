@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "pyVaultAgeInfoListNode.h"
-#include "pyVaultFolderNode.h"
 
 #include "plVault/plVault.h"
 
@@ -58,10 +57,6 @@ pyVaultAgeInfoListNode::pyVaultAgeInfoListNode()
     fNode->SetNodeType(plVault::kNodeType_AgeInfoList);
 }
 
-
-//==================================================================
-// class RelVaultNode : public plVaultFolderNode
-//
 bool pyVaultAgeInfoListNode::HasAge(uint32_t ageID)
 {
     if (!fNode)
