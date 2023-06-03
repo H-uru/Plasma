@@ -3085,8 +3085,8 @@ public:
                     // if there is no text, then there is nothing to translate
                     SetDlgItemText( hWnd, IDC_GUI_INITTEXT, pmap->GetParamBlock()->GetStr( plGUITextBoxComponent::kRefInitText ) );
                 SendMessage( GetDlgItem( hWnd, IDC_GUI_LANGUAGE ), CB_RESETCONTENT, 0, 0 );
-                for (auto lang : plLocalization::GetAllLanguages()) {
-                    SendMessage(GetDlgItem(hWnd, IDC_GUI_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)ST2T(plLocalization::GetLanguageName(lang)));
+                for (const auto& langName : plLocalization::GetAllLanguageNames()) {
+                    SendMessage(GetDlgItem(hWnd, IDC_GUI_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)ST2T(langName));
                 }
                 SendMessage( GetDlgItem( hWnd, IDC_GUI_LANGUAGE ), CB_SETCURSEL, 0, 0 );
                 fCurLanguage = 0;

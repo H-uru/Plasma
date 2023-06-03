@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "res/ui_AddElement.h"
 #include "res/ui_AddLocalization.h"
 
+#include <algorithm>
 #include <vector>
 
 // very simple validator for edit controls (and combo boxes) so that they only accept alphanumeric values
@@ -154,18 +155,6 @@ void plAddElementDlg::Update(const QString &text)
 }
 
 // plAddLocalizationDlg - dialog for adding a single localization
-std::vector<ST::string> IGetAllLanguageNames()
-{
-    std::vector<ST::string> retVal;
-
-    for (auto lang : plLocalization::GetAllLanguages())
-    {
-        retVal.emplace_back(plLocalization::GetLanguageName(lang));
-    }
-
-    return retVal;
-}
-
 plAddLocalizationDlg::plAddLocalizationDlg(const ST::string &parentPath, QWidget *parent)
     : QDialog(parent)
 {
@@ -188,15 +177,10 @@ bool plAddLocalizationDlg::DoPick()
     std::vector<ST::string> existingLanguages;
     existingLanguages = pfLocalizationDataMgr::Instance().GetLanguages(fAgeName, fSetName, fElementName);
 
-    std::vector<ST::string> missingLanguages = IGetAllLanguageNames();
-    for (int i = 0; i < existingLanguages.size(); i++) // remove all languages we already have
-    {
-        for (auto lit = missingLanguages.begin(); lit != missingLanguages.end(); )
-        {
-            if (*lit == existingLanguages[i])
-                lit = missingLanguages.erase(lit);
-            else
-                ++lit;
+    std::vector<ST::string> missingLanguages;
+    for (const auto &langName : plLocalization::GetAllLanguageNames()) {
+        if (std::find(existingLanguages.begin(), existingLanguages.end(), langName) == existingLanguages.end()) {
+            missingLanguages.push_back(langName);
         }
     }
 

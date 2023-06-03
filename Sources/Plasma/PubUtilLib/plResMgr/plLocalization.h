@@ -66,9 +66,9 @@ public:
 
 protected:
     static Language fLanguage;
-    static const ST::string fLangTags[kNumLanguages];
-    static std::set<ST::string> fLangCodes[kNumLanguages];
-    static const ST::string fLangNames[kNumLanguages];
+    static const std::array<ST::string, kNumLanguages> fLangTags;
+    static const std::array<std::set<ST::string>, kNumLanguages> fLangCodes;
+    static const std::array<ST::string, kNumLanguages> fLangNames;
 
     static plFileName IGetLocalized(const plFileName& name, Language lang);
 
@@ -103,7 +103,10 @@ public:
     static void SetLanguage(Language lang) { fLanguage = lang; }
     static Language GetLanguage() { return fLanguage; }
 
+    static const std::array<ST::string, kNumLanguages>& GetAllLanguageNames() { return fLangNames; };
     static ST::string GetLanguageName(Language lang);
+
+    static const std::array<std::set<ST::string>, kNumLanguages>& GetAllLanguageCodes() { return fLangCodes; };
     static std::set<ST::string> GetLanguageCodes(Language lang);
 
     // Returns true if we're using localized assets.  If it returns false, you

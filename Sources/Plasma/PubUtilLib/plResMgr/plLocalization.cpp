@@ -51,8 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plLocalization::Language plLocalization::fLanguage = plLocalization::kEnglish;
 
-const ST::string plLocalization::fLangTags[] =
-{
+const std::array<ST::string, plLocalization::kNumLanguages> plLocalization::fLangTags = {
     ST_LITERAL("_eng"), // kEnglish
     ST_LITERAL("_fre"), // kFrench
     ST_LITERAL("_ger"), // kGerman
@@ -63,18 +62,16 @@ const ST::string plLocalization::fLangTags[] =
 const int kLangTagLen = 4;
 
 // ISO 639, e.g. used in video tracks
-std::set<ST::string> plLocalization::fLangCodes[] =
-{
+const std::array<std::set<ST::string>, plLocalization::kNumLanguages> plLocalization::fLangCodes = {{
     {"eng", "en"},
     {"fre", "fra", "fr"},
     {"ger", "deu", "de"},
     {"spa", "es"},
     {"ita", "it"},
     {"jpn", "ja"}
-};
+}};
 
-const ST::string plLocalization::fLangNames[] =
-{
+const std::array<ST::string, plLocalization::kNumLanguages> plLocalization::fLangNames = {
     ST_LITERAL("English"), // kEnglish
     ST_LITERAL("French"),  // kFrench
     ST_LITERAL("German"),  // kGerman

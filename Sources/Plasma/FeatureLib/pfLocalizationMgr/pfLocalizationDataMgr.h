@@ -115,7 +115,6 @@ protected:
     plFileName fDataPath;
 
     ST::string IGetCurrentLanguageName() const; // get the name of the current language
-    std::vector<ST::string> IGetAllLanguageNames() const;
 
     void IConvertElement(const element& elementInfo, const ST::string & curPath);
     void IConvertSet(const set& setInfo, const ST::string & curPath);

@@ -58,9 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <expat.h>
 
+#include <algorithm>
 #include <stack>
-#include <unordered_set>
-
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -518,11 +517,7 @@ void LocalizationDatabase::IMergeData()
 
 void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::string &setName, LocalizationXMLFile::set::iterator& curElement)
 {
-    std::unordered_set<ST::string> languageNames;
-    for (auto lang : plLocalization::GetAllLanguages())
-    {
-        languageNames.emplace(plLocalization::GetLanguageName(lang));
-    }
+    auto languageNames = plLocalization::GetAllLanguageNames();
 
     ST::string elementName = curElement->first;
     LocalizationXMLFile::element& theElement = curElement->second;
@@ -531,7 +526,7 @@ void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::s
     while (curTranslation != theElement.end())
     {
         // Make sure this language exists!
-        auto languageIt = languageNames.find(curTranslation->first);
+        auto languageIt = std::find(languageNames.begin(), languageNames.end(), curTranslation->first);
 
         if (languageIt == languageNames.end())
         {
@@ -818,20 +813,6 @@ pfLocalizationDataMgr::~pfLocalizationDataMgr()
 ST::string pfLocalizationDataMgr::IGetCurrentLanguageName() const
 {
     return plLocalization::GetLanguageName(plLocalization::GetLanguage());
-}
-
-//// IGetAllLanguageNames ////////////////////////////////////////////
-
-std::vector<ST::string> pfLocalizationDataMgr::IGetAllLanguageNames() const
-{
-    std::vector<ST::string> retVal;
-
-    for (auto lang : plLocalization::GetAllLanguages())
-    {
-        retVal.emplace_back(plLocalization::GetLanguageName(lang));
-    }
-
-    return retVal;
 }
 
 //// IConvertSubtitle ////////////////////////////////////////////////
@@ -1132,10 +1113,9 @@ bool pfLocalizationDataMgr::DeleteElement(const ST::string & name)
 void pfLocalizationDataMgr::WriteDatabaseToDisk(const plFileName & path) const
 {
     std::vector<ST::string> ageNames = GetAgeList();
-    std::vector<ST::string> languageNames = IGetAllLanguageNames();
     for (const auto& curAge : ageNames)
     {
-        for (const auto& curLanguage : languageNames)
+        for (const auto& curLanguage : plLocalization::GetAllLanguageNames())
         {
             plFileName locPath = plFileName::Join(path, ST::format("{}{}.loc",
                                     curAge, curLanguage));
