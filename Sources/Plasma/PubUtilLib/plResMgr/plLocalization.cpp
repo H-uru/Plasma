@@ -57,27 +57,39 @@ const std::array<ST::string, plLocalization::kNumLanguages> plLocalization::fLan
     ST_LITERAL("_ger"), // kGerman
     ST_LITERAL("_spa"), // kSpanish
     ST_LITERAL("_ita"), // kItalian
-    ST_LITERAL("_jpn")  // kJapanese
+    ST_LITERAL("_jpn"), // kJapanese
+    ST_LITERAL("_dch"), // kDutch
+    ST_LITERAL("_rus"), // kRussian
+    ST_LITERAL("_pol"), // kPolish
+    ST_LITERAL("_czk"), // kCzech
 };
 const int kLangTagLen = 4;
 
 // ISO 639, e.g. used in video tracks
 const std::array<std::set<ST::string>, plLocalization::kNumLanguages> plLocalization::fLangCodes = {{
-    {"eng", "en"},
-    {"fre", "fra", "fr"},
-    {"ger", "deu", "de"},
-    {"spa", "es"},
-    {"ita", "it"},
-    {"jpn", "ja"}
+    {ST_LITERAL("eng"), ST_LITERAL("en")},
+    {ST_LITERAL("fre"), ST_LITERAL("fra"), ST_LITERAL("fr")},
+    {ST_LITERAL("ger"), ST_LITERAL("deu"), ST_LITERAL("de")},
+    {ST_LITERAL("spa"), ST_LITERAL("es")},
+    {ST_LITERAL("ita"), ST_LITERAL("it")},
+    {ST_LITERAL("jpn"), ST_LITERAL("ja")},
+    {ST_LITERAL("dut"), ST_LITERAL("nld"), ST_LITERAL("nl")},
+    {ST_LITERAL("rus"), ST_LITERAL("ru")},
+    {ST_LITERAL("pol"), ST_LITERAL("pl")},
+    {ST_LITERAL("cze"), ST_LITERAL("ces"), ST_LITERAL("cs")},
 }};
 
 const std::array<ST::string, plLocalization::kNumLanguages> plLocalization::fLangNames = {
-    ST_LITERAL("English"), // kEnglish
-    ST_LITERAL("French"),  // kFrench
-    ST_LITERAL("German"),  // kGerman
-    ST_LITERAL("Spanish"), // kSpanish
-    ST_LITERAL("Italian"), // kItalian
-    ST_LITERAL("Japanese") // kJapanese
+    ST_LITERAL("English"),
+    ST_LITERAL("French"),
+    ST_LITERAL("German"),
+    ST_LITERAL("Spanish"),
+    ST_LITERAL("Italian"),
+    ST_LITERAL("Japanese"),
+    ST_LITERAL("Dutch"),
+    ST_LITERAL("Russian"),
+    ST_LITERAL("Polish"),
+    ST_LITERAL("Czech"),
 };
 
 plFileName plLocalization::IGetLocalized(const plFileName& name, Language lang)

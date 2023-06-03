@@ -60,6 +60,10 @@ public:
         kSpanish,
         kItalian,
         kJapanese,
+        kDutch,
+        kRussian,
+        kPolish,
+        kCzech,
 
         kNumLanguages,
     };
