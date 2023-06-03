@@ -538,12 +538,13 @@ void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::s
             curTranslation++;
     }
 
-    for (const auto& language : languageNames)
-    {
-        if (theElement.find(language) == theElement.end())
-        {
+    for (auto lang : plLocalization::GetAllLanguages()) {
+        if (
+            plLocalization::IsLanguageUsable(lang)
+            && theElement.find(plLocalization::GetLanguageName(lang)) == theElement.end()
+        ) {
             pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Language {} is missing from the translations in element {}.{}.{}. You'll want to get translations for that!",
-                language, ageName, setName, elementName);
+                plLocalization::GetLanguageName(lang), ageName, setName, elementName);
         }
     }
 }
