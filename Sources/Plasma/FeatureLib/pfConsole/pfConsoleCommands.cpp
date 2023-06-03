@@ -2431,7 +2431,7 @@ PF_CONSOLE_CMD(App,
 PF_CONSOLE_CMD(App,
                SetLanguage,
                "string language",
-               "Set the language (English, French, German, Spanish, Italian, or Japanese)")
+               "Set the language")
 {
     if (pfConsole::GetPipeline())
     {
@@ -2439,19 +2439,12 @@ PF_CONSOLE_CMD(App,
         return;
     }
 
-    if (stricmp(params[0], "english") == 0)
-        plLocalization::SetLanguage(plLocalization::kEnglish);
-    else if (stricmp(params[0], "french") == 0)
-        plLocalization::SetLanguage(plLocalization::kFrench);
-    else if (stricmp(params[0], "german") == 0)
-        plLocalization::SetLanguage(plLocalization::kGerman);
-    else if (stricmp(params[0], "spanish") == 0)
-        plLocalization::SetLanguage(plLocalization::kSpanish);
-    else if (stricmp(params[0], "italian") == 0)
-        plLocalization::SetLanguage(plLocalization::kItalian);
-    else if (stricmp(params[0], "japanese") == 0)
-        plLocalization::SetLanguage(plLocalization::kJapanese);
-
+    for (const auto &lang : plLocalization::GetAllLanguages()) {
+        if (plLocalization::GetLanguageName(lang).compare_i(params[0]) == 0) {
+            plLocalization::SetLanguage(lang);
+            break;
+        }
+    }
 }
 
 PF_CONSOLE_CMD(App,
