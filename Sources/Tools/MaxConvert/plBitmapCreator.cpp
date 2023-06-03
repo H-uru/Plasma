@@ -467,9 +467,8 @@ plBitmap *plBitmapCreator::CreateTexture(plBitmapData *bd, const plLocation &loc
 {
     plBitmap* bm = ICreateTexture(bd, loc, clipID);
 
-    for (int i = 0; i < plLocalization::GetNumLocales(); i++)
-    {
-        plFileName localName = plLocalization::ExportGetLocalized(bd->fileName, i);
+    for (auto lang : plLocalization::GetAllLanguages()) {
+        plFileName localName = plLocalization::ExportGetLocalized(bd->fileName, lang);
         if (localName.IsValid())
         {
             plFileName oldName = bd->fileName;

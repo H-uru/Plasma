@@ -592,9 +592,8 @@ plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const plFileName 
         plFileName sfxPath = plFileName::Join(plasmaDir, "sfx", fileName.GetFileName());
 
         // Export any localized versions as well
-        for (int i = 0; i < plLocalization::GetNumLocales(); i++)
-        {
-            plFileName localName = plLocalization::ExportGetLocalized(sfxPath, i);
+        for (auto lang : plLocalization::GetAllLanguages()) {
+            plFileName localName = plLocalization::ExportGetLocalized(sfxPath, lang);
             if (localName.IsValid())
             {
                 IGetSourceBuffer(localName, srcNode, srcBufferFlags);

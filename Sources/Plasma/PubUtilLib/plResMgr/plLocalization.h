@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLocalization_h_inc
 #define plLocalization_h_inc
 
+#include <array>
 #include <set>
 #include <vector>
 
@@ -72,6 +73,33 @@ protected:
     static plFileName IGetLocalized(const plFileName& name, Language lang);
 
 public:
+    // Get all defined langauge numbers as an array for convenient iteration.
+    // Note that this includes some languages that aren't suitable for regular gameplay (yet),
+    // due to missing translations or font support, such as Japanese - see IsLanguageUsable.
+    static std::array<Language, kNumLanguages> GetAllLanguages()
+    {
+        std::array<Language, kNumLanguages> languages;
+        for (int lang = 0; lang < kNumLanguages; lang++) {
+            languages[lang] = static_cast<Language>(lang);
+        }
+        return languages;
+    }
+
+    // Check whether the given language is considered usable/supported.
+    // This controls which languages are shown to players in the login window.
+    // Languages listed here should have some reasonable amount of translations
+    // and must have the necessary characters included in the game fonts.
+    static bool IsLanguageUsable(Language lang)
+    {
+        return (
+            lang == kEnglish
+            || lang == kFrench
+            || lang == kGerman
+            || lang == kSpanish
+            || lang == kItalian
+        );
+    }
+
     static void SetLanguage(Language lang) { fLanguage = lang; }
     static Language GetLanguage() { return fLanguage; }
 
@@ -92,17 +120,14 @@ public:
     // When you're exporting an asset that could be localized, you'll want to do
     // a loop something like this to try and find any localized versions.
     //
-    // for (int i = 0; i < plLocalization::GetNumLocales(); i++)
-    // {
-    //     char localName[MAX_PATH];
-    //     if (plLocalization::ExportGetLocalized(fileName, i, localName))
-    //     {
+    // for (auto lang : plLocalization::GetAllLanguages()) {
+    //     plFileName localName = plLocalization::ExportGetLocalized(fileName, lang);
+    //     if (localName.IsValid()) {
     //         ...
     //     }
     // }
     //
-    static int GetNumLocales() { return kNumLanguages - 1; }
-    static plFileName ExportGetLocalized(const plFileName& name, int lang);
+    static plFileName ExportGetLocalized(const plFileName& name, Language lang);
 
     // Converts a vector of translated strings to a encoded string that can be decoded by StringToLocal()
     // The index in the vector of a string is it's language

@@ -113,24 +113,27 @@ plFileName plLocalization::GetLocalized(plFileName const &name)
     return IGetLocalized(name, fLanguage);
 }
 
-plFileName plLocalization::ExportGetLocalized(const plFileName& name, int lang)
+plFileName plLocalization::ExportGetLocalized(const plFileName& name, Language lang)
 {
-    plFileName localizedName = IGetLocalized(name, Language(lang+1));
+    if (lang == kEnglish) {
+        return {};
+    }
+    plFileName localizedName = IGetLocalized(name, lang);
     if (plFileInfo(localizedName).Exists())
         return localizedName;
 
-    return "";
+    return {};
 }
 
 ST::string plLocalization::LocalToString(const std::vector<ST::string>& localizedText)
 {
     ST::string_stream ss;
-    for (size_t i = 0; i < localizedText.size(); i++)
-    {
-        if (i > kNumLanguages - 1)
+    for (auto lang : plLocalization::GetAllLanguages()) {
+        if (lang >= localizedText.size()) {
             break;
-        ST::string langName = GetLanguageName((Language)i);
-        ss << '$' << langName.substr(0, 2) << '$' << localizedText[i];
+        }
+        ST::string langName = GetLanguageName(lang);
+        ss << '$' << langName.substr(0, 2) << '$' << localizedText[lang];
     }
     return ss.to_string();
 }
@@ -141,10 +144,7 @@ std::vector<ST::string> plLocalization::StringToLocal(const ST::string& localize
     std::vector<hsSsize_t> tagLocs;
     std::vector<Language> sortedLangs;
     std::vector<ST::string> retVal;
-    int i;
-    for (i=0; i<kNumLanguages; i++)
-    {
-        Language lang = static_cast<Language>(i);
+    for (auto lang : plLocalization::GetAllLanguages()) {
         ST::string langName = GetLanguageName(lang);
         ST::string tag = "$" + langName.substr(0, 2) + "$";
         tags.push_back(tag);

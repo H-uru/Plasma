@@ -156,12 +156,11 @@ void plAddElementDlg::Update(const QString &text)
 // plAddLocalizationDlg - dialog for adding a single localization
 std::vector<ST::string> IGetAllLanguageNames()
 {
-    int numLocales = plLocalization::GetNumLocales();
     std::vector<ST::string> retVal;
 
-    for (int curLocale = 0; curLocale <= numLocales; curLocale++)
+    for (auto lang : plLocalization::GetAllLanguages())
     {
-        retVal.emplace_back(plLocalization::GetLanguageName((plLocalization::Language)curLocale));
+        retVal.emplace_back(plLocalization::GetLanguageName(lang));
     }
 
     return retVal;

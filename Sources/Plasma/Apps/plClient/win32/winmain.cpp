@@ -790,9 +790,11 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
             SendMessage(GetDlgItem(hwndDlg, IDC_PRODUCTSTRING), WM_SETTEXT, 0,
                         (LPARAM)plProduct::ProductString().c_str());
 
-            for (int i = 0; i < plLocalization::GetNumLocales(); i++)
-            {
-                ST::wchar_buffer languageNameBuf = plLocalization::GetLanguageName((plLocalization::Language)i).to_wchar();
+            for (auto lang : plLocalization::GetAllLanguages()) {
+                if (!plLocalization::IsLanguageUsable(lang)) {
+                    continue;
+                }
+                ST::wchar_buffer languageNameBuf = plLocalization::GetLanguageName(lang).to_wchar();
                 SendMessageW(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)languageNameBuf.c_str());
             }
             SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_SETCURSEL, (WPARAM)plLocalization::GetLanguage(), 0);

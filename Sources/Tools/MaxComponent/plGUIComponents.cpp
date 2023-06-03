@@ -3072,7 +3072,6 @@ public:
 
     INT_PTR DlgProc(TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override
     {
-        int i;
         switch( msg )
         {
             case WM_INITDIALOG:
@@ -3086,8 +3085,9 @@ public:
                     // if there is no text, then there is nothing to translate
                     SetDlgItemText( hWnd, IDC_GUI_INITTEXT, pmap->GetParamBlock()->GetStr( plGUITextBoxComponent::kRefInitText ) );
                 SendMessage( GetDlgItem( hWnd, IDC_GUI_LANGUAGE ), CB_RESETCONTENT, 0, 0 );
-                for (i=0; i<plLocalization::kNumLanguages; i++)
-                    SendMessage(GetDlgItem(hWnd, IDC_GUI_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)ST2T(plLocalization::GetLanguageName((plLocalization::Language)i)));
+                for (auto lang : plLocalization::GetAllLanguages()) {
+                    SendMessage(GetDlgItem(hWnd, IDC_GUI_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)ST2T(plLocalization::GetLanguageName(lang)));
+                }
                 SendMessage( GetDlgItem( hWnd, IDC_GUI_LANGUAGE ), CB_SETCURSEL, 0, 0 );
                 fCurLanguage = 0;
 

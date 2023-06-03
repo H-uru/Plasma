@@ -519,13 +519,9 @@ void LocalizationDatabase::IMergeData()
 void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::string &setName, LocalizationXMLFile::set::iterator& curElement)
 {
     std::unordered_set<ST::string> languageNames;
-    ST::string defaultLanguage = plLocalization::GetLanguageName((plLocalization::Language)0);
-
-    int numLocales = plLocalization::GetNumLocales();
-    for (int curLocale = 0; curLocale <= numLocales; curLocale++)
+    for (auto lang : plLocalization::GetAllLanguages())
     {
-        ST::string name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
-        languageNames.emplace(std::move(name));
+        languageNames.emplace(plLocalization::GetLanguageName(lang));
     }
 
     ST::string elementName = curElement->first;
@@ -817,21 +813,6 @@ pfLocalizationDataMgr::~pfLocalizationDataMgr()
     }
 }
 
-//// ICreateLocalizedElement /////////////////////////////////////////
-
-pfLocalizationDataMgr::localizedElement pfLocalizationDataMgr::ICreateLocalizedElement()
-{
-    int numLocales = plLocalization::GetNumLocales();
-    pfLocalizationDataMgr::localizedElement retVal;
-
-    for (int curLocale = 0; curLocale <= numLocales; curLocale++)
-    {
-        retVal[plLocalization::GetLanguageName((plLocalization::Language)curLocale)] = "";
-    }
-
-    return retVal;
-}
-
 //// IGetCurrentLanguageName /////////////////////////////////////////
 
 ST::string pfLocalizationDataMgr::IGetCurrentLanguageName() const
@@ -843,13 +824,11 @@ ST::string pfLocalizationDataMgr::IGetCurrentLanguageName() const
 
 std::vector<ST::string> pfLocalizationDataMgr::IGetAllLanguageNames() const
 {
-    int numLocales = plLocalization::GetNumLocales();
     std::vector<ST::string> retVal;
 
-    for (int curLocale = 0; curLocale <= numLocales; curLocale++)
+    for (auto lang : plLocalization::GetAllLanguages())
     {
-        ST::string name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
-        retVal.push_back(name);
+        retVal.emplace_back(plLocalization::GetLanguageName(lang));
     }
 
     return retVal;

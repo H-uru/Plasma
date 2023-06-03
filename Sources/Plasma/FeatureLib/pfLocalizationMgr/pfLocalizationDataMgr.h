@@ -114,8 +114,6 @@ protected:
 
     plFileName fDataPath;
 
-    localizedElement ICreateLocalizedElement(); // ease of use function that creates a basic localized element object
-
     ST::string IGetCurrentLanguageName() const; // get the name of the current language
     std::vector<ST::string> IGetAllLanguageNames() const;
 
