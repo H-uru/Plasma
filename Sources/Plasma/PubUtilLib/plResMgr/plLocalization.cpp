@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plFileSystem.h"
 
+#include <algorithm>
 #include <string_theory/string>
 #include <string_theory/string_stream>
 
@@ -137,45 +138,42 @@ ST::string plLocalization::LocalToString(const std::vector<ST::string>& localize
 std::vector<ST::string> plLocalization::StringToLocal(const ST::string& localizedText)
 {
     std::vector<ST::string> tags;
-    std::vector<int> tagLocs;
-    std::vector<int> sortedTagLocs;
+    std::vector<hsSsize_t> tagLocs;
+    std::vector<Language> sortedLangs;
     std::vector<ST::string> retVal;
     int i;
     for (i=0; i<kNumLanguages; i++)
     {
-        ST::string langName = GetLanguageName((Language)i);
+        Language lang = static_cast<Language>(i);
+        ST::string langName = GetLanguageName(lang);
         ST::string tag = "$" + langName.substr(0, 2) + "$";
         tags.push_back(tag);
         tagLocs.push_back(localizedText.find(tag));
-        sortedTagLocs.push_back(i);
+        sortedLangs.push_back(lang);
         retVal.emplace_back();
     }
-    for (i=0; i<kNumLanguages-1; i++)
-    {
-        for (int j=i; j<kNumLanguages; j++)
-        {
-            if (tagLocs[sortedTagLocs[i]] > tagLocs[sortedTagLocs[j]])
-                sortedTagLocs[i]^=sortedTagLocs[j]^=sortedTagLocs[i]^=sortedTagLocs[j]; // swap the contents (yes, it works)
-        }
-    }
-    // now sortedTagLocs has the indexes of tagLocs sorted from smallest loc to highest loc
+
+    std::sort(sortedLangs.begin(), sortedLangs.end(), [&](auto a, auto b) {
+        return tagLocs[a] < tagLocs[b];
+    });
+
+    // now sortedLangs has the indexes of tagLocs sorted from smallest loc to highest loc
     bool noTags = true;
-    for (i=0; i<kNumLanguages; i++)
-    {
-        int lang = sortedTagLocs[i]; // the language we are extracting
-        if (tagLocs[lang] != -1)
-        {
+    for (auto it = sortedLangs.begin(); it != sortedLangs.end(); ++it) {
+        Language lang = *it; // the language we are extracting
+        if (tagLocs[lang] != -1) {
             noTags = false; // at least one tag was found in the text
-            int startLoc = tagLocs[lang] + tags[lang].size();
-            int endLoc;
-            if (i+1 == kNumLanguages)
+            hsSsize_t startLoc = tagLocs[lang] + tags[lang].size();
+            hsSsize_t endLoc;
+            if (it+1 == sortedLangs.end()) {
                 endLoc = localizedText.size();
-            else
-                endLoc = tagLocs[sortedTagLocs[i+1]];
+            } else {
+                endLoc = tagLocs[it[1]];
+            }
             retVal[lang] = localizedText.substr(startLoc,endLoc-startLoc);
         }
     }
     if (noTags)
-        retVal[0] = localizedText; // if no tags were in the text, we assume it to be English
+        retVal[kEnglish] = localizedText; // if no tags were in the text, we assume it to be English
     return retVal;
 }
