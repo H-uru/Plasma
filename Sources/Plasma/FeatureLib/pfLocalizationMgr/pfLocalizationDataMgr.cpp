@@ -556,7 +556,7 @@ void LocalizationDatabase::IVerifySet(const ST::string &ageName, const ST::strin
     LocalizationXMLFile::set& theSet = fData[ageName][setName];
     LocalizationXMLFile::set::iterator curElement = theSet.begin();
 
-    ST::string defaultLanguage = plLocalization::GetLanguageName((plLocalization::Language)0);
+    ST::string defaultLanguage = plLocalization::GetLanguageName(plLocalization::kEnglish);
 
     while (curElement != theSet.end())
     {
