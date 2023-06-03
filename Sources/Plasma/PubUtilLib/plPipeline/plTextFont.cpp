@@ -154,9 +154,6 @@ uint16_t  *plTextFont::IInitFontTexture()
     FT_UInt freeTypeResolution = 0;
     return nullptr;
 #endif
-    
-    /// Now create the data block
-    uint16_t* data = new uint16_t[fTextureWidth * fTextureHeight]();
 
     ftError = FT_Set_Char_Size(face, 0, fSize * 64, freeTypeResolution, freeTypeResolution);
     FT_Size_Metrics fontMetrics = face->size->metrics;
@@ -170,6 +167,9 @@ uint16_t  *plTextFont::IInitFontTexture()
         fTextureWidth = fTextureHeight = 512;
     else
         fTextureWidth = fTextureHeight = 256;
+
+    /// Now create the data block
+    uint16_t* data = new uint16_t[fTextureWidth * fTextureHeight]();
 
     data[0] = 0xffff;
 
