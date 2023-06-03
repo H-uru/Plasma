@@ -791,11 +791,17 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
                         (LPARAM)plProduct::ProductString().c_str());
 
             for (auto lang : plLocalization::GetAllLanguages()) {
+                ST::string langName = plLocalization::GetLanguageName(lang);
                 if (!plLocalization::IsLanguageUsable(lang)) {
+#if defined(PLASMA_EXTERNAL_RELEASE)
+                    // External clients only allow selecting usable languages.
                     continue;
+#else
+                    // Internal clients allow choosing unsupported languages as well.
+                    langName += ST_LITERAL(" (unsupported)");
+#endif
                 }
-                ST::wchar_buffer languageNameBuf = plLocalization::GetLanguageName(lang).to_wchar();
-                SendMessageW(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)languageNameBuf.c_str());
+                SendMessageW(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)langName.to_wchar().c_str());
             }
             SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_SETCURSEL, (WPARAM)plLocalization::GetLanguage(), 0);
 
