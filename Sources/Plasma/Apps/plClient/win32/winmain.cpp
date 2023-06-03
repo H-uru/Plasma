@@ -944,9 +944,6 @@ INT_PTR CALLBACK SplashDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "Avvio di URU, attendere...");
             break;
             // default is English
-        case plLocalization::kJapanese:
-            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "...");
-            break;
         default:
             ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "Starting URU. Please wait...");
             break;
