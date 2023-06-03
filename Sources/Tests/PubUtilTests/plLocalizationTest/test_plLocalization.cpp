@@ -59,6 +59,10 @@ TEST(plLocalization, LocalToString)
     translations.emplace_back(ST_LITERAL("Italian"));
     translations.emplace_back(ST_LITERAL("Japanese"));
     EXPECT_EQ(ST_LITERAL("$En$English$Fr$French$Ge$German$Sp$Spanish$It$Italian$Ja$Japanese"), plLocalization::LocalToString(translations));
+
+    translations[plLocalization::kGerman].clear();
+    translations[plLocalization::kItalian].clear();
+    EXPECT_EQ(ST_LITERAL("$En$English$Fr$French$Sp$Spanish$Ja$Japanese"), plLocalization::LocalToString(translations));
 }
 
 TEST(plLocalization, StringToLocal)

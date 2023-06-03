@@ -128,6 +128,8 @@ ST::string plLocalization::LocalToString(const std::vector<ST::string>& localize
     for (auto lang : plLocalization::GetAllLanguages()) {
         if (lang >= localizedText.size()) {
             break;
+        } else if (localizedText[lang].empty()) {
+            continue;
         }
         ST::string langName = GetLanguageName(lang);
         ss << '$' << langName.substr(0, 2) << '$' << localizedText[lang];
