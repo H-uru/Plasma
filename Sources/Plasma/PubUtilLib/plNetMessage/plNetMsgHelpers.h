@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCommon/plClientGuid.h"
 
 class plKey;
+class hsRAMStream;
 class hsStream;
 class hsStreamable;
 
@@ -157,7 +158,7 @@ public:
 
     // copiers
     void CopyFrom(const plNetMsgStreamHelper* other);
-    void CopyStream(hsStream* ssStream);            // copies to fStream
+    void CopyStream(hsRAMStream* ssStream); // copies to fStream
     void CopyStream(int32_t len, const void* buf);    // copies to fStream
 
     // setters

@@ -71,7 +71,7 @@ public:
     void      Truncate() override;
 
     uint32_t  GetEOF() override;
-    void    CopyToMem(void* mem) override;
+    void CopyToMem(void* mem);
 
     virtual void    Reset();        // clears the buffers
 

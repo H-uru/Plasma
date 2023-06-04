@@ -64,20 +64,19 @@ public:
 
     virtual bool      Open(const plFileName &, const char * = "rb") = 0;
     virtual bool      Close()=0;
-    virtual bool      AtEnd();
+    virtual bool      AtEnd() = 0;
     virtual uint32_t  Read(uint32_t byteCount, void * buffer) = 0;
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer) = 0;
     virtual void      Skip(uint32_t deltaByteCount) = 0;
     virtual void      Rewind() = 0;
-    virtual void      FastFwd();
+    virtual void      FastFwd() = 0;
     virtual uint32_t  GetPosition() const;
     virtual void      SetPosition(uint32_t position);
-    virtual void      Truncate();
+    virtual void      Truncate() = 0;
     virtual void      Flush() {}
 
-    virtual uint32_t  GetEOF();
+    virtual uint32_t  GetEOF() = 0;
     uint32_t          GetSizeLeft();
-    virtual void      CopyToMem(void* mem);
     virtual bool      IsCompressed() { return false; }
 
     uint32_t        WriteString(const ST::string & string) { return Write((uint32_t)string.size(), string.c_str()); }
@@ -228,10 +227,11 @@ public:
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
+    void FastFwd() override;
     void      Truncate() override;
 
     uint32_t  GetEOF() override;
-    void    CopyToMem(void* mem) override;
+    void CopyToMem(void* mem);
 
     void            Reset();        // clears the buffers
 };
@@ -242,12 +242,15 @@ public:
     bool      Open(const plFileName &, const char *) override { return true; }
     bool      Close() override { return true; }
 
+    bool AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void * buffer) override;  // throws exception
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
+    void FastFwd() override;
     void      Truncate() override;
 
+    uint32_t GetEOF() override { return GetBytesWritten(); }
     uint32_t          GetBytesWritten() const { return fBytesRead; }
     void              Reset( ) { fBytesRead = 0;   }
 };
@@ -270,10 +273,11 @@ public:
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;    // throws exception
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
+    void FastFwd() override;
     void      Truncate() override;
     virtual uint32_t  GetBytesRead() const { return fBytesRead; }
     uint32_t  GetEOF() override { return (uint32_t)(fStop-fStart); }
-    void      CopyToMem(void* mem) override;
+    void CopyToMem(void* mem);
 };
 
 // write only mem stream
@@ -310,8 +314,10 @@ public:
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
     void      FastFwd() override;
+    void Truncate() override;
     bool      AtEnd() override;
 
+    uint32_t GetEOF() override { return fWriteCursor - fReadCursor; }
     uint32_t GetSize() { return fSize; }
     const char* GetQueue() { return fQueue; }
     uint32_t GetReadCursor() { return fReadCursor; }
@@ -352,6 +358,7 @@ public:
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
+    void FastFwd() override;
     void      Truncate() override;
     uint32_t  GetEOF() override;
 

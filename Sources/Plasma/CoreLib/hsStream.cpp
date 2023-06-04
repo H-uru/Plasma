@@ -54,12 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_UNIX
 #include <unistd.h>
 #endif
-//////////////////////////////////////////////////////////////////////////////////
-
-void hsStream::FastFwd()
-{
-    hsThrow("FastFwd unimplemented by subclass of stream");
-}
 
 uint32_t hsStream::GetPosition() const
 {
@@ -72,11 +66,6 @@ void hsStream::SetPosition(uint32_t position)
         return;
     Rewind();
     Skip(position);
-}
-
-void hsStream::Truncate()
-{
-    hsThrow("Truncate unimplemented by subclass of stream");
 }
 
 uint32_t hsStream::GetSizeLeft()
@@ -92,19 +81,6 @@ uint32_t hsStream::GetSizeLeft()
     }
 
     return ret;
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-
-uint32_t hsStream::GetEOF()
-{
-    hsThrow( "GetEOF() unimplemented by subclass of stream");
-    return 0;
-}
-
-void hsStream::CopyToMem(void* mem)
-{
-    hsThrow( "CopyToMem unimplemented by subclass of stream");
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -215,12 +191,6 @@ uint8_t hsStream::ReadByte()
 
     this->Read(sizeof(uint8_t), &value);
     return value;
-}
-
-bool hsStream::AtEnd()
-{
-    hsAssert(0,"No hsStream::AtEnd() implemented for this stream class");
-    return false;
 }
 
 bool hsStream::IsTokenSeparator(char c)
@@ -725,6 +695,12 @@ void hsRAMStream::Rewind()
     fIter.ResetToHead(&fAppender);
 }
 
+void hsRAMStream::FastFwd()
+{
+    fBytesRead = fPosition = GetEOF();
+    fIter.ResetToTail(&fAppender);
+}
+
 void hsRAMStream::Truncate()
 {
     Reset();
@@ -741,6 +717,11 @@ void hsRAMStream::CopyToMem(void* mem)
 }
 
 //////////////////////////////////////////////////////////////////////
+
+bool hsNullStream::AtEnd()
+{
+    return true;
+}
 
 uint32_t hsNullStream::Read(uint32_t byteCount, void * buffer)
 {
@@ -767,6 +748,9 @@ void hsNullStream::Rewind()
     fBytesRead = 0;
     fPosition = 0;
 }
+
+void hsNullStream::FastFwd()
+{}
 
 void hsNullStream::Truncate()
 {
@@ -814,6 +798,12 @@ void hsReadOnlyStream::Rewind()
     fBytesRead = 0;
     fPosition = 0;
     fData = fStart;
+}
+
+void hsReadOnlyStream::FastFwd()
+{
+    fBytesRead = fPosition = GetEOF();
+    fData = fStop;
 }
 
 void hsReadOnlyStream::Truncate()
@@ -944,6 +934,11 @@ void hsQueueStream::Rewind()
 void hsQueueStream::FastFwd()
 {
     fReadCursor = fWriteCursor;
+}
+
+void hsQueueStream::Truncate()
+{
+    fWriteCursor = fReadCursor;
 }
 
 bool hsQueueStream::AtEnd()
@@ -1211,6 +1206,13 @@ void hsBufferedStream::Rewind()
         fBufferLen = 0;
 
     fPosition = 0;
+}
+
+void hsBufferedStream::FastFwd()
+{
+    fseek(fRef, 0, SEEK_END);
+    fBufferLen = 0;
+    fPosition = ftell(fRef);
 }
 
 uint32_t hsBufferedStream::GetEOF()

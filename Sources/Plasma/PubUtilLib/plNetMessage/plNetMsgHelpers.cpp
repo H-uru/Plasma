@@ -240,7 +240,7 @@ void plNetMsgStreamHelper::IAllocStream(uint32_t len)
         fStreamBuf = new uint8_t[len];
 }
 
-void plNetMsgStreamHelper::CopyStream(hsStream* ssStream)
+void plNetMsgStreamHelper::CopyStream(hsRAMStream* ssStream)
 {
     uint32_t len=ssStream->GetEOF();
     IAllocStream(len);

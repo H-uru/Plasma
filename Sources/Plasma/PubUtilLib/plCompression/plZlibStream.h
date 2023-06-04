@@ -79,6 +79,7 @@ public:
     void     Skip(uint32_t deltaByteCount) override;
     void     Rewind() override;
     void     FastFwd() override;
+    void Truncate() override;
     uint32_t GetEOF() override;
 };
 

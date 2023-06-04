@@ -283,6 +283,16 @@ void plEncryptedStream::FastFwd()
     }
 }
 
+void plEncryptedStream::Truncate()
+{
+    if (fOpenMode != kOpenWrite) {
+        hsAssert(false, "Trying to write to a read stream");
+        return;
+    }
+
+    return fRAMStream->Truncate();
+}
+
 uint32_t plEncryptedStream::GetEOF()
 {
     return fActualFileSize;
