@@ -217,11 +217,10 @@ public:
 class hsRAMStream : public hsStream
 {
     std::vector<uint8_t> fVector;
-    uint32_t fEnd; // End of file (one past the last byte)
 
 public:
-    hsRAMStream() : fEnd() {}
-    hsRAMStream(uint32_t chunkSize) : fEnd() { fVector.reserve(chunkSize); };
+    hsRAMStream() {}
+    hsRAMStream(uint32_t chunkSize) { fVector.reserve(chunkSize); }
 
     bool  Open(const plFileName &, const char *) override { hsAssert(0, "hsRAMStream::Open  NotImplemented"); return false; }
     bool  Close() override { return false; }

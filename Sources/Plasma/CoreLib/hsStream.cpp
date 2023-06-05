@@ -631,14 +631,14 @@ uint32_t  plReadOnlySubStream::GetEOF()
 
 bool hsRAMStream::AtEnd()
 {
-    return (fBytesRead >= fEnd);
+    return (fBytesRead >= fVector.size());
 }
 
 uint32_t hsRAMStream::Read(uint32_t byteCount, void * buffer)
 {
-    if (fBytesRead + byteCount > fEnd) {
-//      hsStatusMessageF("Reading past end of hsRAMStream (read %u of %u requested bytes)", fEnd-fBytesRead, byteCount);
-        byteCount = fEnd - fBytesRead;
+    if (fBytesRead + byteCount > fVector.size()) {
+//      hsStatusMessageF("Reading past end of hsRAMStream (read %u of %u requested bytes)", fVector.size() - fBytesRead, byteCount);
+        byteCount = fVector.size() - fBytesRead;
     }
     
     memcpy(buffer, &fVector[fBytesRead], byteCount);
@@ -651,7 +651,7 @@ uint32_t hsRAMStream::Read(uint32_t byteCount, void * buffer)
 
 uint32_t hsRAMStream::Write(uint32_t byteCount, const void* buffer)
 {
-    size_t spaceUntilEof = fEnd - fPosition;
+    size_t spaceUntilEof = fVector.size() - fPosition;
     if (byteCount <= spaceUntilEof) {
         memcpy(fVector.data() + fPosition, buffer, byteCount);
     } else {
@@ -661,10 +661,6 @@ uint32_t hsRAMStream::Write(uint32_t byteCount, const void* buffer)
     }
 
     fPosition += byteCount;
-
-    if (fPosition > fEnd) {
-        fEnd = fPosition;
-    }
 
     return byteCount;
 }
@@ -683,38 +679,35 @@ void hsRAMStream::Rewind()
 
 void hsRAMStream::FastFwd()
 {
-    fBytesRead = fPosition = fEnd;
+    fBytesRead = fPosition = fVector.size();
 }
 
 void hsRAMStream::Truncate()
 {
     fVector.erase(fVector.begin()+fPosition, fVector.end());
-    fEnd = fPosition-1;
 }
 
 uint32_t hsRAMStream::GetEOF()
 {
-    return fEnd;
+    return fVector.size();
 }
 
 void hsRAMStream::CopyToMem(void* mem)
 {
-    memcpy(mem, &fVector[0], fEnd);
+    memcpy(mem, &fVector[0], fVector.size());
 }
 
 void hsRAMStream::Erase(uint32_t bytes)
 {
-    hsAssert(fPosition+bytes <= fEnd, "Erasing past end of stream");
+    hsAssert(fPosition+bytes <= fVector.size(), "Erasing past end of stream");
 
     fVector.erase(fVector.begin()+fPosition, fVector.begin()+fPosition+bytes);
-    fEnd -= bytes;
 }
 
 void hsRAMStream::Reset()
 {
     fBytesRead = 0;
     fPosition = 0;
-    fEnd = 0;
     fVector.clear();
 }
 
