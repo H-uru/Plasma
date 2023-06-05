@@ -54,12 +54,11 @@ enum {
     kComment = '#'
     };
 protected:
-    uint32_t      fBytesRead;
     uint32_t      fPosition;
 
     bool      IsTokenSeparator(char c);
 public:
-                hsStream() : fBytesRead(0), fPosition(0) {}
+    hsStream() : fPosition(0) {}
     virtual     ~hsStream() { }
 
     virtual bool      Open(const plFileName &, const char * = "rb") = 0;
@@ -262,9 +261,8 @@ public:
     void FastFwd() override;
     void      Truncate() override;
 
-    uint32_t GetEOF() override { return GetBytesWritten(); }
-    uint32_t          GetBytesWritten() const { return fBytesRead; }
-    void              Reset( ) { fBytesRead = 0;   }
+    uint32_t GetEOF() override { return fPosition; }
+    void Reset() { fPosition = 0; }
 };
 
 // read only mem stream
@@ -287,7 +285,6 @@ public:
     void      Rewind() override;
     void FastFwd() override;
     void      Truncate() override;
-    virtual uint32_t  GetBytesRead() const { return fBytesRead; }
     uint32_t  GetEOF() override { return (uint32_t)(fStop-fStart); }
     void CopyToMem(void* mem);
 };
@@ -302,8 +299,6 @@ public:
     bool      Close() override { hsAssert(0, "hsWriteOnlyStream::Close  NotImplemented"); return false; }
     uint32_t  Read(uint32_t byteCount, void * buffer) override;  // throws exception
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
-    uint32_t  GetBytesRead() const override { return 0; }
-    virtual uint32_t  GetBytesWritten() const { return fBytesRead; }
 };
 
 // circular queue stream

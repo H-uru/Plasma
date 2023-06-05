@@ -453,7 +453,6 @@ uint32_t hsUNIXStream::Read(uint32_t bytes,  void* buffer)
     if (!fRef || !bytes)
         return 0;
     size_t numItems = ::fread(buffer, 1 /*size*/, bytes /*count*/, fRef);
-    fBytesRead += numItems;
     fPosition += numItems;
     if (numItems < bytes)
     {
@@ -488,7 +487,6 @@ void hsUNIXStream::SetPosition(uint32_t position)
 {
     if (!fRef || (position == fPosition))
         return;
-    fBytesRead = position;
     fPosition = position;
     (void)::fseek(fRef, position, SEEK_SET);
 }
@@ -497,7 +495,6 @@ void hsUNIXStream::Skip(uint32_t delta)
 {
     if (!fRef)
         return;
-    fBytesRead += delta;
     fPosition += delta;
     (void)::fseek(fRef, delta, SEEK_CUR);
 }
@@ -506,7 +503,6 @@ void hsUNIXStream::Rewind()
 {
     if (!fRef)
         return;
-    fBytesRead = 0;
     fPosition = 0;
     (void)::fseek(fRef, 0, SEEK_SET);
 }
@@ -516,7 +512,7 @@ void hsUNIXStream::FastFwd()
     if (!fRef)
         return;
     (void)::fseek(fRef, 0, SEEK_END);
-    fBytesRead = fPosition = ftell(fRef);
+    fPosition = ftell(fRef);
 }
 
 uint32_t  hsUNIXStream::GetEOF()
@@ -631,19 +627,18 @@ uint32_t  plReadOnlySubStream::GetEOF()
 
 bool hsRAMStream::AtEnd()
 {
-    return (fBytesRead >= fVector.size());
+    return (fPosition >= fVector.size());
 }
 
 uint32_t hsRAMStream::Read(uint32_t byteCount, void * buffer)
 {
-    if (fBytesRead + byteCount > fVector.size()) {
-//      hsStatusMessageF("Reading past end of hsRAMStream (read %u of %u requested bytes)", fVector.size() - fBytesRead, byteCount);
-        byteCount = fVector.size() - fBytesRead;
+    if (fPosition + byteCount > fVector.size()) {
+//      hsStatusMessageF("Reading past end of hsRAMStream (read %u of %u requested bytes)", fVector.size() - fPosition, byteCount);
+        byteCount = fVector.size() - fPosition;
     }
     
-    memcpy(buffer, fVector.data() + fBytesRead, byteCount);
+    memcpy(buffer, fVector.data() + fPosition, byteCount);
 
-    fBytesRead += byteCount;
     fPosition += byteCount;
 
     return byteCount;
@@ -667,19 +662,17 @@ uint32_t hsRAMStream::Write(uint32_t byteCount, const void* buffer)
 
 void hsRAMStream::Skip(uint32_t deltaByteCount)
 {
-    fBytesRead += deltaByteCount;
     fPosition += deltaByteCount;
 }
 
 void hsRAMStream::Rewind()
 {
-    fBytesRead = 0;
     fPosition = 0;
 }
 
 void hsRAMStream::FastFwd()
 {
-    fBytesRead = fPosition = fVector.size();
+    fPosition = fVector.size();
 }
 
 void hsRAMStream::Truncate()
@@ -706,7 +699,6 @@ void hsRAMStream::Erase(uint32_t bytes)
 
 void hsRAMStream::Reset()
 {
-    fBytesRead = 0;
     fPosition = 0;
     fVector.clear();
 }
@@ -731,7 +723,6 @@ uint32_t hsNullStream::Read(uint32_t byteCount, void * buffer)
 
 uint32_t hsNullStream::Write(uint32_t byteCount, const void* buffer)
 {
-    fBytesRead += byteCount;
     fPosition += byteCount;
 
     return byteCount;
@@ -739,13 +730,11 @@ uint32_t hsNullStream::Write(uint32_t byteCount, const void* buffer)
 
 void hsNullStream::Skip(uint32_t deltaByteCount)
 {
-    fBytesRead += deltaByteCount;
     fPosition += deltaByteCount;
 }
 
 void hsNullStream::Rewind()
 {
-    fBytesRead = 0;
     fPosition = 0;
 }
 
@@ -773,7 +762,6 @@ uint32_t hsReadOnlyStream::Read(uint32_t byteCount, void* buffer)
 
     memmove(buffer, fData, byteCount);
     fData += byteCount;
-    fBytesRead += byteCount;
     fPosition += byteCount;
     return byteCount;
 }
@@ -786,7 +774,6 @@ uint32_t hsReadOnlyStream::Write(uint32_t byteCount, const void* buffer)
 
 void hsReadOnlyStream::Skip(uint32_t deltaByteCount)
 {
-    fBytesRead += deltaByteCount;
     fPosition += deltaByteCount;
     fData += deltaByteCount;
     if (fData > fStop)
@@ -795,14 +782,13 @@ void hsReadOnlyStream::Skip(uint32_t deltaByteCount)
 
 void hsReadOnlyStream::Rewind()
 {
-    fBytesRead = 0;
     fPosition = 0;
     fData = fStart;
 }
 
 void hsReadOnlyStream::FastFwd()
 {
-    fBytesRead = fPosition = GetEOF();
+    fPosition = GetEOF();
     fData = fStop;
 }
 
@@ -831,7 +817,6 @@ uint32_t hsWriteOnlyStream::Write(uint32_t byteCount, const void* buffer)
         hsThrow("Write past end of stream");
     memmove(fData, buffer, byteCount);
     fData += byteCount;
-    fBytesRead += byteCount;
     fPosition += byteCount;
     return byteCount;
 }

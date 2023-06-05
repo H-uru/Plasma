@@ -196,7 +196,6 @@ uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
     if (!fRef)
         return 0;
     int numItems = (int)(::fread(buffer, 1 /*size*/, bytes /*count*/, fRef));
-    fBytesRead += numItems;
     fPosition += numItems;
     if ((unsigned)numItems < bytes) {
         if (feof(fRef)) {
@@ -246,7 +245,6 @@ void plEncryptedStream::Skip(uint32_t delta)
     }
     else if (fRef)
     {
-        fBytesRead += delta;
         fPosition += delta;
         fseek(fRef, delta, SEEK_CUR);
     }
@@ -261,7 +259,6 @@ void plEncryptedStream::Rewind()
     }
     else if (fRef)
     {
-        fBytesRead = 0;
         fPosition = 0;
         fseek(fRef, kFileStartOffset, SEEK_SET);
     }
@@ -277,7 +274,7 @@ void plEncryptedStream::FastFwd()
     else if (fRef)
     {
         fseek(fRef, kFileStartOffset+fActualFileSize, SEEK_SET);
-        fBytesRead = fPosition = ftell(fRef);
+        fPosition = ftell(fRef);
     }
 }
 
