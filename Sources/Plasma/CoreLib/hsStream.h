@@ -76,7 +76,6 @@ public:
 
     virtual uint32_t  GetEOF() = 0;
     uint32_t          GetSizeLeft();
-    virtual bool      IsCompressed() { return false; }
 
     uint32_t        WriteString(const ST::string & string) { return Write((uint32_t)string.size(), string.c_str()); }
 
