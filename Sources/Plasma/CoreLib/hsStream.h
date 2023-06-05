@@ -43,9 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsStream_Defined
 
 #include "HeadSpin.h"
-#include "hsMemory.h"
 #include "plFileSystem.h"
 #include <string_theory/format>
+#include <vector>
 
 class hsStream {
 public:
@@ -210,13 +210,18 @@ public:
     uint32_t  GetEOF() override;
 };
 
-class hsRAMStream : public hsStream {
-    hsAppender          fAppender;
-    hsAppenderIterator  fIter;
+//
+// In-memory only
+// Erase function lets you cut a chunk out of the middle of the stream
+//
+class hsRAMStream : public hsStream
+{
+    std::vector<uint8_t> fVector;
+    uint32_t fEnd; // End of file (one past the last byte)
+
 public:
-                hsRAMStream();
-                hsRAMStream(uint32_t chunkSize);
-    virtual     ~hsRAMStream();
+    hsRAMStream() : fEnd() {}
+    hsRAMStream(uint32_t chunkSize) : fEnd() { fVector.reserve(chunkSize); };
 
     bool  Open(const plFileName &, const char *) override { hsAssert(0, "hsRAMStream::Open  NotImplemented"); return false; }
     bool  Close() override { return false; }
@@ -234,6 +239,14 @@ public:
     void CopyToMem(void* mem);
 
     void            Reset();        // clears the buffers
+
+    // Erase number of bytes at the current position
+    void Erase(uint32_t bytes);
+    // A pointer to the beginning of the data in the stream.  This is only valid
+    // until someone modifies the stream.
+    const void* GetData();
+    // In case you want to try and be efficient with your memory allocations
+    void Reserve(uint32_t bytes) { fVector.reserve(bytes); }
 };
 
 class hsNullStream : public hsStream {

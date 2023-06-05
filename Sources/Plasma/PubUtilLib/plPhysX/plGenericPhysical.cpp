@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 #include "hsQuat.h"
 #include "hsResMgr.h"
-#include "hsSTLStream.h"
 #include "hsTimer.h"
 
 #include "pnMessage/plCorrectionMsg.h"

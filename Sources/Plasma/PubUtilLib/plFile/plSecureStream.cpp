@@ -45,8 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSecureStream.h"
 #include "hsWindows.h"
 
-#include "hsSTLStream.h"
-
 #if !HS_BUILD_FOR_WIN32
 #include <errno.h>
 #define INVALID_HANDLE_VALUE nullptr
@@ -219,7 +217,7 @@ bool plSecureStream::Open(const plFileName& name, const char* mode)
     }
     else if (strcmp(mode, "wb") == 0)
     {
-        fRAMStream = new hsVectorStream;
+        fRAMStream = new hsRAMStream;
         fWriteFileName = name;
         fPosition = 0;
 
@@ -338,7 +336,7 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
 
 void plSecureStream::IBufferFile()
 {
-    fRAMStream = new hsVectorStream;
+    fRAMStream = new hsRAMStream;
     char buf[1024];
     while (!AtEnd())
     {

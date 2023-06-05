@@ -12,7 +12,6 @@ set(CoreLib_SOURCES
     hsMemory.cpp
     hsQuat.cpp
     hsRefCnt.cpp
-    hsSTLStream.cpp
     hsStream.cpp
     hsStringTokenizer.cpp
     hsSystemInfo.cpp
@@ -55,7 +54,6 @@ set(CoreLib_HEADERS
     hsQuat.h
     hsRefCnt.h
     hsSIMD.h
-    hsSTLStream.h
     hsStream.h
     hsStringTokenizer.h
     hsSystemInfo.h

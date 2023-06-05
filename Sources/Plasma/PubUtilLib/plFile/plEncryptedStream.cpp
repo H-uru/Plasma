@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plEncryptedStream.h"
 
-#include "hsSTLStream.h"
-
 #include <ctime>
 #include <wchar.h>
 #include <algorithm>
@@ -147,7 +145,7 @@ bool plEncryptedStream::Open(const plFileName& name, const char* mode)
     }
     else if (strcmp(mode, "wb") == 0)
     {
-        fRAMStream = new hsVectorStream;
+        fRAMStream = new hsRAMStream;
         fWriteFileName = name;
         fPosition = 0;
 
@@ -216,7 +214,7 @@ uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
 
 void plEncryptedStream::IBufferFile()
 {
-    fRAMStream = new hsVectorStream;
+    fRAMStream = new hsRAMStream;
     char buf[1024];
     while (!AtEnd())
     {

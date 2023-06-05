@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 #include "hsExceptions.h"
-#include "hsMemory.h"
 
 #include <cctype>
 #if HS_BUILD_FOR_WIN32
@@ -630,90 +629,105 @@ uint32_t  plReadOnlySubStream::GetEOF()
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-#define kRAMStreamChunkSize     1024
-
-hsRAMStream::hsRAMStream() : fAppender(1, kRAMStreamChunkSize)
-{
-    fIter.ResetToHead(&fAppender);
-}
-
-hsRAMStream::hsRAMStream(uint32_t chunkSize) : fAppender(1, chunkSize)
-{
-    fIter.ResetToHead(&fAppender);
-}
-
-hsRAMStream::~hsRAMStream()
-{
-}
-
-void hsRAMStream::Reset()
-{
-    fBytesRead = 0;
-    fPosition = 0;
-
-    fAppender.Reset();
-    fIter.ResetToHead(&fAppender);
-}
-
 bool hsRAMStream::AtEnd()
 {
-    return (fBytesRead >= fAppender.Count() * fAppender.ElemSize());
+    return (fBytesRead >= fEnd);
 }
 
 uint32_t hsRAMStream::Read(uint32_t byteCount, void * buffer)
 {
-    if (fBytesRead + byteCount > fAppender.Count() * fAppender.ElemSize())
-        byteCount = (fAppender.Count() * fAppender.ElemSize()) - fBytesRead;
+    if (fBytesRead + byteCount > fEnd) {
+//      hsStatusMessageF("Reading past end of hsRAMStream (read %u of %u requested bytes)", fEnd-fBytesRead, byteCount);
+        byteCount = fEnd - fBytesRead;
+    }
+    
+    memcpy(buffer, &fVector[fBytesRead], byteCount);
 
     fBytesRead += byteCount;
     fPosition += byteCount;
-
-    fIter.Next(byteCount, buffer);
 
     return byteCount;
 }
 
 uint32_t hsRAMStream::Write(uint32_t byteCount, const void* buffer)
 {
+    if (fPosition == fVector.size()) {
+        // If we are at the end of the vector, we can just do a block insert of the data
+        fVector.insert(fVector.end(), (uint8_t *)buffer, (uint8_t *)buffer + byteCount);
+    } else {
+        // If we are in the middle, I don't know how to just overwrite a block of the vector.
+        // So, we make sure there is enough space and copy the elements one by one
+        fVector.reserve(fPosition+byteCount);
+        for (uint32_t i = 0; i < byteCount; i++) {
+            fVector[fPosition + i] = ((uint8_t *)buffer)[i];
+        }
+    }
+
     fPosition += byteCount;
 
-    fAppender.PushTail(byteCount, buffer);
+    if (fPosition > fEnd) {
+        fEnd = fPosition;
+    }
 
     return byteCount;
 }
 
 void hsRAMStream::Skip(uint32_t deltaByteCount)
 {
+    fBytesRead += deltaByteCount;
     fPosition += deltaByteCount;
-    fIter.Next(deltaByteCount, nullptr);
 }
 
 void hsRAMStream::Rewind()
 {
     fBytesRead = 0;
     fPosition = 0;
-    fIter.ResetToHead(&fAppender);
 }
 
 void hsRAMStream::FastFwd()
 {
-    fBytesRead = fPosition = GetEOF();
-    fIter.ResetToTail(&fAppender);
+    fBytesRead = fPosition = fEnd;
 }
 
 void hsRAMStream::Truncate()
 {
-    Reset();
+    fVector.erase(fVector.begin()+fPosition, fVector.end());
+    fEnd = fPosition-1;
 }
 
 uint32_t hsRAMStream::GetEOF()
 {
-    return fAppender.Count() * fAppender.ElemSize();
+    return fEnd;
 }
 
 void hsRAMStream::CopyToMem(void* mem)
 {
-    (void)fAppender.CopyInto(mem);
+    memcpy(mem, &fVector[0], fEnd);
+}
+
+void hsRAMStream::Erase(uint32_t bytes)
+{
+    hsAssert(fPosition+bytes <= fEnd, "Erasing past end of stream");
+
+    fVector.erase(fVector.begin()+fPosition, fVector.begin()+fPosition+bytes);
+    fEnd -= bytes;
+}
+
+void hsRAMStream::Reset()
+{
+    fBytesRead = 0;
+    fPosition = 0;
+    fEnd = 0;
+    fVector.clear();
+}
+
+const void *hsRAMStream::GetData()
+{
+    if (fVector.size() > 0) {
+        return &fVector[0];
+    } else {
+        return nullptr;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
