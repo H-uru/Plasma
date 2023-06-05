@@ -651,16 +651,13 @@ uint32_t hsRAMStream::Read(uint32_t byteCount, void * buffer)
 
 uint32_t hsRAMStream::Write(uint32_t byteCount, const void* buffer)
 {
-    if (fPosition == fVector.size()) {
-        // If we are at the end of the vector, we can just do a block insert of the data
-        fVector.insert(fVector.end(), (uint8_t *)buffer, (uint8_t *)buffer + byteCount);
+    size_t spaceUntilEof = fEnd - fPosition;
+    if (byteCount <= spaceUntilEof) {
+        memcpy(fVector.data() + fPosition, buffer, byteCount);
     } else {
-        // If we are in the middle, I don't know how to just overwrite a block of the vector.
-        // So, we make sure there is enough space and copy the elements one by one
-        fVector.reserve(fPosition+byteCount);
-        for (uint32_t i = 0; i < byteCount; i++) {
-            fVector[fPosition + i] = ((uint8_t *)buffer)[i];
-        }
+        memcpy(fVector.data() + fPosition, buffer, spaceUntilEof);
+        auto buf = static_cast<const uint8_t*>(buffer);
+        fVector.insert(fVector.end(), buf + spaceUntilEof, buf + byteCount);
     }
 
     fPosition += byteCount;
