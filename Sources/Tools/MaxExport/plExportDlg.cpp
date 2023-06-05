@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/MaxAPI.h"
 
 #include <set>
-#include <string>
+#include <string_theory/format>
 #include <vector>
 
 #include "plExportDlg.h"
@@ -413,7 +413,7 @@ static bool AutoExportDir(const plFileName& inputDir, const plFileName& outputDi
         hsUNIXStream log;
         if (log.Open(outputLog, "ab"))
         {
-            log.WriteFmt("{}\r\n", iter->GetFileName());
+            log.WriteString(ST::format("{}\r\n", iter->GetFileName()));
             log.Close();
         }
 

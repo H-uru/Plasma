@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <io.h>
 #endif
 #include <algorithm>
+#include <string_theory/format>
 
 #if HS_BUILD_FOR_UNIX
 #include <unistd.h>
@@ -1016,10 +1017,10 @@ bool hsBufferedStream::Close()
     if (fBufferReadIn + fReadDirect > 0)
         wasted -= int((float(fBufferReadOut+fReadDirect) / float(fBufferReadIn+fReadDirect)) * 100.f);
 
-    s.WriteFmt("{},{},{},{},{},{},{},{}\n",
+    s.WriteString(ST::format("{},{},{},{},{},{},{},{}\n",
         fFilename, fBufferHits, fBufferMisses, fBufferReadIn, fBufferReadOut, fReadDirect,
         wasted,
-        fCloseReason ? fCloseReason : "Unknown");
+        fCloseReason ? fCloseReason : "Unknown"));
 
     s.Close();
 #endif // LOG_BUFFERED

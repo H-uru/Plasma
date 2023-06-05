@@ -44,7 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plFileSystem.h"
-#include <string_theory/format>
+
+#include <string_theory/string>
 #include <vector>
 
 class hsStream {
@@ -78,9 +79,6 @@ public:
     uint32_t          GetSizeLeft();
 
     uint32_t        WriteString(const ST::string & string) { return Write((uint32_t)string.size(), string.c_str()); }
-
-    template        <typename... _Args>
-    uint32_t        WriteFmt(const char * fmt, _Args&&... args) { return WriteString(ST::format(fmt, std::forward<_Args>(args)...)); }
 
     uint32_t        WriteSafeString(const ST::string &string);
     uint32_t        WriteSafeWString(const ST::string &string);

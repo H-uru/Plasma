@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // For class names
 #include "plCreatableStrings.h"
 
+#include <string_theory/format>
 
 static plFactory*   theFactory = nullptr;
 

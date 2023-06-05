@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <functional>
 #include <algorithm>
 #include <cmath>
-
+#include <string_theory/format>
 
 const uint32_t    plAgePage::kInvalidSeqSuffix = (uint32_t)-1;
 
