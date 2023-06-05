@@ -9,7 +9,6 @@ set(CoreLib_SOURCES
     hsGeometry3.cpp
     hsMatrix33.cpp
     hsMatrix44.cpp
-    hsMemory.cpp
     hsQuat.cpp
     hsRefCnt.cpp
     hsStream.cpp
@@ -48,7 +47,6 @@ set(CoreLib_HEADERS
     hsLockGuard.h
     hsMatrix44.h
     hsMatrixMath.h
-    hsMemory.h
     hsPoint2.h
     hsPoolVector.h
     hsQuat.h
