@@ -641,7 +641,7 @@ uint32_t hsRAMStream::Read(uint32_t byteCount, void * buffer)
         byteCount = fVector.size() - fBytesRead;
     }
     
-    memcpy(buffer, &fVector[fBytesRead], byteCount);
+    memcpy(buffer, fVector.data() + fBytesRead, byteCount);
 
     fBytesRead += byteCount;
     fPosition += byteCount;
@@ -684,7 +684,7 @@ void hsRAMStream::FastFwd()
 
 void hsRAMStream::Truncate()
 {
-    fVector.erase(fVector.begin()+fPosition, fVector.end());
+    fVector.resize(fPosition);
 }
 
 uint32_t hsRAMStream::GetEOF()
@@ -694,7 +694,7 @@ uint32_t hsRAMStream::GetEOF()
 
 void hsRAMStream::CopyToMem(void* mem)
 {
-    memcpy(mem, &fVector[0], fVector.size());
+    memcpy(mem, fVector.data(), fVector.size());
 }
 
 void hsRAMStream::Erase(uint32_t bytes)
@@ -713,11 +713,7 @@ void hsRAMStream::Reset()
 
 const void *hsRAMStream::GetData()
 {
-    if (fVector.size() > 0) {
-        return &fVector[0];
-    } else {
-        return nullptr;
-    }
+    return fVector.data();
 }
 
 //////////////////////////////////////////////////////////////////////
