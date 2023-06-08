@@ -153,10 +153,9 @@ public:
 class hsUNIXStream: public hsStream
 {   
     FILE*       fRef;
-    char*       fBuff;
 
 public:
-    hsUNIXStream(): fRef(), fBuff() { }
+    hsUNIXStream() : fRef() {}
     ~hsUNIXStream();
     bool  Open(const plFileName& name, const char* mode = "rb") override;
     bool  Close() override;

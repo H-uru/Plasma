@@ -443,8 +443,6 @@ bool hsUNIXStream::Close()
     if (fRef)
         rtn = fclose(fRef);
     fRef = nullptr;
-    delete [] fBuff;
-    fBuff = nullptr;
 
     return !rtn;
 }
