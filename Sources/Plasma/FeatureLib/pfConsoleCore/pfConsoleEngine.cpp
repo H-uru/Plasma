@@ -268,12 +268,10 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
         {
             fErrorMsg = ST::format("Error in console file {}, command line {}: {}",
                      fileName.AsString(), line, fErrorMsg);
-            stream->Close();
             delete stream;
             return false;
         }
     }
-    stream->Close();
     delete stream;
     fLastErrorLine.clear();
 

@@ -200,7 +200,6 @@ void    plInitFileReader::Close()
 
     if( fStream == fOurStream )
     {
-        fStream->Close();
         delete fOurStream;
         fOurStream = nullptr;
     }

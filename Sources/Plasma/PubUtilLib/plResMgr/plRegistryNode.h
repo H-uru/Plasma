@@ -43,11 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plRegistryNode_h_inc
 
 #include "HeadSpin.h"
-#include "hsStream.h"
+#include "plFileSystem.h"
 #include "plPageInfo.h"
 
 #include <map>
 
+class hsStream;
 class plRegistryKeyList;
 class plKeyImp;
 class plRegistryKeyIterator;
@@ -78,12 +79,12 @@ protected:
     plFileName  fPath;          // Path to the page file
     plPageInfo  fPageInfo;      // Info about this page
 
-    hsBufferedStream fStream;   // Stream for reading/writing our page
+    hsBufferedStream* fStream; // Stream for reading/writing our page
     uint8_t fOpenRequests;        // How many handles there are to fStream (or
                                 // zero if it's closed)
     bool fIsNewPage;          // True if this page is new (not read off disk)
 
-    plRegistryPageNode() {}
+    plRegistryPageNode();
 
     plRegistryKeyList* IGetKeyList(uint16_t classType) const;
     PageCond IVerify();

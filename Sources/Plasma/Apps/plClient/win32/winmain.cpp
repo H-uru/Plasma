@@ -874,7 +874,6 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
                         ST::string ini_str = ST::format("App.SetLanguage {}\n", plLocalization::GetLanguageName(new_language));
                         hsStream* gini = plEncryptedStream::OpenEncryptedFileWrite(gipath);
                         gini->WriteString(ini_str);
-                        gini->Close();
                         delete gini;
                     }
 

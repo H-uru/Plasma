@@ -88,7 +88,6 @@ public:
     plEncryptedStream& operator=(plEncryptedStream&& other) = delete;
 
     bool    Open(const plFileName& name, const char* mode = "rb") override;
-    bool    Close() override;
 
     uint32_t  Read(uint32_t byteCount, void* buffer) override;
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;

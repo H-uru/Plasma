@@ -820,7 +820,6 @@ bool plClient::MsgReceive(plMessage* msg)
             char buf[256];
             sprintf(buf, "%s %d\n", plAgeLoader::GetInstance()->GetCurrAgeFilename(), fNumPostLoadMsgs);
             s.WriteString(buf);
-            s.Close();
             #endif
 #endif
         }
@@ -2023,9 +2022,6 @@ void plClient::IDetectAudioVideoSettings()
 
     plPipeline::fDefaultPipeParams.VSync = false;
 
-    int val = 0;
-    hsStream *stream = nullptr;
-    hsUNIXStream s;
     plFileName audioIniFile = plFileName::Join(plFileSystem::GetInitPath(), "audio.ini");
     plFileName graphicsIniFile = plFileName::Join(plFileSystem::GetInitPath(), "graphics.ini");
 
@@ -2038,15 +2034,11 @@ void plClient::IDetectAudioVideoSettings()
 #endif
 
     //check to see if audio.ini exists
-    if (s.Open(audioIniFile))
-        s.Close();
-    else
+    if (!plFileInfo(audioIniFile).Exists())
         IWriteDefaultAudioSettings(audioIniFile);
 
     // check to see if graphics.ini exists
-    if (s.Open(graphicsIniFile))
-        s.Close();
-    else
+    if (!plFileInfo(graphicsIniFile).Exists())
         IWriteDefaultGraphicsSettings(graphicsIniFile);
 }
 
@@ -2063,9 +2055,7 @@ void plClient::IWriteDefaultAudioSettings(const plFileName& destFile)
     WriteInt(stream, "Audio.SetChannelVolume NPCVoice", 1);
     WriteInt(stream, "Audio.EnableVoiceRecording", 1);
     WriteInt(stream, "Audio.EnableSubtitles", true);
-    stream->Close();
     delete stream;
-    stream = nullptr;
 }
 
 void plClient::IWriteDefaultGraphicsSettings(const plFileName& destFile)
@@ -2083,9 +2073,7 @@ void plClient::IWriteDefaultGraphicsSettings(const plFileName& destFile)
     WriteInt(stream, "Graphics.Shadow.Enable", plPipeline::fDefaultPipeParams.Shadows);
     WriteInt(stream, "Graphics.EnablePlanarReflections", plPipeline::fDefaultPipeParams.PlanarReflections);
     WriteBool(stream, "Graphics.EnableVSync", plPipeline::fDefaultPipeParams.VSync);
-    stream->Close();
     delete stream;
-    stream = nullptr;
 }
 
 

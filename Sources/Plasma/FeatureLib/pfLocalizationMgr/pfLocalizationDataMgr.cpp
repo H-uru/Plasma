@@ -393,7 +393,6 @@ bool LocalizationXMLFile::Parse(const plFileName& fileName)
 
     XML_ParserFree(fParser);
     fParser = nullptr;
-    xmlStream->Close();
     delete xmlStream;
     return true;
 }
@@ -903,7 +902,6 @@ void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const ST::st
         // now spit the results out to the file
         hsStream *xmlStream = plEncryptedStream::OpenEncryptedFileWrite(filename);
         xmlStream->Write(fileData.size(), fileData.raw_buffer());
-        xmlStream->Close();
         delete xmlStream;
     }
 }

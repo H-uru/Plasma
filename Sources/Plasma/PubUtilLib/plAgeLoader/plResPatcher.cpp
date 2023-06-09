@@ -111,7 +111,6 @@ bool plResPatcher::OnGameCodeDiscovered(const plFileName& file, hsStream* stream
         plStreamSource::GetInstance()->InsertFile(file, ss);
 
         // SecureStream will hold a decrypted buffer...
-        stream->Close();
         delete stream;
     } else
         plStreamSource::GetInstance()->InsertFile(file, stream);

@@ -145,10 +145,6 @@ bool pyStream::WriteLines(const std::vector<ST::string> & lines)
 
 void pyStream::Close()
 {
-    if (fStream)
-    {
-        fStream->Close();
-        delete fStream;
-    }
+    delete fStream;
     fStream = nullptr;
 }

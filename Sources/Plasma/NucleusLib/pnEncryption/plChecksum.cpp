@@ -168,7 +168,6 @@ void plMD5Checksum::CalcFromFile(const plFileName& fileName)
     if (s.Open(fileName))
     {
         CalcFromStream(&s);
-        s.Close();
     }
 }
 
@@ -310,7 +309,6 @@ void plSHAChecksum::CalcFromFile(const plFileName& fileName)
     if (s.Open(fileName))
     {
         CalcFromStream(&s);
-        s.Close();
     }
 }
 
@@ -463,7 +461,6 @@ void plSHA1Checksum::CalcFromFile(const plFileName& fileName)
     if (s.Open(fileName))
     {
         CalcFromStream(&s);
-        s.Close();
     }
 }
 

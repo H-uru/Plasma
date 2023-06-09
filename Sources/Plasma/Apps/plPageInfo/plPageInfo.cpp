@@ -211,7 +211,7 @@ class plStatDumpIterator : public plRegistryPageIterator, public plRegistryKeyIt
 {
 protected:
     plFileName fOutputDir;
-    hsUNIXStream fStream;
+    hsUNIXStream* fStream;
 
 public:
     plStatDumpIterator(const plFileName& outputDir) : fOutputDir(outputDir) {}
@@ -220,16 +220,16 @@ public:
     {
         const plKeyImp* imp = plKeyImp::GetFromKey(key);
 
-        fStream.WriteString(key->GetName());
-        fStream.WriteString(",");
+        fStream->WriteString(key->GetName());
+        fStream->WriteString(",");
 
-        fStream.WriteString(plFactory::GetNameOfClass(key->GetUoid().GetClassType()));
-        fStream.WriteString(",");
+        fStream->WriteString(plFactory::GetNameOfClass(key->GetUoid().GetClassType()));
+        fStream->WriteString(",");
 
         char buf[30];
         sprintf(buf, "%u", imp->GetDataLen());
-        fStream.WriteString(buf);
-        fStream.WriteString("\n");
+        fStream->WriteString(buf);
+        fStream->WriteString("\n");
 
         return true;
     }
@@ -240,12 +240,13 @@ public:
 
         plFileName fileName = plFileName::Join(fOutputDir,
                 ST::format("{}_{}.csv", info.GetAge(), info.GetPage()));
-        fStream.Open(fileName, "wt");
+        fStream = new hsUNIXStream;
+        fStream->Open(fileName, "wt");
 
         page->LoadKeys();
         page->IterateKeys(this);
 
-        fStream.Close();
+        delete fStream;
 
         return true;
     }

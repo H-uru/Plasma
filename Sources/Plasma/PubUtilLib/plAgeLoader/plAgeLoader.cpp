@@ -241,7 +241,6 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
     plAgeDescription ad;
     ad.Read(stream);
     ad.SetAgeName(fAgeName);
-    stream->Close();
     delete stream;
     ad.SeekFirstPage();
     
@@ -418,7 +417,6 @@ void plAgeLoader::ExecPendingAgeCsvFiles()
         if (stream)
         {
             plRelevanceMgr::Instance()->ParseCsvInput(stream);
-            stream->Close();
             delete stream;
         }
     }

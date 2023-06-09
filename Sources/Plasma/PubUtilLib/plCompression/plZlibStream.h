@@ -60,6 +60,8 @@ protected:
     plFileName fFilename;
     const char* fMode;
 
+    void Close();
+
 public:
     plZlibStream() : fOutput(), fZStream(), fErrorOccurred(), fDecompressedOk(), fMode() { }
     plZlibStream(const plZlibStream& other) = delete;
@@ -70,7 +72,6 @@ public:
     plZlibStream& operator=(plZlibStream&& other) = delete;
 
     bool     Open(const plFileName& filename, const char* mode) override;
-    bool     Close() override;
     uint32_t Write(uint32_t byteCount, const void* buffer) override;
 
     // Since most functions don't check the return value from Write, you can

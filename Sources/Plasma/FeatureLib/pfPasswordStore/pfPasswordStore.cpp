@@ -104,7 +104,6 @@ ST::string pfFilePasswordStore::GetPassword(const ST::string& username)
             }
         }
 
-        stream->Close();
         delete stream;
     }
 
@@ -130,7 +129,6 @@ bool pfFilePasswordStore::SetPassword(const ST::string& username, const ST::stri
         stream->WriteSafeString(username);
         stream->WriteSafeString(password);
 
-        stream->Close();
         delete stream;
 
         return true;

@@ -63,7 +63,6 @@ void plStreamSource::ICleanup()
     decltype(fFileData.begin()) curData;
     for (curData = fFileData.begin(); curData != fFileData.end(); curData++)
     {
-        curData->second.fStream->Close();
         delete curData->second.fStream;
         curData->second.fStream = nullptr;
     }

@@ -388,7 +388,6 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
 {
     pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
     pfPatcherStream* stream = static_cast<pfPatcherStream*>(writer);
-    stream->Close();
 
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded File '{}'", stream->GetFileName());
@@ -427,7 +426,6 @@ pfPatcherWorker::~pfPatcherWorker()
         hsLockGuard(fRequestMut);
         std::for_each(fRequests.begin(), fRequests.end(),
             [] (const Request& req) {
-                if (req.fStream) req.fStream->Close();
                 delete req.fStream;
             }
         );
@@ -636,9 +634,8 @@ void pfPatcherWorker::WhitelistFile(const plFileName& file, bool justDownloaded,
             if (!fGameCodeDiscovered(file, stream))
                 EndPatch(kNetErrInternalError, "SecurePreloader failed.");
         }
-    } else if (stream) {
+    } else {
         // no dad gum memory leaks, m'kay?
-        stream->Close();
         delete stream;
     }
 }

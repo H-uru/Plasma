@@ -71,6 +71,16 @@ plEncryptedStream::plEncryptedStream(uint32_t* key) :
 
 plEncryptedStream::~plEncryptedStream()
 {
+    if (fOpenMode == kOpenWrite) {
+        fRAMStream->Rewind();
+        IWriteEncypted(fRAMStream, fWriteFileName);
+    }
+
+    if (fRef) {
+        fclose(fRef);
+    }
+
+    delete fRAMStream;
 }
 
 //
@@ -160,35 +170,6 @@ bool plEncryptedStream::Open(const plFileName& name, const char* mode)
         fOpenMode = kOpenFail;
         return false;
     }
-}
-
-bool plEncryptedStream::Close()
-{
-    int rtn = false;
-
-    if (fOpenMode == kOpenWrite)
-    {
-        fRAMStream->Rewind();
-        rtn = IWriteEncypted(fRAMStream, fWriteFileName);
-    }
-    if (fRef)
-    {
-        rtn = (fclose(fRef) == 0);
-        fRef = nullptr;
-    }
-
-    if (fRAMStream)
-    {
-        delete fRAMStream;
-        fRAMStream = nullptr;
-    }
-
-    fWriteFileName = ST::string();
-    fActualFileSize = 0;
-    fBufferedStream = false;
-    fOpenMode = kOpenFail;
-
-    return rtn;
 }
 
 uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
@@ -422,30 +403,27 @@ bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const plFileName&
     outputStream.Skip(kMagicStringLen);
     outputStream.WriteLE32(actualSize);
 
-    outputStream.Close();
-
     return true;
 }
 
 bool plEncryptedStream::FileEncrypt(const plFileName& fileName)
 {
-    hsUNIXStream sIn;
-    if (!sIn.Open(fileName))
-        return false;
-
-    // Don't double encrypt any files
-    if (ICheckMagicString(sIn.GetFILE()))
+    bool wroteEncrypted;
     {
-        sIn.Close();
-        return true;
+        hsUNIXStream sIn;
+        if (!sIn.Open(fileName))
+            return false;
+
+        // Don't double encrypt any files
+        if (ICheckMagicString(sIn.GetFILE()))
+        {
+            return true;
+        }
+        sIn.Rewind();
+
+        plEncryptedStream sOut;
+        wroteEncrypted = sOut.IWriteEncypted(&sIn, "crypt.dat");
     }
-    sIn.Rewind();
-
-    plEncryptedStream sOut;
-    bool wroteEncrypted = sOut.IWriteEncypted(&sIn, "crypt.dat");
-
-    sIn.Close();
-    sOut.Close();
 
     if (wroteEncrypted)
     {
@@ -458,27 +436,25 @@ bool plEncryptedStream::FileEncrypt(const plFileName& fileName)
 
 bool plEncryptedStream::FileDecrypt(const plFileName& fileName)
 {
-    plEncryptedStream sIn;
-    if (!sIn.Open(fileName))
-        return false;
-
-    hsUNIXStream sOut;
-    if (!sOut.Open("crypt.dat", "wb"))
     {
-        sIn.Close();
-        return false;
+        plEncryptedStream sIn;
+        if (!sIn.Open(fileName))
+            return false;
+
+        hsUNIXStream sOut;
+        if (!sOut.Open("crypt.dat", "wb"))
+        {
+            return false;
+        }
+
+        char buf[1024];
+
+        while (!sIn.AtEnd())
+        {
+            uint32_t numRead = sIn.Read(sizeof(buf), buf);
+            sOut.Write(numRead, buf);
+        }
     }
-
-    char buf[1024];
-
-    while (!sIn.AtEnd())
-    {
-        uint32_t numRead = sIn.Read(sizeof(buf), buf);
-        sOut.Write(numRead, buf);
-    }
-
-    sIn.Close();
-    sOut.Close();
 
     plFileSystem::Unlink(fileName);
     plFileSystem::Move("crypt.dat", fileName);

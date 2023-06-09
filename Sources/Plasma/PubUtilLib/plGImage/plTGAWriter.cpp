@@ -105,8 +105,5 @@ void    plTGAWriter::WriteMipmap( const char *fileName, plMipmap *mipmap )
             stream.WriteByte( pixel.r );
         }
     }
-
-    /// All done!
-    stream.Close();
 }
 

@@ -414,7 +414,6 @@ static bool AutoExportDir(const plFileName& inputDir, const plFileName& outputDi
         if (log.Open(outputLog, "ab"))
         {
             log.WriteString(ST::format("{}\r\n", iter->GetFileName()));
-            log.Close();
         }
 
         if (GetCOREInterface()->LoadFromFile(ST2M(iter->AsString())))
@@ -442,7 +441,6 @@ static void ShutdownMax()
     {
         hsUNIXStream s;
         s.Open("log\\AutoExportDone.txt", "wb");
-        s.Close();
     }
     GetCOREInterface()->FlushUndoBuffer();
     SetSaveRequiredFlag(FALSE);

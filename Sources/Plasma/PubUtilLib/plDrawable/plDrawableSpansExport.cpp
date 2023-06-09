@@ -184,7 +184,6 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
         char buf[256];
         sprintf(buf, "Drawable Span: %s, GroupNum: %u\r\n", GetKeyName().c_str(), i);
         log.WriteString(buf);
-        log.Close();
 #endif
         fGroups[ i ]->Write( s );
     }

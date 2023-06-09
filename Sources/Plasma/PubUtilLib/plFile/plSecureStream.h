@@ -100,7 +100,6 @@ public:
 
     bool Open(const plFileName& name, const char* mode = "rb") override;
     bool Open(hsStream* stream);
-    bool Close() override;
 
     uint32_t Read(uint32_t byteCount, void* buffer) override;
     uint32_t Write(uint32_t byteCount, const void* buffer) override;

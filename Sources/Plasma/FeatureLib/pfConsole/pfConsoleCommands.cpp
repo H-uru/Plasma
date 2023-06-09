@@ -5297,8 +5297,6 @@ PF_CONSOLE_CMD( Age, GetElapsedDays, "string agedefnfile", "Gets the elapsed day
     age.Read(&s);
 
     PrintString(ST::format("ElapsedTime: {f} Days", age.GetAgeElapsedDays(plUnifiedTime::GetCurrent())));
-
-    s.Close();
 }
 
 PF_CONSOLE_CMD( Age, GetTimeOfDay, "string agedefnfile", "Gets the elapsed days and fractions" )
@@ -5314,8 +5312,6 @@ PF_CONSOLE_CMD( Age, GetTimeOfDay, "string agedefnfile", "Gets the elapsed days 
     age.Read(&s);
 
     PrintString(ST::format("TimeOfDay: {f} percent", age.GetAgeTimeOfDayPercent(plUnifiedTime::GetCurrent())));
-
-    s.Close();
 }
 
 PF_CONSOLE_CMD( Age, SetSDLFloat, "string varName, float value, int index", "Set the value of an age global variable" )

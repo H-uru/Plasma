@@ -3043,9 +3043,6 @@ void    plEAXListenerComponent::SetCustFile( const MCHAR* path )
         hsAssert( false, "Couldn't find all of the keywords in the settings file. Oh well" );
     }
 
-    // All done!
-    presetFile.Close();
-
     // Update our helper reminder string
     _tsplitpath(path, nullptr, nullptr, file, nullptr);
     fCompPB->SetValue( (ParamID)kRefCustFile, 0, file );

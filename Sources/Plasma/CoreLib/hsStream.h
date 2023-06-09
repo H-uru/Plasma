@@ -63,7 +63,6 @@ public:
     virtual     ~hsStream() { }
 
     virtual bool      Open(const plFileName &, const char * = "rb") = 0;
-    virtual bool      Close()=0;
     virtual bool      AtEnd() = 0;
     virtual uint32_t  Read(uint32_t byteCount, void * buffer) = 0;
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer) = 0;
@@ -164,7 +163,6 @@ public:
     hsUNIXStream& operator=(hsUNIXStream&& other) = delete;
 
     bool  Open(const plFileName& name, const char* mode = "rb") override;
-    bool  Close() override;
 
     bool      AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void* buffer) override;
@@ -195,11 +193,9 @@ class plReadOnlySubStream: public hsStream
 
 public:
     plReadOnlySubStream() : fBase(), fOffset(), fLength() { }
-    ~plReadOnlySubStream();
 
     bool      Open(const plFileName &, const char *) override { hsAssert(0, "plReadOnlySubStream::Open  NotImplemented"); return false; }
     void      Open( hsStream *base, uint32_t offset, uint32_t length );
-    bool      Close() override { fBase = nullptr; fOffset = 0; fLength = 0; return true; }
     bool      AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void* buffer) override;
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
@@ -224,9 +220,7 @@ public:
     hsRAMStream(uint32_t chunkSize) { fVector.reserve(chunkSize); }
 
     bool  Open(const plFileName &, const char *) override { hsAssert(0, "hsRAMStream::Open  NotImplemented"); return false; }
-    bool  Close() override { return false; }
 
-    
     bool      AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void * buffer) override;
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
@@ -253,7 +247,6 @@ class hsNullStream : public hsStream {
 public:
 
     bool      Open(const plFileName &, const char *) override { return true; }
-    bool      Close() override { return true; }
 
     bool AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void * buffer) override;  // throws exception
@@ -279,7 +272,6 @@ public:
 
     virtual void      Init(int size, const void* data) { fStart=((char*)data); fData=((char*)data); fStop=((char*)data + size); }
     bool      Open(const plFileName &, const char *) override { hsAssert(0, "hsReadOnlyStream::Open  NotImplemented"); return false; }
-    bool      Close() override { hsAssert(0, "hsReadOnlyStream::Close  NotImplemented"); return false; }
     bool      AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void * buffer) override;
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;    // throws exception
@@ -303,7 +295,6 @@ public:
     hsWriteOnlyStream& operator=(hsWriteOnlyStream&& other) = delete;
 
     bool      Open(const plFileName &, const char *) override { hsAssert(0, "hsWriteOnlyStream::Open  NotImplemented"); return false; }
-    bool      Close() override { hsAssert(0, "hsWriteOnlyStream::Close  NotImplemented"); return false; }
     uint32_t  Read(uint32_t byteCount, void * buffer) override;  // throws exception
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
 };
@@ -326,7 +317,6 @@ public:
     hsQueueStream& operator=(hsQueueStream&& other) = delete;
 
     bool  Open(const plFileName &, const char *) override { hsAssert(0, "hsQueueStream::Open  NotImplemented"); return false; }
-    bool  Close() override { hsAssert(0, "hsQueueStream::Close  NotImplemented"); return false; }
 
     uint32_t  Read(uint32_t byteCount, void * buffer) override;
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
@@ -369,13 +359,12 @@ public:
     hsBufferedStream();
     hsBufferedStream(const hsBufferedStream& other) = delete;
     hsBufferedStream(hsBufferedStream&& other) = delete;
-    virtual ~hsBufferedStream() { }
+    ~hsBufferedStream();
 
     const hsBufferedStream& operator=(const hsBufferedStream& other) = delete;
     hsBufferedStream& operator=(hsBufferedStream&& other) = delete;
 
     bool  Open(const plFileName& name, const char* mode = "rb") override;
-    bool  Close() override;
 
     bool      AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void* buffer) override;

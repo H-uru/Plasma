@@ -1347,7 +1347,6 @@ plUoid plNetClientMgr::GetAgeSDLObjectUoid(const ST::string& ageName) const
                 plAgeDescription ad;
                 ad.Read(stream);
                 loc=ad.CalcPageLocation("BuiltIn");
-                stream->Close();
             }           
             delete stream;
         }

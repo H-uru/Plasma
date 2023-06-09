@@ -528,11 +528,6 @@ void    plGBufferGroup::Write( hsStream *s )
         for (const plGBufferCell& cell : fCells[i])
             cell.Write(s);
     }
-
-#ifdef VERT_LOG
-    log.Close();
-#endif
-    // All done!
 }
 
 ///////////////////////////////////////////////////////////////////////////////

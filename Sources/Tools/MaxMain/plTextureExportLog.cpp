@@ -232,7 +232,6 @@ void    plTextureExportLog::Write()
         stream->WriteString( "\n" );
     }
 
-    stream->Close();
     delete stream;
 
     // HACK: Prevent the destructor from writing out now

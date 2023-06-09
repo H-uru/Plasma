@@ -70,11 +70,7 @@ plNetClientStreamRecorder::plNetClientStreamRecorder(TimeWrapper* timeWrapper) :
 
 plNetClientStreamRecorder::~plNetClientStreamRecorder()
 {
-    if (fRecordStream)
-    {
-        fRecordStream->Close();
-        delete fRecordStream;
-    }
+    delete fRecordStream;
 }
 
 hsResMgr* plNetClientStreamRecorder::GetResMgr()
@@ -238,7 +234,6 @@ plNetMessage* plNetClientStreamRecorder::IGetNextMessage()
         // If this was the last message, stop playing back
         if (fRecordStream->AtEnd())
         {
-            fRecordStream->Close();
             delete fRecordStream;
             fRecordStream = nullptr;
         }

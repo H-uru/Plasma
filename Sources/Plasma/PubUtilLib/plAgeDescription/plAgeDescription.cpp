@@ -171,7 +171,6 @@ bool plAgeDescription::ReadFromFile( const plFileName &fileNameToReadFrom )
         return false;
 
     Read( stream );
-    stream->Close();
     delete stream;
 
     SetAgeNameFromPath( fileNameToReadFrom );
