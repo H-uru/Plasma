@@ -91,7 +91,12 @@ protected:
 public:
     plSecureStream(bool deleteOnExit = false, uint32_t* key = nullptr); // uses default key if you don't pass one in
     plSecureStream(hsStream* base, uint32_t* key = nullptr);
+    plSecureStream(const plSecureStream& other) = delete;
+    plSecureStream(plSecureStream&& other) = delete;
     ~plSecureStream();
+
+    const plSecureStream& operator=(const plSecureStream& other) = delete;
+    plSecureStream& operator=(plSecureStream&& other) = delete;
 
     bool Open(const plFileName& name, const char* mode = "rb") override;
     bool Open(hsStream* stream);

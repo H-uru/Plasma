@@ -62,7 +62,12 @@ protected:
 
 public:
     plZlibStream() : fOutput(), fZStream(), fErrorOccurred(), fDecompressedOk(), fMode() { }
+    plZlibStream(const plZlibStream& other) = delete;
+    plZlibStream(plZlibStream&& other) = delete;
     virtual ~plZlibStream();
+
+    const plZlibStream& operator=(const plZlibStream& other) = delete;
+    plZlibStream& operator=(plZlibStream&& other) = delete;
 
     bool     Open(const plFileName& filename, const char* mode) override;
     bool     Close() override;

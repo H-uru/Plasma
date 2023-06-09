@@ -80,7 +80,12 @@ protected:
 public:
     // If you don't pass in a key (4 uint32_t's), the default one will be used
     plEncryptedStream(uint32_t* key=nullptr);
+    plEncryptedStream(const plEncryptedStream& other) = delete;
+    plEncryptedStream(plEncryptedStream&& other) = delete;
     ~plEncryptedStream();
+
+    const plEncryptedStream& operator=(const plEncryptedStream& other) = delete;
+    plEncryptedStream& operator=(plEncryptedStream&& other) = delete;
 
     bool    Open(const plFileName& name, const char* mode = "rb") override;
     bool    Close() override;

@@ -156,7 +156,13 @@ class hsUNIXStream: public hsStream
 
 public:
     hsUNIXStream() : fRef() {}
+    hsUNIXStream(const hsUNIXStream& other) = delete;
+    hsUNIXStream(hsUNIXStream&& other) = delete;
     ~hsUNIXStream();
+
+    const hsUNIXStream& operator=(const hsUNIXStream& other) = delete;
+    hsUNIXStream& operator=(hsUNIXStream&& other) = delete;
+
     bool  Open(const plFileName& name, const char* mode = "rb") override;
     bool  Close() override;
 
@@ -290,6 +296,11 @@ class hsWriteOnlyStream : public hsReadOnlyStream {
 public:
     hsWriteOnlyStream(int size, const void* data) : hsReadOnlyStream(size, data) {}
     hsWriteOnlyStream() {}
+    hsWriteOnlyStream(const hsWriteOnlyStream& other) = delete;
+    hsWriteOnlyStream(hsWriteOnlyStream&& other) = delete;
+
+    const hsWriteOnlyStream& operator=(const hsWriteOnlyStream& other) = delete;
+    hsWriteOnlyStream& operator=(hsWriteOnlyStream&& other) = delete;
 
     bool      Open(const plFileName &, const char *) override { hsAssert(0, "hsWriteOnlyStream::Open  NotImplemented"); return false; }
     bool      Close() override { hsAssert(0, "hsWriteOnlyStream::Close  NotImplemented"); return false; }
@@ -307,7 +318,12 @@ private:
     
 public:
     hsQueueStream(int32_t size);
+    hsQueueStream(const hsQueueStream& other) = delete;
+    hsQueueStream(hsQueueStream&& other) = delete;
     ~hsQueueStream();
+
+    const hsQueueStream& operator=(const hsQueueStream& other) = delete;
+    hsQueueStream& operator=(hsQueueStream&& other) = delete;
 
     bool  Open(const plFileName &, const char *) override { hsAssert(0, "hsQueueStream::Open  NotImplemented"); return false; }
     bool  Close() override { hsAssert(0, "hsQueueStream::Close  NotImplemented"); return false; }
@@ -351,7 +367,12 @@ class hsBufferedStream : public hsStream
 
 public:
     hsBufferedStream();
+    hsBufferedStream(const hsBufferedStream& other) = delete;
+    hsBufferedStream(hsBufferedStream&& other) = delete;
     virtual ~hsBufferedStream() { }
+
+    const hsBufferedStream& operator=(const hsBufferedStream& other) = delete;
+    hsBufferedStream& operator=(hsBufferedStream&& other) = delete;
 
     bool  Open(const plFileName& name, const char* mode = "rb") override;
     bool  Close() override;
