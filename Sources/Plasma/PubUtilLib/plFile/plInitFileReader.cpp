@@ -79,19 +79,21 @@ void    plInitFileReader::IInitReaders( plInitSectionReader **readerArray )
 }
 
 plInitFileReader::plInitFileReader( plInitSectionReader **readerArray, uint16_t lineSize )
+    : fOurStream()
 {
     fCurrLine = nullptr;
     fLineSize = lineSize;
-    fStream = fOurStream = nullptr;
+    fStream = nullptr;
     IInitReaders( readerArray );
     fUnhandledSection = nullptr;
 }
 
 plInitFileReader::plInitFileReader( const char *fileName, plInitSectionReader **readerArray, uint16_t lineSize )
+    : fOurStream()
 {
     fCurrLine = nullptr;
     fLineSize = lineSize;
-    fStream = fOurStream = nullptr;
+    fStream = nullptr;
     IInitReaders( readerArray );
     if( !Open( fileName ) )
         hsAssert( false, "Constructor open for plInitFileReader failed!" );
@@ -99,10 +101,11 @@ plInitFileReader::plInitFileReader( const char *fileName, plInitSectionReader **
 }
 
 plInitFileReader::plInitFileReader( hsStream *stream, plInitSectionReader **readerArray, uint16_t lineSize )
+    : fOurStream()
 {
     fCurrLine = nullptr;
     fLineSize = lineSize;
-    fStream = fOurStream = nullptr;
+    fStream = nullptr;
     IInitReaders( readerArray );
     if( !Open( stream ) )
         hsAssert( false, "Constructor open for plInitFileReader failed!" );
@@ -111,7 +114,6 @@ plInitFileReader::plInitFileReader( hsStream *stream, plInitSectionReader **read
 
 plInitFileReader::~plInitFileReader()
 {
-    Close();
     delete [] fCurrLine;
 }
 
@@ -128,7 +130,7 @@ bool    plInitFileReader::Open( const char *fileName )
     if (fOurStream == nullptr)
         return false;
 
-    fStream = fOurStream;
+    fStream = fOurStream.get();
 
     return true;
 }
@@ -192,18 +194,3 @@ bool    plInitFileReader::Parse( uint32_t userData )
 
     return true;
 }
-
-void    plInitFileReader::Close()
-{
-    if (fStream == nullptr)
-        return;
-
-    if( fStream == fOurStream )
-    {
-        delete fOurStream;
-        fOurStream = nullptr;
-    }
-
-    fStream = nullptr;
-}
-

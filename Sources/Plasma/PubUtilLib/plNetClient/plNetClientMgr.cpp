@@ -1341,14 +1341,13 @@ plUoid plNetClientMgr::GetAgeSDLObjectUoid(const ST::string& ageName) const
         if (!loc.IsValid())
         {
             // try to load age desc
-            hsStream* stream=plAgeLoader::GetAgeDescFileStream(ageName);
+            std::unique_ptr<hsStream> stream = plAgeLoader::GetAgeDescFileStream(ageName);
             if (stream)
             {
                 plAgeDescription ad;
-                ad.Read(stream);
+                ad.Read(stream.get());
                 loc=ad.CalcPageLocation("BuiltIn");
-            }           
-            delete stream;
+            }
         }
     }
 

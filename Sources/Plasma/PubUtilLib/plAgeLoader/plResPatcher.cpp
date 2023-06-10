@@ -106,14 +106,14 @@ void plResPatcher::OnFileDownloaded(const plFileName& file)
 
 bool plResPatcher::OnGameCodeDiscovered(const plFileName& file, hsStream* stream)
 {
-    plSecureStream* ss = new plSecureStream(false, plStreamSource::GetInstance()->GetEncryptionKey());
+    auto ss = std::make_unique<plSecureStream>(false, plStreamSource::GetInstance()->GetEncryptionKey());
     if (ss->Open(stream)) {
-        plStreamSource::GetInstance()->InsertFile(file, ss);
+        plStreamSource::GetInstance()->InsertFile(file, std::move(ss));
 
         // SecureStream will hold a decrypted buffer...
         delete stream;
     } else
-        plStreamSource::GetInstance()->InsertFile(file, stream);
+        plStreamSource::GetInstance()->InsertFile(file, std::unique_ptr<hsStream>(stream));
 
     return true; // ASSume success for now...
 }

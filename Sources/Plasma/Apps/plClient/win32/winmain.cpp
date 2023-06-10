@@ -872,9 +872,8 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
                     {
                         plFileName gipath = plFileName::Join(plFileSystem::GetInitPath(), "general.ini");
                         ST::string ini_str = ST::format("App.SetLanguage {}\n", plLocalization::GetLanguageName(new_language));
-                        hsStream* gini = plEncryptedStream::OpenEncryptedFileWrite(gipath);
+                        std::unique_ptr<hsStream> gini = plEncryptedStream::OpenEncryptedFileWrite(gipath);
                         gini->WriteString(ini_str);
-                        delete gini;
                     }
 
                     memset(&pLoginParam->authError, 0, sizeof(pLoginParam->authError));

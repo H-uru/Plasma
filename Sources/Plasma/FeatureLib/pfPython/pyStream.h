@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
 
+#include <memory>
 #include <vector>
 
 class hsStream;
@@ -61,14 +62,12 @@ namespace ST { class string; }
 class pyStream
 {
 private:
-    hsStream*   fStream;
+    std::unique_ptr<hsStream> fStream;
 
 protected:
     pyStream();
 
 public:
-    ~pyStream();
-
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptStream);
     PYTHON_CLASS_NEW_DEFINITION;

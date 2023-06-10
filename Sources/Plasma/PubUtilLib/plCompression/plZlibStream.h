@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
+#include <memory>
+
 //
 // This is for reading a .gz file from a buffer, and writing the uncompressed data to a file.
 // Call open with the name of the uncompressed file, then call write with the compressed data.
@@ -51,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plZlibStream : public hsStream
 {
 protected:
-    hsStream* fOutput;
+    std::unique_ptr<hsStream> fOutput;
     void* fZStream;
     bool fErrorOccurred;
     bool fDecompressedOk;

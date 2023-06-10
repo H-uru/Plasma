@@ -90,7 +90,7 @@ ST::string pfFilePasswordStore::GetPassword(const ST::string& username)
         loginDat = local;
 #endif
 
-    hsStream* stream = plEncryptedStream::OpenEncryptedFile(loginDat, fCryptKey);
+    std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(loginDat, fCryptKey);
     if (stream && !stream->AtEnd())
     {
         uint32_t savedKey[4];
@@ -103,8 +103,6 @@ ST::string pfFilePasswordStore::GetPassword(const ST::string& username)
                 password = stream->ReadSafeString();
             }
         }
-
-        delete stream;
     }
 
     return password;
@@ -122,14 +120,12 @@ bool pfFilePasswordStore::SetPassword(const ST::string& username, const ST::stri
         loginDat = local;
 #endif
 
-    hsStream* stream = plEncryptedStream::OpenEncryptedFileWrite(loginDat, fCryptKey);
+    std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFileWrite(loginDat, fCryptKey);
     if (stream)
     {
         stream->Write(sizeof(fCryptKey), fCryptKey);
         stream->WriteSafeString(username);
         stream->WriteSafeString(password);
-
-        delete stream;
 
         return true;
     }

@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plStreamSource_h_inc
 
 #include <map>
+#include <memory>
 #include <mutex>
 #include "hsStream.h"
 
@@ -57,7 +58,7 @@ private:
         plFileName      fFilename; // includes path
         plFileName      fDir; // parent directory
         ST::string      fExt;
-        hsStream*       fStream; // we own this pointer, so clean it up
+        std::unique_ptr<hsStream> fStream;
     };
     std::map<plFileName, fileData, plFileName::less_i> fFileData; // key is filename
     std::mutex fMutex;
@@ -77,7 +78,7 @@ public:
     std::vector<plFileName> GetListOfNames(const plFileName& dir, const ST::string& ext); // internal builds merge from disk
 
     // For other classes to insert files (takes ownership of the stream if successful)
-    bool InsertFile(const plFileName& filename, hsStream* stream);
+    bool InsertFile(const plFileName& filename, std::unique_ptr<hsStream>&& stream);
 
     /** Gets a pointer to our encryption key */
     uint32_t* GetEncryptionKey() { return fServerKey; }

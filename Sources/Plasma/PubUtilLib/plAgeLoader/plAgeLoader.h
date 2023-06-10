@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <memory>
+
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "plAgeDescription/plAgeDescription.h"
 
@@ -97,7 +99,7 @@ public:
 
     static plAgeLoader* GetInstance();
     static void SetInstance(plAgeLoader* inst);
-    static hsStream* GetAgeDescFileStream(const ST::string& ageName);
+    static std::unique_ptr<hsStream> GetAgeDescFileStream(const ST::string& ageName);
 
     void Init();
     void Shutdown();

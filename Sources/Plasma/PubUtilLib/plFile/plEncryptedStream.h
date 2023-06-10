@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
+#include <memory>
+
 //
 // Encrypt a large file by running FileEncrypt on it.  Small files can be done
 // in the usual way, but they will be in memory until Close is called.  Files
@@ -59,7 +61,7 @@ protected:
 
     bool fBufferedStream;
 
-    hsStream* fRAMStream;
+    std::unique_ptr<hsStream> fRAMStream;
 
     plFileName fWriteFileName;
 
@@ -106,10 +108,9 @@ public:
     static bool IsEncryptedFile(const plFileName& fileName);
 
     // Attempts to create a read-binary stream for the requested file.  If it's
-    // encrypted, you'll get a plEncryptedStream, otherwise just a standard
-    // hsUNIXStream.  Remember to delete the stream when you're done with it.
-    static hsStream* OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey = nullptr);
-    static hsStream* OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey = nullptr);
+    // encrypted, you'll get a plEncryptedStream, otherwise just a standard hsUNIXStream.
+    static std::unique_ptr<hsStream> OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey = nullptr);
+    static std::unique_ptr<hsStream> OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey = nullptr);
 };
 
 #endif // plEncryptedStream_h_inc

@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEncryptedStream.h"
 #include "hsLockGuard.h"
 
+#include <utility>
+
 #if HS_BUILD_FOR_UNIX
 #    include <wctype.h>
 #endif
@@ -58,15 +60,6 @@ plStreamSource::plStreamSource()
 void plStreamSource::ICleanup()
 {
     hsLockGuard(fMutex);
-
-    // loop through all the file data records, and delete the streams
-    decltype(fFileData.begin()) curData;
-    for (curData = fFileData.begin(); curData != fFileData.end(); curData++)
-    {
-        delete curData->second.fStream;
-        curData->second.fStream = nullptr;
-    }
-
     fFileData.clear();
 }
 
@@ -87,25 +80,25 @@ hsStream* plStreamSource::GetFile(const plFileName& filename)
             fFileData[sFilename].fExt = sFilename.GetFileExt();
             if (plSecureStream::IsSecureFile(filename))
             {
-                hsStream* ss = nullptr;
+                std::unique_ptr<hsStream> ss;
 
                 uint32_t encryptionKey[4];
                 if (plSecureStream::GetSecureEncryptionKey(filename, encryptionKey, 4))
                     ss = plSecureStream::OpenSecureFile(filename, 0, encryptionKey);
                 else
                     ss = plSecureStream::OpenSecureFile(filename, 0, fServerKey);
-                fFileData[sFilename].fStream = ss;
                 hsAssert(ss, "failed to open a SecureStream for a disc file!");
+                fFileData[sFilename].fStream = std::move(ss);
             }
             else // otherwise it is an encrypted or plain stream, this call handles both
                 fFileData[sFilename].fStream = plEncryptedStream::OpenEncryptedFile(filename);
 
-            return fFileData[sFilename].fStream;
+            return fFileData[sFilename].fStream.get();
         }
 #endif // PLASMA_EXTERNAL_RELEASE
         return nullptr;
     }
-    return fFileData[sFilename].fStream;
+    return fFileData[sFilename].fStream.get();
 }
 
 std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, const ST::string& ext)
@@ -138,7 +131,7 @@ std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, co
     return retVal;
 }
 
-bool plStreamSource::InsertFile(const plFileName& filename, hsStream* stream)
+bool plStreamSource::InsertFile(const plFileName& filename, std::unique_ptr<hsStream>&& stream)
 {
     plFileName sFilename = filename.Normalize('/');
 
@@ -150,7 +143,7 @@ bool plStreamSource::InsertFile(const plFileName& filename, hsStream* stream)
     fFileData[sFilename].fFilename = sFilename;
     fFileData[sFilename].fDir = sFilename.StripFileName();
     fFileData[sFilename].fExt = sFilename.GetFileExt();
-    fFileData[sFilename].fStream = stream;
+    fFileData[sFilename].fStream = std::move(stream);
 
     return true;
 }

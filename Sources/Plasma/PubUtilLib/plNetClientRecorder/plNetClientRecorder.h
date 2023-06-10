@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <memory>
+
 class hsStream;
 class plNetMessage;
 class plStatusLog;
@@ -114,7 +116,7 @@ public:
 class plNetClientStreamRecorder : public plNetClientLoggingRecorder
 {
 protected:
-    hsStream* fRecordStream;
+    std::unique_ptr<hsStream> fRecordStream;
 
     hsResMgr* fResMgr;
 

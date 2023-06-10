@@ -559,16 +559,20 @@ void plMipmap::IWriteJPEGImage( hsStream *stream )
     plMipmap *alpha = ISplitAlpha();
     uint8_t flags = 0;
 
-    hsNullStream *nullStream = new hsNullStream();
-    IWriteRLEImage(nullStream,this);
-    if (nullStream->GetPosition() < 5120) // we use RLE if it can get the image size under 5k, otherwise we use JPEG
-        flags |= kColorDataRLE;
-    delete nullStream;
-    nullStream = new hsNullStream();
-    IWriteRLEImage(nullStream,alpha);
-    if (nullStream->GetPosition() < 5120)
-        flags |= kAlphaDataRLE;
-    delete nullStream;
+    {
+        hsNullStream nullStream;
+        IWriteRLEImage(&nullStream, this);
+        if (nullStream.GetPosition() < 5120) // we use RLE if it can get the image size under 5k, otherwise we use JPEG
+            flags |= kColorDataRLE;
+    }
+
+    {
+        hsNullStream nullStream;
+        IWriteRLEImage(&nullStream, alpha);
+        if (nullStream.GetPosition() < 5120)
+            flags |= kAlphaDataRLE;
+    }
+
     stream->WriteByte(flags);
 
     if (flags & kColorDataRLE)

@@ -132,15 +132,14 @@ hsStream* plRegistryPageNode::OpenStream()
     if (fOpenRequests == 0)
     {
         hsAssert(fStream == nullptr, "plRegistryPageNode::fStream should be nullptr when not open!");
-        hsBufferedStream* stream = new hsBufferedStream;
+        auto stream = std::make_unique<hsBufferedStream>();
         if (!stream->Open(fPath, "rb")) {
-            delete stream;
             return nullptr;
         }
-        fStream = stream;
+        fStream = std::move(stream);
     }
     fOpenRequests++;
-    return fStream;
+    return fStream.get();
 }
 
 void plRegistryPageNode::CloseStream()
@@ -149,8 +148,7 @@ void plRegistryPageNode::CloseStream()
         fOpenRequests--;
 
     if (fOpenRequests == 0) {
-        delete fStream;
-        fStream = nullptr;
+        fStream.reset();
     }
 }
 

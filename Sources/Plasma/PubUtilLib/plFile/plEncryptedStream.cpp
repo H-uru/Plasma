@@ -73,14 +73,12 @@ plEncryptedStream::~plEncryptedStream()
 {
     if (fOpenMode == kOpenWrite) {
         fRAMStream->Rewind();
-        IWriteEncypted(fRAMStream, fWriteFileName);
+        IWriteEncypted(fRAMStream.get(), fWriteFileName);
     }
 
     if (fRef) {
         fclose(fRef);
     }
-
-    delete fRAMStream;
 }
 
 //
@@ -155,7 +153,7 @@ bool plEncryptedStream::Open(const plFileName& name, const char* mode)
     }
     else if (strcmp(mode, "wb") == 0)
     {
-        fRAMStream = new hsRAMStream;
+        fRAMStream = std::make_unique<hsRAMStream>();
         fWriteFileName = name;
         fPosition = 0;
 
@@ -194,7 +192,7 @@ uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
 
 void plEncryptedStream::IBufferFile()
 {
-    fRAMStream = new hsRAMStream;
+    fRAMStream = std::make_unique<hsRAMStream>();
     char buf[1024];
     while (!AtEnd())
     {
@@ -483,28 +481,28 @@ bool plEncryptedStream::IsEncryptedFile(const plFileName& fileName)
     return isEncrypted;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey)
+std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey)
 {
 
     bool isEncrypted = IsEncryptedFile(fileName);
 
-    hsStream* s = nullptr;
+    std::unique_ptr<hsStream> s;
     if (isEncrypted)
-        s = new plEncryptedStream(cryptKey);
+        s = std::make_unique<plEncryptedStream>(cryptKey);
     else
-        s = new hsUNIXStream;
+        s = std::make_unique<hsUNIXStream>();
 
     s->Open(fileName, "rb");
     return s;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey)
+std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey)
 {
-    hsStream* s = nullptr;
+    std::unique_ptr<hsStream> s;
     if (IsEncryptedFile(fileName))
-        s = new plEncryptedStream(cryptKey);
+        s = std::make_unique<plEncryptedStream>(cryptKey);
     else
-        s = new hsUNIXStream;
+        s = std::make_unique<hsUNIXStream>();
 
     s->Open(fileName, "wb");
     return s;

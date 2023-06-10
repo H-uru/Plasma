@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsTimer.h"
 
+#include <memory>
 #include <string_theory/format>
 
 #include "pnKeyedObject/plKeyImp.h"
@@ -211,7 +212,7 @@ class plStatDumpIterator : public plRegistryPageIterator, public plRegistryKeyIt
 {
 protected:
     plFileName fOutputDir;
-    hsUNIXStream* fStream;
+    std::unique_ptr<hsStream> fStream;
 
 public:
     plStatDumpIterator(const plFileName& outputDir) : fOutputDir(outputDir) {}
@@ -240,13 +241,13 @@ public:
 
         plFileName fileName = plFileName::Join(fOutputDir,
                 ST::format("{}_{}.csv", info.GetAge(), info.GetPage()));
-        fStream = new hsUNIXStream;
+        fStream = std::make_unique<hsUNIXStream>();
         fStream->Open(fileName, "wt");
 
         page->LoadKeys();
         page->IterateKeys(this);
 
-        delete fStream;
+        fStream.reset();
 
         return true;
     }

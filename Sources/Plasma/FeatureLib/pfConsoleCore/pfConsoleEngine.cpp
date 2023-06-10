@@ -246,7 +246,7 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 {
     int     line;
 
-    hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileName);
+    std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(fileName);
 
     if( !stream )
     {
@@ -268,11 +268,9 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
         {
             fErrorMsg = ST::format("Error in console file {}, command line {}: {}",
                      fileName.AsString(), line, fErrorMsg);
-            delete stream;
             return false;
         }
     }
-    delete stream;
     fLastErrorLine.clear();
 
     return true;

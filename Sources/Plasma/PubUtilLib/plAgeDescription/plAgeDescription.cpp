@@ -166,12 +166,11 @@ bool plAgeDescription::ReadFromFile( const plFileName &fileNameToReadFrom )
 {
     IInit();
 
-    hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileNameToReadFrom);
+    std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(fileNameToReadFrom);
     if( !stream )
         return false;
 
-    Read( stream );
-    delete stream;
+    Read(stream.get());
 
     SetAgeNameFromPath( fileNameToReadFrom );
     return true;
@@ -401,7 +400,6 @@ void plAgeDescription::Read(hsStream* stream)
     }
     
     reader.Parse();
-    reader.Close();
 }
 
 //

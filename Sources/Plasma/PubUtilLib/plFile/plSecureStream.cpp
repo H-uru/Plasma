@@ -97,7 +97,7 @@ plSecureStream::~plSecureStream()
 {
     if (fOpenMode == kOpenWrite) {
         fRAMStream->Rewind();
-        IWriteEncrypted(fRAMStream, fWriteFileName);
+        IWriteEncrypted(fRAMStream.get(), fWriteFileName);
     }
 
     if (fRef != INVALID_HANDLE_VALUE) {
@@ -107,8 +107,6 @@ plSecureStream::~plSecureStream()
         fclose(fRef);
 #endif
     }
-
-    delete fRAMStream;
 }
 
 //
@@ -231,7 +229,7 @@ bool plSecureStream::Open(const plFileName& name, const char* mode)
     }
     else if (strcmp(mode, "wb") == 0)
     {
-        fRAMStream = new hsRAMStream;
+        fRAMStream = std::make_unique<hsRAMStream>();
         fWriteFileName = name;
         fPosition = 0;
 
@@ -257,7 +255,7 @@ bool plSecureStream::Open(hsStream* stream)
 
     fActualFileSize = stream->ReadLE32();
     uint32_t trimSize = kMagicStringLen + sizeof(uint32_t) + fActualFileSize;
-    fRAMStream = new hsRAMStream;
+    fRAMStream = std::make_unique<hsRAMStream>();
     while (!stream->AtEnd())
     {
         // Don't write out any garbage
@@ -316,7 +314,7 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
 
 void plSecureStream::IBufferFile()
 {
-    fRAMStream = new hsRAMStream;
+    fRAMStream = std::make_unique<hsRAMStream>();
     char buf[1024];
     while (!AtEnd())
     {
@@ -650,30 +648,30 @@ bool plSecureStream::IsSecureFile(const plFileName& fileName)
     return isEncrypted;
 }
 
-hsStream* plSecureStream::OpenSecureFile(const plFileName& fileName, const uint32_t flags /* = kRequireEncryption */, uint32_t* key /* = nullptr */)
+std::unique_ptr<hsStream> plSecureStream::OpenSecureFile(const plFileName& fileName, const uint32_t flags /* = kRequireEncryption */, uint32_t* key /* = nullptr */)
 {
     bool requireEncryption = flags & kRequireEncryption;
     bool deleteOnExit = flags & kDeleteOnExit;
     bool isEncrypted = IsSecureFile(fileName);
 
-    hsStream* s = nullptr;
+    std::unique_ptr<hsStream> s;
     if (isEncrypted)
-        s = new plSecureStream(deleteOnExit, key);
+        s = std::make_unique<plSecureStream>(deleteOnExit, key);
     else if (!requireEncryption)
-        s = new hsUNIXStream;
+        s = std::make_unique<hsUNIXStream>();
 
     if (s)
         s->Open(fileName, "rb");
     return s;
 }
 
-hsStream* plSecureStream::OpenSecureFileWrite(const plFileName& fileName, uint32_t* key /* = nullptr */)
+std::unique_ptr<hsStream> plSecureStream::OpenSecureFileWrite(const plFileName& fileName, uint32_t* key /* = nullptr */)
 {
-    hsStream* s = nullptr;
+    std::unique_ptr<hsStream> s;
 #ifdef PLASMA_EXTERNAL_RELEASE
-    s = new plSecureStream(false, key);
+    s = std::make_unique<plSecureStream>(false, key);
 #else
-    s = new hsUNIXStream;
+    s = std::make_unique<hsUNIXStream>();
 #endif
 
     s->Open(fileName, "wb");

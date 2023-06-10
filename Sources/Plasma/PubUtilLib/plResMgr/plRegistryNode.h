@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPageInfo.h"
 
 #include <map>
+#include <memory>
 
 class hsStream;
 class plRegistryKeyList;
@@ -79,7 +80,7 @@ protected:
     plFileName  fPath;          // Path to the page file
     plPageInfo  fPageInfo;      // Info about this page
 
-    hsBufferedStream* fStream; // Stream for reading/writing our page
+    std::unique_ptr<hsStream> fStream; // Stream for reading/writing our page
     uint8_t fOpenRequests;        // How many handles there are to fStream (or
                                 // zero if it's closed)
     bool fIsNewPage;          // True if this page is new (not read off disk)

@@ -230,7 +230,7 @@ public:
         : fParent(parent), fFilename(filename), fFlags(), fBytesWritten(), fDLStartTime(), plZlibStream()
     {
         fParent->fTotalBytes += size;
-        fOutput = new hsRAMStream;
+        fOutput = std::make_unique<hsRAMStream>();
     }
 
     pfPatcherStream(pfPatcherWorker* parent, const pfPatcherQueuedFile& file)

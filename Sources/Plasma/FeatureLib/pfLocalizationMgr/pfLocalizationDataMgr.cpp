@@ -365,7 +365,7 @@ bool LocalizationXMLFile::Parse(const plFileName& fileName)
     XML_SetCharacterDataHandler(fParser, HandleData);
     XML_SetUserData(fParser, (void*)this);
 
-    hsStream *xmlStream = plEncryptedStream::OpenEncryptedFile(fileName);
+    std::unique_ptr<hsStream> xmlStream = plEncryptedStream::OpenEncryptedFile(fileName);
     if (!xmlStream)
     {
         pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: Can't open file stream for {}", fileName);
@@ -393,7 +393,6 @@ bool LocalizationXMLFile::Parse(const plFileName& fileName)
 
     XML_ParserFree(fParser);
     fParser = nullptr;
-    delete xmlStream;
     return true;
 }
 
@@ -900,9 +899,8 @@ void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const ST::st
     if (weWroteData)
     {
         // now spit the results out to the file
-        hsStream *xmlStream = plEncryptedStream::OpenEncryptedFileWrite(filename);
+        std::unique_ptr<hsStream> xmlStream = plEncryptedStream::OpenEncryptedFileWrite(filename);
         xmlStream->Write(fileData.size(), fileData.raw_buffer());
-        delete xmlStream;
     }
 }
 

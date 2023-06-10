@@ -59,12 +59,6 @@ pyStream::pyStream()
 {
 }
 
-pyStream::~pyStream()
-{
-    Close();
-}
-
-
 bool pyStream::Open(const plFileName& fileName, const ST::string& flags)
 {
     // make sure its closed first
@@ -92,7 +86,7 @@ bool pyStream::Open(const plFileName& fileName, const ST::string& flags)
                 // force encryption?
                 if (encryptflag)
                 {
-                    fStream = new plEncryptedStream;
+                    fStream = std::make_unique<plEncryptedStream>();
                     fStream->Open(fileName, "wb");
                 }
                 else
@@ -145,6 +139,5 @@ bool pyStream::WriteLines(const std::vector<ST::string> & lines)
 
 void pyStream::Close()
 {
-    delete fStream;
-    fStream = nullptr;
+    fStream.reset();
 }
