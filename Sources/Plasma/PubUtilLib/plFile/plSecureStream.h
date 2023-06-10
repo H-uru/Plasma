@@ -59,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // to download the file from a server into a temporary directory (with a mangled name) and
 // delete that file on close, thereby minimizing the chance of having that file examined or
 // edited.
-class plSecureStream: public hsStream
+class plSecureStream : public hsFileSystemStream
 {
 protected:
     hsFD fRef;

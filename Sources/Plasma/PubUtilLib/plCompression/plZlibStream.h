@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // This is for reading a .gz file from a buffer, and writing the uncompressed data to a file.
 // Call open with the name of the uncompressed file, then call write with the compressed data.
 //
-class plZlibStream : public hsStream
+class plZlibStream : public hsFileSystemStream
 {
 protected:
     std::unique_ptr<hsStream> fOutput;

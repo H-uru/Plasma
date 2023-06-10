@@ -93,15 +93,14 @@ bool plNetClientStreamRecorder::BeginRecording(const char* recName)
 {
     if (!fRecordStream)
     {
-        fRecordStream = std::make_unique<hsUNIXStream>();
         char path[256];
         IMakeFilename(recName, path);
 
-        if (!fRecordStream->Open(path, "wb"))
-        {
-            fRecordStream.reset();
+        auto newStream = std::make_unique<hsUNIXStream>();
+        if (!newStream->Open(path, "wb")) {
             return false;
         }
+        fRecordStream = std::move(newStream);
 
         hsBitVector contentFlags;
         contentFlags.SetBit(kNetClientRecSDLDesc);
@@ -120,12 +119,12 @@ bool plNetClientStreamRecorder::BeginPlayback(const char* recName)
 {
     if (!fRecordStream)
     {
-        fRecordStream = std::make_unique<hsUNIXStream>();
         char path[256];
         IMakeFilename(recName, path);
 
-        if (fRecordStream->Open(path, "rb"))
-        {
+        auto newStream = std::make_unique<hsUNIXStream>();
+        if (newStream->Open(path, "rb")) {
+            fRecordStream = std::move(newStream);
             hsBitVector contentFlags;
             contentFlags.Read(fRecordStream.get());
 
@@ -135,10 +134,7 @@ bool plNetClientStreamRecorder::BeginPlayback(const char* recName)
             fPlaybackTimeOffset = GetTime();
             fNextPlaybackTime = fRecordStream->ReadLEDouble();
             fBetweenAges = false;
-        }
-        else
-        {
-            fRecordStream.reset();
+        } else {
             return false;
         }
 

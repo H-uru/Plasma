@@ -62,8 +62,13 @@ bool plZlibStream::Open(const plFileName& filename, const char* mode)
     fFilename = filename;
     fMode = mode;
 
-    fOutput = std::make_unique<hsUNIXStream>();
-    return fOutput->Open(filename, "wb");
+    auto output = std::make_unique<hsUNIXStream>();
+    if (output->Open(filename, "wb")) {
+        fOutput = std::move(output);
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void plZlibStream::Close()

@@ -654,7 +654,7 @@ std::unique_ptr<hsStream> plSecureStream::OpenSecureFile(const plFileName& fileN
     bool deleteOnExit = flags & kDeleteOnExit;
     bool isEncrypted = IsSecureFile(fileName);
 
-    std::unique_ptr<hsStream> s;
+    std::unique_ptr<hsFileSystemStream> s;
     if (isEncrypted)
         s = std::make_unique<plSecureStream>(deleteOnExit, key);
     else if (!requireEncryption)
@@ -667,7 +667,7 @@ std::unique_ptr<hsStream> plSecureStream::OpenSecureFile(const plFileName& fileN
 
 std::unique_ptr<hsStream> plSecureStream::OpenSecureFileWrite(const plFileName& fileName, uint32_t* key /* = nullptr */)
 {
-    std::unique_ptr<hsStream> s;
+    std::unique_ptr<hsFileSystemStream> s;
 #ifdef PLASMA_EXTERNAL_RELEASE
     s = std::make_unique<plSecureStream>(false, key);
 #else

@@ -212,7 +212,7 @@ class plStatDumpIterator : public plRegistryPageIterator, public plRegistryKeyIt
 {
 protected:
     plFileName fOutputDir;
-    std::unique_ptr<hsStream> fStream;
+    std::unique_ptr<hsFileSystemStream> fStream;
 
 public:
     plStatDumpIterator(const plFileName& outputDir) : fOutputDir(outputDir) {}

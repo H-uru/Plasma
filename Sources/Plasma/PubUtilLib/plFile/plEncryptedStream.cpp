@@ -486,7 +486,7 @@ std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFile(const plFileName&
 
     bool isEncrypted = IsEncryptedFile(fileName);
 
-    std::unique_ptr<hsStream> s;
+    std::unique_ptr<hsFileSystemStream> s;
     if (isEncrypted)
         s = std::make_unique<plEncryptedStream>(cryptKey);
     else
@@ -498,7 +498,7 @@ std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFile(const plFileName&
 
 std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey)
 {
-    std::unique_ptr<hsStream> s;
+    std::unique_ptr<hsFileSystemStream> s;
     if (IsEncryptedFile(fileName))
         s = std::make_unique<plEncryptedStream>(cryptKey);
     else

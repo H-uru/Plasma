@@ -625,8 +625,9 @@ void pfPatcherWorker::WhitelistFile(const plFileName& file, bool justDownloaded,
         ST::string ext = file.GetFileExt();
         if (ext.compare_i("pak") == 0 || ext.compare_i("sdl") == 0) {
             if (!stream) {
-                stream = new hsUNIXStream;
-                stream->Open(file, "rb");
+                hsUNIXStream* newStream = new hsUNIXStream;
+                newStream->Open(file, "rb");
+                stream = newStream;
             }
 
             // if something terrible goes wrong (eg bad encryption), we can exit sanely

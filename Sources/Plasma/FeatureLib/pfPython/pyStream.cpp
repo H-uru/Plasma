@@ -86,8 +86,9 @@ bool pyStream::Open(const plFileName& fileName, const ST::string& flags)
                 // force encryption?
                 if (encryptflag)
                 {
-                    fStream = std::make_unique<plEncryptedStream>();
-                    fStream->Open(fileName, "wb");
+                    auto stream = std::make_unique<plEncryptedStream>();
+                    stream->Open(fileName, "wb");
+                    fStream = std::move(stream);
                 }
                 else
                     fStream = plEncryptedStream::OpenEncryptedFileWrite(fileName);

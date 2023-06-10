@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // in the usual way, but they will be in memory until Close is called.  Files
 // will be decrypted on the fly during read.operations
 //
-class plEncryptedStream : public hsStream
+class plEncryptedStream : public hsFileSystemStream
 {
 protected:
     FILE* fRef;
