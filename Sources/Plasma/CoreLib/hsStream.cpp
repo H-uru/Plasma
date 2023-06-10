@@ -541,12 +541,9 @@ void hsUNIXStream::Flush()
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-void    plReadOnlySubStream::Open( hsStream *base, uint32_t offset, uint32_t length )
+plReadOnlySubStream::plReadOnlySubStream(hsStream* base, uint32_t offset, uint32_t length)
+    : fBase(base), fOffset(offset), fLength(length)
 {
-    fBase = base;
-    fOffset = offset;
-    fLength = length;
-
     fBase->SetPosition( fOffset );
     IFixPosition();
 }

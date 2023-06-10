@@ -196,9 +196,8 @@ class plReadOnlySubStream: public hsStream
     void    IFixPosition();
 
 public:
-    plReadOnlySubStream() : fBase(), fOffset(), fLength() { }
+    plReadOnlySubStream(hsStream* base, uint32_t offset, uint32_t length);
 
-    void      Open( hsStream *base, uint32_t offset, uint32_t length );
     bool      AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void* buffer) override;
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
@@ -265,10 +264,10 @@ protected:
     char*   fData;
     char*   fStop;
 public:
-    hsReadOnlyStream(int size, const void* data) { Init(size, data); }
-    hsReadOnlyStream() : fStart(), fData(), fStop() { }
+    hsReadOnlyStream(int size, const void* data)
+        : fStart((char*)data), fData((char*)data), fStop((char*)data + size)
+    {}
 
-    virtual void      Init(int size, const void* data) { fStart=((char*)data); fData=((char*)data); fStop=((char*)data + size); }
     bool      AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void * buffer) override;
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;    // throws exception
@@ -284,7 +283,6 @@ public:
 class hsWriteOnlyStream : public hsReadOnlyStream {
 public:
     hsWriteOnlyStream(int size, const void* data) : hsReadOnlyStream(size, data) {}
-    hsWriteOnlyStream() {}
     hsWriteOnlyStream(const hsWriteOnlyStream& other) = delete;
     hsWriteOnlyStream(hsWriteOnlyStream&& other) = delete;
 
