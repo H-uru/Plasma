@@ -788,6 +788,12 @@ void hsReadOnlyStream::CopyToMem(void* mem)
 
 
 ////////////////////////////////////////////////////////////////////////////////////
+
+bool hsWriteOnlyStream::AtEnd()
+{
+    return fData >= fStop;
+}
+
 uint32_t hsWriteOnlyStream::Read(uint32_t byteCount, void* buffer)
 {
     hsThrow( "can't read to a writeonly stream");
@@ -802,6 +808,39 @@ uint32_t hsWriteOnlyStream::Write(uint32_t byteCount, const void* buffer)
     fData += byteCount;
     fPosition += byteCount;
     return byteCount;
+}
+
+void hsWriteOnlyStream::Skip(uint32_t deltaByteCount)
+{
+    fPosition += deltaByteCount;
+    fData += deltaByteCount;
+    if (fData > fStop) {
+        hsThrow("Skip went past end of stream");
+    }
+}
+
+void hsWriteOnlyStream::Rewind()
+{
+    fPosition = 0;
+    fData = fStart;
+}
+
+void hsWriteOnlyStream::FastFwd()
+{
+    fPosition = GetEOF();
+    fData = fStop;
+}
+
+void hsWriteOnlyStream::Truncate()
+{
+    hsThrow("can't write to a readonly stream");
+}
+
+void hsWriteOnlyStream::CopyToMem(void* mem)
+{
+    if (fData < fStop) {
+        memmove(mem, fData, fStop - fData);
+    }
 }
 
 

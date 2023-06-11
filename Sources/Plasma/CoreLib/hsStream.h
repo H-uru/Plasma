@@ -260,12 +260,14 @@ public:
 // read only mem stream
 class hsReadOnlyStream : public hsStream {
 protected:
-    char*   fStart;
-    char*   fData;
-    char*   fStop;
+    const char* fStart;
+    const char* fData;
+    const char* fStop;
 public:
-    hsReadOnlyStream(int size, const void* data)
-        : fStart((char*)data), fData((char*)data), fStop((char*)data + size)
+    hsReadOnlyStream(int size, const void* data) :
+        fStart(static_cast<const char*>(data)),
+        fData(static_cast<const char*>(data)),
+        fStop(static_cast<const char*>(data) + size)
     {}
 
     bool      AtEnd() override;
@@ -280,17 +282,33 @@ public:
 };
 
 // write only mem stream
-class hsWriteOnlyStream : public hsReadOnlyStream {
+class hsWriteOnlyStream : public hsStream {
+protected:
+    char* fStart;
+    char* fData;
+    char* fStop;
+
 public:
-    hsWriteOnlyStream(int size, const void* data) : hsReadOnlyStream(size, data) {}
+    hsWriteOnlyStream(int size, void* data) :
+        fStart(static_cast<char*>(data)),
+        fData(static_cast<char*>(data)),
+        fStop(static_cast<char*>(data) + size)
+    {}
     hsWriteOnlyStream(const hsWriteOnlyStream& other) = delete;
     hsWriteOnlyStream(hsWriteOnlyStream&& other) = delete;
 
     const hsWriteOnlyStream& operator=(const hsWriteOnlyStream& other) = delete;
     hsWriteOnlyStream& operator=(hsWriteOnlyStream&& other) = delete;
 
+    bool      AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void * buffer) override;  // throws exception
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
+    void      Skip(uint32_t deltaByteCount) override;
+    void      Rewind() override;
+    void FastFwd() override;
+    void      Truncate() override;
+    uint32_t  GetEOF() override { return (uint32_t)(fStop - fStart); }
+    void CopyToMem(void* mem);
 };
 
 // circular queue stream
