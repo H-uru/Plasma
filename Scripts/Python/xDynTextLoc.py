@@ -63,6 +63,7 @@ clearColorR = ptAttribFloat(15, "Clear Color (Red)", default=0.0)
 clearColorG = ptAttribFloat(16, "Clear Color (Green)", default=0.0)
 clearColorB = ptAttribFloat(17, "Clear Color (Blue)", default=0.0)
 clearColorA = ptAttribFloat(18, "Clear Color (Alpha)", default=0.0)
+blockRGB = ptAttribBoolean(19, "Render into alpha channel")
 
 _JUSTIFY_LUT = {
     "left": PtJustify.kLeftJustify,
@@ -84,7 +85,7 @@ class xDynTextLoc(ptModifier):
         wrappingHeight = textMap.getHeight() - marginBottom.value - marginTop.value
 
         textMap.clearToColor(self._clearColor)
-        textMap.setTextColor(self._fontColor)
+        textMap.setTextColor(self._fontColor, blockRGB.value)
         textMap.setWrapping(wrappingWidth, wrappingHeight)
         textMap.setFont(fontFace.value, fontSize.value)
         textMap.setJustify(self._justify)
