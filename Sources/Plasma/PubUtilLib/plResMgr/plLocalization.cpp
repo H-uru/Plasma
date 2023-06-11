@@ -66,7 +66,7 @@ const std::array<ST::string, plLocalization::kNumLanguages> plLocalization::fLan
 const int kLangTagLen = 4;
 
 // ISO 639, e.g. used in video tracks
-const std::array<std::set<ST::string>, plLocalization::kNumLanguages> plLocalization::fLangCodes = {{
+const std::array<std::unordered_set<ST::string>, plLocalization::kNumLanguages> plLocalization::fLangCodes = {{
     {ST_LITERAL("eng"), ST_LITERAL("en")},
     {ST_LITERAL("fre"), ST_LITERAL("fra"), ST_LITERAL("fr")},
     {ST_LITERAL("ger"), ST_LITERAL("deu"), ST_LITERAL("de")},
@@ -112,7 +112,7 @@ ST::string plLocalization::GetLanguageName(plLocalization::Language lang)
     return fLangNames[lang];
 }
 
-std::set<ST::string> plLocalization::GetLanguageCodes(plLocalization::Language lang)
+std::unordered_set<ST::string> plLocalization::GetLanguageCodes(plLocalization::Language lang)
 {
     return fLangCodes[lang];
 }
@@ -164,7 +164,7 @@ std::vector<ST::string> plLocalization::StringToLocal(const ST::string& localize
         retVal.emplace_back();
     }
 
-    std::sort(sortedLangs.begin(), sortedLangs.end(), [&](auto a, auto b) {
+    std::sort(sortedLangs.begin(), sortedLangs.end(), [&tagLocs](auto a, auto b) {
         return tagLocs[a] < tagLocs[b];
     });
 

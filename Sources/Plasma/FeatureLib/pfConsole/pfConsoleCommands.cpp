@@ -2439,7 +2439,7 @@ PF_CONSOLE_CMD(App,
         return;
     }
 
-    for (const auto &lang : plLocalization::GetAllLanguages()) {
+    for (const auto& lang : plLocalization::GetAllLanguages()) {
         if (plLocalization::GetLanguageName(lang).compare_i(params[0]) == 0) {
             plLocalization::SetLanguage(lang);
             break;

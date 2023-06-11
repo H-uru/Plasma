@@ -539,12 +539,10 @@ void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::s
     }
 
     for (auto lang : plLocalization::GetAllLanguages()) {
-        if (
-            plLocalization::IsLanguageUsable(lang)
-            && theElement.find(plLocalization::GetLanguageName(lang)) == theElement.end()
-        ) {
+        ST::string langName = plLocalization::GetLanguageName(lang);
+        if (plLocalization::IsLanguageUsable(lang) && theElement.find(langName) == theElement.end()) {
             pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Language {} is missing from the translations in element {}.{}.{}. You'll want to get translations for that!",
-                plLocalization::GetLanguageName(lang), ageName, setName, elementName);
+                langName, ageName, setName, elementName);
         }
     }
 }

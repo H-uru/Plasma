@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLocalization_h_inc
 
 #include <array>
-#include <set>
+#include <unordered_set>
 #include <vector>
 
 class plFileName;
@@ -71,7 +71,7 @@ public:
 protected:
     static Language fLanguage;
     static const std::array<ST::string, kNumLanguages> fLangTags;
-    static const std::array<std::set<ST::string>, kNumLanguages> fLangCodes;
+    static const std::array<std::unordered_set<ST::string>, kNumLanguages> fLangCodes;
     static const std::array<ST::string, kNumLanguages> fLangNames;
 
     static plFileName IGetLocalized(const plFileName& name, Language lang);
@@ -110,8 +110,8 @@ public:
     static const std::array<ST::string, kNumLanguages>& GetAllLanguageNames() { return fLangNames; };
     static ST::string GetLanguageName(Language lang);
 
-    static const std::array<std::set<ST::string>, kNumLanguages>& GetAllLanguageCodes() { return fLangCodes; };
-    static std::set<ST::string> GetLanguageCodes(Language lang);
+    static const std::array<std::unordered_set<ST::string>, kNumLanguages>& GetAllLanguageCodes() { return fLangCodes; };
+    static std::unordered_set<ST::string> GetLanguageCodes(Language lang);
 
     // Returns true if we're using localized assets.  If it returns false, you
     // don't need to bother calling GetLocalized
