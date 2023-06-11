@@ -108,7 +108,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     SetMapMode( hDC, MM_TEXT );
     // Get the font data
 
-    int nHeight = -MulDiv( fSize, GetDeviceCaps(hDC, LOGPIXELSY), 72 );
+    int nHeight = -MulDiv( fSize, plWinDpi::Instance().GetDpi(), 72);
     
     hFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
                         CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, fFace );
@@ -120,7 +120,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     void* fontData = std::malloc( fontDataSize );
     GetFontData(hDC, 0, 0, fontData, fontDataSize);
     ftError = FT_New_Memory_Face(library, (FT_Byte *) fontData, fontDataSize, 0, &face);
-    FT_UInt freeTypeResolution = GetDeviceCaps(hDC, LOGPIXELSY);
+    FT_UInt freeTypeResolution = plWinDpi::Instance().GetDpi();
 
     DeleteDC( hDC );
     DeleteObject( hFont );
