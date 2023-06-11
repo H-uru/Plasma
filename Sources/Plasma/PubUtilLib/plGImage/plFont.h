@@ -212,6 +212,7 @@ class plFont : public hsKeyedObject
 
         uint8_t   *IGetFreeCharData( uint32_t &newOffset );
 
+        const plCharacter& IGetCharacter(wchar_t c) const;
         void    IRenderLoop( const wchar_t *string, int32_t maxCount );
         void    IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, bool justCalc );
 
