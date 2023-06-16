@@ -65,9 +65,7 @@ class plUUID;
 
 //
 // Base class for application network messages.
-// These become the data in a plNetCommonMessage when sent over the network.
 //
-class plNetCommonMessage;
 class plKey;
 
 class plNetMessage : public plCreatable
@@ -82,7 +80,6 @@ class plNetMessage : public plCreatable
     uint32_t fTransactionID;  // set by originator, included in reply. Only written if kHasTransactionID flag set
     uint32_t fPlayerID;       // set by originator. Only written if kHasPlayerID flag set
     plUUID fAcctUUID;       // set by sender (app level). Only written if kHasAcctUUID flag set
-    const plNetCommonMessage* fNetCoreMsg;  // not sent, set by the receiver
     uint32_t fPeekStatus;     // not sent. set on PeekBuffer, cleared on PokeBuffer
     uint8_t   fProtocolVerMajor;  // conditionally sent
     uint8_t   fProtocolVerMinor;  // conditionally sent
@@ -181,14 +178,12 @@ public:
 
     // ctor
     plNetMessage()
-        : fTimeRecvd(), fBytesRead(), fNetCoreMsg(), fContext(),
+        : fTimeRecvd(), fBytesRead(), fContext(),
           fPeekStatus(), fTransactionID(), fPlayerID(kInvalidPlayerID),
           fNetProtocol(), fProtocolVerMajor(), fProtocolVerMinor(),
           fFlags(0)
     { }
 
-    static plNetMessage* CreateAndRead(const plNetCommonMessage*);
-    static plNetMessage* Create(const plNetCommonMessage*);
     int PokeBuffer(char* buf, int bufLen, uint32_t peekOptions=0);            // put msg in buffer
     int PeekBuffer(const char* buf, int bufLen, uint32_t peekOptions=0, bool forcePeek=false);   // get msg out of buffer
     bool NeedsReliableSend() const { return IsBitSet(kNeedsReliableSend); }
@@ -202,8 +197,6 @@ public:
     bool GetHasTimeSent() const { return IsBitSet(kHasTimeSent); }
     double GetTimeReceived() const { return fTimeRecvd; }
     bool IsBitSet(int b) const { return (fFlags & b) != 0; }
-    const plNetCommonMessage* GetNetCoreMsg() const { return fNetCoreMsg; }
-    uint32_t GetNetCoreMsgLen() const;
     bool GetHasContext() const { return IsBitSet(kHasContext);}
     uint32_t GetContext() const { return fContext;}
     bool GetHasTransactionID() const { return IsBitSet(kHasTransactionID);}
@@ -222,7 +215,6 @@ public:
     void SetHasTimeSent(bool value) { SetBit( kHasTimeSent, value ); }
     void SetTimeReceived(double t) { fTimeRecvd=t; }
     void SetBit(int b, bool on=true) { if (on) fFlags |= b; else fFlags &= ~b; }
-    void SetNetCoreMsg(const plNetCommonMessage* ncmsg) { fNetCoreMsg=ncmsg; }
     void SetHasContext(bool value) { SetBit(kHasContext,value);}
     void SetContext(uint32_t value) { fContext=value; SetHasContext(true);}
     void SetHasTransactionID(bool value) { SetBit(kHasTransactionID,value);}

@@ -4,7 +4,6 @@ set(plNetMessage_SOURCES
 )
 
 set(plNetMessage_HEADERS
-    plNetCommonMessage.h
     plNetMessage.h
     plNetMessageCreatable.h
     plNetMsgHelpers.h
