@@ -168,7 +168,6 @@ int plNetMessage::PokeBuffer(char* bufIn, int bufLen, uint32_t peekOptions)
     if (! (peekOptions & kDontClearBuffer))
         memset(bufIn, 0, bufLen);
     
-    ValidatePoke();
     hsWriteOnlyStream writeStream(bufLen, bufIn);
     int ret;
     if (peekOptions & kBaseClassOnly)
@@ -202,12 +201,10 @@ int plNetMessage::PeekBuffer(const char* bufIn, int bufLen, uint32_t peekOptions
     if (peekOptions & kBaseClassOnly)
     {
         ret=plNetMessage::IPeekBuffer(&readStream, peekOptions);
-        plNetMessage::ValidatePeek();
     }
     else
     {
         ret=IPeekBuffer(&readStream, peekOptions);
-        ValidatePeek();
     }
     
     return ret;
@@ -378,16 +375,6 @@ int plNetMessage::GetPackSize()
 uint32_t plNetMessage::GetNetCoreMsgLen() const
 {
     return fNetCoreMsg ? fNetCoreMsg->GetLen() : 0;
-}
-
-void plNetMessage::ValidatePeek() const 
-{ 
-    
-}
-
-void plNetMessage::ValidatePoke() const 
-{ 
-    
 }
 
 ST::string plNetMessage::AsString() const

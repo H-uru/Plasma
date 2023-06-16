@@ -193,8 +193,6 @@ public:
     int PeekBuffer(const char* buf, int bufLen, uint32_t peekOptions=0, bool forcePeek=false);   // get msg out of buffer
     bool NeedsReliableSend() const { return IsBitSet(kNeedsReliableSend); }
     bool IsSystemMessage() const { return IsBitSet(kIsSystemMessage);   }
-    virtual void ValidatePoke() const;
-    virtual void ValidatePeek() const;
     virtual bool NeedsBroadcast() const { return false; }           // should game server broadcast this message to other clients?
     virtual int ValidationSchemeID() const { return 1; }
 
