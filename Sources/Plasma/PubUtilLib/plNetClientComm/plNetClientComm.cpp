@@ -220,7 +220,8 @@ static void INetBufferCallback (
         return;
     }
 
-    if (!msg->PeekBuffer((const char *)buffer, bytes)) {
+    hsReadOnlyStream stream(bytes, buffer);
+    if (!msg->PeekBuffer(&stream)) {
         LogMsg(kLogError, "NetComm: plNetMessage %u failed to peek buffer", type);
         return;
     }
@@ -872,9 +873,10 @@ void NetCommSendMsg (
 ) {
     msg->SetPlayerID(NetCommGetPlayer()->playerInt);
 
-    unsigned msgSize = msg->GetPackSize();
-    uint8_t * buf = (uint8_t *)malloc(msgSize);
-    msg->PokeBuffer((char *)buf, msgSize);
+    hsRAMStream stream;
+    msg->PokeBuffer(&stream);
+    size_t msgSize = stream.GetEOF();
+    auto buf = static_cast<const uint8_t*>(stream.GetData());
 
     switch (msg->GetNetProtocol()) {
         case kNetProtocolCli2Auth:
@@ -895,8 +897,6 @@ void NetCommSendMsg (
 
         DEFAULT_FATAL(msg->GetNetProtocol());
     }
-
-    free(buf);
 }
 
 //============================================================================

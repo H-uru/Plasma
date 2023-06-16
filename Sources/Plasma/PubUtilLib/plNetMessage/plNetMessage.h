@@ -184,8 +184,8 @@ public:
           fFlags(0)
     { }
 
-    int PokeBuffer(char* buf, int bufLen, uint32_t peekOptions=0);            // put msg in buffer
-    int PeekBuffer(const char* buf, int bufLen, uint32_t peekOptions=0, bool forcePeek=false);   // get msg out of buffer
+    int PokeBuffer(hsStream* s, uint32_t peekOptions = 0); // put msg in stream
+    int PeekBuffer(hsStream* s, uint32_t peekOptions = 0, bool forcePeek = false); // get msg out of stream
     bool NeedsReliableSend() const { return IsBitSet(kNeedsReliableSend); }
     bool IsSystemMessage() const { return IsBitSet(kIsSystemMessage);   }
     virtual bool NeedsBroadcast() const { return false; }           // should game server broadcast this message to other clients?

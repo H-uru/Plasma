@@ -114,53 +114,39 @@ void plNetMessage::InitReplyFieldsFrom(plNetMessage * msg)
 #endif
 }
 
-int plNetMessage::PokeBuffer(char* bufIn, int bufLen, uint32_t peekOptions)
+int plNetMessage::PokeBuffer(hsStream* s, uint32_t peekOptions)
 {
     fPeekStatus = 0;
-    
-    if (!bufIn)
-        return 0;   
-    
-    if (! (peekOptions & kDontClearBuffer))
-        memset(bufIn, 0, bufLen);
-    
-    hsWriteOnlyStream writeStream(bufLen, bufIn);
+
     int ret;
     if (peekOptions & kBaseClassOnly)
     {
-        ret=plNetMessage::IPokeBuffer(&writeStream, peekOptions);
+        ret=plNetMessage::IPokeBuffer(s, peekOptions);
     }
     else
     {
-        ret=IPokeBuffer(&writeStream, peekOptions);
+        ret=IPokeBuffer(s, peekOptions);
     }
     return ret;
 }
 
-int plNetMessage::PeekBuffer(const char* bufIn, int bufLen, uint32_t peekOptions, bool forcePeek)
+int plNetMessage::PeekBuffer(hsStream* s, uint32_t peekOptions, bool forcePeek)
 {
-    if(!bufLen || bufLen < 1)
-        return 0;
-
     uint32_t partialPeekOptions = (peekOptions & kPartialPeekMask);
     if (!forcePeek && (fPeekStatus & partialPeekOptions) )
         return 0;   // already peeked, fully or partially
-    
-    if (!bufIn)
-        return 0;
-    
+
     // set peek status based on peekOptions
     fPeekStatus = partialPeekOptions ? partialPeekOptions : kFullyPeeked;
-    
-    hsReadOnlyStream readStream(bufLen, bufIn);
+
     int ret;
     if (peekOptions & kBaseClassOnly)
     {
-        ret=plNetMessage::IPeekBuffer(&readStream, peekOptions);
+        ret=plNetMessage::IPeekBuffer(s, peekOptions);
     }
     else
     {
-        ret=IPeekBuffer(&readStream, peekOptions);
+        ret=IPeekBuffer(s, peekOptions);
     }
     
     return ret;
