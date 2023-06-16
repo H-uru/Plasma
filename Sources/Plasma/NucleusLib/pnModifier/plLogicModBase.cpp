@@ -46,10 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plTimerCallbackManager.h"
 #include "pnSceneObject/plSceneObject.h"
-#include "pnNetCommon/plGenericVar.h"
 #include "pnNetCommon/plNetApp.h"
-#include "pnNetCommon/plNetSharedState.h"
-#include "plNetMessage/plNetMessage.h"  // breaks project dependancy levels
 #include "pnMessage/plNotifyMsg.h"
 #include "pnMessage/plEnableMsg.h"
 #include "pnMessage/plServerReplyMsg.h"
@@ -104,34 +101,6 @@ void plLogicModBase::RegisterForMessageType(uint16_t hClass)
     plgDispatch::Dispatch()->RegisterForExactType( hClass, GetKey() ); 
 }
 
-//
-// Update generic shared state (which reflects trigger state) on server 
-// by sending TestAndSet request.  By locking and unlocking the sharedState,
-// we can guarantee that only one logicMod instance can trigger at a time.
-// The server will confirm or deny our request to lock and set the state.
-//
-void plLogicModBase::IUpdateSharedState(bool triggered) const
-{
-    plNetSharedState ss("TrigState");
-    plGenericVar* sv = new plGenericVar("Triggered");
-    sv->Value().SetBool(triggered); // attempting to set trig state to true
-    ss.AddVar(sv);
-    
-    bool lock = triggered;
-
-    // if unlocking, then the server does not need to store this state, since it's back to its default state
-    ss.SetServerMayDelete(!lock);       
-
-    plNetMsgTestAndSet ts;
-    ts.SetNetProtocol(kNetProtocolCli2Game);
-    ts.CopySharedState(&ss);
-    ts.ObjectInfo()->SetFromKey(GetKey());
-    ts.SetLockRequest(lock);        // if triggering, lock state, else unlock state
-    plNetClientApp::GetInstance()->SendMsg(&ts);
-    plNetClientApp::GetInstance()->DebugMsg("\tLM: Attempting to set logic mod shared lock to {}, t={f}\n",
-        triggered ? "Triggered" : "UnTriggered", hsTimer::GetSysSeconds());
-}
-
 bool plLogicModBase::MsgReceive(plMessage* msg)
 {
     // read messages:
@@ -184,7 +153,7 @@ void plLogicModBase::IHandleArbitration(plServerReplyMsg* pSMsg)
     } else {
         bool netRequest=false;    // we're triggering as a result of a local activation
         PreTrigger(netRequest);
-        IUpdateSharedState(false /* untriggering */);
+        UpdateSharedState(false /* untriggering */);
     }
 }
 
@@ -214,7 +183,7 @@ void plLogicModBase::RequestTrigger(bool netRequest)
     }
     else
     {
-        IUpdateSharedState(true /* triggering */);  // request arbitration from server
+        UpdateSharedState(true /* triggering */);  // request arbitration from server
         SetFlag(kRequestingTrigger);
 
 #if 1

@@ -48,7 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plCondRefMsg.h"
 #include "plMessage/plTimerCallbackMsg.h"
 #include "plMessage/plActivatorMsg.h"
+#include "pnNetCommon/plGenericVar.h"
 #include "pnNetCommon/plNetApp.h"
+#include "pnNetCommon/plNetSharedState.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plFakeOutMsg.h"
@@ -57,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDetectorLog.h"
 #include "plInputCore/plSceneInputInterface.h"
+#include "plNetMessage/plNetMessage.h"
 #include "pfConditional/plObjectInBoxConditionalObject.h"
 
 
@@ -216,6 +219,32 @@ void plLogicModifier::PreTrigger(bool netRequest)
         return;
     }
     plLogicModBase::PreTrigger(netRequest);
+}
+
+// Update generic shared state (which reflects trigger state) on server
+// by sending TestAndSet request.  By locking and unlocking the sharedState,
+// we can guarantee that only one logicMod instance can trigger at a time.
+// The server will confirm or deny our request to lock and set the state.
+void plLogicModifier::UpdateSharedState(bool triggered) const
+{
+    plNetSharedState ss("TrigState");
+    plGenericVar* sv = new plGenericVar("Triggered");
+    sv->Value().SetBool(triggered); // attempting to set trig state to true
+    ss.AddVar(sv);
+
+    bool lock = triggered;
+
+    // if unlocking, then the server does not need to store this state, since it's back to its default state
+    ss.SetServerMayDelete(!lock);
+
+    plNetMsgTestAndSet ts;
+    ts.SetNetProtocol(kNetProtocolCli2Game);
+    ts.CopySharedState(&ss);
+    ts.ObjectInfo()->SetFromKey(GetKey());
+    ts.SetLockRequest(lock);        // if triggering, lock state, else unlock state
+    plNetClientApp::GetInstance()->SendMsg(&ts);
+    plNetClientApp::GetInstance()->DebugMsg("\tLM: Attempting to set logic mod shared lock to {}, t={f}\n",
+        triggered ? "Triggered" : "UnTriggered", hsTimer::GetSysSeconds());
 }
 
 

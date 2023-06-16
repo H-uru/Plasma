@@ -76,13 +76,13 @@ protected:
     bool                    fDisabled;
 
     bool IEval(double secs, float del, uint32_t dirty) override { return false; }
-    void IUpdateSharedState(bool triggered) const;
     void IHandleArbitration(class plServerReplyMsg* msg);
     bool IEvalCounter();
     virtual void PreTrigger(bool netRequest);
     virtual void Trigger(bool netRequest);
     virtual void UnTrigger();
-    
+    virtual void UpdateSharedState(bool triggered) const = 0;
+
     void CreateNotifyMsg();
 
 public:
