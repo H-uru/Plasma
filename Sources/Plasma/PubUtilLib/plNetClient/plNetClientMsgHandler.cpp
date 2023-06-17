@@ -439,7 +439,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMembersList)
     {
         plNetTransportMember* mbr = new plNetTransportMember(nc);
         IFillInTransportMember(m->MemberListInfo()->GetMember(i), mbr);
-        hsLogEntry(nc->DebugMsg("\tAdding transport member, name={}, p2p={}, plrID={}\n", mbr->AsString(), mbr->IsPeerToPeer(), mbr->GetPlayerID()));
+        hsLogEntry(nc->DebugMsg("\tAdding transport member, name={}, plrID={}\n", mbr->AsString(), mbr->GetPlayerID()));
         hsSsize_t idx = nc->fTransport.AddMember(mbr);
         hsAssert(idx>=0, "Failed adding member?");
             

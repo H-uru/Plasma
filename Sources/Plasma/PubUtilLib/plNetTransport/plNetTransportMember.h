@@ -97,7 +97,6 @@ public:
     void SetTransportFlags(uint32_t f) { fTransportFlags=f; }
     uint32_t GetTransportFlags() const { return fTransportFlags; }
 
-    bool IsPeerToPeer() const { return hsCheckBits(fFlags, kRequestP2P); }
     ST::string AsString() const override;
     bool IsEqualTo(const plNetMember * other) const override
     {

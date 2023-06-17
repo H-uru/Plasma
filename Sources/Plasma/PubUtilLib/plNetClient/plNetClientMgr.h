@@ -279,9 +279,6 @@ public:
 
     plKey GetLocalPlayerKey()  const override { return fLocalPlayerKey; }
     plSynchedObject* GetLocalPlayer(bool forceLoad=false) const override;
-    
-    bool IsPeerToPeer()               const { return false; }
-    bool IsConnected()                const { return true; }
 
     void IncNumInitialSDLStates();
     void ResetNumInitialSDLStates() { fNumInitialSDLStates=0; }
