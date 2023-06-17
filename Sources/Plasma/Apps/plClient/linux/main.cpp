@@ -54,6 +54,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <xcb/xproto.h>
 #include <X11/Xlib-xcb.h>
 
+// Undefine the problematic X11 stuff
+#undef Status
+
 #include "HeadSpin.h"
 #include "plCmdParser.h"
 #include "plPipeline.h"
