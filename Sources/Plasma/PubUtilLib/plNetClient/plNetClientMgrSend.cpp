@@ -412,11 +412,11 @@ void plNetClientMgr::SendMsg(plNetMessage* msg)
     }
     
     msg->SetTimeSent(plUnifiedTime::GetCurrent());
-    int channel = IPrepMsg(msg);
+    IPrepMsg(msg);
     
 //  hsLogEntry( DebugMsg( "<SND> {} {}", msg->ClassName(), msg->AsStdString()) );
     
-    fTransport.SendMsg(channel, msg);
+    fTransport.SendMsg(msg);
 
     // Debug
     if (plNetMsgVoice::ConvertNoRef(msg))

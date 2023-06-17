@@ -61,9 +61,7 @@ class plNetTransport
 private:
     typedef std::vector<plNetTransportMember*> MembersList;
     MembersList fMembers;                     // master list of all members in the game, server is member[0]
-    std::vector<MembersList> fChannelGroups;  // members grouped by channel
 
-    void IUnSubscribeToAllChannelGrps(plNetTransportMember* mbr);
     void IRemoveMember(plNetTransportMember* mbr);
 public:
     plNetTransport() {}
@@ -86,14 +84,7 @@ public:
     const std::vector<plNetTransportMember*>& GetMemberList() const { return fMembers; }
     void ClearMembers();
 
-    // channel group ops
-    void SubscribeToChannelGrp(plNetTransportMember* mbr, int channel);
-    bool UnSubscribeToChannelGrp(plNetTransportMember* mbr, int channel);
-    void GetSubscriptions(plNetTransportMember* mbr, std::vector<int>* channels) const;
-    void ClearChannelGrp(int channel);
-    void SetNumChannels(int n);
-
-    void SendMsg(int channel, plNetMessage* msg) const;
+    void SendMsg(plNetMessage* msg) const;
 };
 
 #endif  // plNetTransport_h

@@ -75,17 +75,6 @@ hsSsize_t plNetTransport::AddMember(plNetTransportMember* mbr)
     return -1;
 }
 
-void plNetTransport::IUnSubscribeToAllChannelGrps(plNetTransportMember* mbr)
-{
-    int i;
-    for( i=mbr->GetNumSubscriptions()-1; i>=0 ; i-- )
-    {
-        int chan=mbr->GetSubscription(i);
-        bool ok=UnSubscribeToChannelGrp(mbr, chan);
-        hsAssert(ok, "can't find supposed subscription to remove");
-    } // for             
-}
-
 void plNetTransport::IRemoveMember(plNetTransportMember* mbr)
 {
     if (!mbr)
@@ -96,9 +85,6 @@ void plNetTransport::IRemoveMember(plNetTransportMember* mbr)
 //  plNetClientMgr::GetInstance()->GetNetCore()->RemovePeer(mbr->GetPeerID());
     plNetClientMgr::GetInstance()->GetTalkList()->RemoveMember(mbr);
     plNetClientMgr::GetInstance()->GetListenList()->RemoveMember(mbr);
-
-    // remove member from subscription lists
-    IUnSubscribeToAllChannelGrps(mbr);
 
     auto it = std::find(fMembers.cbegin(), fMembers.cend(), mbr);
 
@@ -153,50 +139,9 @@ hsSsize_t plNetTransport::FindMember(const plNetTransportMember* mbr)
 
 
 //
-// add this member to the given channel grp
+// Send Msg to the server.
 //
-void plNetTransport::SubscribeToChannelGrp(plNetTransportMember* mbr, int channel)
-{
-//  hsAssert(FindMember(mbr) != -1, "must add member before subscribing to channel");
-    if (mbr->AddSubscription(channel))
-    {
-        hsAssert(channel<fChannelGroups.size(), "invalid channel index");
-        fChannelGroups[channel].push_back(mbr);
-    }
-}
-
-//
-// Remove the subscription to the given channel grp for a member.
-//
-bool plNetTransport::UnSubscribeToChannelGrp(plNetTransportMember* mbr, int chan)
-{
-    hsAssert(chan>=0 && chan<fChannelGroups.size(), "invalid channel idx");
-    MembersList* mList = &fChannelGroups[chan];
-    auto it = std::find(mList->cbegin(), mList->cend(), mbr);
-    if (it != mList->cend())
-    {
-        mList->erase(it);
-        bool ret=mbr->RemoveSubscription(chan);
-        hsAssert(ret, "error removing subscription");
-        return true;
-    }
-    return false;
-}
-
-//
-// copy list of members channelGrp subscriptions
-//
-void plNetTransport::GetSubscriptions(plNetTransportMember* mbr, std::vector<int>* channels) const
-{
-    mbr->CopySubscriptions(channels);
-}
-
-
-//
-// Send Msg to all members in the given channelGrp.
-// Here's where multicasting would be used.
-//
-void plNetTransport::SendMsg(int chan, plNetMessage* netMsg) const
+void plNetTransport::SendMsg(plNetMessage* netMsg) const
 {
     NetCommSendMsg(netMsg);
 }
@@ -207,7 +152,6 @@ void plNetTransport::ClearMembers()
     for (plNetTransportMember* mbr : fMembers)
     {
         hsAssert(mbr, "nil member?");
-        IUnSubscribeToAllChannelGrps(mbr);
         delete mbr;
     } // for         
     
@@ -243,57 +187,19 @@ hsSsize_t plNetTransport::FindMember(const plKey& avKey) const
     return -1;
 }
 
-//
-// clear channel and unsubscribe all members to that channel
-//
-void plNetTransport::ClearChannelGrp(int channel)
-{
-    const MembersList* mList = &fChannelGroups[channel];
-    for (plNetTransportMember* tm : *mList)
-    {
-        bool ok=tm->RemoveSubscription(channel);
-        hsAssert(ok, "error removing subscription");
-    }
-
-    fChannelGroups[channel].clear();
-}
-
 void plNetTransport::DumpState()
 {
     plNetClientMgr* nc=plNetClientMgr::GetInstance();
     
     hsLogEntry( nc->DebugMsg("-------------------\n") );
-    hsLogEntry( nc->DebugMsg("Num Channels={}\n", fChannelGroups.size()) );
-
-    for (size_t i = 0; i < fChannelGroups.size(); i++)
-    {
-        MembersList* mList = &fChannelGroups[i];
-        hsLogEntry( nc->DebugMsg("\tChannel {}, num mbrs={}\n", i, mList->size()) );
-        for (plNetTransportMember* mbr : *mList)
-        {
-            hsLogEntry(nc->DebugMsg("\t\tMbr {}\n", mbr->AsString()));
-        }
-    }
 
     nc->DebugMsg("Num Mbrs={}\n", GetNumMembers());
     for (size_t i = 0; i < GetNumMembers(); i++)
     {
         plNetTransportMember * mbr = GetMember(i);
-        hsLogEntry (nc->DebugMsg("\tMbr {}, name={}, plyrID={}, subs={}",
-            i,mbr->AsString(),mbr->GetPlayerID(),mbr->GetNumSubscriptions()) );
-        int j;
-        for(j=0;j<mbr->GetNumSubscriptions();j++)
-        {
-            hsLogEntry( nc->DebugMsg("\t\tSub {}, chan={}\n", j, mbr->GetSubscription(j)) );
-        }
+        hsLogEntry(nc->DebugMsg("\tMbr {}, name={}, plyrID={}", i, mbr->AsString(), mbr->GetPlayerID()));
     }
     hsLogEntry( nc->DebugMsg("\n") );
-}
-
-void plNetTransport::SetNumChannels(int n)
-{
-    if (n>fChannelGroups.size())
-        fChannelGroups.resize(n);
 }
 
 //

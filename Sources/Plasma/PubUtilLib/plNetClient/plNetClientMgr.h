@@ -90,16 +90,6 @@ class plNetClientMgr : public plNetClientApp
 private:
     typedef std::vector<plKey> plKeyVec;
 public:
-
-    enum NetChannels
-    {
-        kNetChanDefault,
-        kNetChanVoice,
-        kNetChanListenListUpdate,
-        kNetChanDirectedMsg,
-        kNetNumChannels
-    };
-
     enum DirectedSendFlags
     {
         kInterAgeMsg = 0x1
@@ -211,7 +201,7 @@ private:
     bool IUpdateListenList(double secs);
     void IHandleNetVoiceListMsg(plNetVoiceListMsg* msg);
     bool IApplyNewListenList(std::vector<DistSqInfo>& newListenList, bool forceSynch);
-    int IPrepMsg(plNetMessage* msg);
+    void IPrepMsg(plNetMessage* msg);
     void IPlayerChangeAge(bool exiting, int32_t spawnPt);   
     
     void IAddCloneRoom();

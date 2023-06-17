@@ -115,7 +115,6 @@ plNetClientMgr::plNetClientMgr()
     SetFlagsBit(kAllowAuthTimeOut);
 
 //  fPlayerVault.SetPlayerName("SinglePlayer"); // in a MP game, this will be replaced with a player name like 'Atrus'
-    fTransport.SetNumChannels(kNetNumChannels); 
 }
 
 //
@@ -326,21 +325,13 @@ void plNetClientMgr::Init()
 
 //
 // Prepare to send.
-// Update p2p transport groups and rcvrs list in some msgs
-// Returns channel.
+// Update rcvrs list in some msgs
 //
-int plNetClientMgr::IPrepMsg(plNetMessage* msg)
+void plNetClientMgr::IPrepMsg(plNetMessage* msg)
 {
-    // pick channel, prepare msg
-    int channel=kNetChanDefault;
     plNetMsgVoice* v=plNetMsgVoice::ConvertNoRef(msg);
     if (v)
     {       // VOICE MSG
-        channel=kNetChanVoice;
-        
-        // compute new transport group (from talkList) if necessary
-        GetTalkList()->UpdateTransportGroup(this);  
-        
         // update receivers list in voice msg based on talk list
         v->Receivers()->Clear();
         int i;
@@ -352,31 +343,6 @@ int plNetClientMgr::IPrepMsg(plNetMessage* msg)
         if (msg->IsBitSet(plNetMessage::kEchoBackToSender))
             v->Receivers()->AddReceiverPlayerID(GetPlayerID());
     }
-    else if (plNetMsgListenListUpdate::ConvertNoRef(msg))
-    {   // LISTEN LIST UPDATE MSG
-        channel=kNetChanListenListUpdate;
-
-        // update transport group from rcvrs list, add p2p mbrs to trasnport group
-        fTransport.ClearChannelGrp(kNetChanListenListUpdate);
-        if (IsPeerToPeer())
-        {
-            plNetMsgReceiversListHelper* rl = plNetMsgReceiversListHelper::ConvertNoRef(msg);
-            hsAssert(rl, "error converting msg to rcvrs list?");
-            int i;
-            for(i=0;i<rl->GetNumReceivers();i++)
-            {
-                plNetTransportMember* tm = fTransport.GetMemberByID(rl->GetReceiverPlayerID(i));
-                hsAssert(tm, "error finding transport mbr");
-                if (tm->IsPeerToPeer())
-                    fTransport.SubscribeToChannelGrp(tm, kNetChanListenListUpdate);
-            }
-        }
-    }
-    else if( plNetMsgGameMessageDirected::ConvertNoRef( msg ) )
-    {
-        channel = kNetChanDirectedMsg;
-    }
-    return channel;
 }
 
 //

@@ -71,24 +71,6 @@ int plNetVoiceList::FindMember(plNetTransportMember* e)
 *
 ***/
 
-void plNetTalkList::UpdateTransportGroup(plNetClientMgr* nc)
-{
-    if (fFlags & kDirty)
-    {
-        nc->fTransport.ClearChannelGrp(plNetClientMgr::kNetChanVoice);
-        if (nc->IsPeerToPeer())
-        {
-            int i;
-            for(i=0;i<GetNumMembers();i++)
-            {
-                if (GetMember(i)->IsPeerToPeer())
-                    nc->fTransport.SubscribeToChannelGrp(GetMember(i), plNetClientMgr::kNetChanVoice);
-            }
-        }
-        fFlags &= ~kDirty;
-    }
-}
-
 void plNetTalkList::AddMember(plNetTransportMember* e) 
 { 
     if (FindMember(e)==-1)
@@ -96,7 +78,6 @@ void plNetTalkList::AddMember(plNetTransportMember* e)
         plStatusLog::AddLineSF("voice.log", "Adding {} to talk list", e->AsString());
         fMembers.push_back(e);
     }
-    fFlags |= kDirty;   
 }
     
 void plNetTalkList::RemoveMember(plNetTransportMember* e) 
@@ -107,13 +88,6 @@ void plNetTalkList::RemoveMember(plNetTransportMember* e)
         plStatusLog::AddLineSF("voice.log", "Removing {} from talklist", e->AsString());
         fMembers.erase(fMembers.begin()+idx);
     }
-    fFlags |= kDirty; 
-}
-    
-void plNetTalkList::Clear() 
-{ 
-    plNetVoiceList::Clear(); 
-    fFlags |= kDirty; 
 }
 
 
