@@ -187,6 +187,7 @@ void plRegistryPageNode::UnloadKeys()
     {
         plRegistryKeyList* keyList = it->second;
         delete keyList;
+        it->second = nullptr;
     }
     fKeyLists.clear();
 

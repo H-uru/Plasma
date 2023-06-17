@@ -56,9 +56,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plRegistryKeyList::~plRegistryKeyList()
 {
-    std::for_each(fKeys.begin(), fKeys.end(),
-        [] (plKeyImp* key) { if (key && !key->ObjectIsLoaded()) delete key; }
-    );
+    for (auto& key : fKeys) {
+        if (key && !key->ObjectIsLoaded()) {
+            delete key;
+            key = nullptr;
+        }
+    }
 }
 
 plKeyImp* plRegistryKeyList::FindKey(const ST::string& keyName) const
