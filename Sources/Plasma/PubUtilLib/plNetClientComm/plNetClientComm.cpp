@@ -154,7 +154,6 @@ static HASHTABLEDECL(
 ) s_handlers;
 
 static NetCommMsgHandler    s_defaultHandler(0, nullptr, nullptr);
-static NetCommMsgHandler    s_preHandler(0, nullptr, nullptr);
 
 
 //============================================================================
@@ -741,7 +740,6 @@ void NetCommShutdown () {
     s_shutdown = true;
 
     NetCommSetDefaultMsgHandler(nullptr, nullptr);
-    NetCommSetMsgPreHandler(nullptr, nullptr);
     NetCommRemoveMsgHandler(
         kNetCommAllMsgClasses,
         kNetCommAllMsgHandlers,
@@ -904,9 +902,6 @@ void NetCommRecvMsg (
     plNetMessage * msg
 ) {
     for (;;) {
-        if (s_preHandler.proc && s_preHandler.proc(msg, s_preHandler.state) == plNetMsgHandler::Status::kConsumed)
-            break;
-
         unsigned msgClassIdx = msg->ClassIndex();
         NetCommMsgHandler * handler = s_handlers.Find(msgClassIdx);
 
@@ -982,15 +977,6 @@ void NetCommSetDefaultMsgHandler (
 ) {
     s_defaultHandler.proc  = proc;
     s_defaultHandler.state = state;
-}
-
-//============================================================================
-void NetCommSetMsgPreHandler (
-    FNetCommMsgHandler *    proc,
-    void *                  state
-) {
-    s_preHandler.proc  = proc;
-    s_preHandler.state = state;
 }
 
 //============================================================================
@@ -1306,17 +1292,6 @@ void NetCommLogStackDump(const ST::string& stackDump)
 
 
 ////////////////////////////////////////////////////////////////////
-
-// plNetClientComm ----------------------------------------------
-plNetClientComm::plNetClientComm()
-{
-}
-
-// ~plNetClientComm ----------------------------------------------
-plNetClientComm::~plNetClientComm()
-{
-    NetCommSetMsgPreHandler(nullptr, nullptr);
-}
 
 // AddMsgHandlerForType ----------------------------------------------
 void plNetClientComm::AddMsgHandlerForType( uint16_t msgClassIdx, MsgHandler* handler )

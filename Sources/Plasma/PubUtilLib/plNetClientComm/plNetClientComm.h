@@ -179,10 +179,6 @@ void NetCommSetDefaultMsgHandler (
     FNetCommMsgHandler *    handler,
     void *                  userState
 );
-void NetCommSetMsgPreHandler (
-    FNetCommMsgHandler *    handler,
-    void *                  userState
-);
 
 /*****************************************************************************
 *
@@ -325,13 +321,6 @@ public:
         static plNetMsgHandler::Status StaticMsgHandler(plNetMessage* msg, void* userState);
         virtual plNetMsgHandler::Status HandleMessage(plNetMessage* msg) = 0;
     };
-
-    ////////////////////////////////////////////////////////////////
-
-    plNetClientComm();
-    ~plNetClientComm();
-
-    ////////////////////////////////////////////////////////////////
 
     // Adds a msg handler for a msg that is convertable to specified type.
     void    AddMsgHandlerForType( uint16_t msgClassIdx, MsgHandler* handler );
