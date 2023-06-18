@@ -506,7 +506,6 @@ PF_CONSOLE_CMD( Net,            // groupName
 
     // send net msg
     plNetMsgObjectUpdateFilter netMsg;
-    netMsg.SetNetProtocol(kNetProtocolCli2Game);
     netMsg.SetMaxUpdateFreq(freq);
     netMsg.ObjectListInfo()->AddObject(key);
     plNetClientMgr::GetInstance()->SendMsg(&netMsg);

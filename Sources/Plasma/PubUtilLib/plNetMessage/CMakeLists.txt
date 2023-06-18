@@ -17,7 +17,6 @@ target_link_libraries(
         CoreLib
         pnFactory
         pnKeyedObject
-        pnNetBase
         pnNetCommon
         plNetCommon
         plUnifiedTime

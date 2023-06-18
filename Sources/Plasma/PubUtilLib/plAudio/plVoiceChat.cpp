@@ -292,7 +292,6 @@ void plVoiceRecorder::Update(double time)
 
             if (!encoder) {
                 plNetMsgVoice pMsg;
-                pMsg.SetNetProtocol(kNetProtocolCli2Game);
                 pMsg.SetVoiceData(buffer.get(), totalSamples * sizeof(int16_t));
                 pMsg.SetPlayerID(plNetClientApp::GetInstance()->GetPlayerID());
                 if (plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kEchoVoice))
@@ -309,7 +308,6 @@ void plVoiceRecorder::Update(double time)
 
                 if (packedLength) {
                     plNetMsgVoice pMsg;
-                    pMsg.SetNetProtocol(kNetProtocolCli2Game);
                     pMsg.SetVoiceData(packet.get(), packedLength);
                     pMsg.SetPlayerID(plNetClientApp::GetInstance()->GetPlayerID());
                     pMsg.SetFlag(encoder->GetVoiceFlag());

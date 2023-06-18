@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsBitVector.h"
 
-#include "pnNetBase/pnNetBase.h"
 #include "pnNetCommon/plNetGroup.h"
 #include "pnFactory/plCreatable.h"
 
@@ -83,7 +82,6 @@ class plNetMessage : public plCreatable
     uint32_t fPeekStatus;     // not sent. set on PeekBuffer, cleared on PokeBuffer
     uint8_t   fProtocolVerMajor;  // conditionally sent
     uint8_t   fProtocolVerMinor;  // conditionally sent
-    ENetProtocol fNetProtocol;  // the server this msg should be sent to. this value is not sent over wire.
 
     enum ContentFlags
     {
@@ -180,7 +178,7 @@ public:
     plNetMessage()
         : fTimeRecvd(), fBytesRead(), fContext(),
           fPeekStatus(), fTransactionID(), fPlayerID(kInvalidPlayerID),
-          fNetProtocol(), fProtocolVerMajor(), fProtocolVerMinor(),
+          fProtocolVerMajor(), fProtocolVerMinor(),
           fFlags(0)
     { }
 
@@ -208,7 +206,6 @@ public:
     const plUUID * GetAcctUUID() const { return &fAcctUUID; }
     uint8_t GetVersionMajor() const { return fProtocolVerMajor;   }
     uint8_t GetVersionMinor() const { return fProtocolVerMinor;   }
-    ENetProtocol GetNetProtocol () const { return fNetProtocol; }
 
     // setters
     void SetTimeSent(const plUnifiedTime& t) { fTimeSent=t;SetHasTimeSent(true); }
@@ -224,7 +221,6 @@ public:
     void SetHasAcctUUID( bool v ) { SetBit( kHasAcctUUID,v ); }
     void SetAcctUUID(const plUUID * v ) { fAcctUUID.CopyFrom(v); SetHasAcctUUID(true); }
     void SetVersion(uint8_t maj=kVerMajor, uint8_t min=kVerMinor) { SetBit(kHasVersion); fProtocolVerMajor=maj; fProtocolVerMinor=min;  }
-    void SetNetProtocol (ENetProtocol v ) { fNetProtocol = v; }
 
     // init fContext, fTransactionID, etc. if needed.
     void InitReplyFieldsFrom(plNetMessage * msg);

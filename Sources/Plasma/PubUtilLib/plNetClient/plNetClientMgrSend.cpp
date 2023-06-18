@@ -80,7 +80,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plNetClientMgr::ISendMembersListRequest()
 {
     plNetMsgMembersListReq  msg;
-    msg.SetNetProtocol(kNetProtocolCli2Game);
     SendMsg(&msg);
 }
 
@@ -91,7 +90,6 @@ void plNetClientMgr::ISendRoomsReset()
 {
     plNetMsgPagingRoom msg;
     msg.SetPageFlags(plNetMsgPagingRoom::kResetList);
-    msg.SetNetProtocol(kNetProtocolCli2Game);
     SendMsg(&msg);
 }
 
@@ -377,7 +375,6 @@ void plNetClientMgr::ISendGameMessage(plMessage* msg)
 #endif
 
     netMsgWrap->SetPlayerID(GetPlayerID());
-    netMsgWrap->SetNetProtocol(kNetProtocolCli2Game);
     SendMsg(netMsgWrap);
 
     if (plNetObjectDebugger::GetInstance()->IsDebugObject(msg->GetSender() ? msg->GetSender()->ObjectIsLoaded() : nullptr))

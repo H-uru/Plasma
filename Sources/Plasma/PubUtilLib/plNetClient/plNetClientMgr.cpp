@@ -1193,7 +1193,6 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
 
             // notify server - NOTE: he might not still be around to get this...
             plNetMsgPlayerPage npp (playerKey->GetUoid(), playerMsg->fUnload);
-            npp.SetNetProtocol(kNetProtocolCli2Game);
             SendMsg(&npp);
         }
         else if (int idx; IsRemotePlayerKey(playerKey, &idx))
@@ -1235,7 +1234,6 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
 
                 // notify server
                 plNetMsgPlayerPage npp (playerKey->GetUoid(), playerMsg->fUnload);
-                npp.SetNetProtocol(kNetProtocolCli2Game);
                 SendMsg(&npp);
             }
             else

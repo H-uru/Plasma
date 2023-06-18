@@ -102,7 +102,6 @@ void plSDLModifier::ISendNetMsg(plStateDataRecord*& state, const plKey& senderKe
 
     // send to server
     plNetMsgSDLState* msg = state->PrepNetMsg(0, writeOptions);
-    msg->SetNetProtocol(kNetProtocolCli2Game);
     msg->ObjectInfo()->SetUoid(senderKey->GetUoid());
 
     if (sendFlags & plSynchedObject::kNewState)

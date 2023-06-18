@@ -106,7 +106,6 @@ bool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList,
 
         plNetMsgListenListUpdate llu;
         llu.SetPlayerID(GetPlayerID());
-        llu.SetNetProtocol(kNetProtocolCli2Game);
         
         //
         // for each client in the old list, if not in the new list, send a ListenList remove msg

@@ -837,28 +837,12 @@ void NetCommSendMsg (
 
     hsRAMStream stream;
     msg->PokeBuffer(&stream);
-    size_t msgSize = stream.GetEOF();
-    auto buf = static_cast<const uint8_t*>(stream.GetData());
 
-    switch (msg->GetNetProtocol()) {
-        case kNetProtocolCli2Auth:
-            NetCliAuthPropagateBuffer(
-                msg->ClassIndex(),
-                msgSize,
-                buf
-            );
-        break;
-
-        case kNetProtocolCli2Game:
-            NetCliGamePropagateBuffer(
-                msg->ClassIndex(),
-                msgSize,
-                buf
-            );
-        break;
-
-        DEFAULT_FATAL(msg->GetNetProtocol());
-    }
+    NetCliGamePropagateBuffer(
+        msg->ClassIndex(),
+        stream.GetEOF(),
+        static_cast<const uint8_t *>(stream.GetData())
+    );
 }
 
 //============================================================================

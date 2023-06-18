@@ -1556,7 +1556,6 @@ bool plArmatureMod::IEval(double time, float elapsed, uint32_t dirty)
                 {
                     // Send message to the server here.
                     plNetMsgRelevanceRegions relRegionsNetMsg;
-                    relRegionsNetMsg.SetNetProtocol(kNetProtocolCli2Game);
                     relRegionsNetMsg.SetRegionsICareAbout(fRegionsICareAbout);
                     relRegionsNetMsg.SetRegionsImIn(fRegionsImIn);
                     plNetClientApp::GetInstance()->SendMsg(&relRegionsNetMsg);

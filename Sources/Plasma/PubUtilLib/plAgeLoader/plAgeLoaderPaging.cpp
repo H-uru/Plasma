@@ -97,7 +97,6 @@ void plAgeLoader::FinishedPagingInRoom(plKey* rmKey, int numRms)
 
     // Send a msg to the server indicating that we have this room paged in
     plNetMsgPagingRoom * pagingMsg = new plNetMsgPagingRoom;
-    pagingMsg->SetNetProtocol(kNetProtocolCli2Game);
     int i;
     for(i=0;i<numRms;i++)
     {
@@ -168,7 +167,6 @@ void plAgeLoader::StartPagingOutRoom(plKey* rmKey, int numRms)
     plNetClientApp* nc = plNetClientApp::GetInstance();
 
     plNetMsgPagingRoom pagingMsg;
-    pagingMsg.SetNetProtocol(kNetProtocolCli2Game);
     pagingMsg.SetPagingOut(true);
     int i;
     for(i=0;i<numRms;i++)
