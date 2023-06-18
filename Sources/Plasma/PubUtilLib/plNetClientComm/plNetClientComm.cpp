@@ -1046,68 +1046,6 @@ void NetCommSetAgePublic (  // --> no msg
 }
 
 //============================================================================
-void NetCommCreatePublicAge (// --> plNetCommPublicAgeMsg
-    const char              ageName[],
-    const plUUID&           ageInstId,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommRemovePublicAge(// --> plNetCommPublicAgeMsg
-    const plUUID&           ageInstId,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommRegisterOwnedAge (
-    const NetCommAge &      age,
-    const char              ageInstDesc[],
-    unsigned                playerInt,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommUnregisterOwnedAge (
-    const char              ageName[],
-    unsigned                playerInt,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommRegisterVisitAge (
-    const NetCommAge &      age,
-    const char              ageInstDesc[],
-    unsigned                playerInt,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommUnregisterVisitAge (
-    const plUUID&           ageInstId,
-    unsigned                playerInt,
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommConnectPlayerVault (
-    void *                  param
-) {
-}
-
-//============================================================================
-void NetCommConnectAgeVault (
-    const plUUID&           ageInstId,
-    void *                  param
-) {
-}
-
-//============================================================================
 void NetCommUpgradeVisitorToExplorer (
     unsigned                playerInt,
     void *                  param
