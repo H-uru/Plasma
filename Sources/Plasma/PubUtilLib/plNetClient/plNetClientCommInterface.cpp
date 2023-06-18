@@ -68,7 +68,7 @@ void plNetClientMgr::IInitNetClientComm()
     NetCommActivateMsgDispatchers();
 
     ASSERT(!GetFlagsBit(kNetClientCommInited));
-    fNetClientComm.SetDefaultHandler(&fNetClientCommMsgHandler);
+    fNetClientComm.SetMsgHandler(&fNetClientCommMsgHandler);
 
     SetFlagsBit(kNetClientCommInited);
 }

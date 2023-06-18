@@ -78,16 +78,6 @@ using namespace std::literals::string_view_literals;
 
 extern  bool    gDataServerLocal;
 
-/*****************************************************************************
-*
-*   Exported data
-*
-***/
-
-const unsigned          kNetCommAllMsgClasses   = (unsigned)-1;
-FNetCommMsgHandler *    kNetCommAllMsgHandlers  = (FNetCommMsgHandler*)-1;
-const void *            kNetCommAllUserStates   = (void*)-1;
-
 struct NetCommParam {
     void *                          param;
     plNetCommReplyMsg::EParamType   type;
@@ -131,29 +121,8 @@ static plUUID              s_iniStartupAgeInstId;
 static unsigned            s_iniStartupPlayerId = 0;
 static bool                s_netError = false;
 
-
-struct NetCommMsgHandler : THashKeyVal<unsigned> {
-    HASHLINK(NetCommMsgHandler) link;
-    FNetCommMsgHandler  *       proc;
-    void *                      state;
-
-    NetCommMsgHandler (
-        unsigned             msgId,
-        FNetCommMsgHandler * proc,
-        void *               state
-    ) : THashKeyVal<unsigned>(msgId)
-    ,   proc(proc)
-    ,   state(state)
-    { }
-};
-
-static HASHTABLEDECL(
-    NetCommMsgHandler,
-    THashKeyVal<unsigned>,
-    link
-) s_handlers;
-
-static NetCommMsgHandler    s_defaultHandler(0, nullptr, nullptr);
+static FNetCommMsgHandler* s_msgHandlerProc = nullptr;
+static void* s_msgHandlerState = nullptr;
 
 
 //============================================================================
@@ -739,13 +708,8 @@ void NetCommStartup () {
 void NetCommShutdown () {
     s_shutdown = true;
 
-    NetCommSetDefaultMsgHandler(nullptr, nullptr);
-    NetCommRemoveMsgHandler(
-        kNetCommAllMsgClasses,
-        kNetCommAllMsgHandlers,
-        kNetCommAllUserStates
-    );
-    
+    NetCommSetMsgHandler(nullptr, nullptr);
+
     NetCliGameDisconnect();
     NetCliAuthDisconnect();
     if (!gDataServerLocal)
@@ -901,81 +865,18 @@ void NetCommSendMsg (
 void NetCommRecvMsg (
     plNetMessage * msg
 ) {
-    for (;;) {
-        unsigned msgClassIdx = msg->ClassIndex();
-        NetCommMsgHandler * handler = s_handlers.Find(msgClassIdx);
-
-        if (!handler && s_defaultHandler.proc) {
-            s_defaultHandler.proc(msg, s_defaultHandler.state);
-            break;
-        }        
-        while (handler) {
-            handler->proc(msg, handler->state);
-            handler = s_handlers.FindNext(msgClassIdx, handler);
-        }
-        break;
+    if (s_msgHandlerProc != nullptr) {
+        s_msgHandlerProc(msg, s_msgHandlerState);
     }
 }
 
 //============================================================================
-void NetCommAddMsgHandlerForType (
-    unsigned                msgClassIdx,
+void NetCommSetMsgHandler(
     FNetCommMsgHandler *    proc,
     void *                  state
 ) {
-    for (unsigned i = 0; i < plFactory::GetNumClasses(); ++i) {
-        if (plFactory::DerivesFrom(msgClassIdx, i))
-            NetCommAddMsgHandlerForExactType(i, proc, state);
-    }
-}
-
-//============================================================================
-void NetCommAddMsgHandlerForExactType (
-    unsigned                msgClassIdx,
-    FNetCommMsgHandler *    proc,
-    void *                  state
-) {
-    ASSERT(msgClassIdx != kNetCommAllMsgClasses);
-    ASSERT(proc && proc != kNetCommAllMsgHandlers);
-    ASSERT(!state || (state && state != kNetCommAllUserStates));
-
-    NetCommRemoveMsgHandler(msgClassIdx, proc, state);
-    NetCommMsgHandler * handler = new NetCommMsgHandler(msgClassIdx, proc, state);
-
-    s_handlers.Add(handler);
-}
-
-//============================================================================
-void NetCommRemoveMsgHandler (
-    unsigned                msgClassIdx,
-    FNetCommMsgHandler *    proc,
-    const void *            state
-) {
-    NetCommMsgHandler * next, * handler = s_handlers.Head();
-    for (; handler; handler = next) {
-        next = handler->link.Next();
-        if (handler->GetValue() != msgClassIdx)
-            if (msgClassIdx != kNetCommAllMsgClasses)
-                continue;
-        if (handler->proc != proc)
-            if (proc != kNetCommAllMsgHandlers)
-                continue;
-        if (handler->state != state)
-            if (state != kNetCommAllUserStates)
-                continue;
-
-        // We found a matching handler, delete it
-        delete handler;        
-    }
-}
-
-//============================================================================
-void NetCommSetDefaultMsgHandler (
-    FNetCommMsgHandler *    proc,
-    void *                  state
-) {
-    s_defaultHandler.proc  = proc;
-    s_defaultHandler.state = state;
+    s_msgHandlerProc = proc;
+    s_msgHandlerState = state;
 }
 
 //============================================================================
@@ -1292,33 +1193,9 @@ void NetCommLogStackDump(const ST::string& stackDump)
 
 ////////////////////////////////////////////////////////////////////
 
-// AddMsgHandlerForType ----------------------------------------------
-void plNetClientComm::AddMsgHandlerForType( uint16_t msgClassIdx, MsgHandler* handler )
-{
-    int i;
-    for( i = 0; i < plFactory::GetNumClasses(); i++ )
-    {
-        if ( plFactory::DerivesFrom( msgClassIdx, i ) )
-            AddMsgHandlerForExactType( i, handler );
-    }
-}
-
-// AddMsgHandlerForExactType ----------------------------------------------
-void plNetClientComm::AddMsgHandlerForExactType( uint16_t msgClassIdx, MsgHandler* handler )
-{
-    NetCommAddMsgHandlerForExactType(msgClassIdx, MsgHandler::StaticMsgHandler, handler);
-}
-
-// RemoveMsgHandler ----------------------------------------------
-bool plNetClientComm::RemoveMsgHandler( MsgHandler* handler )
-{
-    NetCommRemoveMsgHandler(kNetCommAllMsgClasses, kNetCommAllMsgHandlers, handler);
-    return true;
-}
-
 // SetDefaultHandler ----------------------------------------------
-void plNetClientComm::SetDefaultHandler( MsgHandler* handler) {
-    NetCommSetDefaultMsgHandler(MsgHandler::StaticMsgHandler, handler);
+void plNetClientComm::SetMsgHandler(MsgHandler* msgHandler) {
+    NetCommSetMsgHandler(MsgHandler::StaticMsgHandler, msgHandler);
 }
 
 // MsgHandler::StaticMsgHandler ----------------------------------------------

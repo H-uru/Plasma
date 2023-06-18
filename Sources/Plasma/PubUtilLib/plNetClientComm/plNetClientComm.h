@@ -152,30 +152,7 @@ typedef plNetMsgHandler::Status (FNetCommMsgHandler)(
     void *          userState
 );
 
-// Adds a msg handler for a msg that is convertable to specified type.
-void NetCommAddMsgHandlerForType (
-    unsigned                msgClassIdx,
-    FNetCommMsgHandler *    handler,
-    void *                  userState
-);
-// Adds a msg handler for a specific msg type.
-void NetCommAddMsgHandlerForExactType (
-    unsigned                msgClassIdx,
-    FNetCommMsgHandler *    handler,
-    void *                  userState
-);
-
-extern const unsigned       kNetCommAllMsgClasses;
-extern FNetCommMsgHandler * kNetCommAllMsgHandlers;
-extern const void *         kNetCommAllUserStates;
-
-void NetCommRemoveMsgHandler (
-    unsigned                msgClassIdx,
-    FNetCommMsgHandler *    handler,
-    const void *            userState
-);
-
-void NetCommSetDefaultMsgHandler (
+void NetCommSetMsgHandler(
     FNetCommMsgHandler *    handler,
     void *                  userState
 );
@@ -322,18 +299,7 @@ public:
         virtual plNetMsgHandler::Status HandleMessage(plNetMessage* msg) = 0;
     };
 
-    // Adds a msg handler for a msg that is convertable to specified type.
-    void    AddMsgHandlerForType( uint16_t msgClassIdx, MsgHandler* handler );
-
-    // Adds a msg handler for a specific msg type.
-    void    AddMsgHandlerForExactType( uint16_t msgClassIdx, MsgHandler* handler );
-
-    bool    RemoveMsgHandler( MsgHandler* handler );
-
-    // Msgs not part of a task controlled by this
-    // object, and doesn't have a handler set for its type
-    // are sent to this handler (if set).
-    void    SetDefaultHandler( MsgHandler* msgHandler );
+    void SetMsgHandler(MsgHandler* msgHandler);
 };
 
 ////////////////////////////////////////////////////////////////////
