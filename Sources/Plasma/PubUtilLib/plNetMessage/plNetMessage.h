@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommon.h"
-#include "plNetCommon/plNetCommonConstants.h"
 #include "plNetCommon/plNetCommonHelpers.h"
 #include "plUnifiedTime/plClientUnifiedTime.h"
 

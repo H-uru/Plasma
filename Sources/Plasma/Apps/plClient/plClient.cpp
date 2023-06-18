@@ -110,7 +110,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClient/plLinkEffectsMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
 #include "plNetClient/plNetClientMgr.h"
-#include "plNetCommon/plNetCommonConstants.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plPipeline/plCaptureRender.h"
 #include "plPipeline/plDTProgressMgr.h"
