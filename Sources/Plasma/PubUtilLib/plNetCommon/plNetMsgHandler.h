@@ -60,9 +60,6 @@ public:
     {
         kError,
         kHandled,
-        // Return this value from your registered msg handler
-        // to stop further dispatching of incoming msg.
-        kConsumed,
     };
 
     plNetMsgHandler() : fNetApp() { }

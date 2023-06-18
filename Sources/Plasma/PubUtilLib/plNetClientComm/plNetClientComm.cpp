@@ -910,8 +910,7 @@ void NetCommRecvMsg (
             break;
         }        
         while (handler) {
-            if (handler->proc(msg, handler->state) == plNetMsgHandler::Status::kConsumed)
-                break;
+            handler->proc(msg, handler->state);
             handler = s_handlers.FindNext(msgClassIdx, handler);
         }
         break;
