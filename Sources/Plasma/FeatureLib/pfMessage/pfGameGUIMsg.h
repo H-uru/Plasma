@@ -80,6 +80,7 @@ class pfGameGUIMsg : public plMessage
         void Read(hsStream* s, hsResMgr* mgr) override;
         void Write(hsStream* s, hsResMgr* mgr) override;
 
+        void        SetCommand(uint8_t cmd) { fCommand = cmd; }
         uint8_t     GetCommand() const { return fCommand; }
 
         void        SetString(const ST::string &str) { fString = str; }
