@@ -121,8 +121,7 @@ static plUUID              s_iniStartupAgeInstId;
 static unsigned            s_iniStartupPlayerId = 0;
 static bool                s_netError = false;
 
-static FNetCommMsgHandler* s_msgHandlerProc = nullptr;
-static void* s_msgHandlerState = nullptr;
+static plNetMsgHandler* s_msgHandler = nullptr;
 
 
 //============================================================================
@@ -708,8 +707,6 @@ void NetCommStartup () {
 void NetCommShutdown () {
     s_shutdown = true;
 
-    NetCommSetMsgHandler(nullptr, nullptr);
-
     NetCliGameDisconnect();
     NetCliAuthDisconnect();
     if (!gDataServerLocal)
@@ -849,18 +846,9 @@ void NetCommSendMsg (
 void NetCommRecvMsg (
     plNetMessage * msg
 ) {
-    if (s_msgHandlerProc != nullptr) {
-        s_msgHandlerProc(msg, s_msgHandlerState);
+    if (s_msgHandler != nullptr) {
+        s_msgHandler->ReceiveMsg(msg);
     }
-}
-
-//============================================================================
-void NetCommSetMsgHandler(
-    FNetCommMsgHandler *    proc,
-    void *                  state
-) {
-    s_msgHandlerProc = proc;
-    s_msgHandlerState = state;
 }
 
 //============================================================================
@@ -1108,20 +1096,11 @@ void NetCommLogStackDump(const ST::string& stackDump)
 
 /*****************************************************************************
 *
-*   Msg handler interface - compatibility layer with legacy code
+*   Msg handler interface
 *
 ***/
 
-
-////////////////////////////////////////////////////////////////////
-
-// SetDefaultHandler ----------------------------------------------
-void plNetClientComm::SetMsgHandler(MsgHandler* msgHandler) {
-    NetCommSetMsgHandler(MsgHandler::StaticMsgHandler, msgHandler);
-}
-
-// MsgHandler::StaticMsgHandler ----------------------------------------------
-plNetMsgHandler::Status plNetClientComm::MsgHandler::StaticMsgHandler(plNetMessage* msg, void* userState) {
-    plNetClientComm::MsgHandler * handler = (plNetClientComm::MsgHandler *) userState;
-    return handler->HandleMessage(msg);
+void plNetClientComm::SetMsgHandler(plNetMsgHandler* msgHandler)
+{
+    s_msgHandler = msgHandler;
 }

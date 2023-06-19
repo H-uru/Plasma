@@ -81,10 +81,6 @@ class plCCRPetitionMsg;
 class plNetMsgPagingRoom;
 
 
-struct plNetClientCommMsgHandler : plNetClientComm::MsgHandler {
-    plNetMsgHandler::Status HandleMessage(plNetMessage* msg) override;
-};
-
 class plNetClientMgr : public plNetClientApp
 {
 private:
@@ -370,8 +366,7 @@ public:
 
 private:
     plNetClientComm             fNetClientComm;
-    plNetClientCommMsgHandler   fNetClientCommMsgHandler;
-    
+
     void IInitNetClientComm();
     void IDeInitNetClientComm();
     void INetClientCommOpStarted(uint32_t context);
@@ -382,7 +377,6 @@ private:
     friend class plNetDniInfoSource;
     friend class plNetTalkList;
     friend class plNetClientMsgHandler;
-    friend struct plNetClientCommMsgHandler;
 };
 
 #endif  // PL_NET_CLIENT_inc

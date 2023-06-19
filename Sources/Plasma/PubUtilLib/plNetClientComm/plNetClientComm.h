@@ -143,22 +143,6 @@ void NetCommActivateMsgDispatchers();
 
 /*****************************************************************************
 *
-*   Net message handlers
-*
-***/
-
-typedef plNetMsgHandler::Status (FNetCommMsgHandler)(
-    plNetMessage *  msg,
-    void *          userState
-);
-
-void NetCommSetMsgHandler(
-    FNetCommMsgHandler *    handler,
-    void *                  userState
-);
-
-/*****************************************************************************
-*
 *   Network requests
 *   Network replies are posted via plDispatch
 *
@@ -241,15 +225,7 @@ void NetCommLogStackDump(const ST::string& stackDump);
 class plNetClientComm
 {
 public:
-    // Message handler for unsolicited msgs or registered for specific msg types.
-    class MsgHandler
-    {
-    public:
-        static plNetMsgHandler::Status StaticMsgHandler(plNetMessage* msg, void* userState);
-        virtual plNetMsgHandler::Status HandleMessage(plNetMessage* msg) = 0;
-    };
-
-    void SetMsgHandler(MsgHandler* msgHandler);
+    void SetMsgHandler(plNetMsgHandler* msgHandler);
 };
 
 ////////////////////////////////////////////////////////////////////
