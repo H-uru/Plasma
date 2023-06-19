@@ -68,7 +68,7 @@ public:
     void SetNetApp(plNetApp* na) { fNetApp=na; }
     plNetApp* GetNetApp() { return fNetApp; }
 
-    virtual Status ReceiveMsg(plNetMessage*& netMsg) = 0;
+    virtual Status ReceiveMsg(plNetMessage* netMsg) = 0;
 };
 
 #define MSG_HANDLER(msgClassName) msgClassName##HandleMsg
@@ -77,13 +77,13 @@ public:
 // Use to declare msg handler fxns in your MsgHandler .h class header
 //
 #define MSG_HANDLER_DECL(msgClassName) \
-virtual plNetMsgHandler::Status MSG_HANDLER(msgClassName)(plNetMessage*& netMsg); 
+virtual plNetMsgHandler::Status MSG_HANDLER(msgClassName)(plNetMessage* netMsg); 
 
 //
 // Use to define msg handler fxns in your MsgHandler .cpp file
 //
 #define MSG_HANDLER_DEFN(handlerClassName, msgClassName) \
-plNetMsgHandler::Status handlerClassName::MSG_HANDLER(msgClassName)(plNetMessage*& netMsg)
+plNetMsgHandler::Status handlerClassName::MSG_HANDLER(msgClassName)(plNetMessage* netMsg)
 
 //
 // Use in the switch statement in your ReceiveMsg function

@@ -70,7 +70,7 @@ public:
     plNetClientMsgHandler(plNetClientMgr * mgr);
     ~plNetClientMsgHandler();
 
-    plNetMsgHandler::Status ReceiveMsg(plNetMessage *& netMsg) override;
+    plNetMsgHandler::Status ReceiveMsg(plNetMessage* netMsg) override;
 
     MSG_HANDLER_DECL(plNetMsgTerminated)
     MSG_HANDLER_DECL(plNetMsgGroupOwner)

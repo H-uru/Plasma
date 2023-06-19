@@ -104,7 +104,7 @@ void plNetClientMsgHandler::IFillInTransportMember(const plNetMsgMemberInfoHelpe
         mbr->SetAvatarKey(avKey);
 }
 
-plNetMsgHandler::Status plNetClientMsgHandler::ReceiveMsg(plNetMessage *& netMsg)
+plNetMsgHandler::Status plNetClientMsgHandler::ReceiveMsg(plNetMessage* netMsg)
 {
 #ifdef HS_DEBUGGING
     //plNetClientMgr::GetInstance()->DebugMsg("<RCV> {}", netMsg->ClassName());
