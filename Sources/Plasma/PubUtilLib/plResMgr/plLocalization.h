@@ -101,6 +101,7 @@ public:
             || lang == kGerman
             || lang == kSpanish
             || lang == kItalian
+            || lang == kRussian
         );
     }
 
