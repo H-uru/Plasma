@@ -1870,6 +1870,10 @@ void plDXPipeline::IPrintDeviceInitError()
             caption = ST_LITERAL("Errore");
             message = ST_LITERAL("Errore di inizializzazione della scheda video. Sono state ripristinate le impostazioni predefinite.");
             break;
+        case plLocalization::kRussian:
+            caption = ST_LITERAL("Ошибка");
+            message = ST_LITERAL("Произошла ошибка инициализации вашей видеокарты. Мы сбросили настройки по умолчанию.");
+            break;
         default:
             caption = ST_LITERAL("Error");
             message = ST_LITERAL("There was an error initializing your video card. We have reset it to its Default settings.");

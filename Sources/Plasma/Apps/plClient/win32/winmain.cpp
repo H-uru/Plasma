@@ -944,6 +944,9 @@ INT_PTR CALLBACK SplashDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
         case plLocalization::kItalian:
             message = ST_LITERAL("Avvio di URU, attendere...");
             break;
+        case plLocalization::kRussian:
+            message = ST_LITERAL("Запуск URU. Пожалуйста, подождите...");
+            break;
             // default is English
         default:
             message = ST_LITERAL("Starting URU. Please wait...");
@@ -1162,6 +1165,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
             case plLocalization::kItalian:
                 caption = ST_LITERAL("Errore");
                 message = ST_LITERAL("Un'altra copia di URU è già aperta");
+                break;
+            case plLocalization::kRussian:
+                caption = ST_LITERAL("Ошибка");
+                message = ST_LITERAL("Другая копия URU уже запущена");
                 break;
             // default is English
             default:
