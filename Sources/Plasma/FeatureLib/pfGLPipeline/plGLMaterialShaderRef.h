@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plGLMaterialShaderRef_inc_
 
 #include "plGLDeviceRef.h"
-#include "plShaderNode.h"
 
 #include <map>
 #include <vector>
@@ -64,25 +63,8 @@ enum plGLShaderConstants : GLuint {
 
 class plGLMaterialShaderRef : public plGLDeviceRef
 {
-    typedef std::map<ST::string, std::shared_ptr<plGlobalVariableNode>> plShaderVarLookup;
-
     enum {
         kShaderVersion = 100
-    };
-
-    struct ShaderBuilder {
-        std::shared_ptr<plShaderFunction>   fFunction;
-        uint32_t                            fIteration;
-
-        std::shared_ptr<plVariableNode>     fMatValues;
-
-        std::shared_ptr<plVariableNode>     fPrevColor;
-        std::shared_ptr<plVariableNode>     fPrevAlpha;
-
-        std::shared_ptr<plVariableNode>     fCurrColor;
-        std::shared_ptr<plVariableNode>     fCurrAlpha;
-        std::shared_ptr<plVariableNode>     fCurrCoord;
-        std::shared_ptr<plVariableNode>     fCurrImage;
     };
 
     struct uniformLightSource {
@@ -105,9 +87,6 @@ protected:
     GLuint                              fFragShaderRef;
 
     std::vector<size_t>                 fPassIndices;
-
-    std::shared_ptr<plShaderContext>    fFragmentShader;
-    plShaderVarLookup                   fVariables;
 
 public:
     // These are named to match the GLSL variable names and are public vars
@@ -155,22 +134,7 @@ public:
 protected:
     void ICompile();
 
-    void ISetupShaderContexts();
     void ISetShaderVariableLocs();
-    void ICleanupShaderContexts();
-
-    template <typename T>
-    std::shared_ptr<T> IFindVariable(const ST::string& name, const ST::string& type, size_t n = 1)
-    {
-        auto it = fVariables.find(name);
-        if (it == fVariables.end()) {
-            std::shared_ptr<T> var = std::make_shared<T>(name, type, n);
-            fVariables[name] = var;
-            return var;
-        } else {
-            return std::static_pointer_cast<T>(it->second);
-        }
-    }
 
     void ILoopOverLayers();
 
@@ -179,14 +143,9 @@ protected:
     // fMatOverOff overrides to clear a state bit whether it is set in the layer or not.
     const hsGMatState ICompositeLayerState(plLayerInterface* layer);
 
-    uint32_t IHandleMaterial(uint32_t layer, std::shared_ptr<plShaderFunction> ffn);
+    uint32_t IHandleMaterial(uint32_t layer);
     uint32_t ILayersAtOnce(uint32_t which);
     bool ICanEatLayer(plLayerInterface* lay);
-    void IBuildLayerTransform(uint32_t idx, plLayerInterface* layer, ShaderBuilder* sb);
-    void IBuildLayerTexture(uint32_t idx, plLayerInterface* layer, ShaderBuilder* sb);
-    void IBuildLayerBlend(plLayerInterface* layer, ShaderBuilder* sb);
-    //void IHandleFirstTextureStage(plLayerInterface* layer);
-    //void IHandleFirstStageBlend(const hsGMatState& layerState);
 };
 
 #endif // _plGLMaterialShaderRef_inc_

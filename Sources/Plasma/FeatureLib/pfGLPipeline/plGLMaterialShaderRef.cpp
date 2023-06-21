@@ -63,8 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
 
-//#define USE_DYNAMIC_SHADERS 1
-
 // From plGLDevice.cpp
 extern GLfloat* hsMatrix2GL(const hsMatrix44& src, GLfloat* dst);
 
@@ -183,6 +181,7 @@ uniform mat4 uLayerMat[8];
 uniform int uLayerUVWSrc[8];
 uniform int uStartingLayer;
 uniform int uLayersAtOnce;
+uniform int uPassNumber;
 
 uniform sampler2D uTexture0;
 
@@ -235,11 +234,9 @@ void main() {
 plGLMaterialShaderRef::plGLMaterialShaderRef(hsGMaterial* mat, plGLPipeline* pipe)
     : plGLDeviceRef(), fMaterial(mat), fPipeline(pipe), fVertShaderRef(0), fFragShaderRef(0)
 {
-    ISetupShaderContexts();
     ILoopOverLayers();
     ICompile();
     ISetShaderVariableLocs();
-    ICleanupShaderContexts();
 }
 
 plGLMaterialShaderRef::~plGLMaterialShaderRef()
@@ -356,13 +353,7 @@ void plGLMaterialShaderRef::ICompile()
     }
 
     const char* vs_code = VERTEX_SHADER_STRING;
-
-#ifdef USE_DYNAMIC_SHADERS
-    ST::string frg = fFragmentShader->Render();
-    const char* fs_code = frg.c_str();
-#else
     const char* fs_code = FRAGMENT_SHADER_STRING;
-#endif
 
     static GLuint vshader = 0;
     if (!vshader) {
@@ -428,37 +419,8 @@ void plGLMaterialShaderRef::ICompile()
 }
 
 
-void plGLMaterialShaderRef::ISetupShaderContexts()
-{
-    fFragmentShader = std::make_shared<plShaderContext>(kFragment, kShaderVersion);
-
-#ifdef USE_DYNAMIC_SHADERS
-    // Helper function to invert colour
-    auto invColor = std::make_shared<plShaderFunction>("invColor", "vec3");
-    auto argColor = std::make_shared<plArgumentNode>("color", "vec3", 0);
-    invColor->PushOp(RETURN(SUB(CONSTANT("1.0"), argColor)));
-
-    // Helper function to invert alpha
-    auto invAlpha = std::make_shared<plShaderFunction>("invAlpha", "float");
-    auto argAlpha = std::make_shared<plArgumentNode>("alpha", "float", 0);
-    invAlpha->PushOp(RETURN(SUB(CONSTANT("1.0"), argAlpha)));
-
-    fFragmentShader->PushFunction(invColor);
-    fFragmentShader->PushFunction(invAlpha);
-#endif
-}
-
-
 void plGLMaterialShaderRef::ISetShaderVariableLocs()
 {
-#ifdef USE_DYNAMIC_SHADERS
-    // Assign and bind the attribute locations for later
-    glBindAttribLocation(fRef, kVtxPosition, "aVtxPosition");
-    glBindAttribLocation(fRef, kVtxNormal, "aVtxNormal");
-    glBindAttribLocation(fRef, kVtxColor, "aVtxColor");
-    glBindAttribLocation(fRef, kVtxUVWSrc,  "aVtxUVWSrc");
-#endif
-
     glLinkProgram(fRef);
     LOG_GL_ERROR_CHECK("Program Link failed");
 
@@ -519,52 +481,18 @@ void plGLMaterialShaderRef::ISetShaderVariableLocs()
 }
 
 
-void plGLMaterialShaderRef::ICleanupShaderContexts()
-{
-    fVariables.clear();
-
-    fFragmentShader.reset();
-}
-
-
 void plGLMaterialShaderRef::ILoopOverLayers()
 {
-    size_t j = 0;
-    size_t pass = 0;
-
-    // Build the fragment shader main function with the right passes
-    std::shared_ptr<plShaderFunction> fragMain = std::make_shared<plShaderFunction>("main", "void");
-    std::shared_ptr<plUniformNode> uPass = IFindVariable<plUniformNode>("uPassNumber", "int");
-
-    for (j = 0; j < fMaterial->GetNumLayers(); )
-    {
+    for (size_t j = 0; j < fMaterial->GetNumLayers(); ) {
         size_t iCurrMat = j;
-        std::shared_ptr<plShaderFunction> fragPass = std::make_shared<plShaderFunction>(ST::format("pass{}", pass), "vec4");
 
-        j = IHandleMaterial(iCurrMat, fragPass);
+        j = IHandleMaterial(iCurrMat);
 
         if (j == -1)
             break;
 
-        fFragmentShader->PushFunction(fragPass);
-
-        std::shared_ptr<plConditionNode> passCond = COND(IS_EQ(uPass, CONSTANT(ST::format("{}", pass))));
-
-        std::shared_ptr<plOutputVariableNode> output = IFindVariable<plOutputVariableNode>("fragColor", "vec4");
-        passCond->PushOp(ASSIGN(output, CALL(fragPass->name)));
-
-        // if (uPassNumber == curpass) { curpass(); }
-        fragMain->PushOp(passCond);
-
-        pass++;
         fPassIndices.push_back(iCurrMat);
-
-#if 0
-        ISetFogParameters(fMaterial->GetLayer(iCurrMat));
-#endif
     }
-
-    fFragmentShader->PushFunction(fragMain);
 }
 
 
@@ -576,7 +504,7 @@ const hsGMatState plGLMaterialShaderRef::ICompositeLayerState(plLayerInterface* 
 }
 
 
-uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<plShaderFunction> ffn)
+uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer)
 {
     if (!fMaterial || layer >= fMaterial->GetNumLayers() || !fMaterial->GetLayer(layer))
         return -1;
@@ -640,71 +568,6 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
 
     currLay = fPipeline->IPopOverAllLayer(currLay);
     currLay = fPipeline->IPopOverBaseLayer(currLay);
-
-    std::shared_ptr<plVaryingNode> vVtxColor = IFindVariable<plVaryingNode>("vVtxColor", "vec4");
-
-    std::shared_ptr<plTempVariableNode> fBaseAlpha = std::make_shared<plTempVariableNode>("baseAlpha", "float");
-    ffn->PushOp(ASSIGN(fBaseAlpha, PROP(vVtxColor, "a")));
-
-    ShaderBuilder sb;
-    sb.fFunction = ffn;
-    sb.fIteration = 0;
-    sb.fPrevAlpha = fBaseAlpha;
-
-#if 0
-    if (state.fZFlags & hsGMatState::kZIncLayer) {
-        // Set the Z-bias
-        sb.fFunction->PushOp(ASSIGN(OUTPUT("gl_FragDepth"), ADD(CONSTANT("gl_FragCoord.z"), CONSTANT("-0.0001"))));
-    } else {
-        // Clear any Z-bias
-        sb.fFunction->PushOp(ASSIGN(OUTPUT("gl_FragDepth"), CONSTANT("gl_FragCoord.z")));
-    }
-#endif
-
-    for (int32_t i = 0; i < currNumLayers; i++) {
-        sb.fIteration = i;
-        sb.fCurrColor.reset();
-        sb.fCurrAlpha.reset();
-        sb.fCurrCoord.reset();
-        sb.fCurrImage.reset();
-
-        plLayerInterface* layPtr = fMaterial->GetLayer(layer + i);
-        if (!layPtr)
-            return -1;
-
-        IBuildLayerTransform(layer + i, layPtr, &sb);
-        IBuildLayerTexture(layer + i, layPtr, &sb);
-        IBuildLayerBlend(layPtr, &sb);
-
-        sb.fPrevColor = sb.fCurrColor;
-        sb.fPrevAlpha = sb.fCurrAlpha;
-    }
-
-    //IHandleTextureMode(layer);
-    //IHandleShadeMode(layer);
-    //IHandleZMode();
-    //IHandleMiscMode()
-    //IHandleTextureStage(0, layer);
-
-    // Handle High Alpha Threshold
-    std::shared_ptr<plUniformNode> alphaThreshold = IFindVariable<plUniformNode>("uAlphaThreshold", "float");
-
-    std::shared_ptr<plConditionNode> alphaTest = COND(IS_LESS(sb.fCurrAlpha, alphaThreshold));
-    alphaTest->PushOp(CONSTANT("discard"));
-
-    // if (final.a < alphaThreshold) { discard; }
-    sb.fFunction->PushOp(alphaTest);
-
-    // Multiply in the vertex color at the end (but alpha is premultiplied!)
-    std::shared_ptr<plShaderNode> finalColor;
-
-    if (sb.fCurrColor) {
-        finalColor = MUL(PROP(vVtxColor, "rgb"), sb.fCurrColor, true);
-    } else {
-        finalColor = PROP(vVtxColor, "rgb");
-    }
-
-    sb.fFunction->PushOp(RETURN(CALL("vec4", finalColor, sb.fCurrAlpha)));
 
     return layer + currNumLayers;
 }
@@ -771,511 +634,3 @@ bool plGLMaterialShaderRef::ICanEatLayer(plLayerInterface* lay)
 
     return true;
 }
-
-
-void plGLMaterialShaderRef::IBuildLayerTransform(uint32_t idx, plLayerInterface* layer, ShaderBuilder* sb)
-{
-    std::shared_ptr<plVariableNode> matrix;
-    hsGMatState state = ICompositeLayerState(layer);
-
-    if (state.fMiscFlags & (hsGMatState::kMiscUseReflectionXform | hsGMatState::kMiscUseRefractionXform)) {
-        std::shared_ptr<plUniformNode> mC2W = IFindVariable<plUniformNode>("uMatrixC2W", "mat4");
-
-        ST::string matName = ST::format("LayerMat{}", idx);
-        matrix = std::make_shared<plTempVariableNode>(matName, "mat4");
-
-        ST::string tempName = ST::format("t{}", idx);
-        std::shared_ptr<plTempVariableNode> temp = std::make_shared<plTempVariableNode>(tempName, "float");
-
-        sb->fFunction->PushOp(ASSIGN(matrix, mC2W));
-
-        // mat[0][3] = mat[1][3] = mat[2][3] = 0
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "0"), "3"),
-                              ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "3"),
-                              ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "3"),
-                              CONSTANT("0.0")))));
-
-        // This is just a rotation about X of Pi/2 (y = z, z = -y),
-        // followed by flipping Z to reflect back towards us (z = -z).
-
-        // swap mat[1][0] and mat[2][0]
-        sb->fFunction->PushOp(ASSIGN(temp, SUBVAL(SUBVAL(matrix, "1"), "0")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "0"), SUBVAL(SUBVAL(matrix, "2"), "0")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "0"), temp));
-
-        // swap mat[1][1] and mat[2][1]
-        sb->fFunction->PushOp(ASSIGN(temp, SUBVAL(SUBVAL(matrix, "1"), "1")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "1"), SUBVAL(SUBVAL(matrix, "2"), "1")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "1"), temp));
-
-        // swap mat[1][2] and mat[2][2]
-        sb->fFunction->PushOp(ASSIGN(temp, SUBVAL(SUBVAL(matrix, "1"), "2")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "2"), SUBVAL(SUBVAL(matrix, "2"), "2")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "2"), temp));
-
-        if (state.fMiscFlags & hsGMatState::kMiscUseRefractionXform) {
-            // Same as reflection, but then matrix = matrix * scaleMatNegateZ.
-
-            // mat[0][2] = -mat[0][2];
-            sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "0"), "2"), SUB(CONSTANT("0.0"), SUBVAL(SUBVAL(matrix, "0"), "2"))));
-
-            // mat[1][2] = -mat[1][2];
-            sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "2"), SUB(CONSTANT("0.0"), SUBVAL(SUBVAL(matrix, "1"), "2"))));
-
-            // mat[2][2] = -mat[2][2];
-            sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "2"), SUB(CONSTANT("0.0"), SUBVAL(SUBVAL(matrix, "2"), "2"))));
-        }
-    } else if (state.fMiscFlags & hsGMatState::kMiscCam2Screen) {
-        // cam2Screen will also have the kMiscPerspProjection flag set, so this
-        // needs to go before the regular kMiscProjection check.
-        std::shared_ptr<plUniformNode> mNDC = IFindVariable<plUniformNode>("uMatrixProj", "mat4");
-
-        ST::string matName = ST::format("LayerMat{}", idx);
-        matrix = std::make_shared<plTempVariableNode>(matName, "mat4");
-
-        // mat.Reset();
-        sb->fFunction->PushOp(ASSIGN(matrix, CALL("mat4", CONSTANT("1.0"))));
-
-        // mat.MakeScaleMat(hsVector3 camScale(0.5f, -0.5f, 1.f));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "0"), "0"), CONSTANT("0.5")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "1"), CONSTANT("-0.5")));
-
-        // hsVector3 camTrans(0.5f, 0.5f, 0.f);
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "0"), "3"), CONSTANT("0.5")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "3"), CONSTANT("0.5")));
-
-        // The scale and trans move us from NDC to Screen space. We need to swap
-        // the Z and W coordinates so that the texture projection will divide by W
-        // and give us projected 2D coordinates.
-        ST::string tempName = ST::format("t{}", idx);
-        std::shared_ptr<plTempVariableNode> temp = std::make_shared<plTempVariableNode>(tempName, "float");
-
-        // swap mat[2][2] and mat[3][2]
-        sb->fFunction->PushOp(ASSIGN(temp, SUBVAL(SUBVAL(matrix, "2"), "2")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "2"), SUBVAL(SUBVAL(matrix, "3"), "2")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "3"), "2"), temp));
-
-        // swap mat[2][3] and mat[3][3]
-        sb->fFunction->PushOp(ASSIGN(temp, SUBVAL(SUBVAL(matrix, "2"), "3")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "3"), SUBVAL(SUBVAL(matrix, "3"), "3")));
-        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "3"), "3"), temp));
-
-        // Multiply by the projection matrix
-        sb->fFunction->PushOp(ASSIGN(matrix, MUL(matrix, mNDC)));
-#if 0
-    } else if (state.fMiscFlags & hsGMatState::kMiscProjection) {
-        ST::string matName = ST::format("uLayerMat{}", idx);
-        std::shared_ptr<plUniformNode> layMat = IFindVariable<plUniformNode>(matName, "mat4");
-    } else if (state.fMiscFlags & hsGMatState::kMiscBumpChans) {
-#endif
-    } else {
-        ST::string matName = ST::format("uLayerMat{}", idx);
-        matrix = IFindVariable<plUniformNode>(matName, "mat4");
-    }
-
-    uint32_t uvwSrc = layer->GetUVWSrc();
-
-    // Local variable to store the mesh uvw * layer matrix
-    ST::string coordName = ST::format("coords{}", idx);
-    std::shared_ptr<plTempVariableNode> coords = std::make_shared<plTempVariableNode>(coordName, "vec4");
-
-    switch (uvwSrc) {
-    case plLayerInterface::kUVWNormal:
-        {
-            std::shared_ptr<plVaryingNode> vCamNor = IFindVariable<plVaryingNode>("vCamNormal", "vec4");
-            sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, vCamNor)));
-        }
-        break;
-    case plLayerInterface::kUVWPosition:
-        {
-            std::shared_ptr<plVaryingNode> vCamPos = IFindVariable<plVaryingNode>("vCamPosition", "vec4");
-            sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, vCamPos)));
-        }
-        break;
-    case plLayerInterface::kUVWReflect:
-        {
-            std::shared_ptr<plVaryingNode> vCamPos = IFindVariable<plVaryingNode>("vCamPosition", "vec4");
-            std::shared_ptr<plVaryingNode> vCamNor = IFindVariable<plVaryingNode>("vCamNormal", "vec4");
-            std::shared_ptr<plUniformNode> mC2W = IFindVariable<plUniformNode>("uMatrixC2W", "mat4");
-
-            sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, MUL(mC2W, CALL("reflect", CALL("normalize", vCamPos), CALL("normalize", vCamNor))))));
-        }
-        break;
-    default:
-        {
-            uvwSrc &= plGBufferGroup::kUVCountMask;
-
-            std::shared_ptr<plVaryingNode> layUVW = IFindVariable<plVaryingNode>("vVtxUVWSrc", "highp vec3", 8);
-            sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, CALL("vec4", SUBVAL(layUVW, ST::format("{}", uvwSrc)), CONSTANT("1.0")))));
-        }
-        break;
-    }
-
-    if (state.fMiscFlags & hsGMatState::kMiscPerspProjection) {
-        sb->fFunction->PushOp(ASSIGN(PROP(coords, "x"), DIV(PROP(coords, "x"), PROP(coords, "z"))));
-        sb->fFunction->PushOp(ASSIGN(PROP(coords, "y"), DIV(PROP(coords, "y"), PROP(coords, "z"))));
-    }
-
-    sb->fCurrCoord = coords;
-}
-
-
-void plGLMaterialShaderRef::IBuildLayerTexture(uint32_t idx, plLayerInterface* layer, ShaderBuilder* sb)
-{
-    plBitmap* texture = layer->GetTexture();
-
-    if (texture != nullptr && sb->fCurrCoord) {
-        // Local variable to store the mesh uvw * layer matrix
-        ST::string imgName = ST::format("image{}", idx);
-        std::shared_ptr<plTempVariableNode> img = std::make_shared<plTempVariableNode>(imgName, "vec4");
-
-        sb->fCurrImage = img;
-
-        if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
-            ST::string samplerName = ST::format("uTexture{}", idx);
-            std::shared_ptr<plUniformNode> sampler = IFindVariable<plUniformNode>(samplerName, "samplerCube");
-
-            // image = texture(sampler, coords.xyz)
-            sb->fFunction->PushOp(ASSIGN(img, CALL("texture", sampler, PROP(sb->fCurrCoord, "xyz"))));
-        } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
-            ST::string samplerName = ST::format("uTexture{}", idx);
-            std::shared_ptr<plUniformNode> sampler = IFindVariable<plUniformNode>(samplerName, "sampler2D");
-
-            // image = texture(sampler, coords.xy)
-            sb->fFunction->PushOp(ASSIGN(img, CALL("texture", sampler, PROP(sb->fCurrCoord, "xy"))));
-        }
-    }
-}
-
-
-void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuilder* sb)
-{
-    hsGMatState state = ICompositeLayerState(layer);
-
-    if (!sb->fCurrImage) {
-        plStatusLog::AddLineSF("pipeline.log", "Got a layer with no image: {}", layer->GetKeyName());
-        sb->fCurrColor = sb->fPrevColor;
-        sb->fCurrAlpha = sb->fPrevAlpha;
-        return;
-    }
-
-    // Local variable to store the color value
-    ST::string colName = ST::format("color{}", sb->fIteration);
-    std::shared_ptr<plTempVariableNode> col = std::make_shared<plTempVariableNode>(colName, "vec3");
-
-    // Local variable to store the alpha value
-    ST::string alphaName = ST::format("alpha{}", sb->fIteration);
-    std::shared_ptr<plTempVariableNode> alpha = std::make_shared<plTempVariableNode>(alphaName, "float");
-
-    std::shared_ptr<plShaderNode> texCol;
-    if (state.fBlendFlags & hsGMatState::kBlendInvertColor) {
-        // color = 1.0 - texture.rgb
-        texCol = CALL("invColor", PROP(sb->fCurrImage, "rgb"));
-    } else {
-        // color = texture.rgb
-        texCol = PROP(sb->fCurrImage, "rgb");
-    }
-
-
-    if (sb->fIteration == 0) {
-        // Leave fCurrColor null if we are blending without texture color
-        if (state.fBlendFlags & hsGMatState::kBlendNoTexColor) {
-            sb->fCurrColor = sb->fPrevColor;
-        } else {
-            sb->fFunction->PushOp(ASSIGN(col, texCol));
-            sb->fCurrColor = col;
-        }
-
-        std::shared_ptr<plShaderNode> alphaVal;
-        if (state.fBlendFlags & hsGMatState::kBlendInvertAlpha) {
-            // 1.0 - texture.a
-            alphaVal = CALL("invAlpha", PROP(sb->fCurrImage, "a"));
-        } else {
-            // texture.a
-            alphaVal = PROP(sb->fCurrImage, "a");
-        }
-
-
-        if (state.fBlendFlags & hsGMatState::kBlendNoVtxAlpha || !sb->fPrevAlpha) {
-            // Only use texture alpha
-            sb->fFunction->PushOp(ASSIGN(alpha, alphaVal));
-
-            sb->fCurrAlpha = alpha;
-        } else if (state.fBlendFlags & hsGMatState::kBlendNoTexAlpha) {
-            // Only use vertex alpha (prev alpha)
-            sb->fCurrAlpha = sb->fPrevAlpha;
-        } else {
-            // Vertex alpha * base texture alpha
-            sb->fFunction->PushOp(ASSIGN(alpha, MUL(alphaVal, sb->fPrevAlpha)));
-            sb->fCurrAlpha = alpha;
-        }
-    } else {
-        switch (state.fBlendFlags & hsGMatState::kBlendMask)
-        {
-
-            case hsGMatState::kBlendAddColorTimesAlpha:
-                hsAssert(false, "Blend mode unsupported on upper layers");
-                break;
-
-            case hsGMatState::kBlendAlpha:
-            {
-                if (state.fBlendFlags & hsGMatState::kBlendNoTexColor) {
-                    // color = prev
-                    sb->fCurrColor = sb->fPrevColor;
-                } else {
-                    if (state.fBlendFlags & hsGMatState::kBlendInvertAlpha) {
-                        // color = texture.rgb + (texture.a * prev)
-                        sb->fFunction->PushOp(ASSIGN(col, ADD(texCol, MUL(PROP(sb->fCurrImage, "a"), sb->fPrevColor, true))));
-                        sb->fCurrColor = col;
-                    } else {
-                        // color = mix(prev, texture.rgb, texture.a)
-                        sb->fFunction->PushOp(ASSIGN(col, CALL("mix", sb->fPrevColor, texCol, PROP(sb->fCurrImage, "a"))));
-                        sb->fCurrColor = col;
-                    }
-                }
-
-
-                std::shared_ptr<plShaderNode> alphaVal;
-                if (state.fBlendFlags & hsGMatState::kBlendInvertAlpha) {
-                    // 1.0 - texture.a
-                    alphaVal = CALL("invAlpha", PROP(sb->fCurrImage, "a"));
-                } else {
-                    // texture.a
-                    alphaVal = PROP(sb->fCurrImage, "a");
-                }
-
-                if (state.fBlendFlags & hsGMatState::kBlendAlphaAdd) {
-                    // alpha = alphaVal + prev
-                    sb->fFunction->PushOp(ASSIGN(alpha, ADD(alphaVal, sb->fPrevAlpha)));
-                    sb->fCurrAlpha = alpha;
-                } else if (state.fBlendFlags & hsGMatState::kBlendAlphaMult) {
-                    // alpha = alphaVal * prev
-                    sb->fFunction->PushOp(ASSIGN(alpha, MUL(alphaVal, sb->fPrevAlpha)));
-                    sb->fCurrAlpha = alpha;
-                } else {
-                    // alpha = prev
-                    sb->fCurrAlpha = sb->fPrevAlpha;
-                }
-                break;
-            }
-
-            case hsGMatState::kBlendAdd:
-            {
-                // color = texture.rgb + prev
-                sb->fFunction->PushOp(ASSIGN(col, ADD(texCol, sb->fPrevColor)));
-                sb->fCurrColor = col;
-
-                // alpha = prev
-                sb->fCurrAlpha = sb->fPrevAlpha;
-                break;
-            }
-
-            case hsGMatState::kBlendMult:
-            {
-                // color = color * prev
-                sb->fFunction->PushOp(ASSIGN(col, MUL(texCol, sb->fPrevColor)));
-                sb->fCurrColor = col;
-
-                // alpha = prev
-                sb->fCurrAlpha = sb->fPrevAlpha;
-                break;
-            }
-
-            case hsGMatState::kBlendDot3:
-            {
-                // color = (color.r * prev.r + color.g * prev.g + color.b * prev.b)
-                sb->fFunction->PushOp(ASSIGN(PROP(col, "r"), ASSIGN(PROP(col, "g"), ASSIGN(PROP(col, "b"), CALL("dot", PROP(col, "rgb"), PROP(sb->fPrevColor, "rgb"))))));
-                sb->fCurrColor = col;
-
-                // alpha = prev
-                sb->fCurrAlpha = sb->fPrevAlpha;
-                break;
-            }
-
-            case hsGMatState::kBlendAddSigned:
-            {
-                // color = color + prev - 0.5
-                sb->fFunction->PushOp(ASSIGN(col, SUB(ADD(texCol, sb->fPrevColor), CONSTANT("0.5"))));
-                sb->fCurrColor = col;
-
-                // alpha = prev
-                sb->fCurrAlpha = sb->fPrevAlpha;
-                break;
-            }
-
-            case hsGMatState::kBlendAddSigned2X:
-            {
-                // color = (color + prev - 0.5) << 1
-                // Note: using CALL here for multiplication to ensure parentheses
-                sb->fFunction->PushOp(ASSIGN(col, CALL("2 *", SUB(ADD(texCol, sb->fPrevColor), CONSTANT("0.5")))));
-                sb->fCurrColor = col;
-
-                // alpha = prev
-                sb->fCurrAlpha = sb->fPrevAlpha;
-                break;
-            }
-
-            case 0:
-            {
-                // color = texture.rgb
-                sb->fFunction->PushOp(ASSIGN(col, texCol));
-                sb->fCurrColor = col;
-
-                // alpha = texture.a
-                sb->fFunction->PushOp(ASSIGN(alpha, PROP(sb->fCurrImage, "a")));
-                sb->fCurrAlpha = alpha;
-                break;
-            }
-        }
-    }
-
-}
-
-
-#if 0
-void plGLMaterialShaderRef::IHandleTextureMode(plLayerInterface* layer)
-{
-    plBitmap* bitmap = layer->GetTexture();
-
-    if (bitmap) {
-        // EnvBumpNext is unused in production -- ignoring for now
-
-
-        if (layer->GetBlendFlags() & hsGMatState::kBlendNoTexColor) {
-            // color = null
-        } else {
-            if (lay->GetBlendFlags() & hsGMatState::kBlendInvertColor) {
-                // color = 1.0 - texture.rgb
-            } else {
-                // color = texture.rgb
-            }
-        }
-
-        if (layer->GetBlendFlags() & hsGMatState::kBlendInvertAlpha) {
-            // alpha1 = 1.0 - texture.a
-        } else {
-            // alpha1 = texture.a
-        }
-
-        if (layer->GetBlendFlags() & hsGMatState::kBlendInvertVtxAlpha) {
-            // alpha2 = 1.0 - vVtxColor.a
-        } else {
-            // alpha2 = vVtxColor.a
-        }
-
-        if (layer->GetBlendFlags() & hsGMatState::kBlendNoVtxAlpha) {
-            // alpha = alpha1
-        } else if (layer->GetBlendFlags() & hsGMatState::kBlendNoTexAlpha) {
-            // alpha = alpha2
-        } else {
-            // alpha = alpha1 * alpha2
-        }
-    } else if (piggybacks) {
-        // Plasma says it selects the vertex colours, but actually selects an
-        // undefined arg2. We're going to assume that's wrong and select the
-        // vertex colours.
-
-        // color = vVtxColor.rgb
-        // alpha = vVtxColor.a
-    } else {
-        // color = vVtxColor.rgb
-        if (layer->GetBlendFlags() & hsGMatState::kBlendInvertVtxAlpha) {
-            // alpha = 1.0 - vVtxColor.a
-        } else {
-            // alpha = vVtxColor.a
-        }
-    }
-}
-
-void plGLMaterialShaderRef::IHandleStageBlend(const hsGMatState& state)
-{
-    const uint32_t blendFlags = state.fBlendFlags;
-
-    if (blendFlags & hsGMatState::kBlendInvertColor) {
-        // color = 1.0 - texture.rgb
-    } else {
-        // color = texture.rgb
-    }
-
-    // Ignoring the unused kBlendEnvBumpNext
-
-    switch (blendFlags & hsGMatState::kBlendMask)
-    {
-        case hsGMatState::kBlendAlpha:
-        {
-            if (blendFlags & hsGMatState::kBlendNoTexColor) {
-                // if (prev) { color = prev }
-            } else {
-                if (blendFlags & hsGMatState::kBlendInvertAlpha) {
-                    // color = color.rgb + (texture.a * prev.rgb)
-                } else {
-                    // color = mix(prev.rgb, color.rgb, texture.a)
-                }
-            }
-
-            if (blendFlags & hsGMatState::kBlendAlphaAdd) {
-                if (blendFlags & hsGMatState::kBlendInvertAlpha) {
-                    // alpha = (1.0 - texture.a) + prev
-                } else {
-                    // alpha = texture.a + prev
-                }
-            } else if (blendFlags & hsGMatState::kBlendAlphaMult) {
-                if (blendFlags & hsGMatState::kBlendInvertAlpha) {
-                    // alpha = (1.0 - texture.a) * prev
-                } else {
-                    // alpha = texture.a * prev
-                }
-            } else {
-                // alpha = prev
-            }
-            break;
-        }
-
-        case hsGMatState::kBlendAdd:
-        {
-            // color = color + prev
-            // alpha = prev
-            break;
-        }
-
-        case hsGMatState::kBlendMult:
-        {
-            // color = color * prev
-            // alpha = prev
-            break;
-        }
-
-        case hsGMatState::kBlendDot3:
-        {
-            // color = (color.r * prev.r + color.g * prev.g + color.b * prev.b)
-            // alpha = prev
-            break;
-        }
-
-        case hsGMatState::kBlendAddSigned:
-        {
-            // color = color + prev - 0.5
-            // alpha = prev
-            break;
-        }
-
-        case hsGMatState::kBlendAddSigned2X:
-        {
-            // color = (color + prev - 0.5) << 1
-            // alpha = prev
-            break;
-        }
-
-        case hsGMatState::kBlendAddColorTimesAlpha:
-            hsAssert(false, "Blend mode unsupported on upper layers");
-            break;
-
-        case 0:
-        {
-            // color = color
-            // alpha = prev
-            break;
-        }
-    }
-}
-#endif
