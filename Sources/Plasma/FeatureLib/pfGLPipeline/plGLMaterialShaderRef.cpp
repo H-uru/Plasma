@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
 
-//#define USE_NEW_SHADERS 1
+//#define USE_DYNAMIC_SHADERS 1
 
 // From plGLDevice.cpp
 extern GLfloat* hsMatrix2GL(const hsMatrix44& src, GLfloat* dst);
@@ -357,7 +357,7 @@ void plGLMaterialShaderRef::ICompile()
 
     const char* vs_code = VERTEX_SHADER_STRING;
 
-#ifndef USE_NEW_SHADERS
+#ifdef USE_DYNAMIC_SHADERS
     ST::string frg = fFragmentShader->Render();
     const char* fs_code = frg.c_str();
 #else
@@ -432,7 +432,7 @@ void plGLMaterialShaderRef::ISetupShaderContexts()
 {
     fFragmentShader = std::make_shared<plShaderContext>(kFragment, kShaderVersion);
 
-#ifndef USE_NEW_SHADERS
+#ifdef USE_DYNAMIC_SHADERS
     // Helper function to invert colour
     auto invColor = std::make_shared<plShaderFunction>("invColor", "vec3");
     auto argColor = std::make_shared<plArgumentNode>("color", "vec3", 0);
@@ -451,7 +451,7 @@ void plGLMaterialShaderRef::ISetupShaderContexts()
 
 void plGLMaterialShaderRef::ISetShaderVariableLocs()
 {
-#ifndef USE_NEW_SHADERS
+#ifdef USE_DYNAMIC_SHADERS
     // Assign and bind the attribute locations for later
     glBindAttribLocation(fRef, kVtxPosition, "aVtxPosition");
     glBindAttribLocation(fRef, kVtxNormal, "aVtxNormal");
