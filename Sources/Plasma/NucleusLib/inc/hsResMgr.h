@@ -145,6 +145,9 @@ private:
 public:
     static hsResMgr* ResMgr() { return (hsResMgr*)fResMgr; }
 
+    // External modifier use only
+    static void SetTheResMgr(hsResMgr* mgr) { fResMgr = mgr; }
+
     static plDispatchBase* Dispatch() { hsAssert(fResMgr, "No resmgr"); return fResMgr->Dispatch(); }
 
     static bool Init(hsResMgr* m);

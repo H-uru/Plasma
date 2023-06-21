@@ -28,12 +28,9 @@ target_link_libraries(
         pnNetCommon
     PRIVATE
         pnMessage
-        plNetMessage
         pnNucleusInc
         pnSceneObject
 )
-
-target_include_directories(pnModifier PRIVATE "${PLASMA_SOURCE_ROOT}/PubUtilLib")
 
 source_group("Header Files" FILES ${pnModifier_HEADERS})
 source_group("Source Files" FILES ${pnModifier_SOURCES})

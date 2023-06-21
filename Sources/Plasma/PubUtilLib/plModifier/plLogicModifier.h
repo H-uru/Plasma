@@ -55,6 +55,7 @@ protected:
     std::vector<plConditionalObject*> fConditionList;
 
     void PreTrigger(bool netRequest) override;
+    void UpdateSharedState(bool triggered) const override;
 
 public:
     plLogicModifier();

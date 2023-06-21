@@ -45,6 +45,7 @@ target_link_libraries(
         pnModifier
         pnNetCommon
         pnSceneObject
+        pnTimer
 )
 
 target_include_directories(pnNucleusInc INTERFACE ${CMAKE_CURRENT_LIST_DIR})

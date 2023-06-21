@@ -95,6 +95,18 @@ static_assert(plCreator::VerifyNonKeyedIndex<plClassName, CLASS_INDEX_SCOPED(plC
               #plClassName " is in the non-KeyedObject section of plCreatableIndex but "      \
               "derives from hsKeyedObject.");                                                   //
 
+
+#define VERIFY_EXTERNAL_CREATABLE(plClassName)                                               \
+                                                                                              \
+static_assert(plCreator::VerifyKeyedIndex<plClassName, EXTERN_CLASS_INDEX_SCOPED(plClassName)>(),    \
+              #plClassName " is in the KeyedObject section of plCreatableIndex but "          \
+              "does not derive from hsKeyedObject.");                                         \
+                                                                                              \
+static_assert(plCreator::VerifyNonKeyedIndex<plClassName, EXTERN_CLASS_INDEX_SCOPED(plClassName)>(), \
+              #plClassName " is in the non-KeyedObject section of plCreatableIndex but "      \
+              "derives from hsKeyedObject.");                                                 //
+
+
 #define REGISTER_CREATABLE( plClassName )                                           \
                                                                                     \
 VERIFY_CREATABLE(plClassName);                                                      \
@@ -123,6 +135,7 @@ static plClassName##__Creator   static##plClassName##__Creator;                 
 uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
 VERIFY_CREATABLE(plClassName);                                                        //
 
+
 #define REGISTER_NONCREATABLE( plClassName )                                        \
                                                                                     \
 class plClassName##__Creator : public plCreator                                     \
@@ -149,6 +162,7 @@ public:                                                                         
 static plClassName##__Creator   static##plClassName##__Creator;                     \
 uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
 VERIFY_CREATABLE(plClassName);                                                        //
+
 
 #define DECLARE_EXTERNAL_CREATABLE( plClassName )                                   \
                                                                                     \
@@ -182,13 +196,16 @@ public:                                                                         
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
 uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
-VERIFY_CREATABLE(plClassName);                                                        //
+VERIFY_EXTERNAL_CREATABLE(plClassName);                                             //
+
 
 #define REGISTER_EXTERNAL_CREATABLE(plClassName)                                    \
 static##plClassName##__Creator.Register();                                          //
 
+
 #define UNREGISTER_EXTERNAL_CREATABLE(plClassName)                                  \
 plFactory::UnRegister(EXTERN_CLASS_INDEX_SCOPED(plClassName), &static##plClassName##__Creator);
+
 
 #define REGISTER_EXTERNAL_NONCREATABLE( plClassName )                               \
                                                                                     \
@@ -215,7 +232,7 @@ public:                                                                         
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
 uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
-VERIFY_CREATABLE(plClassName);                                                        //
+VERIFY_EXTERNAL_CREATABLE(plClassName);                                             //
 
 
 #endif // plCreator_inc
