@@ -6,7 +6,6 @@ set(pfGLPipeline_SOURCES
     plGLPipeline.cpp
     plGLPlateManager.cpp
     plGLTextFont.cpp
-    plShaderNode.cpp
 )
 
 set(pfGLPipeline_HEADERS
@@ -17,7 +16,6 @@ set(pfGLPipeline_HEADERS
     pfGLPipelineCreatable.h
     plGLPlateManager.h
     plGLTextFont.h
-    plShaderNode.h
 )
 
 plasma_library(pfGLPipeline
