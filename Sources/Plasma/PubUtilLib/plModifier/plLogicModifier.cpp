@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plLogicModifier.h"
+
+#include "hsTimer.h"
 #include "plgDispatch.h"
 #include "plTimerCallbackManager.h"
 #include "pnModifier/plConditionalObject.h"
