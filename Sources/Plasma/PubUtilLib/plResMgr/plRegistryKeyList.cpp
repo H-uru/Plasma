@@ -58,8 +58,9 @@ plRegistryKeyList::~plRegistryKeyList()
 {
     for (auto& key : fKeys) {
         if (key && !key->ObjectIsLoaded()) {
-            delete key;
+            plKeyImp* temp = key;
             key = nullptr;
+            delete temp;
         }
     }
 }
