@@ -2364,22 +2364,19 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                             idx--;
                         break;
                     }
-                    if (lastChar < chunk->fText.size() && chunk->fText[lastChar] != 0)
+                    if (lastChar < chunk->fText.size())
                     {
                         // Didn't get to render the whole paragraph in this go, so we're going to cheat
                         // and split the paragraph up into two so that we can handle it properly. Note:
                         // this changes the chunk array beyond this point, so we need to invalidate the
                         // cache, but that's ok 'cause if we're doing this, it's probably invalid (or empty)
                         // anyway
-                        ST::wchar_buffer s = chunk->fText.to_wchar();
-
-                        // Note: Makes a copy of the string
-                        pfEsHTMLChunk *c2 = new pfEsHTMLChunk( &s[ lastChar ] );
+                        pfEsHTMLChunk *c2 = new pfEsHTMLChunk(chunk->fText.substr(lastChar));
                         c2->fFlags = chunk->fFlags;
                         fHTMLSource.emplace(fHTMLSource.begin() + idx + 1, c2);
 
                         // Clip and reallocate so we don't have two copies laying around
-                        chunk->fText = ST::string::from_wchar(s.c_str(), lastChar);
+                        chunk->fText = chunk->fText.left(lastChar);
 
                         // Invalidate our cache starting with the next page
                         if (fPageStarts.size() > page + 1)

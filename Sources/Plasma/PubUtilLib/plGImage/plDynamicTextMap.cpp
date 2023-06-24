@@ -592,7 +592,16 @@ void    plDynamicTextMap::SetFirstLineIndent( int16_t indent )
 void    plDynamicTextMap::CalcWrappedStringSize( const ST::string &text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar, uint16_t *maxAscent, uint16_t *lastX, uint16_t *lastY )
 {
     // TEMP
-    CalcWrappedStringSize(text.to_wchar().data(), width, height, firstClippedChar, maxAscent, lastX, lastY);
+    ST::wchar_buffer wcharBuf = text.to_wchar();
+    uint32_t firstClippedWchar;
+    CalcWrappedStringSize(wcharBuf.data(), width, height, &firstClippedWchar, maxAscent, lastX, lastY);
+
+    if (firstClippedChar != nullptr) {
+        // Convert the firstClippedChar offset from wchar_t units to UTF-8 byte units.
+        // This is a bit inefficient, because it creates an actual UTF-8 string
+        // even though we just need the count, but string_theory has no better alternative.
+        *firstClippedChar = ST::string::from_wchar(wcharBuf.data(), firstClippedWchar).size();
+    }
 }
 
 void    plDynamicTextMap::CalcWrappedStringSize( const wchar_t *text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar, uint16_t *maxAscent, uint16_t *lastX, uint16_t *lastY )

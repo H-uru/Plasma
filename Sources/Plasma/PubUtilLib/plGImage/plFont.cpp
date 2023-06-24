@@ -1176,8 +1176,7 @@ void    plFont::IRenderCharNull( const plCharacter &c )
 uint16_t  plFont::CalcStringWidth( const ST::string &string )
 {
     uint16_t w, h, a, lX, lY;
-    uint32_t s;
-    CalcStringExtents( string, w, h, a, s, lX, lY );
+    CalcStringExtents( string, w, h, a, lX, lY );
     return w;
 }
 
@@ -1189,9 +1188,13 @@ uint16_t  plFont::CalcStringWidth( const wchar_t *string )
     return w;
 }
 
-void    plFont::CalcStringExtents( const ST::string &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY )
+void    plFont::CalcStringExtents( const ST::string &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint16_t &lastX, uint16_t &lastY )
 {
     // convert the char string to a wchar_t string
+    // We don't expose firstClippedChar as an out parameter in the ST::string overload,
+    // because converting it to a correct UTF-8-based count is a bit complicated
+    // and currently nothing uses this information.
+    uint32_t firstClippedChar;
     CalcStringExtents(string.to_wchar().data(), width, height, ascent, firstClippedChar, lastX, lastY);
 }
 
