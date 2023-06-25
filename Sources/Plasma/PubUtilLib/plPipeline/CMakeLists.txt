@@ -71,8 +71,8 @@ target_link_libraries(plPipeline
         plSurface
         pfCamera # plCaptureRender, plDynamicEnvMap, plDXPipeline
         pfGameGUIMgr # plCaptureRender
-        freetype
         $<$<BOOL:${WIN32}>:plWinDpi>
+        freetype
     INTERFACE
         pnFactory
 )
