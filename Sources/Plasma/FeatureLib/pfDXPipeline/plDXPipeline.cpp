@@ -126,6 +126,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfCamera/plVirtualCamNeu.h"
 
 #include <algorithm>
+#include <string_theory/string>
 
 //#define MF_TOSSER
 
@@ -1849,17 +1850,36 @@ void plDXPipeline::ICreateDynamicBuffers()
 
 void plDXPipeline::IPrintDeviceInitError()
 {
-    char str[256];
-    char err[16];
+    ST::string caption;
+    ST::string message;
     switch(plLocalization::GetLanguage())
     {
-        case plLocalization::kFrench:   strcpy(err, "Erreur"); strcpy(str, "Erreur d'initialisation de votre carte graphique. Les valeurs par d�faut de ses param�tres ont �t� r�tablis. ");    break;
-        case plLocalization::kGerman:   strcpy(err, "Fehler");  strcpy(str, "Bei der Initialisierung Ihrer Grafikkarte ist ein Fehler aufgetreten. Standardeinstellungen werden wiederhergestellt."); break;
-        case plLocalization::kSpanish:  strcpy(err, "Error"); strcpy(str, "Ocurri� un error al inicializar tu tarjeta de v�deo. Hemos restaurado los ajustes por defecto. "); break;
-        case plLocalization::kItalian:  strcpy(err, "Errore");  strcpy(str, "Errore di inizializzazione della scheda video. Sono state ripristinate le impostazioni predefinite."); break;
-        default:                        strcpy(err, "Error"); strcpy(str, "There was an error initializing your video card. We have reset it to its Default settings."); break;
+        case plLocalization::kFrench:
+            caption = ST_LITERAL("Erreur");
+            message = ST_LITERAL("Erreur d'initialisation de votre carte graphique. Les valeurs par défaut de ses paramètres ont été rétablis. ");
+            break;
+        case plLocalization::kGerman:
+            caption = ST_LITERAL("Fehler");
+            message = ST_LITERAL("Bei der Initialisierung Ihrer Grafikkarte ist ein Fehler aufgetreten. Standardeinstellungen werden wiederhergestellt.");
+            break;
+        case plLocalization::kSpanish:
+            caption = ST_LITERAL("Error");
+            message = ST_LITERAL("Ocurrió un error al inicializar tu tarjeta de vídeo. Hemos restaurado los ajustes por defecto. ");
+            break;
+        case plLocalization::kItalian:
+            caption = ST_LITERAL("Errore");
+            message = ST_LITERAL("Errore di inizializzazione della scheda video. Sono state ripristinate le impostazioni predefinite.");
+            break;
+        case plLocalization::kRussian:
+            caption = ST_LITERAL("Ошибка");
+            message = ST_LITERAL("Произошла ошибка инициализации вашей видеокарты. Мы сбросили настройки по умолчанию.");
+            break;
+        default:
+            caption = ST_LITERAL("Error");
+            message = ST_LITERAL("There was an error initializing your video card. We have reset it to its Default settings.");
+            break;
     }
-    hsMessageBox(str, err, hsMessageBoxNormal, hsMessageBoxIconError);
+    hsMessageBox(message.to_wchar().c_str(), caption.to_wchar().c_str(), hsMessageBoxNormal, hsMessageBoxIconError);
 }
 
 // Reset device creation parameters to default and write to ini file

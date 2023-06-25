@@ -58,9 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <expat.h>
 
+#include <algorithm>
 #include <stack>
-#include <unordered_set>
-
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -518,15 +517,7 @@ void LocalizationDatabase::IMergeData()
 
 void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::string &setName, LocalizationXMLFile::set::iterator& curElement)
 {
-    std::unordered_set<ST::string> languageNames;
-    ST::string defaultLanguage = plLocalization::GetLanguageName((plLocalization::Language)0);
-
-    int numLocales = plLocalization::GetNumLocales();
-    for (int curLocale = 0; curLocale <= numLocales; curLocale++)
-    {
-        ST::string name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
-        languageNames.emplace(std::move(name));
-    }
+    auto languageNames = plLocalization::GetAllLanguageNames();
 
     ST::string elementName = curElement->first;
     LocalizationXMLFile::element& theElement = curElement->second;
@@ -535,7 +526,7 @@ void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::s
     while (curTranslation != theElement.end())
     {
         // Make sure this language exists!
-        auto languageIt = languageNames.find(curTranslation->first);
+        auto languageIt = std::find(languageNames.begin(), languageNames.end(), curTranslation->first);
 
         if (languageIt == languageNames.end())
         {
@@ -547,12 +538,11 @@ void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::s
             curTranslation++;
     }
 
-    for (const auto& language : languageNames)
-    {
-        if (theElement.find(language) == theElement.end())
-        {
+    for (auto lang : plLocalization::GetAllLanguages()) {
+        ST::string langName = plLocalization::GetLanguageName(lang);
+        if (plLocalization::IsLanguageUsable(lang) && theElement.find(langName) == theElement.end()) {
             pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Language {} is missing from the translations in element {}.{}.{}. You'll want to get translations for that!",
-                language, ageName, setName, elementName);
+                langName, ageName, setName, elementName);
         }
     }
 }
@@ -564,7 +554,7 @@ void LocalizationDatabase::IVerifySet(const ST::string &ageName, const ST::strin
     LocalizationXMLFile::set& theSet = fData[ageName][setName];
     LocalizationXMLFile::set::iterator curElement = theSet.begin();
 
-    ST::string defaultLanguage = plLocalization::GetLanguageName((plLocalization::Language)0);
+    ST::string defaultLanguage = plLocalization::GetLanguageName(plLocalization::kEnglish);
 
     while (curElement != theSet.end())
     {
@@ -817,42 +807,11 @@ pfLocalizationDataMgr::~pfLocalizationDataMgr()
     }
 }
 
-//// ICreateLocalizedElement /////////////////////////////////////////
-
-pfLocalizationDataMgr::localizedElement pfLocalizationDataMgr::ICreateLocalizedElement()
-{
-    int numLocales = plLocalization::GetNumLocales();
-    pfLocalizationDataMgr::localizedElement retVal;
-
-    for (int curLocale = 0; curLocale <= numLocales; curLocale++)
-    {
-        retVal[plLocalization::GetLanguageName((plLocalization::Language)curLocale)] = "";
-    }
-
-    return retVal;
-}
-
 //// IGetCurrentLanguageName /////////////////////////////////////////
 
 ST::string pfLocalizationDataMgr::IGetCurrentLanguageName() const
 {
     return plLocalization::GetLanguageName(plLocalization::GetLanguage());
-}
-
-//// IGetAllLanguageNames ////////////////////////////////////////////
-
-std::vector<ST::string> pfLocalizationDataMgr::IGetAllLanguageNames() const
-{
-    int numLocales = plLocalization::GetNumLocales();
-    std::vector<ST::string> retVal;
-
-    for (int curLocale = 0; curLocale <= numLocales; curLocale++)
-    {
-        ST::string name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
-        retVal.push_back(name);
-    }
-
-    return retVal;
 }
 
 //// IConvertSubtitle ////////////////////////////////////////////////
@@ -1153,10 +1112,9 @@ bool pfLocalizationDataMgr::DeleteElement(const ST::string & name)
 void pfLocalizationDataMgr::WriteDatabaseToDisk(const plFileName & path) const
 {
     std::vector<ST::string> ageNames = GetAgeList();
-    std::vector<ST::string> languageNames = IGetAllLanguageNames();
     for (const auto& curAge : ageNames)
     {
-        for (const auto& curLanguage : languageNames)
+        for (const auto& curLanguage : plLocalization::GetAllLanguageNames())
         {
             plFileName locPath = plFileName::Join(path, ST::format("{}{}.loc",
                                     curAge, curLanguage));

@@ -209,7 +209,11 @@ class PtLanguage:
     kSpanish = 3
     kItalian = 4
     kJapanese = 5
-    kNumLanguages = 6
+    kDutch = 6
+    kRussian = 7
+    kPolish = 8
+    kCzech = 9
+    kNumLanguages = 10
 
 class PtMarkerMsgType:
     """(none)"""

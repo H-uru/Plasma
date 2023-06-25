@@ -790,10 +790,18 @@ INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
             SendMessage(GetDlgItem(hwndDlg, IDC_PRODUCTSTRING), WM_SETTEXT, 0,
                         (LPARAM)plProduct::ProductString().c_str());
 
-            for (int i = 0; i < plLocalization::GetNumLocales(); i++)
-            {
-                ST::wchar_buffer languageNameBuf = plLocalization::GetLanguageName((plLocalization::Language)i).to_wchar();
-                SendMessageW(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)languageNameBuf.c_str());
+            for (auto lang : plLocalization::GetAllLanguages()) {
+                ST::string langName = plLocalization::GetLanguageName(lang);
+                if (!plLocalization::IsLanguageUsable(lang)) {
+#if defined(PLASMA_EXTERNAL_RELEASE)
+                    // External clients only allow selecting usable languages.
+                    continue;
+#else
+                    // Internal clients allow choosing unsupported languages as well.
+                    langName += ST_LITERAL(" (unsupported)");
+#endif
+                }
+                SendMessageW(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_ADDSTRING, 0, (LPARAM)langName.to_wchar().c_str());
             }
             SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_SETCURSEL, (WPARAM)plLocalization::GetLanguage(), 0);
 
@@ -921,28 +929,30 @@ INT_PTR CALLBACK SplashDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
     switch (uMsg)
     {
     case WM_INITDIALOG:
+        ST::string message;
         switch (plLocalization::GetLanguage())
         {
         case plLocalization::kFrench:
-            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "D�marrage d'URU. Veuillez patienter...");
+            message = ST_LITERAL("Démarrage d'URU. Veuillez patienter...");
             break;
         case plLocalization::kGerman:
-            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "Starte URU, bitte warten ...");
+            message = ST_LITERAL("Starte URU, bitte warten ...");
             break;
         case plLocalization::kSpanish:
-            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "Iniciando URU, por favor espera...");
+            message = ST_LITERAL("Iniciando URU, por favor espera...");
             break;
         case plLocalization::kItalian:
-            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "Avvio di URU, attendere...");
+            message = ST_LITERAL("Avvio di URU, attendere...");
+            break;
+        case plLocalization::kRussian:
+            message = ST_LITERAL("Запуск URU. Пожалуйста, подождите...");
             break;
             // default is English
-        case plLocalization::kJapanese:
-            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "...");
-            break;
         default:
-            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "Starting URU. Please wait...");
+            message = ST_LITERAL("Starting URU. Please wait...");
             break;
         }
+        SetDlgItemTextW(hwndDlg, IDC_STARTING_TEXT, message.to_wchar().c_str());
         return true;
 
     }
@@ -1136,25 +1146,37 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     HANDLE hOneInstance = CreateMutex(nullptr, FALSE, "UruExplorer");
     if (WaitForSingleObject(hOneInstance,0) != WAIT_OBJECT_0)
     {
+        ST::string caption;
+        ST::string message;
         switch (plLocalization::GetLanguage())
         {
             case plLocalization::kFrench:
-                hsMessageBox("Une autre copie d'URU est d�j� en cours d'ex�cution", "Erreur", hsMessageBoxNormal);
+                caption = ST_LITERAL("Erreur");
+                message = ST_LITERAL("Une autre copie d'URU est déjà en cours d'exécution");
                 break;
             case plLocalization::kGerman:
-                hsMessageBox("URU wird bereits in einer anderen Instanz ausgef�hrt", "Fehler", hsMessageBoxNormal);
+                caption = ST_LITERAL("Fehler");
+                message = ST_LITERAL("URU wird bereits in einer anderen Instanz ausgeführt");
                 break;
             case plLocalization::kSpanish:
-                hsMessageBox("En estos momentos se est� ejecutando otra copia de URU", "Error", hsMessageBoxNormal);
+                caption = ST_LITERAL("Error");
+                message = ST_LITERAL("En estos momentos se está ejecutando otra copia de URU");
                 break;
             case plLocalization::kItalian:
-                hsMessageBox("Un'altra copia di URU � gi� aperta", "Errore", hsMessageBoxNormal);
+                caption = ST_LITERAL("Errore");
+                message = ST_LITERAL("Un'altra copia di URU è già aperta");
+                break;
+            case plLocalization::kRussian:
+                caption = ST_LITERAL("Ошибка");
+                message = ST_LITERAL("Другая копия URU уже запущена");
                 break;
             // default is English
             default:
-                hsMessageBox("Another copy of URU is already running", "Error", hsMessageBoxNormal);
+                caption = ST_LITERAL("Error");
+                message = ST_LITERAL("Another copy of URU is already running");
                 break;
         }
+        hsMessageBox(message.to_wchar().c_str(), caption.to_wchar().c_str(), hsMessageBoxNormal);
         return PARABLE_NORMAL_EXIT;
     }
 #endif
