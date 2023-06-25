@@ -100,14 +100,7 @@ namespace plPython
         // The point of all this is to use Python's new "vectorcall" calling convention.
         // PSF claims that is is faster -- the most evident improvement is that we don't
         // have to allocate a transitional tuple object to pass the arguments.
-        if constexpr (sizeof...(args) == 1) {
-            // Use Python's built-in vectorcall optimization for one argument.
-            pyObjectRef arg = ConvertFrom(std::forward<Args>(args)...);
-            plProfile_BeginTiming(PythonUpdate);
-            pyObjectRef result = _PyObject_CallOneArg(callable, arg.Get());
-            plProfile_EndTiming(PythonUpdate);
-            return result;
-        } else if constexpr (sizeof...(args) == 0) {
+        if constexpr (sizeof...(args) == 0) {
             plProfile_BeginTiming(PythonUpdate);
 #if PY_VERSION_HEX >= 0x03090000
             // Use Python's built-in vectorcall optimization for no argument.
@@ -123,6 +116,17 @@ namespace plPython
 #endif
             plProfile_EndTiming(PythonUpdate);
             return result;
+#if PY_VERSION_HEX >= 0x03090000
+        } else if constexpr (sizeof...(args) == 1) {
+            // Use Python's built-in vectorcall optimization for one argument.
+            // This API exists in Python 3.8 in a provisional form but is not
+            // exposed, so we can only use it on Python 3.9+.
+            pyObjectRef arg = ConvertFrom(std::forward<Args>(args)...);
+            plProfile_BeginTiming(PythonUpdate);
+            pyObjectRef result = PyObject_CallOneArg(callable, arg.Get());
+            plProfile_EndTiming(PythonUpdate);
+            return result;
+#endif
         } else if constexpr (sizeof...(args) < 64) {
             constexpr size_t nargs = sizeof...(args) + 1;
             PyObject* argsObjs[nargs];
