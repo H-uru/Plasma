@@ -3401,10 +3401,9 @@ class xKI(ptModifier):
     def ShowBigKI(self):
 
         self.waitingForAnimation = True
-        curBrainMode = PtGetLocalAvatar().avatar.getCurrentMode()
         toggleCB = ptGUIControlCheckBox(KIMini.dialog.getControlFromTag(kGUI.miniToggleBtnID))
         toggleCB.disable()
-        if curBrainMode == PtBrainModes.kNonGeneric:
+        if PtIsCurrentBrainHuman():
             PtDebugPrint("xKI.ShowBigKI(): Entering LookingAtKI mode.", level=kDebugDumpLevel)
             PtAvatarEnterLookingAtKI()
             self.isPlayingLookingAtKIMode = True
