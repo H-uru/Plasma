@@ -279,7 +279,7 @@ class plFont : public hsKeyedObject
 
         uint16_t  CalcStringWidth( const ST::string &string );
         uint16_t  CalcStringWidth( const wchar_t *string );
-        void    CalcStringExtents( const ST::string &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
+        void    CalcStringExtents( const ST::string &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint16_t &lastX, uint16_t &lastY );
         void    CalcStringExtents( const wchar_t *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
 
         bool    LoadFromFNT( const plFileName &path );

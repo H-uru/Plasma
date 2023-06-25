@@ -72,8 +72,7 @@ void plFontPreview::Update(plFont *font, const QString &text)
     fFont->SetRenderFlag(plFont::kRenderClip, true);
     fFont->SetRenderClipRect(0, 0, (int16_t)width(), (int16_t)height());
     uint16_t w, h, a, lastX, lastY;
-    uint32_t firstCC;
-    fFont->CalcStringExtents(testString, w, h, a, firstCC, lastX, lastY);
+    fFont->CalcStringExtents(testString, w, h, a, lastX, lastY);
 
     int cY = ((height() - h) >> 1) + a;
 
