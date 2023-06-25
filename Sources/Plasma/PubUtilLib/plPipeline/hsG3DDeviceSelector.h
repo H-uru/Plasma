@@ -323,7 +323,7 @@ public:
     typedef std::function<void(std::vector<hsG3DDeviceRecord>&)> DeviceEnumerator;
 
 protected:
-    static std::list<DeviceEnumerator> sEnumerators;
+    static std::list<DeviceEnumerator>& Enumerators();
 
     std::vector<hsG3DDeviceRecord> fRecords;
 
@@ -344,7 +344,7 @@ protected:
     void    ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRecord &record );
 
 public:
-    static void AddDeviceEnumerator(const DeviceEnumerator& de) { sEnumerators.emplace_back(de); }
+    static void AddDeviceEnumerator(const DeviceEnumerator& de) { Enumerators().emplace_back(de); }
 
     hsG3DDeviceSelector() { }
     virtual ~hsG3DDeviceSelector();
