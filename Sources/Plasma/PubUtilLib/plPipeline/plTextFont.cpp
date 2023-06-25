@@ -205,10 +205,10 @@ uint16_t  *plTextFont::IInitFontTexture()
         }
         int offset = int( fFontHeight - cBox.yMax );
 
-        //blit the bitmap into place
+        // blit the bitmap into place
         for (int glyphY = bitmap.rows - 1; glyphY >= 0 ; glyphY--) {
             for (int glyphX = 0; glyphX < bitmap.width; glyphX++) {
-                //1 bit Bitmap as source
+                // 1 bit Bitmap as source
                 int pitch = abs(slot->bitmap.pitch);
                 unsigned char* row = &slot->bitmap.buffer[pitch * glyphY];
                 unsigned char cValue = row[glyphX >> 3];
@@ -221,8 +221,8 @@ uint16_t  *plTextFont::IInitFontTexture()
                 int destY = y + glyphY + offset;
                 int destX = glyphX + x + face->glyph->bitmap_left;
                 int destIndex = (destY * fTextureWidth) + destX;
-                hsAssert( destX < fTextureWidth, "Destination X cannot be out of bounds");
-                hsAssert( destY < fTextureHeight, "Destination Y cannot be out of bounds");
+                hsAssert(destX < fTextureWidth, "Destination X cannot be out of bounds");
+                hsAssert(destY < fTextureHeight, "Destination Y cannot be out of bounds");
 
                 data[(destIndex )] = src;
             }

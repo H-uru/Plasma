@@ -146,7 +146,6 @@ target_link_libraries(
         plStatGather
         plStatusLog
         plUnifiedTime
-        $<$<BOOL:${WIN32}>:plWinDpi>
         pfAnimation
         pfAudio
         pfCharacter
