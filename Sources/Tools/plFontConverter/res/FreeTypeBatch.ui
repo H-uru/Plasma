@@ -37,7 +37,24 @@
       <string>Common Settings</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="2" colspan="2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Screen &amp;Resolution:</string>
+        </property>
+        <property name="buddy">
+         <cstring>fResolution</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="fResolution">
+        <property name="maximum">
+         <number>65535</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="QRadioButton" name="fMonochrome">
@@ -54,40 +71,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Screen &amp;Resolution:</string>
-        </property>
-        <property name="buddy">
-         <cstring>fResolution</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Max &amp;Character:</string>
-        </property>
-        <property name="buddy">
-         <cstring>fMaxChar</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QSpinBox" name="fMaxChar">
-        <property name="maximum">
-         <number>1114111</number>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="fResolution">
-        <property name="maximum">
-         <number>65535</number>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>

@@ -533,7 +533,6 @@ void plFontConverter::IBatchFreeType(const plFileName &path, void *init)
     ui.fPointSizes->setText(QString::number(info.fSize));
     ui.fFontName->setText(path.GetFileNameNoExt().c_str());
     ui.fResolution->setValue(info.fScreenRes);
-    ui.fMaxChar->setValue(info.fMaxCharLimit);
     if (info.fBitDepth == 1)
         ui.fMonochrome->setChecked(true);
     else
@@ -548,7 +547,6 @@ void plFontConverter::IBatchFreeType(const plFileName &path, void *init)
         iSizes.append(s.toInt());
 
     info.fScreenRes = ui.fResolution->value();
-    info.fMaxCharLimit = ui.fMaxChar->value();
     info.fBitDepth = (ui.fMonochrome->isChecked() ? 1 : 8);
 
     QString outPath = QFileDialog::getExistingDirectory(this,
@@ -612,7 +610,6 @@ void plFontConverter::IImportFreeType(const plFileName &path)
 
     ui.fPointSize->setValue(info.fSize);
     ui.fResolution->setValue(info.fScreenRes);
-    ui.fMaxChar->setValue(info.fMaxCharLimit);
     if (info.fBitDepth == 1)
         ui.fMonochrome->setChecked(true);
     else
@@ -622,7 +619,6 @@ void plFontConverter::IImportFreeType(const plFileName &path)
 
     info.fSize = ui.fPointSize->value();
     info.fScreenRes = ui.fResolution->value();
-    info.fMaxCharLimit = ui.fMaxChar->value();
     info.fBitDepth = (ui.fMonochrome->isChecked() ? 1 : 8);
 
     if (ret == QDialog::Rejected)
