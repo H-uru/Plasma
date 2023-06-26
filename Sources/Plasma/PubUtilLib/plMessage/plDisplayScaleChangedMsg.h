@@ -81,7 +81,7 @@ public:
     float GetScale() const { return fScale; }
     std::optional<ClientWindow> GetSuggestedLocation() const { return fNewLocation; }
 
-#if WIN32
+#ifdef HS_BUILD_FOR_WIN32
     static RECT ConvertRect(const plDisplayScaleChangedMsg::ClientWindow& rect)
     {
         return *((const LPRECT)&rect);
