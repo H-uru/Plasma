@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFontFreeType.h"
 
+#include <string_theory/format>
+
 #include <memory>
 
 #include "ft2build.h"
@@ -217,18 +219,16 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
 
         // Set the name and size of our font
         fSize = options->fSize;
-        char str[ 512 ];
         
         if( ftFace->style_flags & FT_STYLE_FLAG_ITALIC )
             SetFlag( kFlagItalic, true );
         if( ftFace->style_flags & FT_STYLE_FLAG_BOLD )
             SetFlag( kFlagBold, true );
         
-        if( IsFlagSet( kFlagItalic | kFlagBold ) )
-            sprintf( str, "%s %s", ftFace->family_name, ftFace->style_name );
+        if (IsFlagSet(kFlagItalic | kFlagBold))
+            SetFace(ST::format("{} {}", ftFace->family_name, ftFace->style_name));
         else
-            strcpy( str, ftFace->family_name );
-        SetFace( str );
+            SetFace(ftFace->family_name);
 
         // # of bytes per row 
         uint32_t stride = ( fBPP == 1 ) ? ( fWidth >> 3 ) : fWidth;
