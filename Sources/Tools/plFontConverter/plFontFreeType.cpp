@@ -164,7 +164,17 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
                 if (ftIndex == 0)
                     continue;
 
-                error = FT_Load_Glyph(ftFace, ftIndex, FT_LOAD_DEFAULT);
+                constexpr FT_Int32 kMonochromeLoadFlags = (
+                    FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_NO_AUTOHINT
+                );
+                constexpr FT_Int32 kNormalLoadFlags = (
+                    FT_LOAD_RENDER | FT_LOAD_NO_AUTOHINT
+                );
+                error = FT_Load_Glyph(
+                    ftFace,
+                    ftIndex,
+                    options->fBitDepth == 1 ? kMonochromeLoadFlags : kNormalLoadFlags
+                );
                 if (error || ftChar > kMaxGlyphs)
                     continue;
 
@@ -232,17 +242,6 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
         // Now re-run through our stored list of glyphs, converting them to bitmaps
         for( uint32_t i = 0; i < numGlyphs; i++ )
         {
-            if( ftGlyphs[ i ]->format != ft_glyph_format_bitmap )
-            {
-                FT_Vector origin;
-                origin.x = 32;      // Half a pixel over
-                origin.y = 0;
-
-                error = FT_Glyph_To_Bitmap( &ftGlyphs[ i ], ( fBPP == 1 ) ? ft_render_mode_mono : ft_render_mode_normal, &origin, 0 );
-                if( error )
-                    throw false;
-            }
-
             if (fCharacters.size() < glyphChars[i] + 1)
                 fCharacters.resize(glyphChars[i] + 1);
 
