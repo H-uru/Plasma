@@ -52,86 +52,11 @@ using namespace metal;
 #include "ShaderVertex.h"
 #include "ShaderTypes.h"
 
-//copying this direction from hsGMatState because I am a horrible person but we can't import the header here in since it includes a lot of class stuff.
-//FIXME: Come up with something better.
-enum hsGMatMiscFlags: uint32_t {
-    kMiscWireFrame          = 0x1,          // dev (running out of bits)
-    kMiscDrawMeshOutlines   = 0x2,          // dev, currently unimplemented
-    kMiscTwoSided           = 0x4,          // view,dev
-    kMiscDrawAsSplats       = 0x8,          // dev? bwt
-    kMiscAdjustPlane        = 0x10,
-    kMiscAdjustCylinder     = 0x20,
-    kMiscAdjustSphere       = 0x40,
-    kMiscAdjust             = kMiscAdjustPlane | kMiscAdjustCylinder| kMiscAdjustSphere,
-    kMiscTroubledLoner      = 0x80,
-    kMiscBindSkip           = 0x100,
-    kMiscBindMask           = 0x200,
-    kMiscBindNext           = 0x400,
-    kMiscLightMap           = 0x800,
-    kMiscUseReflectionXform = 0x1000,       // Use the calculated reflection environment
-                                            // texture transform instead of layer->GetTransform()
-    kMiscPerspProjection    = 0x2000,
-    kMiscOrthoProjection    = 0x4000,
-    kMiscProjection         = kMiscPerspProjection | kMiscOrthoProjection,
+#define GMAT_STATE_ENUM_START(name)       enum name {
+#define GMAT_STATE_ENUM_VALUE(name, val)    name = val,
+#define GMAT_STATE_ENUM_END(name)         };
 
-    kMiscRestartPassHere    = 0x8000,       // Tells pipeline to start a new pass beginning with this layer
-                                            // Kinda like troubledLoner, but only cuts off lower layers, not
-                                            // higher ones (kMiscBindNext sometimes does this by implication)
-
-    kMiscBumpLayer          = 0x10000,
-    kMiscBumpDu             = 0x20000,
-    kMiscBumpDv             = 0x40000,
-    kMiscBumpDw             = 0x80000,
-    kMiscBumpChans          = kMiscBumpDu | kMiscBumpDv | kMiscBumpDw,
-
-    kMiscNoShadowAlpha      = 0x100000,
-    kMiscUseRefractionXform = 0x200000, // Use a refraction-like hack.
-    kMiscCam2Screen         = 0x400000, // Expects tex coords to be XYZ in camera space. Does a cam to screen (not NDC) projection
-                                        // and swaps Z with W, so that the texture projection can produce projected 2D screen coordinates.
-
-    kAllMiscFlags           = 0xffffffff
-};
-    
-enum hsGMatBlendFlags: uint32_t {
-    kBlendTest  = 0x1,                          // dev
-    // Rest of blends are mutually exclusive
-    kBlendAlpha                     = 0x2,      // dev
-    kBlendMult                      = 0x4,      // dev
-    kBlendAdd                       = 0x8,      // dev
-    kBlendAddColorTimesAlpha        = 0x10,     // dev
-    kBlendAntiAlias                 = 0x20,
-    kBlendDetail                    = 0x40,
-    kBlendNoColor                   = 0x80,     // dev
-    kBlendMADD                      = 0x100,
-    kBlendDot3                      = 0x200,
-    kBlendAddSigned                 = 0x400,
-    kBlendAddSigned2X               = 0x800,
-    kBlendMask                      = kBlendAlpha
-                                    | kBlendMult
-                                    | kBlendAdd
-                                    | kBlendAddColorTimesAlpha
-                                    | kBlendDetail
-                                    | kBlendMADD
-                                    | kBlendDot3
-                                    | kBlendAddSigned
-                                    | kBlendAddSigned2X,
-    kBlendInvertAlpha               = 0x1000,   // dev
-    kBlendInvertColor               = 0x2000,   // dev
-    kBlendAlphaMult                 = 0x4000,
-    kBlendAlphaAdd                  = 0x8000,
-    kBlendNoVtxAlpha                = 0x10000,
-    kBlendNoTexColor                = 0x20000,
-    kBlendNoTexAlpha                = 0x40000,
-    kBlendInvertVtxAlpha            = 0x80000,  // Invert ONLY the vertex alpha source
-    kBlendAlphaAlways               = 0x100000, // Alpha test always passes (even for alpha=0).
-    kBlendInvertFinalColor          = 0x200000,
-    kBlendInvertFinalAlpha          = 0x400000,
-    kBlendEnvBumpNext               = 0x800000,
-    kBlendSubtract                  = 0x1000000,
-    kBlendRevSubtract               = 0x2000000,
-    kBlendAlphaTestHigh             = 0x4000000,
-    kBlendAlphaPremultiplied        = 0x8000000
-};
+#include "hsGMatStateEnums.h"
     
 enum plUVWSrcModifiers: uint32_t {
     kUVWPassThru                                = 0x00000000,
