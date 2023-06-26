@@ -47,6 +47,8 @@ Mead, WA   99021
 #include "pfPatcher/plManifests.h"
 #include "pfPatcher/pfPatcher.h"
 
+#include "plWinDpi/plWinDpi.h"
+
 #include "plClientLauncher.h"
 
 #include "hsWindows.h"
@@ -55,6 +57,7 @@ Mead, WA   99021
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shlobj.h>
+#include <ShellScalingApi.h>
 
 // ===================================================
 
@@ -124,6 +127,11 @@ static inline void IShowMarquee(bool marquee=true)
 
 INT_PTR CALLBACK PatcherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    // DPI Helper can eat messages.
+    auto result = plWinDpi::Instance().WndProc(hwndDlg, uMsg, wParam, lParam, nullptr);
+    if (result.has_value())
+        return result.value();
+
     // NT6 Taskbar Majick
     if (uMsg == s_taskbarCreated) {
         hsRequireCOM();
@@ -380,6 +388,8 @@ static pfPatcher* IPatcherFactory()
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLink, int nCmdShow)
 {
+    plWinDpi::Instance();
+
     plClientLauncher launcher;
     s_launcher = &launcher;
 

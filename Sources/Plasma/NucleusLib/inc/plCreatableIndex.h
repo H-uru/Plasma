@@ -960,6 +960,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plConfirmationMsg),
     CLASS_INDEX(plLocalizedConfirmationMsg),
     CLASS_INDEX(plSubtitleMsg),
+    CLASS_INDEX(plDisplayScaleChangedMsg),
 CLASS_INDEX_LIST_END
 
 #endif // plCreatableIndex_inc

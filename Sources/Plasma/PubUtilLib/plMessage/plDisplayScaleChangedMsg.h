@@ -39,50 +39,59 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-//////////////////////////////////////////////////////////////////////////////
-//                                                                          //
-//  plDTProgressMgr Header                                                  //
-//                                                                          //
-//// Description /////////////////////////////////////////////////////////////
-//                                                                          //
-//  Derived class of plProgressMgr to draw the progress bars via debug text.// 
-//                                                                          //
-//////////////////////////////////////////////////////////////////////////////
 
-#ifndef _plDTProgressMgr_h
-#define _plDTProgressMgr_h
+#ifndef _plDisplayScaleChangedMsg_h_inc_
+#define _plDisplayScaleChangedMsg_h_inc_
 
-#include "plProgressMgr/plProgressMgr.h"
+#include <optional>
 
-class plPipeline;
+#include "pnMessage/plMessage.h"
 
-//// Manager Class Definition ////////////////////////////////////////////////
-
-class plDTProgressMgr : public plProgressMgr
+class plDisplayScaleChangedMsg : public plMessage
 {
-    protected:
-        uint32_t    fCurrentImage;
-        float       fLastDraw;
-        plPlate*    fActivePlate;
-        plPlate*    fStaticTextPlate;
-        StaticText  fShowingStaticText;
+public:
+    struct ClientWindow
+    {
+        int32_t fLeft;
+        int32_t fTop;
+        int32_t fRight;
+        int32_t fBottom;
+    };
 
-        void    Activate() override;
-        void    Deactivate() override;
+protected:
+    float fScale;
+    std::optional<ClientWindow> fNewLocation;
 
-        bool    IDrawTheStupidThing( plPipeline *p, plOperationProgress *prog, 
-                                     uint16_t x, uint16_t y, uint16_t width, uint16_t height, float scale );
+public:
+    plDisplayScaleChangedMsg(float scale, std::optional<ClientWindow> newLocation = std::nullopt)
+        : plMessage(), fScale(scale), fNewLocation(newLocation)
+    {
+        SetBCastFlag(plMessage::kBCastByExactType);
+    }
 
-    public:
+public:
+    CLASSNAME_REGISTER(plDisplayScaleChangedMsg);
+    GETINTERFACE_ANY(plDisplayScaleChangedMsg, plMessage);
 
-        plDTProgressMgr();
-        ~plDTProgressMgr();
+public:
+    void Read(hsStream*, hsResMgr*) override { hsAssert(0, "nope"); }
+    void Write(hsStream*, hsResMgr*) override { hsAssert(0, "nope"); }
 
-        void    Draw(plPipeline *p) override;
+public:
+    float GetScale() const { return fScale; }
+    std::optional<ClientWindow> GetSuggestedLocation() const { return fNewLocation; }
 
-        static void     DeclareThyself();
+#if WIN32
+    static RECT ConvertRect(const plDisplayScaleChangedMsg::ClientWindow& rect)
+    {
+        return *((const LPRECT)&rect);
+    }
+
+    static plDisplayScaleChangedMsg::ClientWindow ConvertRect(const RECT& rect)
+    {
+        return *((const plDisplayScaleChangedMsg::ClientWindow*)&rect);
+    }
+#endif
 };
 
-
-#endif //_plDTProgressMgr_h
-
+#endif

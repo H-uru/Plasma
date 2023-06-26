@@ -29,6 +29,7 @@ target_link_libraries(
         pnNetBase
         plNetGameLib
         plStatusLog
+        plWinDpi
         pfConsoleCore
         pfPatcher
         CURL::libcurl

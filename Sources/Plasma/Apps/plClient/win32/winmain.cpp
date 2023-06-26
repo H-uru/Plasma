@@ -67,12 +67,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plInputCore/plInputManager.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetGameLib/plNetGameLib.h"
+#include "plMessage/plDisplayScaleChangedMsg.h"
 #include "plPhysX/plPXSimulation.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plResMgr/plLocalization.h"
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plVersion.h"
 #include "plStatusLog/plStatusLog.h"
+#include "plWinDpi/plWinDpi.h"
 
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfCrashHandler/plCrashCli.h"
@@ -121,12 +123,6 @@ static const plCmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeBool,       "SkipIntroMovies", kArgSkipIntroMovies },
     { kCmdArgFlagged  | kCmdTypeString,     "Renderer",        kArgRenderer },
 };
-
-/// Made globals now, so we can set them to zero if we take the border and 
-/// caption styles out ala fullscreen (8.11.2000 mcn)
-int gWinBorderDX    = GetSystemMetrics( SM_CXSIZEFRAME );
-int gWinBorderDY    = GetSystemMetrics( SM_CYSIZEFRAME );
-int gWinMenuDY      = GetSystemMetrics( SM_CYCAPTION );
 
 plClientLoader  gClient;
 bool            gPendingActivate = false;
@@ -177,11 +173,23 @@ static void AuthFailedStrings (ENetError authError,
 
 void DebugMsgF(const char* format, ...);
 
+static void HandleDpiChange(HWND hWnd, UINT dpi, float scale, const RECT& rect)
+{
+    // Inform the engine about the new DPI.
+    auto* msg = new plDisplayScaleChangedMsg(scale, plDisplayScaleChangedMsg::ConvertRect(rect));
+    msg->Send();
+}
+
 // Handles all the windows messages we might receive
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static bool gDragging = false;
     static uint8_t mouse_down = 0;
+
+    // DPI Helper can eat messages.
+    auto result = plWinDpi::Instance().WndProc(hWnd, message, wParam, lParam, HandleDpiChange);
+    if (result.has_value())
+        return result.value();
 
     // Messages we registered for manually (no const value)
     if (message == s_WmTaskbarList)
@@ -347,6 +355,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 RECT r;
                 ::GetClientRect(hWnd, &r);
                 gClient->GetPipeline()->Resize(r.right - r.left, r.bottom - r.top);
+                gClient->GetPipeline()->SetBackingScale(plWinDpi::Instance().GetScale(hWnd));
             }
             break;
 
@@ -1019,6 +1028,9 @@ PF_CONSOLE_LINK_ALL()
 
 bool WinInit(HINSTANCE hInst)
 {
+    // Initialize the DPI helpers
+    plWinDpi::Instance();
+
     // Fill out WNDCLASS info
     WNDCLASS wndClass;
     wndClass.style = CS_DBLCLKS;   // CS_HREDRAW | CS_VREDRAW;
@@ -1037,13 +1049,17 @@ bool WinInit(HINSTANCE hInst)
     if (!RegisterClass(&wndClass))
         return false;
 
+    int winBorderDX = plWinDpi::Instance().GetSystemMetrics(SM_CXSIZEFRAME);
+    int winBorderDY = plWinDpi::Instance().GetSystemMetrics(SM_CYSIZEFRAME);
+    int winMenuDY = plWinDpi::Instance().GetSystemMetrics(SM_CYCAPTION);
+
     // Create a window
     HWND hWnd = CreateWindow(
         CLASSNAME, plProduct::LongName().c_str(),
         WS_OVERLAPPEDWINDOW,
         0, 0,
-        800 + gWinBorderDX * 2,
-        600 + gWinBorderDY * 2 + gWinMenuDY,
+        800 + winBorderDX * 2,
+        600 + winBorderDY * 2 + winMenuDY,
         nullptr, nullptr, hInst, nullptr
         );
     HDC hDC = GetDC(hWnd);
@@ -1266,6 +1282,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         HWND splashDialog = ::CreateDialog(hInst, MAKEINTRESOURCE(IDD_LOADING), nullptr, SplashDialogProc);
         gClient.Wait();
         ::DestroyWindow(splashDialog);
+    }
+
+    // Tell everybody about the current display scaling
+    {
+        plDisplayScaleChangedMsg* msg = new plDisplayScaleChangedMsg(plWinDpi::Instance().GetScale());
+        msg->Send();
     }
 
     // Main loop

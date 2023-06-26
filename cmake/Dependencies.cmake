@@ -42,7 +42,7 @@ set_package_properties(
     URL "https://www.freetype.org/"
     DESCRIPTION "Library for rendering fonts"
     PURPOSE "Used to convert vector fonts to raster assets"
-    TYPE OPTIONAL
+    TYPE REQUIRED
 )
 set_package_properties(
     JPEG PROPERTIES

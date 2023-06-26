@@ -72,6 +72,7 @@ set(plMessage_HEADERS
     plConsoleMsg.h
     plDampMsg.h
     plDeviceRecreateMsg.h
+    plDisplayScaleChangedMsg.h
     plDynaDecalEnableMsg.h
     plDynamicEnvMapMsg.h
     plDynamicTextMsg.h
