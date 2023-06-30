@@ -155,12 +155,7 @@ ST::string hsStream::ReadSafeString()
     ST::char_buffer name;
     uint16_t numChars = ReadLE16();
 
-#ifndef REMOVE_ME_SOON
-    // Backward compat hack - remove in a week or so (from 6/30/03)
-    bool oldFormat = !(numChars & 0xf000);
-    if (oldFormat)
-        (void)ReadLE16();
-#endif
+    hsAssert(numChars & 0xf000, "SafeString in old (pre-2003) format");
 
     numChars &= ~0xf000;
     hsAssert(numChars <= GetSizeLeft(), "Bad string");
