@@ -2571,8 +2571,6 @@ PF_CONSOLE_CMD( Registry, SetLoggingLevel, "int level", "Sets the logging level 
 class plActiveRefPeekerKey : public plKeyImp
 {
     public:
-        size_t      PeekNumNotifies() { return GetNumNotifyCreated(); }
-        plRefMsg*   PeekNotifyCreated(size_t i) { return GetNotifyCreated(i); }
         bool        PeekIsActiveRef(size_t i) const { return IsActiveRef(i); }
 };
 
@@ -2583,15 +2581,15 @@ void MyHandyPrintFunction(const plKey &obj, void (*PrintString)(const ST::string
 
     if( peeker->GetUoid().IsClone() )
         PrintString(ST::format("{} refs on {}, clone {}:{}: loaded={}",
-            peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName(),
+            peeker->GetNumNotifyCreated(), obj->GetUoid().GetObjectName(),
             peeker->GetUoid().GetCloneID(), peeker->GetUoid().GetClonePlayerID(),
             obj->ObjectIsLoaded() ? 1 : 0));
     else
         PrintString(ST::format("{} refs on {}: loaded={}",
-            peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName(),
+            peeker->GetNumNotifyCreated(), obj->GetUoid().GetObjectName(),
             obj->ObjectIsLoaded() ? 1 : 0));
 
-    if( peeker->PeekNumNotifies() == 0 )
+    if( peeker->GetNumNotifyCreated() == 0 )
         return;
 
     uint32_t a, j, limit = 30, count = 0;
@@ -2599,11 +2597,11 @@ void MyHandyPrintFunction(const plKey &obj, void (*PrintString)(const ST::string
     {
         PrintString( ( a == 0 ) ? "  Active:" : "  Passive:" );
 
-        for (size_t i = 0; i < peeker->PeekNumNotifies(); i++)
+        for (size_t i = 0; i < peeker->GetNumNotifyCreated(); i++)
         {
             if( ( a == 0 && peeker->PeekIsActiveRef( i ) ) || ( a == 1 && !peeker->PeekIsActiveRef( i ) ) )
             {
-                plRefMsg *msg = peeker->PeekNotifyCreated( i );
+                plRefMsg *msg = peeker->GetNotifyCreated( i );
                 if (msg != nullptr)
                 {
                     for( j = 0; j < msg->GetNumReceivers(); j++ )
