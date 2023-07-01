@@ -2579,7 +2579,7 @@ class plActiveRefPeekerKey : public plKeyImp
 // Not static so others can call it - making it even handier
 void MyHandyPrintFunction(const plKey &obj, void (*PrintString)(const ST::string&))
 {
-    plActiveRefPeekerKey *peeker = (plActiveRefPeekerKey *)(plKeyImp *)obj;
+    auto peeker = static_cast<plActiveRefPeekerKey*>(plKeyImp::GetFromKey(obj));
 
     if( peeker->GetUoid().IsClone() )
         PrintString(ST::format("{} refs on {}, clone {}:{}: loaded={}",
@@ -2644,12 +2644,12 @@ PF_CONSOLE_CMD( Registry, ListRefs, "string keyType, string keyName", "For the g
 
     MyHandyPrintFunction( obj, PrintString );
     
-    plActiveRefPeekerKey *peeker = (plActiveRefPeekerKey *)(plKeyImp *)obj;
-    if( peeker->GetNumClones() > 0 )
+    plKeyImp* imp = plKeyImp::GetFromKey(obj);
+    if (imp->GetNumClones() > 0)
     {
-        for (size_t i = 0; i < peeker->GetNumClones(); i++)
+        for (size_t i = 0; i < imp->GetNumClones(); i++)
         {
-            MyHandyPrintFunction( peeker->GetCloneByIdx( i ), PrintString );
+            MyHandyPrintFunction(imp->GetCloneByIdx(i), PrintString);
         }
     }
 }

@@ -206,8 +206,7 @@ public:
 
     bool EatKey(const plKey& key) override
     {
-        plKeyImp* imp = (plKeyImp*)key;
-        imp->WriteObject(fStream);
+        plKeyImp::GetFromKey(key)->WriteObject(fStream);
         return true;
     }
 };

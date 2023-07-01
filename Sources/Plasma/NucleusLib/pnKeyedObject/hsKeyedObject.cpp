@@ -52,13 +52,13 @@ void hsKeyedObject::SetKey(plKey k)
     if (fpKey != nullptr)
     {
         hsAssert(k == nullptr || k == fpKey, "Changing an object's key is not allowed");
-        ((plKeyImp*)fpKey)->SetObjectPtr(nullptr);
+        plKeyImp::GetFromKey(fpKey)->SetObjectPtr(nullptr);
     }
 
     fpKey = std::move(k);
 
     if (fpKey != nullptr)
-        ((plKeyImp*)fpKey)->SetObjectPtr(this); 
+        plKeyImp::GetFromKey(fpKey)->SetObjectPtr(this); 
 }   
 
 bool hsKeyedObject::SendRef(plRefMsg* refMsg, plRefFlags::Type flags)
@@ -96,7 +96,7 @@ void hsKeyedObject::UnRegister()
         if (plgDispatch::Dispatch())
             plgDispatch::Dispatch()->UnRegisterAll(fpKey);
         
-        ((plKeyImp *)fpKey)->SetObjectPtr(nullptr);
+        plKeyImp::GetFromKey(fpKey)->SetObjectPtr(nullptr);
     }
 }
 
@@ -112,7 +112,7 @@ plKey hsKeyedObject::RegisterAs(plFixedKeyId fixedKey)
 
         //  the key list "helpfully" assigns us an object id.
         // we don't want one for fixed keys however (initialization order might bite us in the ass)
-        static_cast<plKeyImp*>(key)->SetObjectID(0);
+        plKeyImp::GetFromKey(key)->SetObjectID(0);
     }
     else
     {
@@ -154,7 +154,7 @@ void hsKeyedObject::UnRegisterAsManual(plUoid& inUoid)
                            fpKey->GetName(), inUoid, myUoid).c_str());
 #endif
         }
-        ((plKeyImp*)fpKey)->UnRegister();
+        plKeyImp::GetFromKey(fpKey)->UnRegister();
     }
 }
 

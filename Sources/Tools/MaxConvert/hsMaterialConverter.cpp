@@ -1292,7 +1292,7 @@ hsGMaterial* hsMaterialConverter::IInsertDoneMaterial(Mtl *mtl, hsGMaterial *hMa
         plKey matKey = hMat->GetKey();
         matKey->RefObject();
         matKey->UnRefObject();
-        ((plKeyImp *)matKey)->SetObjectPtr(nullptr);
+        plKeyImp::GetFromKey(matKey)->SetObjectPtr(nullptr);
         matKey = nullptr;
 
         hMat = equivalent->fHsMaterial;

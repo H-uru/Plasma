@@ -191,7 +191,7 @@ void plPageOptimizer::IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey&
         void SetStartPos(uint32_t startPos) { fStartPos = startPos; }
     };
 
-    plUpdateKeyImp* keyImp = (plUpdateKeyImp*)(plKeyImp*)key;
+    plUpdateKeyImp* keyImp = static_cast<plUpdateKeyImp*>(plKeyImp::GetFromKey(key));
     uint32_t startPos = keyImp->GetStartPos();
     uint32_t len = keyImp->GetDataLen();
 
@@ -267,7 +267,7 @@ void plPageOptimizer::IRewritePage()
                 uint32_t dataLen = oldPage.ReadLE32();
 
                 // Get the new start pos
-                plKeyImp* key = (plKeyImp*)fResMgr->FindKey(uoid);
+                const plKeyImp* key = plKeyImp::GetFromKey(fResMgr->FindKey(uoid));
                 startPos = key->GetStartPos();
 
                 uoid.Write(&newPage);

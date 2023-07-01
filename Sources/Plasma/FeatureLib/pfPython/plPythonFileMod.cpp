@@ -729,7 +729,7 @@ ST::string plPythonFileMod::IMakeModuleName(const plSceneObject* sobj)
     name << soName << pmName;
 
     // check to see if we are attaching to a clone?
-    const plKeyImp* pKeyImp = (plKeyImp*)(sKey);
+    const plKeyImp* pKeyImp = plKeyImp::GetFromKey(sKey);
     if (pKeyImp->GetCloneOwner()) {
         // we have an owner... so we must be a clone.
         // add the cloneID to the end of the module name

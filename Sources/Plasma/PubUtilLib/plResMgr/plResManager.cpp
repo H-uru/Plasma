@@ -284,7 +284,7 @@ void plResManager::LogReadTimes(bool logReadTimes)
 
 hsKeyedObject* plResManager::IGetSharedObject(plKeyImp* pKey)
 {
-    plKeyImp* origKey = (plKeyImp*)pKey->GetCloneOwner();
+    plKeyImp* origKey = plKeyImp::GetFromKey(pKey->GetCloneOwner());
 
     // Find the first non-nil key and ask it to clone itself
     size_t count = origKey->GetNumClones();
@@ -583,7 +583,7 @@ plKey plResManager::FindKey(const plUoid& uoid)
 
     // If we're looking for a clone, get the clone instead of the original
     if (key && uoid.IsClone())
-        key = ((plKeyImp*)key)->GetClone(uoid.GetClonePlayerID(), uoid.GetCloneID());
+        key = plKeyImp::GetFromKey(key)->GetClone(uoid.GetClonePlayerID(), uoid.GetCloneID());
 
     return key;
 }
@@ -626,7 +626,7 @@ bool plResManager::AddViaNotify(const plKey &key, plRefMsg* msg, plRefFlags::Typ
         return false;
     }
 
-    ((plKeyImp*)key)->SetupNotify(msg,flags);
+    plKeyImp::GetFromKey(key)->SetupNotify(msg,flags);
     
     if (flags != plRefFlags::kPassiveRef)
     {
@@ -666,7 +666,7 @@ bool plResManager::SendRef(const plKey& key, plRefMsg* refMsg, plRefFlags::Type 
         return false;
     }
 
-    plKeyImp* iKey = (plKeyImp*)key;
+    plKeyImp* iKey = plKeyImp::GetFromKey(key);
     iKey->ISetupNotify(refMsg, flags);
     hsRefCnt_SafeUnRef(refMsg);
 
@@ -713,7 +713,7 @@ plKey plResManager::ReadKeyNotifyMe(hsStream* stream, plRefMsg* msg, plRefFlags:
         return nullptr;
     }
 
-    ((plKeyImp*)key)->SetupNotify(msg,flags);
+    plKeyImp::GetFromKey(key)->SetupNotify(msg,flags);
 
     hsKeyedObject* ko = key->ObjectIsLoaded();
 
@@ -795,7 +795,7 @@ plKey plResManager::ReRegister(const ST::string& nm, const plUoid& oid)
     {
         if (pOrigKey)
         {
-            plKey cloneKey = ((plKeyImp*)pOrigKey)->GetClone(fCurClonePlayerID, fCurCloneID);
+            plKey cloneKey = plKeyImp::GetFromKey(pOrigKey)->GetClone(fCurClonePlayerID, fCurCloneID);
             if (cloneKey)
                 return cloneKey;
         }
@@ -804,8 +804,8 @@ plKey plResManager::ReRegister(const ST::string& nm, const plUoid& oid)
     plKeyImp* pKey = new plKeyImp;
     if (canClone && pOrigKey)
     {   
-        pKey->CopyForClone((plKeyImp*)pOrigKey, fCurClonePlayerID, fCurCloneID);
-        ((plKeyImp*)pOrigKey)->AddClone(pKey);
+        pKey->CopyForClone(plKeyImp::GetFromKey(pOrigKey), fCurClonePlayerID, fCurCloneID);
+        plKeyImp::GetFromKey(pOrigKey)->AddClone(pKey);
     }
     else
     {
@@ -927,7 +927,7 @@ bool plResManager::Unload(const plKey& objKey)
 {
     if (objKey)
     {
-        ((plKeyImp*)objKey)->UnRegister();
+        plKeyImp::GetFromKey(objKey)->UnRegister();
         fDispatch->UnRegisterAll(objKey);
         return true;
     }
@@ -1583,7 +1583,7 @@ void plResManager::UnloadPageObjects(plRegistryPageNode* pageNode, uint16_t clas
     public:
         bool EatKey(const plKey& key) override
         {
-            sIReportLeak((plKeyImp*)key, nullptr);
+            sIReportLeak(plKeyImp::GetFromKey(key), nullptr);
             return true;
         }
     };

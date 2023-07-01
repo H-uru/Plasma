@@ -235,13 +235,13 @@ void plResBrowser::SaveSelectedObject()
 
     if (!fileName.isEmpty())
     {
-        plKeyImp *keyImp = static_cast<plKeyImp *>(itemKey);
+        plKeyImp* keyImp = plKeyImp::GetFromKey(itemKey);
 
         if (keyImp->GetDataLen() <= 0)
             return;
 
         plResManager *resMgr = static_cast<plResManager *>(hsgResMgr::ResMgr());
-        plRegistryPageNode *pageNode = resMgr->FindPage(keyImp->GetUoid().GetLocation());
+        plRegistryPageNode* pageNode = resMgr->FindPage(itemKey->GetUoid().GetLocation());
 
         hsStream *stream = pageNode->OpenStream();
         if (!stream)
@@ -317,7 +317,7 @@ void plResBrowser::UpdateInfoPage()
             fUI->fObjectClass->setText(QString("%1 (%2)").arg(cname ? cname : "<unknown>")
                                        .arg(key->GetUoid().GetClassType()));
 
-            plKeyImp *imp = static_cast<plKeyImp *>(key);
+            plKeyImp* imp = plKeyImp::GetFromKey(key);
             if (showAsHex)
                 fUI->fStartPos->setText(QString("0x%1").arg(imp->GetStartPos(), 0, 16));
             else

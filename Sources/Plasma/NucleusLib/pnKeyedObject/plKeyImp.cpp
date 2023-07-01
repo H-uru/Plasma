@@ -122,7 +122,7 @@ plKeyImp::~plKeyImp()
     if (fCloneOwner != nullptr)
     {
         // Must be a clone, remove us from our parent list
-        ((plKeyImp*)fCloneOwner)->RemoveClone(this);
+        plKeyImp::GetFromKey(fCloneOwner)->RemoveClone(this);
     }
 
     for (plKeyImp* clone : fClones)
@@ -435,7 +435,7 @@ plKey plKeyImp::GetCloneByIdx(size_t idx)
 void plKeyImp::SatisfyPending(plRefMsg* msg) const
 {
     for (int i = 0; i < msg->GetNumReceivers(); i++)
-        ((plKeyImp*)msg->GetReceiver(i))->SatisfyPending();
+        plKeyImp::GetFromKey(msg->GetReceiver(i))->SatisfyPending();
 }
 
 void plKeyImp::SatisfyPending() const
@@ -458,7 +458,7 @@ void plKeyImp::ISetupNotify(plRefMsg* msg, plRefFlags::Type flags)
 
     hsAssert(msg->GetNumReceivers(), "nil object getting a reference");
     for (int i = 0; i < msg->GetNumReceivers(); i++)
-        ((plKeyImp*)msg->GetReceiver(i))->AddRef(plKey::Make(this));
+        plKeyImp::GetFromKey(msg->GetReceiver(i))->AddRef(plKeyImp::GetFromKey(plKey::Make(this)));
 }
 
 void plKeyImp::SetupNotify(plRefMsg* msg, plRefFlags::Type flags)
@@ -584,13 +584,13 @@ void plKeyImp::IClearRefs()
     {
         plRefMsg* msg = GetNotifyCreated(i);
         for (size_t j = 0; j < msg->GetNumReceivers(); j++)
-            ((plKeyImp*)msg->GetReceiver(j))->RemoveRef(this);
+            plKeyImp::GetFromKey(msg->GetReceiver(j))->RemoveRef(this);
     }
 }
 
 void plKeyImp::Release(plKey targetKey)
 {
-    IRelease((plKeyImp*)targetKey);
+    IRelease(plKeyImp::GetFromKey(targetKey));
 }
 
 void plKeyImp::IRelease(plKeyImp* iTargetKey)

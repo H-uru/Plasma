@@ -2708,7 +2708,7 @@ PyObject* cyMisc::FindClones(pyKey* object) {
     plKey obj = object->getKey();
     plUoid uoid = obj->GetUoid();
 
-    plKeyImp* imp = ((plKeyImp*)obj);
+    plKeyImp* imp = plKeyImp::GetFromKey(obj);
     size_t cloneNum = imp->GetNumClones();
     PyObject* keyList = PyList_New(cloneNum);
 

@@ -506,14 +506,14 @@ bool plPluginResManager::NukeKeyAndObject(plKey& objectKey)
         uint16_t GetRefCount() const { return fRefCount; }
     };
 
-    plKeyImp* keyData = (plKeyImp*)objectKey;
+    plKeyImp* keyData = plKeyImp::GetFromKey(objectKey);
 
     // Check the ref count on the object. Nobody should have a ref to it
     // except the key
     hsKeyedObject* object = objectKey->ObjectIsLoaded();
     if (object != nullptr)
     {
-        if (keyData->GetActiveRefs())
+        if (objectKey->GetActiveRefs())
             // Somebody still has a ref to this object, so we can't nuke it
             return false;
     }

@@ -60,6 +60,11 @@ public:
     plKeyImp(plUoid, uint32_t pos,uint32_t len);
     virtual ~plKeyImp();
 
+    static plKeyImp* GetFromKey(const plKey& key)
+    {
+        return static_cast<plKeyImp*>(&*key);
+    }
+
     const plUoid&           GetUoid() const override { return fUoid; }
     ST::string              GetName() const override;
 
