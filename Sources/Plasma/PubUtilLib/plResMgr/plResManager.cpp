@@ -214,14 +214,20 @@ void plResManager::IShutdown()
     // Shut down the registry (finally!)
     ILockPages();
 
-    PageMap::const_iterator it;
-    for (it = fAllPages.begin(); it != fAllPages.end(); it++)
-        delete it->second;
-    fAllPages.clear();
+    // Unload all keys before actually deleting the pages.
+    // When a key's refcount drops to zero, IKeyUnreffed looks up the key's page.
+    // If the page is already deleted at that point, this causes a use after free and potential crash.
+    for (const auto& pair : fAllPages) {
+        pair.second->UnloadKeys();
+    }
     fLoadedPages.clear();
+    fLastFoundPage = nullptr;
+    for (const auto& pair : fAllPages) {
+        delete pair.second;
+    }
+    fAllPages.clear();
 
     IUnlockPages();
-    fLastFoundPage = nullptr;
 
     // Now, kill off the Dispatcher
     hsRefCnt_SafeUnRef(fDispatch);
