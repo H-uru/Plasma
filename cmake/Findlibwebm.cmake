@@ -2,8 +2,8 @@ include(FindPackageHandleStandardArgs)
 include(SelectLibraryConfigurations)
 
 find_path(libwebm_INCLUDE_DIR
-    NAMES mkvparser.hpp
-    PATH_SUFFIXES libwebm
+    NAMES mkvparser/mkvparser.h
+    PATH_SUFFIXES libwebm webm
 )
 find_library(libwebm_LIBRARY_RELEASE NAMES webm libwebm)
 find_library(libwebm_LIBRARY_DEBUG NAMES webmd libwebmd)
