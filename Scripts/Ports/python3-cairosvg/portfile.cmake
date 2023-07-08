@@ -5,7 +5,8 @@ if(NOT VCPKG_TARGET_IS_WINDOWS)
     message(STATUS "Install cairo on Ubuntu with `sudo apt install libcairo2` and on macOS with `brew install cairo`.")
 endif()
 
-set(CAIROSVG_VERSION "2.5.2")
+set(PILLOW_VERSION "9.5.0")
+set(CAIROSVG_VERSION "2.7.0")
 set(INSTALLED_PYTHON_PREFIX "${CURRENT_INSTALLED_DIR}/tools/python3")
 
 # We are running in script mode, so no toolchains are available. Sad.
@@ -124,7 +125,7 @@ vcpkg_execute_required_process(
 message(STATUS "Installing cairosvg from pip")
 file(TO_NATIVE_PATH "${CURRENT_PYTHON_PREFIX}" _PIP_PREFIX)
 vcpkg_execute_required_process(
-    COMMAND "${PYTHON_EXECUTABLE}" -m pip install --prefix "${_PIP_PREFIX}" "cairosvg==${CAIROSVG_VERSION}"
+    COMMAND "${PYTHON_EXECUTABLE}" -m pip install --prefix "${_PIP_PREFIX}" "pillow==${PILLOW_VERSION}" "cairosvg==${CAIROSVG_VERSION}"
     ALLOW_IN_DOWNLOAD_MODE
     WORKING_DIRECTORY "${CURRENT_PYTHON_PREFIX}"
     LOGNAME install
