@@ -1,7 +1,6 @@
 {
   "name": "python3-cairosvg",
-  "version-semver": "2.5.2",
-  "port-version": 1,
+  "version-semver": "2.7.0",
   "description": "CairoSVG is an SVG converter based on Cairo. It can export SVG files to PDF, EPS, PS, and PNG files.",
   "homepage": "https://cairosvg.org/",
   "dependencies": [
