@@ -241,6 +241,12 @@ jobs:
         run: |
           cmake --build build --target install -j 2
 
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
+          path: build/install
+
 
   macos:
     runs-on: macos-latest
