@@ -169,7 +169,7 @@ PF_CONSOLE_LINK_ALL()
                         styleMask:windowStyle
                         backing:NSBackingStoreBuffered
                         defer:NO];
-    self.window.backgroundColor = NSColor.blackColor;
+    window.backgroundColor = NSColor.blackColor;
     
     PLSView *view = [[PLSView alloc] init];
     self.plsView = view;
