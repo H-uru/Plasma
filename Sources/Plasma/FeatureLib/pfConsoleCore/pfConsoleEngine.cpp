@@ -49,6 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCmd.h"
 #include "pfConsoleContext.h"
 
+#include <string_theory/format>
+#include <string_theory/string_stream>
+#include <utility>
+#include <vector>
+
 #include "plFile/plEncryptedStream.h"
 
 
@@ -62,7 +67,7 @@ static const char *console_strtok( char *&line, bool haveCommand )
 {
     char *begin = line;
 
-    while (*begin && isspace(*begin))
+    while (*begin && isspace(static_cast<unsigned char>(*begin)))
         ++begin;
 
     for (line = begin; *line; ++line) {
@@ -118,17 +123,19 @@ pfConsoleEngine::~pfConsoleEngine()
 
 //// PrintCmdHelp ////////////////////////////////////////////////////////////
 
-bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char * ) )
+bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const ST::string&))
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
     const char          *ptr;
-    static char         tempString[ 512 ];
-    uint32_t              i;
+
+    // console_strtok requires a writable C string...
+    ST::char_buffer nameBuf = name.to_utf8();
+    char* namePtr = nameBuf.data();
 
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = console_strtok( name, false );
+    ptr = console_strtok(namePtr, false);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
@@ -137,37 +144,31 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
         else
             break;
 
-        ptr = console_strtok( name, false );
+        ptr = console_strtok(namePtr, false);
     }
 
     if (ptr == nullptr)
     {
         if (group == nullptr)
         {
-            ISetErrorMsg( "Invalid command syntax" );
+            fErrorMsg = ST_LITERAL("Invalid command syntax");
             return false;
         }
 
         // Print help for this group
         if( group == pfConsoleCmdGroup::GetBaseGroup() )
-            PrintFn("Base commands and groups:");
+            PrintFn(ST_LITERAL("Base commands and groups:"));
         else
-            PrintFn(ST::format("Group {}:", group->GetName()).c_str());
-        PrintFn("  Subgroups:");
+            PrintFn(ST::format("Group {}:", group->GetName()));
+        PrintFn(ST_LITERAL("  Subgroups:"));
         for (subGrp = group->GetFirstSubGroup(); subGrp != nullptr; subGrp = subGrp->GetNext())
         {
-            PrintFn(ST::format("    {}", subGrp->GetName()).c_str());
+            PrintFn(ST::format("    {}", subGrp->GetName()));
         }
-        PrintFn("  Commands:");
+        PrintFn(ST_LITERAL("  Commands:"));
         for (cmd = group->GetFirstCommand(); cmd != nullptr; cmd = cmd->GetNext())
         {
-            const char* p = cmd->GetHelp();
-            for(i = 0; p[ i ] != 0 && p[ i ] != '\n'; i++) {
-                tempString[ i ] = p[ i ];
-            }
-            tempString[ i ] = 0;
-
-            PrintFn(ST::format("    {}: {}", cmd->GetName(), tempString).c_str());
+            PrintFn(ST::format("    {}: {}", cmd->GetName(), cmd->GetHelp().before_first('\n')));
         }
 
         return true;
@@ -177,30 +178,33 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
     cmd = group->FindCommandNoCase( ptr );
     if (cmd == nullptr)
     {
-        ISetErrorMsg( "Invalid syntax: command not found" );
+        fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
         return false;
     }
 
     /// That's it!
-    PrintFn(ST::format("\nHelp for the command {}:", cmd->GetName()).c_str());
-    PrintFn(ST::format("\\i{}", cmd->GetHelp()).c_str());
-    PrintFn(ST::format("\\iUsage: {}", cmd->GetSignature()).c_str());
+    PrintFn(ST::format("\nHelp for the command {}:", cmd->GetName()));
+    PrintFn(ST::format("\\i{}", cmd->GetHelp()));
+    PrintFn(ST::format("\\iUsage: {}", cmd->GetSignature()));
 
     return true;
 }
 
 //// GetCmdSignature /////////////////////////////////////////////////////////
 
-const char  *pfConsoleEngine::GetCmdSignature( char *name )
+ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
     const char          *ptr;
 
+    // console_strtok requires a writable C string...
+    ST::char_buffer nameBuf = name.to_utf8();
+    char* namePtr = nameBuf.data();
     
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = console_strtok( name, false );
+    ptr = console_strtok(namePtr, false);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
@@ -209,21 +213,21 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
         else
             break;
 
-        ptr = console_strtok( name, false );
+        ptr = console_strtok(namePtr, false);
     }
 
     if (ptr == nullptr)
     {
-        ISetErrorMsg( "Invalid command syntax" );
-        return nullptr;
+        fErrorMsg = ST_LITERAL("Invalid command syntax");
+        return {};
     }
 
     /// OK, so what we found wasn't a group. Which means we need a command...
     cmd = group->FindCommandNoCase( ptr );
     if (cmd == nullptr)
     {
-        ISetErrorMsg( "Invalid syntax: command not found" );
-        return nullptr;
+        fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
+        return {};
     }
 
     /// That's it!
@@ -232,7 +236,7 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
 
 //// Dummy Local Function ////////////////////////////////////////////////////
 
-void    DummyPrintFn( const char *line )
+void DummyPrintFn(const ST::string& line)
 {
 }
 
@@ -240,14 +244,13 @@ void    DummyPrintFn( const char *line )
 
 bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 {
-    char    string[ 512 ];
     int     line;
 
     hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileName);
 
     if( !stream )
     {
-        ISetErrorMsg( "Cannot open given file" );
+        fErrorMsg = ST_LITERAL("Cannot open given file");
 //      return false;
         /// THIS IS BAD: because of the asserts we throw after this if we return false, a missing
         /// file will throw an assert. This is all well and good except for the age-specific .fni files,
@@ -256,15 +259,15 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
         return true;
     }
 
-    for (line = 1; stream->ReadLn(string, std::size(string)); line++)
+    ST::string string;
+    for (line = 1; stream->ReadLn(string); line++)
     {
-        strncpy(fLastErrorLine, string, std::size(fLastErrorLine));
+        fLastErrorLine = string;
 
         if( !RunCommand( string, DummyPrintFn ) )
         {
-            snprintf(string, std::size(string), "Error in console file %s, command line %d: %s",
-                     fileName.AsString().c_str(), line, fErrorMsg);
-            ISetErrorMsg( string );
+            fErrorMsg = ST::format("Error in console file {}, command line {}: {}",
+                     fileName.AsString(), line, fErrorMsg);
             stream->Close();
             delete stream;
             return false;
@@ -272,7 +275,7 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
     }
     stream->Close();
     delete stream;
-    fLastErrorLine[ 0 ] = 0;
+    fLastErrorLine.clear();
 
     return true;
 }
@@ -282,7 +285,7 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 //  requires tokenizing the entire line and searching the tokens one by one,
 //  parsing them first as groups, then commands and then params.
 
-bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * ) )
+bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const ST::string&))
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
@@ -291,12 +294,13 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
     const char          *ptr;
     bool                valid = true;
 
-
-    hsAssert(line != nullptr, "Bad parameter to RunCommand()");
+    // console_strtok requires a writable C string...
+    ST::char_buffer lineBuf = line.to_utf8();
+    char* linePtr = lineBuf.data();
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = console_strtok( line, false );
+    ptr = console_strtok(linePtr, false);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
@@ -305,12 +309,12 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
         else
             break;
 
-        ptr = console_strtok( line, false );
+        ptr = console_strtok(linePtr, false);
     }
 
     if (ptr == nullptr)
     {
-        ISetErrorMsg( "Invalid command syntax" );
+        fErrorMsg = ST_LITERAL("Invalid command syntax");
         return false;
     }
 
@@ -318,7 +322,7 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
     cmd = group->FindCommandNoCase( ptr );
     if (cmd == nullptr)
     {
-        ISetErrorMsg( "Invalid syntax: command not found" );
+        fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
         return false;
     }
 
@@ -327,12 +331,12 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
     /// params
 
     for( numParams = numQuotedParams = 0; numParams < fMaxNumParams 
-                        && (ptr = console_strtok(line, true)) != nullptr
+                        && (ptr = console_strtok(linePtr, true)) != nullptr
                         && valid; numParams++ )
     {
         if( ptr[ 0 ] == '\xFF' )
         {
-            ISetErrorMsg( "Invalid syntax: unterminated quoted parameter" );
+            fErrorMsg = ST_LITERAL("Invalid syntax: unterminated quoted parameter");
             return false;
         }
 
@@ -347,30 +351,28 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
             hsSsize_t idx = context.FindVar( ptr + 1 );
             if( idx == -1 )
             {
-                ISetErrorMsg( "Invalid console variable name" );
+                fErrorMsg = ST_LITERAL("Invalid console variable name");
             }
             else
             {
-                // Just copy. Note that this will copy string pointers, but so long as the variable in
-                // question doesn't change, we'll be OK...
                 paramArray[ numParams ] = context.GetVarValue( idx );
                 valid = true;
             }
         }
 
         if( !valid )
-            valid = IConvertToParam( cmd->GetSigEntry( (uint8_t)numParams ), ptr, &paramArray[ numParams ] );
+            valid = IConvertToParam(cmd->GetSigEntry(numParams), ptr, &paramArray[numParams]);
     }
     for( i = numParams; i < fMaxNumParams + 1; i++ )
         paramArray[ i ].SetNone();
 
-    if( !valid || ( cmd->GetSigEntry( (uint8_t)numParams ) != pfConsoleCmd::kAny && 
-                    cmd->GetSigEntry( (uint8_t)numParams ) != pfConsoleCmd::kNone ) )
+    if (!valid || (cmd->GetSigEntry(numParams) != pfConsoleCmd::kAny &&
+                   cmd->GetSigEntry(numParams) != pfConsoleCmd::kNone))
     {
         // Print help string and return
-        ISetErrorMsg( "" ); // Printed on next line
-        PrintFn("Invalid parameters to command");
-        PrintFn(ST::format("Usage: {}", cmd->GetSignature()).c_str());
+        fErrorMsg.clear(); // Printed on next line
+        PrintFn(ST_LITERAL("Invalid parameters to command"));
+        PrintFn(ST::format("Usage: {}", cmd->GetSignature()));
         return false;
     }
 
@@ -383,86 +385,63 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
 //  Converts a null-terminated string representing a parameter to a 
 //  pfConsoleCmdParam argument.
 
-bool    pfConsoleEngine::IConvertToParam( uint8_t type, const char *string, pfConsoleCmdParam *param )
+bool pfConsoleEngine::IConvertToParam(uint8_t type, ST::string string, pfConsoleCmdParam *param)
 {
-    const char *c, expChars[] = "dDeE+-.";
-    bool    hasDecimal = false, hasLetters = false;
-
-
     if( type == pfConsoleCmd::kNone )
         return false;
-
-    for( c = string; *c != 0; c++ )
-    {
-        if( !isdigit( *c ) )
-        {
-            if( c == string && ( *c == '-' || *c == '+' ) )
-            {
-                // Do nothing--perfectly legal to have these at the beginning of an int
-            }
-            else if (strchr(expChars, *c) != nullptr)
-                hasDecimal = true;
-            else
-                hasLetters = true;
-        }
-    }
 
     if( type == pfConsoleCmd::kAny )
     {
         /// Want "any"
-        param->SetAny( (char*)string );
+        param->SetAny(std::move(string));
     }
     else if( type == pfConsoleCmd::kString )
     {
         /// Want just a string
-        param->SetString( (char*)string );
+        param->SetString(std::move(string));
     }
     else if( type == pfConsoleCmd::kFloat )
     {
-        if( hasLetters )
+        ST::conversion_result res;
+        float value = string.to_float(res);
+        if (!res.ok() || !res.full_match()) {
             return false;
+        }
 
-        param->SetFloat( (float)atof( string ) );
+        param->SetFloat(value);
     }
     else if( type == pfConsoleCmd::kInt )
     {
-        if( hasLetters || hasDecimal )
+        ST::conversion_result res;
+        int value = string.to_int(res, 10);
+        if (!res.ok() || !res.full_match()) {
             return false;
+        }
 
-        param->SetInt( atoi( string ) );
+        param->SetInt(value);
     }
     else if( type == pfConsoleCmd::kBool )
     {
-        if( stricmp( string, "true" ) == 0 || stricmp( string, "t" ) == 0 )
-            param->SetBool( true );
-        else if( stricmp( string, "false" ) == 0 || stricmp( string, "f" ) == 0 )
-            param->SetBool( false );
-        else if( atoi( string ) == 0 )
-            param->SetBool( false );
-        else
-            param->SetBool( true );
+        if (string.compare_i("t") == 0) {
+            param->SetBool(true);
+        } else if (string.compare_i("f") == 0) {
+            param->SetBool(false);
+        } else {
+            param->SetBool(string.to_bool());
+        }
     }
 
     return true;
 }
 
 //// FindPartialCmd //////////////////////////////////////////////////////////
-//  Given a string which is the beginning of a console command, modifies the
-//  string to represent the best match of command (or group) for that string.
-//  WARNING: modifies the string passed to it.
+//  Given a string which is the beginning of a console command,
+//  returns the best match of command (or group) for that string.
 
-bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preserveParams )
+ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgain, bool preserveParams)
 {
-    pfConsoleCmd        *cmd = nullptr;
-    pfConsoleCmdGroup   *group, *subGrp;
-
-    static const char           *ptr = nullptr;
-    static char                 *insertLoc = nullptr;
     static pfConsoleCmd         *lastCmd = nullptr;
     static pfConsoleCmdGroup    *lastGroup = nullptr;
-    static char                 newStr[ 256 ];
-    static char                 *originalLine = line;
-
 
     /// Repeat search
     if( !findAgain )
@@ -472,51 +451,44 @@ bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preser
     }
 
     /// New search
-    if( strlen( line ) > sizeof( newStr ) )
-        return false;
-
-    newStr[ 0 ] = 0;
-    insertLoc = newStr;
+    ST::string_stream newStr;
+    // console_strtok requires a writable C string...
+    ST::char_buffer lineBuf = line.to_utf8();
+    char* linePtr = lineBuf.data();
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
-    group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = console_strtok( line, false );
+    pfConsoleCmdGroup* group = pfConsoleCmdGroup::GetBaseGroup();
+    const char* ptr = console_strtok(linePtr, false);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
-        if( ( subGrp = group->FindSubGroupNoCase( ptr, 0/*pfConsoleCmdGroup::kFindPartial*/
-            , /*lastGroup*/nullptr)) != nullptr)
-        {
-            group = subGrp;
-            strcat( newStr, group->GetName() );
-            insertLoc += strlen( group->GetName() );
-        }
-        else
+        pfConsoleCmdGroup* subGrp = group->FindSubGroupNoCase(ptr, 0, nullptr);
+        if (subGrp == nullptr) {
             break;
+        }
 
-        ptr = console_strtok( line, false );
-        strcat( newStr, "." );
-        insertLoc++;
+        group = subGrp;
+        newStr << group->GetName() << '.';
+        ptr = console_strtok(linePtr, false);
     }
 
     if (ptr != nullptr)
     {
         // Still got at least one token left. Try to match to either
         // a partial group or a partial command
-        if ((subGrp = group->FindSubGroupNoCase(ptr, pfConsoleCmdGroup::kFindPartial, lastGroup)) != nullptr)
+        pfConsoleCmdGroup* subGrp = group->FindSubGroupNoCase(ptr, pfConsoleCmdGroup::kFindPartial, lastGroup);
+        if (subGrp != nullptr)
         {
             lastGroup = group = subGrp;
-            strcat( newStr, group->GetName() );
-            strcat( newStr, "." );
+            newStr << group->GetName()  << '.';
         }
         else 
         {
-            cmd = group->FindCommandNoCase( ptr, pfConsoleCmdGroup::kFindPartial, lastCmd );
+            pfConsoleCmd* cmd = group->FindCommandNoCase(ptr, pfConsoleCmdGroup::kFindPartial, lastCmd);
             if (cmd == nullptr)
-                return false;
+                return {};
 
-            strcat( newStr, cmd->GetName() );
-            strcat( newStr, " " );
+            newStr << cmd->GetName()  << ' ';
             lastCmd = cmd;
         }
     }
@@ -524,14 +496,11 @@ bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preser
     if( preserveParams )
     {
         /// Preserve the rest of the string after the matched command
-        if (line != nullptr)
-            strcat( newStr, line );
+        if (linePtr != nullptr)
+            newStr << linePtr;
     }
 
-    // Copy back!
-    strcpy( originalLine, newStr );
-
-    return true;
+    return newStr.to_string();
 }
 
 //// FindNestedPartialCmd ////////////////////////////////////////////////////
@@ -540,40 +509,35 @@ bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preser
 //  groups. numToSkip specifies how many matches to skip before returning one
 //  (so if numToSkip = 1, then this will return the second match found).
 
-bool    pfConsoleEngine::FindNestedPartialCmd( char *line, uint32_t numToSkip, bool preserveParams )
+ST::string pfConsoleEngine::FindNestedPartialCmd(const ST::string& line, uint32_t numToSkip, bool preserveParams)
 {
-    pfConsoleCmd        *cmd;
-
-    
     /// Somewhat easier than FindPartialCmd...
-    cmd = pfConsoleCmdGroup::GetBaseGroup()->FindNestedPartialCommand( line, &numToSkip );
+    pfConsoleCmd* cmd = pfConsoleCmdGroup::GetBaseGroup()->FindNestedPartialCommand(line, &numToSkip);
     if (cmd == nullptr)
-        return false;
+        return {};
 
     /// Recurse back up and get the group hierarchy
-    line[ 0 ] = 0;
-    IBuildCmdNameRecurse( cmd->GetParent(), line );
-    strcat( line, cmd->GetName() );
-    strcat( line, " " );
+    std::vector<ST::string> reverseParts {cmd->GetName()};
+    pfConsoleCmdGroup* group = cmd->GetParent();
+    while (group != nullptr && group != pfConsoleCmdGroup::GetBaseGroup()) {
+        reverseParts.emplace_back(group->GetName());
+        group = group->GetParent();
+    }
+
+    ST::string_stream name;
+    for (auto it = reverseParts.crbegin(); it != reverseParts.crend(); ++it) {
+        name << *it;
+        if (it + 1 == reverseParts.crend()) {
+            name << ' ';
+        } else {
+            name << '.';
+        }
+    }
 
     if( preserveParams )
     {
         /// Preserve the rest of the string after the matched command
     }
 
-    return true;
-}
-
-//// IBuildCmdNameRecurse ////////////////////////////////////////////////////
-
-void    pfConsoleEngine::IBuildCmdNameRecurse( pfConsoleCmdGroup *group, char *string )
-{
-    if (group == nullptr || group == pfConsoleCmdGroup::GetBaseGroup())
-        return;
-
-
-    IBuildCmdNameRecurse( group->GetParent(), string );
-
-    strcat( string, group->GetName() );
-    strcat( string, "." );
+    return name.to_string();
 }

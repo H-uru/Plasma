@@ -530,7 +530,7 @@ plKeyDef plKeyMap::ConvertCharToVKey(const ST::string& c)
     // Is it just a single character?
     // This intentionally only detects and handles ASCII characters.
     // Non-ASCII characters are handled via the fKeyConversion maps.
-    if (c.size() == 1 && isalnum(c[0]))
+    if (c.size() == 1 && isalnum(static_cast<unsigned char>(c[0])))
         return (plKeyDef)c.to_upper()[0];
 
     // if we didn't find anything yet...
@@ -553,7 +553,7 @@ ST::string plKeyMap::KeyComboToString(const plKeyCombo &combo)
 {
     ST::string str = ConvertVKeyToChar(combo.fKey);
     if (str.empty()) {
-        if (isalnum(combo.fKey)) {
+        if (combo.fKey < 0x80 && isalnum(combo.fKey)) {
             char c = (char)combo.fKey;
             str = ST::string(&c, 1);
         } else {

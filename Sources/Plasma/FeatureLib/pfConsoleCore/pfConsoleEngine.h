@@ -57,8 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-class plFileName;
+#include <string_theory/string>
 
+class plFileName;
 
 //// pfConsoleEngine Class Definition ////////////////////////////////////////
 
@@ -70,15 +71,10 @@ class pfConsoleEngine
 
         static const int32_t      fMaxNumParams;
 
-        bool    IConvertToParam( uint8_t type, const char *string, pfConsoleCmdParam *param );
+        bool IConvertToParam(uint8_t type, ST::string string, pfConsoleCmdParam *param);
 
-        char    fErrorMsg[ 128 ];
-        char    fLastErrorLine[ 512 ];
-
-        void    ISetErrorMsg(const char *msg ) { hsStrncpy( fErrorMsg, msg, sizeof( fErrorMsg ) ); }
-
-        // Recursive function to build a string of the groups a command is in
-        void        IBuildCmdNameRecurse( pfConsoleCmdGroup *group, char *string );
+        ST::string fErrorMsg;
+        ST::string fLastErrorLine;
 
     public:
 
@@ -86,28 +82,28 @@ class pfConsoleEngine
         ~pfConsoleEngine();
 
         // Gets the signature for the command given (NO groups!)
-        const char  *GetCmdSignature( char *name );
+        ST::string GetCmdSignature(const ST::string& name);
 
         // Prints out the help for a given command (or group)
-        bool    PrintCmdHelp( char *name, void (*PrintFn)( const char * ) );
+        bool PrintCmdHelp(const ST::string& name, void (*PrintFn)(const ST::string&));
 
         // Breaks the given line into a command and parameters and runs the command
-        bool    RunCommand( char *line, void (*PrintFn)( const char * ) );
+        bool RunCommand(const ST::string& line, void (*PrintFn)(const ST::string&));
 
         // Executes the given file as a sequence of console commands
         bool    ExecuteFile( const plFileName &fileName );
 
         // Get the last reported error
-        const char  *GetErrorMsg() { return fErrorMsg; }
+        ST::string GetErrorMsg() { return fErrorMsg; }
 
         // Get the line for which the last reported error was for
-        const char  *GetLastErrorLine() { return fLastErrorLine; }
+        ST::string GetLastErrorLine() { return fLastErrorLine; }
 
         // Does command completion on a partially-complete console line
-        bool        FindPartialCmd( char *line, bool findAgain = false, bool perserveParams = false );
+        ST::string FindPartialCmd(const ST::string& line, bool findAgain = false, bool perserveParams = false);
 
         // Does command completion without restrictions to any group, skipping the number of matches given
-        bool        FindNestedPartialCmd( char *line, uint32_t numToSkip, bool perserveParams = false );
+        ST::string FindNestedPartialCmd(const ST::string& line, uint32_t numToSkip, bool perserveParams = false);
 };
 
 

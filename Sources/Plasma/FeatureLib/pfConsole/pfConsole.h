@@ -57,6 +57,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <string_theory/string>
+
 #include "pnKeyedObject/hsKeyedObject.h"
 
 class pfConsoleEngine;
@@ -93,7 +95,7 @@ class pfConsole : public hsKeyedObject
         int32_t   fEffectCounter;
         float   fLastTime;
         uint32_t  fHelpTimer;
-        char    fLastHelpMsg[ kWorkingLineSize ];
+        ST::string fLastHelpMsg;
         uint8_t   fMode;      // 0 - invisible, 1 - single line, 2 - full
         bool    fInited, fHelpMode, fPythonMode, fPythonFirstTime, fFXEnabled;
         uint32_t  fPythonMultiLines;
@@ -101,7 +103,7 @@ class pfConsole : public hsKeyedObject
         uint32_t  fMsgTimeoutTimer;
 
         struct _fHistory {
-            char fData[ kNumHistoryItems ][ kMaxCharsWide ];
+            ST::string fData[kNumHistoryItems];
             uint32_t  fCursor, fRecallCursor;
         } fHistory[ kNumHistoryTypes ];
         char    *fDisplayBuffer;
@@ -112,17 +114,21 @@ class pfConsole : public hsKeyedObject
 
         pfConsoleEngine     *fEngine;
 
+        ST::string IGetWorkingLine();
+        void ISetWorkingLine(const ST::string& workingLine);
+        void IClearWorkingLine();
+
         void    IHandleKey( plKeyEventMsg *msg );
         void    IHandleCharacter(const char c);
 
         static uint32_t       fConsoleTextColor;
         static pfConsole    *fTheConsole;
-        static void IAddLineCallback( const char *string );
+        static void IAddLineCallback(const ST::string& string);
 
         static plPipeline   *fPipeline;
 
         void    IAddLine( const char *string, short leftMargin = 0 );
-        void    IAddParagraph( const char *string, short margin = 0 );
+        void    IAddParagraph(const ST::string& string, short margin = 0);
         void    IClear();
 
         void    ISetMode( uint8_t mode );
@@ -148,8 +154,7 @@ class pfConsole : public hsKeyedObject
         void    Init( pfConsoleEngine *engine );
         void    Draw( plPipeline *p );
 
-        static void AddLine( const char *string ) { fTheConsole->IAddParagraph( string ); }
-        static void AddLineF(const char * fmt, ...);
+        static void AddLine(const ST::string& string) { fTheConsole->IAddParagraph(string); }
         static void Clear() { fTheConsole->IClear(); }
         static void Hide() { fTheConsole->ISetMode(kModeHidden); }
 
@@ -160,8 +165,6 @@ class pfConsole : public hsKeyedObject
 
         static void         SetPipeline( plPipeline *pipe ) { fPipeline = pipe; }
         static plPipeline   *GetPipeline() { return fPipeline; }
-        
-        static void RunCommandAsync (const char cmd[]);
 };
 
 #endif //_pfConsole_h

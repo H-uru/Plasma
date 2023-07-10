@@ -245,7 +245,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
 
             // These are handled by KEYUP/KEYDOWN and should not be sent
             // We don't like garbage getting in string fields
-            if (std::iscntrl(ch, localeC))
+            if (ch < 0x80 && std::iscntrl(ch, localeC))
                 break;
 
             BYTE scan = (BYTE)(Lparam >> 16);

@@ -221,6 +221,34 @@ pfConsole * pfConsole::GetInstance () {
     return fTheConsole;
 }
 
+ST::string pfConsole::IGetWorkingLine()
+{
+    // FIXME: Support more Unicode than just Latin-1
+    return ST::string::from_latin_1(fWorkingLine);
+}
+
+void pfConsole::ISetWorkingLine(const ST::string& workingLine)
+{
+    // FIXME: Support more Unicode than just Latin-1
+    ST::char_buffer buf = workingLine.to_latin_1();
+    size_t size;
+    if (buf.size() >= sizeof(fWorkingLine)) {
+        size = sizeof(fWorkingLine);
+        buf[size - 1] = 0;
+    } else {
+        size = buf.size() + 1;
+    }
+    hsAssert(size <= sizeof(fWorkingLine), "Miscalculated size of buffer for working line!");
+    memcpy(fWorkingLine, buf.c_str(), size);
+    fWorkingCursor = size - 1;
+}
+
+void pfConsole::IClearWorkingLine()
+{
+    fWorkingLine[0] = 0;
+    fWorkingCursor = 0;
+}
+
 //// Init ////////////////////////////////////////////////////////////////////
 
 void    pfConsole::Init( pfConsoleEngine *engine )
@@ -228,10 +256,11 @@ void    pfConsole::Init( pfConsoleEngine *engine )
     fDisplayBuffer = new char[ fNumDisplayLines * kMaxCharsWide ];
     memset( fDisplayBuffer, 0, fNumDisplayLines * kMaxCharsWide );
 
-    memset( fWorkingLine, 0, sizeof( fWorkingLine ) );
-    fWorkingCursor = 0;
+    IClearWorkingLine();
 
-    memset( fHistory, 0, sizeof( fHistory ) );
+    for (size_t i = 0; i < kNumHistoryTypes; i++) {
+        fHistory[i] = {};
+    }
 
     fEffectCounter = 0;
     fMode = 0;
@@ -242,7 +271,7 @@ void    pfConsole::Init( pfConsoleEngine *engine )
     fPythonMultiLines = 0;
     fHelpTimer = 0;
     fCursorTicks = 0;
-    memset( fLastHelpMsg, 0, sizeof( fLastHelpMsg ) );
+    fLastHelpMsg.clear();
     fEngine = engine;
 
     fInputInterface = new pfConsoleInputInterface( this );
@@ -296,7 +325,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
         plFileName fn = ST::format("{}{04}.png", prefix, num);
         plPNG::Instance().WriteToFile(plFileName::Join(screenshots, fn), capMsg->GetMipmap());
 
-        AddLineF("Saved screenshot as '%s'", fn.AsString().c_str());
+        AddLine(ST::format("Saved screenshot as '{}'", fn.AsString()));
         return true;
     }
 
@@ -305,10 +334,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
     {
         if( ctrlMsg->ControlActivated() && ctrlMsg->GetControlCode() == B_CONTROL_CONSOLE_COMMAND && plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kPlayingGame))
         {
-            // pfConsoleEngine::RunCommand requires a writable C string...
-            ST::char_buffer cmdBuf;
-            ctrlMsg->GetCmdString().to_buffer(cmdBuf);
-            fEngine->RunCommand(cmdBuf.data(), IAddLineCallback);
+            fEngine->RunCommand(ctrlMsg->GetCmdString(), IAddLineCallback);
             return true;
         }
         return false;
@@ -337,16 +363,14 @@ bool    pfConsole::MsgReceive( plMessage *msg )
             }
         }
         else if( cmd->GetCmd() == plConsoleMsg::kAddLine )
-            IAddParagraph( cmd->GetString().c_str() );
+            IAddParagraph(cmd->GetString());
         else if( cmd->GetCmd() == plConsoleMsg::kExecuteLine )
         {
-            ST::char_buffer cmdBuf;
-            cmd->GetString().to_buffer(cmdBuf);
-            if( !fEngine->RunCommand(cmdBuf.data(), IAddLineCallback))
+            if( !fEngine->RunCommand(cmd->GetString(), IAddLineCallback))
             {
                 // Change the following line once we have a better way of reporting
                 // errors in the parsing
-                AddLineF("%s:\n\nCommand: '%s'\n", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine());
+                AddLine(ST::format("{}:\n\nCommand: '{}'\n", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine()));
             }
         }
             
@@ -373,7 +397,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
 
     if( msg->GetKeyCode() == KEY_ESCAPE )
     {
-        fWorkingLine[ fWorkingCursor = 0 ] = 0;
+        IClearWorkingLine();
         findAgain = false;
         findCounter = 0;
         fHelpMode = false;
@@ -394,72 +418,59 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
         }
         else
         {
-            static char     lastSearch[ kMaxCharsWide ];
-            char            search[ kMaxCharsWide ];
+            static ST::string lastSearch;
 
             if( !findAgain && findCounter == 0 )
-                strcpy( lastSearch, fWorkingLine );
-            strcpy( search, lastSearch );
+                lastSearch = IGetWorkingLine();
 
-            if( findCounter > 0 )
-            {
+            ST::string found;
+            if (findCounter > 0) {
                 // Not found the normal way; try using an unrestricted search
-                if( fEngine->FindNestedPartialCmd( search, findCounter, true ) )
-                {
-                    strcpy( fWorkingLine, search );
+                found = fEngine->FindNestedPartialCmd(lastSearch, findCounter, true);
+                if (!found.empty()) {
                     findCounter++;
-                }
-                else
-                {
+                } else {
                     /// Try starting over...?
                     findCounter = 0;
-                    if( fEngine->FindNestedPartialCmd( search, findCounter, true ) )
-                    { 
-                        strcpy( fWorkingLine, search );
+                    found = fEngine->FindNestedPartialCmd(lastSearch, findCounter, true);
+                    if (!found.empty()) {
+                        findCounter++;
+                    }
+                }
+            } else {
+                found = fEngine->FindPartialCmd(lastSearch, findAgain, true);
+                if (!found.empty()) {
+                    findAgain = true;
+                } else if (findAgain) {
+                    /// Try starting over
+                    found = fEngine->FindPartialCmd(lastSearch, findAgain = false, true);
+                    if (!found.empty()) {
+                        findAgain = true;
+                    }
+                } else {
+                    // Not found the normal way; start an unrestricted search
+                    found = fEngine->FindNestedPartialCmd(lastSearch, findCounter, true);
+                    if (!found.empty()) {
                         findCounter++;
                     }
                 }
             }
-            else if( fEngine->FindPartialCmd( search, findAgain, true ) )
-            {
-                strcpy( fWorkingLine, search );
-                findAgain = true;
-            }
-            else if( findAgain )
-            {
-                /// Try starting over
-                strcpy( search, lastSearch );
-                if( fEngine->FindPartialCmd( search, findAgain = false, true ) )
-                {
-                    strcpy( fWorkingLine, search );
-                    findAgain = true;
-                }
-            }
 
-            else
-            {
-                // Not found the normal way; start an unrestricted search
-                if( fEngine->FindNestedPartialCmd( search, findCounter, true ) )
-                {
-                    strcpy( fWorkingLine, search );
-                    findCounter++;
-                }
+            if (!found.empty()) {
+                ISetWorkingLine(found);
             }
-
-            fWorkingCursor = strlen( fWorkingLine );
             IUpdateTooltip();
         }
     }
     else if( msg->GetKeyCode() == KEY_UP )
     {
         i = ( fHistory[ fPythonMode ].fRecallCursor > 0 ) ? fHistory[ fPythonMode ].fRecallCursor - 1 : kNumHistoryItems - 1;
-        if( fHistory[ fPythonMode ].fData[ i ][ 0 ] != 0 )
+        if (!fHistory[fPythonMode].fData[i].empty())
         {
             fHistory[ fPythonMode ].fRecallCursor = i;
-            strcpy( fWorkingLine, fHistory[ fPythonMode ].fData[ fHistory[ fPythonMode ].fRecallCursor ] );
+            ISetWorkingLine(fHistory[fPythonMode].fData[fHistory[fPythonMode].fRecallCursor]);
             findAgain = false;
             findCounter = 0;
-            fWorkingCursor = strlen( fWorkingLine );
             IUpdateTooltip();
         }
     }
@@ -471,16 +482,15 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
             if( i != fHistory[ fPythonMode ].fCursor )
             {
                 fHistory[ fPythonMode ].fRecallCursor = i;
-                strcpy( fWorkingLine, fHistory[ fPythonMode ].fData[ fHistory[ fPythonMode ].fRecallCursor ] );
+                ISetWorkingLine(fHistory[fPythonMode].fData[fHistory[fPythonMode].fRecallCursor]);
             }
             else
             {
-                memset( fWorkingLine, 0, sizeof( fWorkingLine ) );
+                IClearWorkingLine();
                 fHistory[ fPythonMode ].fRecallCursor = fHistory[ fPythonMode ].fCursor;
             }
             findAgain = false;
             findCounter = 0;
-            fWorkingCursor = strlen( fWorkingLine );
             IUpdateTooltip();
         }
     }
@@ -545,14 +555,12 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     }
     else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_C)
     {
-        // FIXME: console unicode friendly
-        plClipboard::GetInstance().SetClipboardText(ST::string::from_latin_1(fWorkingLine));
+        plClipboard::GetInstance().SetClipboardText(IGetWorkingLine());
     }
     else if (msg->GetCtrlKeyDown() && msg->GetKeyCode() == KEY_X)
     {
-        // FIXME: console unicode friendly
-        plClipboard::GetInstance().SetClipboardText(ST::string::from_latin_1(fWorkingLine));
-        fWorkingLine[fWorkingCursor = 0] = 0;
+        plClipboard::GetInstance().SetClipboardText(IGetWorkingLine());
+        IClearWorkingLine();
         findAgain = false;
         findCounter = 0;
         IUpdateTooltip();
@@ -568,7 +576,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
 
         // FIXME: Unfortunately, the console is currently limited to single byte
         //        characters. Remove this when the console is unicode safe.
-        ST::char_buffer buf = text.to_latin_1(ST::utf_validation_t::substitute_invalid);
+        ST::char_buffer buf = text.to_latin_1();
 
         // If there are any embedded newlines, we will need to execute the commands
         // or Python code, otherwise we will get a mess in the working line. However,
@@ -619,8 +627,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
                     IAddLine( "" );     // add a blank line
                     PythonInterface::RunStringInteractive("import sys;print(f'Python {sys.version}')", nullptr);
                     // get the messages
-                    ST::string output = PythonInterface::getOutputAndReset();
-                    AddLine( output.c_str() );
+                    AddLine(PythonInterface::getOutputAndReset());
                     fPythonFirstTime = false;       // do this only once!
                 }
             }
@@ -663,7 +670,7 @@ void    pfConsole::IHandleCharacter(const char c)
 
 //// IAddLineCallback ////////////////////////////////////////////////////////
 
-void    pfConsole::IAddLineCallback( const char *string )
+void pfConsole::IAddLineCallback(const ST::string& string)
 {
     fTheConsole->IAddParagraph( string, 0 );
 }
@@ -701,10 +708,10 @@ void    pfConsole::IAddLine( const char *string, short leftMargin )
 
 //// IAddParagraph ///////////////////////////////////////////////////////////
 
-void    pfConsole::IAddParagraph( const char *s, short margin )
+void pfConsole::IAddParagraph(const ST::string& s, short margin)
 {
-    char        *ptr, *ptr2, *ptr3, *string=(char*)s;
-
+    ST::char_buffer buf = s.to_latin_1();
+    char* string = buf.data();
 
     // Special character: if \i is in front of the string, indent it
     while( strncmp( string, "\\i", 2 ) == 0 )
@@ -713,9 +720,10 @@ void    pfConsole::IAddParagraph( const char *s, short margin )
         string += 2;
     }
 
-    for (ptr = string; ptr != nullptr && *ptr != 0; )
+    for (char* ptr = string; ptr != nullptr && *ptr != 0; )
     {
         // Go as far as possible
+        char* ptr2;
         if( strlen( ptr ) < kMaxCharsWide - margin - margin - 1 )
             ptr2 = ptr + strlen( ptr );
         else
@@ -726,7 +734,7 @@ void    pfConsole::IAddParagraph( const char *s, short margin )
         }
 
         // Check for carriage return
-        ptr3 = strchr( ptr, '\n' );
+        char* ptr3 = strchr( ptr, '\n' );
         if( ptr3 == ptr )
         {
             IAddLine( "", margin );
@@ -792,7 +800,7 @@ void    pfConsole::Draw( plPipeline *p )
     else
         height = yOff * ( fNumDisplayLines + 2 ) + 14;
 
-    if( fHelpTimer == 0 && !fHelpMode && fLastHelpMsg[ 0 ] != 0 )
+    if (fHelpTimer == 0 && !fHelpMode && !fLastHelpMsg.empty())
         showTooltip = true;
     
     if( fEffectCounter > 0 )
@@ -929,10 +937,15 @@ void    pfConsole::Draw( plPipeline *p )
     if( fCursorTicks < -kCursorBlinkRate )
         fCursorTicks = kCursorBlinkRate;
 
-    if( showTooltip )
-        drawText.DrawString( i, y - yOff, fLastHelpMsg, 255, 255, 0 );
-    else
+    if (showTooltip) {
+        ST::char_buffer helpMsgBuf = fLastHelpMsg.to_latin_1();
+        if (helpMsgBuf.size() > kMaxCharsWide - 2) {
+            helpMsgBuf[kMaxCharsWide - 2] = 0;
+        }
+        drawText.DrawString(i, y - yOff, helpMsgBuf.c_str(), 255, 255, 0);
+    } else {
         fHelpTimer--;
+    }
 
     drawText.SetDrawOnTopMode( false );
 }
@@ -941,17 +954,12 @@ void    pfConsole::Draw( plPipeline *p )
 
 void    pfConsole::IUpdateTooltip()
 {
-    char    tmpStr[ kWorkingLineSize ];
-    char    *c;
-
-
-    strcpy( tmpStr, fWorkingLine );
-    c = (char *)fEngine->GetCmdSignature( tmpStr );
-    if (c == nullptr || strcmp(c, fLastHelpMsg) != 0)
+    ST::string c = fEngine->GetCmdSignature(IGetWorkingLine());
+    if (c.empty() || c != fLastHelpMsg)
     {
         /// Different--update timer to wait
         fHelpTimer = kHelpDelay;
-        strncpy( fLastHelpMsg, c ? c : "", kMaxCharsWide - 2 );
+        fLastHelpMsg = std::move(c);
     }
 }
 
@@ -959,43 +967,36 @@ void    pfConsole::IUpdateTooltip()
 
 void    pfConsole::IExecuteWorkingLine()
 {
-    int   i, eol;
-    char* c;
+    ST::string line = IGetWorkingLine();
 
     // leave leading space for Python multi lines (need the indents!)
     if (fPythonMultiLines == 0) {
         // Clean up working line by removing any leading whitespace
-        for (c = fWorkingLine; *c == ' ' || *c == '\t'; c++);
-        for (i = 0; *c != 0; i++, c++)
-            fWorkingLine[i] = *c;
-        fWorkingLine[i] = 0;
-        eol = i;
+        line = line.trim_left();
     }
 
-    if (fWorkingLine[0] == 0 && !fHelpMode && !fPythonMode) {
+    if (line.empty() && !fHelpMode && !fPythonMode) {
         // Blank line--just print a blank line to the console and skip
         IAddLine("");
         return;
     }
 
     // only save history line if there is something there
-    if (fWorkingLine[0] != 0) {
+    if (!line.empty()) {
         // Save to history
-        strcpy(fHistory[fPythonMode].fData[fHistory[fPythonMode].fCursor], fWorkingLine);
+        fHistory[fPythonMode].fData[fHistory[fPythonMode].fCursor] = line;
         fHistory[fPythonMode].fCursor = (fHistory[fPythonMode].fCursor < kNumHistoryItems - 1) ? fHistory[fPythonMode].fCursor + 1 : 0;
         fHistory[fPythonMode].fRecallCursor = fHistory[fPythonMode].fCursor;
     }
 
-    // EXECUTE!!! (warning: DESTROYS fWorkingLine)
+    // EXECUTE!!!
     if (fHelpMode) {
-        if (fWorkingLine[0] == 0) {
+        if (line.empty()) {
             IPrintSomeHelp();
-        } else if (stricmp(fWorkingLine, "commands") == 0) {
-            char empty[] = "";
-            fEngine->PrintCmdHelp(empty, IAddLineCallback);
-        } else if (!fEngine->PrintCmdHelp(fWorkingLine, IAddLineCallback)) {
-            c = (char*)fEngine->GetErrorMsg();
-            AddLine(c);
+        } else if (line.compare_i("commands") == 0) {
+            fEngine->PrintCmdHelp({}, IAddLineCallback);
+        } else if (!fEngine->PrintCmdHelp(line, IAddLineCallback)) {
+            AddLine(fEngine->GetErrorMsg());
         }
 
         fHelpMode = false;
@@ -1003,114 +1004,86 @@ void    pfConsole::IExecuteWorkingLine()
         // are we in Python multi-line mode?
         if (fPythonMultiLines > 0) {
             // if there was a line then bump num lines
-            if (fWorkingLine[0] != 0) {
-                AddLineF("... %s", fWorkingLine);
+            if (!line.empty()) {
+                AddLine(ST_LITERAL("... ") + line);
                 fPythonMultiLines++;
             }
 
             // is it time to evaluate all the multi lines that are saved?
-            if (fWorkingLine[0] == 0 || fPythonMultiLines >= kNumHistoryItems) {
+            if (line.empty() || fPythonMultiLines >= kNumHistoryItems) {
                 if (fPythonMultiLines >= kNumHistoryItems)
-                    AddLine("Python Multi-line buffer full!");
+                    AddLine(ST_LITERAL("Python Multi-line buffer full!"));
                 // get the lines and stuff them in our buffer
-                char biglines[kNumHistoryItems * (kMaxCharsWide + 1)];
-                biglines[0] = 0;
-                for (i = fPythonMultiLines; i > 0; i--) {
+                ST::string_stream biglines;
+                for (size_t i = fPythonMultiLines; i > 0; i--) {
                     // reach back in the history and find this line and paste it in here
                     int recall = fHistory[fPythonMode].fCursor - i;
                     if (recall < 0)
                         recall += kNumHistoryItems;
-                    strcat(biglines, fHistory[fPythonMode].fData[recall]);
-                    strcat(biglines, "\n");
+                    biglines << fHistory[fPythonMode].fData[recall] << '\n';
                 }
                 // now evaluate this mess they made
                 PyObject* mymod = PythonInterface::FindModule("__main__");
-                PythonInterface::RunStringInteractive(biglines, mymod);
+                PythonInterface::RunStringInteractive(biglines.to_string().c_str(), mymod);
                 // get the messages
-                ST::string output = PythonInterface::getOutputAndReset();
-                AddLine(output.c_str());
+                AddLine(PythonInterface::getOutputAndReset());
                 // all done doing multi lines...
                 fPythonMultiLines = 0;
             }
         } else {
             // else we are just doing single lines
             // was there actually anything in the input buffer?
-            if (fWorkingLine[0] != 0) {
-                AddLineF(">>> %s", fWorkingLine);
+            if (!line.empty()) {
+                AddLine(ST_LITERAL(">>> ") + line);
                 // check to see if this is going to be a multi line mode ( a ':' at the end)
-                if (fWorkingLine[eol - 1] == ':') {
+                if (line.ends_with(":")) {
                     fPythonMultiLines = 1;
                 } else
                     // else if not the start of a multi-line then execute it
                 {
                     PyObject* mymod = PythonInterface::FindModule("__main__");
-                    PythonInterface::RunStringInteractive(fWorkingLine, mymod);
+                    PythonInterface::RunStringInteractive(line.c_str(), mymod);
                     // get the messages
-                    ST::string output = PythonInterface::getOutputAndReset();
-                    AddLine(output.c_str());
+                    AddLine(PythonInterface::getOutputAndReset());
                 }
             } else {
-                AddLine(">>> ");
+                AddLine(ST_LITERAL(">>> "));
             }
         }
-        // find the end of the line
-        for (c = fWorkingLine, eol = 0; *c != 0; eol++, c++);
     } else {
-        if (!fEngine->RunCommand(fWorkingLine, IAddLineCallback)) {
-            c = (char*)fEngine->GetErrorMsg();
-            if (c[0] != 0)
-                AddLine(c);
+        if (!fEngine->RunCommand(line, IAddLineCallback)) {
+            ST::string errorMsg = fEngine->GetErrorMsg();
+            if (!errorMsg.empty())
+                AddLine(errorMsg);
         }
     }
 
-    // Clear
-    fWorkingLine[fWorkingCursor = 0] = 0;
+    IClearWorkingLine();
 }
 
 //// IPrintSomeHelp //////////////////////////////////////////////////////////
 
 void    pfConsole::IPrintSomeHelp()
 {
-    char    msg1[] = "The console contains commands arranged under groups and subgroups. \
+    ST::string msg1 = ST_LITERAL("The console contains commands arranged under groups and subgroups. \
 To use a command, you type the group name plus the command, such as 'Console.Clear' or \
-'Console Clear'.";
+'Console Clear'.");
     
-    char    msg2[] = "To get help on a command or group, type '?' followed by the command or \
+    ST::string msg2 = ST_LITERAL("To get help on a command or group, type '?' followed by the command or \
 group name. Typing '?' and just hitting enter will bring up this message. Typing '?' and \
-then 'commands' will bring up a list of all base groups and commands.";
+then 'commands' will bring up a list of all base groups and commands.");
 
-    char    msg3[] = "You can also have the console auto-complete a command by pressing tab. \
+    ST::string msg3 = ST_LITERAL("You can also have the console auto-complete a command by pressing tab. \
 This will search for a group or command that starts with what you have typed. If there is more \
-than one match, pressing tab repeatedly will cycle through all the matches.";
+than one match, pressing tab repeatedly will cycle through all the matches.");
 
 
-    AddLine( "" );
-    AddLine( "How to use the console:" );
-    IAddParagraph( msg1, 2 );
-    AddLine( "" );
-    IAddParagraph( msg2, 2 );
-    AddLine( "" );
-    IAddParagraph( msg3, 2 );
-    AddLine( "" );
-}
-
-
-//============================================================================
-void pfConsole::AddLineF(const char * fmt, ...) {
-    char str[1024];
-    va_list args;
-    va_start(args, fmt);
-    vsnprintf(str, std::size(str), fmt, args);
-    va_end(args);
-    AddLine(str);
-}
-
-//============================================================================
-void pfConsole::RunCommandAsync (const char cmd[]) {
-
-    plConsoleMsg * consoleMsg = new plConsoleMsg;
-    consoleMsg->SetCmd(plConsoleMsg::kExecuteLine);
-    consoleMsg->SetString(cmd);
-//  consoleMsg->SetBreakBeforeDispatch(true);
-    consoleMsg->Send(nullptr, true);
+    AddLine({});
+    AddLine(ST_LITERAL("How to use the console:"));
+    IAddParagraph(msg1, 2);
+    AddLine({});
+    IAddParagraph(msg2, 2);
+    AddLine({});
+    IAddParagraph(msg3, 2);
+    AddLine({});
 }

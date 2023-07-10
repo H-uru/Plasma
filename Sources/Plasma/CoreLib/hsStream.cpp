@@ -225,7 +225,7 @@ bool hsStream::AtEnd()
 
 bool hsStream::IsTokenSeparator(char c)
 {
-    return (isspace(c) || c==',' || c=='=');
+    return (isspace(static_cast<unsigned char>(c)) || c==',' || c=='=');
 }
 
 bool hsStream::GetToken(char *s, uint32_t maxLen, const char beginComment, const char endComment)

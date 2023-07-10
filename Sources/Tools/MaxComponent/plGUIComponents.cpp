@@ -481,7 +481,7 @@ LRESULT CALLBACK    SubclassedEditProc( HWND hWnd, UINT msg, WPARAM wParam, LPAR
     switch( msg )
     {
         case WM_CHAR:
-            if( !isdigit( (TCHAR)wParam ) )
+            if (wParam >= 0x80 || !isdigit(wParam))
                 return 0;
             break;
 

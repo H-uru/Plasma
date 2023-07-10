@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCmd.h"
 #include "pnNetBase/pnNetBase.h"
 #include <string_theory/codecs>
+#include <string_theory/format>
 
 //// DO NOT REMOVE!!!!
 //// This is here so Microsoft VC won't decide to "optimize" this file out
@@ -72,7 +73,7 @@ PF_CONSOLE_CMD(
     "string url",
     "Set the server's status URL"
 ) {
-    SetServerStatusUrl((char*)params[0]);
+    SetServerStatusUrl(params[0]);
 }
 
 //============================================================================
@@ -82,7 +83,7 @@ PF_CONSOLE_CMD(
     "string url",
     "Set the server's new user sign-up URL"
 ) {
-    SetServerSignupUrl((char*)params[0]);
+    SetServerSignupUrl(params[0]);
 }
 
 //============================================================================
@@ -92,7 +93,7 @@ PF_CONSOLE_CMD(
     "string name",
     "Set the displayable server name"
 ) {
-    SetServerDisplayName((char*)params[0]);
+    SetServerDisplayName(params[0]);
 }
 
 //============================================================================
@@ -117,7 +118,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the File Server address"
 ) {
-    SetFileSrvHostname((char*)params[0]);
+    SetFileSrvHostname(params[0]);
 }
 
 
@@ -132,7 +133,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the Auth Server address"
 ) {
-    SetAuthSrvHostname((char*)params[0]);
+    SetAuthSrvHostname(params[0]);
 }
 
 //============================================================================
@@ -142,11 +143,10 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Auth Server N key"
 ) {
-    ST::string base64key = ST::string::from_utf8(params[0]);
+    const ST::string& base64key = params[0];
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
-                        kNetDiffieHellmanKeyBits / 8);
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 
@@ -161,11 +161,10 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Auth Server X key"
 ) {
-    ST::string base64key = ST::string::from_utf8(params[0]);
+    const ST::string& base64key = params[0];
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
-                        kNetDiffieHellmanKeyBits / 8);
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 
@@ -195,11 +194,10 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Game Server N key"
 ) {
-    ST::string base64key = ST::string::from_utf8(params[0]);
+    const ST::string& base64key = params[0];
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
-                        kNetDiffieHellmanKeyBits / 8);
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 
@@ -214,11 +212,10 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Game Server X key"
 ) {
-    ST::string base64key = ST::string::from_utf8(params[0]);
+    const ST::string& base64key = params[0];
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
-                        kNetDiffieHellmanKeyBits / 8);
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 
@@ -248,7 +245,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the GateKeeper Server address"
 ) {
-    SetGateKeeperSrvHostname((char*)params[0]);
+    SetGateKeeperSrvHostname(params[0]);
 }
 
 //============================================================================
@@ -258,11 +255,10 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the GateKeeper Server N key"
 ) {
-    ST::string base64key = ST::string::from_utf8(params[0]);
+    const ST::string& base64key = params[0];
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
-                        kNetDiffieHellmanKeyBits / 8);
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 
@@ -277,11 +273,10 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the GateKeeper Server X key"
 ) {
-    ST::string base64key = ST::string::from_utf8(params[0]);
+    const ST::string& base64key = params[0];
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
-                        kNetDiffieHellmanKeyBits / 8);
+        PrintString(ST::format("Invalid key: should be exactly {} bytes", kNetDiffieHellmanKeyBits / 8));
         return;
     }
 

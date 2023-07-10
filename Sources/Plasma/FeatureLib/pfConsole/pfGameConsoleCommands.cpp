@@ -120,7 +120,7 @@ PF_CONSOLE_CMD( Game, LoadDialog, "string dlgName", "Loads the given GUI dialog 
     if( mgrKey )
     {
         pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kLoadDialog );
-        msg->SetString( (const char *)params[ 0 ] );
+        msg->SetString(params[0]);
         plgDispatch::MsgSend( msg );
     }
 }
@@ -132,8 +132,8 @@ PF_CONSOLE_CMD( Game, LoadLocalDialog, "string ageName, string dlgName", "Loads 
     if( mgrKey )
     {
         pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kLoadDialog );
-        msg->SetString( (const char *)params[ 1 ] );
-        msg->SetAge( (const char *)params[ 0 ] );
+        msg->SetString(params[1]);
+        msg->SetAge(params[0]);
         plgDispatch::MsgSend( msg );
     }
 }
@@ -145,7 +145,7 @@ PF_CONSOLE_CMD( Game, ShowDialog, "string dlgName", "Shows the given GUI dialog"
     if( mgrKey )
     {
         pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kShowDialog );
-        msg->SetString( (const char *)params[ 0 ] );
+        msg->SetString(params[0]);
         plgDispatch::MsgSend( msg );
     }
 }
@@ -157,7 +157,7 @@ PF_CONSOLE_CMD( Game, HideDialog, "string dlgName", "Hides the given GUI dialog"
     if( mgrKey )
     {
         pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kHideDialog );
-        msg->SetString( (const char *)params[ 0 ] );
+        msg->SetString(params[0]);
         plgDispatch::MsgSend( msg );
     }
 }
@@ -171,11 +171,11 @@ PF_CONSOLE_CMD( Game, SwitchDialog, "string olddlgName, string newdlgName", "Hid
     if( mgrKey )
     {
         pfGameGUIMsg    *msg = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kHideDialog );
-        msg->SetString( (const char *)params[ 0 ] );
+        msg->SetString(params[0]);
         plgDispatch::MsgSend( msg );
 
         pfGameGUIMsg    *msg2 = new pfGameGUIMsg( mgrKey, pfGameGUIMsg::kShowDialog );
-        msg2->SetString( (const char *)params[ 1 ] );
+        msg2->SetString(params[1]);
         plgDispatch::MsgSend( msg2 );
     }
 }
