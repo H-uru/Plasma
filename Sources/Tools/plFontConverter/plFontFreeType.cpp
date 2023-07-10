@@ -85,7 +85,15 @@ static_assert(
     std::all_of(
         std::begin(s_Characters), std::end(s_Characters),
         [](const plCharacterRange& range) {
-            return range.fBegin < range.fEnd && range.fEnd < kMaxGlyphs;
+            // Combined high and low surrogates because no individual codepoint
+            // exists in the low surrogate range AFAIK, so who cares about the
+            // distinction.
+            constexpr plCharacterRange kSurrogatePair{ 0xD800, 0xDFFF };
+            return (
+                range.fBegin < range.fEnd && range.fEnd < kMaxGlyphs &&
+                // All characters must fit in a single UTF-16 codepoint
+                (range.fEnd < kSurrogatePair.fBegin || range.fBegin > kSurrogatePair.fEnd)
+            );
         }
     )
 );
