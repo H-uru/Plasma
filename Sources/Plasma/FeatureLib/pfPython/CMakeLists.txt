@@ -32,6 +32,7 @@ set(pfPython_SOURCES
     pyGameScoreMsg.cpp
     pyGlueHelpers.cpp
     pyGmBlueSpiral.cpp
+    pyGmMarker.cpp
     pyGrassShader.cpp
     pyGUIControl.cpp
     pyGUIControlButton.cpp
@@ -122,6 +123,7 @@ set(pfPython_HEADERS
     pyGameScoreMsg.h
     pyGeometry3.h
     pyGmBlueSpiral.h
+    pyGmMarker.h
     pyGrassShader.h
     pyGUIControl.h
     pyGUIControlButton.h
@@ -207,6 +209,7 @@ set(pfPython_GLUE
     pyGeometry3Glue.cpp
     pyGlueHelpers.h
     pyGmBlueSpiralGlue.cpp
+    pyGmMarkerGlue.cpp
     pyGrassShaderGlue.cpp
     pyGUIControlButtonGlue.cpp
     pyGUIControlCheckBoxGlue.cpp

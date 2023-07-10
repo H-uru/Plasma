@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-""" *==LICENSE==*
+/*==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
 Copyright (C) 2011  Cyan Worlds, Inc.
@@ -39,26 +38,54 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       14617 N Newport Hwy
       Mead, WA   99021
 
- *==LICENSE==* """
+*==LICENSE==*/
 
-from __future__ import annotations
+#ifndef _pyGmMarker_h_
+#define _pyGmMarker_h_
 
-class PtGameJoinError:
-    kGameJoinSuccess = 0
-    kGameJoinErrNotExist = 1
-    kGameJoinErrInitFailed = 2
-    kGameJoinErrGameStarted = 3
-    kGameJoinErrGameOver = 4
-    kGameJoinErrMaxPlayers = 5
-    kGameJoinErrAlreadyJoined = 6
-    kGameJoinErrNoInvite = 7
-    kNumGameJoinErrors = 8
-    kGameJoinPending = -1
+#include "pyGameCli.h"
 
+#include "pnGameMgr/pnGmMarkerConst.h"
 
-class PtMarkerGameType:
-    kMarkerGameQuest = 0
-    kMarkerGameCGZ = 1
-    kMarkerGameCapture = 2
-    kMarkerGameCaptureAndHold = 3
-    kNumMarkerGameTypes = 4
+class pfGmMarker;
+class pyGmMarkerHandler;
+
+class pyGmMarker : public pyGameCli
+{
+public:
+    // required functions for PyObject interoperability
+    PYTHON_CLASS_NEW_FRIEND(ptGmMarker);
+    PYTHON_CLASS_GMCLI_NEW_DEFINITION(pfGmMarker);
+    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultNode object
+    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyGmMarker); // converts a PyObject to a pyVaultNode (throws error if not correct type)
+
+protected:
+    pfGmMarker* GetGameCli() const { return (pfGmMarker*)fCli; }
+
+public:
+    void StartGame() const;
+    void PauseGame() const;
+    void ResetGame() const;
+    void ChangeGameName(const ST::string& name) const;
+    void ChangeTimeLimit(uint32_t timeLimit) const;
+    void DeleteGame() const;
+    void AddMarker(double x, double y, double z, const ST::string& name, const ST::string& age) const;
+    void DeleteMarker(uint32_t markerId) const;
+    void ChangeMarkerName(uint32_t markerId, const ST::string& markerName) const;
+    void CaptureMarker(uint32_t markerId) const;
+
+public:
+    static void Create(
+        PyObject* handler,
+        EMarkerGameType gameType,
+        ST::string templateId
+    );
+
+    static bool IsSupported();
+
+public:
+    static void AddPlasmaGameClasses(PyObject* m);
+    static void AddPlasmaGameConstantsClasses(PyObject* m);
+};
+
+#endif

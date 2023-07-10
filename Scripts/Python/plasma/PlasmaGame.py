@@ -62,3 +62,58 @@ class ptGameCli:
     def leaveGame(self) -> None:
         """Explicitly ask the server to allow us to leave the game."""
         ...
+
+
+class ptGmMarker(ptGameCli):
+    """Legacy marker game client."""
+
+    def addMarker(self, x: float, y: float, z: float, name: str, age: str) -> None:
+        """Request for the server to add a new marker to the game."""
+        ...
+
+    def captureMarker(self, markerId: int) -> None:
+        """Request for the server to register a capture of the specified marker for our team."""
+        ...
+
+    def changeGameName(self, name: str) -> None:
+        """Request for the server to change the internal marker game name."""
+        ...
+
+    def changeMarkerName(self, markerID: int) -> None:
+        """Request for the server to change the name of a specific marker from the game."""
+        ...
+
+    def changeTimeLimit(self, timeLimit: int) -> None:
+        """Request for the server to change the marker game's time limit."""
+        ...
+
+    @staticmethod
+    def create(handler: Any, gameType: int, templateId: Optional[str]) -> None:
+        """Initialize a new marker game client with the server."""
+        ...
+
+    def deleteGame(self) -> None:
+        """Request for the server to delete all data associated with this game, including
+           the marker definitions and game name.
+        """
+        ...
+
+    def deleteMarker(self, markerID: int) -> None:
+        """Request for the server to delete a specific marker from the game."""
+        ...
+
+    @staticmethod
+    def isSupported() -> bool:
+        ...
+
+    def pauseGame(self) -> None:
+        """Request for the server to pause the marker game."""
+        ...
+
+    def resetGame(self) -> None:
+        """Request for the server to clear all markers to the uncaptured state."""
+        ...
+
+    def startGame(self) -> None:
+        """Request for the server to start the marker game."""
+        ...

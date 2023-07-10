@@ -39,224 +39,416 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       14617 N Newport Hwy
       Mead, WA   99021
 
- *==LICENSE==* """
+ *==LICENSE==*
+"""
+
+from __future__ import annotations
+import abc
+from typing import *
+import weakref
 
 from Plasma import *
+from PlasmaGame import *
 from PlasmaKITypes import *
 from PlasmaTypes import *
 
-import grtzMarkerGames
-from .xMarkerGameBrain import *
-from .xMarkerBrainUser import *
+from .xMarkerGameBrain import xMarker
+import xMarkerGameUtils
 
-class QuestMarkerBrain(object):
-    def CaptureAllMarkers(self):
-        mgr = ptMarkerMgr()
-        captures = {}
-        for i in range(self.marker_total):
-            mgr.captureQuestMarker(i, True)
-            captures[i] = True
-        self._captures = captures
+if TYPE_CHECKING:
+    from .xMarkerMgr import MarkerGameManager
 
-    def CaptureMarker(self, idx):
-        for marker in self.markers:
-            if marker[0] == idx:
-                desc = marker[3]
-                break
-        else:
-            PtDebugPrint("QuestMarkerBrain.CaptureMarker():\tMarker #{} does not exist. Are you drunk?".format(idx))
-            return
+class _MarkerGameBrainQuest:
+    def __init__(self, mgr: weakref.ReferenceType[MarkerGameManager]):
+        self._captures: Set[int] = set()
+        self._loaded = False
+        self._markers: Dict[int, xMarker] = {}
+        self._mgr = mgr
+        self._playing = False
 
-        PtDebugPrint("QuestMarkerBrain.CaptureMarker():\tCapturing marker #{}, '{}'".format(idx, desc), level=kWarningLevel)
-        ptMarkerMgr().captureQuestMarker(idx, True)
-        msg = PtGetLocalizedString("KI.MarkerGame.FoundMarker", [desc])
-        PtSendKIMessage(kKILocalChatStatusMsg, msg)
+    def CaptureAllMarkers(self) -> None:
+        PtDebugPrint("_MarkerGameBrainQuest.CaptureAllMarkers():\tAvast, ye hacker!", level=kWarningLevel)
+        for markerID in self._markers.keys():
+            self.CaptureMarker(markerID)
 
-        caps = self._captures
-        if idx not in caps or not caps[idx]:
-            caps[idx] = True
-            self._captures = caps
+    def _ShowTheMarkers(self, showAll: bool = False):
+        currAge = PtGetAgeName().lower()
+        markers = filter(lambda x: x.age.lower() == currAge, self._markers.values())
+        if not showAll:
+            markers = filter(lambda x: x.idx not in self._captures, markers)
 
-    def _get_captures(self):
-        return PtGetMarkerQuestCaptures(self.game_id)
-    def _set_captures(self, value):
-        PtSetMarkerQuestCaptures(self.game_id, value)
-    _captures = property(_get_captures, _set_captures)
-
-    def Cleanup(self):
-        self._captures = {}
-
-    def IsMarkerCaptured(self, idx):
-        try:
-            return bool(self._captures[idx])
-        except:
-            return False
-
-    @property
-    def markers_captured(self):
-        for i, captured in self._captures.items():
-            if captured:
-                age, pos, desc = self._markers[i]
-                yield (i, age, pos, desc)
-
-    @property
-    def num_markers_captured(self):
-        return len(self._captures)
-
-    def RefreshMarkers(self):
         mgr = ptMarkerMgr()
         mgr.removeAllMarkers()
+        for marker in markers:
+            mgr.addMarker(marker.pos, marker.idx, False)
+            pass
 
-        ageName = PtGetAgeName().lower()
-        captures = self._captures
-        for i, age, pos, desc in self.markers:
-            if ageName != age.lower():
-                continue
-            try:
-                captured = captures[i]
-            except LookupError:
-                captured = False
-            if not captured:
-                mgr.addMarker(pos, i, False)
+    # ================
+    # MarkerGameBrain
+    # ================
 
+    def FlushMarkers(self) -> None:
+        PtDebugPrint("_MarkerGameBrainQuest.FlushMarkers():\tClearing internal marker state", level=kWarningLevel)
+        ptMarkerMgr().removeAllMarkers()
+        self._markers.clear()
+        self._loaded = False
 
-class CGZMarkerGame(QuestMarkerBrain):
-    def __init__(self, mission, newMission=True):
-        self._markers = grtzMarkerGames.mgs[mission]
-        if newMission:
-            PtSetCGZM(mission)
-            PtUpdateCGZStartTime()
-            self._captures = {}
-
-    def Cleanup(self):
-        PtSetCGZM(-1)
-        self._captures = {}
+    def IsMarkerCaptured(self, markerID: int) -> bool:
+        return markerID in self._captures
 
     @property
-    def game_id(self):
-        return "cgz"
-
-    @staticmethod
-    def LoadFromVault():
-        try:
-            return CGZMarkerGame(PtGetCGZM(), newMission=False)
-        except:
-            return None
+    def is_loaded(self) -> bool:
+        return self._loaded
 
     @property
-    def marker_colors(self):
-        return ("yellow", "yellowlt")
+    def marker_total(self) -> int:
+        return len(self._markers)
 
     @property
-    def marker_total(self):
-        return len(list(self.markers))
+    def markers(self) -> Iterator[xMarker]:
+        return self._markers.values()
 
     @property
-    def markers(self):
-        for i, (age, pos, desc) in enumerate(self._markers):
-            yield (i, age, pos, desc)
+    def markers_captured(self) -> Iterator[xMarker]:
+        yield from (self._markers[i] for i in self._captures)
 
     @property
-    def playing(self):
-        return True
+    def num_markers_captured(self) -> int:
+        return len(self._captures)
 
+    @property
+    def playing(self) -> bool:
+        return self._playing
 
-class UCQuestMarkerGame(QuestMarkerBrain, UCMarkerGame):
-    def __init__(self, markerNode):
-        UCMarkerGame.__init__(self, markerNode)
+    # ========
+    # Utility
+    # ========
 
-    def _get_is_active(self):
-        mg = PtGetMarkerGameChronicle()
-        if mg is not None and mg.getValue() == "quest":
-            chron = PtFindCreateMarkerChronicle("ActiveQuest")
-            return chron.getValue() == self.game_id
-        return False
-    def _set_is_active(self, value):
-        mg = PtGetMarkerGameChronicle()
-        mg.setValue("quest" if value else "")
-        mg.save()
-        chron = PtFindCreateMarkerChronicle("ActiveQuest")
-        chron.setValue(self.game_id if value else "-1")
-        chron.save()
-    _is_active = property(_get_is_active, _set_is_active)
+    def _StartGame(self) -> None:
+        """(Re)-start the current quest game."""
+        self._playing = True
+        self._ShowTheMarkers()
+        self._mgr().UpdateMarkerDisplay()
 
-    def CaptureMarker(self, id):
-        # We're still told to capture markers even if the game is not being played (eg in edit mode)
+    def _PauseGame(self) -> None:
+        self._playing = False
+        # It's better to just despawn them all and respawn them again as needed.
+        ptMarkerMgr().removeAllMarkers()
+        self._mgr().UpdateMarkerDisplay()
+
+    def _ResetGame(self) -> None:
+        """Reset the internal quest game state to initial."""
+        PtDebugPrint("_MarkerGameBrainQuest._ResetGame():\tThe game was reset, clearing all captures", level=kWarningLevel)
+        self._captures.clear()
         if self.playing:
-            QuestMarkerBrain.CaptureMarker(self, id)
-            if self._finished_game:
-                self._GiveReward()
+            self._ShowTheMarkers()
+        self._mgr().UpdateMarkerDisplay()
 
-    def Cleanup(self):
-        QuestMarkerBrain.Cleanup(self)
-        self._is_active = False
+    def _ChangeName(self, name: str) -> None:
+        PtDebugPrint(f"_MarkerGameBrainQuest._ChangeName():\t{name=}", level=kWarningLevel)
 
-    def DeleteMarker(self, id):
-        UCMarkerGame.DeleteMarker(self, id)
-        if self.markers_visible:
-            self.RefreshMarkers()
+    def _GameLoaded(self) -> None:
+        """Handle the chaos from a game being loaded."""
+        # Most of the work will be done in derived game types.
+        self._loaded = True
+        if self.playing:
+            self._ShowTheMarkers()
+        self._mgr().UpdateMarkerDisplay()
 
-    @property
-    def _finished_game(self):
-        """Checks our captures against the markers because yhe game may have been updated"""
-        captures = self._captures
-        for idx, age, pos, desc in self.markers:
-            if idx not in self._captures:
-                return False
-        return True
+    def _AddMarker(self, marker: xMarker) -> None:
+        """Add a new marker to the internal quest game state."""
+        PtDebugPrint(f"_MarkerGameBrainQuest._AddMarker():\tLearned about {marker.idx=}", level=kDebugDumpLevel)
+        self._markers[marker.idx] = marker
 
-    def _GiveReward(self):
-        # Send a congratulatory note to the KI
-        congrats = PtGetLocalizedString("KI.MarkerGame.FinishedGame", [self.game_name])
-        PtSendKIMessage(kKILocalChatStatusMsg, congrats)
+        # There is a fatal (read: crashing) race condition if we add markers while the game
+        # is re-loading. We would add the marker here and add it again in _ShowTheMarkers(), which
+        # triggers a crash. The crash seems to be related to poor key reference management in
+        # pfMarkerMgr, which should probably be fixed...
+        if self._loaded and self.markers_visible:
+            if PtGetAgeName().lower() == marker.age.lower():
+                ptMarkerMgr().addMarker(
+                    marker.pos,
+                    marker.idx,
+                    not self.playing
+                )
 
-        # Apply any game-specific reward
-        UCMarkerGame._GiveReward(self)
+        # Prevent callback storms
+        if self.is_loaded:
+            self._mgr().UpdateMarkerDisplay()
 
-    @staticmethod
-    def LoadFromVault():
-        chron = PtFindCreateMarkerChronicle("ActiveQuest", default=0)
+    def _DeleteMarker(self, markerID: int) -> None:
         try:
-            gameID = int(chron.getValue())
-        except:
-            return None
+            del self._markers[markerID]
+        except KeyError:
+            PtDebugPrint(f"_MarkerGameBrainQuest._DeleteMarker():\tTried to delete unknown marker {markerID=}")
+        else:
+            PtDebugPrint(f"_MarkerGameBrainQuest._DeleteMarker():\tDeleted {markerID=}", level=kWarningLevel)
+            ptMarkerMgr().removeMarker(markerID)
+            try:
+                self._captures.remove(markerID)
+            except KeyError:
+                # No one cares, we just don't want to have captured a no longer existing marker.
+                pass
+            self._mgr().UpdateMarkerDisplay()
 
-        # We need to search for the game's node. It should already be in our player vault, thankfully.
-        template = ptVaultMarkerGameNode()
-        template.setID(gameID)
-        gameNode = ptVault().findNode(template)
-        if gameNode is None:
-            PtDebugPrint("UCQuestMarkerGame.LoadFromVault():\tFailed to fetch game #{}".format(gameID))
-            return None
-        gameNode = gameNode.upcastToMarkerGameNode()
-        if gameNode is None:
-            PtDebugPrint("UCQuestMarkerGame.LoadFromVault():\tNode #{} is not a marker game".format(gameID))
-            return None
+    def _RenameMarker(self, markerID: int, markerName: str) -> None:
+        if marker := self._markers.get(markerID):
+            PtDebugPrint(f"_MarkerGameBrainQuest._RenameMarker():\tStashing new name for {markerID=}: '{marker.desc}' -> {markerName}", level=kWarningLevel)
+            # Marker objects are immutable, so make a new one.
+            self._markers[markerID] = xMarker(
+                marker.idx,
+                marker.age,
+                marker.pos,
+                markerName
+            )
+            self._mgr().UpdateMarkerDisplay()
+        else:
+            PtDebugPrint(f"_MarkerGameBrainQuest._RenameMarker():\tTrying to rename an unknown {markerID=}")
 
-        PtDebugPrint("UCQuestMarkerGame.LoadFromVault():\tRestored game #{}".format(gameID), level=kWarningLevel)
-        brain = UCQuestMarkerGame(gameNode)
-        # refresh markers now == KABLOOEY!
-        brain.Play(refreshMarkers=False)
-        return brain
+    def _CaptureMarker(self, markerID: int) -> None:
+        if marker := self._markers.get(markerID):
+            PtDebugPrint(f"_MarkerGameBrainQuest._CaptureMarker():\tCapturing {markerID=}")
+            self._captures.add(markerID)
+
+            # This should probably be in more UI related code, but meh.
+            if self.is_loaded and self.playing:
+                ptMarkerMgr().captureQuestMarker(markerID, True)
+                msg = PtGetLocalizedString("KI.MarkerGame.FoundMarker", [marker.desc])
+                PtSendKIMessage(kKILocalChatStatusMsg, msg)
+
+            # Prevent callback storms
+            if self.is_loaded:
+                self._mgr().UpdateMarkerDisplay()
+
+                markersRemaining = frozenset(self._markers.keys()) - self._captures
+                if not markersRemaining:
+                    PtDebugPrint("_MarkerGameBrainQuest._CaptureMarker():\tThe game is complete, woo!", level=kWarningLevel)
+                    self._AllMarkersCaptured()
+                else:
+                    PtDebugPrint(f"_MarkerGameBrainQuest._CaptureMarker():\t... still {len(markersRemaining)} left :(", level=kWarningLevel)
+
+    def _AllMarkersCaptured(self) -> None:
+        # Just a stub cause CGZMs do nothing when everything is captured.
+        pass
+
+
+class MarkerGameBrainLegacyQuest(_MarkerGameBrainQuest):
+    """Implements marker quest missions using the legacy Game Manager."""
+    def __init__(self, mgr: weakref.ReferenceType[MarkerGameManager], gameGuid: str = ""):
+        _MarkerGameBrainQuest.__init__(self, mgr)
+        self.gameCli: Optional[ptGmMarker] = None
+        self._gameGuid = gameGuid
+
+    # ======================
+    # _MarkerGameBrainQuest
+    # ======================
+
+    def _GameLoaded(self):
+        _MarkerGameBrainQuest._GameLoaded(self)
+
+        # NOTE: svrGameStarted is such a wonderful promise. Sadly, IT IS A LIE! The legacy client
+        # does not use it. So, we have to rely on the presence of the svrGameTemplateID to figure
+        # out if we need to be playing this thing.
+        prevTemplateID = xMarkerGameUtils.GetLegacyChronicle().svrGameTemplateID
+        if prevTemplateID == self._gameGuid:
+            PtDebugPrint("MarkerGameBrainLegacyQuest._GameLoaded():\tWe were previously playing the game, so starting it again.", level=kWarningLevel)
+            self.gameCli.startGame()
+        else:
+            PtDebugPrint("MarkerGameBrainLegacyQuest._GameLoaded():\tWe were NOT previousl playing this, so buzz off!", level=kWarningLevel)
+
+    # ================
+    # MarkerGameBrain
+    # ================
+
+    def CaptureMarker(self, markerID: int) -> None:
+        assert self.playing, "Can only capture markers when playing the game."
+        if cli := self.gameCli:
+            PtDebugPrint(f"MarkerGameBrainLegacyQuest.CaptureMarker():\tSending capture request for {markerID=} to server.", level=kWarningLevel)
+            cli.captureMarker(markerID)
+        else:
+            PtDebugPrint(f"MarkerGameBrainLegacyQuest.CaptureMarker: Tried to capture {markerID=} before the gameCli was available.")
+
+    def Cleanup(self) -> None:
+        # Clear out the current marker game state.
+        xMarkerGameUtils.SaveLegacyChronicle(None)
+
+    def FlushMarkers(self) -> None:
+        _MarkerGameBrainQuest.FlushMarkers(self)
+        # Linking to a new Age resets the playing state.
+        self._playing = False
 
     @property
-    def marker_colors(self):
-        return ("purple", "purplelt")
+    def game_id(self) -> str:
+        return self._gameGuid
 
-    def Play(self, refreshMarkers=True):
-        UCMarkerGame.Play(self)
-        self._is_active = True
-        if refreshMarkers:
-            self.RefreshMarkers()
+    def RefreshMarkers(self) -> None:
+        # NOTE: self.gameCli is set by the engine.
+        PtDebugPrint(f"MarkerGameBrainLegacyQuest.RefreshMarkers():\tRefreshing gameCli: {self._gameGuid}", level=kWarningLevel)
+        ptGmMarker.create(self, self.game_type, self._gameGuid)
 
-    def RefreshMarkers(self):
-        if self.markers_visible:
-            QuestMarkerBrain.RefreshMarkers(self)
+    # ================
+    # GameCli Handler
+    # ================
 
-    def Stop(self):
-        UCMarkerGame.Stop(self)
-        self._is_active = False
+    def OnGameCliInstance(self, result: int) -> None:
+        with xMarkerGameUtils.LegacyMarkerData() as markerData:
+            markerData.svrGameClientID = self.gameCli.gameID
 
-# Register our ABC so it doesn't complain about all the mixins
-MarkerGameBrain.register(CGZMarkerGame)
-MarkerGameBrain.register(UCQuestMarkerGame)
+    def OnGameCliDelete(self) -> None:
+        with xMarkerGameUtils.LegacyMarkerData() as markerData:
+            markerData.svrGameClientID = -1
+
+    def OnPlayerJoined(self, playerID) -> None:
+        if playerID == PtGetLocalClientID():
+            with xMarkerGameUtils.LegacyMarkerData() as markerData:
+                markerData.isPlayerJoined = 1
+
+    def OnPlayerLeft(self, playerID) -> None:
+        if playerID == PtGetLocalClientID():
+            with xMarkerGameUtils.LegacyMarkerData() as markerData:
+                markerData.isPlayerJoined = 0
+
+    def OnTemplateCreated(self, templateID) -> None:
+        PtDebugPrint(f"MarkerGameBrainLegacyQuest.OnTemplateCreated():\tEmpty {templateID=} initialized")
+        self._gameGuid = templateID
+
+        # On legacy clients, this means "PLAY ME NOW!" So, only stash it if we're playing.
+        # This will probably always evaluate to False.
+        if self.playing:
+            with xMarkerGameUtils.LegacyMarkerData() as markerData:
+                markerData.svrGameTemplateID = templateID
+
+    def OnGameType(self, gameType: int) -> None:
+        with xMarkerGameUtils.LegacyMarkerData() as markerData:
+            markerData.svrGameTypeID = gameType
+
+    def OnGameStarted(self) -> None:
+        self._StartGame()
+        with xMarkerGameUtils.LegacyMarkerData() as markerData:
+            # NOTE: the legacy client doesn't actually use svrGameStarted, instead it goes
+            # by the presence or absence of the template ID. In fact, don't even touch
+            # svrGameStarted, because the legacy client shows a weird, non-functional
+            # "Invite Player" button if it's set...
+            markerData.svrGameTemplateID = self._gameGuid
+
+    def OnGamePause(self) -> None:
+        self._PauseGame()
+        with xMarkerGameUtils.LegacyMarkerData() as markerData:
+            markerData.svrGameTemplateID = ""
+
+    def OnGameReset(self) -> None:
+        self._ResetGame()
+        with xMarkerGameUtils.LegacyMarkerData() as markerData:
+            markerData.numCapturedMarkers = self.num_markers_captured
+
+    def OnGameOver(self) -> None:
+        with xMarkerGameUtils.LegacyMarkerData() as markerData:
+            markerData.svrGameStarted = 0
+
+    def OnGameNameChanged(self, name: str) -> None:
+        self._ChangeName(name)
+        with xMarkerGameUtils.LegacyMarkerData() as markerData:
+            markerData.svrGameName = name
+
+        # This is the last message in the initial game load cascade, so stash the name
+        # away and mark us as loaded.
+        if not self._loaded:
+            # If an empty name comes down, this might be a new game or some other kind of brokenness.
+            # Anyway, an empty name will hose the legacy client, so change it to SOMETHING. Only
+            # do this once to prevent strange recursion in the case of "broken" (read: deleted) games,
+            # which might simply reject any attempts to change their name.
+            if not name:
+                name = self.game_name if self.game_name else "Marker Game"
+                self.gameCli.changeGameName(name)
+            self._GameLoaded()
+
+    def OnGameDeleted(self, success: bool) -> None:
+        pass
+
+    def OnMarkerAdded(self, x: float, y: float, z: float, markerID: int, name: str, age: str):
+        marker = xMarker(
+            markerID,
+            age,
+            ptPoint3(x, y, z),
+            name
+        )
+        self._AddMarker(marker)
+        with xMarkerGameUtils.LegacyMarkerData() as markerData:
+            markerData.numMarkers = self.marker_total
+
+    def OnMarkerDeleted(self, markerID: int) -> None:
+        self._DeleteMarker(markerID)
+        with xMarkerGameUtils.LegacyMarkerData() as markerData:
+            markerData.numMarkers = self.marker_total
+            markerData.numCapturedMarkers = self.num_markers_captured
+
+    def OnMarkerNameChanged(self, markerID: int, markerName: str) -> None:
+        self._RenameMarker(markerID, markerName)
+
+    def OnMarkerCaptured(self, markerID: int, team: int) -> None:
+        self._CaptureMarker(markerID)
+        with xMarkerGameUtils.LegacyMarkerData() as markerData:
+            markerData.numCapturedMarkers = self.num_markers_captured
+
+
+class MarkerBrainVaultQuest(_MarkerGameBrainQuest):
+    def __init__(self, mgr: weakref.ReferenceType[MarkerGameManager]):
+        _MarkerGameBrainQuest.__init__(self, mgr)
+
+    @property
+    def _capture_chronicle(self) -> Set[int]:
+        chron = xMarkerGameUtils.GetNewStyleCaptureChronicle(self.game_id)
+        # The double generator is to filter out empty values that would cause int() to error.
+        # This can happen under regular gameplay circumstances if the capture chronicle is empty.
+        value = filter(None, (i.strip() for i in chron.chronicleGetValue().split(',')))
+        return set((int(i) for i in value))
+
+    @_capture_chronicle.setter
+    def _capture_chronicle(self, value: Optional[Set[int]]) -> None:
+        chron = xMarkerGameUtils.GetNewStyleCaptureChronicle(self.game_id)
+        value = ','.join(map(str, value)) if value else ''
+        chron.chronicleSetValue(value)
+
+    def _UpdateCaptureChronicle(self) -> None:
+        self._capture_chronicle = self._captures
+
+    # ================
+    # MarkerGameBrain
+    # ================
+
+    def CaptureMarker(self, markerID: int) -> None:
+        assert self.playing, "Can only capture markers when playing the game."
+
+        # Capture the marker immediately. There is no blocking server communication.
+        self._CaptureMarker(markerID)
+        self._UpdateCaptureChronicle()
+
+    def RefreshMarkers(self) -> None:
+        # Refresh captures from vault (overriding all the things).
+        self._captures = self._capture_chronicle
+
+        # Sanity: ensure that we only capture markers that actually exist.
+        actualMarkers = frozenset((i.idx for i in self.markers))
+        deadCaps = self._captures - actualMarkers
+        if deadCaps:
+            PtDebugPrint(f"MarkerBrainVaultQuest._GameLoaded():\tDiscarding captures for invalid markers: '{','.join(map(str, deadCaps))}'")
+        self._captures &= actualMarkers
+
+        # Save the result back to the chronicle for sanity.
+        if deadCaps:
+            self._UpdateCaptureChronicle()
+
+        # The game is always loaded by virtue of it being stored in the vault.
+        self._GameLoaded()
+
+    # =====================
+    # _MarkerGameBrainQuest
+    # =====================
+
+    def _CaptureMarker(self, markerID: int) -> None:
+        _MarkerGameBrainQuest._CaptureMarker(self, markerID)
+        self._capture_chronicle = self._captures
+
+    def _ResetGame(self) -> None:
+        _MarkerGameBrainQuest._ResetGame(self)
+        self._UpdateCaptureChronicle()

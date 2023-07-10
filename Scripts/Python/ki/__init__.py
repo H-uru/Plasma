@@ -355,7 +355,7 @@ class xKI(ptModifier):
         PtLoadDialog("YeeshaPageGUI")
         PtLoadDialog("KIMiniMarkers", self.key)
 
-        self.markerGameManager = xMarkerMgr.MarkerGameManager()
+        self.markerGameManager = xMarkerMgr.MarkerGameManager(self)
         self.chatMgr.markerGameManager = self.markerGameManager
 
         # Pass the newly-initialized key to the modules.
@@ -1939,7 +1939,7 @@ class xKI(ptModifier):
             return
 
         # The player cannot create a game if one is already in progress.
-        if self.markerGameManager.playing:
+        if self.markerGameManager.am_playing:
             PtDebugPrint("xKI.CreateMarkerGame(): Aborting Marker Game creation request, a game is already in progress.", level=kDebugDumpLevel)
             self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.MarkerGame.createErrorExistingGame"), kChat.SystemMessage)
             return
@@ -3236,7 +3236,7 @@ class xKI(ptModifier):
                     selectedMarker = self.markerGameManager.selected_marker_id
                 except :
                     selectedMarker = -1
-                if self.markerGameManager.playing:
+                if self.markerGameManager.am_playing:
                     btnmgNewMarker.hide()
                     btnmgNewGame.hide()
                     btnmgInactive.show()
@@ -4806,12 +4806,10 @@ class xKI(ptModifier):
         # Save some typing.
         mgr = self.markerGameManager
         getControl = KIMarkerFolderExpanded.dialog.getControlFromTag
-        mbtnDelete = ptGUIControlButton(getControl(kGUI.MarkerFolderDeleteBtn))
 
         # Make sure that the player can view this game.
         if self.gKIMarkerLevel < kKIMarkerNormalLevel:
             self.BigKIDisplayMarkerGameMessage(PtGetLocalizedString("KI.MarkerGame.pendingActionUpgradeKI"))
-            mbtnDelete.show()
             return
 
         # Initialize the markerGameDisplay to the currently selected game.
@@ -4833,12 +4831,21 @@ class xKI(ptModifier):
         ## This was previously BigKIFinishDisplayMarkerGame()
         questGameFinished = False
 
-        # A game is in progress, restrict access.
-        if mgr.AmIPlaying(element):
+        # Check to see if the current element is the active game brain.
+        elementIsActive = mgr.IsActive(element)
+
+        # Is the game still loading?
+        if elementIsActive and not mgr.is_game_loaded:
+            msg = f"---- {PtGetLocalizedString('KI.MarkerGame.pendingActionLoading')} ----"
+            self.BigKIDisplayMarkerGameMessage(msg)
+            return
+
+        # THIS game is in progress, restrict access.
+        elif elementIsActive and mgr.am_playing:
             self.MFdialogMode = kGames.MFPlaying
 
         # Are we editing this game? If so, how?
-        elif mgr.IsActive(element) and mgr.edit_mode:
+        elif elementIsActive and mgr.edit_mode:
             if mgr.selected_marker_id != -1:
                 self.MFdialogMode = kGames.MFEditingMarker
             else:
@@ -4859,6 +4866,7 @@ class xKI(ptModifier):
         mtbInvitePlayer.setForeColor(kColors.Clear)
         mtbInvitePlayer.setString(" ")
 
+        mbtnDelete = ptGUIControlButton(getControl(kGUI.MarkerFolderDeleteBtn))
         mbtnEditStart = ptGUIControlButton(getControl(kGUI.MarkerFolderEditStartGame))
         mbtnPlayEnd = ptGUIControlButton(getControl(kGUI.MarkerFolderPlayEndGame))
         mrkfldOwner = ptGUIControlTextBox(getControl(kGUI.MarkerFolderOwner))
@@ -4903,16 +4911,20 @@ class xKI(ptModifier):
             mbtnDelete.show()
             mbtnGameTimePullD.hide()
             mbtnGameTimeArrow.hide()
-            if element.getCreatorNodeID() == PtGetLocalClientID():
+            if elementIsActive and element.getCreatorNodeID() == PtGetLocalClientID():
                 mbtnEditStart.show()
                 mtbEditStart.setForeColor(kColors.DniShowBtn)
             else:
                 mbtnEditStart.hide()
                 mtbEditStart.setForeColor(kColors.DniGhostBtn)
+            if elementIsActive:
+                mtbPlayEnd.setForeColor(kColors.DniShowBtn)
+                mbtnPlayEnd.show()
+            else:
+                mtbPlayEnd.setForeColor(kColors.DniGhostBtn)
+                mbtnPlayEnd.hide()
             mtbEditStart.setString(PtGetLocalizedString("KI.MarkerGame.EditButton"))
             mtbEditStart.show()
-            mbtnPlayEnd.show()
-            mtbPlayEnd.setForeColor(kColors.DniShowBtn)
             mtbPlayEnd.setString(PtGetLocalizedString("KI.MarkerGame.PlayButton"))
             mtbPlayEnd.show()
             mlbMarkerList.hide()
@@ -5122,7 +5134,7 @@ class xKI(ptModifier):
         ptGUIControlTextBox(getControl(kGUI.MarkerFolderPlayEndGameTB)).hide()
 
         ptGUIControlButton(getControl(kGUI.MarkerFolderTitleBtn)).hide()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderDeleteBtn)).hide()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderDeleteBtn)).enable()
         ptGUIControlButton(getControl(kGUI.MarkerFolderTimePullDownBtn)).hide()
         ptGUIControlButton(getControl(kGUI.MarkerFolderTypePullDownBtn)).hide()
         ptGUIControlButton(getControl(kGUI.MarkerFolderTypePullDownBtn)).disable()
@@ -5134,9 +5146,9 @@ class xKI(ptModifier):
         ptGUIControlListBox(getControl(kGUI.MarkerFolderMarkListbox)).hide()
         ptGUIControlTextBox(getControl(kGUI.MarkerFolderMarkerTextTB)).hide()
         ptGUIControlTextBox(getControl(kGUI.MarkerFolderMarkerTextBtn)).hide()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderToranIcon)).disable()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderHSpanIcon)).disable()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderVSpanIcon)).disable()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderToranIcon)).enable()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderHSpanIcon)).enable()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderVSpanIcon)).enable()
         ptGUIControlTextBox(getControl(kGUI.MarkerFolderToranTB)).hide()
         ptGUIControlTextBox(getControl(kGUI.MarkerFolderHSpanTB)).hide()
         ptGUIControlTextBox(getControl(kGUI.MarkerFolderVSpanTB)).hide()
@@ -5394,7 +5406,10 @@ class xKI(ptModifier):
                     if element is not None:
                         name = control.getString()
                         if not control.wasEscaped() and name:
-                            self.markerGameManager.selected_marker_name = name
+                            self.markerGameManager.RenameMarker(
+                                self.markerGameManager.selected_marker_id,
+                                name
+                            )
                         else:
                             PtDebugPrint("xKI.SaveMarkerTextFromEdit(): escape hit!", level=kDebugDumpLevel )
         control.hide()
@@ -6330,6 +6345,8 @@ class xKI(ptModifier):
             typeField = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kGUI.MarkerFolderGameTimeTB))
             typeField.setString(kLoc.MarkerFolderPopupMenu[self.markerGameTimeID][0])
         elif event == kShowHide:
+            mgr.LoadGame(self.BKCurrentContent)
+
             # Reset the edit text lines.
             if control.isEnabled():
                 titleEdit = ptGUIControlEditBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kGUI.MarkerFolderTitleEB))
@@ -6382,7 +6399,7 @@ class xKI(ptModifier):
                 mfmlb = ptGUIControlListBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kGUI.MarkerFolderMarkListbox))
                 self.MFScrollPos = mfmlb.getScrollPos()
 
-                if not mgr.playing:
+                if not mgr.am_playing:
                     # NOTE: We must use selected_marker_index because marker IDs don't necessarily
                     #       match up with the indices used in the GUI
                     mgr.selected_marker_index = control.getSelection()

@@ -51,4 +51,7 @@ REGISTER_NONCREATABLE(pfGameCli);
 #include "pfGmBlueSpiral.h"
 REGISTER_NONCREATABLE(pfGmBlueSpiral);
 
+#include "pfGmMarker.h"
+REGISTER_NONCREATABLE(pfGmMarker);
+
 #endif

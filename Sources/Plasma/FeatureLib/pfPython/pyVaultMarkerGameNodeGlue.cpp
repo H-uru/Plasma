@@ -66,6 +66,11 @@ PYTHON_INIT_DEFINITION(ptVaultMarkerGameNode, args, keywords)
     PYTHON_RETURN_INIT_OK;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptVaultMarkerGameNode, getGameGuid)
+{
+    return PyUnicode_FromSTString(self->fThis->GetGameGuid());
+}
+
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultMarkerGameNode, getGameName)
 {
     return PyUnicode_FromSTString(self->fThis->GetGameName());
@@ -74,6 +79,17 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultMarkerGameNode, getGameName)
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultMarkerGameNode, getMarkers)
 {
     return self->fThis->GetMarkers();
+}
+
+PYTHON_METHOD_DEFINITION(ptVaultMarkerGameNode, setGameGuid, args)
+{
+    ST::string guid;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &guid)) {
+        PyErr_SetString(PyExc_TypeError, "setGameGuid expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetGameGuid(guid);
+    PYTHON_RETURN_NONE;
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultMarkerGameNode, setGameName, args)
@@ -144,9 +160,11 @@ PYTHON_METHOD_DEFINITION(ptVaultMarkerGameNode, setMarkers, args)
 }
 
 PYTHON_START_METHODS_TABLE(ptVaultMarkerGameNode)
+    PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getGameGuid, ""),
     PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getGameName, "Returns the marker game's name"),
     PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getMarkers, "Returns a tuple of markers associated with this game"),
     PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getReward, "Returns a string representing the reward for completing this game"),
+    PYTHON_METHOD(ptVaultMarkerGameNode, setGameGuid, ""),
     PYTHON_METHOD(ptVaultMarkerGameNode, setGameName, "Params: name\nSets marker game's name"),
     PYTHON_METHOD(ptVaultMarkerGameNode, setMarkers, "Params: markers\nSets markers associated with this game"),
     PYTHON_METHOD(ptVaultMarkerGameNode, setReward, "Params: reward\nSets the reward for completing this marker game"),
