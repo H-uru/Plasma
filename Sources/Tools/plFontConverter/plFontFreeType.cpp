@@ -77,9 +77,7 @@ static plCharacterRange s_Characters[]{
     { 0x0500, 0x052F }, // Cyrillic Supplement
 };
 
-/*
- * When we update to C++20, we can verify that the characters are in range at
- * compile time using:
+#if __cpp_lib_constexpr_algorithms >= 201806L
 #include <algorithm>
 static_assert(
     std::all_of(
@@ -97,7 +95,7 @@ static_assert(
         }
     )
 );
-*/
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 
