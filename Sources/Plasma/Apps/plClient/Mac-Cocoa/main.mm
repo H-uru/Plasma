@@ -71,7 +71,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #import "PLSView.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plMessage/plDisplayScaleChangedMsg.h"
-#define PARABLE_NORMAL_EXIT     0   // i.e. exited WinMain normally
 
 #include "StringTheory_NSString.h"
 
