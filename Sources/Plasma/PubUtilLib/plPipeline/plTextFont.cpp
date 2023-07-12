@@ -70,6 +70,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if defined(HS_BUILD_FOR_APPLE)
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreText/CoreText.h>
+#elif defined(HS_BUILD_FOR_UNIX)
+#include <fontconfig/fontconfig.h>
 #endif
 
 //// Constructor & Destructor /////////////////////////////////////////////////
@@ -150,9 +152,38 @@ uint16_t  *plTextFont::IInitFontTexture()
     fTextureWidth *= 2;
     fTextureHeight *= 2;
 #else
-    FT_Done_FreeType(library);
-    FT_UInt freeTypeResolution = 0;
-    return nullptr;
+    FcPattern* pattern = FcNameParse((FcChar8*)fFace);
+    FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
+    FcDefaultSubstitute(pattern);
+
+    FcResult result;
+    FcPattern* match = FcFontMatch(nullptr, pattern, &result);
+
+    FcPatternDestroy(pattern);
+
+    if (result) {
+        FT_Done_FreeType(library);
+        return nullptr;
+    }
+
+    FcValue value;
+    result = FcPatternGet(match, FC_FILE, 0, &value);
+
+    if (result) {
+        FcPatternDestroy(match);
+
+        FT_Done_FreeType(library);
+        return nullptr;
+    }
+
+    char filename[PATH_MAX];
+    strncpy(filename, (char*)(value.u.s), std::size(filename) - 1);
+    filename[std::size(filename) - 1] = '\0';
+    FcPatternDestroy(match);
+
+    ftError = FT_New_Face(library, filename, 0, &face);
+
+    FT_UInt freeTypeResolution = 96;
 #endif
 
     ftError = FT_Set_Char_Size(face, 0, fSize * 64, freeTypeResolution, freeTypeResolution);
