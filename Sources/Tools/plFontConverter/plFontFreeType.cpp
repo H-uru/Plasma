@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFontFreeType.h"
 
+#include <string_theory/format>
+
 #include <memory>
 
 #include "ft2build.h"
@@ -56,8 +58,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include FT_GLYPH_H
 #include FT_TYPES_H
 
-#define kMaxGlyphs  65536
+constexpr FT_ULong kMaxGlyphs = 65536;
 
+///////////////////////////////////////////////////////////////////////////////
+
+struct plCharacterRange
+{
+    FT_ULong fBegin;
+    FT_ULong fEnd;
+};
+
+static plCharacterRange s_Characters[]{
+    { 0x0020, 0x007E }, // Basic Latin (ASCII)
+    { 0x00A0, 0x00FF }, // Latin-1 Supplement
+    { 0x0100, 0x017F }, // Latin Extended-A
+    { 0x0180, 0x024F }, // Latin Extended-B
+    { 0x0400, 0x04FF }, // Cyrillic
+    { 0x0500, 0x052F }, // Cyrillic Supplement
+};
+
+#if __cpp_lib_constexpr_algorithms >= 201806L
+#include <algorithm>
+static_assert(
+    std::all_of(
+        std::begin(s_Characters), std::end(s_Characters),
+        [](const plCharacterRange& range) {
+            // Combined high and low surrogates because no individual codepoint
+            // exists in the low surrogate range AFAIK, so who cares about the
+            // distinction.
+            constexpr plCharacterRange kSurrogatePair{ 0xD800, 0xDFFF };
+            return (
+                range.fBegin < range.fEnd && range.fEnd < kMaxGlyphs &&
+                // All characters must fit in a single UTF-16 codepoint
+                (range.fEnd < kSurrogatePair.fBegin || range.fBegin > kSurrogatePair.fEnd)
+            );
+        }
+    )
+);
+#endif
+
+///////////////////////////////////////////////////////////////////////////////
 
 
 bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *options, plBDFConvertCallback *callback )
@@ -100,9 +140,7 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
 
         // Run through our glyphs, loading them into a temp array and calcing bounding boxes for them
         FT_GlyphSlot    ftSlot = ftFace->glyph;
-        FT_ULong        ftChar;
-        FT_UInt         ftIndex;
-        uint32_t        numGlyphs = 0, totalHeight = 0, maxChar = 0, i;
+        uint32_t        numGlyphs = 0, totalHeight = 0, maxChar = 0;
         auto            ftGlyphs = std::make_unique<FT_Glyph[]>(kMaxGlyphs);
         auto            glyphChars = std::make_unique<uint16_t[]>(kMaxGlyphs);
         auto            ftAdvances = std::make_unique<FT_Vector[]>(kMaxGlyphs);
@@ -112,21 +150,41 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
         ftFontBox.xMin = ftFontBox.yMin = 32000;
         ftFontBox.xMax = ftFontBox.yMax = -32000;
 
-        // Hack for now: if we don't have a charmap active already, just choose the first one
-        if (ftFace->charmap == nullptr)
-        {
-            if( ftFace->num_charmaps == 0 )
-                throw false;
-
-            FT_Set_Charmap( ftFace, ftFace->charmaps[ 0 ] );
+        // Set the unicode character map as the active charmap. Our
+        // list of character ranges is for unicode fonts.
+        for (FT_Int i = 0; i < ftFace->num_charmaps; ++i) {
+            if (ftFace->charmaps[i]->encoding == FT_ENCODING_UNICODE) {
+                FT_Set_Charmap(ftFace, ftFace->charmaps[i]);
+                break;
+            }
+        }
+        if (ftFace->charmap == nullptr) {
+            hsAssert(0, "Oh crap, this font doesn't have a unicode character map.");
+            throw false;
         }
 
-        ftChar = FT_Get_First_Char( ftFace, &ftIndex );
-        while( ftIndex != 0 && numGlyphs < kMaxGlyphs )
-        {
-            error = FT_Load_Glyph( ftFace, ftIndex, FT_LOAD_DEFAULT );
-            if( !error && ftChar <= options->fMaxCharLimit )
-            {
+        for (const auto& charRange : s_Characters) {
+            for (FT_ULong ftChar = charRange.fBegin; ftChar <= charRange.fEnd; ++ftChar) {
+                // Remove this assert and uncomment the compile-time verification
+                // at the top of the file when we update to C++20.
+                hsAssert(ftChar < kMaxGlyphs, "Character index out of bounds");
+                FT_UInt ftIndex = FT_Get_Char_Index(ftFace, ftChar);
+                if (ftIndex == 0)
+                    continue;
+
+                constexpr FT_Int32 kMonochromeLoadFlags = (
+                    FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_NO_AUTOHINT
+                );
+                constexpr FT_Int32 kNormalLoadFlags = (
+                    FT_LOAD_RENDER | FT_LOAD_NO_AUTOHINT
+                );
+                error = FT_Load_Glyph(
+                    ftFace,
+                    ftIndex,
+                    options->fBitDepth == 1 ? kMonochromeLoadFlags : kNormalLoadFlags
+                );
+                if (error || ftChar > kMaxGlyphs)
+                    continue;
 
                 // Got this glyph, store it and update our bounding box
                 error = FT_Get_Glyph( ftFace->glyph, &ftGlyphs[ numGlyphs ] );
@@ -154,8 +212,6 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
 
                 numGlyphs++;
             }
-
-            ftChar = FT_Get_Next_Char( ftFace, ftChar, &ftIndex );
         }
 
         // Init some of our font properties
@@ -169,18 +225,16 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
 
         // Set the name and size of our font
         fSize = options->fSize;
-        char str[ 512 ];
         
         if( ftFace->style_flags & FT_STYLE_FLAG_ITALIC )
             SetFlag( kFlagItalic, true );
         if( ftFace->style_flags & FT_STYLE_FLAG_BOLD )
             SetFlag( kFlagBold, true );
         
-        if( IsFlagSet( kFlagItalic | kFlagBold ) )
-            sprintf( str, "%s %s", ftFace->family_name, ftFace->style_name );
+        if (IsFlagSet(kFlagItalic | kFlagBold))
+            SetFace(ST::format("{} {}", ftFace->family_name, ftFace->style_name));
         else
-            strcpy( str, ftFace->family_name );
-        SetFace( str );
+            SetFace(ftFace->family_name);
 
         // # of bytes per row 
         uint32_t stride = ( fBPP == 1 ) ? ( fWidth >> 3 ) : fWidth;
@@ -192,19 +246,8 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
             callback->NumChars( (uint16_t)(maxChar + 1) );
 
         // Now re-run through our stored list of glyphs, converting them to bitmaps
-        for( i = 0; i < numGlyphs; i++ )
+        for( uint32_t i = 0; i < numGlyphs; i++ )
         {
-            if( ftGlyphs[ i ]->format != ft_glyph_format_bitmap )
-            {
-                FT_Vector origin;
-                origin.x = 32;      // Half a pixel over
-                origin.y = 0;
-
-                error = FT_Glyph_To_Bitmap( &ftGlyphs[ i ], ( fBPP == 1 ) ? ft_render_mode_mono : ft_render_mode_normal, &origin, 0 );
-                if( error )
-                    throw false;
-            }
-
             if (fCharacters.size() < glyphChars[i] + 1)
                 fCharacters.resize(glyphChars[i] + 1);
 
