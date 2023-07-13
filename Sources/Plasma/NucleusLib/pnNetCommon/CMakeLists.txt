@@ -34,6 +34,7 @@ target_link_libraries(
     PRIVATE
         pnMessage
         pnSceneObject
+        $<$<PLATFORM_ID:SunOS>:socket>
         $<$<PLATFORM_ID:Windows>:ws2_32>
 )
 

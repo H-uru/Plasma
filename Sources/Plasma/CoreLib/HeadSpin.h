@@ -209,8 +209,8 @@ inline double hsSwapEndianDouble(double dvalue)
 // Generic versions for use in templates
 template <typename T> inline T hsToLE(T value) = delete;
 template <> inline char hsToLE(char value) { return value; }
-template <> inline int8_t hsToLE(int8_t value) { return value; }
-template <> inline uint8_t hsToLE(uint8_t value) { return value; }
+template <> inline signed char hsToLE(signed char value) { return value; }
+template <> inline unsigned char hsToLE(unsigned char value) { return value; }
 template <> inline int16_t hsToLE(int16_t value) { return (int16_t)hsToLE16((uint16_t)value); }
 template <> inline uint16_t hsToLE(uint16_t value) { return hsToLE16(value); }
 template <> inline int32_t hsToLE(int32_t value) { return (int32_t)hsToLE32((uint32_t)value); }

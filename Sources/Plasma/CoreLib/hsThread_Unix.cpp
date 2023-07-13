@@ -81,8 +81,14 @@ hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const ST::string& name)
     fPSema = nullptr;
     fNamed = !name.empty();
     if (fNamed) {
+        ST::string semName = name;
+        if (semName.front() != '/') {
+            /* UNIX named semaphores need to start with a slash */
+            semName = ST::format("/{}", name);
+        }
+
         /* Named semaphore shared between processes */
-        fPSema = sem_open(name.c_str(), O_CREAT, 0666, initialValue);
+        fPSema = sem_open(semName.c_str(), O_CREAT, 0666, initialValue);
         if (fPSema == SEM_FAILED)
         {
             hsAssert(0, "hsOSException");

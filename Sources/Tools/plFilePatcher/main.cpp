@@ -65,6 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     }
 #else
 #   include <sys/ioctl.h>
+#   include <sys/termios.h>
 #   include <unistd.h>
 
     void GetConsoleWidth(size_t& width)
