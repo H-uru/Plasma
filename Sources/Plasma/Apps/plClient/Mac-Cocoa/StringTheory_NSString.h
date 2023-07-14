@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(id)initWithSTString:(const ST::string&)string;
 +(id)stringWithSTString:(const ST::string&)string;
 
--(const ST::string)stString;
+-(const ST::string)STString;
 
 @end
 

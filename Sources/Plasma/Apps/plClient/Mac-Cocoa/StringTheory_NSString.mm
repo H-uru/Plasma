@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     return [[NSString alloc] initWithSTString:string];
 }
 
--(const ST::string)stString {
+-(const ST::string)STString {
     return ST::string([self cStringUsingEncoding:NSUTF8StringEncoding]);
 }
 

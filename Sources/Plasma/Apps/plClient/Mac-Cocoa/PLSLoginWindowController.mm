@@ -140,7 +140,7 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
     
     if(self.rememberPassword) {
         pfPasswordStore* store = pfPasswordStore::Instance();
-        ST::string username = [self.username stString];
+        ST::string username = [self.username STString];
         ST::string password = store->GetPassword(username);
         self.password = [NSString stringWithSTString:password];
     }
