@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProduct.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
-#include "hsTimer.h"
 
 #include "pnFactory/plCreatable.h"
 #include "pnNetCommon/plNetApp.h"
@@ -1294,7 +1293,7 @@ bool plSimpleStateVariable::Set(double v, int idx)
 
     if (fVar.GetType()==plVarDescriptor::kTime)
     {   // convert from, 
-        fT[idx].SetFromGameTime(v, hsTimer::GetSysSeconds());       
+        fT[idx].SetFromGameTime(v);
         IVarSet();
         return true;
     }
@@ -1361,11 +1360,10 @@ bool plSimpleStateVariable::Set(double* v, int idx)
 
     if (fVar.GetAtomicType()==plVarDescriptor::kTime)
     {
-        double secs=hsTimer::GetSysSeconds();
         int i;
         int cnt=fVar.GetAtomicCount()*idx;
         for(i=0;i<fVar.GetAtomicCount();i++)
-            fT[cnt+i].SetFromGameTime(v[i], secs);      
+            fT[cnt+i].SetFromGameTime(v[i]);
         IVarSet();
         return true;
     }
@@ -1627,14 +1625,11 @@ bool plSimpleStateVariable::Get(float* value, int idx) const
 
     if (fVar.GetAtomicType()==plVarDescriptor::kTime)   // && fIsUsed)
     {
-        double secs=hsTimer::GetSysSeconds();
         int i;
         int cnt=fVar.GetAtomicCount()*idx;
         for(i=0;i<fVar.GetAtomicCount();i++)
         {
-            double tmp;
-            fT[cnt+i].ConvertToGameTime(&tmp, secs);
-            value[i] = (float)tmp;
+            value[i] = static_cast<float>(fT[cnt+i].ConvertToGameTime());
         }
         return true;
     }
@@ -1659,11 +1654,10 @@ bool plSimpleStateVariable::Get(double* value, int idx) const
 
     if (fVar.GetAtomicType()==plVarDescriptor::kTime)
     {
-        double secs=hsTimer::GetSysSeconds();
         int i;
         int cnt=fVar.GetAtomicCount()*idx;
         for(i=0;i<fVar.GetAtomicCount();i++)
-            fT[cnt+i].ConvertToGameTime(&value[i], secs);
+            value[i] = fT[cnt+i].ConvertToGameTime();
 
         return true;
     }
@@ -2307,12 +2301,12 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
         {
             logMsg << " gameTime:" << s;
             logMsg << " pst:" << fT[i].PrintWMillis();
-            logMsg << " ts:" << fTimeStamp.Format("%c").c_str();
+            logMsg << " ts:" << fTimeStamp.Format("%c");
         }
         else
         {
             logMsg << " value:" << s;
-            logMsg << " ts:" << (fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c").c_str());
+            logMsg << " ts:" << (fTimeStamp.AtEpoch() ? ST_LITERAL("0") : fTimeStamp.Format("%c"));
         }
 
         if (!dirtyOnly)
@@ -2350,12 +2344,12 @@ void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int l
         {
             logMsg << " gameTime:" << s;
             logMsg << " pst:" << fT[i].PrintWMillis();
-            logMsg << " ts:" << fTimeStamp.Format("%c").c_str();
+            logMsg << " ts:" << fTimeStamp.Format("%c");
         }
         else
         {
             logMsg << " value:" << s;
-            logMsg << " ts:" << (fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c").c_str());
+            logMsg << " ts:" << (fTimeStamp.AtEpoch() ? ST_LITERAL("0") : fTimeStamp.Format("%c"));
         }
 
         if (!dirtyOnly)

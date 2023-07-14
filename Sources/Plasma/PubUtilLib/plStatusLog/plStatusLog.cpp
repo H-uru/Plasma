@@ -533,7 +533,7 @@ bool plStatusLog::IPrintLineToFile(const ST::string& line)
         {
             if ( fFlags & kTimestamp )
             {
-                buf << '(' << plUnifiedTime(kNow).Format("%m/%d %H:%M:%S") << ") ";
+                buf << '(' << plUnifiedTime::GetCurrent(plUnifiedTime::kLocal).Format("%m/%d %H:%M:%S") << ") ";
             }
             if ( fFlags & kTimestampGMT )
             {
@@ -541,11 +541,11 @@ bool plStatusLog::IPrintLineToFile(const ST::string& line)
             }
             if ( fFlags & kTimeInSeconds )
             {
-                buf << '(' << plUnifiedTime(kNow).GetSecs() << ") ";
+                buf << '(' << plUnifiedTime::GetCurrent(plUnifiedTime::kLocal).GetSecs() << ") ";
             }
             if ( fFlags & kTimeAsDouble )
             {
-                buf << '(' << plUnifiedTime(kNow).GetSecsDouble() << ") ";
+                buf << '(' << plUnifiedTime::GetCurrent(plUnifiedTime::kLocal).GetSecsDouble() << ") ";
             }
             if (fFlags & kRawTimeStamp)
             {

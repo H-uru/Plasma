@@ -292,7 +292,7 @@ void plNetClientMgr::ISendGameMessage(plMessage* msg)
     if (msg->GetTimeStamp()<=hsTimer::GetSysSeconds())
         msg->SetTimeStamp(0);   
     else
-        netMsgWrap->GetDeliveryTime().SetFromGameTime(msg->GetTimeStamp(), hsTimer::GetSysSeconds());   
+        netMsgWrap->GetDeliveryTime().SetFromGameTime(msg->GetTimeStamp());
 
     // write message (and label) to ram stream
     hsRAMStream stream;

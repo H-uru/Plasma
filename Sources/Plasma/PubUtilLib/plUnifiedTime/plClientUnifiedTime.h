@@ -46,9 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //
 // class based on UnifiedTime which has some specialized client code in it as well.
-// WARNING: plUnifiedTime math operators will not work correctly unless
-// you convert this object using GetAsUnifiedTIme().  I decided not to 
-// recreate all the plUnifiedTime operators in this class.
 //
 class plClientUnifiedTime : public plUnifiedTime
 {
@@ -56,20 +53,15 @@ private:
     static plUnifiedTime    fFrameStartTime;
     static double           fSysTimeOffset;
 public:
-    plClientUnifiedTime(const plUnifiedTime& ut) { *this=ut;   }
+    plClientUnifiedTime(const plUnifiedTime& ut) { *static_cast<plUnifiedTime*>(this) = ut; }
     plClientUnifiedTime() {}
 
     static void SetSysTime();
     static plUnifiedTime& GetFrameStartTime() { return fFrameStartTime; }
 
-    plUnifiedTime& GetAsUnifiedTime() { return *(plUnifiedTime*)this;   }
-
     // game secs conversions
-    void SetFromGameTime(double gameTime, double curGameSecs);
-    void ConvertToGameTime(double* gameTimeOut, double curGameSecs);
-
-    const plClientUnifiedTime & operator=(const plUnifiedTime & src);
-    const plClientUnifiedTime & operator=(const plClientUnifiedTime & src);
+    void SetFromGameTime(double gameTime);
+    double ConvertToGameTime();
 };
 
 #endif  // plClientUnifiedTime_inc'

@@ -5296,10 +5296,8 @@ PF_CONSOLE_CMD( Age, GetElapsedDays, "string agedefnfile", "Gets the elapsed day
 
     plAgeDescription age;
     age.Read(&s);
-    
-    plUnifiedTime current;
-    current.SetToUTC();
-    PrintString(ST::format("ElapsedTime: {f} Days", age.GetAgeElapsedDays(current)));
+
+    PrintString(ST::format("ElapsedTime: {f} Days", age.GetAgeElapsedDays(plUnifiedTime::GetCurrent())));
 
     s.Close();
 }
@@ -5315,10 +5313,8 @@ PF_CONSOLE_CMD( Age, GetTimeOfDay, "string agedefnfile", "Gets the elapsed days 
 
     plAgeDescription age;
     age.Read(&s);
-    
-    plUnifiedTime current;
-    current.SetToUTC();
-    PrintString(ST::format("TimeOfDay: {f} percent", age.GetAgeTimeOfDayPercent(current)));
+
+    PrintString(ST::format("TimeOfDay: {f} percent", age.GetAgeTimeOfDayPercent(plUnifiedTime::GetCurrent())));
 
     s.Close();
 }

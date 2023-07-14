@@ -39,84 +39,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <cfloat>
+
 #include <cmath>
-#include <ctime>
+#include <string_theory/format>
+
 #include "plUnifiedTime.h"
-#include "hsWindows.h"
+
 #include "hsStream.h"
-
-#if HS_BUILD_FOR_UNIX
-#include <sys/time.h>
-#include <unistd.h>
-#endif
-
-#if HS_BUILD_FOR_WIN32
-#include <sys/timeb.h>  // for timeb
-#endif
-
-
-#if HS_BUILD_FOR_WIN32
-//
-// Converts Windows Time to Unified Time
-//
-#define MAGICWINDOWSOFFSET ((__int64)11644473600)  // magic number, taken from Python Source
-//
-bool plUnifiedTime::SetFromWinFileTime(const FILETIME ft)
-{
-    // FILETIME resolution seems to be 0.01 sec
-
-    __int64 ff,ffsecs;
-    ff = *(__int64*)(&ft);
-    ffsecs = ff/(__int64)10000000;
-
-    if (ffsecs >= MAGICWINDOWSOFFSET)  // make sure we won't end up negatice
-    {
-        fSecs = (time_t)(ffsecs-MAGICWINDOWSOFFSET);
-        fMicros = (uint32_t)(ff % 10000000)/10;
-        return true;
-    }
-    else
-        // before the UNIX Epoch
-        return false;
-}
-
-//
-// Sets the unified time to the current UTC time
-//
-bool plUnifiedTime::SetToUTC()
-{
-    FILETIME ft;
-
-    GetSystemTimeAsFileTime(&ft);   /* 100 ns blocks since 01-Jan-1641 */
-    return SetFromWinFileTime(ft);
-}
-#elif HS_BUILD_FOR_UNIX
-
-//
-// Sets the unified time to the current UTC time
-//
-bool plUnifiedTime::SetToUTC()
-{
-    struct timeval tv;
-    
-    // get the secs and micros from Jan 1, 1970
-    int ret = gettimeofday(&tv, nullptr);
-    if (ret == 0)
-    {
-        fSecs = tv.tv_sec;
-        fMicros = tv.tv_usec;
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-#else
-#error "Unified Time Not Implemented on this platform!"
-#endif
-
 
 struct tm * plUnifiedTime::IGetTime(const time_t * timer) const
 {
@@ -134,59 +63,24 @@ struct tm * plUnifiedTime::IGetTime(const time_t * timer) const
     return tm;
 }
 
-plUnifiedTime::plUnifiedTime(plUnifiedTime_CtorNow,int mode)
-{
-    SetMode((Mode)mode);
-    ToCurrentTime();
-}
 
+plUnifiedTime::plUnifiedTime(const struct timespec& tv)
+    : fSecs(tv.tv_sec), fMicros(tv.tv_nsec / 1000), fMode(kGmt)
+{}
 
-plUnifiedTime::plUnifiedTime(const timeval & tv)
-    : fMode(kGmt)
-{
-    *this = tv;
-}
-
-plUnifiedTime::plUnifiedTime(int mode, const struct tm & src)
-    : fMode((Mode)mode), fMicros()
-{
-    *this = src;
-}
+// Note: mktime may modify src in place, so src must be passed in by value (i. e. copied).
+plUnifiedTime::plUnifiedTime(Mode mode, struct tm src)
+    : fSecs(mktime(&src)), fMicros(), fMode(mode)
+{}
 
 plUnifiedTime::plUnifiedTime(time_t t)
-    : fMode(kGmt)
-{
-    *this = t;
-}
-
-plUnifiedTime::plUnifiedTime(unsigned long t)
-    : fMode(kGmt)
-{
-    *this = t;
-}
+    : fSecs(t), fMicros(), fMode(kGmt)
+{}
 
 plUnifiedTime::plUnifiedTime(int year, int month, int day, int hour, int min, int sec, unsigned long usec, int dst)
     : fMode(kGmt), fMicros()
 {
     SetTime(year,month,day,hour,min,sec,usec,dst);
-}
-
-plUnifiedTime::plUnifiedTime(int mode, const char * buf, const char * fmt)
-    : fMode((Mode)mode), fMicros()
-{
-    FromString(buf,fmt);
-}
-
-plUnifiedTime::plUnifiedTime(const plUnifiedTime & src)
-    : fMode(src.fMode)
-{
-    *this = src;
-}
-
-plUnifiedTime::plUnifiedTime(const plUnifiedTime * src)
-    : fMode(src->fMode)
-{
-    *this = *src;
 }
 
 plUnifiedTime plUnifiedTime::GetCurrent(Mode mode)
@@ -197,47 +91,6 @@ plUnifiedTime plUnifiedTime::GetCurrent(Mode mode)
     return t;
 }
 
-
-const plUnifiedTime & plUnifiedTime::operator=(const plUnifiedTime & src)
-{
-    fSecs = src.fSecs;
-    fMicros = src.fMicros;
-    fMode = src.fMode;
-    return *this;
-}
-
-const plUnifiedTime & plUnifiedTime::operator=(const plUnifiedTime * src)
-{
-    return operator=(*src);
-}
-
-const plUnifiedTime & plUnifiedTime::operator=(time_t src)
-{
-    fSecs = src;
-    fMicros = 0;
-    return *this;
-}
-
-const plUnifiedTime & plUnifiedTime::operator=(unsigned long src)
-{
-    fSecs = (time_t)src;
-    fMicros = 0;
-    return *this;
-}
-
-const plUnifiedTime & plUnifiedTime::operator=(const struct timeval & src)
-{
-    fSecs = src.tv_sec;
-    fMicros = src.tv_usec;
-    return *this;
-}
-
-const plUnifiedTime & plUnifiedTime::operator=(const struct tm & src)
-{
-    struct tm atm = src;
-    fSecs = mktime(&atm);
-    return *this;
-}
 
 void plUnifiedTime::SetSecsDouble(double secs)
 {
@@ -251,7 +104,20 @@ void plUnifiedTime::SetSecsDouble(double secs)
 
 void plUnifiedTime::ToCurrentTime()
 {
-    SetToUTC();
+    struct timespec ts;
+
+#if defined(HS_BUILD_FOR_APPLE)
+    // timespec_get is only supported since macOS 10.15,
+    // but clock_gettime exists since macOS 10.12.
+    int res = clock_gettime(CLOCK_REALTIME, &ts);
+    hsAssert(res == 0, "clock_gettime failed");
+#else
+    int res = timespec_get(&ts, TIME_UTC);
+    hsAssert(res != 0, "timespec_get failed");
+#endif
+
+    fSecs = ts.tv_sec;
+    fMicros = ts.tv_nsec / 1000;
 }
 
 bool plUnifiedTime::SetGMTime(short year, short month, short day, short hour, short minute, short second, unsigned long usec)
@@ -299,25 +165,21 @@ bool plUnifiedTime::GetTime(short &year, short &month, short &day, short &hour, 
     return true;
 }
 
-const char* plUnifiedTime::Print() const
+ST::string plUnifiedTime::Print() const
 {
-    static std::string s;
 //  short year, month, day, hour, minute, second;
 //  GetTime(year, month, day, hour, minute, second);
 //
 //  s = ST::format("yr {} mo {} day {} hour {} min {} sec {}",
 //                 year, month, day, hour, minute, second);
 
-    s = Format("%c");
-    return s.c_str();
+    return Format("%c");
 }
 
-const char* plUnifiedTime::PrintWMillis() const
+ST::string plUnifiedTime::PrintWMillis() const
 {
-    static ST::string s;
-    s = ST::format("{},s:{},ms:{}",
+    return ST::format("{},s:{},ms:{}",
         Print(), (unsigned long)GetSecs(), GetMillis() );
-    return s.c_str();
 }
 
 struct tm * plUnifiedTime::GetTm(struct tm * ptm) const
@@ -442,15 +304,12 @@ bool plUnifiedTime::operator>=(const plUnifiedTime & rhs) const
 }
 
 
-plUnifiedTime::operator timeval() const
+plUnifiedTime::operator struct timespec() const
 {
-#if HS_BUILD_FOR_WIN32
-    // tv_secs should be a time_t, but on Windows it is a long
-    struct timeval t = {(long)fSecs, (long)fMicros};
-#else
-    struct timeval t = {fSecs, (suseconds_t)fMicros};
-#endif
-    return t;
+    struct timespec ts;
+    ts.tv_sec = fSecs;
+    ts.tv_nsec = fMicros * 1000;
+    return ts;
 }
 
 
@@ -460,14 +319,14 @@ plUnifiedTime::operator struct tm() const
 }
 
 
-std::string plUnifiedTime::Format(const char * fmt) const
+ST::string plUnifiedTime::Format(const char * fmt) const
 {
     char buf[128];
     struct tm * t = IGetTime(&fSecs);
     if (t == nullptr ||
         !strftime(buf, sizeof(buf), fmt, t))
-        buf[0] = '\0';
-    return std::string(buf);
+        return {};
+    return ST::string::from_utf8(buf);
 }
 
 
@@ -488,513 +347,6 @@ plUnifiedTime operator +(const plUnifiedTime & left, const plUnifiedTime & right
 bool operator <(const plUnifiedTime & time, int secs)
 {
     return (time.GetSecs()<secs);
-}
-
-
-////////////////////////////////////////////////////////////////////
-// FromString
-
-#if !defined(HS_BUILD_FOR_UNIX)
-
-namespace pvt_strptime
-{
-    
-    //
-    // based on glibc's strptime
-    //
-    
-#define __isleap(year)  \
-    ((year) % 4 == 0 && ((year) % 100 != 0 || (year) % 400 == 0))
-    
-#define match_char(ch1, ch2) if (ch1 != ch2) return nullptr
-#define match_string(cs1, s2) \
-    (strnicmp((cs1), (s2), strlen (cs1)) ? 0 : ((s2) += strlen (cs1), 1))
-#define get_number(from, to, n) \
-    do {                                          \
-        int __n = n;                              \
-        val = 0;                                  \
-        while (*rp == ' ')                        \
-            ++rp;                                 \
-        if (*rp < '0' || *rp > '9')               \
-            return nullptr;                       \
-        do {                                      \
-            val *= 10;                            \
-            val += *rp++ - '0';                   \
-        } while (--__n > 0 && val * 10 <= to && *rp >= '0' && *rp <= '9'); \
-        if (val < from || val > to)               \
-            return nullptr;                       \
-    } while (0)
-#define recursive(new_fmt) \
-    (*(new_fmt) != '\0'                               \
-    && (rp = strptime_internal (rp, (new_fmt), tm, mode)) != nullptr)
-    
-    static char const weekday_name[][10] =
-    {
-        "Sunday", "Monday", "Tuesday", "Wednesday",
-            "Thursday", "Friday", "Saturday"
-    };
-    static char const ab_weekday_name[][4] =
-    {
-        "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-    };
-    static char const month_name[][10] =
-    {
-        "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-    };
-    static char const ab_month_name[][4] =
-    {
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    };
-#define HERE_D_T_FMT "%m/%d/%y %H:%M:%S"
-#define HERE_D_FMT "%m/%d/%y"
-#define HERE_AM_STR "AM"
-#define HERE_PM_STR "PM"
-#define HERE_T_FMT_AMPM "%I:%M:%S %p"
-#define HERE_T_FMT "%H:%M:%S"
-    
-    const unsigned short int __mon_yday[2][13] =
-    {
-        /* Normal years.  */
-        { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 },
-            /* Leap years.  */
-        { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 }
-    };
-    
-    
-    
-    static struct tm *
-        time_r(
-        const time_t *t,
-        struct tm *tp,
-        int mode)
-    {
-        struct tm *l = nullptr;
-        switch (mode)
-        {
-        case plUnifiedTime::kGmt:
-            l = gmtime(t);
-            break;
-        default:
-            l = localtime(t);
-        }
-        if (! l)
-            return nullptr;
-        *tp = *l;
-        tp->tm_isdst = -1;
-        return tp;
-    }
-    
-    /* Compute the day of the week.  */
-    static void
-        day_of_the_week (struct tm *tm)
-    {
-    /* We know that January 1st 1970 was a Thursday (= 4).  Compute the
-    the difference between this data in the one on TM and so determine
-        the weekday.  */
-        int corr_year = 1900 + tm->tm_year - (tm->tm_mon < 2);
-        int wday = (-473
-            + (365 * (tm->tm_year - 70))
-            + (corr_year / 4)
-            - ((corr_year / 4) / 25) + ((corr_year / 4) % 25 < 0)
-            + (((corr_year / 4) / 25) / 4)
-            + __mon_yday[0][tm->tm_mon]
-            + tm->tm_mday - 1);
-        tm->tm_wday = ((wday % 7) + 7) % 7;
-    }
-    
-    /* Compute the day of the year.  */
-    static void
-        day_of_the_year (struct tm *tm)
-    {
-        tm->tm_yday = (__mon_yday[__isleap (1900 + tm->tm_year)][tm->tm_mon]
-            + (tm->tm_mday - 1));
-    }
-    
-    
-    
-    static char * strptime_internal(
-        const char * rp,
-        const char * fmt,
-        struct tm * tm,
-        int mode)
-    {
-        const char *rp_backup;
-        int cnt;
-        size_t val;
-        int have_I, is_pm;
-        int century, want_century;
-        int have_wday, want_xday;
-        int have_yday;
-        int have_mon, have_mday;
-        
-        have_I = is_pm = 0;
-        century = -1;
-        want_century = 0;
-        
-        have_wday = want_xday = have_yday = have_mon = have_mday = 0;
-        
-        while (*fmt != '\0')
-        {
-        /* A white space in the format string matches 0 more or white
-            space in the input string.  */
-            if (isspace(static_cast<unsigned char>(*fmt)))
-            {
-                while (isspace(static_cast<unsigned char>(*rp)))
-                    ++rp;
-                ++fmt;
-                continue;
-            }
-            
-            /* Any character but `%' must be matched by the same character
-            in the iput string.  */
-            if (*fmt != '%')
-            {
-                match_char (*fmt++, *rp++);
-                continue;
-            }
-            
-            ++fmt;
-            /* We need this for handling the `E' modifier.  */
-start_over:
-            
-            /* Make back up of current processing pointer.  */
-            rp_backup = rp;
-            
-            switch (*fmt++)
-            {
-            case '%':
-                /* Match the `%' character itself.  */
-                match_char ('%', *rp++);
-                break;
-            case 'a':
-            case 'A':
-                /* Match day of week.  */
-                for (cnt = 0; cnt < 7; ++cnt)
-                {
-                    if (match_string (weekday_name[cnt], rp)
-                        || match_string (ab_weekday_name[cnt], rp))
-                    {
-                        break;
-                    }
-                }
-                if (cnt == 7)
-                    /* Does not match a weekday name.  */
-                    return nullptr;
-                tm->tm_wday = cnt;
-                have_wday = 1;
-                break;
-            case 'b':
-            case 'B':
-            case 'h':
-                /* Match month name.  */
-                for (cnt = 0; cnt < 12; ++cnt)
-                {
-                    if (match_string (month_name[cnt], rp)
-                        || match_string (ab_month_name[cnt], rp))
-                    {
-                        break;
-                    }
-                }
-                if (cnt == 12)
-                    /* Does not match a month name.  */
-                    return nullptr;
-                tm->tm_mon = cnt;
-                want_xday = 1;
-                break;
-            case 'c':
-                /* Match locale's date and time format.  */
-                if (!recursive (HERE_D_T_FMT))
-                    return nullptr;
-                want_xday = 1;
-                break;
-            case 'C':
-                /* Match century number.  */
-                get_number (0, 99, 2);
-                century = val;
-                want_xday = 1;
-                break;
-            case 'd':
-            case 'e':
-                /* Match day of month.  */
-                get_number (1, 31, 2);
-                tm->tm_mday = val;
-                have_mday = 1;
-                want_xday = 1;
-                break;
-            case 'F':
-                if (!recursive ("%Y-%m-%d"))
-                    return nullptr;
-                want_xday = 1;
-                break;
-            case 'x':
-                /* Fall through.  */
-            case 'D':
-                /* Match standard day format.  */
-                if (!recursive (HERE_D_FMT))
-                    return nullptr;
-                want_xday = 1;
-                break;
-            case 'k':
-            case 'H':
-                /* Match hour in 24-hour clock.  */
-                get_number (0, 23, 2);
-                tm->tm_hour = val;
-                have_I = 0;
-                break;
-            case 'I':
-                /* Match hour in 12-hour clock.  */
-                get_number (1, 12, 2);
-                tm->tm_hour = val % 12;
-                have_I = 1;
-                break;
-            case 'j':
-                /* Match day number of year.  */
-                get_number (1, 366, 3);
-                tm->tm_yday = val - 1;
-                have_yday = 1;
-                break;
-            case 'm':
-                /* Match number of month.  */
-                get_number (1, 12, 2);
-                tm->tm_mon = val - 1;
-                have_mon = 1;
-                want_xday = 1;
-                break;
-            case 'M':
-                /* Match minute.  */
-                get_number (0, 59, 2);
-                tm->tm_min = val;
-                break;
-            case 'n':
-            case 't':
-                /* Match any white space.  */
-                while (isspace(static_cast<unsigned char>(*rp)))
-                    ++rp;
-                break;
-            case 'p':
-                /* Match locale's equivalent of AM/PM.  */
-                if (!match_string (HERE_AM_STR, rp))
-                    if (match_string (HERE_PM_STR, rp))
-                        is_pm = 1;
-                    else
-                        return nullptr;
-                    break;
-            case 'r':
-                if (!recursive (HERE_T_FMT_AMPM))
-                    return nullptr;
-                break;
-            case 'R':
-                if (!recursive ("%H:%M"))
-                    return nullptr;
-                break;
-            case 's':
-                {
-                /* The number of seconds may be very high so we cannot use
-                the `get_number' macro.  Instead read the number
-                character for character and construct the result while
-                    doing this.  */
-                    time_t secs = 0;
-                    if (*rp < '0' || *rp > '9')
-                        /* We need at least one digit.  */
-                        return nullptr;
-                    
-                    do
-                    {
-                        secs *= 10;
-                        secs += *rp++ - '0';
-                    }
-                    while (*rp >= '0' && *rp <= '9');
-                    
-                    if (time_r(&secs, tm, mode) == nullptr)
-                        /* Error in function.  */
-                        return nullptr;
-                }
-                break;
-            case 'S':
-                get_number (0, 61, 2);
-                tm->tm_sec = val;
-                break;
-            case 'X':
-                /* Fall through.  */
-            case 'T':
-                if (!recursive (HERE_T_FMT))
-                    return nullptr;
-                break;
-            case 'u':
-                get_number (1, 7, 1);
-                tm->tm_wday = val % 7;
-                have_wday = 1;
-                break;
-            case 'g':
-                get_number (0, 99, 2);
-                /* XXX This cannot determine any field in TM.  */
-                break;
-            case 'G':
-                if (*rp < '0' || *rp > '9')
-                    return nullptr;
-                    /* XXX Ignore the number since we would need some more
-                information to compute a real date.  */
-                do
-                ++rp;
-                while (*rp >= '0' && *rp <= '9');
-                break;
-            case 'U':
-            case 'V':
-            case 'W':
-                get_number (0, 53, 2);
-                /* XXX This cannot determine any field in TM without some
-                information.  */
-                break;
-            case 'w':
-                /* Match number of weekday.  */
-                get_number (0, 6, 1);
-                tm->tm_wday = val;
-                have_wday = 1;
-                break;
-            case 'y':
-                /* Match year within century.  */
-                get_number (0, 99, 2);
-                /* The "Year 2000: The Millennium Rollover" paper suggests that
-                values in the range 69-99 refer to the twentieth century.  */
-                tm->tm_year = val >= 69 ? val : val + 100;
-                /* Indicate that we want to use the century, if specified.  */
-                want_century = 1;
-                want_xday = 1;
-                break;
-            case 'Y':
-                /* Match year including century number.  */
-                get_number (0, 9999, 4);
-                tm->tm_year = val - 1900;
-                want_century = 0;
-                want_xday = 1;
-                break;
-                
-                goto start_over;
-                
-            case 'O':
-                switch (*fmt++)
-                {
-                case 'd':
-                case 'e':
-                    /* Match day of month using alternate numeric symbols.  */
-                    get_number (1, 31, 2);
-                    tm->tm_mday = val;
-                    have_mday = 1;
-                    want_xday = 1;
-                    break;
-                case 'H':
-                /* Match hour in 24-hour clock using alternate numeric
-                    symbols.  */
-                    get_number (0, 23, 2);
-                    tm->tm_hour = val;
-                    have_I = 0;
-                    break;
-                case 'I':
-                /* Match hour in 12-hour clock using alternate numeric
-                    symbols.  */
-                    get_number (1, 12, 2);
-                    tm->tm_hour = val - 1;
-                    have_I = 1;
-                    break;
-                case 'm':
-                    /* Match month using alternate numeric symbols.  */
-                    get_number (1, 12, 2);
-                    tm->tm_mon = val - 1;
-                    have_mon = 1;
-                    want_xday = 1;
-                    break;
-                case 'M':
-                    /* Match minutes using alternate numeric symbols.  */
-                    get_number (0, 59, 2);
-                    tm->tm_min = val;
-                    break;
-                case 'S':
-                    /* Match seconds using alternate numeric symbols.  */
-                    get_number (0, 61, 2);
-                    tm->tm_sec = val;
-                    break;
-                case 'U':
-                case 'V':
-                case 'W':
-                    get_number (0, 53, 2);
-                    /* XXX This cannot determine any field in TM without
-                    further information.  */
-                    break;
-                case 'w':
-                    /* Match number of weekday using alternate numeric symbols.  */
-                    get_number (0, 6, 1);
-                    tm->tm_wday = val;
-                    have_wday = 1;
-                    break;
-                case 'y':
-                    /* Match year within century using alternate numeric symbols.  */
-                    get_number (0, 99, 2);
-                    tm->tm_year = val >= 69 ? val : val + 100;
-                    want_xday = 1;
-                    break;
-                default:
-                    return nullptr;
-                }
-                break;
-                default:
-                    return nullptr;
-    }
-    }
-    
-    if (have_I && is_pm)
-        tm->tm_hour += 12;
-    
-    if (century != -1)
-    {
-        if (want_century)
-            tm->tm_year = tm->tm_year % 100 + (century - 19) * 100;
-        else
-            /* Only the century, but not the year.  Strange, but so be it.  */
-            tm->tm_year = (century - 19) * 100;
-    }
-    
-    if (want_xday && !have_wday)
-    {
-        if ( !(have_mon && have_mday) && have_yday)
-        {
-            /* We don't have tm_mon and/or tm_mday, compute them.  */
-            int t_mon = 0;
-            while (__mon_yday[__isleap(1900 + tm->tm_year)][t_mon] <= tm->tm_yday)
-                t_mon++;
-            if (!have_mon)
-                tm->tm_mon = t_mon - 1;
-            if (!have_mday)
-                tm->tm_mday =
-                (tm->tm_yday
-                - __mon_yday[__isleap(1900 + tm->tm_year)][t_mon - 1] + 1);
-        }
-        day_of_the_week (tm);
-    }
-    if (want_xday && !have_yday)
-        day_of_the_year (tm);
-    
-    return (char *) rp;
-}
-
-
-}   // namespace pvt_strptime
-
-#endif
-
-bool plUnifiedTime::FromString(const char * buf, const char * fmt)
-{
-    struct tm tm;
-    tm.tm_isdst = -1;
-#if !defined(HS_BUILD_FOR_UNIX)
-    bool result = (pvt_strptime::strptime_internal(buf, fmt, &tm, fMode) != nullptr);
-#else
-    bool result = (strptime(buf, fmt, &tm) != nullptr);
-#endif
-    if (result)
-        *this = tm;
-    return result;
 }
 
 /// Local time zone offset stuff
