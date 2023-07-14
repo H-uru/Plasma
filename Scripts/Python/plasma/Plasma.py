@@ -5271,6 +5271,24 @@ class ptImage:
         """Saves this image to disk as a JPEG file"""
         pass
 
+class ptImageLibMod:
+    """Plasma ImageLibraryModifier class"""
+    def __init__(self,imlkey):
+        """None"""
+        pass
+
+    def getImage(imageName):
+        """Returns the named image, if present"""
+        pass
+
+    def getImages():
+        """Returns a tuple of ptImages"""
+        pass
+
+    def getNames():
+        """Returns a tuple of the image names"""
+        pass
+
 class ptInputInterface:
     """Plasma input interface class"""
     def __init__(self):

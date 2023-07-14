@@ -114,8 +114,14 @@ class stupStartUp(ptResponder):
     
     ###########################
     def randomizeBackground(self):
-        if ilmList := BGObj.sceneobject.getImageLibMods():
-            ilm = ptImageLibMod(ilmList[0])
-            bgChoice = random.choice(ilm.getNames())
-            if newImage := ilm.getImage(bgChoice):
-                BGLayer.layer.texture = newImage
+        if not BGObj.sceneobject or not BGLayer.layer:
+            PtDebugPrint("stupStartUp: Missing ptAttribs for randomized backgrounds.  Leaving default...") 
+            return
+
+        # Get the first available ImageLibModifier on our Background SceneObject
+        if ilm := next(BGObj.sceneobject.getImageLibMods(), None):
+            # Choose a random image from the available images
+            bgChoice = random.choice(ilm.getImages())
+            # Update the Background Layer's texture to our chosen image
+            BGLayer.layer.texture = bgChoice
+            PtDebugPrint("stupStartUp: Background has been randomized.")

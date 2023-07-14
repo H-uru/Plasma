@@ -55,6 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "plModifier/plImageLibMod.h"
 
+class pyImage;
+
 class pyImageLibMod
 {
 protected:
@@ -114,8 +116,9 @@ public:
     plKey GetKey() const { return fModifier ? fModifier->GetKey() : fModifierKey; }
 
     // for python access
-    plBitmap* GetImage (const ST::string& name) const;
-    std::vector<ST::string> GetImageNames() const;
+    pyImage* GetImage (const ST::string& name) const;
+    const std::vector<ST::string> GetImageNames() const;
+    const std::vector<pyImage*> GetImages() const;
 };
 
 #endif  // pyImageLibMod_h
