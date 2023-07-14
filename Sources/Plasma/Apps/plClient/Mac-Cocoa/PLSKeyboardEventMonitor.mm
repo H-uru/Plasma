@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /*
  This class implements a Cocoa keyboard tap for Plasma.
  
- IOKit isn't being used for raw keyboard input because it requires special privacy permission in macOS Catalina and higher. The Cocoa event stream is cumbersome, but doesn't require an event stream.
+ IOKit isn't being used for raw keyboard input because it requires special privacy permission in macOS Catalina and higher. The Cocoa event stream is cumbersome, but doesn't require a permision.
  
  There should be an alternate implementation for macOS 11 that uses the Game Controller framework, which supports keyboards in Big Sur and higher. That input is more appropriate for a game, and would also work on an iPad version. That is not yet implemented.
  */
@@ -114,7 +114,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 }
 
 -(BOOL)isFunctionKey:(UInt16)keycode {
-    return (keycode >= 99 && keycode <= 113) || keycode == kVK_F4 || keycode == kVK_F2 || keycode == kVK_F1;
+    return  (
+             keycode == kVK_F1 ||
+             keycode == kVK_F2 ||
+             keycode == kVK_F3 ||
+             keycode == kVK_F4 ||
+             keycode == kVK_F5 ||
+             keycode == kVK_F6 ||
+             keycode == kVK_F7 ||
+             keycode == kVK_F8 ||
+             keycode == kVK_F9 ||
+             keycode == kVK_F10 ||
+             keycode == kVK_F11 ||
+             keycode == kVK_F12 ||
+             keycode == kVK_F13 ||
+             keycode == kVK_F14 ||
+             keycode == kVK_F15 ||
+             keycode == kVK_F16 ||
+             keycode == kVK_F17 ||
+             keycode == kVK_F18 ||
+             keycode == kVK_F19 ||
+             keycode == kVK_F20
+             );
 }
 
 -(BOOL)processKeyEvent:(NSEvent *)event {
@@ -146,8 +167,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
      as "function keys". So we want to not trap events that are function key events, but we do want to trap the arrow keys.
      */
     //Edit 2: We also want to catch the function key modifier but not the actual function keys
-    if (!(keycode == kVK_LeftArrow || keycode == kVK_RightArrow || keycode == kVK_UpArrow || keycode == kVK_DownArrow || [self isFunctionKey:keycode]) &&  modifierFlags & NSEventModifierFlagFunction) {
-        NSLog(@"%i", keycode);
+    if (!(keycode == kVK_LeftArrow ||
+          keycode == kVK_RightArrow ||
+          keycode == kVK_UpArrow ||
+          keycode == kVK_DownArrow ||
+          keycode == kVK_Home ||
+          keycode == kVK_End ||
+          keycode == kVK_PageUp ||
+          keycode == kVK_PageDown ||
+          [self isFunctionKey:keycode]
+          ) && modifierFlags & NSEventModifierFlagFunction) {
         return NO;
     }
     
@@ -155,8 +184,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
         self.inputManager->HandleKeyEvent((plKeyDef)keycode, down, event.type == NSEventTypeFlagsChanged ? false : event.ARepeat);
         if (!(modifierFlags & NSEventModifierFlagFunction) && down) {
             if (event.type != NSEventTypeFlagsChanged && event.characters.length > 0) {
-                char character = [event.characters cStringUsingEncoding:NSUTF8StringEncoding][0];
-                if (!std::iscntrl(character)) {
+                // Only works for BMP code points (up to U+FFFF), but that's unlikely to matter at this stage...
+                wchar_t character = [event.characters characterAtIndex:0];
+                if (!std::iswcntrl(character)) {
                     self.inputManager->HandleKeyEvent((plKeyDef)keycode, down, event.type == NSEventTypeFlagsChanged ? false : event.ARepeat, character);
                 }
             }
