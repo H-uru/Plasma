@@ -140,24 +140,4 @@ public:
     GETINTERFACE_ANY( plParticleScaleMaxApplicator, plAGApplicator );
 };
 
-class plParticleGravityApplicator : public plParticleApplicator
-{
-protected:
-    void IApply(const plAGModifier *mod, double time) override;
-
-public:
-    CLASSNAME_REGISTER( plParticleGravityApplicator );
-    GETINTERFACE_ANY( plParticleGravityApplicator, plAGApplicator );
-};
-
-class plParticleDragApplicator : public plParticleApplicator
-{
-protected:
-    void IApply(const plAGModifier *mod, double time) override;
-
-public:
-    CLASSNAME_REGISTER( plParticleDragApplicator );
-    GETINTERFACE_ANY( plParticleDragApplicator, plAGApplicator );
-};
-
 #endif

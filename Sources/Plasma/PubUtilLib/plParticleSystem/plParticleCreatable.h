@@ -61,8 +61,6 @@ REGISTER_CREATABLE(plParticleScaleMaxApplicator);
 REGISTER_CREATABLE(plParticleScaleMinApplicator);
 REGISTER_CREATABLE(plParticleVelMaxApplicator);
 REGISTER_CREATABLE(plParticleVelMinApplicator);
-//REGISTER_CREATABLE(plParticleGravityApplicator);
-//REGISTER_CREATABLE(plParticleDragApplicator);
 
 #include "plParticleEffect.h"
 REGISTER_NONCREATABLE(plParticleCollisionEffect);
