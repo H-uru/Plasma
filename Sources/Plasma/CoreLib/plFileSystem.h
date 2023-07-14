@@ -122,8 +122,8 @@ public:
     /** Functor which compares two filenames case-insensitively for sorting. */
     struct less_i
     {
-        bool operator()(const plFileName &_L, const plFileName &_R) const
-        { return _L.fName.compare_i(_R.fName) < 0; }
+        bool operator()(const plFileName &lhs, const plFileName &rhs) const
+        { return lhs.fName.compare_i(rhs.fName) < 0; }
     };
 
     /** Return whether this filename is valid (not empty). */

@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef HS_BUILD_FOR_UNIX
 #    include <sys/utsname.h>
+#    include <unistd.h>
 #endif
 
 #ifdef HS_BUILD_FOR_APPLE
@@ -316,7 +317,7 @@ ST::string hsSystemInfo::GetOperatingSystem()
 
 #ifdef HS_BUILD_FOR_UNIX
     // Should work for everything else.
-    utsname sysinfo;
+    struct utsname sysinfo;
     uname(&sysinfo);
     system = ST::format("{} {} ({})", sysinfo.sysname, sysinfo.release, sysinfo.machine);
 #endif
@@ -349,7 +350,11 @@ uint64_t hsSystemInfo::GetRAM()
     // offset amounts of memory.
     return memory / (uint64_t)(1024 * 1024);
 #else
-    static_assert(false, "hsSystemInfo::GetRAM() not implemented for this platform");
+    long pagesize = sysconf(_SC_PAGESIZE);
+    long npages = sysconf(_SC_PHYS_PAGES);
+    if (pagesize >= 0 && npages >= 0) {
+        return (uint64_t)(pagesize * npages) / (uint64_t)(1024 * 1024);
+    }
 #endif
     return 0; // Yikes
 }

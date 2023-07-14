@@ -125,7 +125,7 @@ bool plUUID::FromString( const char * str )
     }
 
     uuid_t g;
-    if (uuid_parse(str, g) != 0) {
+    if (uuid_parse(const_cast<char*>(str), g) != 0) {
         return false;
     }
 

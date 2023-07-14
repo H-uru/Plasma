@@ -71,10 +71,10 @@ target_link_libraries(plPipeline
         plSurface
         pfCamera # plCaptureRender, plDynamicEnvMap, plDXPipeline
         pfGameGUIMgr # plCaptureRender
-        $<$<BOOL:${WIN32}>:plWinDpi>
+        $<$<PLATFORM_ID:Windows>:plWinDpi>
         freetype
         "$<$<PLATFORM_ID:Darwin>:-framework CoreText>"
-        $<$<PLATFORM_ID:Linux>:Fontconfig::Fontconfig>
+        $<$<AND:$<NOT:$<PLATFORM_ID:Windows>>,$<NOT:$<PLATFORM_ID:Darwin>>>:Fontconfig::Fontconfig>
     INTERFACE
         pnFactory
 )
