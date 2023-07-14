@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyKey.h"
 #include "pyMatrix44.h"
 
+#include "pyImageLibMod.h"
 #include "pySceneObject.h"
 
 #include "cyAvatar.h"
@@ -838,7 +839,7 @@ std::vector<PyObject*> pySceneObject::GetImageLibMods()
         {
             const plImageLibMod* ilm = plImageLibMod::ConvertNoRef(obj->GetModifierByType(plImageLibMod::Index()));
             if (ilm)
-                pyPL.push_back(pyKey::New(ilm->GetKey()));
+                pyPL.push_back(pyImageLibMod::New(ilm->GetKey()));
         }
     }
     return pyPL;

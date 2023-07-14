@@ -45,7 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 #include "pnKeyedObject/plUoid.h"
+#include "pyImage.h"
 #include "pyImageLibMod.h"
+
 
 void pyImageLibMod::setKey(pyKey& ilmKey) // only for python glue, do NOT call
 {
@@ -56,17 +58,34 @@ void pyImageLibMod::setKey(pyKey& ilmKey) // only for python glue, do NOT call
     fModifierKey = ilmKey.getKey();
 }
 
-plBitmap* pyImageLibMod::GetImage(const ST::string& name) const
+pyImage* pyImageLibMod::GetImage(const ST::string& name) const
 {
     plBitmap* image;
+
     if (fModifier)
         image = fModifier->GetImage(name);
     else
         image = plImageLibMod::ConvertNoRef(fModifierKey->ObjectIsLoaded())->GetImage(name);
-    return image;
+
+    return pyImage::ConvertFrom(pyImage::New(dynamic_cast<plMipmap*>(image)));
 }
 
-std::vector<ST::string> pyImageLibMod::GetImageNames() const
+const std::vector<pyImage*> pyImageLibMod::GetImages() const
+{
+    std::vector<pyImage*> imageList;
+    plImageLibMod* mod;
+
+    if (fModifier)
+        mod = fModifier;
+    else
+        mod = plImageLibMod::ConvertNoRef(fModifierKey->ObjectIsLoaded());
+
+    for (const auto& image : mod->GetImages())
+        imageList.push_back(pyImage::ConvertFrom(pyImage::New(dynamic_cast<plMipmap*>(image))));
+    return imageList;
+}
+
+const std::vector<ST::string> pyImageLibMod::GetImageNames() const
 {
     std::vector<ST::string> nameList;
     plImageLibMod* mod;

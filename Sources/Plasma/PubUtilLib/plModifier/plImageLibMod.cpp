@@ -49,13 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 
-plImageLibMod::plImageLibMod()
-{
-}
-
-plImageLibMod::~plImageLibMod()
-{
-}
 
 bool plImageLibMod::MsgReceive(plMessage* msg)
 {
@@ -104,6 +97,14 @@ plBitmap* plImageLibMod::GetImage(const ST::string& imageName) const
     if (findIt != fImages.end())
         return *findIt;
     return nullptr;
+}
+
+const std::vector<plBitmap*> plImageLibMod::GetImages() const
+{
+    std::vector<plBitmap*> images;
+    for (auto image : fImages)
+        images.emplace_back(image);
+    return images;
 }
 
 const std::vector<ST::string> plImageLibMod::GetImageNames() const

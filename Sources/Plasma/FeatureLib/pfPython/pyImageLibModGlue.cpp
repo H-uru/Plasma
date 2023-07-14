@@ -113,11 +113,20 @@ PYTHON_METHOD_DEFINITION(ptImageLibMod, getImage, args)
         PYTHON_RETURN_ERROR;
     }
 
-    plMipmap* image = plMipmap::ConvertNoRef(self->fThis->GetImage(name));
+    pyImage* image = self->fThis->GetImage(name);
     if (image)
-        return pyImage::New(image);
+        return pyImage::New(image->GetKey());
 
     PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptImageLibMod, getImages)
+{
+    const std::vector<pyImage*> imageList = self->fThis->GetImages();
+    PyObject* retVal = PyTuple_New(imageList.size());
+    for (size_t curKey = 0; curKey < imageList.size(); curKey++)
+        PyTuple_SET_ITEM(retVal, curKey, pyImage::New(imageList[curKey]->GetKey()));
+    return retVal;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptImageLibMod, getNames)
@@ -131,6 +140,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptImageLibMod, getNames)
 
 PYTHON_START_METHODS_TABLE(ptImageLibMod)
     PYTHON_METHOD(ptImageLibMod, getImage, "Params: name\nReturns the ptImage with the specified name"),
+    PYTHON_METHOD_NOARGS(ptImageLibMod, getImages, "Returns a tuple of the library's ptImages"),
     PYTHON_METHOD_NOARGS(ptImageLibMod, getNames, "Returns the list of image names"),
 PYTHON_END_METHODS_TABLE;
 
