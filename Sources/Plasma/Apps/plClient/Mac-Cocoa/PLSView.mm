@@ -91,11 +91,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     return YES;
 }
 
-- (void)drawRect:(NSRect)dirtyRect {
-    [super drawRect:dirtyRect];
-}
-
-
 //MARK: Left mouse button
 -(void)mouseDown:(NSEvent *)event
 {

@@ -52,12 +52,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 @implementation PLSServerStatus
 
 +(id)sharedStatus {
-      static PLSServerStatus* shared = nil;
-      static dispatch_once_t onceToken;
-      dispatch_once(&onceToken, ^{
-          shared = [[self alloc] init];
-      });
-      return shared;
+    static PLSServerStatus* shared = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        shared = [[self alloc] init];
+    });
+    return shared;
 }
 
 -(void)loadServerStatus

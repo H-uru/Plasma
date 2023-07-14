@@ -41,8 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #import <Cocoa/Cocoa.h>
-#include "plProduct.h"
-#include "plInputCore/plInputManager.h"
+
+class plClientLoader;
 
 NS_ASSUME_NONNULL_BEGIN
 

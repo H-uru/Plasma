@@ -82,17 +82,17 @@ static NSOperationQueue *_loginQueue = nil;
             NetCommConnect();
         NetCommAuthenticate(nullptr);
         
-       while (!NetCommIsLoginComplete()) {
-           if(weakOperation.cancelled) {
-               return;
-           }
-           NetCommUpdate();
-       }
-       
-       ENetError result = NetCommGetAuthResult();
-       [NSOperationQueue.mainQueue addOperationWithBlock:^{
-           completion(result);
-       }];
+        while (!NetCommIsLoginComplete()) {
+            if(weakOperation.cancelled) {
+                return;
+            }
+            NetCommUpdate();
+        }
+        
+        ENetError result = NetCommGetAuthResult();
+        [NSOperationQueue.mainQueue addOperationWithBlock:^{
+            completion(result);
+        }];
     }];
     [_loginQueue addOperation:operation];
 }
@@ -177,8 +177,7 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
     
     ST::string username = ST::string([self.username cStringUsingEncoding:NSUTF8StringEncoding]);
     NetCommSetAccountUsernamePassword(username, hash);
-    char16_t platform[] = u"mac";
-    NetCommSetAuthTokenAndOS(nullptr, platform);
+    NetCommSetAuthTokenAndOS(nullptr, u"mac");
 }
 
 @end

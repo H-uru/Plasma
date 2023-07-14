@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 @implementation NSString (StringTheory)
 
 -(id)initWithSTString:(const ST::string&)string {
-    self = [self initWithCString:string.data() encoding:NSUTF8StringEncoding];
+    self = [self initWithUTF8String:string.c_str()];
     return self;
 }
 
@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 }
 
 -(const ST::string)STString {
-    return ST::string([self cStringUsingEncoding:NSUTF8StringEncoding]);
+    return ST::string([self UTF8String]);
 }
 
 @end

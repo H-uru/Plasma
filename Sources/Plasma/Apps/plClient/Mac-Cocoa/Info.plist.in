@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>LSApplicationCategoryType</key>
-	<string>App Transport Security Settings</string>
+	<string>public.app-category.adventure-games</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>CFBundleDevelopmentRegion</key>

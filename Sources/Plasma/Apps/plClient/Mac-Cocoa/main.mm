@@ -149,8 +149,9 @@ static const plCmdArgDef s_cmdLineArgs[] = {
 
 plCmdParser cmdParser(s_cmdLineArgs, std::size(s_cmdLineArgs));
 
-@implementation AppDelegate
 PF_CONSOLE_LINK_ALL()
+
+@implementation AppDelegate
 
 -(id)init {
     
