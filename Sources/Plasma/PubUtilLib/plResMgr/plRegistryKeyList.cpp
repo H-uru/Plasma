@@ -201,6 +201,16 @@ bool plRegistryKeyList::SetKeyUnused(plKeyImp* key, LoadStatus& loadStatusChange
     return foundKey != nullptr;
 }
 
+void plRegistryKeyList::PrepForWrite()
+{
+    uint32_t objectID = 1;
+    for (plKeyImp* key : fKeys) {
+        if (key->ObjectIsLoaded()) {
+            key->SetObjectID(objectID++);
+        }
+    }
+}
+
 void plRegistryKeyList::Read(hsStream* s)
 {
     uint32_t keyListLen = s->ReadLE32();

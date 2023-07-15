@@ -241,6 +241,9 @@ void plRegistryPageNode::Write()
     for (it = fKeyLists.begin(); it != fKeyLists.end(); it++)
     {
         plRegistryKeyList* keyList = it->second;
+        if (fIsNewPage)
+            keyList->PrepForWrite();
+
         int ver = plVersion::GetCreatableVersion(keyList->GetClassType());
         fPageInfo.AddClassVersion(keyList->GetClassType(), ver);
     }
