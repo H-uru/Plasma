@@ -250,11 +250,11 @@ static const NetMsgField kClientSetCCRLevelFields[] = {
 };
 
 static const NetMsgField kLogPythonTracebackFields[] = {
-    NET_MSG_FIELD_STRING(1024),                 // traceback text
+    NET_MSG_FIELD_STRING(kMaxTracebackLength), // traceback text
 };
 
 static const NetMsgField kLogStackDumpFields[] = {
-    NET_MSG_FIELD_STRING(1024),                 // stackdump text
+    NET_MSG_FIELD_STRING(kMaxTracebackLength), // stackdump text
 };
 
 static const NetMsgField kLogClientDebuggerConnectFields[] = {

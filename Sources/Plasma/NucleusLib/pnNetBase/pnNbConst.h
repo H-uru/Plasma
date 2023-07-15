@@ -81,6 +81,7 @@ const unsigned kMaxPublisherAuthKeyLength       = 64;
 const unsigned kMaxGTOSIdLength                 = 8;
 const unsigned kMaxGameScoreNameLength          = 64;
 const unsigned kMaxEmailAddressLength           = 64;
+const unsigned kMaxTracebackLength              = 1024;
 
 /*****************************************************************************
 *
