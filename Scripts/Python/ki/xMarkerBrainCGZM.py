@@ -220,7 +220,7 @@ class VaultCGZMGame(MarkerBrainVaultQuest, CGZMGame):
     def LoadFromVault(cls, mgr: MarkerGameManager) -> Optional[LegacyCGZMGame]:
         if cgzmChron := xMarkerGameUtils.FindNewStyleChronicle("CGZ-Mission"):
             try:
-                cgzmMission = int(cgzmChron.chronicleGetValue().strip())
+                cgzmMission = int(cgzmChron.getValue().strip())
             except ValueError:
                 cgzmMission = -1
             if cgzmMission != -1:
