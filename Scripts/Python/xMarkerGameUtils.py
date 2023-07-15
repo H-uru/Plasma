@@ -258,9 +258,9 @@ def SetCGZMTimes(missionID: int, newTimes: CGZMTimes, *, legacyOnly: bool = Fals
     if not legacyOnly and not ptGmMarker.isSupported():
         if not missionID != GetCurrentCGZM():
             raise RuntimeError("Can only set the times for the current CGZM.")
-        if newStartTimes is not None:
+        if newTimes.start_time is not None:
             startTimeChron = FindNewStyleChronicle("CGZ-StartTime", create=True)
-            startTimeChron.setValue(str(newStartTimes))
+            startTimeChron.setValue(str(newTimes.start_time))
 
 def IsCGZMComplete() -> bool:
     missionID = GetCurrentCGZM()
