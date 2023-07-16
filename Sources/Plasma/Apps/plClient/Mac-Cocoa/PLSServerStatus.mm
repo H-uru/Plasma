@@ -75,10 +75,4 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     [statusTask resume];
 }
 
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
-{
-    //Some servers, including Cyans, support HTTPS on their status feeds, but with self signed certs.
-    completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
-}
-
 @end
