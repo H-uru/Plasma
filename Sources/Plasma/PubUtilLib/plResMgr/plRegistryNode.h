@@ -139,6 +139,10 @@ public:
     hsStream*   OpenStream();
     void        CloseStream();
 
+    // Export time only.  Before we write to disk, assign all the loaded keys
+    // sequential object IDs that they can use to do fast lookups at load time.
+    void PrepForWrite();
+
     // Takes care of everything involved in writing this page to disk
     void Write();
     void DeleteSource();
