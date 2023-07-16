@@ -23,6 +23,7 @@ set(CoreLib_SOURCES
     plProduct.cpp
     plViewTransform.cpp
     hsWindows.cpp
+    $<$<PLATFORM_ID:Darwin>:HeadSpin_Mac.mm>
 )
 
 if(CMAKE_USE_WIN32_THREADS_INIT)
@@ -31,10 +32,6 @@ elseif(CMAKE_USE_PTHREADS_INIT)
     list(APPEND CoreLib_SOURCES hsThread_Unix.cpp)
 else()
     message(FATAL_ERROR "The thread library CMake provided for your platform is not supported.")
-endif()
-
-if(APPLE)
-    list(APPEND CoreLib_SOURCES HeadSpin_Mac.mm)
 endif()
 
 set(CoreLib_HEADERS
