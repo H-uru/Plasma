@@ -80,7 +80,7 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaMethods(PyObject* m);
 
-    static bool IsGUIDialog(pyKey& gckey);
+    static bool IsGUIDialog(const plKey& key);
 
     void setKey(plKey key) { fGCkey = std::move(key); } // used by python glue, do NOT call
 
@@ -102,7 +102,8 @@ public:
         kPopUpMenu=14,
         kClickMap=15,
     };
-    static uint32_t WhatControlType(pyKey& gckey);
+    static PyObject* ConvertControl(const plKey& key);
+    static uint32_t WhatControlType(const plKey& key);
     static void GUICursorOff();
     static void GUICursorOn();
     static void GUICursorDimmed();
@@ -127,12 +128,14 @@ public:
 
     size_t GetNumControls();
     PyObject* GetControl(uint32_t idx); // returns pyKey
+    PyObject* GetControlMod(uint32_t idx) const;
     void SetFocus(pyKey& gcKey);
     void NoFocus();
     void Show();
     void ShowNoReset();
     void Hide();
     PyObject* GetControlFromTag(uint32_t tagID); // returns pyKey
+    PyObject* GetControlModFromTag(uint32_t tagID) const;
 
     // get color schemes
     PyObject* GetForeColor(); // returns pyColor

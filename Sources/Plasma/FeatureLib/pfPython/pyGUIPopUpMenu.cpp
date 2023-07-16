@@ -174,9 +174,9 @@ void pyGUIPopUpMenu::setup(const ST::string& name, pyGUIPopUpMenu &parent, float
         fGCkey = nullptr;
 }
 
-bool pyGUIPopUpMenu::IsGUIPopUpMenu(pyKey& gckey)
+bool pyGUIPopUpMenu::IsGUIPopUpMenu(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIPopUpMenu::ConvertNoRef(gckey.getKey()->GetObjectPtr()) )
+    if ( key && pfGUIPopUpMenu::ConvertNoRef(key->GetObjectPtr()) )
         return true;
     return false;
 }

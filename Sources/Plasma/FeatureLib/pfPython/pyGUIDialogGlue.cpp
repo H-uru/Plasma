@@ -160,6 +160,16 @@ PYTHON_METHOD_DEFINITION(ptGUIDialog, getControlFromIndex, args)
     return self->fThis->GetControl(index);
 }
 
+PYTHON_METHOD_DEFINITION(ptGUIDialog, getControlModFromIndex, args)
+{
+    unsigned long index;
+    if (!PyArg_ParseTuple(args, "l", &index)) {
+        PyErr_SetString(PyExc_TypeError, "getControlModFromIndex expects an unsigned long");
+        PYTHON_RETURN_ERROR;
+    }
+    return self->fThis->GetControlMod(index);
+}
+
 PYTHON_METHOD_DEFINITION(ptGUIDialog, setFocus, args)
 {
     PyObject* keyObj = nullptr;
@@ -193,6 +203,16 @@ PYTHON_METHOD_DEFINITION(ptGUIDialog, getControlFromTag, args)
         PYTHON_RETURN_ERROR;
     }
     return self->fThis->GetControlFromTag(tagID);
+}
+
+PYTHON_METHOD_DEFINITION(ptGUIDialog, getControlModFromTag, args)
+{
+    unsigned long tagID;
+    if (!PyArg_ParseTuple(args, "l", &tagID)) {
+        PyErr_SetString(PyExc_TypeError, "getControlModFromTag expects an unsigned long");
+        PYTHON_RETURN_ERROR;
+    }
+    return self->fThis->GetControlModFromTag(tagID);
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIDialog, getForeColor)
@@ -293,12 +313,14 @@ PYTHON_START_METHODS_TABLE(ptGUIDialog)
     PYTHON_METHOD_NOARGS(ptGUIDialog, getVersion, "UNKNOWN"),
     PYTHON_METHOD_NOARGS(ptGUIDialog, getNumControls, "Returns the number of controls in this dialog"),
     PYTHON_METHOD(ptGUIDialog, getControlFromIndex, "Params: index\nReturns the ptKey of the control with the specified index (not tag ID!)"),
+    PYTHON_METHOD(ptGUIDialog, getControlModFromIndex, "Params: index\nReturns the ptGUIControl with the specified index (not tag ID!)"),
     PYTHON_METHOD(ptGUIDialog, setFocus, "Params: ctrlKey\nSets the control that has input focus"),
     PYTHON_BASIC_METHOD(ptGUIDialog, noFocus, "Makes sure no control has input focus"),
     PYTHON_BASIC_METHOD(ptGUIDialog, show, "Shows the dialog"),
     PYTHON_BASIC_METHOD(ptGUIDialog, showNoReset, "Show dialog without resetting clickables"),
     PYTHON_BASIC_METHOD(ptGUIDialog, hide, "Hides the dialog"),
     PYTHON_METHOD(ptGUIDialog, getControlFromTag, "Params: tagID\nReturns the ptKey of the control with the specified tag ID"),
+    PYTHON_METHOD(ptGUIDialog, getControlModFromTag, "Params: tagID\nReturns the ptGUIControl with the specified tag ID"),
     PYTHON_METHOD_NOARGS(ptGUIDialog, getForeColor, "Returns the fore color as a ptColor object"),
     PYTHON_METHOD_NOARGS(ptGUIDialog, getSelectColor, "Returns the select color as a ptColor object"),
     PYTHON_METHOD_NOARGS(ptGUIDialog, getBackColor, "Returns the back color as a ptColor object"),
@@ -370,7 +392,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtWhatGUIControlType, args, "Params: guiKey\nRet
         PYTHON_RETURN_ERROR;
     }
     pyKey* guiKey = pyKey::ConvertFrom(guiKeyObj);
-    return PyLong_FromUnsignedLong(pyGUIDialog::WhatControlType(*guiKey));
+    return PyLong_FromUnsignedLong(pyGUIDialog::WhatControlType(guiKey->getKey()));
 }
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtGUICursorOff, pyGUIDialog::GUICursorOff, "Turns the GUI cursor off")

@@ -73,7 +73,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlCheckBox(pyKey& gckey);
+    static bool IsGUIControlCheckBox(const plKey& key);
 
     void SetChecked(bool checked);
     bool IsChecked();

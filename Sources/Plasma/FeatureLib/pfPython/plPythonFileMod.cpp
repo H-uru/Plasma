@@ -1151,64 +1151,10 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         pyObjectRef pyControl;
         if (pGUIMsg->GetControlKey()) {
             // now create the control... but first we need to find out what it is
-            pyObjectRef pyCtrlKey = pyKey::New(pGUIMsg->GetControlKey());
-            uint32_t control_type = pyGUIDialog::WhatControlType(*(pyKey::ConvertFrom(pyCtrlKey.Get())));
-
-            switch (control_type) {
-                case pyGUIDialog::kDialog:
-                    pyControl = pyGUIDialog::New(pGUIMsg->GetControlKey());
-                    break;
-
-                case pyGUIDialog::kButton:
-                    pyControl = pyGUIControlButton::New(pGUIMsg->GetControlKey());
-                    break;
-
-                case pyGUIDialog::kListBox:
-                    pyControl = pyGUIControlListBox::New(pGUIMsg->GetControlKey());
-                    break;
-
-                case pyGUIDialog::kTextBox:
-                    pyControl = pyGUIControlTextBox::New(pGUIMsg->GetControlKey());
-                    break;
-
-                case pyGUIDialog::kEditBox:
-                    pyControl = pyGUIControlEditBox::New(pGUIMsg->GetControlKey());
-                    break;
-
-                case pyGUIDialog::kUpDownPair:
-                case pyGUIDialog::kKnob:
-                    pyControl = pyGUIControlValue::New(pGUIMsg->GetControlKey());
-                    break;
-
-                case pyGUIDialog::kCheckBox:
-                    pyControl = pyGUIControlCheckBox::New(pGUIMsg->GetControlKey());
-                    break;
-
-                case pyGUIDialog::kRadioGroup:
-                    pyControl = pyGUIControlRadioGroup::New(pGUIMsg->GetControlKey());
-                    break;
-
-                case pyGUIDialog::kDynamicText:
-                    pyControl = pyGUIControlDynamicText::New(pGUIMsg->GetControlKey());
-                    break;
-
-                case pyGUIDialog::kMultiLineEdit:
-                    pyControl = pyGUIControlMultiLineEdit::New(pGUIMsg->GetControlKey());
-                    break;
-
-                case pyGUIDialog::kPopUpMenu:
-                    pyControl = pyGUIPopUpMenu::New(pGUIMsg->GetControlKey());
-                    break;
-
-                case pyGUIDialog::kClickMap:
-                    pyControl = pyGUIControlClickMap::New(pGUIMsg->GetControlKey());
-                    break;
-
-                default:
-                    // we don't know what it is... just send 'em the pyKey
-                    pyControl = pyKey::New(pGUIMsg->GetControlKey());
-                    break;
-
+            pyControl = pyGUIDialog::ConvertControl(pGUIMsg->GetControlKey());
+            if (!pyControl) {
+                // we don't know what it is... just send 'em the pyKey
+                pyControl = pyKey::New(pGUIMsg->GetControlKey());
             }
         }
         // Need to determine which of the GUIDialogs sent this plGUINotifyMsg

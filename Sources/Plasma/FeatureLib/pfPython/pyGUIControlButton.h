@@ -74,7 +74,7 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    static bool IsGUIControlButton(pyKey& gckey);
+    static bool IsGUIControlButton(const plKey& key);
     
     void SetNotifyType(int32_t kind);
     int32_t GetNotifyType();

@@ -58,9 +58,9 @@ pyGUIControlEditBox::pyGUIControlEditBox(plKey objkey) : pyGUIControl(std::move(
 }
 
 
-bool pyGUIControlEditBox::IsGUIControlEditBox(pyKey& gckey)
+bool pyGUIControlEditBox::IsGUIControlEditBox(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIEditBoxMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIEditBoxMod::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }

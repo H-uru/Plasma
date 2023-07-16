@@ -83,48 +83,87 @@ pyGUIDialog::pyGUIDialog()
 {
 }
 
-bool pyGUIDialog::IsGUIDialog(pyKey& gckey)
+PyObject* pyGUIDialog::ConvertControl(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIDialogMod::ConvertNoRef(gckey.getKey()->GetObjectPtr()) )
+    if (!key)
+        return nullptr;
+
+    switch (WhatControlType(key)) {
+    case kPopUpMenu:
+        // This isn't really a control, but OnGUINotify may receive this.
+        return pyGUIPopUpMenu::New(key);
+    case kDialog:
+        // This is definitely not a control, but OnGUINotify may receive this.
+        return pyGUIDialog::New(key);
+    case kButton:
+        return pyGUIControlButton::New(key);
+    case kCheckBox:
+        return pyGUIControlCheckBox::New(key);
+    case kEditBox:
+        return pyGUIControlEditBox::New(key);
+    case kListBox:
+        return pyGUIControlListBox::New(key);
+    case kRadioGroup:
+        return pyGUIControlRadioGroup::New(key);
+    case kTextBox:
+        return pyGUIControlTextBox::New(key);
+    case kKnob:
+        return pyGUIControlKnob::New(key);
+    case kUpDownPair:
+        return pyGUIControlUpDownPair::New(key);
+    case kDynamicText:
+        return pyGUIControlDynamicText::New(key);
+    case kMultiLineEdit:
+        return pyGUIControlMultiLineEdit::New(key);
+    case kClickMap:
+        return pyGUIControlClickMap::New(key);
+    default:
+        return nullptr;
+    }
+}
+
+bool pyGUIDialog::IsGUIDialog(const plKey& key)
+{
+    if ( key && pfGUIDialogMod::ConvertNoRef(key->GetObjectPtr()) )
         return true;
     return false;
 }
 
 
-uint32_t pyGUIDialog::WhatControlType(pyKey& gckey)
+uint32_t pyGUIDialog::WhatControlType(const plKey& key)
 {
     // Do the pop-up menu test first, since it's derived from dialog
-    if ( pyGUIPopUpMenu::IsGUIPopUpMenu(gckey) )
+    if ( pyGUIPopUpMenu::IsGUIPopUpMenu(key) )
         return kPopUpMenu;
-    else if ( pyGUIDialog::IsGUIDialog(gckey) )
+    else if ( pyGUIDialog::IsGUIDialog(key) )
         return kDialog;
-    else if ( pyGUIControlButton::IsGUIControlButton(gckey) )
+    else if ( pyGUIControlButton::IsGUIControlButton(key) )
         return kButton;
-    else if ( pyGUIControlCheckBox::IsGUIControlCheckBox(gckey) )
+    else if ( pyGUIControlCheckBox::IsGUIControlCheckBox(key) )
         return kCheckBox;
-    else if ( pyGUIControlEditBox::IsGUIControlEditBox(gckey) )
+    else if ( pyGUIControlEditBox::IsGUIControlEditBox(key) )
         return kEditBox;
-    else if ( pyGUIControlListBox::IsGUIControlListBox(gckey) )
+    else if ( pyGUIControlListBox::IsGUIControlListBox(key) )
         return kListBox;
-    else if ( pyGUIControlRadioGroup::IsGUIControlRadioGroup(gckey) )
+    else if ( pyGUIControlRadioGroup::IsGUIControlRadioGroup(key) )
         return kRadioGroup;
-    else if ( pyGUIControlTextBox::IsGUIControlTextBox(gckey) )
+    else if ( pyGUIControlTextBox::IsGUIControlTextBox(key) )
         return kTextBox;
-    else if ( pyGUIControlValue::IsGUIControlValue(gckey) )
+    else if ( pyGUIControlValue::IsGUIControlValue(key) )
     {
         // then see what kind of value control it is
-        if ( pfGUIKnobCtrl::ConvertNoRef(gckey.getKey()->GetObjectPtr()) )
+        if ( pfGUIKnobCtrl::ConvertNoRef(key->GetObjectPtr()) )
             return kKnob;
-        else if ( pfGUIUpDownPairMod::ConvertNoRef(gckey.getKey()->GetObjectPtr()) )
+        else if ( pfGUIUpDownPairMod::ConvertNoRef(key->GetObjectPtr()) )
             return kUpDownPair;
         else
             return 0;
     }
-    else if ( pyGUIControlDynamicText::IsGUIControlDynamicText( gckey ) )
+    else if ( pyGUIControlDynamicText::IsGUIControlDynamicText( key ) )
         return kDynamicText;
-    else if ( pyGUIControlMultiLineEdit::IsGUIControlMultiLineEdit( gckey ) )
+    else if ( pyGUIControlMultiLineEdit::IsGUIControlMultiLineEdit( key ) )
         return kMultiLineEdit;
-    else if ( pyGUIControlClickMap::IsGUIControlClickMap( gckey ) )
+    else if ( pyGUIControlClickMap::IsGUIControlClickMap( key ) )
         return kClickMap;
     else
         return 0;
@@ -246,6 +285,26 @@ PyObject* pyGUIDialog::GetControl( uint32_t idx )
     PYTHON_RETURN_ERROR;
 }
 
+PyObject* pyGUIDialog::GetControlMod(uint32_t idx) const
+{
+    if (fGCkey) {
+        const pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pdmod) {
+            const pfGUIControlMod* pcontrolmod = pdmod->GetControl(idx);
+            if (pcontrolmod) {
+                PyObject* retVal = ConvertControl(pcontrolmod->GetKey());
+                if (retVal)
+                    return retVal;
+            }
+        }
+    }
+
+    // if we got here then there must have been an error
+    ST::string errmsg = ST::format("Index {d} not found in GUIDialog {}", idx, GetName());
+    PyErr_SetObject(PyExc_KeyError, PyUnicode_FromSTString(errmsg));
+    PYTHON_RETURN_ERROR;
+}
+
 void pyGUIDialog::SetFocus( pyKey& gcKey )
 {
     if ( fGCkey )
@@ -303,6 +362,26 @@ PyObject* pyGUIDialog::GetControlFromTag( uint32_t tagID )
             pfGUIControlMod* pcontrolmod = pdmod->GetControlFromTag(tagID);
             if ( pcontrolmod )
                 return pyKey::New(pcontrolmod->GetKey());
+        }
+    }
+
+    // if we got here then there must have been an error
+    ST::string errmsg = ST::format("TagID {d} not found in GUIDialog {}", tagID, GetName());
+    PyErr_SetObject(PyExc_KeyError, PyUnicode_FromSTString(errmsg));
+    PYTHON_RETURN_ERROR;
+}
+
+PyObject* pyGUIDialog::GetControlModFromTag(uint32_t tagID) const
+{
+    if (fGCkey) {
+        const pfGUIDialogMod* pdmod = pfGUIDialogMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pdmod) {
+            const pfGUIControlMod* pcontrolmod = pdmod->GetControlFromTag(tagID);
+            if (pcontrolmod) {
+                PyObject* retVal = ConvertControl(pcontrolmod->GetKey());
+                if (retVal)
+                    return retVal;
+            }
         }
     }
 

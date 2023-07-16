@@ -93,7 +93,7 @@ public:
     void setup(const ST::string& name, float screenOriginX, float screenOriginY, const plLocation &destLoc = plLocation::kGlobalFixedLoc);
     void setup(const ST::string& name, pyGUIPopUpMenu &parent, float screenOriginX, float screenOriginY);
 
-    static bool IsGUIPopUpMenu(pyKey& gckey);
+    static bool IsGUIPopUpMenu(const plKey& key);
 
     // override the equals to operator
     bool operator==(const pyGUIPopUpMenu &gdobj) const;

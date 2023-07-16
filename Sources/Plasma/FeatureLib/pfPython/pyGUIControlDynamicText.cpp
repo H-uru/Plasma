@@ -58,9 +58,9 @@ pyGUIControlDynamicText::pyGUIControlDynamicText(plKey objkey) : pyGUIControl(st
 }
 
 
-bool pyGUIControlDynamicText::IsGUIControlDynamicText(pyKey& gckey)
+bool pyGUIControlDynamicText::IsGUIControlDynamicText(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIDynDisplayCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIDynDisplayCtrl::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }

@@ -57,9 +57,9 @@ pyGUIControlCheckBox::pyGUIControlCheckBox(plKey objkey) : pyGUIControl(std::mov
 }
 
 
-bool pyGUIControlCheckBox::IsGUIControlCheckBox(pyKey& gckey)
+bool pyGUIControlCheckBox::IsGUIControlCheckBox(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUICheckBoxCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUICheckBoxCtrl::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }

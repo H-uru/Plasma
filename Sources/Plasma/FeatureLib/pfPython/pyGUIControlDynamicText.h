@@ -72,7 +72,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlDynamicText(pyKey& gckey);
+    static bool IsGUIControlDynamicText(const plKey& key);
 
     //specific interface functions
     uint32_t GetNumMaps();

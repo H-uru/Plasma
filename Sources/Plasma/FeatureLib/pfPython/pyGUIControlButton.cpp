@@ -53,9 +53,9 @@ pyGUIControlButton::pyGUIControlButton(plKey objkey) : pyGUIControl(std::move(ob
 {
 }
 
-bool pyGUIControlButton::IsGUIControlButton(pyKey& gckey)
+bool pyGUIControlButton::IsGUIControlButton(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIButtonMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIButtonMod::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }

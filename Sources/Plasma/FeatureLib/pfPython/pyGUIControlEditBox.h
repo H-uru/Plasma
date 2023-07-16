@@ -74,7 +74,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlEditBox(pyKey& gckey);
+    static bool IsGUIControlEditBox(const plKey& key);
 
     void SetBufferSize(uint32_t size);
     ST::string GetBuffer();

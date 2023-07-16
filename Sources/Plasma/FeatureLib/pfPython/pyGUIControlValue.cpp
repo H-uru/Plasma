@@ -57,9 +57,9 @@ pyGUIControlValue::pyGUIControlValue(plKey objkey) : pyGUIControl(std::move(objk
 {
 }
 
-bool pyGUIControlValue::IsGUIControlValue(pyKey& gckey)
+bool pyGUIControlValue::IsGUIControlValue(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIValueCtrl::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIValueCtrl::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }
