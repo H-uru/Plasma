@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientComm.h"
 
 #include <chrono>
+#include <string_view>
 #include <thread>
 
 #include "HeadSpin.h"
@@ -71,6 +72,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVault/plVault.h"
 
 #include "pfMessage/pfKIMsg.h"
+
+using namespace std::literals::string_view_literals;
 
 extern  bool    gDataServerLocal;
 
@@ -1256,7 +1259,7 @@ void NetCommSendFriendInvite (
     );
 }
 
-static constexpr char16_t kTracebackTruncatedMarker[5] = {u'[', u'.', u'.', u'.', u']'};
+static constexpr std::u16string_view kTracebackTruncatedMarker = u"[...]"sv;
 // Maximum length of a traceback chunk to still leave room for the truncation marker.
 // Like kMaxTracebackLength, includes one char16_t extra for the zero terminator.
 static constexpr unsigned int kTracebackChunkLength = kMaxTracebackLength - std::size(kTracebackTruncatedMarker);
@@ -1276,7 +1279,7 @@ static void NetCommLogChunkedError(const ST::string& errorText)
         auto pos = wdata.begin();
         for (; wdata.end() - pos >= kMaxTracebackLength - 1; pos += kTracebackChunkLength - 1) {
             ST::utf16_buffer chunk = ST::utf16_buffer(pos, kMaxTracebackLength - 1);
-            memcpy(&chunk[kTracebackChunkLength - 1], kTracebackTruncatedMarker, sizeof(kTracebackTruncatedMarker));
+            kTracebackTruncatedMarker.copy(&chunk[kTracebackChunkLength - 1], kTracebackTruncatedMarker.size());
             logErrorFunc(chunk.data());
         }
         logErrorFunc(pos);
