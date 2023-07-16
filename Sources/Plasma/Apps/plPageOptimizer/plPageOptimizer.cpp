@@ -185,13 +185,7 @@ void plPageOptimizer::KeyedObjectProc(const plKey& key)
 
 void plPageOptimizer::IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey& key)
 {
-    class plUpdateKeyImp : public plKeyImp
-    {
-    public:
-        void SetStartPos(uint32_t startPos) { fStartPos = startPos; }
-    };
-
-    plUpdateKeyImp* keyImp = static_cast<plUpdateKeyImp*>(plKeyImp::GetFromKey(key));
+    plKeyImp* keyImp = plKeyImp::GetFromKey(key);
     uint32_t startPos = keyImp->GetStartPos();
     uint32_t len = keyImp->GetDataLen();
 
@@ -206,7 +200,7 @@ void plPageOptimizer::IWriteKeyData(hsStream* oldPage, hsStream* newPage, plKey&
     if (newStartPos != startPos)
         fOptimized = false;
 
-    keyImp->SetStartPos(newStartPos);
+    keyImp->fStartPos = newStartPos;
     newPage->Write(len, &fBuf[0]);
 }
 
