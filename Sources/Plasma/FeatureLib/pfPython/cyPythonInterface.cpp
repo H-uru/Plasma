@@ -58,8 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyMatrix44.h"
 #include "pyObjectRef.h"
 
-#include "pnNetBase/pnNetBase.h"
-
 // CPython specific init stuff
 #include <cpython/initconfig.h>
 #include <pylifecycle.h>
@@ -112,8 +110,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPythonSDLModifier.h"
 
 // For printing to the log
+#include "plNetClientComm/plNetClientComm.h"
 #include "plStatusLog/plStatusLog.h"
-#include "plNetGameLib/plNetGameLib.h"
 
 // vault
 #include "pyVaultNode.h"
@@ -687,11 +685,6 @@ PYTHON_CLASS_CONVERT_FROM_IMPL(ptOutputRedirector, pyOutputRedirector)
 class pyErrorRedirector
 {
 private:
-    static constexpr char16_t kTracebackTruncatedMarker[5] = {u'[', u'.', u'.', u'.', u']'};
-    // Maximum length of a traceback chunk to still leave room for the truncation marker.
-    // Like kMaxTracebackLength, includes one char16_t extra for the zero terminator.
-    static constexpr unsigned int kTracebackChunkLength = kMaxTracebackLength - std::size(kTracebackTruncatedMarker);
-
     static bool fTypeCreated;
 
     ST::string_stream fData;
@@ -731,21 +724,7 @@ public:
         PyErr_Display(except, val, tb);
 
         // Send to the log server
-        ST::utf16_buffer wdata = fData.to_string().to_utf16();
-        if (wdata.size() < kMaxTracebackLength - 1) {
-            NetCliAuthLogPythonTraceback(wdata.data());
-        } else {
-            // The traceback is too long for a single LogPythonTraceback message,
-            // so split it up into multiple small messages
-            // and add a truncation marker at the end of every message but the last.
-            auto pos = wdata.begin();
-            for (; wdata.end() - pos >= kMaxTracebackLength - 1; pos += kTracebackChunkLength - 1) {
-                ST::utf16_buffer chunk = ST::utf16_buffer(pos, kMaxTracebackLength - 1);
-                memcpy(&chunk[kTracebackChunkLength - 1], kTracebackTruncatedMarker, sizeof(kTracebackTruncatedMarker));
-                NetCliAuthLogPythonTraceback(chunk.data());
-            }
-            NetCliAuthLogPythonTraceback(pos);
-        }
+        NetCommLogPythonTraceback(fData.to_string());
 
         if (fLog)
             fData.erase(SIZE_MAX);

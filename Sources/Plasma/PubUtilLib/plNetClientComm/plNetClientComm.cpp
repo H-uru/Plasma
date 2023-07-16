@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnAsyncCore/pnAsyncCore.h"
 #include "pnEncryption/plChallengeHash.h"
+#include "pnNetBase/pnNbConst.h"
 #include "pnNetCli/pnNetCli.h"
 #include "pnNetCommon/plNetApp.h"
 
@@ -1253,6 +1254,43 @@ void NetCommSendFriendInvite (
         INetCliAuthSendFriendInviteCallback,
         nullptr
     );
+}
+
+static constexpr char16_t kTracebackTruncatedMarker[5] = {u'[', u'.', u'.', u'.', u']'};
+// Maximum length of a traceback chunk to still leave room for the truncation marker.
+// Like kMaxTracebackLength, includes one char16_t extra for the zero terminator.
+static constexpr unsigned int kTracebackChunkLength = kMaxTracebackLength - std::size(kTracebackTruncatedMarker);
+
+typedef void LogErrorFunc(const char16_t* errorText);
+
+template<LogErrorFunc logErrorFunc>
+static void NetCommLogChunkedError(const ST::string& errorText)
+{
+    ST::utf16_buffer wdata = errorText.to_utf16();
+    if (wdata.size() < kMaxTracebackLength - 1) {
+        logErrorFunc(wdata.data());
+    } else {
+        // The traceback is too long for a single message,
+        // so split it up into multiple small messages
+        // and add a truncation marker at the end of every message but the last.
+        auto pos = wdata.begin();
+        for (; wdata.end() - pos >= kMaxTracebackLength - 1; pos += kTracebackChunkLength - 1) {
+            ST::utf16_buffer chunk = ST::utf16_buffer(pos, kMaxTracebackLength - 1);
+            memcpy(&chunk[kTracebackChunkLength - 1], kTracebackTruncatedMarker, sizeof(kTracebackTruncatedMarker));
+            logErrorFunc(chunk.data());
+        }
+        logErrorFunc(pos);
+    }
+}
+
+void NetCommLogPythonTraceback(const ST::string& traceback)
+{
+    NetCommLogChunkedError<NetCliAuthLogPythonTraceback>(traceback);
+}
+
+void NetCommLogStackDump(const ST::string& stackDump)
+{
+    NetCommLogChunkedError<NetCliAuthLogStackDump>(stackDump);
 }
 
 

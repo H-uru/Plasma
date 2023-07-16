@@ -284,6 +284,8 @@ void NetCommSendFriendInvite (
     const ST::string& toName,
     const plUUID&     inviteUuid
 );
+void NetCommLogPythonTraceback(const ST::string& traceback);
+void NetCommLogStackDump(const ST::string& stackDump);
 
 #endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETCLIENTCOMM_PLNETCLIENTCOMM_H
 
