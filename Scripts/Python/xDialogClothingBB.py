@@ -260,7 +260,7 @@ class xDialogClothingBB(ptModifier):
         pantsWornIdx = self.IWhatPantsAmIWearing(avatar)
         shirtWornIdx = self.IWhatShirtAmIWearing(avatar)
         # set the pants radio group
-        psRG = ptGUIControlRadioGroup(KIBlackbar.dialog.getControlFromTag(kPantRadioGroupID))
+        psRG = KIBlackbar.dialog.getControlModFromTag(kPantRadioGroupID)
         if pantsWornIdx != psRG.getValue():
             if pantsWornIdx == kNoPantsIdx:
                 PtDebugPrint("xDialogClothingBB: currently wearing no pants")
@@ -272,7 +272,7 @@ class xDialogClothingBB(ptModifier):
                     PtDebugPrint("xDialogClothingBB: currently wearing unknown pants %s" % (PantNames[pantsWornIdx]))
                     psRG.setValue(-1)   # there is nothing that is selected for nopant wearers
         # set the pants radio group
-        ssRG = ptGUIControlRadioGroup(KIBlackbar.dialog.getControlFromTag(kShirtRadioGroupID))
+        ssRG = KIBlackbar.dialog.getControlModFromTag(kShirtRadioGroupID)
         if shirtWornIdx != ssRG.getValue():
             if shirtWornIdx == kNoShirtIdx:
                 PtDebugPrint("xDialogClothingBB: currently wearing no shirt")
@@ -284,7 +284,7 @@ class xDialogClothingBB(ptModifier):
                     PtDebugPrint("xDialogClothingBB: currently wearing unknown shirt %s" % (ShirtNames[shirtWornIdx]))
                     ssRG.setValue(-1)   # there is nothing that is selected for barechested
         # get current color
-        scRG = ptGUIControlRadioGroup(KIBlackbar.dialog.getControlFromTag(kTintRadioGroupID))
+        scRG = KIBlackbar.dialog.getControlModFromTag(kTintRadioGroupID)
         if shirtWornIdx != kNoShirtIdx:
             # make sure that it is enabled
             scRG.setVisible(1)

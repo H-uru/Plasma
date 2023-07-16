@@ -215,7 +215,7 @@ class tldnVaporScope(ptModifier):
                 # get the FOV and set the Zoom slider
                 curCam = ptCamera()
                 gInitialFOV = curCam.getFOV()
-                zoomSlider = ptGUIControlKnob(control.getControlFromTag(kZoomSlider))
+                zoomSlider = control.getControlModFromTag(kZoomSlider)
                 if gInitialFOV > kMinFOV:
                     gInitialFOV = kMinFOV
                 elif gInitialFOV < kMaxFOV:
@@ -279,7 +279,7 @@ class tldnVaporScope(ptModifier):
                         PtDebugPrint("tldnVaporScope:GUINotify Shoot vapor",level=kDebugDumpLevel)
                         respShootGun.run(self.key)
                         ####-# reset the slider back to initialFOV, cause the animation of the scope will set it back
-                        ####-zoomSlider = ptGUIControlKnob(control.getOwnerDialog().getControlFromTag(kZoomSlider))
+                        ####-zoomSlider = control.getOwnerDialog().getControlModFromTag(kZoomSlider)
                         ####-zsliderValue = (gInitialFOV-kMaxFOV)/kDegreesPerSlider
                         ####-zoomSlider.setValue(zsliderValue)
                         # need to see if we hit anything and run their responder
@@ -290,7 +290,7 @@ class tldnVaporScope(ptModifier):
                                 scopeDlg = PtGetDialogFromString(Vignette.value)
                                 if scopeDlg:
                                     try:
-                                        fireBtn = ptGUIControlButton(scopeDlg.getControlFromTag(kFireScopeBtn))
+                                        fireBtn = scopeDlg.getControlModFromTag(kFireScopeBtn)
                                         fireBtn.disable()
                                     except KeyError:
                                         PtDebugPrint("tldnVaporScope:GUINotify can't find the fire button",level=kDebugDumpLevel)
@@ -417,7 +417,7 @@ class tldnVaporScope(ptModifier):
                     scopeDlg = PtGetDialogFromString(Vignette.value)
                     if scopeDlg:
                         try:
-                            fireBtn = ptGUIControlButton(scopeDlg.getControlFromTag(kFireScopeBtn))
+                            fireBtn = scopeDlg.getControlModFromTag(kFireScopeBtn)
                             fireBtn.enable()
                         except KeyError:
                             PtDebugPrint("tldnVaporScope:Timer can't find the fire button",level=kDebugDumpLevel)

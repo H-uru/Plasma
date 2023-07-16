@@ -182,14 +182,14 @@ class xYeeshaPages(ptModifier):
 #        PtDebugPrint("PageNumber = ", PageNumber.value)
         for x in kYeeshaPage:
             try:
-                ctrl = mydialog.getControlFromTag(x)
+                ctrl = mydialog.getControlModFromTag(x)
             except KeyError:
                 continue
             else:
-                ptGUIControlButton(ctrl).hide()
+                ctrl.hide()
 
         #now draw correct panel
-        ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage[PageNumber.value])).show()
+        mydialog.getControlModFromTag(kYeeshaPage[PageNumber.value]).show()
         return
 
 #

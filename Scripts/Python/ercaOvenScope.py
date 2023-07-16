@@ -414,12 +414,12 @@ class ercaOvenScope(ptModifier):
         if event == kDialogLoaded:
             if WasPowered == 0:
                 return
-            timeSlider = ptGUIControlKnob(control.getControlFromTag(kTimeSlider))
-            amountSlider = ptGUIControlKnob(control.getControlFromTag(kAmountSlider))            
-            tempSlider = ptGUIControlKnob(control.getControlFromTag(kTempSlider))
-            bakeBtn = ptGUIControlButton(control.getControlFromTag(kBakeBtn))
-            timerWheel = ptGUIControlProgress(control.getControlFromTag(kTimerWheel))
-            tempWheel = ptGUIControlProgress(control.getControlFromTag(kTempWheel))
+            timeSlider = control.getControlModFromTag(kTimeSlider)
+            amountSlider = control.getControlModFromTag(kAmountSlider)
+            tempSlider = control.getControlModFromTag(kTempSlider)
+            bakeBtn = control.getControlModFromTag(kBakeBtn)
+            timerWheel = control.getControlModFromTag(kTimerWheel)
+            tempWheel = control.getControlModFromTag(kTempWheel)
         
         elif event == kShowHide:
             if WasPowered == 0:

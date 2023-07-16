@@ -200,8 +200,8 @@ class xDialogStartUp(ptResponder):
 
         self.InitPlayerList(GUIDiag4b, gExp_HotSpot, gExp_TxtBox, gExp_HiLite)
 
-        ptGUIControlEditBox(GUIDiag6.dialog.getControlFromTag(k6NameID)).setStringSize(63)
-        ptGUIControlEditBox(GUIDiag6.dialog.getControlFromTag(k6InviteID)).setStringSize(63)
+        GUIDiag6.dialog.getControlModFromTag(k6NameID).setStringSize(63)
+        GUIDiag6.dialog.getControlModFromTag(k6InviteID).setStringSize(63)
 
         WebLaunchCmd = webbrowser.open_new
 
@@ -286,7 +286,7 @@ class xDialogStartUp(ptResponder):
                 elif  tagID == k4bDeleteID: ## Delete Explorer ##
                     if gSelectedSlot and gPlayerList[gSelectedSlot-gMinusExplorer]:
                         deleteString = "Would you like to delete the EXPLORER " + str(gPlayerList[gSelectedSlot-gMinusExplorer][0]) + "?"
-                        ptGUIControlTextBox(GUIDiag4c.dialog.getControlFromTag(k4cStaticID)).setString(deleteString)
+                        GUIDiag4c.dialog.getControlModFromTag(k4cStaticID).setString(deleteString)
                         self.PlayerListNotify(GUIDiag4b, gExp_HotSpot, 0)
                         PtShowDialog("GUIDialog04c")
                     ## Or Else?? ##
@@ -326,7 +326,7 @@ class xDialogStartUp(ptResponder):
                     self.ToggleColor(GUIDiag4b, k4bPlayer03)
                     self.PlayerListNotify(GUIDiag4b, gExp_HotSpot, 1)
                     PtHideDialog("GUIDialog04d")
-                    ptGUIControlButton(GUIDiag6.dialog.getControlFromTag(k6PlayID)).enable()
+                    GUIDiag6.dialog.getControlModFromTag(k6PlayID).enable()
 
         #################################
         ##        Create Player        ##
@@ -344,32 +344,32 @@ class xDialogStartUp(ptResponder):
                         self.SelectSlot(GUIDiag4b, 0)
 
                 elif  tagID == k6PlayID: ## Play ##
-                    playerName = ptGUIControlEditBox(GUIDiag6.dialog.getControlFromTag(k6NameID)).getString()
+                    playerName = GUIDiag6.dialog.getControlModFromTag(k6NameID).getString()
                     playerGender = ""
                     playerStart = ""
 
-                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6MaleID)).isChecked():
+                    if GUIDiag6.dialog.getControlModFromTag(k6MaleID).isChecked():
                         playerGender = "male"
-                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6FemaleID)).isChecked():
+                    if GUIDiag6.dialog.getControlModFromTag(k6FemaleID).isChecked():
                         playerGender = "female"
-                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6CleftID)).isChecked():
+                    if GUIDiag6.dialog.getControlModFromTag(k6CleftID).isChecked():
                         playerStart = "cleft"
-                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6ReltoID)).isChecked():
+                    if GUIDiag6.dialog.getControlModFromTag(k6ReltoID).isChecked():
                         playerStart = "relto"
 
                     if playerName == "" or playerName.isspace():
                         errorString = PtGetLocalizedString("GUI.Dialog04d.ErrorName")
-                        ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                        GUIDiag4d.dialog.getControlModFromTag(k4dTextID).setString(errorString)
                         PtShowDialog("GUIDialog04d")
                         self.ToggleColor(GUIDiag4b, k4bPlayer03)
                     elif playerGender == "":
                         errorString = PtGetLocalizedString("GUI.Dialog04d.ErrorGender")
-                        ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                        GUIDiag4d.dialog.getControlModFromTag(k4dTextID).setString(errorString)
                         PtShowDialog("GUIDialog04d")
                         self.ToggleColor(GUIDiag4b, k4bPlayer03)
                     elif playerStart == "":
                         errorString = PtGetLocalizedString("GUI.Dialog04d.ErrorPath")
-                        ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                        GUIDiag4d.dialog.getControlModFromTag(k4dTextID).setString(errorString)
                         PtShowDialog("GUIDialog04d")
                         self.ToggleColor(GUIDiag4b, k4bPlayer03)
                     else:
@@ -382,43 +382,39 @@ class xDialogStartUp(ptResponder):
                                 errorString = PtGetLocalizedString("GUI.Dialog04d.InvalidCharacters")
                             else:
                                 errorString = PtGetLocalizedString("GUI.Dialog04d.IncorrectFormatting")
-                            ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                            GUIDiag4d.dialog.getControlModFromTag(k4dTextID).setString(errorString)
                             PtShowDialog("GUIDialog04d")
                             self.ToggleColor(GUIDiag4b, k4bPlayer03)
 
-                            ptGUIControlEditBox(GUIDiag6.dialog.getControlFromTag(k6NameID)).setString(fixedPlayerName)
+                            GUIDiag6.dialog.getControlModFromTag(k6NameID).setString(fixedPlayerName)
                         else:
                             PtDebugPrint("Creating Player")
                             PtShowDialog("GUIDialog06a")
-                            ptGUIControlButton(GUIDiag6.dialog.getControlFromTag(k6PlayID)).disable()
+                            GUIDiag6.dialog.getControlModFromTag(k6PlayID).disable()
                             gPlayerStart = playerStart
                             PtCreatePlayer(fixedPlayerName, playerGender, "")  #                                                  <---
 
                 elif  tagID == k6MaleID: ## Gender Male ##
-                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6FemaleID)).isChecked():
-                        ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6FemaleID)).setChecked(False)
+                    GUIDiag6.dialog.getControlModFromTag(k6FemaleID).setChecked(False)
 
                 elif  tagID == k6FemaleID: ## Gender Female ##
-                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6MaleID)).isChecked():
-                        ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6MaleID)).setChecked(False)
+                    GUIDiag6.dialog.getControlModFromTag(k6MaleID).setChecked(False)
 
                 elif  tagID == k6CleftID: ## Start Cleft ##
-                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6ReltoID)).isChecked():
-                        ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6ReltoID)).setChecked(False)
+                    GUIDiag6.dialog.getControlModFromTag(k6ReltoID).setChecked(False)
 
                 elif  tagID == k6ReltoID: ## Start Relto ##
-                    if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6CleftID)).isChecked():
-                        ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6CleftID)).setChecked(False)
+                    GUIDiag6.dialog.getControlModFromTag(k6CleftID).setChecked(False)
 
                 elif tagID == k6CleftHelpID: ## Cleft Help Button ##
                     errorString = PtGetLocalizedString("GUI.Dialog04d.CleftHelp")
-                    ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                    GUIDiag4d.dialog.getControlModFromTag(k4dTextID).setString(errorString)
                     PtShowDialog("GUIDialog04d")
                     self.ToggleColor(GUIDiag4b, k4bPlayer03)
 
                 elif tagID == k6ReltoHelpID: ## Relto Help Button ##
                     errorString = PtGetLocalizedString("GUI.Dialog04d.ReltoHelp")
-                    ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                    GUIDiag4d.dialog.getControlModFromTag(k4dTextID).setString(errorString)
                     PtShowDialog("GUIDialog04d")
                     self.ToggleColor(GUIDiag4b, k4bPlayer03)
 
@@ -438,15 +434,15 @@ class xDialogStartUp(ptResponder):
 
             if result == 12:
                 errorString = PtGetLocalizedString("GUI.Dialog04d.NameAlreadyExists")
-                ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                GUIDiag4d.dialog.getControlModFromTag(k4dTextID).setString(errorString)
                 PtShowDialog("GUIDialog04d")
             elif result == 28:
                 errorString = PtGetLocalizedString("GUI.Dialog04d.IllegalName")
-                ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                GUIDiag4d.dialog.getControlModFromTag(k4dTextID).setString(errorString)
                 PtShowDialog("GUIDialog04d")
             else:
                 errorString = PtGetLocalizedString("GUI.Dialog04d.NetworkError")
-                ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
+                GUIDiag4d.dialog.getControlModFromTag(k4dTextID).setString(errorString)
                 PtShowDialog("GUIDialog04d")
             return
 
@@ -521,18 +517,18 @@ class xDialogStartUp(ptResponder):
         global gExp_HotSpot
         global gExp_HiLite
 
-        currentColor = ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(tagID+10)).getForeColor()
+        currentColor = dlgObj.dialog.getControlModFromTag(tagID+10).getForeColor()
 
         idx = gExp_HotSpot.index(tagID)
         respToRun = gExp_HiLite[idx]
 
         if currentColor == gBlueColor:
             #PtDebugPrint("toggle tagID(%d) off" % (tagID))
-            ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(tagID+10)).setForeColor(gTanColor)
+            dlgObj.dialog.getControlModFromTag(tagID+10).setForeColor(gTanColor)
             respToRun.run(self.key,state="out")
         else:
             #PtDebugPrint("toggle tagID(%d) on" % (tagID))
-            ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(tagID+10)).setForeColor(gBlueColor)
+            dlgObj.dialog.getControlModFromTag(tagID+10).setForeColor(gBlueColor)
             respToRun.run(self.key,state="in")
 
     ###########################
@@ -543,11 +539,11 @@ class xDialogStartUp(ptResponder):
             PtDebugPrint("xDialogStartUp.SelectSlot: tagID = %d   gSelectedSlot = %d" % (tagID, gSelectedSlot))
             if gSelectedSlot:
                 self.ToggleColor(dlgObj, gSelectedSlot)
-                ptGUIControlButton(dlgObj.dialog.getControlFromTag(gSelectedSlot)).setNotifyOnInteresting(True)
+                dlgObj.dialog.getControlModFromTag(gSelectedSlot).setNotifyOnInteresting(True)
                 PtDebugPrint("xDialogStartUp.SelectSlot: Setting old slot to Interesting")
 
             gSelectedSlot = tagID
-            ptGUIControlButton(dlgObj.dialog.getControlFromTag(gSelectedSlot)).setNotifyOnInteresting(False)
+            dlgObj.dialog.getControlModFromTag(gSelectedSlot).setNotifyOnInteresting(False)
             PtDebugPrint("xDialogStartUp.SelectSlot: Setting gSelectedSlot to new val and removing Interesting")
         elif tagID == 0:
             PtDebugPrint("xDialogStartUp.SelectSlot: Setting gSelectedSlot to %d" % (tagID))
@@ -570,8 +566,9 @@ class xDialogStartUp(ptResponder):
 
         for tagID in listTxtBox: ## Setup The Slot Colors And Default Titles ##
             createExplorer = PtGetLocalizedString("GUI.Dialog04b.CreateExplorer")
-            ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(tagID)).setString(createExplorer)
-            ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(tagID)).setForeColor(gTanColor)
+            textbox = dlgObj.dialog.getControlModFromTag(tagID)
+            textbox.setString(createExplorer)
+            textbox.setForeColor(gTanColor)
         for respToRun in listHiLite:
             respToRun.run(self.key,state="out")
 
@@ -586,7 +583,7 @@ class xDialogStartUp(ptResponder):
 
         for idx in range(1, len(gPlayerList[1:]) + 1): ## Setup The Explorer Slots ##
             player = gPlayerList[idx]
-            ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(listTxtBox[idx])).setString(str(player[0]))
+            dlgObj.dialog.getControlModFromTag(listTxtBox[idx]).setString(player[0])
             try:
                 filename = basePath + str(player[1]) + ".jpg"
                 PtDebugPrint("xDialogStartUp: Trying to load \"" + filename + "\"")
@@ -614,11 +611,11 @@ class xDialogStartUp(ptResponder):
 
         for tagID in listHotSpot:
             PtDebugPrint("xDialogStartUp.PlayerListNotify: setting tagID (%d) to Interesting = %d" % (tagID, toggle))
-            ptGUIControlButton(dlgObj.dialog.getControlFromTag(tagID)).setNotifyOnInteresting(toggle)
+            dlgObj.dialog.getControlModFromTag(tagID).setNotifyOnInteresting(toggle)
 
         if toggle and gSelectedSlot:
             PtDebugPrint("xDialogStartUp.PlayerListNotify: setting gSelectedSlot (%d) to not Interesting" % (gSelectedSlot))
-            ptGUIControlButton(dlgObj.dialog.getControlFromTag(gSelectedSlot)).setNotifyOnInteresting(False)
+            dlgObj.dialog.getControlModFromTag(gSelectedSlot).setNotifyOnInteresting(False)
 
         # Everyone is an explorer, so disable the button for visiting.
-        btn = ptGUIControlButton(dlgObj.dialog.getControlFromTag(listHotSpot[0])).disable()
+        dlgObj.dialog.getControlModFromTag(listHotSpot[0]).disable()
