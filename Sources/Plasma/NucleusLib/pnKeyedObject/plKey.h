@@ -82,7 +82,7 @@ public:
     plKeyData* operator->() const;
     plKeyData& operator*() const;
 
-    operator bool() const { return fKeyData; }
+    operator bool() const { return fKeyData != nullptr; }
 
     static plKey Make(plKeyData* data) { return plKey(data); }
 
