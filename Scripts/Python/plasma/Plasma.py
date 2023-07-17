@@ -5014,9 +5014,17 @@ class ptGUIDialog:
         """Returns the ptKey of the control with the specified index (not tag ID!)"""
         pass
 
+    def getControlModFromIndex(self, index: int) -> ptGUIControl:
+        """Returns the ptGUIControl with the specified index (not tag ID!)"""
+        ...
+
     def getControlFromTag(self,tagID):
         """Returns the ptKey of the control with the specified tag ID"""
         pass
+
+    def getControlModFromTag(self, tagID: int) -> ptGUIControl:
+        """Returns the GUI control with the specified tag ID"""
+        ...
 
     def getFontSize(self):
         """Returns the font size"""

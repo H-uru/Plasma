@@ -82,7 +82,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlListBox(pyKey& gckey);
+    static bool IsGUIControlListBox(const plKey& key);
 
     // special case control for the listbox
     // ...this allows the listbox to be used without being selectable

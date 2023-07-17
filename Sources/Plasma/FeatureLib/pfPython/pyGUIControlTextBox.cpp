@@ -61,9 +61,9 @@ pyGUIControlTextBox::pyGUIControlTextBox(plKey objkey) : pyGUIControl(std::move(
 }
 
 
-bool pyGUIControlTextBox::IsGUIControlTextBox(pyKey& gckey)
+bool pyGUIControlTextBox::IsGUIControlTextBox(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUITextBoxMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUITextBoxMod::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }

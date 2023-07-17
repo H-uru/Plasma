@@ -239,48 +239,30 @@ class xOpeningSequence(ptModifier):
                 PtDebugPrint("xOpeningSequence - quiet sounds and show background",level=kDebugDumpLevel)
                 # this SHOULD be in the max file, but since someone has the KI max file tied up, it will have to go here
                 # set the text localized strings
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kHelpTitle))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Title"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kWalkText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Walk"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kRunText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Run"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kTurnLeftText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.TurnLeft"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kBackwardsText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.WalkBackwards"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kTurnRightText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.TurnRight"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kToggleViewText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.ToggleView"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kJumpText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.KeyCommands.Jump"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kMouseWalkText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Walk"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kMouseRunText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Run"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kSelectText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Select"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kMousePanCam))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.MousePanCam"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kMouseBackwards))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.WalkBackwards"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kMousePresetsTitle))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.MousePresets"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kMouseNormalText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Normal"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kMouseNoviceText))
-                textField.setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Novice"))
-                textField = ptGUIControlTextBox(FirstHelpDlg.dialog.getControlFromTag(kOkButton))
-                textField.setString(PtGetLocalizedString("OptionsMenu.Main.Ok"))
+                getControl = FirstHelpDlg.dialog.getControlModFromTag
+                getControl(kHelpTitle).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Title"))
+                getControl(kWalkText).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Walk"))
+                getControl(kRunText).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Run"))
+                getControl(kTurnLeftText).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.TurnLeft"))
+                getControl(kBackwardsText).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.WalkBackwards"))
+                getControl(kTurnRightText).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.TurnRight"))
+                getControl(kToggleViewText).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.ToggleView"))
+                getControl(kJumpText).setString(PtGetLocalizedString("OptionsMenu.KeyCommands.Jump"))
+                getControl(kMouseWalkText).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Walk"))
+                getControl(kMouseRunText).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Run"))
+                getControl(kSelectText).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Select"))
+                getControl(kMousePanCam).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.MousePanCam"))
+                getControl(kMouseBackwards).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.WalkBackwards"))
+                getControl(kMousePresetsTitle).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.MousePresets"))
+                getControl(kMouseNormalText).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Normal"))
+                getControl(kMouseNoviceText).setString(PtGetLocalizedString("OptionsMenu.StartupHelp.Novice"))
+                getControl(kOkButton).setString(PtGetLocalizedString("OptionsMenu.Main.Ok"))
                 # hide the ok button until they agree to the terms... or pick normal or novice
-                ##textField.setString(" ")
-                ##okBtn = ptGUIControlButton(FirstHelpDlg.dialog.getControlFromTag(kFirstHelpOkBtn))
-                ##okBtn.hide()
+                ##getControl(kFirstHelpOkBtn).hide()
             elif event == kShowHide:
                 # reset the edit text lines
                 if control.isEnabled():
-                    nnRG = ptGUIControlRadioGroup(FirstHelpDlg.dialog.getControlFromTag(kNormNoviceRGID))
+                    nnRG = FirstHelpDlg.dialog.getControlModFromTag(kNormNoviceRGID)
                     if PtIsClickToTurn():
                         nnRG.setValue(1)
                     else:
@@ -292,7 +274,7 @@ class xOpeningSequence(ptModifier):
                 helpID = control.getTagID()
                 if helpID == kFirstHelpOkBtn:
                     # get the setting of the novice/normal radio group
-                    nnRG = ptGUIControlRadioGroup(FirstHelpDlg.dialog.getControlFromTag(kNormNoviceRGID))
+                    nnRG = FirstHelpDlg.dialog.getControlModFromTag(kNormNoviceRGID)
                     vault = ptVault()
                     entry = vault.findChronicleEntry(kIntroPlayedChronicle)
                     if nnRG.getValue() == 1:
@@ -384,10 +366,10 @@ class xOpeningSequence(ptModifier):
                 OrientationPBIcon01.value.draw.disable()
                 OrientationPBIcon02.value.draw.disable()
                 OrientationPBIcon01Zandi.value.draw.enable()
-                ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setString(PtGetLocalizedString("GUI.OrientationGUI.OrientPBTextZandi"))
+                OrientationDlg.dialog.getControlModFromTag(kOrientPBText).setString(PtGetLocalizedString("GUI.OrientationGUI.OrientPBTextZandi"))
             else:
                 OrientationPBIcon01Zandi.value.draw.disable()
-                ptGUIControlTextBox(OrientationDlg.dialog.getControlFromTag(kOrientPBText)).setString(PtGetLocalizedString("GUI.OrientationGUI.OrientPBText"))
+                OrientationDlg.dialog.getControlModFromTag(kOrientPBText).setString(PtGetLocalizedString("GUI.OrientationGUI.OrientPBText"))
         PtFadeIn(kHelpFadeInSeconds,0)
 
 

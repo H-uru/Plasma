@@ -79,7 +79,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlTextBox(pyKey& gckey);
+    static bool IsGUIControlTextBox(const plKey& key);
 
     void SetText(ST::string text);
     ST::string GetText() const;

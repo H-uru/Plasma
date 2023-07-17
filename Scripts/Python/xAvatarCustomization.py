@@ -640,7 +640,7 @@ class xAvatarCustomization(ptModifier):
         "Activated... we just landed in the AvaCusta Age"
         if state and id == InRoomActivator.id:
             ZoomResponder.run(self.key, state="ZoomOut")
-            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarCameraID)).disable()
+            AvCustGUI.dialog.getControlModFromTag(kAvatarCameraID).disable()
             TestMap.textmap.clearToColor(ptColor(0.92,0.82,0.63,1))
             TestMap.textmap.flush()
             # disable the KI until further notice
@@ -652,7 +652,7 @@ class xAvatarCustomization(ptModifier):
             # callback from the reset confirmation dialog box
             if state:
                 self.dirty = 0 # we are resetting the avatar, so hide the reset button
-                ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarResetID)).hide()
+                AvCustGUI.dialog.getControlModFromTag(kAvatarResetID).hide()
                 self.IResetAvatar()
 
     def OnGUINotify(self,id,control,event):
@@ -678,7 +678,7 @@ class xAvatarCustomization(ptModifier):
                 # is it one of the knobbies?
                 if isinstance(control,ptGUIControlValue):
                     self.dirty = 1 # we changed something! so show the "reset" button
-                    ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarResetID)).show()
+                    AvCustGUI.dialog.getControlModFromTag(kAvatarResetID).show()
                     if tagID >= kMorphSliderOffset and tagID < kMorphSliderOffset+kNumberOfMorphs:
                         # it is a morph slider
                         self.IMorphItem(tagID)
@@ -686,12 +686,12 @@ class xAvatarCustomization(ptModifier):
                         self.ITexMorphItem(tagID)
                 elif isinstance(control,ptGUIControlClickMap):
                     self.dirty = 1 # we changed something! so show the "reset" button
-                    ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarResetID)).show()
+                    AvCustGUI.dialog.getControlModFromTag(kAvatarResetID).show()
                     self.IColorShowingItem(tagID)
                 # is it one of the list boxes, probably one of the clothing listboxes
                 elif isinstance(control,ptGUIControlListBox):
                     self.dirty = 1 # we changed something! so show the "reset" button
-                    ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarResetID)).show()
+                    AvCustGUI.dialog.getControlModFromTag(kAvatarResetID).show()
                     # find the clothing group they are working with
                     clothing_group = TheCloset[tagID]
                     if tagID == kUpperBodyOptionsLB or tagID == kLwrBodyOptionsLB:
@@ -710,7 +710,7 @@ class xAvatarCustomization(ptModifier):
                             listboxDict[tagID + kAccessoryLBOffset].SelectItem(0) # select the first texture option
                             listboxDict[tagID + kAccessoryLBOffset].UpdateScrollArrows()
                             listboxDict[tagID + kAccessoryLBOffset].UpdateListbox()
-                            listbox = ptGUIControlListBox(AvCustGUI.dialog.getControlFromTag(tagID+kAccessoryLBOffset))
+                            listbox = AvCustGUI.dialog.getControlModFromTag(tagID+kAccessoryLBOffset)
                             self.OnGUINotify(AvCustGUI.id, listbox, kValueChanged) # fake a mouse down
                     elif clothing_group is not None:
                         # found list box
@@ -729,7 +729,7 @@ class xAvatarCustomization(ptModifier):
 
                             if newitem.isClothingSet:
                                 self.IWearClothingSet(newitem.clothingSet)
-                                descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
+                                descbox = AvCustGUI.dialog.getControlModFromTag(kClothingDesc)
                                 descbox.setString(newitem.description)
                                 return None
                             # get the current worn item to see what color it was
@@ -755,10 +755,10 @@ class xAvatarCustomization(ptModifier):
                             avatar.avatar.tintClothingItemLayer(newitem.name,lastcolor2,2)
                             self.IMorphOneItem(kWeightKnob,newitem.name) # propigate the weight morph to the new clothing item
                             # then set the description box
-                            descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
+                            descbox = AvCustGUI.dialog.getControlModFromTag(kClothingDesc)
                             descbox.setString(newitem.description)
                             # set up the color pickers
-                            colorbar1 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName1))
+                            colorbar1 = pAvCustGUI.dialog.getControlModFromTag(kColorbarName1)
                             if newitem.colorlabel1 == "":
                                 self.IHideColorPicker(kColor1ClickMap)
                             else:
@@ -768,7 +768,7 @@ class xAvatarCustomization(ptModifier):
                                     self.IDrawPickerThingy(kHairClickMap,lastcolor1)
                                 else:
                                     self.IDrawPickerThingy(kColor1ClickMap,lastcolor1)
-                            colorbar2 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName2))
+                            colorbar2 = AvCustGUI.dialog.getControlModFromTag(kColorbarName2)
                             if newitem.colorlabel2 == "":
                                 self.IHideColorPicker(kColor2ClickMap)
                             else:
@@ -800,7 +800,7 @@ class xAvatarCustomization(ptModifier):
 
                                     if newitem.isClothingSet:
                                         self.IWearClothingSet(newitem.clothingSet)
-                                        descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
+                                        descbox = AvCustGUI.dialog.getControlModFromTag(kClothingDesc)
                                         descbox.setString(newitem.description)
                                         return None
                                     avatar = PtGetLocalAvatar()
@@ -819,17 +819,17 @@ class xAvatarCustomization(ptModifier):
                                     avatar.avatar.tintClothingItemLayer(newitem.name,lastcolor2,2)
                                     self.IMorphOneItem(kWeightKnob,newitem.name) # propigate the weight morph to the new clothing item
                                     # then set the description box
-                                    descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
+                                    descbox = AvCustGUI.dialog.getControlModFromTag(kClothingDesc)
                                     descbox.setString(newitem.description)
                                     # set up the color pickers
-                                    colorbar1 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName1))
+                                    colorbar1 = AvCustGUI.dialog.getControlModFromTag(kColorbarName1)
                                     if newitem.colorlabel1 == "":
                                         self.IHideColorPicker(kColor1ClickMap)
                                     else:
                                         self.IShowColorPicker(kColor1ClickMap)
                                         colorbar1.setString(newitem.colorlabel1)
                                         self.IDrawPickerThingy(kColor1ClickMap,lastcolor1)
-                                    colorbar2 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName2))
+                                    colorbar2 = AvCustGUI.dialog.getControlModFromTag(kColorbarName2)
                                     if newitem.colorlabel2 == "":
                                         self.IHideColorPicker(kColor2ClickMap)
                                     else:
@@ -852,7 +852,7 @@ class xAvatarCustomization(ptModifier):
 
                                 if newitem.isClothingSet:
                                     self.IWearClothingSet(newitem.clothingSet)
-                                    descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
+                                    descbox = AvCustGUI.dialog.getControlModFromTag(kClothingDesc)
                                     descbox.setString(newitem.description)
                                     return None
                                 avatar = PtGetLocalAvatar()
@@ -877,7 +877,7 @@ class xAvatarCustomization(ptModifier):
                                         # if this is a head accessory, we can tint it, so restore last tint
                                         if tagID == kHeadAccLB and not (newitem.name in untintableHeadAcc):
                                             self.IShowColorPicker(kColor2ClickMap)
-                                            colorbar2 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName2))
+                                            colorbar2 = AvCustGUI.dialog.getControlModFromTag(kColorbarName2)
                                             colorbar2.setString(GetItemName("Glasses"))
                                             if not lastitem == "":
                                                 lastcolor = avatar.avatar.getTintClothingItem(lastitem,1)
@@ -895,12 +895,12 @@ class xAvatarCustomization(ptModifier):
                                         self.IHideColorPicker(kColor2ClickMap)
                 elif isinstance(control,ptGUIControlRadioGroup):
                     if tagID == kPanelsRGID:
-                        panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
+                        panelRG = AvCustGUI.dialog.getControlModFromTag(kPanelsRGID)
                         rgVal = panelRG.getValue()
-                        zoomBtn = ptGUIControlCheckBox(AvCustGUI.dialog.getControlFromTag(kZoomButton))
+                        zoomBtn = AvCustGUI.dialog.getControlModFromTag(kZoomButton)
                         if rgVal == 1:
                             ZoomResponder.run(self.key, state="ZoomIn")
-                            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarCameraID)).enable()
+                            AvCustGUI.dialog.getControlModFromTag(kAvatarCameraID).enable()
                             # enable the zoom button
                             zoomBtn.show()
                             # zoom in on face automatically
@@ -911,7 +911,7 @@ class xAvatarCustomization(ptModifier):
                         else:
                             zoomBtn.hide()
                         # unset the description box
-                        descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
+                        descbox = AvCustGUI.dialog.getControlModFromTag(kClothingDesc)
                         descbox.setString("")
                         self.ISetStandardControls()
                 elif isinstance(control,ptGUIControlButton):
@@ -996,7 +996,7 @@ class xAvatarCustomization(ptModifier):
                         # and ask if they want to quit (KI will quit if they answer yes)
                         PtSendKIMessage(kQuitDialog,0)
                     elif IsAccArrow(btnID):
-                        panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
+                        panelRG = AvCustGUI.dialog.getControlModFromTag(kPanelsRGID)
                         rgVal = panelRG.getValue()
                         listboxID = panelAccListboxOffset + rgVal
                         if IsLeftArrow(btnID):
@@ -1006,7 +1006,7 @@ class xAvatarCustomization(ptModifier):
                         listboxDict[listboxID].UpdateScrollArrows()
                         listboxDict[listboxID].UpdateListbox()
                     elif IsOptArrow(btnID):
-                        panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
+                        panelRG = AvCustGUI.dialog.getControlModFromTag(kPanelsRGID)
                         rgVal = panelRG.getValue()
                         listboxID = panelOptListboxOffset + rgVal
                         if IsLeftArrow(btnID):
@@ -1022,7 +1022,7 @@ class xAvatarCustomization(ptModifier):
                         if PtIsInternalRelease():
                             self.IRestoreAvatarFromDisk()
                             self.dirty = 1 # we are changing the avatar, so show the reset button
-                            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarResetID)).show()
+                            AvCustGUI.dialog.getControlModFromTag(kAvatarResetID).show()
                     elif btnID == kAvatarSaveID:
                         if PtIsInternalRelease():
                             SaveAvatarToDisk()
@@ -1045,17 +1045,17 @@ class xAvatarCustomization(ptModifier):
                 elif isinstance(control,ptGUIControlCheckBox):
                     chkBoxID = control.getTagID()
                     if chkBoxID == kZoomButton:
-                        zoomBtn = ptGUIControlCheckBox(AvCustGUI.dialog.getControlFromTag(chkBoxID))
-                        radioGroup = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
+                        zoomBtn = AvCustGUI.dialog.getControlModFromTag(chkBoxID)
+                        radioGroup = AvCustGUI.dialog.getControlModFromTag(kPanelsRGID)
                         if zoomBtn.isChecked():
                             ZoomResponder.run(self.key, state="ZoomIn")
-                            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarCameraID)).enable()
+                            AvCustGUI.dialog.getControlModFromTag(kAvatarCameraID).enable()
                             ZoomCamera.sceneobject.pushCutsceneCamera(1,PtGetLocalAvatar().getKey())
                             radioGroup.hide()
                             self.SetupCamera()
                         else:
                             ZoomResponder.run(self.key, state="ZoomOut")
-                            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarCameraID)).disable()
+                            AvCustGUI.dialog.getControlModFromTag(kAvatarCameraID).disable()
                             ZoomCamera.sceneobject.popCutsceneCamera(PtGetLocalAvatar().getKey())
                             radioGroup.show()
                             self.SetupCamera()
@@ -1373,11 +1373,7 @@ class xAvatarCustomization(ptModifier):
         SetDefaultSettings() # grab the stuff we came in with
         PtDisableAvatarCursorFade()
 
-        if InAvatarCloset:
-            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarSwitchID)).hide()
-        else:
-            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarSwitchID)).hide()
-
+        AvCustGUI.dialog.getControlModFromTag(kAvatarSwitchID).hide()
         AvCustGUI.dialog.show()
         PtDisableAvatarJump()
         self.ILocalizeStaticText()
@@ -1435,15 +1431,15 @@ class xAvatarCustomization(ptModifier):
         "Update all the dialog controls to reflect what the avatar is currently"
         # do the global settings
         avatar = PtGetLocalAvatar()
-        namebox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kNameTBID))
+        namebox = AvCustGUI.dialog.getControlModFromTag(kNameTBID)
         namebox.show()
-        editbox = ptGUIControlEditBox(AvCustGUI.dialog.getControlFromTag(kNameEBID))
+        editbox = AvCustGUI.dialog.getControlModFromTag(kNameEBID)
         editbox.hide() # don't want people changing their name
         localplayer = PtGetLocalPlayer()
         namebox.setString(localplayer.getPlayerName())
-        panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
+        panelRG = AvCustGUI.dialog.getControlModFromTag(kPanelsRGID)
         clothing_panel = panelRG.getValue()
-        zoomBtn = ptGUIControlCheckBox(AvCustGUI.dialog.getControlFromTag(kZoomButton))
+        zoomBtn = AvCustGUI.dialog.getControlModFromTag(kZoomButton)
         if clothing_panel == 1:
             # enable the zoom button
             zoomBtn.show()
@@ -1470,7 +1466,7 @@ class xAvatarCustomization(ptModifier):
         global TheCloset
         global listboxDict
         # assume that there is no accessories
-        listbox = ptGUIControlListBox(AvCustGUI.dialog.getControlFromTag(kAccessOptionsLB))
+        listbox = AvCustGUI.dialog.getControlModFromTag(kAccessOptionsLB)
         listbox.hide()
         # get (or re-get) the closet
         TheCloset = ClothingCloset()
@@ -1535,7 +1531,7 @@ class xAvatarCustomization(ptModifier):
         global WornList
 
         # Find what to color
-        panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
+        panelRG = AvCustGUI.dialog.getControlModFromTag(kPanelsRGID)
         clothing_panel = panelRG.getValue()
         foundItem = 0
         if clothing_panel >= 0 and clothing_panel < len(CLxref):
@@ -1547,18 +1543,17 @@ class xAvatarCustomization(ptModifier):
                 # if the saturation is zero then don't allow tiniting
                 if controlID == kColor1ClickMap or controlID == kColor2ClickMap:
                     #Make sure that we're not zoomed in (changing eye color)
-                    panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
                     rgVal = panelRG.getValue()
 
                     # get the color
                     if controlID == kColor2ClickMap:
                         layer = 2
-                        colormap = ptGUIControlClickMap(AvCustGUI.dialog.getControlFromTag(kColor2ClickMap)).getLastMouseUpPoint()
+                        colormap = AvCustGUI.dialog.getControlModFromTag(kColor2ClickMap).getLastMouseUpPoint()
                         colorit = ColorMaterial.map.getPixelColor(colormap.getX(),colormap.getY())
                         self.IDrawCrosshair(kColor2ClickMap,colormap.getX(),colormap.getY())
                     else:
                         layer = 1
-                        colormap = ptGUIControlClickMap(AvCustGUI.dialog.getControlFromTag(kColor1ClickMap)).getLastMouseUpPoint()
+                        colormap = AvCustGUI.dialog.getControlModFromTag(kColor1ClickMap).getLastMouseUpPoint()
                         colorit = ColorMaterial.map.getPixelColor(colormap.getX(),colormap.getY())
                         self.IDrawCrosshair(kColor1ClickMap,colormap.getX(),colormap.getY())
                     avatar = PtGetLocalAvatar()
@@ -1575,7 +1570,7 @@ class xAvatarCustomization(ptModifier):
                                 avatar.avatar.tintClothingItem(aitem.name,colorit)
                 elif controlID == kSkinClickMap:
                     # then this is a skin tinting affair
-                    colormap = ptGUIControlClickMap(AvCustGUI.dialog.getControlFromTag(kSkinClickMap)).getLastMouseUpPoint()
+                    colormap = AvCustGUI.dialog.getControlModFromTag(kSkinClickMap).getLastMouseUpPoint()
                     colorskin = SkinMaterial.map.getPixelColor(colormap.getX(),colormap.getY())
                     self.IDrawCrosshair(kSkinClickMap,colormap.getX(),colormap.getY())
                     avatar = PtGetLocalAvatar()
@@ -1584,7 +1579,7 @@ class xAvatarCustomization(ptModifier):
                     # then this is a hair tinting affair
 
 
-                    colormap = ptGUIControlClickMap(AvCustGUI.dialog.getControlFromTag(kHairClickMap)).getLastMouseUpPoint()
+                    colormap = AvCustGUI.dialog.getControlModFromTag(kHairClickMap).getLastMouseUpPoint()
                     colorit = HairMaterial.map.getPixelColor(colormap.getX(),colormap.getY())
                     self.IDrawCrosshair(kHairClickMap,colormap.getX(),colormap.getY())
                     avatar = PtGetLocalAvatar()
@@ -1600,7 +1595,7 @@ class xAvatarCustomization(ptModifier):
 
         if knobID < kMorphSliderOffset or knobID >= kMorphSliderOffset+kNumberOfMorphs:
             return
-        morphKnob = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(knobID))
+        morphKnob = AvCustGUI.dialog.getControlModFromTag(knobID)
         morphVal = self.ISliderToMorph(morphKnob.getValue())
         avatar = PtGetLocalAvatar()
         item = TheCloset.getItemByName(itemName)
@@ -1622,7 +1617,7 @@ class xAvatarCustomization(ptModifier):
         # for now, skip out on an invalid control
         if knobID < kMorphSliderOffset or knobID >= kMorphSliderOffset+kNumberOfMorphs:
             return
-        morphKnob = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(knobID))
+        morphKnob = AvCustGUI.dialog.getControlModFromTag(knobID)
         morphVal = self.ISliderToMorph(morphKnob.getValue())
         avatar = PtGetLocalAvatar()
         gender = avatar.avatar.getAvatarClothingGroup()
@@ -1638,7 +1633,7 @@ class xAvatarCustomization(ptModifier):
 
         if knobID <= kTexMorphSliderOffset or knobID > kTexMorphSliderOffset+kNumberOfTexMorphs:
             return
-        morphKnob = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(knobID))
+        morphKnob = AvCustGUI.dialog.getControlModFromTag(knobID)
         morphVal = self.ISliderToTexMorph(morphKnob.getValue())
         avatar = PtGetLocalAvatar()
 
@@ -1658,8 +1653,8 @@ class xAvatarCustomization(ptModifier):
             else:
                 morphID1 = kEthnic1TexMorph
                 morphID2 = kEthnic2TexMorph
-            morphKnob1 = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(morphID1))
-            morphKnob2 = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(morphID2))
+            morphKnob1 = AvCustGUI.dialog.getControlModFromTag(morphID1)
+            morphKnob2 = AvCustGUI.dialog.getControlModFromTag(morphID2)
             morphVal1 = self.ISliderToTexMorph(morphKnob1.getValue())
             morphVal2 = self.ISliderToTexMorph(morphKnob2.getValue())
             total = morphVal + morphVal1 + morphVal2
@@ -1687,21 +1682,24 @@ class xAvatarCustomization(ptModifier):
 
     def ISetStandardControls(self):
         "Set the color knobs depending on the color of the clothing item panel showing"
+        resetBtn = AvCustGUI.dialog.getControlModFromTag(kAvatarResetID)
         if self.dirty: # has the clothing changed at all?
-            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarResetID)).show() # then show the reset button
+            resetBtn.show() # then show the reset button
         else:
-            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarResetID)).hide() # otherwise, hide it
+            resetBtn.hide() # otherwise, hide it
 
+        readBtn = AvCustGUI.dialog.getControlModFromTag(kAvatarReadID)
+        saveBtn = AvCustGUI.dialog.getControlModFromTag(kAvatarSaveID)
         if PtIsInternalRelease():
-            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarReadID)).show()
-            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarSaveID)).show()
+            readBtn.show()
+            saveBtn.show()
         else:
-            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarReadID)).hide()
-            ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(kAvatarSaveID)).hide()
+            readBtn.hide()
+            saveBtn.hide()
 
         foundItem = 0
         # get the panel and the worn item
-        panelRG = ptGUIControlRadioGroup(AvCustGUI.dialog.getControlFromTag(kPanelsRGID))
+        panelRG = AvCustGUI.dialog.getControlModFromTag(kPanelsRGID)
         clothing_panel = panelRG.getValue()
         avatar = PtGetLocalAvatar()
         if clothing_panel >= 0 and clothing_panel < len(CLxref):
@@ -1709,15 +1707,15 @@ class xAvatarCustomization(ptModifier):
             # find the clothing type in what is being worn
             wornitem = FindWornItem(clothing_type)
             if wornitem is not None:
-                descbox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kClothingDesc))
+                descbox = AvCustGUI.dialog.getControlModFromTag(kClothingDesc)
                 descbox.setString(wornitem.description)
-                colorbar1 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName1))
+                colorbar1 = AvCustGUI.dialog.getControlModFromTag(kColorbarName1)
                 if wornitem.colorlabel1 == "":
                     self.IHideColorPicker(kColor1ClickMap)
                 else:
                     self.IShowColorPicker(kColor1ClickMap)
                     colorbar1.setString(wornitem.colorlabel1)
-                colorbar2 = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName2))
+                colorbar2 = AvCustGUI.dialog.getControlModFromTag(kColorbarName2)
                 if wornitem.colorlabel2 == "":
                     self.IHideColorPicker(kColor2ClickMap)
                 else:
@@ -1757,7 +1755,7 @@ class xAvatarCustomization(ptModifier):
         allMorphsLoaded = 1
         for morphID in range(kNumberOfMorphs):
             knobID = morphID + kMorphSliderOffset
-            morphKnob = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(knobID))
+            morphKnob = AvCustGUI.dialog.getControlModFromTag(knobID)
             morphKnob.show()
             morphVal = 0
             gender = avatar.avatar.getAvatarClothingGroup()
@@ -1774,7 +1772,7 @@ class xAvatarCustomization(ptModifier):
                 pass
         for texMorphID in range(1,kNumberOfTexMorphs+1):
             knobID = texMorphID + kTexMorphSliderOffset
-            morphKnob = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(knobID))
+            morphKnob = AvCustGUI.dialog.getControlModFromTag(knobID)
             morphKnob.show()
             try:
                 if (knobID == kAgeTexMorph):
@@ -1794,13 +1792,13 @@ class xAvatarCustomization(ptModifier):
 
     def IShowColorPicker(self,id):
         if (id == kColor1ClickMap):
-            clickMap = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(kColor1ClickMap))
+            clickMap = AvCustGUI.dialog.getControlModFromTag(kColor1ClickMap)
         elif (id == kColor2ClickMap):
-            clickMap = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(kColor2ClickMap))
+            clickMap = AvCustGUI.dialog.getControlModFromTag(kColor2ClickMap)
         elif (id == kHairClickMap):
-            clickMap = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(kHairClickMap))
+            clickMap = AvCustGUI.dialog.getControlModFromTag(kHairClickMap)
         else:
-            clickMap = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(kSkinClickMap))
+            clickMap = AvCustGUI.dialog.getControlModFromTag(kSkinClickMap)
 
         clickMap.enable()
         clickMap.show()
@@ -1808,19 +1806,19 @@ class xAvatarCustomization(ptModifier):
     def IHideColorPicker(self,id):
         textBox = None
         if (id == kColor1ClickMap):
-            textBox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName1))
-            clickMap = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(kColor1ClickMap))
+            textBox = AvCustGUI.dialog.getControlModFromTag(kColorbarName1)
+            clickMap = AvCustGUI.dialog.getControlModFromTag(kColor1ClickMap)
             texMap = Color1Map.textmap
         elif (id == kColor2ClickMap):
-            textBox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName2))
-            clickMap = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(kColor2ClickMap))
+            textBox = AvCustGUI.dialog.getControlModFromTag(kColorbarName2)
+            clickMap = AvCustGUI.dialog.getControlModFromTag(kColor2ClickMap)
             texMap = Color2Map.textmap
         elif (id == kHairClickMap):
-            textBox = ptGUIControlTextBox(AvCustGUI.dialog.getControlFromTag(kColorbarName1))
-            clickMap = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(kHairClickMap))
+            textBox = AvCustGUI.dialog.getControlModFromTag(kColorbarName1)
+            clickMap = AvCustGUI.dialog.getControlModFromTag(kHairClickMap)
             texMap = Color1Map.textmap
         else:
-            clickMap = ptGUIControlValue(AvCustGUI.dialog.getControlFromTag(kSkinClickMap))
+            clickMap = AvCustGUI.dialog.getControlModFromTag(kSkinClickMap)
             texMap = SkinMap.textmap
         clickMap.disable()
         clickMap.hide()
@@ -2532,13 +2530,13 @@ class ScrollingListBox:
 
     def UpdateScrollArrows(self):
         if self.listboxID >= kHairAccLB and self.listboxID <= kAccessAccLB:
-            leftArrow = ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(self.listboxID+kIDBtnLeftAccOffset))
-            rightArrow = ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(self.listboxID+kIDBtnRightAccOffset))
+            leftArrow = AvCustGUI.dialog.getControlModFromTag(self.listboxID+kIDBtnLeftAccOffset)
+            rightArrow = AvCustGUI.dialog.getControlModFromTag(self.listboxID+kIDBtnRightAccOffset)
         else:
             if self.listboxID == kHeadOptionsLB:
                 return # there aren't any head options, just accessories
-            leftArrow = ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(self.listboxID+kIDBtnLeftOptOffset))
-            rightArrow = ptGUIControlButton(AvCustGUI.dialog.getControlFromTag(self.listboxID+kIDBtnRightOptOffset))
+            leftArrow = AvCustGUI.dialog.getControlModFromTag(self.listboxID+kIDBtnLeftOptOffset)
+            rightArrow = AvCustGUI.dialog.getControlModFromTag(self.listboxID+kIDBtnRightOptOffset)
         if self.IShowLeftArrow():
             leftArrow.show()
         if self.IShowRightArrow():
@@ -2546,7 +2544,7 @@ class ScrollingListBox:
         pass
 
     def UpdateListbox(self):
-        listbox = ptGUIControlListBox(AvCustGUI.dialog.getControlFromTag(self.listboxID))
+        listbox = AvCustGUI.dialog.getControlModFromTag(self.listboxID)
         listbox.clearAllElements()
         listbox.hide()
         listbox.disallowNoSelect()

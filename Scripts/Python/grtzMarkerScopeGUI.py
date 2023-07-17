@@ -218,7 +218,7 @@ class grtzMarkerScopeGUI(ptModifier):
         elif event == kValueChanged and self._lookingAtGUI:
             rgid = control.getTagID()
             if rgid == kRGMarkerGameSelect:
-                gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
+                gameSelector = MarkerGameDlg.dialog.getControlModFromTag(kRGMarkerGameSelect)
                 mission = gameSelector.getValue()
                 if mission == -1:
                     self._StopCGZM(win=False)
@@ -279,7 +279,7 @@ class grtzMarkerScopeGUI(ptModifier):
 
     def _ShowGUI(self):
         MGMachineOnResp.run(self.key, netPropagate=False)
-        gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
+        gameSelector = MarkerGameDlg.dialog.getControlModFromTag(kRGMarkerGameSelect)
         if PtDetermineKIMarkerLevel() < kKIMarkerNormalLevel:
             PtDebugPrint("grtzMarkerScopeGUI._ShowGUI():\tKI Level not high enough, disabling GUI controls", level=kWarningLevel)
             gameSelector.setValue(-1)
@@ -316,7 +316,7 @@ class grtzMarkerScopeGUI(ptModifier):
         PtSendKIMessageInt(kMGStopCGZGame, -1)
 
         # Update UI
-        gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
+        gameSelector = MarkerGameDlg.dialog.getControlModFromTag(kRGMarkerGameSelect)
         gameSelector.setValue(-1)
 
     def _UpdateGUI(self, mission=-1, quitting=False, score=None, star=None):
@@ -364,9 +364,9 @@ class grtzMarkerScopeGUI(ptModifier):
 
         # Now do the deed
         fieldID = (mission * 10) + kMarkerGameFieldStart
-        numTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID + kMarkerGameNumFieldOffset))
+        numTB = MarkerGameDlg.dialog.getControlModFromTag(fieldID + kMarkerGameNumFieldOffset)
         numTB.setString(str(len(grtzMarkerGames.mgs[mission])))
-        timeTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID + kMarkerGameNameFieldOffset))
+        timeTB = MarkerGameDlg.dialog.getControlModFromTag(fieldID + kMarkerGameNameFieldOffset)
         timeTB.setString(msg)
 
     def _UpdateScore(self, mission: int, points: int) -> None:

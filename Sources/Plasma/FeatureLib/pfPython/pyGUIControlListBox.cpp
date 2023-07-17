@@ -345,9 +345,9 @@ pyGUIControlListBox::pyGUIControlListBox(plKey objkey) : pyGUIControl(std::move(
 {
 }
 
-bool pyGUIControlListBox::IsGUIControlListBox(pyKey& gckey)
+bool pyGUIControlListBox::IsGUIControlListBox(const plKey& key)
 {
-    if ( gckey.getKey() && pfGUIListBoxMod::ConvertNoRef(gckey.getKey()->ObjectIsLoaded()) )
+    if ( key && pfGUIListBoxMod::ConvertNoRef(key->ObjectIsLoaded()) )
         return true;
     return false;
 }

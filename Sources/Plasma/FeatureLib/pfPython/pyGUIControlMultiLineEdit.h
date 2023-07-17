@@ -77,7 +77,7 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    static bool IsGUIControlMultiLineEdit(pyKey& gckey);
+    static bool IsGUIControlMultiLineEdit(const plKey& key);
 
     void Clickable();
     void Unclickable();

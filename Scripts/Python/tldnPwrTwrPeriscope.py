@@ -277,7 +277,7 @@ class tldnPwrTwrPeriscope(ptResponder):
                     
                     if boolScopeOperator:
                         GUIDialog = PtGetDialogFromString(Vignette.value)
-                        GUICbxBlocker = ptGUIControlCheckBox(GUIDialog.getControlFromTag(kGUIBlocker))
+                        GUICbxBlocker = GUIDialog.getControlModFromTag(kGUIBlocker)
                         GUICbxBlocker.setChecked(kScopeClear)
                         GUIDialog.refreshAllControls()
                 else:
@@ -291,7 +291,7 @@ class tldnPwrTwrPeriscope(ptResponder):
                     
                     if boolScopeOperator:
                         GUIDialog = PtGetDialogFromString(Vignette.value)
-                        GUICbxBlocker = ptGUIControlCheckBox(GUIDialog.getControlFromTag(kGUIBlocker))                    
+                        GUICbxBlocker = GUIDialog.getControlModFromTag(kGUIBlocker)
                         GUICbxBlocker.setChecked(kScopeBlocked)
                         GUIDialog.refreshAllControls()
                     if boolPwrMain and not boolTwrRaised: # power on, tower being lowered
@@ -412,7 +412,7 @@ class tldnPwrTwrPeriscope(ptResponder):
                 PtDebugPrint("tldnPwrTwrPeriscope.OnNotify:\twrote SDL - scope operator id = %d" % (avID))
                 PtDebugPrint("tldnPwrTwrPeriscope.OnNotify:\tSDL OperatorID = %d" % (self.SDL["OperatorID"]))
                 GUIDialog = PtGetDialogFromString(Vignette.value)
-                GUICbxBlocker = ptGUIControlCheckBox(GUIDialog.getControlFromTag(kGUIBlocker))
+                GUICbxBlocker = GUIDialog.getControlModFromTag(kGUIBlocker)
                 if boolTwrRaised:
                     GUICbxBlocker.setChecked(kScopeClear)
                 else:

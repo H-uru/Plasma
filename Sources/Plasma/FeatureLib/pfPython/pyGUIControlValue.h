@@ -73,7 +73,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlValue(pyKey& gckey);
+    static bool IsGUIControlValue(const plKey& key);
 
     float GetValue();
     void SetValue(float v);

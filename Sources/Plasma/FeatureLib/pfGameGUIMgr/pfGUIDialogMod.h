@@ -150,7 +150,7 @@ class pfGUIDialogMod : public plSingleModifier
 
         void            AddControl( pfGUIControlMod *ctrl );
         size_t          GetNumControls() const { return fControls.size(); }
-        pfGUIControlMod *GetControl(size_t idx) { return fControls[idx]; }
+        pfGUIControlMod *GetControl(size_t idx) const { return fControls[idx]; }
 
         pfGUIColorScheme    *GetColorScheme() const { return fColorScheme; }
 

@@ -72,7 +72,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    static bool IsGUIControlClickMap(pyKey& gckey);
+    static bool IsGUIControlClickMap(const plKey& key);
 
     PyObject* GetLastMousePt(); // returns pyPoint3
     PyObject* GetLastMouseUpPt(); // returns pyPoint3

@@ -1840,19 +1840,21 @@ class xOptionsMenu(ptModifier):
 
     def IRefreshAdvSettings(self):
         "refresh the volume settings to the current settings"
+        getControl = AdvGameSettingDlg.dialog.getControlModFromTag
+
         # shadows
         
         # We'll have to do this later, since it's no longer part of the AdvDisplaySettings Dialog
-        #~ shadowDistKnob = ptGUIControlValue(AdvGameSettingDlg.dialog.getControlFromTag(kGSDisplayShadowDistSlider))
+        #~ shadowDistKnob = getControl(kGSDisplayShadowDistSlider)
         #~ setting = PtGetShadowVisDistance()
         #~ shadowDistKnob.setValue(setting*10.0)
         
         #Will have to wire this into Audio panel later
-        #~ soundPriKnob = ptGUIControlValue(AdvGameSettingDlg.dialog.getControlFromTag(kGSSoundPrioritySlider))
+        #~ soundPriKnob = getControl(kGSSoundPrioritySlider)
         #~ audio = ptAudioControl()
         #~ soundPriKnob.setValue(audio.getPriorityCutoff()*(11.0/10.0))
         
-        mouseSensKnob = ptGUIControlValue(AdvGameSettingDlg.dialog.getControlFromTag(kGSMouseTurnSensSlider))
+        mouseSensKnob = getControl(kGSMouseTurnSensSlider)
         PtDebugPrint("IRefreshAdvSettings: PtGetMouseTurnSensitivity() = %d" % (PtGetMouseTurnSensitivity()))
         sensitive = PtGetMouseTurnSensitivity() - 50.0
         if sensitive <= 0.0:
@@ -1868,18 +1870,13 @@ class xOptionsMenu(ptModifier):
                     mouseSensKnob.setValue(5.0)
                 else:
                     mouseSensKnob.setValue(sensitive/20.0)
-                            
-        pukeCamCheckbox = ptGUIControlCheckBox(AdvGameSettingDlg.dialog.getControlFromTag(kGSPukeCamCheckbox))
+
         cam = ptCamera()
-        pukeCamCheckbox.setChecked(cam.isSmootherCam())
-        mouseInvertCheckbox = ptGUIControlCheckBox(AdvGameSettingDlg.dialog.getControlFromTag(kGSMouseInvertCheckbox))
-        mouseInvertCheckbox.setChecked(PtIsMouseInverted())
-        walkAndPanCheckbox = ptGUIControlCheckBox(AdvGameSettingDlg.dialog.getControlFromTag(kGSWalkAndPan))
-        walkAndPanCheckbox.setChecked(cam.isWalkAndVerticalPan())
-        stayInFirstCheckbox = ptGUIControlCheckBox(AdvGameSettingDlg.dialog.getControlFromTag(kGSStayInFirstPerson))
-        stayInFirstCheckbox.setChecked(cam.isStayInFirstPerson())
-        clickToTurnCheckbox = ptGUIControlCheckBox(AdvGameSettingDlg.dialog.getControlFromTag(kGSClickToTurn))
-        clickToTurnCheckbox.setChecked(PtIsClickToTurn())
+        getControl(kGSPukeCamCheckbox).setChecked(cam.isSmootherCam())
+        getControl(kGSMouseInvertCheckbox).setChecked(PtIsMouseInverted())
+        getControl(kGSWalkAndPan).setChecked(cam.isWalkAndVerticalPan())
+        getControl(kGSStayInFirstPerson).setChecked(cam.isStayInFirstPerson())
+        getControl(kGSClickToTurn).setChecked(PtIsClickToTurn())
 
 
     def LoadAdvSettings(self):

@@ -126,7 +126,7 @@ class xKIChat(object):
     def ClearBBMini(self, value=-1):
 
         if self.KILevel == kNormalKI:
-            mmRG = ptGUIControlRadioGroup(KIBlackbar.dialog.getControlFromTag(kGUI.MiniMaximizeRGID))
+            mmRG = KIBlackbar.dialog.getControlModFromTag(kGUI.MiniMaximizeRGID)
             mmRG.setValue(value)
 
     ## Check if the chat is faded out.
@@ -167,8 +167,8 @@ class xKIChat(object):
             KIMicro.dialog.show()
         else:
             mKIdialog = KIMini.dialog
-        caret = ptGUIControlTextBox(mKIdialog.getControlFromTag(kGUI.ChatCaretID))
-        chatEdit = ptGUIControlEditBox(mKIdialog.getControlFromTag(kGUI.ChatEditboxID))
+        caret = mKIdialog.getControlModFromTag(kGUI.ChatCaretID)
+        chatEdit = mKIdialog.getControlModFromTag(kGUI.ChatEditboxID)
         if entering:
             self.isChatting = True
             if not KIMini.dialog.isEnabled():
@@ -221,7 +221,7 @@ class xKIChat(object):
         msg = message.casefold()
 
         # Get any selected players.
-        userListBox = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kGUI.PlayerList))
+        userListBox = KIMini.dialog.getControlModFromTag(kGUI.PlayerList)
         iSelect = userListBox.getSelection()
         selPlyrList = []
 
@@ -1028,9 +1028,9 @@ class CommandsProcessor:
 
                         # If remaining message is empty, try to do mousefree KI folder selection instead
                         if remainingMsg == "" or remainingMsg.isspace():
-                            userListBox = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kGUI.PlayerList))
-                            caret = ptGUIControlTextBox(KIMini.dialog.getControlFromTag(kGUI.ChatCaretID))
-                            privateChbox = ptGUIControlCheckBox(KIMini.dialog.getControlFromTag(kGUI.miniPrivateToggle))
+                            userListBox = KIMini.dialog.getControlModFromTag(kGUI.PlayerList)
+                            caret = KIMini.dialog.getControlModFromTag(kGUI.ChatCaretID)
+                            privateChbox = KIMini.dialog.getControlModFromTag(kGUI.miniPrivateToggle)
 
                             # Handling for selecting Age Players, Buddies, or Neighbors
                             folderName = None
