@@ -92,7 +92,7 @@ protected:
     void IIncRef();
     void IDecRef();
 
-    // Internal constructor, extra param is to distinguish it from the void* constructor
+    // Internal constructor
     plKey(plKeyData* data);
 };
 
