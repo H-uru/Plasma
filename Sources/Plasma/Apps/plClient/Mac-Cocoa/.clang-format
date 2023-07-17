@@ -1,0 +1,48 @@
+---
+BasedOnStyle: Google
+---
+Language: Cpp
+# Modifications to the style for Plasma go here
+IndentWidth: 4
+ColumnLimit: 0
+BraceWrapping:
+  AfterClass:      true
+  AfterControlStatement: MultiLine
+  AfterEnum:       false
+  AfterFunction:   true
+  AfterNamespace:  false
+  AfterObjCDeclaration: false
+  AfterStruct:     true
+  AfterUnion:      false
+  BeforeCatch:     false
+  BeforeElse:      false
+  IndentBraces:    false
+BreakBeforeBraces: Custom
+AlignConsecutiveDeclarations: AcrossComments
+AlignConsecutiveAssignments:
+  Enabled: False
+ReflowComments: false
+LambdaBodyIndentation: OuterScope
+AllowShortBlocksOnASingleLine: true
+AllowShortFunctionsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+PackConstructorInitializers: CurrentLine
+---
+Language: ObjC
+IndentWidth: 4
+BraceWrapping:
+  AfterClass:      true
+  AfterControlStatement: MultiLine
+  AfterEnum:       false
+  AfterFunction:   true
+  AfterNamespace:  false
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      false
+  BeforeCatch:     false
+  BeforeElse:      false
+  IndentBraces:    false
+BreakBeforeBraces: Custom
+DerivePointerAlignment: False
+PointerAlignment: Right
+ObjCBlockIndentWidth: 4
