@@ -400,14 +400,14 @@ class MarkerBrainVaultQuest(_MarkerGameBrainQuest):
         chron = xMarkerGameUtils.GetNewStyleCaptureChronicle(self.game_id)
         # The double generator is to filter out empty values that would cause int() to error.
         # This can happen under regular gameplay circumstances if the capture chronicle is empty.
-        value = filter(None, (i.strip() for i in chron.chronicleGetValue().split(',')))
+        value = filter(None, (i.strip() for i in chron.getValue().split(',')))
         return set((int(i) for i in value))
 
     @_capture_chronicle.setter
     def _capture_chronicle(self, value: Optional[Set[int]]) -> None:
         chron = xMarkerGameUtils.GetNewStyleCaptureChronicle(self.game_id)
         value = ','.join(map(str, value)) if value else ''
-        chron.chronicleSetValue(value)
+        chron.setValue(value)
 
     def _UpdateCaptureChronicle(self) -> None:
         self._capture_chronicle = self._captures

@@ -110,8 +110,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPythonSDLModifier.h"
 
 // For printing to the log
+#include "plNetClientComm/plNetClientComm.h"
 #include "plStatusLog/plStatusLog.h"
-#include "plNetGameLib/plNetGameLib.h"
 
 // vault
 #include "pyVaultNode.h"
@@ -724,8 +724,7 @@ public:
         PyErr_Display(except, val, tb);
 
         // Send to the log server
-        ST::utf16_buffer wdata = fData.to_string().to_utf16();
-        NetCliAuthLogPythonTraceback(wdata.data());
+        NetCommLogPythonTraceback(fData.to_string());
 
         if (fLog)
             fData.erase(SIZE_MAX);

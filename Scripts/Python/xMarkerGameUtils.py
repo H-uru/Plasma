@@ -74,7 +74,7 @@ class LegacyMarkerChronicle:
 def GetLegacyChronicle() -> LegacyMarkerChronicle:
     vault = ptVault()
     if chron := vault.findChronicleEntry(kLegacyChronicleName):
-        value = chron.chronicleGetValue().strip()
+        value = chron.getValue().strip()
         if not value:
             return LegacyMarkerChronicle()
         try:
@@ -129,7 +129,7 @@ def GetMarkerDataChronicle() -> ptVaultChronicleNode:
 def FindNewStyleChronicle(name: str, *, create: bool = False) -> Optional[ptVaultChronicleNode]:
     root = GetMarkerDataChronicle()
     searchTemplate = ptVaultChronicleNode()
-    searchTemplate.chronicleSetName(name)
+    searchTemplate.setName(name)
     if chron := root.findNode(searchTemplate):
         return chron.upcastToChronicleNode()
     if create:
@@ -141,7 +141,7 @@ def FindNewStyleChronicle(name: str, *, create: bool = False) -> Optional[ptVaul
 def GetNewStyleCaptureChronicle(name: str) -> ptVaultChronicleNode:
     questChron = FindNewStyleChronicle("Quest", create=True)
     captureTemplate = ptVaultChronicleNode()
-    captureTemplate.chronicleSetName(name)
+    captureTemplate.setName(name)
     if chron := questChron.findNode(captureTemplate):
         return chron.upcastToChronicleNode()
     questChron.addNode(captureTemplate)
@@ -149,12 +149,12 @@ def GetNewStyleCaptureChronicle(name: str) -> ptVaultChronicleNode:
 
 def GetNewStyleActiveQuest() -> Optional[int]:
     chron = GetMarkerDataChronicle()
-    if chron.chronicleGetValue() != "quest":
+    if chron.getValue() != "quest":
         PtDebugPrint("xMarkerGameUtils.GetNewStyleActiveQuest():\tMarkerBrain is not in quest mode", level=kDebugDumpLevel)
         return None
     if chron := FindNewStyleChronicle("ActiveQuest"):
         try:
-            value = int(chron.chronicleGetValue().strip())
+            value = int(chron.getValue().strip())
         except ValueError:
             PtDebugPrint("xMarkerGameUtils.GetNewStyleActiveQuest():\tActiveQuest chronicle contained nonsense.")
         else:
@@ -170,7 +170,7 @@ def SetNewStyleActiveQuest(name: Optional[str] = None) -> None:
     chron = GetMarkerDataChronicle()
     chron.setValue("quest" if name != "-1" else "")
     chron = FindNewStyleChronicle("ActiveQuest", create=True)
-    chron.chronicleSetValue(name)
+    chron.setValue(name)
 
 def GetCurrentTime() -> int:
     # No, your eyes do not deceive you. For some reason, the Cyan programmer who wrote the
@@ -189,7 +189,7 @@ def GetCurrentCGZM() -> int:
         return chron.CGZGameNum
     elif chron := FindNewStyleChronicle("CGZ-Mission"):
         try:
-            return int(chron.chronicleGetValue().strip())
+            return int(chron.getValue().strip())
         except ValueError:
             pass
     return -1
@@ -203,13 +203,13 @@ def SetCurrentCGZM(missionID: int) -> None:
         chron = GetMarkerDataChronicle()
         chron.setValue("quest" if missionID == -1 else "cgz")
         chron = FindNewStyleChronicle("CGZ-Mission", create=True)
-        chron.chronicleSetValue(str(missionID))
+        chron.setValue(str(missionID))
 
 def GetCGZMTimes(missionID: int, *, forceLegacy: bool = False) -> CGZMTimes:
     vault = ptVault()
     if forceLegacy or ptGmMarker.isSupported():
         if chron := vault.findChronicleEntry(f"MG{missionID+1:02}"):
-            data = filter(None, (i.strip() for i in chron.chronicleGetValue().split(",")))
+            data = filter(None, (i.strip() for i in chron.getValue().split(",")))
 
             # The legacy MOULa client stored these times as floats in the chronicle, but the game
             # returns whole seconds. Therefore, we're exposing ints. However, we have to manually
@@ -226,7 +226,7 @@ def GetCGZMTimes(missionID: int, *, forceLegacy: bool = False) -> CGZMTimes:
         # Only start times can be retrieved for now.
         if startTimeChron := FindNewStyleChronicle("CGZ-StartTime"):
             try:
-                startTime = int(startTimeChron.chronicleGetValue().strip())
+                startTime = int(startTimeChron.getValue().strip())
             except ValueError:
                 pass
             else:
@@ -258,9 +258,9 @@ def SetCGZMTimes(missionID: int, newTimes: CGZMTimes, *, legacyOnly: bool = Fals
     if not legacyOnly and not ptGmMarker.isSupported():
         if not missionID != GetCurrentCGZM():
             raise RuntimeError("Can only set the times for the current CGZM.")
-        if newStartTimes is not None:
+        if newTimes.start_time is not None:
             startTimeChron = FindNewStyleChronicle("CGZ-StartTime", create=True)
-            startTimeChron.chronicleSetValue(str(newStartTimes))
+            startTimeChron.setValue(str(newTimes.start_time))
 
 def IsCGZMComplete() -> bool:
     missionID = GetCurrentCGZM()
@@ -273,6 +273,6 @@ def IsCGZMComplete() -> bool:
         return False
     else:
         chron = GetNewStyleCaptureChronicle("cgz")
-        caps = set(filter(None, (i.strip() for i in chron.chronicleGetValue().split(','))))
+        caps = set(filter(None, (i.strip() for i in chron.getValue().split(','))))
         return len(grtzMarkerGames.mgs[missionID]) <= len(caps)
 
