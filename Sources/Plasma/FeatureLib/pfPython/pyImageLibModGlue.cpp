@@ -72,39 +72,6 @@ PYTHON_INIT_DEFINITION(ptImageLibMod, args, keywords)
     PYTHON_RETURN_INIT_OK;
 }
 
-PYTHON_RICH_COMPARE_DEFINITION(ptImageLibMod, obj1, obj2, compareType)
-{
-    if ((obj1 == Py_None) || (obj2 == Py_None) || !pyImageLibMod::Check(obj1) || !pyImageLibMod::Check(obj2))
-    {
-        // if they aren't the same type, they don't match, obviously (we also never equal none)
-        if (compareType == Py_EQ)
-            PYTHON_RCOMPARE_FALSE;
-        else if (compareType == Py_NE)
-            PYTHON_RCOMPARE_TRUE;
-        else
-        {
-            PyErr_SetString(PyExc_NotImplementedError, "invalid comparison for a ptImageLibMod object");
-            PYTHON_RCOMPARE_ERROR;
-        }
-    }
-    pyImageLibMod* ilm1 = pyImageLibMod::ConvertFrom(obj1);
-    pyImageLibMod* ilm2 = pyImageLibMod::ConvertFrom(obj2);
-    if (compareType == Py_EQ)
-    {
-        if ((*ilm1) == (*ilm2))
-            PYTHON_RCOMPARE_TRUE;
-        PYTHON_RCOMPARE_FALSE;
-    }
-    else if (compareType == Py_NE)
-    {
-        if ((*ilm1) != (*ilm2))
-            PYTHON_RCOMPARE_TRUE;
-        PYTHON_RCOMPARE_FALSE;
-    }
-    PyErr_SetString(PyExc_NotImplementedError, "invalid comparison for a ptImageLibMod object");
-    PYTHON_RCOMPARE_ERROR;
-}
-
 PYTHON_METHOD_DEFINITION(ptImageLibMod, getImage, args)
 {
     ST::string name;
@@ -145,16 +112,7 @@ PYTHON_START_METHODS_TABLE(ptImageLibMod)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptImageLibMod_AS_NUMBER       PYTHON_NO_AS_NUMBER
-#define ptImageLibMod_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
-#define ptImageLibMod_AS_MAPPING      PYTHON_NO_AS_MAPPING
-#define ptImageLibMod_STR             PYTHON_NO_STR
-#define ptImageLibMod_GETATTRO        PYTHON_NO_GETATTRO
-#define ptImageLibMod_SETATTRO        PYTHON_NO_SETATTRO
-#define ptImageLibMod_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptImageLibMod)
-#define ptImageLibMod_GETSET          PYTHON_NO_GETSET
-#define ptImageLibMod_BASE            PYTHON_NO_BASE
-PLASMA_CUSTOM_TYPE(ptImageLibMod, "Params: ilmKey\nPlasma image library modifier class");
+PLASMA_DEFAULT_TYPE(ptImageLibMod, "Params: ilmKey\nPlasma image library modifier class");
 
 // required functions for PyObject interoperability
 PyObject* pyImageLibMod::New(plImageLibMod* ilm)
