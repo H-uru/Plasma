@@ -41,33 +41,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #import "PLSView.h"
-#include "plMessage/plInputEventMsg.h"
 #include <Metal/Metal.h>
 #include <QuartzCore/QuartzCore.h>
+#include "plMessage/plInputEventMsg.h"
 
 /*
  Plasma view for Cocoa
- 
- This view doesn't interact with drawing yet. Ideally it should implement an OpenGL layer and use the still-deprecated-but-more-supported fully hardware accelerated path. Right now it's allowing the OpenGL context to drive it as a dumb view.
- 
- Mouse input is handled here. The raw event stream is too wide for good mouse support, and sends events for a lot of unrelated views like the menu bar or window chrome. Using a view in the responder chain will automatically filter down to just our events.
- 
- Game Controller in Big Sur also implements mouse support. Becuase Plasma uses a cursor, Cocoa mouse support might be adequate.
+
+ This view doesn't interact with drawing yet. Ideally it should implement an OpenGL layer and use
+ the still-deprecated-but-more-supported fully hardware accelerated path. Right now it's allowing
+ the OpenGL context to drive it as a dumb view.
+
+ Mouse input is handled here. The raw event stream is too wide for good mouse support, and sends
+ events for a lot of unrelated views like the menu bar or window chrome. Using a view in the
+ responder chain will automatically filter down to just our events.
+
+ Game Controller in Big Sur also implements mouse support. Becuase Plasma uses a cursor, Cocoa mouse
+ support might be adequate.
  */
 
 @interface PLSView ()
 
 @property NSTrackingArea *mouseTrackingArea;
 #if PLASMA_PIPELINE_METAL
-@property (weak) CAMetalLayer *metalLayer;
+@property(weak) CAMetalLayer *metalLayer;
 #endif
 
 @end
 
 @implementation PLSView
 
-//MARK: View setup
--(id)initWithFrame:(NSRect)frameRect
+// MARK: View setup
+- (id)initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
 #if PLASMA_PIPELINE_METAL
@@ -91,152 +96,158 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     return YES;
 }
 
-//MARK: Left mouse button
--(void)mouseDown:(NSEvent *)event
+// MARK: Left mouse button
+- (void)mouseDown:(NSEvent *)event
 {
     [self handleMouseButtonEvent:event];
 }
 
--(void)mouseUp:(NSEvent *)event
+- (void)mouseUp:(NSEvent *)event
 {
     [self handleMouseButtonEvent:event];
 }
 
--(void)mouseDragged:(NSEvent *)event
+- (void)mouseDragged:(NSEvent *)event
 {
     [self updateClientMouseLocation:event];
 }
 
-//MARK: Right mouse button
--(void)rightMouseDown:(NSEvent *)event
+// MARK: Right mouse button
+- (void)rightMouseDown:(NSEvent *)event
 {
     [self handleMouseButtonEvent:event];
 }
 
--(void)rightMouseUp:(NSEvent *)event
+- (void)rightMouseUp:(NSEvent *)event
 {
     [self handleMouseButtonEvent:event];
 }
 
--(void)rightMouseDragged:(NSEvent *)event
+- (void)rightMouseDragged:(NSEvent *)event
 {
     [self updateClientMouseLocation:event];
 }
 
-//MARK: Mouse movement
--(void)mouseMoved:(NSEvent *)event {
+// MARK: Mouse movement
+- (void)mouseMoved:(NSEvent *)event
+{
     [self updateClientMouseLocation:event];
 }
 
--(void)mouseEntered:(NSEvent *)event
+- (void)mouseEntered:(NSEvent *)event
 {
     [NSCursor hide];
 }
 
--(void)mouseExited:(NSEvent *)event
+- (void)mouseExited:(NSEvent *)event
 {
     //[super mouseExited:event];
     [NSCursor unhide];
 }
 
-//MARK: Cocoa region tracking
--(void)updateTrackingAreas
+// MARK: Cocoa region tracking
+- (void)updateTrackingAreas
 {
-    if(self.mouseTrackingArea) {
+    if (self.mouseTrackingArea) {
         [self removeTrackingArea:self.mouseTrackingArea];
     }
-    self.mouseTrackingArea = [[NSTrackingArea alloc] initWithRect:self.bounds options:NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder owner:self userInfo:nil];
+    self.mouseTrackingArea = [[NSTrackingArea alloc]
+        initWithRect:self.bounds
+             options:NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder
+               owner:self
+            userInfo:nil];
     [self addTrackingArea:self.mouseTrackingArea];
 }
 
-//MARK: Mouse click handler
--(void)handleMouseButtonEvent:(NSEvent *)event {
+// MARK: Mouse click handler
+- (void)handleMouseButtonEvent:(NSEvent *)event
+{
     [self updateClientMouseLocation:event];
-    
+
     CGPoint windowLocation = [event locationInWindow];
     CGPoint viewLocation = [self convertPoint:windowLocation fromView:nil];
-    
-    plIMouseBEventMsg* pBMsg = new plIMouseBEventMsg;
-    
-    if(event.type == NSEventTypeLeftMouseUp) {
+
+    plIMouseBEventMsg *pBMsg = new plIMouseBEventMsg;
+
+    if (event.type == NSEventTypeLeftMouseUp) {
         pBMsg->fButton |= kLeftButtonUp;
-    }
-    else if(event.type == NSEventTypeRightMouseUp) {
+    } else if (event.type == NSEventTypeRightMouseUp) {
         pBMsg->fButton |= kRightButtonUp;
-    }
-    else if(event.type == NSEventTypeLeftMouseDown) {
+    } else if (event.type == NSEventTypeLeftMouseDown) {
         pBMsg->fButton |= kLeftButtonDown;
-    }
-    else if(event.type == NSEventTypeRightMouseDown) {
+    } else if (event.type == NSEventTypeRightMouseDown) {
         pBMsg->fButton |= kRightButtonDown;
     }
-    
-    @synchronized (self.layer) {
+
+    @synchronized(self.layer) {
         self.inputManager->MsgReceive(pBMsg);
     }
-    
-    delete(pBMsg);
+
+    delete (pBMsg);
 }
 
--(void)updateClientMouseLocation:(NSEvent *)event {
+- (void)updateClientMouseLocation:(NSEvent *)event
+{
     CGPoint windowLocation = [event locationInWindow];
     CGPoint viewLocation = [self convertPoint:windowLocation fromView:nil];
-    
+
     NSRect windowViewBounds = self.bounds;
     CGFloat deltaX = (windowLocation.x) / windowViewBounds.size.width;
-    CGFloat deltaY = (windowViewBounds.size.height - windowLocation.y) / windowViewBounds.size.height;
-    
-    plIMouseXEventMsg* pXMsg = new plIMouseXEventMsg;
-    plIMouseYEventMsg* pYMsg = new plIMouseYEventMsg;
-    
+    CGFloat deltaY =
+        (windowViewBounds.size.height - windowLocation.y) / windowViewBounds.size.height;
+
+    plIMouseXEventMsg *pXMsg = new plIMouseXEventMsg;
+    plIMouseYEventMsg *pYMsg = new plIMouseYEventMsg;
+
     pXMsg->fWx = viewLocation.x;
     pXMsg->fX = deltaX;
 
     pYMsg->fWy = (windowViewBounds.size.height - windowLocation.y);
     pYMsg->fY = deltaY;
-    
-    @synchronized (self.layer) {
-        if(self.inputManager) {
+
+    @synchronized(self.layer) {
+        if (self.inputManager) {
             self.inputManager->MsgReceive(pXMsg);
             self.inputManager->MsgReceive(pYMsg);
         }
     }
-    
-    if(self.inputManager->RecenterMouse()) {
+
+    if (self.inputManager->RecenterMouse()) {
         CGPoint warpPoint = [self.window convertPointToScreen:windowLocation];
         CGPoint newWindowLocation = windowLocation;
-        
-        if(self.inputManager->RecenterMouse() && (pXMsg->fX <= 0.1 || pXMsg->fX >= 0.9) ) {
-            newWindowLocation.x =  CGRectGetMidX(self.window.contentView.bounds);
-            
-            //macOS won't generate a new message on warp, need to tell Plasma by hand
+
+        if (self.inputManager->RecenterMouse() && (pXMsg->fX <= 0.1 || pXMsg->fX >= 0.9)) {
+            newWindowLocation.x = CGRectGetMidX(self.window.contentView.bounds);
+
+            // macOS won't generate a new message on warp, need to tell Plasma by hand
             pXMsg->fWx = newWindowLocation.x;
             pXMsg->fX = 0.5f;
             self.inputManager->MsgReceive(pXMsg);
         }
-        
-        if(self.inputManager->RecenterMouse()  && (pYMsg->fY <= 0.1 || pYMsg->fY >= 0.9) ) {
+
+        if (self.inputManager->RecenterMouse() && (pYMsg->fY <= 0.1 || pYMsg->fY >= 0.9)) {
             newWindowLocation.y = CGRectGetMidY(self.window.contentView.bounds);
-            
-            //macOS won't generate a new message on warp, need to tell Plasma by hand
+
+            // macOS won't generate a new message on warp, need to tell Plasma by hand
             pYMsg->fWy = newWindowLocation.y;
             pYMsg->fY = 0.5f;
             self.inputManager->MsgReceive(pYMsg);
         }
-        
-        if(!CGPointEqualToPoint(newWindowLocation, windowLocation)) {
+
+        if (!CGPointEqualToPoint(newWindowLocation, windowLocation)) {
             warpPoint = [self.window convertPointToScreen:newWindowLocation];
             warpPoint.y = [[NSScreen screens][0] frame].size.height - warpPoint.y;
             CGWarpMouseCursorPosition(warpPoint);
-            //macOS will pause input afer warp, turn that off
-            CGEventSourceRef eventSourceRef = CGEventSourceCreate(kCGEventSourceStateCombinedSessionState);
+            // macOS will pause input afer warp, turn that off
+            CGEventSourceRef eventSourceRef =
+                CGEventSourceCreate(kCGEventSourceStateCombinedSessionState);
             CGEventSourceSetLocalEventsSuppressionInterval(eventSourceRef, 0.0);
             CFRelease(eventSourceRef);
         }
     }
-    
-    delete(pXMsg);
-    delete(pYMsg);
+
+    delete (pXMsg);
+    delete (pYMsg);
 }
 
 - (void)viewDidChangeBackingProperties
@@ -261,14 +272,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 {
     CGSize newSize = [self convertRectToBacking:self.bounds].size;
 
-    if(newSize.width <= 0 || newSize.width <= 0)
-    {
+    if (newSize.width <= 0 || newSize.width <= 0) {
         return;
     }
-    
+
 #if PLASMA_PIPELINE_METAL
-    if(newSize.width == _metalLayer.drawableSize.width &&
-       newSize.height == _metalLayer.drawableSize.height)
+    if (newSize.width == _metalLayer.drawableSize.width &&
+        newSize.height == _metalLayer.drawableSize.height)
     {
         return;
     }

@@ -41,9 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #import "PLSPatcherWindowController.h"
-#include "plProduct.h"
-#include "PLSServerStatus.h"
 #include <string_theory/string>
+#include "PLSServerStatus.h"
+#include "plProduct.h"
 
 @interface PLSPatcherWindowController ()
 
@@ -59,34 +59,46 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
     [self.statusLabel setStringValue:statusString];
 }
 
-- (void)patcher:(PLSPatcher *)patcher updatedProgress:(NSString *)progressMessage withBytes:(NSUInteger)bytes outOf:(uint64_t)totalBytes
+- (void)patcher:(PLSPatcher *)patcher
+    updatedProgress:(NSString *)progressMessage
+          withBytes:(NSUInteger)bytes
+              outOf:(uint64_t)totalBytes
 {
     self.progressBar.indeterminate = false;
     self.progressBar.minValue = 0;
     self.progressBar.doubleValue = bytes;
     self.progressBar.maxValue = totalBytes;
     self.detailStatusLabel.stringValue = progressMessage;
-    
-    NSString *bytesString = [NSByteCountFormatter stringFromByteCount:bytes countStyle:NSByteCountFormatterCountStyleFile];
-    NSString *totalBytesString = [NSByteCountFormatter stringFromByteCount:totalBytes countStyle:NSByteCountFormatterCountStyleFile];
-    
-    self.progressLabel.stringValue = [NSString stringWithFormat:@"%@/%@", bytesString, totalBytesString];
+
+    NSString *bytesString =
+        [NSByteCountFormatter stringFromByteCount:bytes
+                                       countStyle:NSByteCountFormatterCountStyleFile];
+    NSString *totalBytesString =
+        [NSByteCountFormatter stringFromByteCount:totalBytes
+                                       countStyle:NSByteCountFormatterCountStyleFile];
+
+    self.progressLabel.stringValue =
+        [NSString stringWithFormat:@"%@/%@", bytesString, totalBytesString];
 }
 
-- (void)patcherCompleted:(nonnull PLSPatcher *)patcher {
-    //intercepted by the application
+- (void)patcherCompleted:(nonnull PLSPatcher *)patcher
+{
+    // intercepted by the application
 }
 
-
-- (void)patcherCompletedWithError:(nonnull PLSPatcher *)patcher error:(nonnull NSError *)error {
-    //intercepted by the application
+- (void)patcherCompletedWithError:(nonnull PLSPatcher *)patcher error:(nonnull NSError *)error
+{
+    // intercepted by the application
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
 {
     if (context == StatusTextDidChangeContext) {
         PLSServerStatus *serverStatus = object;
-        if(serverStatus.serverStatusString) {
+        if (serverStatus.serverStatusString) {
             self.serverStatusLabel.stringValue = serverStatus.serverStatusString;
         }
     } else {
@@ -94,20 +106,27 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
     }
 }
 
-
-- (void)windowDidLoad {
+- (void)windowDidLoad
+{
     [super windowDidLoad];
-    
+
     [self.progressBar startAnimation:self];
-    self.productLabel.stringValue = [NSString stringWithUTF8String:plProduct::ProductString().c_str()];
-    //register for an async notification of when status loads
-    [[PLSServerStatus sharedStatus] addObserver:self forKeyPath:@"serverStatusString" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:StatusTextDidChangeContext];
+    self.productLabel.stringValue =
+        [NSString stringWithUTF8String:plProduct::ProductString().c_str()];
+    // register for an async notification of when status loads
+    [[PLSServerStatus sharedStatus]
+        addObserver:self
+         forKeyPath:@"serverStatusString"
+            options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial
+            context:StatusTextDidChangeContext];
 }
 
-- (void)encodeWithCoder:(nonnull NSCoder *)coder {
+- (void)encodeWithCoder:(nonnull NSCoder *)coder
+{
 }
 
-- (IBAction)cancelButtonHit:(id)sender {
+- (IBAction)cancelButtonHit:(id)sender
+{
     [NSApp terminate:self];
 }
 

@@ -40,64 +40,72 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plMessage/plInputEventMsg.h"
+#import "PLSKeyboardEventMonitor.h"
+#include <Carbon/Carbon.h>
 #import "plClient/plClient.h"
 #include "plClient/plClientLoader.h"
 #include "plInputCore/plInputManager.h"
-#import "PLSKeyboardEventMonitor.h"
-#include <Carbon/Carbon.h>
+#include "plMessage/plInputEventMsg.h"
 
 /*
  This class implements a Cocoa keyboard tap for Plasma.
- 
- IOKit isn't being used for raw keyboard input because it requires special privacy permission in macOS Catalina and higher. The Cocoa event stream is cumbersome, but doesn't require a permision.
- 
- There should be an alternate implementation for macOS 11 that uses the Game Controller framework, which supports keyboards in Big Sur and higher. That input is more appropriate for a game, and would also work on an iPad version. That is not yet implemented.
+
+ IOKit isn't being used for raw keyboard input because it requires special privacy permission in
+ macOS Catalina and higher. The Cocoa event stream is cumbersome, but doesn't require a permision.
+
+ There should be an alternate implementation for macOS 11 that uses the Game Controller framework,
+ which supports keyboards in Big Sur and higher. That input is more appropriate for a game, and
+ would also work on an iPad version. That is not yet implemented.
  */
 
-@interface PLSKeyboardEventMonitor () {
+@interface PLSKeyboardEventMonitor ()
+{
     plClientLoader *_gClient;
 }
 
-@property (weak) NSView *view;
+@property(weak) NSView *view;
 @property plInputManager *inputManager;
-@property (retain) id localMonitor;
+@property(retain) id localMonitor;
 
 @end
 
 @implementation PLSKeyboardEventMonitor
 
--(plClientLoader&)gClient {
+- (plClientLoader &)gClient
+{
     return *_gClient;
 }
 
--(id)initWithView:(NSView *)view inputManager:(plClientLoader *)gClient
+- (id)initWithView:(NSView *)view inputManager:(plClientLoader *)gClient
 {
     self = [super init];
     self.view = view;
     _gClient = gClient;
     self.inputManager = self.gClient->GetInputManager();
-    
+
     const NSEventMask eventMasks = NSEventMaskKeyDown | NSEventMaskKeyUp | NSEventMaskFlagsChanged;
-    
-    self.localMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:eventMasks handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
-        if ([self processEvent:event]) {
-            return nil;
-        }
-        return event;
-    }];
-    
+
+    self.localMonitor =
+        [NSEvent addLocalMonitorForEventsMatchingMask:eventMasks
+                                              handler:^NSEvent *_Nullable(NSEvent *_Nonnull event) {
+                                                  if ([self processEvent:event]) {
+                                                      return nil;
+                                                  }
+                                                  return event;
+                                              }];
+
     return self;
 }
 
--(BOOL)processEvent:(NSEvent *)event {
-    //is this even an event for our window
+- (BOOL)processEvent:(NSEvent *)event
+{
+    // is this even an event for our window
     if ([event window] == [self.view window]) {
-        switch(event.type) {
+        switch (event.type) {
             case NSEventTypeKeyDown:
             case NSEventTypeKeyUp:
             case NSEventTypeFlagsChanged: {
-                if(self.gClient->GetQuitIntro() == false) {
+                if (self.gClient->GetQuitIntro() == false) {
                     self.gClient->SetQuitIntro(true);
                     return true;
                 } else {
@@ -113,42 +121,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     return NO;
 }
 
--(BOOL)isFunctionKey:(UInt16)keycode {
-    return  (
-             keycode == kVK_F1 ||
-             keycode == kVK_F2 ||
-             keycode == kVK_F3 ||
-             keycode == kVK_F4 ||
-             keycode == kVK_F5 ||
-             keycode == kVK_F6 ||
-             keycode == kVK_F7 ||
-             keycode == kVK_F8 ||
-             keycode == kVK_F9 ||
-             keycode == kVK_F10 ||
-             keycode == kVK_F11 ||
-             keycode == kVK_F12 ||
-             keycode == kVK_F13 ||
-             keycode == kVK_F14 ||
-             keycode == kVK_F15 ||
-             keycode == kVK_F16 ||
-             keycode == kVK_F17 ||
-             keycode == kVK_F18 ||
-             keycode == kVK_F19 ||
-             keycode == kVK_F20
-             );
+- (BOOL)isFunctionKey:(UInt16)keycode
+{
+    return (keycode == kVK_F1 || keycode == kVK_F2 || keycode == kVK_F3 || keycode == kVK_F4 ||
+            keycode == kVK_F5 || keycode == kVK_F6 || keycode == kVK_F7 || keycode == kVK_F8 ||
+            keycode == kVK_F9 || keycode == kVK_F10 || keycode == kVK_F11 || keycode == kVK_F12 ||
+            keycode == kVK_F13 || keycode == kVK_F14 || keycode == kVK_F15 || keycode == kVK_F16 ||
+            keycode == kVK_F17 || keycode == kVK_F18 || keycode == kVK_F19 || keycode == kVK_F20);
 }
 
--(BOOL)processKeyEvent:(NSEvent *)event {
+- (BOOL)processKeyEvent:(NSEvent *)event
+{
     NSEventModifierFlags modifierFlags = [event modifierFlags];
-    //Don't intercept system key commands
+    // Don't intercept system key commands
     if (modifierFlags & NSEventModifierFlagCommand) {
         return NO;
     }
-    
+
     BOOL down = event.type == NSEventTypeKeyDown;
-    
+
     unsigned short keycode = [event keyCode];
-    //if it's a shift key event only way to derive up or down is through presence in the modifier flag
+    // if it's a shift key event only way to derive up or down is through presence in the modifier
+    // flag
     if (keycode == kVK_Shift) {
         down = (event.modifierFlags & NSEventModifierFlagShift) != 0;
     }
@@ -158,36 +152,36 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     if (keycode == kVK_Control) {
         down = (event.modifierFlags & NSEventModifierFlagControl) != 0;
     }
-    
+
     /*
      This gets weird.
-     Recent Apple hardware is starting to have its system key shortcuts assigned to the fn key instead of just the command key.
-     (For example: Function-F is the fullscreen toggle on the 2021 Macbook Pro.)
-     So we want to pass function key class events back to the system and not trap them. But the system also considers key up/down/left/right
-     as "function keys". So we want to not trap events that are function key events, but we do want to trap the arrow keys.
+     Recent Apple hardware is starting to have its system key shortcuts assigned to the fn key
+     instead of just the command key. (For example: Function-F is the fullscreen toggle on the 2021
+     Macbook Pro.) So we want to pass function key class events back to the system and not trap
+     them. But the system also considers key up/down/left/right as "function keys". So we want to
+     not trap events that are function key events, but we do want to trap the arrow keys.
      */
-    //Edit 2: We also want to catch the function key modifier but not the actual function keys
-    if (!(keycode == kVK_LeftArrow ||
-          keycode == kVK_RightArrow ||
-          keycode == kVK_UpArrow ||
-          keycode == kVK_DownArrow ||
-          keycode == kVK_Home ||
-          keycode == kVK_End ||
-          keycode == kVK_PageUp ||
-          keycode == kVK_PageDown ||
-          [self isFunctionKey:keycode]
-          ) && modifierFlags & NSEventModifierFlagFunction) {
+    // Edit 2: We also want to catch the function key modifier but not the actual function keys
+    if (!(keycode == kVK_LeftArrow || keycode == kVK_RightArrow || keycode == kVK_UpArrow ||
+          keycode == kVK_DownArrow || keycode == kVK_Home || keycode == kVK_End ||
+          keycode == kVK_PageUp || keycode == kVK_PageDown || [self isFunctionKey:keycode]) &&
+        modifierFlags & NSEventModifierFlagFunction)
+    {
         return NO;
     }
-    
-    @synchronized (self.view.layer) {
-        self.inputManager->HandleKeyEvent((plKeyDef)keycode, down, event.type == NSEventTypeFlagsChanged ? false : event.ARepeat);
+
+    @synchronized(self.view.layer) {
+        self.inputManager->HandleKeyEvent(
+            (plKeyDef)keycode, down, event.type == NSEventTypeFlagsChanged ? false : event.ARepeat);
         if (!(modifierFlags & NSEventModifierFlagFunction) && down) {
             if (event.type != NSEventTypeFlagsChanged && event.characters.length > 0) {
-                // Only works for BMP code points (up to U+FFFF), but that's unlikely to matter at this stage...
+                // Only works for BMP code points (up to U+FFFF), but that's unlikely to matter at
+                // this stage...
                 wchar_t character = [event.characters characterAtIndex:0];
                 if (!std::iswcntrl(character)) {
-                    self.inputManager->HandleKeyEvent((plKeyDef)keycode, down, event.type == NSEventTypeFlagsChanged ? false : event.ARepeat, character);
+                    self.inputManager->HandleKeyEvent(
+                        (plKeyDef)keycode, down,
+                        event.type == NSEventTypeFlagsChanged ? false : event.ARepeat, character);
                 }
             }
         }

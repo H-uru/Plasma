@@ -41,23 +41,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #import "PLSLoginWindowController.h"
+#include <regex>
 #import "PLSServerStatus.h"
+#include "StringTheory_NSString.h"
+#include "pfPasswordStore/pfPasswordStore.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plProduct.h"
-#include "pfPasswordStore/pfPasswordStore.h"
-#include <regex>
 #include "pnEncryption/plChallengeHash.h"
-#include "StringTheory_NSString.h"
 
 @interface PLSLoginWindowController ()
 
-@property (assign) IBOutlet NSTextField *accountNameTextField;
-@property (assign) IBOutlet NSSecureTextField *passwordTextField;
-@property (assign) IBOutlet NSTextField *statusTextField;
-@property (assign) IBOutlet NSTextField *productTextField;
-@property (assign) IBOutlet NSWindow *loggingInWindow;
+@property(assign) IBOutlet NSTextField *accountNameTextField;
+@property(assign) IBOutlet NSSecureTextField *passwordTextField;
+@property(assign) IBOutlet NSTextField *statusTextField;
+@property(assign) IBOutlet NSTextField *productTextField;
+@property(assign) IBOutlet NSWindow *loggingInWindow;
 
-@property (strong) PLSLoginParameters *loginParameters;
+@property(strong) PLSLoginParameters *loginParameters;
 
 @end
 
@@ -67,28 +67,29 @@ static NSOperationQueue *_loginQueue = nil;
 
 @implementation PLSLoginController
 
-+(void)initialize {
++ (void)initialize
+{
     _loginQueue = [NSOperationQueue new];
     _loginQueue.maxConcurrentOperationCount = 1;
 }
 
-+(void)attemptLogin:(void (^)(ENetError))completion {
++ (void)attemptLogin:(void (^)(ENetError))completion
+{
     NSBlockOperation *operation = [[NSBlockOperation alloc] init];
     __weak NSBlockOperation *weakOperation = operation;
     [operation addExecutionBlock:^{
         NetCliAuthAutoReconnectEnable(false);
-        
-        if (!NetCliAuthQueryConnected())
-            NetCommConnect();
+
+        if (!NetCliAuthQueryConnected()) NetCommConnect();
         NetCommAuthenticate(nullptr);
-        
+
         while (!NetCommIsLoginComplete()) {
-            if(weakOperation.cancelled) {
+            if (weakOperation.cancelled) {
                 return;
             }
             NetCommUpdate();
         }
-        
+
         ENetError result = NetCommGetAuthResult();
         [NSOperationQueue.mainQueue addOperationWithBlock:^{
             completion(result);
@@ -103,28 +104,32 @@ static NSOperationQueue *_loginQueue = nil;
 
 static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
 
-- (id)init {
+- (id)init
+{
     self = [super init];
     [self load];
     return self;
 }
 
--(void)save {
-    //windows segments by product name here. in since user defaults belong to this product, we don't need to do that.
+- (void)save
+{
+    // windows segments by product name here. in since user defaults belong to this product, we
+    // don't need to do that.
     NSString *serverName = [NSString stringWithSTString:GetServerDisplayName()];
-    NSMutableDictionary *settingsDictionary = [[[NSUserDefaults standardUserDefaults] dictionaryForKey:serverName] mutableCopy];
-    if(!settingsDictionary)
-        settingsDictionary = [NSMutableDictionary dictionary];
+    NSMutableDictionary *settingsDictionary =
+        [[[NSUserDefaults standardUserDefaults] dictionaryForKey:serverName] mutableCopy];
+    if (!settingsDictionary) settingsDictionary = [NSMutableDictionary dictionary];
     [settingsDictionary setObject:self.username forKey:@"LastAccountName"];
-    [settingsDictionary setObject:[NSNumber numberWithBool:self.rememberPassword] forKey:@"RememberPassword"];
+    [settingsDictionary setObject:[NSNumber numberWithBool:self.rememberPassword]
+                           forKey:@"RememberPassword"];
     [[NSUserDefaults standardUserDefaults] setObject:settingsDictionary forKey:serverName];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    if(self.password && ![self.password isEqualToString:FAKE_PASS_STRING]) {
+
+    if (self.password && ![self.password isEqualToString:FAKE_PASS_STRING]) {
         ST::string username = ST::string([self.username cStringUsingEncoding:NSUTF8StringEncoding]);
         ST::string password = ST::string([self.password cStringUsingEncoding:NSUTF8StringEncoding]);
-        
-        pfPasswordStore* store = pfPasswordStore::Instance();
+
+        pfPasswordStore *store = pfPasswordStore::Instance();
         if (self.rememberPassword)
             store->SetPassword(username, password);
         else
@@ -132,21 +137,24 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
     }
 }
 
--(void)load {
+- (void)load
+{
     NSString *serverName = [NSString stringWithSTString:GetServerDisplayName()];
-    NSDictionary *settingsDictionary = [[NSUserDefaults standardUserDefaults] dictionaryForKey:serverName];
+    NSDictionary *settingsDictionary =
+        [[NSUserDefaults standardUserDefaults] dictionaryForKey:serverName];
     self.username = [settingsDictionary objectForKey:@"LastAccountName"];
     self.rememberPassword = [[settingsDictionary objectForKey:@"RememberPassword"] boolValue];
-    
-    if(self.rememberPassword) {
-        pfPasswordStore* store = pfPasswordStore::Instance();
+
+    if (self.rememberPassword) {
+        pfPasswordStore *store = pfPasswordStore::Instance();
         ST::string username = [self.username STString];
         ST::string password = store->GetPassword(username);
         self.password = [NSString stringWithSTString:password];
     }
 }
 
--(void)storeHash:(ShaDigest &)namePassHash {
+- (void)storeHash:(ShaDigest &)namePassHash
+{
     //  Hash username and password before sending over the 'net.
     //  -- Legacy compatibility: @gametap (and other usernames with domains in them) need
     //     to be hashed differently.
@@ -156,25 +164,25 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
     std::cmatch match;
     std::regex_search(username.c_str(), match, re_domain);
     if (match.empty() || ST::string(match[2].str()).compare_i("gametap") == 0) {
-        plSHA1Checksum shasum(password.size(), reinterpret_cast<const uint8_t*>(password.c_str()));
-        uint32_t* dest = reinterpret_cast<uint32_t*>(namePassHash);
-        const uint32_t* from = reinterpret_cast<const uint32_t*>(shasum.GetValue());
+        plSHA1Checksum shasum(password.size(), reinterpret_cast<const uint8_t *>(password.c_str()));
+        uint32_t *dest = reinterpret_cast<uint32_t *>(namePassHash);
+        const uint32_t *from = reinterpret_cast<const uint32_t *>(shasum.GetValue());
         dest[0] = hsToBE32(from[0]);
         dest[1] = hsToBE32(from[1]);
         dest[2] = hsToBE32(from[2]);
         dest[3] = hsToBE32(from[3]);
         dest[4] = hsToBE32(from[4]);
-    }
-    else {
+    } else {
         //  Domain-based Usernames...
         CryptHashPassword(username, password, namePassHash);
     }
 }
 
--(void)makeCurrent {
+- (void)makeCurrent
+{
     ShaDigest hash;
     [self storeHash:hash];
-    
+
     ST::string username = ST::string([self.username cStringUsingEncoding:NSUTF8StringEncoding]);
     NetCommSetAccountUsernamePassword(username, hash);
     NetCommSetAuthTokenAndOS(nullptr, u"mac");
@@ -184,53 +192,64 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
 
 @implementation PLSLoginWindowController
 
-- (void)windowDidLoad {
-    //register for an async notification of when status loads
-    [[PLSServerStatus sharedStatus] addObserver:self forKeyPath:@"serverStatusString" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:StatusTextDidChangeContext];
-    
+- (void)windowDidLoad
+{
+    // register for an async notification of when status loads
+    [[PLSServerStatus sharedStatus]
+        addObserver:self
+         forKeyPath:@"serverStatusString"
+            options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial
+            context:StatusTextDidChangeContext];
+
     self.loginParameters = [[PLSLoginParameters alloc] init];
     [self.loginParameters load];
-    
-    if(self.loginParameters.rememberPassword) {
+
+    if (self.loginParameters.rememberPassword) {
         [self.passwordTextField setStringValue:FAKE_PASS_STRING];
     }
-    
+
     [super windowDidLoad];
-    
+
     [self.window center];
-    [self.productTextField setStringValue:[NSString stringWithSTString:plProduct::ProductString().c_str()]];
+    [self.productTextField
+        setStringValue:[NSString stringWithSTString:plProduct::ProductString().c_str()]];
 }
 
-- (NSNibName)windowNibName {
+- (NSNibName)windowNibName
+{
     return @"PLSLoginWindowController";
 }
 
-- (IBAction)quitButtonHit:(id)sender {
+- (IBAction)quitButtonHit:(id)sender
+{
     [NSApp terminate:self];
 }
 
-- (IBAction)loginButtonHit:(id)sender {
+- (IBAction)loginButtonHit:(id)sender
+{
     [self.loginParameters save];
-    
-    [self.window beginSheet:self.loggingInWindow completionHandler:^(NSModalResponse returnCode) {
-        
-    }];
-    
+
+    [self.window beginSheet:self.loggingInWindow
+          completionHandler:^(NSModalResponse returnCode){
+
+          }];
+
     [self.loginParameters makeCurrent];
-    
+
     [PLSLoginController attemptLogin:^(ENetError result) {
         [self loginAttemptEndedWithResult:result];
     }];
 }
 
--(void)loginAttemptEndedWithResult:(ENetError)result {
+- (void)loginAttemptEndedWithResult:(ENetError)result
+{
     [self.window endSheet:self.loggingInWindow];
-    
-    if(result == kNetSuccess) {
+
+    if (result == kNetSuccess) {
         [self.delegate loginWindowControllerDidLogin:self];
     } else {
-        //In the future - disconnect on cancel
-        //NetCommDisconnect();
+        // In the future - disconnect on cancel
+        // NetCommDisconnect();
         NSAlert *loginFailedAlert = [[NSAlert alloc] init];
         loginFailedAlert.messageText = @"Authentication Failed";
         loginFailedAlert.informativeText = @"Please try again.";
@@ -240,22 +259,27 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
     }
 }
 
-- (IBAction)needAccountButtonHit:(id)sender {
+- (IBAction)needAccountButtonHit:(id)sender
+{
     NSString *urlString = [NSString stringWithSTString:GetServerSignupUrl()];
     NSURL *url = [NSURL URLWithString:urlString];
-    if(url) {
+    if (url) {
         [[NSWorkspace sharedWorkspace] openURL:url];
     }
 }
 
-- (IBAction)donateButtonHit:(id)sender {
+- (IBAction)donateButtonHit:(id)sender
+{
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
 {
     if (context == StatusTextDidChangeContext) {
         PLSServerStatus *serverStatus = object;
-        if(serverStatus.serverStatusString) {
+        if (serverStatus.serverStatusString) {
             self.statusTextField.stringValue = serverStatus.serverStatusString;
         }
     } else {

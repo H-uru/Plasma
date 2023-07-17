@@ -42,17 +42,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #import "PLSServerStatus.h"
 #include <string_theory/string>
-#include "plNetGameLib/plNetGameLib.h"
 #include "StringTheory_NSString.h"
+#include "plNetGameLib/plNetGameLib.h"
 
 @interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString * serverStatusString;
+@property NSString *serverStatusString;
 @end
 
 @implementation PLSServerStatus
 
-+(id)sharedStatus {
-    static PLSServerStatus* shared = nil;
++ (id)sharedStatus
+{
+    static PLSServerStatus *shared = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         shared = [[self alloc] init];
@@ -60,18 +61,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     return shared;
 }
 
--(void)loadServerStatus
+- (void)loadServerStatus
 {
     NSString *urlString = [NSString stringWithSTString:GetServerStatusUrl()];
     NSURL *url = [NSURL URLWithString:urlString];
-    NSURLSessionConfiguration *URLSessionConfiguration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration delegate:self delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask *statusTask = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if(data) {
-            NSString *statusString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            self.serverStatusString = statusString;
-        }
-    }];
+    NSURLSessionConfiguration *URLSessionConfiguration =
+        [NSURLSessionConfiguration ephemeralSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
+                                                          delegate:self
+                                                     delegateQueue:NSOperationQueue.mainQueue];
+    NSURLSessionTask *statusTask = [session
+          dataTaskWithURL:url
+        completionHandler:^(NSData *_Nullable data, NSURLResponse *_Nullable response,
+                            NSError *_Nullable error) {
+            if (data) {
+                NSString *statusString = [[NSString alloc] initWithData:data
+                                                               encoding:NSUTF8StringEncoding];
+                self.serverStatusString = statusString;
+            }
+        }];
     [statusTask resume];
 }
 
