@@ -70,39 +70,6 @@ PYTHON_INIT_DEFINITION(ptLayer, args, keywords)
     PYTHON_RETURN_INIT_OK;
 }
 
-PYTHON_RICH_COMPARE_DEFINITION(ptLayer, obj1, obj2, compareType)
-{
-    if ((obj1 == Py_None) || (obj2 == Py_None) || !pyLayer::Check(obj1) || !pyLayer::Check(obj2))
-    {
-        // if they aren't the same type, they don't match, obviously (we also never equal none)
-        if (compareType == Py_EQ)
-            PYTHON_RCOMPARE_FALSE;
-        else if (compareType == Py_NE)
-            PYTHON_RCOMPARE_TRUE;
-        else
-        {
-            PyErr_SetString(PyExc_NotImplementedError, "invalid comparison for a ptLayer object");
-            PYTHON_RCOMPARE_ERROR;
-        }
-    }
-    pyLayer* layer1 = pyLayer::ConvertFrom(obj1);
-    pyLayer* layer2 = pyLayer::ConvertFrom(obj2);
-    if (compareType == Py_EQ)
-    {
-        if ((*layer1) == (*layer2))
-            PYTHON_RCOMPARE_TRUE;
-        PYTHON_RCOMPARE_FALSE;
-    }
-    else if (compareType == Py_NE)
-    {
-        if ((*layer1) != (*layer2))
-            PYTHON_RCOMPARE_TRUE;
-        PYTHON_RCOMPARE_FALSE;
-    }
-    PyErr_SetString(PyExc_NotImplementedError, "invalid comparison for a ptLayer object");
-    PYTHON_RCOMPARE_ERROR;
-}
-
 PYTHON_GET_DEFINITION(ptLayer, texture)
 {
     return self->fThis->GetTexture();
@@ -133,7 +100,7 @@ PYTHON_END_METHODS_TABLE;
 #define ptLayer_STR             PYTHON_NO_STR
 #define ptLayer_GETATTRO        PYTHON_NO_GETATTRO
 #define ptLayer_SETATTRO        PYTHON_NO_SETATTRO
-#define ptLayer_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptLayer)
+#define ptLayer_RICH_COMPARE    PYTHON_NO_RICH_COMPARE
 #define ptLayer_GETSET          PYTHON_DEFAULT_GETSET(ptLayer)
 #define ptLayer_BASE            PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptLayer, "Params: layerKey\nPlasma layer class");
