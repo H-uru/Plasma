@@ -42,68 +42,99 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Cocoa/Cocoa.h>
 
+int hsMessageBoxWithOwner(hsWindowHndl owner, NSString* message, NSString* caption, int kind, int icon)
+{
+    // this is a private method - caller is responsible
+    // for wrapping in a valid autorelease pool
+    __block NSModalResponse response;
+    NSCondition *lock = [NSCondition new];
+    dispatch_block_t alertBlock = ^{
+        NSAlert *alert = [NSAlert new];
+        alert.messageText = caption;
+        alert.informativeText = message;
+        
+        if (icon == hsMessageBoxIconError)
+            alert.alertStyle = NSAlertStyleCritical;
+        else if (icon == hsMessageBoxIconQuestion)
+            alert.alertStyle = NSAlertStyleInformational;
+        else if (icon == hsMessageBoxIconExclamation)
+            alert.alertStyle = NSAlertStyleWarning;
+        else if (icon == hsMessageBoxIconAsterisk)
+            alert.alertStyle = NSAlertStyleWarning;
+        else
+            alert.alertStyle = NSAlertStyleCritical;
+        
+        if (kind == hsMessageBoxNormal)
+            [alert addButtonWithTitle:@"OK"];
+        else if (kind == hsMessageBoxAbortRetyIgnore) {
+            [alert addButtonWithTitle:@"Retry"];
+            [alert addButtonWithTitle:@"Ignore"];
+        } else if (kind == hsMessageBoxOkCancel) {
+            [alert addButtonWithTitle:@"OK"];
+            [alert addButtonWithTitle:@"Cancel"];
+        } else if (kind == hsMessageBoxRetryCancel) {
+            [alert addButtonWithTitle:@"Retry"];
+            [alert addButtonWithTitle:@"Cancel"];
+        } else if (kind == hsMessageBoxYesNo) {
+            [alert addButtonWithTitle:@"Yes"];
+            [alert addButtonWithTitle:@"No"];
+        } else if (kind == hsMessageBoxYesNoCancel) {
+            [alert addButtonWithTitle:@"Yes"];
+            [alert addButtonWithTitle:@"No"];
+            [alert addButtonWithTitle:@"Cancel"];
+        } else
+            [alert addButtonWithTitle:@"OK"];
+        response = [alert runModal];
+        [lock lock];
+        [lock signal];
+        [lock unlock];
+    };
+    
+    //Plasma may call dialogs from any thread, not just the main thread
+    //Check to see if we're on the main thread and directly execute
+    //the dialog if we are.
+    if ([NSRunLoop currentRunLoop] == [NSRunLoop mainRunLoop]) {
+        alertBlock();
+    } else {
+        [[NSRunLoop mainRunLoop] performInModes:@[NSDefaultRunLoopMode] block:alertBlock];
+        [lock lock];
+        [lock wait];
+        [lock unlock];
+    }
+    
+    return (int)response;
+}
+
 int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon)
 {
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
     
     @autoreleasepool {
-        __block NSModalResponse response;
-        NSCondition *lock = [NSCondition new];
-        dispatch_block_t alertBlock = ^{
-            NSAlert *alert = [NSAlert new];
-            alert.messageText = [NSString stringWithCString:caption encoding:NSUTF8StringEncoding];
-            alert.informativeText = [NSString stringWithCString:message encoding:NSUTF8StringEncoding];
-            
-            if (icon == hsMessageBoxIconError)
-                alert.alertStyle = NSAlertStyleCritical;
-            else if (icon == hsMessageBoxIconQuestion)
-                alert.alertStyle = NSAlertStyleInformational;
-            else if (icon == hsMessageBoxIconExclamation)
-                alert.alertStyle = NSAlertStyleWarning;
-            else if (icon == hsMessageBoxIconAsterisk)
-                alert.alertStyle = NSAlertStyleWarning;
-            else
-                alert.alertStyle = NSAlertStyleCritical;
-            
-            if (kind == hsMessageBoxNormal)
-                [alert addButtonWithTitle:@"OK"];
-            else if (kind == hsMessageBoxAbortRetyIgnore) {
-                [alert addButtonWithTitle:@"Retry"];
-                [alert addButtonWithTitle:@"Ignore"];
-            } else if (kind == hsMessageBoxOkCancel) {
-                [alert addButtonWithTitle:@"OK"];
-                [alert addButtonWithTitle:@"Cancel"];
-            } else if (kind == hsMessageBoxRetryCancel) {
-                [alert addButtonWithTitle:@"Retry"];
-                [alert addButtonWithTitle:@"Cancel"];
-            } else if (kind == hsMessageBoxYesNo) {
-                [alert addButtonWithTitle:@"Yes"];
-                [alert addButtonWithTitle:@"No"];
-            } else if (kind == hsMessageBoxYesNoCancel) {
-                [alert addButtonWithTitle:@"Yes"];
-                [alert addButtonWithTitle:@"No"];
-                [alert addButtonWithTitle:@"Cancel"];
-            } else
-                [alert addButtonWithTitle:@"OK"];
-            response = [alert runModal];
-            [lock lock];
-            [lock signal];
-            [lock unlock];
-        };
-        
-        //Plasma may call dialogs from any thread, not just the main thread
-        //Check to see if we're on the main thread and directly execute
-        //the dialog if we are.
-        if ([NSRunLoop currentRunLoop] == [NSRunLoop mainRunLoop]) {
-            alertBlock();
-        } else {
-            [[NSRunLoop mainRunLoop] performInModes:@[NSDefaultRunLoopMode] block:alertBlock];
-            [lock lock];
-            [lock wait];
-            [lock unlock];
-        }
-        
-        return response;
+        return hsMessageBoxWithOwner(owner,
+                                     [NSString stringWithCString:caption encoding:NSUTF8StringEncoding],
+                                     [NSString stringWithCString:message encoding:NSUTF8StringEncoding],
+                                     kind,
+                                     icon);
+    }
+}
+
+int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wchar_t* caption, int kind, int icon)
+{
+    if (hsMessageBox_SuppressPrompts)
+        return hsMBoxOk;
+    
+    @autoreleasepool {
+        return hsMessageBoxWithOwner(owner,
+                                     [[[NSString alloc] initWithBytesNoCopy:(void *)caption
+                                                                     length:wcslen(caption)*sizeof(*caption)
+                                                                   encoding:NSUTF32LittleEndianStringEncoding freeWhenDone:NO
+                                      ] autorelease],
+                                     [[[NSString alloc] initWithBytesNoCopy:(void *)message
+                                                                     length:wcslen(caption)*sizeof(*caption)
+                                                                   encoding:NSUTF32LittleEndianStringEncoding freeWhenDone:NO
+                                      ] autorelease],
+                                     kind,
+                                     icon);
     }
 }
