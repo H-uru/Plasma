@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plZlibStream_h_inc
 
 #include "hsStream.h"
-#include <string>
 
 //
 // This is for reading a .gz file from a buffer, and writing the uncompressed data to a file.
@@ -54,20 +53,15 @@ class plZlibStream : public hsStream
 protected:
     hsStream* fOutput;
     void* fZStream;
+    bool fErrorOccurred;
     bool fDecompressedOk;
-
-    enum Validate { kNeedMoreData, kInvalidHeader, kValidHeader };
-    Validate fHeader;
-    std::vector<uint8_t> fHeaderCache;
 
     // needed for rewind function
     plFileName fFilename;
     const char* fMode;
 
-    int IValidateGzHeader(uint32_t byteCount, const void* buffer);
-
 public:
-    plZlibStream() : fOutput(), fZStream(), fHeader(kNeedMoreData), fDecompressedOk(), fMode() { }
+    plZlibStream() : fOutput(), fZStream(), fErrorOccurred(), fDecompressedOk(), fMode() { }
     virtual ~plZlibStream();
 
     bool     Open(const plFileName& filename, const char* mode) override;
