@@ -45,7 +45,8 @@
           <li><a href="https://www.openssl.org/">OpenSSL</a></li>
           <li><a href="https://openal-soft.org/">OpenAL Soft</a></li>
           <li><a href="https://libexpat.github.io/">Expat</a></li>
-          <li><a href="https://libjpeg-turbo.org/">libjpeg</a></li>
+          <li><a href="https://www.freetype.org/">FreeType</a></li>
+          <li><a href="https://libjpeg-turbo.org/">libjpeg-turbo</a></li>
           <li><a href="http://www.libpng.org/">libpng</a></li>
           <li><a href="https://zlib.net/">zlib</a></li>
           <li><a href="https://curl.se/">libcurl</a></li>
@@ -57,8 +58,9 @@
         <ul>
           <li><a href="https://cairosvg.org/">CairoSVG</a> (for building resource.dat)</li>
           <li><a href="https://python-pillow.org/">Pillow</a> (for building resource.dat)</li>
-          <li><a href="https://www.freetype.org/">FreeType</a> (for plFontConverter)</li>
-          <li><a href="https://www.qt.io/download-open-source">Qt5</a> (for the GUI tools)</li>
+          <li><a href="https://github.com/anholt/libepoxy">epoxy</a> (for experimental OpenGL support)</li>
+          <li><a href="https://www.fontconfig.org/">fontconfig</a> (for Linux font support)</li>
+          <li><a href="https://www.qt.io/download-open-source">Qt</a> (for the GUI tools)</li>
           <li><a href="https://www.webmproject.org/">VPX and WebM</a> (for video)</li>
           <li><a href="https://www.opus-codec.org/">Opus</a> (for video and voice chat)</li>
           <li><a href="https://www.speex.org/downloads/">Speex</a> (for legacy voice chat)</li>
@@ -69,24 +71,24 @@
 
       <h3 id="building-windows">Building on Windows</h3>
 
-      <p>Compiling on Windows requires Visual Studio. We recommend <a href="https://visualstudio.microsoft.com/downloads/">Visual Studio 2019 Community Edition</a>, which is available as a free download. Install the “Desktop development with C++” workload.</p>
+      <p>Compiling on Windows requires Visual Studio. We recommend <a href="https://visualstudio.microsoft.com/downloads/">Visual Studio 2022 Community Edition</a>, which is available as a free download. Install the “Desktop development with C++” workload.</p>
 
       <ol>
         <li>
-          <p>Clone the repository from GitHub, including all submodules, using a git client. On the command line, this can be done by executing the following:<br>
-            <code>git clone --recurse-submodules https://github.com/H-uru/Plasma.git</code></p>
+          <p>Launch Visual Studio, and pick <strong>Clone a repository</strong> on the startup screen.</p>
+        </li>
 
-          <p class="infonote" data-infotype="warning"><b>Note:</b> We recommend using <a href="https://git-scm.com/download/win">Git for Windows</a>. Using the git program provided by Cygwin will not set permissions properly on some files and result in build failures.</p>
+        <li>
+          <p>Enter the following URL as the repository location:<br>
+            <code>https://github.com/H-uru/Plasma.git</code></p>
+
+          <p>Specify the folder path on your machine where you'd like the code to be cloned, and then click <strong>Clone</strong>.</p>
 
           <p class="infonote" data-infotype="warning"><b>Note:</b> Some dependencies may fail to build if the path to the code contains spaces.</p>
         </li>
 
         <li>
-          <p>Launch Visual Studio.</p>
-        </li>
-
-        <li>
-          <p>Select <strong>Open a local folder</strong> and choose the folder where you cloned the repository.</p>
+          <p>When Visual Studio finishes cloning the repository, double click on <strong>Folder View</strong> in the Solution Explorer panel.</p>
         </li>
 
         <li>
@@ -153,7 +155,7 @@
 
       <p>Linux and macOS are <strong>not officially supported targets</strong>, and the game client does not compile. However, several of the tools can be built and run.</p>
 
-      <p>You will need to ensure all the required dependencies are available. You may be able to use vcpkg on these platforms, but it has not been extensively tested.</p>
+      <p>You will need to ensure all the required dependencies are available. On macOS, a Homebrew bundle file is included in the repository, which can be installed by running <code>brew bundle</code>. You can also use vcpkg on these platforms for automatically managing dependencies.</p>
 
       <ol>
         <li>
