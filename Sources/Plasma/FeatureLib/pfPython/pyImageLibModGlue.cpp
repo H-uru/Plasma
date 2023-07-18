@@ -80,19 +80,15 @@ PYTHON_METHOD_DEFINITION(ptImageLibMod, getImage, args)
         PYTHON_RETURN_ERROR;
     }
 
-    pyImage* image = self->fThis->GetImage(name);
-    if (image)
-        return pyImage::New(image->GetKey());
-
-    PYTHON_RETURN_NONE;
+    return self->fThis->GetImage(name);
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptImageLibMod, getImages)
 {
-    const std::vector<pyImage*> imageList = self->fThis->GetImages();
+    const std::vector<PyObject*> imageList = self->fThis->GetImages();
     PyObject* retVal = PyTuple_New(imageList.size());
     for (size_t curKey = 0; curKey < imageList.size(); curKey++)
-        PyTuple_SET_ITEM(retVal, curKey, pyImage::New(imageList[curKey]->GetKey()));
+        PyTuple_SET_ITEM(retVal, curKey, imageList[curKey]);
     return retVal;
 }
 
@@ -101,7 +97,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptImageLibMod, getNames)
     std::vector<ST::string> nameList = self->fThis->GetImageNames();
     PyObject* retVal = PyTuple_New(nameList.size());
     for (size_t curKey = 0; curKey < nameList.size(); curKey++)
-        PyTuple_SET_ITEM(retVal, curKey, PyUnicode_FromSTString(nameList[curKey])); // steals the nameList ref
+        PyTuple_SET_ITEM(retVal, curKey, PyUnicode_FromSTString(nameList[curKey]));
     return retVal;
 }
 

@@ -58,7 +58,7 @@ void pyImageLibMod::setKey(pyKey& ilmKey) // only for python glue, do NOT call
     fModifierKey = ilmKey.getKey();
 }
 
-pyImage* pyImageLibMod::GetImage(const ST::string& name) const
+PyObject* pyImageLibMod::GetImage(const ST::string& name) const
 {
     plBitmap* image;
 
@@ -67,12 +67,15 @@ pyImage* pyImageLibMod::GetImage(const ST::string& name) const
     else
         image = plImageLibMod::ConvertNoRef(fModifierKey->ObjectIsLoaded())->GetImage(name);
 
-    return pyImage::ConvertFrom(pyImage::New(dynamic_cast<plMipmap*>(image)));
+    if (image)
+        return pyImage::New(plMipmap::ConvertNoRef(image));
+
+    PYTHON_RETURN_NONE;
 }
 
-const std::vector<pyImage*> pyImageLibMod::GetImages() const
+std::vector<PyObject*> pyImageLibMod::GetImages() const
 {
-    std::vector<pyImage*> imageList;
+    std::vector<PyObject*> imageList;
     plImageLibMod* mod;
 
     if (fModifier)
@@ -80,14 +83,17 @@ const std::vector<pyImage*> pyImageLibMod::GetImages() const
     else
         mod = plImageLibMod::ConvertNoRef(fModifierKey->ObjectIsLoaded());
 
-    for (const auto& image : mod->GetImages())
-        imageList.push_back(pyImage::ConvertFrom(pyImage::New(dynamic_cast<plMipmap*>(image))));
+    imageList.reserve(mod->GetImages().size());
+    for (const auto& image : mod->GetImages()) {
+        if (image)
+            imageList.push_back(pyImage::New(plMipmap::ConvertNoRef(image)));
+    }
+
     return imageList;
 }
 
-const std::vector<ST::string> pyImageLibMod::GetImageNames() const
+std::vector<ST::string> pyImageLibMod::GetImageNames() const
 {
-    std::vector<ST::string> nameList;
     plImageLibMod* mod;
 
     if (fModifier)
@@ -95,7 +101,5 @@ const std::vector<ST::string> pyImageLibMod::GetImageNames() const
     else
         mod = plImageLibMod::ConvertNoRef(fModifierKey->ObjectIsLoaded());
 
-    for (const auto& name : mod->GetImageNames())
-        nameList.push_back(name);
-    return nameList;
+    return mod->GetImageNames();
 }

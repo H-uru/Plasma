@@ -52,9 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGlueHelpers.h"
 
-#include "pnKeyedObject/plKey.h"
 #include "plModifier/plImageLibMod.h"
 
+class plKey;
 class pyImage;
 
 class pyImageLibMod
@@ -116,9 +116,9 @@ public:
     plKey GetKey() const { return fModifier ? fModifier->GetKey() : fModifierKey; }
 
     // for python access
-    pyImage* GetImage (const ST::string& name) const;
-    const std::vector<ST::string> GetImageNames() const;
-    const std::vector<pyImage*> GetImages() const;
+    PyObject* GetImage (const ST::string& name) const;
+    std::vector<ST::string> GetImageNames() const;
+    std::vector<PyObject*> GetImages() const;
 };
 
 #endif  // pyImageLibMod_h

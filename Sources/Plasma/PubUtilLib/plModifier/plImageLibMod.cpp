@@ -99,18 +99,12 @@ plBitmap* plImageLibMod::GetImage(const ST::string& imageName) const
     return nullptr;
 }
 
-const std::vector<plBitmap*> plImageLibMod::GetImages() const
-{
-    std::vector<plBitmap*> images;
-    for (auto image : fImages)
-        images.emplace_back(image);
-    return images;
-}
-
-const std::vector<ST::string> plImageLibMod::GetImageNames() const
+std::vector<ST::string> plImageLibMod::GetImageNames() const
 {
     std::vector<ST::string> names;
-    for (auto image : fImages) {
+    names.reserve(fImages.size());
+
+    for (const auto& image : fImages) {
         if (image)
             names.emplace_back(image->GetKeyName());
     }
