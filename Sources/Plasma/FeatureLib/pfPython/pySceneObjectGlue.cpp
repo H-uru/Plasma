@@ -185,7 +185,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptSceneobject, getImageLibMods)
     std::vector<PyObject*> vecList = self->fThis->GetImageLibMods();
     PyObject* retVal = PyTuple_New(vecList.size());
     for (int curKey = 0; curKey < vecList.size(); curKey++)
-        PyTuple_SetItem(retVal, curKey, vecList[curKey]);
+        PyTuple_SET_ITEM(retVal, curKey, vecList[curKey]);
     return retVal;
 }
 
