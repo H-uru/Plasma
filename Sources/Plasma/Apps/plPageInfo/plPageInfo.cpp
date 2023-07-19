@@ -216,12 +216,12 @@ public:
 
     bool EatKey(const plKey& key) override
     {
-        plKeyImp* imp = (plKey)key;
+        const plKeyImp* imp = plKeyImp::GetFromKey(key);
 
-        fStream.WriteString(imp->GetName());
+        fStream.WriteString(key->GetName());
         fStream.WriteString(",");
 
-        fStream.WriteString(plFactory::GetNameOfClass(imp->GetUoid().GetClassType()));
+        fStream.WriteString(plFactory::GetNameOfClass(key->GetUoid().GetClassType()));
         fStream.WriteString(",");
 
         char buf[30];

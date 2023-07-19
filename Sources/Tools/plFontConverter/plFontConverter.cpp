@@ -259,7 +259,7 @@ void plFontConverter::ExportP2F()
 void plFontConverter::IMakeFontGoAway()
 {
     if (fFont != nullptr) {
-        plKeyImp *imp = (plKeyImp *)(fFont->GetKey());
+        plKeyImp* imp = plKeyImp::GetFromKey(fFont->GetKey());
         if (imp != nullptr)
             imp->SetObjectPtr(nullptr);
         fFont = nullptr;

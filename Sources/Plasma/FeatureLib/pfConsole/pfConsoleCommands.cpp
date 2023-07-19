@@ -2568,30 +2568,29 @@ PF_CONSOLE_CMD( Registry, SetLoggingLevel, "int level", "Sets the logging level 
     }
 }
 
-class plActiveRefPeekerKey : public plKeyImp
+class pfConsoleActiveRefPeeker
 {
     public:
-        size_t      PeekNumNotifies() { return GetNumNotifyCreated(); }
-        plRefMsg*   PeekNotifyCreated(size_t i) { return GetNotifyCreated(i); }
-        bool        PeekIsActiveRef(size_t i) const { return IsActiveRef(i); }
+    static bool IsActiveRef(const plKey& key, size_t i)
+    {
+        return plKeyImp::GetFromKey(key)->IsActiveRef(i);
+    }
 };
 
 // Not static so others can call it - making it even handier
 void MyHandyPrintFunction(const plKey &obj, void (*PrintString)(const ST::string&))
 {
-    plActiveRefPeekerKey *peeker = (plActiveRefPeekerKey *)(plKeyImp *)obj;
-
-    if( peeker->GetUoid().IsClone() )
+    if (obj->GetUoid().IsClone())
         PrintString(ST::format("{} refs on {}, clone {}:{}: loaded={}",
-            peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName(),
-            peeker->GetUoid().GetCloneID(), peeker->GetUoid().GetClonePlayerID(),
+            obj->GetNumNotifyCreated(), obj->GetUoid().GetObjectName(),
+            obj->GetUoid().GetCloneID(), obj->GetUoid().GetClonePlayerID(),
             obj->ObjectIsLoaded() ? 1 : 0));
     else
         PrintString(ST::format("{} refs on {}: loaded={}",
-            peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName(),
+            obj->GetNumNotifyCreated(), obj->GetUoid().GetObjectName(),
             obj->ObjectIsLoaded() ? 1 : 0));
 
-    if( peeker->PeekNumNotifies() == 0 )
+    if (obj->GetNumNotifyCreated() == 0)
         return;
 
     uint32_t a, j, limit = 30, count = 0;
@@ -2599,11 +2598,11 @@ void MyHandyPrintFunction(const plKey &obj, void (*PrintString)(const ST::string
     {
         PrintString( ( a == 0 ) ? "  Active:" : "  Passive:" );
 
-        for (size_t i = 0; i < peeker->PeekNumNotifies(); i++)
+        for (size_t i = 0; i < obj->GetNumNotifyCreated(); i++)
         {
-            if( ( a == 0 && peeker->PeekIsActiveRef( i ) ) || ( a == 1 && !peeker->PeekIsActiveRef( i ) ) )
+            if ((a == 0 && pfConsoleActiveRefPeeker::IsActiveRef(obj, i)) || (a == 1 && !pfConsoleActiveRefPeeker::IsActiveRef(obj, i)))
             {
-                plRefMsg *msg = peeker->PeekNotifyCreated( i );
+                plRefMsg *msg = obj->GetNotifyCreated(i);
                 if (msg != nullptr)
                 {
                     for( j = 0; j < msg->GetNumReceivers(); j++ )
@@ -2644,12 +2643,12 @@ PF_CONSOLE_CMD( Registry, ListRefs, "string keyType, string keyName", "For the g
 
     MyHandyPrintFunction( obj, PrintString );
     
-    plActiveRefPeekerKey *peeker = (plActiveRefPeekerKey *)(plKeyImp *)obj;
-    if( peeker->GetNumClones() > 0 )
+    plKeyImp* imp = plKeyImp::GetFromKey(obj);
+    if (imp->GetNumClones() > 0)
     {
-        for (size_t i = 0; i < peeker->GetNumClones(); i++)
+        for (size_t i = 0; i < imp->GetNumClones(); i++)
         {
-            MyHandyPrintFunction( peeker->GetCloneByIdx( i ), PrintString );
+            MyHandyPrintFunction(imp->GetCloneByIdx(i), PrintString);
         }
     }
 }

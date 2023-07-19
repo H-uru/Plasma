@@ -1206,7 +1206,7 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
     {
         // First, do we have the system?
         plSceneObject *dstSysSO = GetFollowerParticleSystemSO();
-        if (!dstSysSO || ((plKeyImp*)dstSysSO->GetKey())->GetCloneOwner() != partMsg->fSysSOKey) 
+        if (!dstSysSO || plKeyImp::GetFromKey(dstSysSO->GetKey())->GetCloneOwner() != partMsg->fSysSOKey) 
         {
             // Need to clone and resend.
             if (plNetClientApp::GetInstance()->GetLocalPlayer() != GetTarget(0))

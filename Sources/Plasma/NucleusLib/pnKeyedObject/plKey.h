@@ -55,7 +55,6 @@ class hsBitVector;
 //  Pointer to a plKeyData struct, which is a handle to a keyedObject
 
 class plKeyData;
-class plKeyImp;
 
 class plKey 
 {
@@ -83,7 +82,7 @@ public:
     plKeyData* operator->() const;
     plKeyData& operator*() const;
 
-    operator plKeyImp*() const { return (plKeyImp*)fKeyData; }
+    operator bool() const { return fKeyData != nullptr; }
 
     static plKey Make(plKeyData* data) { return plKey(data); }
 
@@ -93,7 +92,7 @@ protected:
     void IIncRef();
     void IDecRef();
 
-    // Internal constructor, extra param is to distinguish it from the void* constructor
+    // Internal constructor
     plKey(plKeyData* data);
 };
 

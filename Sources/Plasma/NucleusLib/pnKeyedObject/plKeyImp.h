@@ -60,6 +60,11 @@ public:
     plKeyImp(plUoid, uint32_t pos,uint32_t len);
     virtual ~plKeyImp();
 
+    static plKeyImp* GetFromKey(const plKey& key)
+    {
+        return static_cast<plKeyImp*>(&*key);
+    }
+
     const plUoid&           GetUoid() const override { return fUoid; }
     ST::string              GetName() const override;
 
@@ -172,6 +177,9 @@ protected:
     mutable int16_t             fPendingRefs;   // Outstanding requests I have out.
     mutable std::vector<plKeyImp*>  fClones;    // clones of me
     mutable plKey               fCloneOwner;    // pointer for clones back to the owning key
+
+    friend class pfConsoleActiveRefPeeker;
+    friend class plPageOptimizer; // needs to update fStartPos
 };
 
 #endif // hsRegistry_inc
