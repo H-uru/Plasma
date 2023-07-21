@@ -164,7 +164,7 @@ INT_PTR plFootstepSoundComponentProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND 
         {
             int i;
             for (i = 0; i < plArmatureEffectsMgr::kMaxSurface; i++)
-                ComboBox_AddString(hSurface, plArmatureEffectsMgr::SurfaceStrings[i]);
+                ComboBox_AddString(hSurface, ST2T(plArmatureEffectsMgr::SurfaceStrings[i]));
 
             curSurface = pb->GetInt(ParamID(plFootstepSoundComponent::kSurface));
             ComboBox_SetCurSel(hSurface, curSurface);

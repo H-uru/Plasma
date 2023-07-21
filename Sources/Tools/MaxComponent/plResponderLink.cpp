@@ -1560,7 +1560,7 @@ public:
         {
         case WM_INITDIALOG:
             for (i = 0; i < plArmatureEffectsMgr::kMaxSurface; i++)
-                ComboBox_AddString(hCB, plArmatureEffectsMgr::SurfaceStrings[i]);
+                ComboBox_AddString(hCB, ST2T(plArmatureEffectsMgr::SurfaceStrings[i]));
 
             ComboBox_SetCurSel(hCB, pb->GetInt(ParamID(kSurface)));
 
@@ -1604,13 +1604,10 @@ const TCHAR* plResponderCmdFootSurface::GetInstanceName(IParamBlock2 *pb)
 {
     static TCHAR name[256];
 
-#ifdef UNICODE
-    _snwprintf(name, std::size(name), L"Foot Surface (%S)",
-        plArmatureEffectsMgr::SurfaceStrings[pb->GetInt(ParamID(kSurface))]);
-#else
-    _snprintf(name, std::size(name), "Foot Surface (%s)",
-        plArmatureEffectsMgr::SurfaceStrings[pb->GetInt(ParamID(kSurface))]);
-#endif
+    _sntprintf(
+        name, std::size(name), _T("Foot Surface (%s)"),
+        ST2T(plArmatureEffectsMgr::SurfaceStrings[pb->GetInt(ParamID(kSurface))])
+    );
     return name;
 }
 
