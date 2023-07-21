@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 
 #ifdef HS_BUILD_FOR_APPLE
-#import <Accelerate/Accelerate.h>
+#include <Accelerate/Accelerate.h>
 #endif
 
 static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& rhs)
@@ -57,7 +57,7 @@ static inline hsMatrix44 IMatrixMul34(const hsMatrix44& lhs, const hsMatrix44& r
     ret.NotIdentity();
     
 #ifdef HS_BUILD_FOR_APPLE
-    vDSP_mmul((const float*)lhs.fMap, 1, (const float*)rhs.fMap, 1, (float*)&(ret.fMap), 1, 3, 4, 4);
+    vDSP_mmul(const_cast<float*>(lhs.fMap[0]), 1, const_cast<float*>(rhs.fMap[0]), 1, ret.fMap[0], 1, 3, 4, 4);
 #else
     ret.fMap[0][0] = lhs.fMap[0][0] * rhs.fMap[0][0]
         + lhs.fMap[0][1] * rhs.fMap[1][0]
