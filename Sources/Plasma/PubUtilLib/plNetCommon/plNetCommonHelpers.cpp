@@ -275,7 +275,7 @@ void plCreatableListHelper::Write( hsStream* s, hsResMgr* mgr )
             }
         }
 
-        ram.Truncate();
+        ram.Reset();
 
         ram.WriteByte(fFlags);
         ram.WriteLE32(bufSz);
