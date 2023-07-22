@@ -58,28 +58,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfAudio/plRandomSoundMod.h"
 #include "pfMessage/plArmatureEffectMsg.h"
 
-const char *plArmatureEffectsMgr::SurfaceStrings[] = 
+using namespace ST::literals;
+
+ST::string plArmatureEffectsMgr::SurfaceStrings[] = 
 {
-    "Dirt",
-    "Puddle",
-    "Water",
-    "Tile",
-    "Metal",
-    "WoodBridge",
-    "RopeLadder",
-    "Grass",
-    "Brush",
-    "HardWood",
-    "Rug",
-    "Stone",
-    "Mud",
-    "MetalLadder",
-    "WoodLadder",
-    "DeepWater",
-    "Maintainer(Glass)",
-    "Maintainer(Stone)",
-    "Swimming",
-    "(none)" // Keep this one last
+    "Dirt"_st,
+    "Puddle"_st,
+    "Water"_st,
+    "Tile"_st,
+    "Metal"_st,
+    "WoodBridge"_st,
+    "RopeLadder"_st,
+    "Grass"_st,
+    "Brush"_st,
+    "HardWood"_st,
+    "Rug"_st,
+    "Stone"_st,
+    "Mud"_st,
+    "MetalLadder"_st,
+    "WoodLadder"_st,
+    "DeepWater"_st,
+    "Maintainer(Glass)"_st,
+    "Maintainer(Stone)"_st,
+    "Swimming"_st,
+    "(none)"_st // Keep this one last
 };
 
 

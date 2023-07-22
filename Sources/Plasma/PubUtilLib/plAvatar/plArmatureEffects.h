@@ -109,7 +109,7 @@ public:
         kMaxSurface,
         kFootNoSurface = kMaxSurface,
     };  
-    static const char *SurfaceStrings[];
+    static ST::string SurfaceStrings[];
 };
 
 class plArmatureEffect : public hsKeyedObject
