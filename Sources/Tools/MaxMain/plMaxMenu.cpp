@@ -320,7 +320,7 @@ void plCreateMenu()
 
         // Update the menu version
         wchar_t buf[12];
-        _snwprintf(buf, std::size(buf), L"%d", kMenuVersion);
+        swprintf(buf, std::size(buf), L"%d", kMenuVersion);
         WritePrivateProfileStringW(L"Menu", L"Version", buf, plMaxConfig::GetPluginIni().WideString().data());
     }
     
