@@ -113,7 +113,8 @@ elseif(APPLE)
         Mac-Cocoa/MainMenu.xib
         Mac-Cocoa/PLSLoginWindowController.xib
         Mac-Cocoa/PLSPatcherWindowController.xib
-        Mac-Cocoa/banner@2x.jpeg
+        Mac-Cocoa/banner.png
+        Mac-Cocoa/banner@2x.png
         win32/res/Dirt.ICO
     )
     
