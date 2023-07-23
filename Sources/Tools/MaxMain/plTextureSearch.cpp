@@ -330,12 +330,9 @@ void plTextureSearch::IUpdateTextures(plTextureSearch::Update update)
             sizeX = FloorPow2(sizeX);
             sizeY = FloorPow2(sizeY);
 
-            char buf[256];
-
             while (sizeX >= 4 && sizeY >= 4)
             {
-                sprintf(buf, "%d x %d", sizeX, sizeY);
-                int idx = ComboBox_AddString(hCombo, buf);
+                int idx = ComboBox_AddString(hCombo, ST2T(ST::format("{} x {}", sizeX, sizeY)));
                 ComboBox_SetItemData(hCombo, idx, MAKELPARAM(sizeX, sizeY));
 
                 sizeX >>= 1;

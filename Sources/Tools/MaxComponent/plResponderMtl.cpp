@@ -524,7 +524,7 @@ void plResponderMtlProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
         savedName = _M("");
 
     ComboBox_ResetContent(hLoop);
-    int sel = ComboBox_AddString(hLoop, ENTIRE_ANIMATION_NAME);
+    int sel = ComboBox_AddString(hLoop, _T(ENTIRE_ANIMATION_NAME));
     ComboBox_SetCurSel(hLoop, sel);
     
     // Get the NoteTrack animations off the selected material

@@ -763,7 +763,7 @@ void plResponderAnimProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
         ST::string loopName;
         while (!(loopName = info.GetNextLoopName()).empty())
         {
-            int idx = ComboBox_AddString(hLoop, loopName.c_str());
+            int idx = ComboBox_AddString(hLoop, ST2T(loopName));
             ComboBox_SetItemData(hLoop, idx, 1);
 
             if (!loopName.compare(savedName))

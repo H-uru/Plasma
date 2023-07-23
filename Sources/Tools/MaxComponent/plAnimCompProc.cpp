@@ -309,7 +309,7 @@ void plMtlAnimProc::ILoadAnimCombo(HWND hWnd, IParamBlock2* pb)
     HWND hAnim = GetDlgItem(hWnd, fAnimComboID);
 
     ComboBox_ResetContent(hAnim);
-    int sel = ComboBox_AddString(hAnim, ENTIRE_ANIMATION_NAME);
+    int sel = ComboBox_AddString(hAnim, _T(ENTIRE_ANIMATION_NAME));
     ComboBox_SetCurSel(hAnim, sel);
     
     auto savedName = pb->GetStr(fAnimParamID);
@@ -323,7 +323,7 @@ void plMtlAnimProc::ILoadAnimCombo(HWND hWnd, IParamBlock2* pb)
         ST::string animName;
         while (!(animName = anim.GetNextAnimName()).empty())
         {
-            int idx = ComboBox_AddString(hAnim, animName.c_str());
+            int idx = ComboBox_AddString(hAnim, ST2T(animName));
             ComboBox_SetItemData(hAnim, idx, 1);
             if (!animName.compare(savedName))
                 ComboBox_SetCurSel(hAnim, idx);
