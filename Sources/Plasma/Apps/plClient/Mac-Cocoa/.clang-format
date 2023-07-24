@@ -46,3 +46,4 @@ BreakBeforeBraces: Custom
 DerivePointerAlignment: False
 PointerAlignment: Right
 ObjCBlockIndentWidth: 4
+ColumnLimit: 0
