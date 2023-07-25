@@ -44,13 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 @implementation NSString (StringTheory)
 
-- (id)initWithSTString:(const ST::string &)string
+- (id)initWithSTString:(const ST::string&)string
 {
     self = [self initWithUTF8String:string.c_str()];
     return self;
 }
 
-+ (id)stringWithSTString:(const ST::string &)string
++ (id)stringWithSTString:(const ST::string&)string
 {
     return [[NSString alloc] initWithSTString:string];
 }

@@ -56,16 +56,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class Patcher
 {
    public:
-    PLSPatcher *parent;
-    void IOnPatchComplete(ENetError result, const ST::string &msg);
-    void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const ST::string &status);
-    void IOnDownloadBegin(const plFileName &file);
+    PLSPatcher* parent;
+    void IOnPatchComplete(ENetError result, const ST::string& msg);
+    void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const ST::string& status);
+    void IOnDownloadBegin(const plFileName& file);
 };
 
 @interface PLSPatcher ()
 @property BOOL selfPatched;
-@property pfPatcher *patcher;
-@property NSTimer *networkPumpTimer;
+@property pfPatcher* patcher;
+@property NSTimer* networkPumpTimer;
 @property Patcher cppPatcher;
 @end
 
@@ -87,12 +87,12 @@ class Patcher
     _patcher->OnCompletion(std::bind(&Patcher::IOnPatchComplete, _cppPatcher, std::placeholders::_1,
                                      std::placeholders::_2));
     _patcher->OnFileDownloadDesired(IApproveDownload);
-    _patcher->OnSelfPatch([&](const plFileName &file) {});
-    _patcher->OnRedistUpdate([&](const plFileName &file) {});
+    _patcher->OnSelfPatch([&](const plFileName& file) {});
+    _patcher->OnRedistUpdate([&](const plFileName& file) {});
 
     self.networkPumpTimer = [NSTimer timerWithTimeInterval:1.0 / 1000.0
                                                    repeats:true
-                                                     block:^(NSTimer *_Nonnull timer) {
+                                                     block:^(NSTimer* _Nonnull timer) {
                                                          hsTimer::IncSysSeconds();
                                                          NetClientUpdate();
                                                      }];
@@ -107,17 +107,17 @@ class Patcher
     self.patcher->Start();
 }
 
-void Patcher::IOnDownloadBegin(const plFileName &file)
+void Patcher::IOnDownloadBegin(const plFileName& file)
 {
-    NSString *fileName = [NSString stringWithSTString:file.AsString()];
+    NSString* fileName = [NSString stringWithSTString:file.AsString()];
     dispatch_async(dispatch_get_main_queue(), ^{
         [parent.delegate patcher:parent beganDownloadOfFile:fileName];
     });
 }
 
-void Patcher::IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const ST::string &status)
+void Patcher::IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const ST::string& status)
 {
-    NSString *statusString = [NSString stringWithSTString:status];
+    NSString* statusString = [NSString stringWithSTString:status];
 
     dispatch_async(dispatch_get_main_queue(), ^{
         [parent.delegate patcher:parent
@@ -127,23 +127,23 @@ void Patcher::IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const ST::
     });
 }
 
-bool IApproveDownload(const plFileName &file)
+bool IApproveDownload(const plFileName& file)
 {
     ST::string ext = file.GetFileExt();
     // nothing from Windows, please
     return ext != "exe" && ext != "pdb" && ext != "dll";
 }
 
-void Patcher::IOnPatchComplete(ENetError result, const ST::string &msg)
+void Patcher::IOnPatchComplete(ENetError result, const ST::string& msg)
 {
     [parent.networkPumpTimer invalidate];
     if (IS_NET_SUCCESS(result)) {
-        PLSPatcher *patcher = parent;
+        PLSPatcher* patcher = parent;
         dispatch_async(dispatch_get_main_queue(), ^{
             [patcher.delegate patcherCompleted:patcher];
         });
     } else {
-        NSString *msgString = [NSString stringWithSTString:msg];
+        NSString* msgString = [NSString stringWithSTString:msg];
 
         dispatch_async(dispatch_get_main_queue(), ^{
             [parent.delegate

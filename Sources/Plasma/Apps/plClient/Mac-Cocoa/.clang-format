@@ -44,6 +44,7 @@ BraceWrapping:
   IndentBraces:    false
 BreakBeforeBraces: Custom
 DerivePointerAlignment: False
-PointerAlignment: Right
+# Not Obj-C standard but following C++ convention
+PointerAlignment: Left
 ObjCBlockIndentWidth: 4
 ColumnLimit: 0

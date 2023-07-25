@@ -51,19 +51,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 @interface PLSLoginWindowController ()
 
-@property(assign) IBOutlet NSTextField *accountNameTextField;
-@property(assign) IBOutlet NSSecureTextField *passwordTextField;
-@property(assign) IBOutlet NSTextField *statusTextField;
-@property(assign) IBOutlet NSTextField *productTextField;
-@property(assign) IBOutlet NSWindow *loggingInWindow;
+@property(assign) IBOutlet NSTextField* accountNameTextField;
+@property(assign) IBOutlet NSSecureTextField* passwordTextField;
+@property(assign) IBOutlet NSTextField* statusTextField;
+@property(assign) IBOutlet NSTextField* productTextField;
+@property(assign) IBOutlet NSWindow* loggingInWindow;
 
-@property(strong) PLSLoginParameters *loginParameters;
+@property(strong) PLSLoginParameters* loginParameters;
 
 @end
 
 #define FAKE_PASS_STRING @"********"
 
-static NSOperationQueue *_loginQueue = nil;
+static NSOperationQueue* _loginQueue = nil;
 
 @implementation PLSLoginController
 
@@ -75,8 +75,8 @@ static NSOperationQueue *_loginQueue = nil;
 
 + (void)attemptLogin:(void (^)(ENetError))completion
 {
-    NSBlockOperation *operation = [[NSBlockOperation alloc] init];
-    __weak NSBlockOperation *weakOperation = operation;
+    NSBlockOperation* operation = [[NSBlockOperation alloc] init];
+    __weak NSBlockOperation* weakOperation = operation;
     [operation addExecutionBlock:^{
         NetCliAuthAutoReconnectEnable(false);
 
@@ -102,7 +102,7 @@ static NSOperationQueue *_loginQueue = nil;
 
 @implementation PLSLoginParameters
 
-static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
+static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
 
 - (id)init
 {
@@ -115,8 +115,8 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
 {
     // windows segments by product name here. in since user defaults belong to this product, we
     // don't need to do that.
-    NSString *serverName = [NSString stringWithSTString:GetServerDisplayName()];
-    NSMutableDictionary *settingsDictionary =
+    NSString* serverName = [NSString stringWithSTString:GetServerDisplayName()];
+    NSMutableDictionary* settingsDictionary =
         [[[NSUserDefaults standardUserDefaults] dictionaryForKey:serverName] mutableCopy];
     if (!settingsDictionary) settingsDictionary = [NSMutableDictionary dictionary];
     [settingsDictionary setObject:self.username forKey:@"LastAccountName"];
@@ -129,7 +129,7 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
         ST::string username = ST::string([self.username cStringUsingEncoding:NSUTF8StringEncoding]);
         ST::string password = ST::string([self.password cStringUsingEncoding:NSUTF8StringEncoding]);
 
-        pfPasswordStore *store = pfPasswordStore::Instance();
+        pfPasswordStore* store = pfPasswordStore::Instance();
         if (self.rememberPassword)
             store->SetPassword(username, password);
         else
@@ -139,21 +139,21 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
 
 - (void)load
 {
-    NSString *serverName = [NSString stringWithSTString:GetServerDisplayName()];
-    NSDictionary *settingsDictionary =
+    NSString* serverName = [NSString stringWithSTString:GetServerDisplayName()];
+    NSDictionary* settingsDictionary =
         [[NSUserDefaults standardUserDefaults] dictionaryForKey:serverName];
     self.username = [settingsDictionary objectForKey:@"LastAccountName"];
     self.rememberPassword = [[settingsDictionary objectForKey:@"RememberPassword"] boolValue];
 
     if (self.rememberPassword) {
-        pfPasswordStore *store = pfPasswordStore::Instance();
+        pfPasswordStore* store = pfPasswordStore::Instance();
         ST::string username = [self.username STString];
         ST::string password = store->GetPassword(username);
         self.password = [NSString stringWithSTString:password];
     }
 }
 
-- (void)storeHash:(ShaDigest &)namePassHash
+- (void)storeHash:(ShaDigest&)namePassHash
 {
     //  Hash username and password before sending over the 'net.
     //  -- Legacy compatibility: @gametap (and other usernames with domains in them) need
@@ -164,9 +164,9 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
     std::cmatch match;
     std::regex_search(username.c_str(), match, re_domain);
     if (match.empty() || ST::string(match[2].str()).compare_i("gametap") == 0) {
-        plSHA1Checksum shasum(password.size(), reinterpret_cast<const uint8_t *>(password.c_str()));
-        uint32_t *dest = reinterpret_cast<uint32_t *>(namePassHash);
-        const uint32_t *from = reinterpret_cast<const uint32_t *>(shasum.GetValue());
+        plSHA1Checksum shasum(password.size(), reinterpret_cast<const uint8_t*>(password.c_str()));
+        uint32_t* dest = reinterpret_cast<uint32_t*>(namePassHash);
+        const uint32_t* from = reinterpret_cast<const uint32_t*>(shasum.GetValue());
         dest[0] = hsToBE32(from[0]);
         dest[1] = hsToBE32(from[1]);
         dest[2] = hsToBE32(from[2]);
@@ -250,7 +250,7 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
     } else {
         // In the future - disconnect on cancel
         // NetCommDisconnect();
-        NSAlert *loginFailedAlert = [[NSAlert alloc] init];
+        NSAlert* loginFailedAlert = [[NSAlert alloc] init];
         loginFailedAlert.messageText = @"Authentication Failed";
         loginFailedAlert.informativeText = @"Please try again.";
         loginFailedAlert.alertStyle = NSAlertStyleCritical;
@@ -261,8 +261,8 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
 
 - (IBAction)needAccountButtonHit:(id)sender
 {
-    NSString *urlString = [NSString stringWithSTString:GetServerSignupUrl()];
-    NSURL *url = [NSURL URLWithString:urlString];
+    NSString* urlString = [NSString stringWithSTString:GetServerSignupUrl()];
+    NSURL* url = [NSURL URLWithString:urlString];
     if (url) {
         [[NSWorkspace sharedWorkspace] openURL:url];
     }
@@ -272,13 +272,13 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
 {
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath
+- (void)observeValueForKeyPath:(NSString*)keyPath
                       ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
+                        change:(NSDictionary*)change
+                       context:(void*)context
 {
     if (context == StatusTextDidChangeContext) {
-        PLSServerStatus *serverStatus = object;
+        PLSServerStatus* serverStatus = object;
         if (serverStatus.serverStatusString) {
             self.statusTextField.stringValue = serverStatus.serverStatusString;
         }

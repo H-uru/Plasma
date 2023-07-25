@@ -46,10 +46,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PLSServerStatus : NSObject
 
-@property (readonly, nullable) NSString * serverStatusString;
+@property(readonly, nullable) NSString* serverStatusString;
 
-+(id)sharedStatus;
--(void)loadServerStatus;
++ (id)sharedStatus;
+- (void)loadServerStatus;
 
 @end
 

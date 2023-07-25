@@ -60,23 +60,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 @interface PLSKeyboardEventMonitor ()
 {
-    plClientLoader *_gClient;
+    plClientLoader* _gClient;
 }
 
-@property(weak) NSView *view;
-@property plInputManager *inputManager;
+@property(weak) NSView* view;
+@property plInputManager* inputManager;
 @property(retain) id localMonitor;
 
 @end
 
 @implementation PLSKeyboardEventMonitor
 
-- (plClientLoader &)gClient
+- (plClientLoader&)gClient
 {
     return *_gClient;
 }
 
-- (id)initWithView:(NSView *)view inputManager:(plClientLoader *)gClient
+- (id)initWithView:(NSView*)view inputManager:(plClientLoader*)gClient
 {
     self = [super init];
     self.view = view;
@@ -87,7 +87,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
     self.localMonitor =
         [NSEvent addLocalMonitorForEventsMatchingMask:eventMasks
-                                              handler:^NSEvent *_Nullable(NSEvent *_Nonnull event) {
+                                              handler:^NSEvent* _Nullable(NSEvent* _Nonnull event) {
                                                   if ([self processEvent:event]) {
                                                       return nil;
                                                   }
@@ -97,7 +97,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     return self;
 }
 
-- (BOOL)processEvent:(NSEvent *)event
+- (BOOL)processEvent:(NSEvent*)event
 {
     // is this even an event for our window
     if ([event window] == [self.view window]) {
@@ -130,7 +130,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
             keycode == kVK_F17 || keycode == kVK_F18 || keycode == kVK_F19 || keycode == kVK_F20);
 }
 
-- (BOOL)processKeyEvent:(NSEvent *)event
+- (BOOL)processKeyEvent:(NSEvent*)event
 {
     NSEventModifierFlags modifierFlags = [event modifierFlags];
     // Don't intercept system key commands

@@ -47,14 +47,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PLSPatcherWindowController : NSWindowController <PLSPatcherDelegate>
 
-@property (readonly) PLSPatcher *patcher;
+@property(readonly) PLSPatcher* patcher;
 
-@property (assign) IBOutlet NSProgressIndicator *progressBar;
-@property (assign) IBOutlet NSTextField *statusLabel;
-@property (assign) IBOutlet NSTextField *detailStatusLabel;
-@property (assign) IBOutlet NSTextField *progressLabel;
-@property (assign) IBOutlet NSTextField *productLabel;
-@property (assign) IBOutlet NSTextField *serverStatusLabel;
+@property(assign) IBOutlet NSProgressIndicator* progressBar;
+@property(assign) IBOutlet NSTextField* statusLabel;
+@property(assign) IBOutlet NSTextField* detailStatusLabel;
+@property(assign) IBOutlet NSTextField* progressLabel;
+@property(assign) IBOutlet NSTextField* productLabel;
+@property(assign) IBOutlet NSTextField* serverStatusLabel;
 - (IBAction)cancelButtonHit:(id)sender;
 
 @end

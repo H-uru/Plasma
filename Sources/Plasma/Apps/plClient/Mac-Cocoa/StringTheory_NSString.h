@@ -47,10 +47,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSString (StringTheory)
 
--(id)initWithSTString:(const ST::string&)string;
-+(id)stringWithSTString:(const ST::string&)string;
+- (id)initWithSTString:(const ST::string&)string;
++ (id)stringWithSTString:(const ST::string&)string;
 
--(const ST::string)STString;
+- (const ST::string)STString;
 
 @end
 

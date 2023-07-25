@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PLSKeyboardEventMonitor : NSObject
 
--(id)initWithView:(NSView *)view inputManager:(plClientLoader*)gClient;
+- (id)initWithView:(NSView*)view inputManager:(plClientLoader*)gClient;
 
 @end
 

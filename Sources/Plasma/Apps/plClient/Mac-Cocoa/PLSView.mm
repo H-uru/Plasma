@@ -62,9 +62,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 @interface PLSView ()
 
-@property NSTrackingArea *mouseTrackingArea;
+@property NSTrackingArea* mouseTrackingArea;
 #if PLASMA_PIPELINE_METAL
-@property(weak) CAMetalLayer *metalLayer;
+@property(weak) CAMetalLayer* metalLayer;
 #endif
 
 @end
@@ -76,7 +76,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 {
     self = [super initWithFrame:frameRect];
 #if PLASMA_PIPELINE_METAL
-    CAMetalLayer *layer = [CAMetalLayer layer];
+    CAMetalLayer* layer = [CAMetalLayer layer];
     layer.contentsScale = [[NSScreen mainScreen] backingScaleFactor];
     layer.maximumDrawableCount = 3;
     layer.pixelFormat = MTLPixelFormatBGR10A2Unorm;
@@ -97,49 +97,49 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 }
 
 // MARK: Left mouse button
-- (void)mouseDown:(NSEvent *)event
+- (void)mouseDown:(NSEvent*)event
 {
     [self handleMouseButtonEvent:event];
 }
 
-- (void)mouseUp:(NSEvent *)event
+- (void)mouseUp:(NSEvent*)event
 {
     [self handleMouseButtonEvent:event];
 }
 
-- (void)mouseDragged:(NSEvent *)event
+- (void)mouseDragged:(NSEvent*)event
 {
     [self updateClientMouseLocation:event];
 }
 
 // MARK: Right mouse button
-- (void)rightMouseDown:(NSEvent *)event
+- (void)rightMouseDown:(NSEvent*)event
 {
     [self handleMouseButtonEvent:event];
 }
 
-- (void)rightMouseUp:(NSEvent *)event
+- (void)rightMouseUp:(NSEvent*)event
 {
     [self handleMouseButtonEvent:event];
 }
 
-- (void)rightMouseDragged:(NSEvent *)event
+- (void)rightMouseDragged:(NSEvent*)event
 {
     [self updateClientMouseLocation:event];
 }
 
 // MARK: Mouse movement
-- (void)mouseMoved:(NSEvent *)event
+- (void)mouseMoved:(NSEvent*)event
 {
     [self updateClientMouseLocation:event];
 }
 
-- (void)mouseEntered:(NSEvent *)event
+- (void)mouseEntered:(NSEvent*)event
 {
     [NSCursor hide];
 }
 
-- (void)mouseExited:(NSEvent *)event
+- (void)mouseExited:(NSEvent*)event
 {
     //[super mouseExited:event];
     [NSCursor unhide];
@@ -160,14 +160,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 }
 
 // MARK: Mouse click handler
-- (void)handleMouseButtonEvent:(NSEvent *)event
+- (void)handleMouseButtonEvent:(NSEvent*)event
 {
     [self updateClientMouseLocation:event];
 
     CGPoint windowLocation = [event locationInWindow];
     CGPoint viewLocation = [self convertPoint:windowLocation fromView:nil];
 
-    plIMouseBEventMsg *pBMsg = new plIMouseBEventMsg;
+    plIMouseBEventMsg* pBMsg = new plIMouseBEventMsg;
 
     if (event.type == NSEventTypeLeftMouseUp) {
         pBMsg->fButton |= kLeftButtonUp;
@@ -186,7 +186,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     delete (pBMsg);
 }
 
-- (void)updateClientMouseLocation:(NSEvent *)event
+- (void)updateClientMouseLocation:(NSEvent*)event
 {
     CGPoint windowLocation = [event locationInWindow];
     CGPoint viewLocation = [self convertPoint:windowLocation fromView:nil];
@@ -196,8 +196,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     CGFloat deltaY =
         (windowViewBounds.size.height - windowLocation.y) / windowViewBounds.size.height;
 
-    plIMouseXEventMsg *pXMsg = new plIMouseXEventMsg;
-    plIMouseYEventMsg *pYMsg = new plIMouseYEventMsg;
+    plIMouseXEventMsg* pXMsg = new plIMouseXEventMsg;
+    plIMouseYEventMsg* pYMsg = new plIMouseYEventMsg;
 
     pXMsg->fWx = viewLocation.x;
     pXMsg->fX = deltaX;
@@ -285,7 +285,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
     _metalLayer.drawableSize = newSize;
 #endif
-    [self.delegate renderView:self didChangeOutputSize:newSize scale:scaleFactor];
+    [self.delegate renderView:self
+          didChangeOutputSize:newSize
+                        scale:scaleFactor];
 }
 
 @end

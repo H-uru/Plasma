@@ -46,14 +46,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetGameLib/plNetGameLib.h"
 
 @interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString *serverStatusString;
+@property NSString* serverStatusString;
 @end
 
 @implementation PLSServerStatus
 
 + (id)sharedStatus
 {
-    static PLSServerStatus *shared = nil;
+    static PLSServerStatus* shared = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         shared = [[self alloc] init];
@@ -63,19 +63,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 - (void)loadServerStatus
 {
-    NSString *urlString = [NSString stringWithSTString:GetServerStatusUrl()];
-    NSURL *url = [NSURL URLWithString:urlString];
-    NSURLSessionConfiguration *URLSessionConfiguration =
+    NSString* urlString = [NSString stringWithSTString:GetServerStatusUrl()];
+    NSURL* url = [NSURL URLWithString:urlString];
+    NSURLSessionConfiguration* URLSessionConfiguration =
         [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
+    NSURLSession* session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
                                                           delegate:self
                                                      delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask *statusTask = [session
+    NSURLSessionTask* statusTask = [session
           dataTaskWithURL:url
-        completionHandler:^(NSData *_Nullable data, NSURLResponse *_Nullable response,
-                            NSError *_Nullable error) {
+        completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response,
+                            NSError* _Nullable error) {
             if (data) {
-                NSString *statusString = [[NSString alloc] initWithData:data
+                NSString* statusString = [[NSString alloc] initWithData:data
                                                                encoding:NSUTF8StringEncoding];
                 self.serverStatusString = statusString;
             }

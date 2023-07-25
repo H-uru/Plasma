@@ -46,31 +46,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PLSLoginParameters: NSObject
-@property NSString *username;
-@property NSString *password;
+@interface PLSLoginParameters : NSObject
+@property NSString* username;
+@property NSString* password;
 @property BOOL rememberPassword;
 
--(void)load;
--(void)save;
--(void)makeCurrent;
+- (void)load;
+- (void)save;
+- (void)makeCurrent;
 
 @end
 
-@interface PLSLoginController: NSObject
+@interface PLSLoginController : NSObject
 
-+(void)attemptLogin:(void (^)(ENetError))completion;
++ (void)attemptLogin:(void (^)(ENetError))completion;
 
 @end
 
 @class PLSLoginWindowController;
 
 @protocol PLSLoginWindowControllerDelegate <NSObject>
--(void)loginWindowControllerDidLogin:(PLSLoginWindowController *)sender;
+- (void)loginWindowControllerDidLogin:(PLSLoginWindowController*)sender;
 @end
 
 @interface PLSLoginWindowController : NSWindowController
-@property (weak) id<PLSLoginWindowControllerDelegate> delegate;
+@property(weak) id<PLSLoginWindowControllerDelegate> delegate;
 @end
 
 NS_ASSUME_NONNULL_END

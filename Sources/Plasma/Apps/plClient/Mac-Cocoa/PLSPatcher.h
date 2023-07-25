@@ -48,19 +48,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol PLSPatcherDelegate
 
--(void)patcher:(PLSPatcher *)patcher beganDownloadOfFile:(NSString *)file;
--(void)patcher:(PLSPatcher *)patcher updatedProgress:(NSString *)progressMessage withBytes:(NSUInteger)bytes outOf:(uint64_t)totalBytes;
--(void)patcherCompleted:(PLSPatcher *)patcher;
--(void)patcherCompletedWithError:(PLSPatcher *)patcher error:(NSError *)error;
+- (void)patcher:(PLSPatcher*)patcher beganDownloadOfFile:(NSString*)file;
+- (void)patcher:(PLSPatcher*)patcher updatedProgress:(NSString*)progressMessage withBytes:(NSUInteger)bytes outOf:(uint64_t)totalBytes;
+- (void)patcherCompleted:(PLSPatcher*)patcher;
+- (void)patcherCompletedWithError:(PLSPatcher*)patcher error:(NSError*)error;
 
 @end
 
 @interface PLSPatcher : NSObject
 
-@property (weak) id<PLSPatcherDelegate> delegate;
-@property (readonly) BOOL selfPatched;
+@property(weak) id<PLSPatcherDelegate> delegate;
+@property(readonly) BOOL selfPatched;
 
--(void)start;
+- (void)start;
 
 @end
 

@@ -51,16 +51,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 @implementation PLSPatcherWindowController
 
-static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
+static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
 
-- (void)patcher:(PLSPatcher *)patcher beganDownloadOfFile:(NSString *)file
+- (void)patcher:(PLSPatcher*)patcher beganDownloadOfFile:(NSString*)file
 {
-    NSString *statusString = [NSString stringWithFormat:@"Downloading: %@", file];
+    NSString* statusString = [NSString stringWithFormat:@"Downloading: %@", file];
     [self.statusLabel setStringValue:statusString];
 }
 
-- (void)patcher:(PLSPatcher *)patcher
-    updatedProgress:(NSString *)progressMessage
+- (void)patcher:(PLSPatcher*)patcher
+    updatedProgress:(NSString*)progressMessage
           withBytes:(NSUInteger)bytes
               outOf:(uint64_t)totalBytes
 {
@@ -70,10 +70,10 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
     self.progressBar.maxValue = totalBytes;
     self.detailStatusLabel.stringValue = progressMessage;
 
-    NSString *bytesString =
+    NSString* bytesString =
         [NSByteCountFormatter stringFromByteCount:bytes
                                        countStyle:NSByteCountFormatterCountStyleFile];
-    NSString *totalBytesString =
+    NSString* totalBytesString =
         [NSByteCountFormatter stringFromByteCount:totalBytes
                                        countStyle:NSByteCountFormatterCountStyleFile];
 
@@ -81,23 +81,23 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
         [NSString stringWithFormat:@"%@/%@", bytesString, totalBytesString];
 }
 
-- (void)patcherCompleted:(nonnull PLSPatcher *)patcher
+- (void)patcherCompleted:(nonnull PLSPatcher*)patcher
 {
     // intercepted by the application
 }
 
-- (void)patcherCompletedWithError:(nonnull PLSPatcher *)patcher error:(nonnull NSError *)error
+- (void)patcherCompletedWithError:(nonnull PLSPatcher*)patcher error:(nonnull NSError*)error
 {
     // intercepted by the application
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath
+- (void)observeValueForKeyPath:(NSString*)keyPath
                       ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
+                        change:(NSDictionary*)change
+                       context:(void*)context
 {
     if (context == StatusTextDidChangeContext) {
-        PLSServerStatus *serverStatus = object;
+        PLSServerStatus* serverStatus = object;
         if (serverStatus.serverStatusString) {
             self.serverStatusLabel.stringValue = serverStatus.serverStatusString;
         }
@@ -121,7 +121,7 @@ static void *StatusTextDidChangeContext = &StatusTextDidChangeContext;
             context:StatusTextDidChangeContext];
 }
 
-- (void)encodeWithCoder:(nonnull NSCoder *)coder
+- (void)encodeWithCoder:(nonnull NSCoder*)coder
 {
 }
 

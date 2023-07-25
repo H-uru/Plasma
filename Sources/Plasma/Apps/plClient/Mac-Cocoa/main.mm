@@ -94,31 +94,31 @@ std::vector<ST::string> args;
     dispatch_source_t _displaySource;
 }
 
-@property(retain) PLSKeyboardEventMonitor *eventMonitor;
+@property(retain) PLSKeyboardEventMonitor* eventMonitor;
 @property CVDisplayLinkRef displayLink;
 @property dispatch_queue_t renderQueue;
-@property CALayer *renderLayer;
-@property(weak) PLSView *plsView;
-@property PLSPatcherWindowController *patcherWindow;
+@property CALayer* renderLayer;
+@property(weak) PLSView* plsView;
+@property PLSPatcherWindowController* patcherWindow;
 @property NSModalSession currentModalSession;
-@property PLSPatcher *patcher;
-@property PLSLoginWindowController *loginWindow;
+@property PLSPatcher* patcher;
+@property PLSLoginWindowController* loginWindow;
 
 @end
 
 void plClient::IResizeNativeDisplayDevice(int width, int height, bool windowed)
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        AppDelegate *appDelegate = (AppDelegate *)[NSApp delegate];
+        AppDelegate* appDelegate = (AppDelegate*)[NSApp delegate];
         if (((appDelegate.window.styleMask & NSWindowStyleMaskFullScreen) > 0) == windowed) {
             [appDelegate.window toggleFullScreen:nil];
         }
-        auto *msg = new plDisplayScaleChangedMsg(appDelegate.window.backingScaleFactor);
+        auto* msg = new plDisplayScaleChangedMsg(appDelegate.window.backingScaleFactor);
         msg->Send();
     });
 }
 void plClient::IChangeResolution(int width, int height) {}
-void plClient::IUpdateProgressIndicator(plOperationProgress *progress) {}
+void plClient::IUpdateProgressIndicator(plOperationProgress* progress) {}
 void plClient::InitDLLs() {}
 void plClient::ShutdownDLLs() {}
 void plClient::ShowClientWindow() {}
@@ -168,13 +168,13 @@ PF_CONSOLE_LINK_ALL()
     // Window bounds (x, y, width, height)
     NSRect windowRect = NSMakeRect(100, 100, 800, 600);
 
-    NSWindow *window = [[NSWindow alloc] initWithContentRect:windowRect
+    NSWindow* window = [[NSWindow alloc] initWithContentRect:windowRect
                                                    styleMask:windowStyle
                                                      backing:NSBackingStoreBuffered
                                                        defer:NO];
     window.backgroundColor = NSColor.blackColor;
 
-    PLSView *view = [[PLSView alloc] init];
+    PLSView* view = [[PLSView alloc] init];
     self.plsView = view;
     window.contentView = view;
     [window setDelegate:self];
@@ -190,7 +190,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 {
     [[NSRunLoop currentRunLoop] addPort:[NSMachPort port] forMode:@"PlasmaEventMode"];
     [self.plsView setBoundsSize:self.plsView.bounds.size];
-    auto *msg = new plDisplayScaleChangedMsg(self.window.backingScaleFactor);
+    auto* msg = new plDisplayScaleChangedMsg(self.window.backingScaleFactor);
     msg->Send();
 
     dispatch_async(loadingQueue, ^{
@@ -210,7 +210,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
                 addObserverForName:NSWindowDidChangeScreenNotification
                             object:self.window
                              queue:[NSOperationQueue mainQueue]
-                        usingBlock:^(NSNotification *_Nonnull note) {
+                        usingBlock:^(NSNotification* _Nonnull note) {
                             // if we change displays, setup a new draw loop. The new display might
                             // have a different or variable refresh rate.
                             [self setupRunLoop];
@@ -229,7 +229,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 
     _displaySource =
         dispatch_source_create(DISPATCH_SOURCE_TYPE_DATA_ADD, 0, 0, dispatch_get_main_queue());
-    __weak AppDelegate *weakSelf = self;
+    __weak AppDelegate* weakSelf = self;
     dispatch_source_set_event_handler(_displaySource, ^() {
         @autoreleasepool {
             [self runLoop];
@@ -241,9 +241,9 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
         [self.window.screen.deviceDescription[@"NSScreenNumber"] intValue], &_displayLink);
     CVDisplayLinkSetOutputHandler(
         self.displayLink,
-        ^CVReturn(CVDisplayLinkRef _Nonnull displayLink, const CVTimeStamp *_Nonnull inNow,
-                  const CVTimeStamp *_Nonnull inOutputTime, CVOptionFlags flagsIn,
-                  CVOptionFlags *_Nonnull flagsOut) {
+        ^CVReturn(CVDisplayLinkRef _Nonnull displayLink, const CVTimeStamp* _Nonnull inNow,
+                  const CVTimeStamp* _Nonnull inOutputTime, CVOptionFlags flagsIn,
+                  CVOptionFlags* _Nonnull flagsOut) {
             dispatch_source_merge_data(_displaySource, 1);
             return kCVReturnSuccess;
         });
@@ -260,23 +260,23 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     }
 }
 
-- (void)renderView:(PLSView *)view didChangeOutputSize:(CGSize)size scale:(NSUInteger)scale
+- (void)renderView:(PLSView*)view didChangeOutputSize:(CGSize)size scale:(NSUInteger)scale
 {
     [[NSRunLoop mainRunLoop]
         performInModes:@[ @"PlasmaEventMode" ]
                  block:^{
-                     auto *msg = new plDisplayScaleChangedMsg(scale);
+                     auto* msg = new plDisplayScaleChangedMsg(scale);
                      msg->Send();
                      float aspectratio = (float)size.width / (float)size.height;
                      pfGameGUIMgr::GetInstance()->SetAspectRatio(aspectratio);
                      plMouseDevice::Instance()->SetDisplayResolution(size.width, size.height);
-                     AppDelegate *appDelegate = (AppDelegate *)[NSApp delegate];
+                     AppDelegate* appDelegate = (AppDelegate*)[NSApp delegate];
                      appDelegate->gClient->GetPipeline()->Resize((int)size.width, (int)size.height);
                  }];
     if (gClient->GetQuitIntro()) [self runLoop];
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)notification
+- (void)applicationDidFinishLaunching:(NSNotification*)notification
 {
     cmdParser.Parse(args);
 
@@ -284,7 +284,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
         // if we're a proper app bundle, start the game using our resources dir
         chdir([[[NSBundle mainBundle] resourcePath] cStringUsingEncoding:NSUTF8StringEncoding]);
     } else if ([NSBundle mainBundle] != nil) {
-        NSString *currentPath = [[NSBundle mainBundle] bundlePath];
+        NSString* currentPath = [[NSBundle mainBundle] bundlePath];
         // if our working path is inside our bundle - get out and
         // point it to the containing folder
         if ([[[NSFileManager defaultManager] currentDirectoryPath] isEqualToString:@"/"]) {
@@ -296,7 +296,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     plFileName serverIni = "server.ini";
     if (cmdParser.IsSpecified(kArgServerIni)) serverIni = cmdParser.GetString(kArgServerIni);
 
-    FILE *serverIniFile = plFileSystem::Open(serverIni, "rb");
+    FILE* serverIniFile = plFileSystem::Open(serverIni, "rb");
     if (serverIniFile) {
         fclose(serverIniFile);
         pfConsoleEngine tempConsole;
@@ -375,7 +375,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     }
 
     if (cmdParser.IsSpecified(kArgSkipLoginDialog)) {
-        PLSLoginParameters *params = [PLSLoginParameters new];
+        PLSLoginParameters* params = [PLSLoginParameters new];
         [params makeCurrent];
         [PLSLoginController attemptLogin:^(ENetError error) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -391,12 +391,12 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     }
 }
 
-- (void)patcher:(PLSPatcher *)patcher beganDownloadOfFile:(NSString *)file
+- (void)patcher:(PLSPatcher*)patcher beganDownloadOfFile:(NSString*)file
 {
     [self.patcherWindow patcher:patcher beganDownloadOfFile:file];
 }
 
-- (void)patcherCompleted:(PLSPatcher *)patcher
+- (void)patcherCompleted:(PLSPatcher*)patcher
 {
     self.patcher = nil;
     [NSApp endModalSession:self.currentModalSession];
@@ -404,9 +404,9 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     [self initializeClient];
 }
 
-- (void)patcherCompletedWithError:(PLSPatcher *)patcher error:(NSError *)error
+- (void)patcherCompletedWithError:(PLSPatcher*)patcher error:(NSError*)error
 {
-    NSAlert *failureAlert = [NSAlert alertWithError:error];
+    NSAlert* failureAlert = [NSAlert alertWithError:error];
     [failureAlert beginSheetModalForWindow:self.patcherWindow.window
                          completionHandler:^(NSModalResponse returnCode){
 
@@ -414,8 +414,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     [NSApp terminate:self];
 }
 
-- (void)patcher:(PLSPatcher *)patcher
-    updatedProgress:(NSString *)progressMessage
+- (void)patcher:(PLSPatcher*)patcher
+    updatedProgress:(NSString*)progressMessage
           withBytes:(NSUInteger)bytes
               outOf:(uint64_t)totalBytes
 {
@@ -425,7 +425,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
                           outOf:totalBytes];
 }
 
-- (void)loginWindowControllerDidLogin:(PLSLoginWindowController *)sender
+- (void)loginWindowControllerDidLogin:(PLSLoginWindowController*)sender
 {
     [sender close];
     [self startClient];
@@ -448,7 +448,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     [self.window makeKeyAndOrderFront:self];
     self.renderLayer = self.window.contentView.layer;
 
-    gClient.SetClientWindow((hsWindowHndl)(__bridge void *)self.window);
+    gClient.SetClientWindow((hsWindowHndl)(__bridge void*)self.window);
     gClient.SetClientDisplay((hsWindowHndl)NULL);
 
     if (!gClient) {
@@ -457,7 +457,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 
     self.eventMonitor = [[PLSKeyboardEventMonitor alloc] initWithView:self.window.contentView
                                                          inputManager:&gClient];
-    ((PLSView *)self.window.contentView).inputManager = gClient->GetInputManager();
+    ((PLSView*)self.window.contentView).inputManager = gClient->GetInputManager();
     [self.window makeFirstResponder:self.window.contentView];
 
     // Main loop
@@ -468,11 +468,11 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 
 - (void)updateWindowTitle
 {
-    NSString *productTitle = [NSString stringWithSTString:plProduct::LongName()];
+    NSString* productTitle = [NSString stringWithSTString:plProduct::LongName()];
     [self.window setTitle:productTitle];
 }
 
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {
     // macOS has requested we terminate. This could happen because the user asked us to quit, the
     // system is going to restart, etc... Do any cleanup we need to do. If we need to we can ask for
@@ -489,19 +489,19 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     return NSTerminateNow;
 }
 
-- (void)windowDidEnterFullScreen:(NSNotification *)notification
+- (void)windowDidEnterFullScreen:(NSNotification*)notification
 {
     [NSApp setPresentationOptions:NSApplicationPresentationFullScreen |
                                   NSApplicationPresentationHideDock |
                                   NSApplicationPresentationAutoHideMenuBar];
 }
 
-- (void)windowDidExitFullScreen:(NSNotification *)notification
+- (void)windowDidExitFullScreen:(NSNotification*)notification
 {
     [NSApp setPresentationOptions:NSApplicationPresentationDefault];
 }
 
-- (NSApplicationPresentationOptions)window:(NSWindow *)window
+- (NSApplicationPresentationOptions)window:(NSWindow*)window
       willUseFullScreenPresentationOptions:(NSApplicationPresentationOptions)proposedOptions
 {
     // this is supposed to prevent the dock from showing in full screen mode, but it does not always
@@ -525,7 +525,7 @@ void PumpMessageQueueProc()
     }
 }
 
-int main(int argc, const char **argv)
+int main(int argc, const char** argv)
 {
     struct rlimit limit;
     getrlimit(RLIMIT_NOFILE, &limit);
