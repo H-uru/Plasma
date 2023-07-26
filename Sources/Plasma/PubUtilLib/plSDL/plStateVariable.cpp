@@ -110,8 +110,7 @@ void plStateVarNotificationInfo::Read(hsStream* s, uint32_t readOptions)
         fHintString = hint;
 }
 
-// Options: (none)
-void plStateVarNotificationInfo::Write(hsStream* s, uint32_t writeOptions) const
+void plStateVarNotificationInfo::Write(hsStream* s) const
 {
     (void)s->WriteByte(uint8_t(0));   // unused: saveFlags
     s->WriteSafeString(fHintString);
@@ -143,7 +142,7 @@ bool plStateVariable::WriteData(hsStream* s, float timeConvert, uint32_t writeOp
     s->WriteByte(saveFlags);
     if (writeNotificationInfo)
     {
-        GetNotificationInfo().Write(s, writeOptions);
+        GetNotificationInfo().Write(s);
     }
     return true;
 }
@@ -1775,8 +1774,7 @@ ST::string plSimpleStateVariable::GetKeyName(int idx) const
 #ifdef _MSC_VER
 #   pragma optimize( "g", off )    // disable float optimizations
 #endif
-// Options: (none)
-bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, uint32_t writeOptions) const
+bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx) const
 {
 #ifdef HS_DEBUGGING
     if (!IsUsed())
@@ -1859,8 +1857,7 @@ bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, 
     return true;
 }
 
-// Options: (none)
-bool plSimpleStateVariable::IReadData(hsStream* s, float timeConvert, int idx, uint32_t readOptions) 
+bool plSimpleStateVariable::IReadData(hsStream* s, float timeConvert, int idx) 
 {   
     int j=idx*fVar.GetAtomicCount();
     int i;
@@ -2011,7 +2008,7 @@ bool plSimpleStateVariable::WriteData(hsStream* s, float timeConvert, uint32_t w
         // list
         int i;
         for(i=0;i<fVar.GetCount();i++)
-            if (!IWriteData(s, timeConvert, i, writeOptions))
+            if (!IWriteData(s, timeConvert, i))
                 return false;
     }
 
@@ -2076,7 +2073,7 @@ bool plSimpleStateVariable::ReadData(hsStream* s, float timeConvert, uint32_t re
     {
         int i;
         for(i=0;i<fVar.GetCount();i++)
-            if (!IReadData(s, timeConvert, i, readOptions))
+            if (!IReadData(s, timeConvert, i))
                 return false;
     }
     else

@@ -159,7 +159,7 @@ public:
     ST::string GetHintString() const { return fHintString; }
 
     void Read(hsStream* s, uint32_t readOptions);
-    void Write(hsStream* s, uint32_t writeOptions) const;
+    void Write(hsStream* s) const;
 };
 
 //
@@ -299,8 +299,8 @@ protected:
     bool IConvertFromRGB8(plVarDescriptor::Type newType);
     bool IConvertFromRGBA8(plVarDescriptor::Type newType);
 
-    bool IReadData(hsStream* s, float timeConvert, int idx, uint32_t readOptions);    
-    bool IWriteData(hsStream* s, float timeConvert, int idx, uint32_t writeOptions) const;
+    bool IReadData(hsStream* s, float timeConvert, int idx);
+    bool IWriteData(hsStream* s, float timeConvert, int idx) const;
 
 public:
 
