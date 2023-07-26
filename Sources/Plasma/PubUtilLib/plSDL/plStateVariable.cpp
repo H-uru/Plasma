@@ -2679,7 +2679,7 @@ bool plSDStateVariable::WriteData(hsStream* s, float timeConvert, uint32_t write
             if (!all)
                 plSDL::VariableLengthWrite(s, 
                     GetVarDescriptor()->IsVariableLength() ? 0xffffffff : GetVarDescriptor()->GetCount(), i);   // idx
-            fDataRecList[i]->Write(s, timeConvert, dirtyOnly);  // item
+            fDataRecList[i]->Write(s, timeConvert, dirtyOnly ? plSDL::kDirtyOnly : 0); // item
             written++;
         }
     }
