@@ -101,12 +101,11 @@ public:
 // plStateVarNotificationInfo
 /////////////////////////////////////////////////////
 
-// Options: kSkipNotificationInfo
-void plStateVarNotificationInfo::Read(hsStream* s, uint32_t readOptions)
+void plStateVarNotificationInfo::Read(hsStream* s)
 {
     (void)s->ReadByte();  // unused: saveFlags
     ST::string hint=s->ReadSafeString();
-    if (!hint.empty() && !(readOptions & plSDL::kSkipNotificationInfo))
+    if (!hint.empty())
         fHintString = hint;
 }
 
@@ -125,7 +124,11 @@ bool plStateVariable::ReadData(hsStream* s, float timeConvert, uint32_t readOpti
     uint8_t saveFlags = s->ReadByte();
     if (saveFlags & plSDL::kHasNotificationInfo)
     {
-        GetNotificationInfo().Read(s, readOptions);
+        if (readOptions & plSDL::kSkipNotificationInfo) {
+            plStateVarNotificationInfo().Read(s);
+        } else {
+            GetNotificationInfo().Read(s);
+        }
     }
     return true;
 }

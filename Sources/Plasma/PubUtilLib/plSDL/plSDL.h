@@ -158,7 +158,7 @@ public:
     void SetHintString(ST::string c) { fHintString = std::move(c); }
     ST::string GetHintString() const { return fHintString; }
 
-    void Read(hsStream* s, uint32_t readOptions);
+    void Read(hsStream* s);
     void Write(hsStream* s) const;
 };
 
