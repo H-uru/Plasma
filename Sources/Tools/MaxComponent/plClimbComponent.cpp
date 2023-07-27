@@ -91,15 +91,15 @@ enum Commands
 };
 
 // these synchronized ^^^^VVVVV
-const char * fCommandStrs[] =
+static const TCHAR* fCommandStrs[] =
 {
-    "Start Climbing",
-    "Enable Dismount",
-    "Disable Dismount",
-    "Enable Climb",
-    "Disable Climb",
-    "Fall Off",
-    "Let Go"
+    _T("Start Climbing"),
+    _T("Enable Dismount"),
+    _T("Disable Dismount"),
+    _T("Enable Climb"),
+    _T("Disable Climb"),
+    _T("Fall Off"),
+    _T("Let Go")
 };
 
 enum Directions
@@ -111,12 +111,12 @@ enum Directions
     kMaxDirections
 };
 
-const char * fDirectionStrs[] =
+static const TCHAR* fDirectionStrs[] =
 {
-    "Up",
-    "Down",
-    "Left",
-    "Right"
+    _T("Up"),
+    _T("Down"),
+    _T("Left"),
+    _T("Right")
 };
 
 

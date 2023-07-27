@@ -99,9 +99,9 @@ public:
             {
                 HWND hLadder = GetDlgItem(hWnd,IDC_COMP_NAV_LADDER_COMBO);
 
-                ComboBox_AddString(hLadder, "Big");
-                ComboBox_AddString(hLadder, "4 feet");
-                ComboBox_AddString(hLadder, "2 feet");
+                ComboBox_AddString(hLadder, _T("Big"));
+                ComboBox_AddString(hLadder, _T("4 feet"));
+                ComboBox_AddString(hLadder, _T("2 feet"));
 
                 int type = map->GetParamBlock()->GetInt(kTypeCombo);
                 ComboBox_SetCurSel(hLadder, type);

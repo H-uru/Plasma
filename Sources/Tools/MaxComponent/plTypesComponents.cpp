@@ -542,7 +542,7 @@ protected:
         ST::string animName;
         while (!(animName = anim.GetNextAnimName()).empty())
         {
-            int sel = ComboBox_AddString(hCombo, animName.c_str());
+            int sel = ComboBox_AddString(hCombo, ST2T(animName));
             if (animName.compare(savedName) == 0)
                 ComboBox_SetCurSel(hCombo, sel);
         }
