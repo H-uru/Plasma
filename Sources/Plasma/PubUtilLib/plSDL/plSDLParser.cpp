@@ -277,23 +277,6 @@ bool plSDLParser::IParseVarDesc(const plFileName& fileName, hsStream* stream, ch
                 hsAssert(false, ST::format("missing defaultOption string, fileName={}", fileName).c_str());
             }
         }
-
-#if 1   // delete me in May 2003
-        else
-        if (!strcmp(token, "INTERNAL"))
-        {
-            hsAssert(curVar, ST::format("Syntax problem with .sdl file, fileName={}", fileName).c_str());
-            curVar->SetInternal(true);
-            dbgStr += ST_LITERAL(" ") + token;
-        }
-        else
-        if (!strcmp(token, "PHASED"))
-        {
-            hsAssert(curVar, ST::format("Syntax problem with .sdl file, fileName={}", fileName).c_str());
-            curVar->SetAlwaysNew(true);
-            dbgStr += ST_LITERAL(" ") + token;
-        }
-#endif
         else
         {
             skipNext=true;
