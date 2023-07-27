@@ -170,10 +170,7 @@ public:                                                                     \
         return #plClassName;                                                \
     }                                                                       \
 private:                                                                    \
-    static uint16_t plClassName##ClassIndex;                                \
-    static void SetClassIndex(uint16_t hClass) {                            \
-        plClassName##ClassIndex = hClass;                                   \
-    }                                                                       \
+    static const uint16_t plClassName##ClassIndex;                          \
 public:                                                                     \
     uint16_t ClassIndex() const override {                                  \
         return plClassName::Index();                                        \
@@ -206,8 +203,7 @@ public:                                                                     \
     }                                                                       \
     static bool HasDerivedClass(uint16_t hDer) {                            \
         return plFactory::DerivesFrom(plClassName##ClassIndex, hDer);       \
-    }                                                                       \
-    friend class plClassName##__Creator;
+    }
 
 
 

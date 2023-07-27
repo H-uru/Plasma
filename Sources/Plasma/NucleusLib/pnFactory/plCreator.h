@@ -115,8 +115,7 @@ class plClassName##__Creator : public plCreator                                 
 public:                                                                             \
     plClassName##__Creator()                                                        \
     {                                                                               \
-        plFactory::Register( CLASS_INDEX_SCOPED(plClassName), this);                \
-        plClassName::SetClassIndex(ClassIndex());                                   \
+        plFactory::Register(CLASS_INDEX_SCOPED(plClassName), this);                 \
     }                                                                               \
     virtual ~plClassName##__Creator()                                               \
     {                                                                               \
@@ -132,7 +131,7 @@ public:                                                                         
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
+const uint16_t plClassName::plClassName##ClassIndex = CLASS_INDEX_SCOPED(plClassName);  \
 VERIFY_CREATABLE(plClassName);                                                        //
 
 
@@ -143,8 +142,7 @@ class plClassName##__Creator : public plCreator                                 
 public:                                                                             \
     plClassName##__Creator()                                                        \
     {                                                                               \
-        plFactory::Register( CLASS_INDEX_SCOPED(plClassName), this);                \
-        plClassName::SetClassIndex(ClassIndex());                                   \
+        plFactory::Register(CLASS_INDEX_SCOPED(plClassName), this);                 \
     }                                                                               \
     virtual ~plClassName##__Creator()                                               \
     {                                                                               \
@@ -160,7 +158,7 @@ public:                                                                         
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
+const uint16_t plClassName::plClassName##ClassIndex = CLASS_INDEX_SCOPED(plClassName);  \
 VERIFY_CREATABLE(plClassName);                                                        //
 
 
@@ -178,8 +176,7 @@ public:                                                                         
     }                                                                               \
     void Register()                                                                 \
     {                                                                               \
-        plFactory::Register( EXTERN_CLASS_INDEX_SCOPED(plClassName), this);         \
-        plClassName::SetClassIndex(ClassIndex());                                   \
+        plFactory::Register(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);          \
     }                                                                               \
     void UnRegister()                                                               \
     {                                                                               \
@@ -195,7 +192,7 @@ public:                                                                         
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
+const uint16_t plClassName::plClassName##ClassIndex = EXTERN_CLASS_INDEX_SCOPED(plClassName);  \
 VERIFY_EXTERNAL_CREATABLE(plClassName);                                             //
 
 
@@ -214,8 +211,7 @@ class plClassName##__Creator : public plCreator                                 
 public:                                                                             \
     plClassName##__Creator()                                                        \
     {                                                                               \
-        plFactory::Register( EXTERN_CLASS_INDEX_SCOPED(plClassName), this);         \
-        plClassName::SetClassIndex(ClassIndex());                                   \
+        plFactory::Register(EXTERN_CLASS_INDEX_SCOPED(plClassName), this);          \
     }                                                                               \
     virtual ~plClassName##__Creator()                                               \
     {                                                                               \
@@ -231,7 +227,7 @@ public:                                                                         
                                                                                     \
 };                                                                                  \
 static plClassName##__Creator   static##plClassName##__Creator;                     \
-uint16_t plClassName::plClassName##ClassIndex = 0;                                  \
+const uint16_t plClassName::plClassName##ClassIndex = EXTERN_CLASS_INDEX_SCOPED(plClassName);  \
 VERIFY_EXTERNAL_CREATABLE(plClassName);                                             //
 
 
