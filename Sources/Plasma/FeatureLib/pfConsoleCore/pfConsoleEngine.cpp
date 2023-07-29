@@ -63,7 +63,7 @@ static const char kTokenSeparators[] = " =\r\n\t,";
 static const char kTokenGrpSeps[] = " =\r\n._\t,";
 
 //WARNING: Potentially increments the pointer passed to it.
-const char* pfConsoleEngine::Tokenize(char*& line, bool haveCommand)
+const char* pfConsoleEngine::TokenizeCommandName(char*& line)
 {
     char *begin = line;
 
@@ -71,34 +71,49 @@ const char* pfConsoleEngine::Tokenize(char*& line, bool haveCommand)
         ++begin;
 
     for (line = begin; *line; ++line) {
-        if (!haveCommand) {
-            for (const char *sep = kTokenGrpSeps; *sep; ++sep) {
-                if (*line == *sep) {
-                    *line = 0;
-                    while (*++line && (*line == *sep))
-                        /* skip duplicate delimiters */;
-                    return begin;
-                }
+        for (const char *sep = kTokenGrpSeps; *sep; ++sep) {
+            if (*line == *sep) {
+                *line = 0;
+                while (*++line && (*line == *sep))
+                    /* skip duplicate delimiters */;
+                return begin;
             }
-        } else {
-            if (*begin == '"' || *begin == '\'') {
-                // Handle strings as a single token
-                char *endptr = strchr(line + 1, *line);
-                if (endptr == nullptr) {
-                    // Bad string token sentry
-                    return "\xFF";
-                }
-                *endptr = 0;
-                line = endptr + 1;
-                return begin + 1;
+        }
+    }
+
+    if (begin == line)
+        return nullptr;
+
+    line = line + strlen(line);
+    return begin;
+}
+
+//WARNING: Potentially increments the pointer passed to it.
+const char* pfConsoleEngine::TokenizeArguments(char*& line)
+{
+    char *begin = line;
+
+    while (*begin && isspace(static_cast<unsigned char>(*begin)))
+        ++begin;
+
+    for (line = begin; *line; ++line) {
+        if (*begin == '"' || *begin == '\'') {
+            // Handle strings as a single token
+            char *endptr = strchr(line + 1, *line);
+            if (endptr == nullptr) {
+                // Bad string token sentry
+                return "\xFF";
             }
-            for (const char *sep = kTokenSeparators; *sep; ++sep) {
-                if (*line == *sep) {
-                    *line = 0;
-                    while (*++line && (*line == *sep))
-                        /* skip duplicate delimiters */;
-                    return begin;
-                }
+            *endptr = 0;
+            line = endptr + 1;
+            return begin + 1;
+        }
+        for (const char *sep = kTokenSeparators; *sep; ++sep) {
+            if (*line == *sep) {
+                *line = 0;
+                while (*++line && (*line == *sep))
+                    /* skip duplicate delimiters */;
+                return begin;
             }
         }
     }
@@ -129,13 +144,13 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
     pfConsoleCmdGroup   *group, *subGrp;
     const char          *ptr;
 
-    // Tokenize requires a writable C string...
+    // TokenizeCommandName requires a writable C string...
     ST::char_buffer nameBuf = name.to_utf8();
     char* namePtr = nameBuf.data();
 
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = Tokenize(namePtr, false);
+    ptr = TokenizeCommandName(namePtr);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
@@ -144,7 +159,7 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
         else
             break;
 
-        ptr = Tokenize(namePtr, false);
+        ptr = TokenizeCommandName(namePtr);
     }
 
     if (ptr == nullptr)
@@ -198,13 +213,13 @@ ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
     pfConsoleCmdGroup   *group, *subGrp;
     const char          *ptr;
 
-    // Tokenize requires a writable C string...
+    // TokenizeCommandName requires a writable C string...
     ST::char_buffer nameBuf = name.to_utf8();
     char* namePtr = nameBuf.data();
     
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = Tokenize(namePtr, false);
+    ptr = TokenizeCommandName(namePtr);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
@@ -213,7 +228,7 @@ ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
         else
             break;
 
-        ptr = Tokenize(namePtr, false);
+        ptr = TokenizeCommandName(namePtr);
     }
 
     if (ptr == nullptr)
@@ -290,13 +305,13 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     const char          *ptr;
     bool                valid = true;
 
-    // Tokenize requires a writable C string...
+    // TokenizeCommandName/TokenizeArguments requires a writable C string...
     ST::char_buffer lineBuf = line.to_utf8();
     char* linePtr = lineBuf.data();
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = Tokenize(linePtr, false);
+    ptr = TokenizeCommandName(linePtr);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
@@ -305,7 +320,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
         else
             break;
 
-        ptr = Tokenize(linePtr, false);
+        ptr = TokenizeCommandName(linePtr);
     }
 
     if (ptr == nullptr)
@@ -327,7 +342,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     /// params
 
     for( numParams = numQuotedParams = 0; numParams < fMaxNumParams 
-                        && (ptr = Tokenize(linePtr, true)) != nullptr
+                        && (ptr = TokenizeArguments(linePtr)) != nullptr
                         && valid; numParams++ )
     {
         if( ptr[ 0 ] == '\xFF' )
@@ -448,13 +463,13 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
 
     /// New search
     ST::string_stream newStr;
-    // Tokenize requires a writable C string...
+    // TokenizeCommandName requires a writable C string...
     ST::char_buffer lineBuf = line.to_utf8();
     char* linePtr = lineBuf.data();
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
     pfConsoleCmdGroup* group = pfConsoleCmdGroup::GetBaseGroup();
-    const char* ptr = Tokenize(linePtr, false);
+    const char* ptr = TokenizeCommandName(linePtr);
     while (ptr != nullptr)
     {
         // Take this token and check to see if it's a group
@@ -465,7 +480,7 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
 
         group = subGrp;
         newStr << group->GetName() << '.';
-        ptr = Tokenize(linePtr, false);
+        ptr = TokenizeCommandName(linePtr);
     }
 
     if (ptr != nullptr)

@@ -81,7 +81,8 @@ class pfConsoleEngine
         pfConsoleEngine();
         ~pfConsoleEngine();
 
-        static const char* Tokenize(char*& line, bool haveCommand);
+        static const char* TokenizeCommandName(char*& line);
+        static const char* TokenizeArguments(char*& line);
 
         // Gets the signature for the command given (NO groups!)
         ST::string GetCmdSignature(const ST::string& name);

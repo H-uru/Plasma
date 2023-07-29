@@ -51,11 +51,11 @@ TEST(pfConsoleCore, TokenizeCommandNameSingle)
     char buf[] = "SampleCmd1";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, false);
+    const char* token1 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token1, "SampleCmd1");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, false);
+    const char* token2 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_EQ(token2, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -65,11 +65,11 @@ TEST(pfConsoleCore, TokenizeCommandNameSingleWhitespace)
     char buf[] = "  SampleCmd1   ";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, false);
+    const char* token1 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token1, "SampleCmd1");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, false);
+    const char* token2 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_EQ(token2, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -81,15 +81,15 @@ TEST(pfConsoleCore, TokenizeCommandNameDot)
     char buf[] = "App.Quit";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, false);
+    const char* token1 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token1, "App");
     EXPECT_EQ(line, buf + sizeof("App.") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, false);
+    const char* token2 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token2, "Quit");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, false);
+    const char* token3 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_EQ(token3, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -99,15 +99,15 @@ TEST(pfConsoleCore, TokenizeCommandNameUnderscore)
     char buf[] = "App_Quit";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, false);
+    const char* token1 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token1, "App");
     EXPECT_EQ(line, buf + sizeof("App_") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, false);
+    const char* token2 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token2, "Quit");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, false);
+    const char* token3 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_EQ(token3, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -117,15 +117,15 @@ TEST(pfConsoleCore, TokenizeCommandNameSpace)
     char buf[] = "App  Quit";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, false);
+    const char* token1 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token1, "App");
     EXPECT_EQ(line, buf + sizeof("App  ") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, false);
+    const char* token2 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token2, "Quit");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, false);
+    const char* token3 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_EQ(token3, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -137,19 +137,19 @@ TEST(pfConsoleCore, TokenizeCommandNameDots)
     char buf[] = "Graphics.Renderer.SetYon";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, false);
+    const char* token1 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token1, "Graphics");
     EXPECT_EQ(line, buf + sizeof("Graphics.") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, false);
+    const char* token2 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token2, "Renderer");
     EXPECT_EQ(line, buf + sizeof("Graphics.Renderer.") - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, false);
+    const char* token3 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token3, "SetYon");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token4 = pfConsoleEngine::Tokenize(line, false);
+    const char* token4 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_EQ(token4, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -159,19 +159,19 @@ TEST(pfConsoleCore, TokenizeCommandNameUnderscores)
     char buf[] = "Graphics_Renderer_SetYon";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, false);
+    const char* token1 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token1, "Graphics");
     EXPECT_EQ(line, buf + sizeof("Graphics_") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, false);
+    const char* token2 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token2, "Renderer");
     EXPECT_EQ(line, buf + sizeof("Graphics_Renderer_") - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, false);
+    const char* token3 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token3, "SetYon");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token4 = pfConsoleEngine::Tokenize(line, false);
+    const char* token4 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_EQ(token4, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -181,19 +181,19 @@ TEST(pfConsoleCore, TokenizeCommandNameSpaces)
     char buf[] = "Graphics Renderer   SetYon";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, false);
+    const char* token1 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token1, "Graphics");
     EXPECT_EQ(line, buf + sizeof("Graphics ") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, false);
+    const char* token2 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token2, "Renderer");
     EXPECT_EQ(line, buf + sizeof("Graphics Renderer   ") - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, false);
+    const char* token3 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_STREQ(token3, "SetYon");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token4 = pfConsoleEngine::Tokenize(line, false);
+    const char* token4 = pfConsoleEngine::TokenizeCommandName(line);
     EXPECT_EQ(token4, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -205,11 +205,11 @@ TEST(pfConsoleCore, TokenizeArgumentsSingle)
     char buf[] = "arg";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "arg");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, true);
+    const char* token2 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_EQ(token2, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -219,11 +219,11 @@ TEST(pfConsoleCore, TokenizeArgumentsSingleWhitespace)
     char buf[] = "  arg   ";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "arg");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, true);
+    const char* token2 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_EQ(token2, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -233,11 +233,11 @@ TEST(pfConsoleCore, TokenizeArgumentsSingleUnderscore)
     char buf[] = "arg_test";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "arg_test");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, true);
+    const char* token2 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_EQ(token2, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -247,11 +247,11 @@ TEST(pfConsoleCore, TokenizeArgumentsSingleDoubleQuote)
     char buf[] = "\"(Default Device)\"";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "(Default Device)");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, true);
+    const char* token2 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_EQ(token2, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -261,11 +261,11 @@ TEST(pfConsoleCore, TokenizeArgumentsSingleSingleQuote)
     char buf[] = "'(Default Device)'";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "(Default Device)");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, true);
+    const char* token2 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_EQ(token2, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -275,7 +275,7 @@ TEST(pfConsoleCore, TokenizeArgumentsSingleDoubleQuoteUnclosed)
     char buf[] = "\"(Default Device)";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "\xff");
 }
 
@@ -284,7 +284,7 @@ TEST(pfConsoleCore, TokenizeArgumentsSingleSingleQuoteUnclosed)
     char buf[] = "'(Default Device)";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "\xff");
 }
 
@@ -295,15 +295,15 @@ TEST(pfConsoleCore, TokenizeArgumentsPair)
     char buf[] = "arg1 arg2";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "arg1");
     EXPECT_EQ(line, buf + sizeof("arg1 ") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, true);
+    const char* token2 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token2, "arg2");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, true);
+    const char* token3 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_EQ(token3, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -313,15 +313,15 @@ TEST(pfConsoleCore, TokenizeArgumentsPairWhitespace)
     char buf[] = " arg1  arg2   ";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "arg1");
     EXPECT_EQ(line, buf + sizeof(" arg1  ") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, true);
+    const char* token2 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token2, "arg2");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, true);
+    const char* token3 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_EQ(token3, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -331,15 +331,15 @@ TEST(pfConsoleCore, TokenizeArgumentsPairComma)
     char buf[] = "arg1, arg2";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "arg1");
     EXPECT_EQ(line, buf + sizeof("arg1,") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, true);
+    const char* token2 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token2, "arg2");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, true);
+    const char* token3 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_EQ(token3, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -349,15 +349,15 @@ TEST(pfConsoleCore, TokenizeArgumentsPairMixedQuotes)
     char buf[] = "\"argument '1'\" 'argument \"2\"'";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "argument '1'");
     EXPECT_EQ(line, buf + sizeof("\"argument '1'\"") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, true);
+    const char* token2 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token2, "argument \"2\"");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, true);
+    const char* token3 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_EQ(token3, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -369,19 +369,19 @@ TEST(pfConsoleCore, TokenizeArgumentsTriple)
     char buf[] = "1.2 3.4 5.6";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "1.2");
     EXPECT_EQ(line, buf + sizeof("1.2 ") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, true);
+    const char* token2 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token2, "3.4");
     EXPECT_EQ(line, buf + sizeof("1.2 3.4 ") - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, true);
+    const char* token3 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token3, "5.6");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token4 = pfConsoleEngine::Tokenize(line, true);
+    const char* token4 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_EQ(token4, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
@@ -391,19 +391,19 @@ TEST(pfConsoleCore, TokenizeArgumentsTripleCommas)
     char buf[] = "1.2, 3.4, 5.6";
     char* line = buf;
 
-    const char* token1 = pfConsoleEngine::Tokenize(line, true);
+    const char* token1 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token1, "1.2");
     EXPECT_EQ(line, buf + sizeof("1.2,") - 1);
 
-    const char* token2 = pfConsoleEngine::Tokenize(line, true);
+    const char* token2 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token2, "3.4");
     EXPECT_EQ(line, buf + sizeof("1.2, 3.4,") - 1);
 
-    const char* token3 = pfConsoleEngine::Tokenize(line, true);
+    const char* token3 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_STREQ(token3, "5.6");
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 
-    const char* token4 = pfConsoleEngine::Tokenize(line, true);
+    const char* token4 = pfConsoleEngine::TokenizeArguments(line);
     EXPECT_EQ(token4, nullptr);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
