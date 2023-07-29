@@ -84,7 +84,6 @@ const char* pfConsoleEngine::TokenizeCommandName(char*& line)
     if (begin == line)
         return nullptr;
 
-    line = line + strlen(line);
     return begin;
 }
 
@@ -121,7 +120,6 @@ const char* pfConsoleEngine::TokenizeArguments(char*& line)
     if (begin == line)
         return nullptr;
 
-    line = line + strlen(line);
     return begin;
 }
 
