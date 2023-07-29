@@ -298,7 +298,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
-    int32_t               numParams, i, numQuotedParams = 0;
+    int32_t               numParams, i;
     pfConsoleCmdParam   paramArray[ fMaxNumParams + 1 ];
     const char          *ptr;
     bool                valid = true;
@@ -339,7 +339,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     /// tokenizing (with the new separators now, mind you) and turn them into
     /// params
 
-    for( numParams = numQuotedParams = 0; numParams < fMaxNumParams 
+    for (numParams = 0; numParams < fMaxNumParams
                         && (ptr = TokenizeArguments(linePtr)) != nullptr
                         && valid; numParams++ )
     {
