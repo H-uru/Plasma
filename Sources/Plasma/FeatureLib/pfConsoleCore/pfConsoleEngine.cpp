@@ -58,14 +58,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 const int32_t     pfConsoleEngine::fMaxNumParams = 16;
+// Yes, this is invalid UTF-8. Yes, this is awful.
+const ST::string pfConsoleEngine::kTokenizeError = ST_LITERAL("\xff");
 
 static const char kTokenSeparators[] = " =\r\n\t,";
 static const char kTokenGrpSeps[] = " =\r\n._\t,";
 
 //WARNING: Potentially increments the pointer passed to it.
-const char* pfConsoleEngine::TokenizeCommandName(char*& line)
+std::optional<ST::string> pfConsoleEngine::TokenizeCommandName(const char*& line)
 {
-    char *begin = line;
+    const char* begin = line;
 
     while (*begin && isspace(static_cast<unsigned char>(*begin)))
         ++begin;
@@ -73,24 +75,25 @@ const char* pfConsoleEngine::TokenizeCommandName(char*& line)
     for (line = begin; *line; ++line) {
         for (const char *sep = kTokenGrpSeps; *sep; ++sep) {
             if (*line == *sep) {
-                *line = 0;
+                const char* end = line;
                 while (*++line && (*line == *sep))
                     /* skip duplicate delimiters */;
-                return begin;
+                return ST::string::from_utf8(begin, end - begin);
             }
         }
     }
 
-    if (begin == line)
-        return nullptr;
+    if (begin == line) {
+        return {};
+    }
 
     return begin;
 }
 
 //WARNING: Potentially increments the pointer passed to it.
-const char* pfConsoleEngine::TokenizeArguments(char*& line)
+std::optional<ST::string> pfConsoleEngine::TokenizeArguments(const char*& line)
 {
-    char *begin = line;
+    const char* begin = line;
 
     while (*begin && isspace(static_cast<unsigned char>(*begin)))
         ++begin;
@@ -98,27 +101,27 @@ const char* pfConsoleEngine::TokenizeArguments(char*& line)
     for (line = begin; *line; ++line) {
         if (*begin == '"' || *begin == '\'') {
             // Handle strings as a single token
-            char *endptr = strchr(line + 1, *line);
-            if (endptr == nullptr) {
-                // Bad string token sentry
-                return "\xFF";
+            ++begin;
+            const char* end = strchr(begin, *line);
+            if (end == nullptr) {
+                return kTokenizeError;
             }
-            *endptr = 0;
-            line = endptr + 1;
-            return begin + 1;
+            line = end + 1;
+            return ST::string::from_utf8(begin, end - begin);
         }
         for (const char *sep = kTokenSeparators; *sep; ++sep) {
             if (*line == *sep) {
-                *line = 0;
+                const char* end = line;
                 while (*++line && (*line == *sep))
                     /* skip duplicate delimiters */;
-                return begin;
+                return ST::string::from_utf8(begin, end - begin);
             }
         }
     }
 
-    if (begin == line)
-        return nullptr;
+    if (begin == line) {
+        return {};
+    }
 
     return begin;
 }
@@ -140,28 +143,22 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
-    const char          *ptr;
-
-    // TokenizeCommandName requires a writable C string...
-    ST::char_buffer nameBuf = name.to_utf8();
-    char* namePtr = nameBuf.data();
+    const char* namePtr = name.c_str();
 
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = TokenizeCommandName(namePtr);
-    while (ptr != nullptr)
-    {
+    auto token = TokenizeCommandName(namePtr);
+    while (token) {
         // Take this token and check to see if it's a group
-        if ((subGrp = group->FindSubGroupNoCase(ptr)) != nullptr)
+        if ((subGrp = group->FindSubGroupNoCase(*token)) != nullptr)
             group = subGrp;
         else
             break;
 
-        ptr = TokenizeCommandName(namePtr);
+        token = TokenizeCommandName(namePtr);
     }
 
-    if (ptr == nullptr)
-    {
+    if (!token) {
         if (group == nullptr)
         {
             fErrorMsg = ST_LITERAL("Invalid command syntax");
@@ -188,7 +185,7 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
     }
 
     /// OK, so what we found wasn't a group. Which means we need a command...
-    cmd = group->FindCommandNoCase( ptr );
+    cmd = group->FindCommandNoCase(*token);
     if (cmd == nullptr)
     {
         fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
@@ -209,34 +206,28 @@ ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
-    const char          *ptr;
-
-    // TokenizeCommandName requires a writable C string...
-    ST::char_buffer nameBuf = name.to_utf8();
-    char* namePtr = nameBuf.data();
+    const char* namePtr = name.c_str();
     
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = TokenizeCommandName(namePtr);
-    while (ptr != nullptr)
-    {
+    auto token = TokenizeCommandName(namePtr);
+    while (token) {
         // Take this token and check to see if it's a group
-        if ((subGrp = group->FindSubGroupNoCase(ptr)) != nullptr)
+        if ((subGrp = group->FindSubGroupNoCase(*token)) != nullptr)
             group = subGrp;
         else
             break;
 
-        ptr = TokenizeCommandName(namePtr);
+        token = TokenizeCommandName(namePtr);
     }
 
-    if (ptr == nullptr)
-    {
+    if (!token) {
         fErrorMsg = ST_LITERAL("Invalid command syntax");
         return {};
     }
 
     /// OK, so what we found wasn't a group. Which means we need a command...
-    cmd = group->FindCommandNoCase( ptr );
+    cmd = group->FindCommandNoCase(*token);
     if (cmd == nullptr)
     {
         fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
@@ -300,35 +291,29 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     pfConsoleCmdGroup   *group, *subGrp;
     int32_t               numParams, i;
     pfConsoleCmdParam   paramArray[ fMaxNumParams + 1 ];
-    const char          *ptr;
     bool                valid = true;
-
-    // TokenizeCommandName/TokenizeArguments requires a writable C string...
-    ST::char_buffer lineBuf = line.to_utf8();
-    char* linePtr = lineBuf.data();
+    const char* linePtr = line.c_str();
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    ptr = TokenizeCommandName(linePtr);
-    while (ptr != nullptr)
-    {
+    auto token = TokenizeCommandName(linePtr);
+    while (token) {
         // Take this token and check to see if it's a group
-        if ((subGrp = group->FindSubGroupNoCase(ptr)) != nullptr)
+        if ((subGrp = group->FindSubGroupNoCase(*token)) != nullptr)
             group = subGrp;
         else
             break;
 
-        ptr = TokenizeCommandName(linePtr);
+        token = TokenizeCommandName(linePtr);
     }
 
-    if (ptr == nullptr)
-    {
+    if (!token) {
         fErrorMsg = ST_LITERAL("Invalid command syntax");
         return false;
     }
 
     /// OK, so what we found wasn't a group. Which means we need a command next
-    cmd = group->FindCommandNoCase( ptr );
+    cmd = group->FindCommandNoCase(*token);
     if (cmd == nullptr)
     {
         fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
@@ -340,11 +325,10 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     /// params
 
     for (numParams = 0; numParams < fMaxNumParams
-                        && (ptr = TokenizeArguments(linePtr)) != nullptr
+                        && (token = TokenizeArguments(linePtr))
                         && valid; numParams++ )
     {
-        if( ptr[ 0 ] == '\xFF' )
-        {
+        if (*token == kTokenizeError) {
             fErrorMsg = ST_LITERAL("Invalid syntax: unterminated quoted parameter");
             return false;
         }
@@ -352,12 +336,11 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
         // Special case for context variables--if we're specifying one, we want to just grab
         // the value of it and return that instead
         valid = false;
-        if( ptr[ 0 ] == '$' )
-        {
+        if (token->starts_with("$")) {
             pfConsoleContext    &context = pfConsoleContext::GetRootContext();
 
             // Potential variable, see if we can find it
-            hsSsize_t idx = context.FindVar( ptr + 1 );
+            hsSsize_t idx = context.FindVar(token->substr(1));
             if( idx == -1 )
             {
                 fErrorMsg = ST_LITERAL("Invalid console variable name");
@@ -370,7 +353,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
         }
 
         if( !valid )
-            valid = IConvertToParam(cmd->GetSigEntry(numParams), ptr, &paramArray[numParams]);
+            valid = IConvertToParam(cmd->GetSigEntry(numParams), *token, &paramArray[numParams]);
     }
     for( i = numParams; i < fMaxNumParams + 1; i++ )
         paramArray[ i ].SetNone();
@@ -461,31 +444,27 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
 
     /// New search
     ST::string_stream newStr;
-    // TokenizeCommandName requires a writable C string...
-    ST::char_buffer lineBuf = line.to_utf8();
-    char* linePtr = lineBuf.data();
+    const char* linePtr = line.c_str();
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
     pfConsoleCmdGroup* group = pfConsoleCmdGroup::GetBaseGroup();
-    const char* ptr = TokenizeCommandName(linePtr);
-    while (ptr != nullptr)
-    {
+    auto token = TokenizeCommandName(linePtr);
+    while (token) {
         // Take this token and check to see if it's a group
-        pfConsoleCmdGroup* subGrp = group->FindSubGroupNoCase(ptr, 0, nullptr);
+        pfConsoleCmdGroup* subGrp = group->FindSubGroupNoCase(*token, 0, nullptr);
         if (subGrp == nullptr) {
             break;
         }
 
         group = subGrp;
         newStr << group->GetName() << '.';
-        ptr = TokenizeCommandName(linePtr);
+        token = TokenizeCommandName(linePtr);
     }
 
-    if (ptr != nullptr)
-    {
+    if (token) {
         // Still got at least one token left. Try to match to either
         // a partial group or a partial command
-        pfConsoleCmdGroup* subGrp = group->FindSubGroupNoCase(ptr, pfConsoleCmdGroup::kFindPartial, lastGroup);
+        pfConsoleCmdGroup* subGrp = group->FindSubGroupNoCase(*token, pfConsoleCmdGroup::kFindPartial, lastGroup);
         if (subGrp != nullptr)
         {
             lastGroup = group = subGrp;
@@ -493,7 +472,7 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
         }
         else 
         {
-            pfConsoleCmd* cmd = group->FindCommandNoCase(ptr, pfConsoleCmdGroup::kFindPartial, lastCmd);
+            pfConsoleCmd* cmd = group->FindCommandNoCase(*token, pfConsoleCmdGroup::kFindPartial, lastCmd);
             if (cmd == nullptr)
                 return {};
 
