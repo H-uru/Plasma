@@ -632,7 +632,6 @@ bool hsRAMStream::AtEnd()
 uint32_t hsRAMStream::Read(uint32_t byteCount, void * buffer)
 {
     if (fPosition + byteCount > fVector.size()) {
-//      hsStatusMessageF("Reading past end of hsRAMStream (read %u of %u requested bytes)", fVector.size() - fPosition, byteCount);
         byteCount = fVector.size() - fPosition;
     }
     
