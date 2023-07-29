@@ -409,3 +409,25 @@ TEST(pfConsoleCore, TokenizeArgumentsTripleCommas)
     EXPECT_FALSE(token4);
     EXPECT_EQ(line, buf + sizeof(buf) - 1);
 }
+
+TEST(pfConsoleCore, TokenizeArgumentsTripleEmptyQuotes)
+{
+    const char buf[] = "'' \"\" ''";
+    const char* line = buf;
+
+    auto token1 = pfConsoleEngine::TokenizeArguments(line);
+    EXPECT_EQ(token1, ""_st);
+    EXPECT_EQ(line, buf + sizeof("''") - 1);
+
+    auto token2 = pfConsoleEngine::TokenizeArguments(line);
+    EXPECT_EQ(token2, ""_st);
+    EXPECT_EQ(line, buf + sizeof("'' \"\"") - 1);
+
+    auto token3 = pfConsoleEngine::TokenizeArguments(line);
+    EXPECT_EQ(token3, ""_st);
+    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+
+    auto token4 = pfConsoleEngine::TokenizeArguments(line);
+    EXPECT_FALSE(token4);
+    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+}
