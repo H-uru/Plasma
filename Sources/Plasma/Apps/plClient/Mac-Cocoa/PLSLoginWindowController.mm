@@ -80,7 +80,8 @@ static NSOperationQueue* _loginQueue = nil;
     [operation addExecutionBlock:^{
         NetCliAuthAutoReconnectEnable(false);
 
-        if (!NetCliAuthQueryConnected()) NetCommConnect();
+        if (!NetCliAuthQueryConnected())
+            NetCommConnect();
         NetCommAuthenticate(nullptr);
 
         while (!NetCommIsLoginComplete()) {

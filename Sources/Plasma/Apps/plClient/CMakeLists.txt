@@ -139,17 +139,17 @@ if(APPLE)
         MACOSX_BUNDLE_GUI_IDENTIFIER org.openuru.plClient
         MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
-        XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon;
-        XCODE_ATTRIBUTE_MTL_FAST_MATH "YES";
-        XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=Debug] "INCLUDE_SOURCE";
-        XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=RelWithDebInfo] "INCLUDE_SOURCE";
-        XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=Debug] "YES";
-        XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=RelWithDebInfo] "YES";
-        XCODE_ATTRIBUTE_MTL_HEADER_SEARCH_PATHS ${Plasma_SOURCE_DIR}/Sources/Plasma/NucleusLib/inc/;
-        XCODE_ATTRIBUTE_INSTALL_PATH "/Applications";
-        XCODE_ATTRIBUTE_SKIP_INSTALL "NO";
-        XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS ${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/plClient.entitlements;
-        XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES";
+        XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon
+        XCODE_ATTRIBUTE_MTL_FAST_MATH "YES"
+        XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=Debug] "INCLUDE_SOURCE"
+        XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=RelWithDebInfo] "INCLUDE_SOURCE"
+        XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=Debug] "YES"
+        XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=RelWithDebInfo] "YES"
+        XCODE_ATTRIBUTE_MTL_HEADER_SEARCH_PATHS ${Plasma_SOURCE_DIR}/Sources/Plasma/NucleusLib/inc/
+        XCODE_ATTRIBUTE_INSTALL_PATH "/Applications"
+        XCODE_ATTRIBUTE_SKIP_INSTALL "NO"
+        XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS ${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/plClient.entitlements
+        XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
     )
     target_compile_options(plClient PRIVATE -fobjc-arc)
     target_sources(plClient PRIVATE Mac-Cocoa/Assets.xcassets)
@@ -249,11 +249,12 @@ if(APPLE)
     # Not sure why - turning that off.
     set_target_properties(plClient PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
     install(
-        CODE [[
+        CODE
+        [[
             include("BundleUtilities")
             fixup_bundle("${CMAKE_INSTALL_PREFIX}/client/$<TARGET_FILE_NAME:plClient>.app" "" "${searchDirs}" IGNORE_ITEM Python)
             execute_process(COMMAND "codesign" "--remove-signature" "--deep" "-f" "${CMAKE_INSTALL_PREFIX}/client/$<TARGET_FILE_NAME:plClient>.app")
-            ]]
+        ]]
         DESTINATION client
     )
 endif()
