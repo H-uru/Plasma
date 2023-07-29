@@ -6,4 +6,5 @@ include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib/inc")
 include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
 include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib/inc")
 
+add_subdirectory(pfConsoleCoreTest)
 add_subdirectory(pfPythonTest)
