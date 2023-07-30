@@ -568,6 +568,7 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
 
 bool plMetalPipeline::BeginRender()
 {
+    fCurrentPool = NS::AutoreleasePool::alloc()->init();
     // offset transform
     RefreshScreenMatrices();
     
@@ -592,6 +593,7 @@ bool plMetalPipeline::BeginRender()
         
         CA::MetalDrawable *drawable = currentDrawableCallback();
         if(!drawable) {
+            fCurrentPool->release();
             return false;
         }
         fDevice.CreateNewCommandBuffer(drawable);
@@ -631,6 +633,7 @@ bool plMetalPipeline::EndRender()
             fLayerRef[i] = nullptr;
         }
     }
+    fCurrentPool->release();
 
     return retVal;
 }

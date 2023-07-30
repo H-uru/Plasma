@@ -250,6 +250,8 @@ private:
     std::vector<plMetalShaderLightSource *> fLightSourceStack;
     
     static plMetalEnumerate enumerator;
+    
+    NS::AutoreleasePool* fCurrentPool;
 };
 
 #endif // _plGLPipeline_inc_
