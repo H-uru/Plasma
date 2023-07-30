@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleEngine.h"
 #include "pfConsoleCmd.h"
 #include "pfConsoleContext.h"
+#include "pfConsoleParser.h"
 
 #include <string_theory/format>
 #include <string_theory/string_stream>
@@ -58,73 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 const int32_t     pfConsoleEngine::fMaxNumParams = 16;
-// Yes, this is invalid UTF-8. Yes, this is awful.
-const ST::string pfConsoleEngine::kTokenizeError = ST_LITERAL("\xff");
-
-static const char kTokenSeparators[] = " =\r\n\t,";
-static const char kTokenGrpSeps[] = " =\r\n._\t,";
-
-//WARNING: Potentially increments the pointer passed to it.
-std::optional<ST::string> pfConsoleEngine::TokenizeCommandName(const char*& line)
-{
-    const char* begin = line;
-
-    while (*begin && isspace(static_cast<unsigned char>(*begin)))
-        ++begin;
-
-    for (line = begin; *line; ++line) {
-        for (const char *sep = kTokenGrpSeps; *sep; ++sep) {
-            if (*line == *sep) {
-                const char* end = line;
-                while (*++line && (*line == *sep))
-                    /* skip duplicate delimiters */;
-                return ST::string::from_utf8(begin, end - begin);
-            }
-        }
-    }
-
-    if (begin == line) {
-        return {};
-    }
-
-    return begin;
-}
-
-//WARNING: Potentially increments the pointer passed to it.
-std::optional<ST::string> pfConsoleEngine::TokenizeArguments(const char*& line)
-{
-    const char* begin = line;
-
-    while (*begin && isspace(static_cast<unsigned char>(*begin)))
-        ++begin;
-
-    for (line = begin; *line; ++line) {
-        if (*begin == '"' || *begin == '\'') {
-            // Handle strings as a single token
-            ++begin;
-            const char* end = strchr(begin, *line);
-            if (end == nullptr) {
-                return kTokenizeError;
-            }
-            line = end + 1;
-            return ST::string::from_utf8(begin, end - begin);
-        }
-        for (const char *sep = kTokenSeparators; *sep; ++sep) {
-            if (*line == *sep) {
-                const char* end = line;
-                while (*++line && (*line == *sep))
-                    /* skip duplicate delimiters */;
-                return ST::string::from_utf8(begin, end - begin);
-            }
-        }
-    }
-
-    if (begin == line) {
-        return {};
-    }
-
-    return begin;
-}
 
 
 //// Constructor & Destructor ////////////////////////////////////////////////
@@ -147,7 +81,7 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
 
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    auto token = TokenizeCommandName(namePtr);
+    auto token = pfConsoleTokenizer::TokenizeCommandName(namePtr);
     while (token) {
         // Take this token and check to see if it's a group
         if ((subGrp = group->FindSubGroupNoCase(*token)) != nullptr)
@@ -155,7 +89,7 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
         else
             break;
 
-        token = TokenizeCommandName(namePtr);
+        token = pfConsoleTokenizer::TokenizeCommandName(namePtr);
     }
 
     if (!token) {
@@ -210,7 +144,7 @@ ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
     
     /// Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    auto token = TokenizeCommandName(namePtr);
+    auto token = pfConsoleTokenizer::TokenizeCommandName(namePtr);
     while (token) {
         // Take this token and check to see if it's a group
         if ((subGrp = group->FindSubGroupNoCase(*token)) != nullptr)
@@ -218,7 +152,7 @@ ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
         else
             break;
 
-        token = TokenizeCommandName(namePtr);
+        token = pfConsoleTokenizer::TokenizeCommandName(namePtr);
     }
 
     if (!token) {
@@ -296,7 +230,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
     group = pfConsoleCmdGroup::GetBaseGroup();
-    auto token = TokenizeCommandName(linePtr);
+    auto token = pfConsoleTokenizer::TokenizeCommandName(linePtr);
     while (token) {
         // Take this token and check to see if it's a group
         if ((subGrp = group->FindSubGroupNoCase(*token)) != nullptr)
@@ -304,7 +238,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
         else
             break;
 
-        token = TokenizeCommandName(linePtr);
+        token = pfConsoleTokenizer::TokenizeCommandName(linePtr);
     }
 
     if (!token) {
@@ -325,10 +259,10 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     /// params
 
     for (numParams = 0; numParams < fMaxNumParams
-                        && (token = TokenizeArguments(linePtr))
+                        && (token = pfConsoleTokenizer::TokenizeArguments(linePtr))
                         && valid; numParams++ )
     {
-        if (*token == kTokenizeError) {
+        if (*token == pfConsoleTokenizer::kTokenizeError) {
             fErrorMsg = ST_LITERAL("Invalid syntax: unterminated quoted parameter");
             return false;
         }
@@ -448,7 +382,7 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
     pfConsoleCmdGroup* group = pfConsoleCmdGroup::GetBaseGroup();
-    auto token = TokenizeCommandName(linePtr);
+    auto token = pfConsoleTokenizer::TokenizeCommandName(linePtr);
     while (token) {
         // Take this token and check to see if it's a group
         pfConsoleCmdGroup* subGrp = group->FindSubGroupNoCase(*token, 0, nullptr);
@@ -458,7 +392,7 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
 
         group = subGrp;
         newStr << group->GetName() << '.';
-        token = TokenizeCommandName(linePtr);
+        token = pfConsoleTokenizer::TokenizeCommandName(linePtr);
     }
 
     if (token) {

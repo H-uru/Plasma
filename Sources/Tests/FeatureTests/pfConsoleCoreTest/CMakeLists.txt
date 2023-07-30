@@ -1,5 +1,5 @@
 set(pfConsoleCore_SOURCES
-    test_pfConsoleCore.cpp
+    test_pfConsoleTokenizer.cpp
 )
 
 plasma_test(test_pfConsoleCore SOURCES ${pfConsoleCore_SOURCES})
