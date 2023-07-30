@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfConsoleParser.h"
 
+#include "pfConsoleCmd.h"
+
 static const char kTokenSeparators[] = " =\r\n\t,";
 static const char kTokenGrpSeps[] = " =\r\n._\t,";
 
@@ -113,4 +115,21 @@ std::optional<ST::string> pfConsoleTokenizer::NextArgument()
     }
 
     return begin;
+}
+
+std::pair<pfConsoleCmdGroup*, std::optional<ST::string>> pfConsoleParser::ParseGroupAndName()
+{
+    pfConsoleCmdGroup* group = pfConsoleCmdGroup::GetBaseGroup();
+    auto token = fTokenizer.NextNamePart();
+    while (token) {
+        // Take this token and check to see if it's a group
+        pfConsoleCmdGroup* subGrp = group->FindSubGroupNoCase(*token);
+        if (subGrp == nullptr) {
+            return {group, token};
+        }
+        group = subGrp;
+        token = fTokenizer.NextNamePart();
+    }
+
+    return {group, token};
 }

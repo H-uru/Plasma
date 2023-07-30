@@ -1,4 +1,5 @@
 set(pfConsoleCore_SOURCES
+    test_pfConsoleParser.cpp
     test_pfConsoleTokenizer.cpp
 )
 

@@ -76,36 +76,18 @@ pfConsoleEngine::~pfConsoleEngine()
 bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const ST::string&))
 {
     pfConsoleCmd        *cmd;
-    pfConsoleCmdGroup   *group, *subGrp;
 
-    /// Scan for subgroups. This can be an empty loop
-    pfConsoleTokenizer tokenizer(name);
-    group = pfConsoleCmdGroup::GetBaseGroup();
-    auto token = tokenizer.NextNamePart();
-    while (token) {
-        // Take this token and check to see if it's a group
-        if ((subGrp = group->FindSubGroupNoCase(*token)) != nullptr)
-            group = subGrp;
-        else
-            break;
-
-        token = tokenizer.NextNamePart();
-    }
+    pfConsoleParser parser(name);
+    auto [group, token] = parser.ParseGroupAndName();
 
     if (!token) {
-        if (group == nullptr)
-        {
-            fErrorMsg = ST_LITERAL("Invalid command syntax");
-            return false;
-        }
-
         // Print help for this group
         if( group == pfConsoleCmdGroup::GetBaseGroup() )
             PrintFn(ST_LITERAL("Base commands and groups:"));
         else
             PrintFn(ST::format("Group {}:", group->GetName()));
         PrintFn(ST_LITERAL("  Subgroups:"));
-        for (subGrp = group->GetFirstSubGroup(); subGrp != nullptr; subGrp = subGrp->GetNext())
+        for (pfConsoleCmdGroup* subGrp = group->GetFirstSubGroup(); subGrp != nullptr; subGrp = subGrp->GetNext())
         {
             PrintFn(ST::format("    {}", subGrp->GetName()));
         }
@@ -139,21 +121,9 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
 ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
 {
     pfConsoleCmd        *cmd;
-    pfConsoleCmdGroup   *group, *subGrp;
     
-    /// Scan for subgroups. This can be an empty loop
-    pfConsoleTokenizer tokenizer(name);
-    group = pfConsoleCmdGroup::GetBaseGroup();
-    auto token = tokenizer.NextNamePart();
-    while (token) {
-        // Take this token and check to see if it's a group
-        if ((subGrp = group->FindSubGroupNoCase(*token)) != nullptr)
-            group = subGrp;
-        else
-            break;
-
-        token = tokenizer.NextNamePart();
-    }
+    pfConsoleParser parser(name);
+    auto [group, token] = parser.ParseGroupAndName();
 
     if (!token) {
         fErrorMsg = ST_LITERAL("Invalid command syntax");
@@ -222,24 +192,12 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const ST::string&))
 {
     pfConsoleCmd        *cmd;
-    pfConsoleCmdGroup   *group, *subGrp;
     int32_t               numParams, i;
     pfConsoleCmdParam   paramArray[ fMaxNumParams + 1 ];
     bool                valid = true;
 
-    /// Loop #1: Scan for subgroups. This can be an empty loop
-    pfConsoleTokenizer tokenizer(line);
-    group = pfConsoleCmdGroup::GetBaseGroup();
-    auto token = tokenizer.NextNamePart();
-    while (token) {
-        // Take this token and check to see if it's a group
-        if ((subGrp = group->FindSubGroupNoCase(*token)) != nullptr)
-            group = subGrp;
-        else
-            break;
-
-        token = tokenizer.NextNamePart();
-    }
+    pfConsoleParser parser(line);
+    auto [group, token] = parser.ParseGroupAndName();
 
     if (!token) {
         fErrorMsg = ST_LITERAL("Invalid command syntax");
@@ -259,7 +217,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     /// params
 
     for (numParams = 0; numParams < fMaxNumParams
-                        && (token = tokenizer.NextArgument())
+                        && (token = parser.fTokenizer.NextArgument())
                         && valid; numParams++ )
     {
         // Special case for context variables--if we're specifying one, we want to just grab
@@ -285,8 +243,9 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
             valid = IConvertToParam(cmd->GetSigEntry(numParams), *token, &paramArray[numParams]);
     }
 
-    if (!tokenizer.fErrorMsg.empty()) {
-        fErrorMsg = ST::format("Invalid syntax: {}", tokenizer.fErrorMsg);
+    ST::string errorMsg = parser.fTokenizer.fErrorMsg;
+    if (!errorMsg.empty()) {
+        fErrorMsg = ST::format("Invalid syntax: {}", errorMsg);
         return false;
     }
 
@@ -380,20 +339,18 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
     /// New search
     ST::string_stream newStr;
 
-    /// Loop #1: Scan for subgroups. This can be an empty loop
-    pfConsoleTokenizer tokenizer(line);
-    pfConsoleCmdGroup* group = pfConsoleCmdGroup::GetBaseGroup();
-    auto token = tokenizer.NextNamePart();
-    while (token) {
-        // Take this token and check to see if it's a group
-        pfConsoleCmdGroup* subGrp = group->FindSubGroupNoCase(*token, 0, nullptr);
-        if (subGrp == nullptr) {
-            break;
-        }
+    pfConsoleParser parser(line);
+    auto [group, token] = parser.ParseGroupAndName();
 
-        group = subGrp;
-        newStr << group->GetName() << '.';
-        token = tokenizer.NextNamePart();
+    // Add group name to replacement line.
+    std::vector<ST::string> reverseParts;
+    pfConsoleCmdGroup* parent = group;
+    while (parent != nullptr && parent != pfConsoleCmdGroup::GetBaseGroup()) {
+        reverseParts.emplace_back(parent->GetName());
+        parent = parent->GetParent();
+    }
+    for (auto it = reverseParts.crbegin(); it != reverseParts.crend(); ++it) {
+        newStr << *it << '.';
     }
 
     if (token) {
@@ -419,7 +376,7 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
     if( preserveParams )
     {
         /// Preserve the rest of the string after the matched command
-        newStr.append(tokenizer.fPos, tokenizer.fEnd - tokenizer.fPos);
+        newStr.append(parser.fTokenizer.fPos, parser.fTokenizer.fEnd - parser.fTokenizer.fPos);
     }
 
     return newStr.to_string();

@@ -47,6 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <optional>
 #include <string_theory/string>
+#include <utility>
+#include <vector>
+
+class pfConsoleCmdGroup;
 
 class pfConsoleTokenizer
 {
@@ -69,6 +73,22 @@ public:
     // returns an empty std::optional and sets fErrorMsg to an empty string.
     std::optional<ST::string> NextNamePart();
     std::optional<ST::string> NextArgument();
+};
+
+class pfConsoleParser
+{
+public:
+    pfConsoleTokenizer fTokenizer;
+
+    pfConsoleParser(ST::string::const_iterator begin, ST::string::const_iterator end) : fTokenizer(begin, end) {}
+    pfConsoleParser(const ST::string& line) : pfConsoleParser(line.begin(), line.end()) {}
+
+    // Parse the command name part of the line as far as possible.
+    // This consumes name part tokens and uses them to look up a command group
+    // until a token is encountered that isn't a known group name.
+    // Returns the found group and the first non-group token
+    // (which may be an empty std::optional if the end of the line was reached).
+    std::pair<pfConsoleCmdGroup*, std::optional<ST::string>> ParseGroupAndName();
 };
 
 #endif // _pfConsolePareser_h
