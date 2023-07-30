@@ -46,24 +46,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 #include <optional>
-
-namespace ST { class string; }
+#include <string_theory/string>
 
 class pfConsoleTokenizer
 {
 public:
-    // Special value returned by the Tokenize methods (currently only TokenizeArguments) to indicate a syntax error.
-    static const ST::string kTokenizeError;
+    const char* fPos;
+    ST::string fErrorMsg;
 
-    // Parse the next command name or argument token from the given input line.
+    pfConsoleTokenizer(const char* line) : fPos(line), fErrorMsg() {}
+
+    // Parse the next command name or argument token from the input line.
     // On success, returns the parsed token.
     // (Note that a successfully parsed token may be an empty string, e. g. from an empty pair of quotes!)
-    // The line pointer is incremented to point after that token
-    // so that it can be passed into another call to continue tokenizing.
-    // If the next token couldn't be parsed (e. g. quote not closed), returns kTokenizeError.
-    // If there are no further tokens in the line, returns an empty std::optional.
-    static std::optional<ST::string> TokenizeCommandName(const char*& line);
-    static std::optional<ST::string> TokenizeArguments(const char*& line);
+    // If the next token couldn't be parsed (e. g. quote not closed),
+    // returns an empty std::optional and sets fErrorMsg to a non-empty string.
+    // If there are no further tokens in the line,
+    // returns an empty std::optional and sets fErrorMsg to an empty string.
+    std::optional<ST::string> NextNamePart();
+    std::optional<ST::string> NextArgument();
 };
 
 #endif // _pfConsolePareser_h

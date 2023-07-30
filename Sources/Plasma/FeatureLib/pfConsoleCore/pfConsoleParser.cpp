@@ -42,70 +42,66 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfConsoleParser.h"
 
-#include <string_theory/string>
-
-// Yes, this is invalid UTF-8. Yes, this is awful.
-const ST::string pfConsoleTokenizer::kTokenizeError = ST_LITERAL("\xff");
-
 static const char kTokenSeparators[] = " =\r\n\t,";
 static const char kTokenGrpSeps[] = " =\r\n._\t,";
 
-//WARNING: Potentially increments the pointer passed to it.
-std::optional<ST::string> pfConsoleTokenizer::TokenizeCommandName(const char*& line)
+std::optional<ST::string> pfConsoleTokenizer::NextNamePart()
 {
-    const char* begin = line;
+    const char* begin = fPos;
 
     while (*begin && isspace(static_cast<unsigned char>(*begin)))
         ++begin;
 
-    for (line = begin; *line; ++line) {
+    for (fPos = begin; *fPos; ++fPos) {
         for (const char *sep = kTokenGrpSeps; *sep; ++sep) {
-            if (*line == *sep) {
-                const char* end = line;
-                while (*++line && (*line == *sep))
+            if (*fPos == *sep) {
+                const char* end = fPos;
+                while (*++fPos && (*fPos == *sep))
                     /* skip duplicate delimiters */;
                 return ST::string::from_utf8(begin, end - begin);
             }
         }
     }
 
-    if (begin == line) {
+    if (begin == fPos) {
+        fErrorMsg.clear();
         return {};
     }
 
     return begin;
 }
 
-//WARNING: Potentially increments the pointer passed to it.
-std::optional<ST::string> pfConsoleTokenizer::TokenizeArguments(const char*& line)
+std::optional<ST::string> pfConsoleTokenizer::NextArgument()
 {
-    const char* begin = line;
+    const char* begin = fPos;
 
     while (*begin && isspace(static_cast<unsigned char>(*begin)))
         ++begin;
 
-    for (line = begin; *line; ++line) {
+    for (fPos = begin; *fPos; ++fPos) {
         if (*begin == '"' || *begin == '\'') {
             // Handle strings as a single token
             ++begin;
-            const char* end = strchr(begin, *line);
+            const char* end = strchr(begin, *fPos);
             if (end == nullptr) {
-                return kTokenizeError;
+                fErrorMsg = ST_LITERAL("unterminated quoted parameter");
+                return {};
             }
-            line = end + 1;
+            fPos = end + 1;
             return ST::string::from_utf8(begin, end - begin);
         }
         for (const char *sep = kTokenSeparators; *sep; ++sep) {
-            if (*line == *sep) {
-                const char* end = line;
-                while (*++line && (*line == *sep))
+            if (*fPos == *sep) {
+                const char* end = fPos;
+                while (*++fPos && (*fPos == *sep))
                     /* skip duplicate delimiters */;
                 return ST::string::from_utf8(begin, end - begin);
             }
         }
     }
 
-    if (begin == line) {
+    if (begin == fPos) {
+        fErrorMsg.clear();
         return {};
     }
 

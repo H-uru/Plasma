@@ -52,29 +52,31 @@ using namespace ST::literals;
 TEST(pfConsoleTokenizer, TokenizeCommandNameSingle)
 {
     const char buf[] = "SampleCmd1";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token1 = tokenizer.NextNamePart();
     EXPECT_EQ(token1, "SampleCmd1"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token2 = tokenizer.NextNamePart();
     EXPECT_FALSE(token2);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeCommandNameSingleWhitespace)
 {
     const char buf[] = "  SampleCmd1   ";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token1 = tokenizer.NextNamePart();
     EXPECT_EQ(token1, "SampleCmd1"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token2 = tokenizer.NextNamePart();
     EXPECT_FALSE(token2);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 // Tokenize command name, 2 tokens
@@ -82,55 +84,58 @@ TEST(pfConsoleTokenizer, TokenizeCommandNameSingleWhitespace)
 TEST(pfConsoleTokenizer, TokenizeCommandNameDot)
 {
     const char buf[] = "App.Quit";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token1 = tokenizer.NextNamePart();
     EXPECT_EQ(token1, "App"_st);
-    EXPECT_EQ(line, buf + sizeof("App.") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("App.") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token2 = tokenizer.NextNamePart();
     EXPECT_EQ(token2, "Quit"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token3 = tokenizer.NextNamePart();
     EXPECT_FALSE(token3);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeCommandNameUnderscore)
 {
     const char buf[] = "App_Quit";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token1 = tokenizer.NextNamePart();
     EXPECT_EQ(token1, "App"_st);
-    EXPECT_EQ(line, buf + sizeof("App_") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("App_") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token2 = tokenizer.NextNamePart();
     EXPECT_EQ(token2, "Quit"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token3 = tokenizer.NextNamePart();
     EXPECT_FALSE(token3);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeCommandNameSpace)
 {
     const char buf[] = "App  Quit";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token1 = tokenizer.NextNamePart();
     EXPECT_EQ(token1, "App"_st);
-    EXPECT_EQ(line, buf + sizeof("App  ") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("App  ") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token2 = tokenizer.NextNamePart();
     EXPECT_EQ(token2, "Quit"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token3 = tokenizer.NextNamePart();
     EXPECT_FALSE(token3);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 // Tokenize command name, 3 tokens
@@ -138,67 +143,70 @@ TEST(pfConsoleTokenizer, TokenizeCommandNameSpace)
 TEST(pfConsoleTokenizer, TokenizeCommandNameDots)
 {
     const char buf[] = "Graphics.Renderer.SetYon";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token1 = tokenizer.NextNamePart();
     EXPECT_EQ(token1, "Graphics"_st);
-    EXPECT_EQ(line, buf + sizeof("Graphics.") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("Graphics.") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token2 = tokenizer.NextNamePart();
     EXPECT_EQ(token2, "Renderer"_st);
-    EXPECT_EQ(line, buf + sizeof("Graphics.Renderer.") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("Graphics.Renderer.") - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token3 = tokenizer.NextNamePart();
     EXPECT_EQ(token3, "SetYon"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token4 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token4 = tokenizer.NextNamePart();
     EXPECT_FALSE(token4);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeCommandNameUnderscores)
 {
     const char buf[] = "Graphics_Renderer_SetYon";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token1 = tokenizer.NextNamePart();
     EXPECT_EQ(token1, "Graphics"_st);
-    EXPECT_EQ(line, buf + sizeof("Graphics_") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("Graphics_") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token2 = tokenizer.NextNamePart();
     EXPECT_EQ(token2, "Renderer"_st);
-    EXPECT_EQ(line, buf + sizeof("Graphics_Renderer_") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("Graphics_Renderer_") - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token3 = tokenizer.NextNamePart();
     EXPECT_EQ(token3, "SetYon"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token4 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token4 = tokenizer.NextNamePart();
     EXPECT_FALSE(token4);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeCommandNameSpaces)
 {
     const char buf[] = "Graphics Renderer   SetYon";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token1 = tokenizer.NextNamePart();
     EXPECT_EQ(token1, "Graphics"_st);
-    EXPECT_EQ(line, buf + sizeof("Graphics ") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("Graphics ") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token2 = tokenizer.NextNamePart();
     EXPECT_EQ(token2, "Renderer"_st);
-    EXPECT_EQ(line, buf + sizeof("Graphics Renderer   ") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("Graphics Renderer   ") - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token3 = tokenizer.NextNamePart();
     EXPECT_EQ(token3, "SetYon"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token4 = pfConsoleTokenizer::TokenizeCommandName(line);
+    auto token4 = tokenizer.NextNamePart();
     EXPECT_FALSE(token4);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 // Tokenize arguments, 1 token
@@ -206,89 +214,96 @@ TEST(pfConsoleTokenizer, TokenizeCommandNameSpaces)
 TEST(pfConsoleTokenizer, TokenizeArgumentsSingle)
 {
     const char buf[] = "arg";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, "arg"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_FALSE(token2);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeArgumentsSingleWhitespace)
 {
     const char buf[] = "  arg   ";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, "arg"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_FALSE(token2);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeArgumentsSingleUnderscore)
 {
     const char buf[] = "arg_test";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, "arg_test"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_FALSE(token2);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeArgumentsSingleDoubleQuote)
 {
     const char buf[] = "\"(Default Device)\"";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, "(Default Device)"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_FALSE(token2);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeArgumentsSingleSingleQuote)
 {
     const char buf[] = "'(Default Device)'";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, "(Default Device)"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_FALSE(token2);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeArgumentsSingleDoubleQuoteUnclosed)
 {
     const char buf[] = "\"(Default Device)";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
-    EXPECT_EQ(token1, "\xff"_st);
+    auto token1 = tokenizer.NextArgument();
+    EXPECT_FALSE(token1);
+    EXPECT_FALSE(tokenizer.fErrorMsg.empty());
 }
 
 TEST(pfConsoleTokenizer, TokenizeArgumentsSingleSingleQuoteUnclosed)
 {
     const char buf[] = "'(Default Device)";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
-    EXPECT_EQ(token1, "\xff"_st);
+    auto token1 = tokenizer.NextArgument();
+    EXPECT_FALSE(token1);
+    EXPECT_FALSE(tokenizer.fErrorMsg.empty());
 }
 
 // Tokenize arguments, 2 tokens
@@ -296,73 +311,77 @@ TEST(pfConsoleTokenizer, TokenizeArgumentsSingleSingleQuoteUnclosed)
 TEST(pfConsoleTokenizer, TokenizeArgumentsPair)
 {
     const char buf[] = "arg1 arg2";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, "arg1"_st);
-    EXPECT_EQ(line, buf + sizeof("arg1 ") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("arg1 ") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_EQ(token2, "arg2"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token3 = tokenizer.NextArgument();
     EXPECT_FALSE(token3);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeArgumentsPairWhitespace)
 {
     const char buf[] = " arg1  arg2   ";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, "arg1"_st);
-    EXPECT_EQ(line, buf + sizeof(" arg1  ") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(" arg1  ") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_EQ(token2, "arg2"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token3 = tokenizer.NextArgument();
     EXPECT_FALSE(token3);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeArgumentsPairComma)
 {
     const char buf[] = "arg1, arg2";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, "arg1"_st);
-    EXPECT_EQ(line, buf + sizeof("arg1,") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("arg1,") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_EQ(token2, "arg2"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token3 = tokenizer.NextArgument();
     EXPECT_FALSE(token3);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeArgumentsPairMixedQuotes)
 {
     const char buf[] = "\"argument '1'\" 'argument \"2\"'";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, "argument '1'"_st);
-    EXPECT_EQ(line, buf + sizeof("\"argument '1'\"") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("\"argument '1'\"") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_EQ(token2, "argument \"2\""_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token3 = tokenizer.NextArgument();
     EXPECT_FALSE(token3);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 // Tokenize arguments, 3 tokens
@@ -370,65 +389,68 @@ TEST(pfConsoleTokenizer, TokenizeArgumentsPairMixedQuotes)
 TEST(pfConsoleTokenizer, TokenizeArgumentsTriple)
 {
     const char buf[] = "1.2 3.4 5.6";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, "1.2"_st);
-    EXPECT_EQ(line, buf + sizeof("1.2 ") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("1.2 ") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_EQ(token2, "3.4"_st);
-    EXPECT_EQ(line, buf + sizeof("1.2 3.4 ") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("1.2 3.4 ") - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token3 = tokenizer.NextArgument();
     EXPECT_EQ(token3, "5.6"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token4 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token4 = tokenizer.NextArgument();
     EXPECT_FALSE(token4);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeArgumentsTripleCommas)
 {
     const char buf[] = "1.2, 3.4, 5.6";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, "1.2"_st);
-    EXPECT_EQ(line, buf + sizeof("1.2,") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("1.2,") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_EQ(token2, "3.4"_st);
-    EXPECT_EQ(line, buf + sizeof("1.2, 3.4,") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("1.2, 3.4,") - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token3 = tokenizer.NextArgument();
     EXPECT_EQ(token3, "5.6"_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token4 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token4 = tokenizer.NextArgument();
     EXPECT_FALSE(token4);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
 
 TEST(pfConsoleTokenizer, TokenizeArgumentsTripleEmptyQuotes)
 {
     const char buf[] = "'' \"\" ''";
-    const char* line = buf;
+    pfConsoleTokenizer tokenizer(buf);
 
-    auto token1 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token1 = tokenizer.NextArgument();
     EXPECT_EQ(token1, ""_st);
-    EXPECT_EQ(line, buf + sizeof("''") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("''") - 1);
 
-    auto token2 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token2 = tokenizer.NextArgument();
     EXPECT_EQ(token2, ""_st);
-    EXPECT_EQ(line, buf + sizeof("'' \"\"") - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof("'' \"\"") - 1);
 
-    auto token3 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token3 = tokenizer.NextArgument();
     EXPECT_EQ(token3, ""_st);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 
-    auto token4 = pfConsoleTokenizer::TokenizeArguments(line);
+    auto token4 = tokenizer.NextArgument();
     EXPECT_FALSE(token4);
-    EXPECT_EQ(line, buf + sizeof(buf) - 1);
+    EXPECT_TRUE(tokenizer.fErrorMsg.empty());
+    EXPECT_EQ(tokenizer.fPos, buf + sizeof(buf) - 1);
 }
