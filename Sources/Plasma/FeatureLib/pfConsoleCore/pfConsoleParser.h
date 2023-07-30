@@ -51,10 +51,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pfConsoleTokenizer
 {
 public:
-    const char* fPos;
+    ST::string::const_iterator fPos;
+    ST::string::const_iterator fEnd;
     ST::string fErrorMsg;
 
-    pfConsoleTokenizer(const char* line) : fPos(line), fErrorMsg() {}
+    pfConsoleTokenizer(ST::string::const_iterator begin, ST::string::const_iterator end) :
+        fPos(begin), fEnd(end), fErrorMsg()
+    {}
+    pfConsoleTokenizer(const ST::string& line) : pfConsoleTokenizer(line.begin(), line.end()) {}
 
     // Parse the next command name or argument token from the input line.
     // On success, returns the parsed token.

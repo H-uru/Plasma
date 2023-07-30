@@ -49,15 +49,17 @@ std::optional<ST::string> pfConsoleTokenizer::NextNamePart()
 {
     const char* begin = fPos;
 
-    while (*begin && isspace(static_cast<unsigned char>(*begin)))
+    while (begin != fEnd && isspace(static_cast<unsigned char>(*begin)))
         ++begin;
 
-    for (fPos = begin; *fPos; ++fPos) {
+    for (fPos = begin; fPos != fEnd; ++fPos) {
         for (const char *sep = kTokenGrpSeps; *sep; ++sep) {
             if (*fPos == *sep) {
                 const char* end = fPos;
-                while (*++fPos && (*fPos == *sep))
-                    /* skip duplicate delimiters */;
+                while (fPos != fEnd && (*fPos == *sep)) {
+                    // skip duplicate delimiters
+                    ++fPos;
+                }
                 return ST::string::from_utf8(begin, end - begin);
             }
         }
@@ -75,17 +77,20 @@ std::optional<ST::string> pfConsoleTokenizer::NextArgument()
 {
     const char* begin = fPos;
 
-    while (*begin && isspace(static_cast<unsigned char>(*begin)))
+    while (begin != fEnd && isspace(static_cast<unsigned char>(*begin)))
         ++begin;
 
-    for (fPos = begin; *fPos; ++fPos) {
+    for (fPos = begin; fPos != fEnd; ++fPos) {
         if (*begin == '"' || *begin == '\'') {
             // Handle strings as a single token
             ++begin;
-            const char* end = strchr(begin, *fPos);
-            if (end == nullptr) {
-                fErrorMsg = ST_LITERAL("unterminated quoted parameter");
-                return {};
+            const char* end = begin;
+            while (*end != *fPos) {
+                ++end;
+                if (end == fEnd) {
+                    fErrorMsg = ST_LITERAL("unterminated quoted parameter");
+                    return {};
+                }
             }
             fPos = end + 1;
             return ST::string::from_utf8(begin, end - begin);
@@ -93,8 +98,10 @@ std::optional<ST::string> pfConsoleTokenizer::NextArgument()
         for (const char *sep = kTokenSeparators; *sep; ++sep) {
             if (*fPos == *sep) {
                 const char* end = fPos;
-                while (*++fPos && (*fPos == *sep))
-                    /* skip duplicate delimiters */;
+                while (fPos != fEnd && (*fPos == *sep)) {
+                    // skip duplicate delimiters
+                    ++fPos;
+                }
                 return ST::string::from_utf8(begin, end - begin);
             }
         }

@@ -79,7 +79,7 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
     pfConsoleCmdGroup   *group, *subGrp;
 
     /// Scan for subgroups. This can be an empty loop
-    pfConsoleTokenizer tokenizer(name.c_str());
+    pfConsoleTokenizer tokenizer(name);
     group = pfConsoleCmdGroup::GetBaseGroup();
     auto token = tokenizer.NextNamePart();
     while (token) {
@@ -142,7 +142,7 @@ ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
     pfConsoleCmdGroup   *group, *subGrp;
     
     /// Scan for subgroups. This can be an empty loop
-    pfConsoleTokenizer tokenizer(name.c_str());
+    pfConsoleTokenizer tokenizer(name);
     group = pfConsoleCmdGroup::GetBaseGroup();
     auto token = tokenizer.NextNamePart();
     while (token) {
@@ -228,7 +228,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     bool                valid = true;
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
-    pfConsoleTokenizer tokenizer(line.c_str());
+    pfConsoleTokenizer tokenizer(line);
     group = pfConsoleCmdGroup::GetBaseGroup();
     auto token = tokenizer.NextNamePart();
     while (token) {
@@ -381,7 +381,7 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
     ST::string_stream newStr;
 
     /// Loop #1: Scan for subgroups. This can be an empty loop
-    pfConsoleTokenizer tokenizer(line.c_str());
+    pfConsoleTokenizer tokenizer(line);
     pfConsoleCmdGroup* group = pfConsoleCmdGroup::GetBaseGroup();
     auto token = tokenizer.NextNamePart();
     while (token) {
@@ -419,7 +419,7 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
     if( preserveParams )
     {
         /// Preserve the rest of the string after the matched command
-        newStr << tokenizer.fPos;
+        newStr.append(tokenizer.fPos, tokenizer.fEnd - tokenizer.fPos);
     }
 
     return newStr.to_string();
