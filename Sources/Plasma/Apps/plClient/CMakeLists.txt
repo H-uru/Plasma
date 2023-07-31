@@ -136,7 +136,13 @@ if(APPLE)
     set_target_properties(plClient PROPERTIES
         BUNDLE TRUE
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/Info.plist.in"
-        MACOSX_BUNDLE_GUI_IDENTIFIER org.openuru.plClient
+        # Hard coding the app name here intentionally.
+        # Should prevent macOS from tripping over secured resources being
+        # accessed from two different apps. In theory - plClient is just
+        # the debug version of UruExplorer. It also prevents invalid characters.
+        # GUI identifier should follow the format of a reverse domain string.
+        # https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFBundles/AccessingaBundlesContents/AccessingaBundlesContents.html
+        MACOSX_BUNDLE_GUI_IDENTIFIER org.Huru.UruExplorer
         MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
         XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon
