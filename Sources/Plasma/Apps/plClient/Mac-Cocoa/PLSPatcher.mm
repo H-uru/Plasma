@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #import "PLSPatcher.h"
 
+#include <unordered_set>
 #include <string_theory/format>
 #include "StringTheory_NSString.h"
 
@@ -131,7 +132,13 @@ bool IApproveDownload(const plFileName& file)
 {
     ST::string ext = file.GetFileExt();
     // nothing from Windows, please
-    return ext != "exe" && ext != "pdb" && ext != "dll";
+    // temporary measure until macOS has it's own manifest
+    static std::unordered_set<ST::string, ST::hash_i, ST::equal_i> extExcludeList{
+        "exe",
+        "dll",
+        "pdb"
+    };
+    return extExcludeList.find(file.GetFileExt()) == extExcludeList.end();
 }
 
 void Patcher::IOnPatchComplete(ENetError result, const ST::string& msg)
