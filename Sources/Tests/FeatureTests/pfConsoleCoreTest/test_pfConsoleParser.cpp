@@ -79,6 +79,9 @@ TEST(pfConsoleParser, ParseBaseCommand)
     pfConsoleParser parser2(string);
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestBaseCmd);
+    auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_TRUE(args->empty());
 }
 
 TEST(pfConsoleParser, ParseBaseCommandArgs)
@@ -94,6 +97,11 @@ TEST(pfConsoleParser, ParseBaseCommandArgs)
     pfConsoleParser parser2(string);
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestBaseCmd);
+    auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_EQ(args->size(), 2);
+    EXPECT_EQ((*args)[0], "arg1"_st);
+    EXPECT_EQ((*args)[1], "arg2"_st);
 }
 
 // Top-level group
@@ -128,6 +136,9 @@ TEST(pfConsoleParser, ParseSubCommand)
     pfConsoleParser parser2(string);
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestGroup_SubCmd);
+    auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_TRUE(args->empty());
 }
 
 TEST(pfConsoleParser, ParseSubCommandArgs)
@@ -143,6 +154,11 @@ TEST(pfConsoleParser, ParseSubCommandArgs)
     pfConsoleParser parser2(string);
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestGroup_SubCmd);
+    auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_EQ(args->size(), 2);
+    EXPECT_EQ((*args)[0], "arg1"_st);
+    EXPECT_EQ((*args)[1], "arg2"_st);
 }
 
 TEST(pfConsoleParser, ParseSubCommandSpace)
@@ -158,6 +174,9 @@ TEST(pfConsoleParser, ParseSubCommandSpace)
     pfConsoleParser parser2(string);
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestGroup_SubCmd);
+    auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_TRUE(args->empty());
 }
 
 TEST(pfConsoleParser, ParseSubCommandSpaceArgs)
@@ -173,6 +192,11 @@ TEST(pfConsoleParser, ParseSubCommandSpaceArgs)
     pfConsoleParser parser2(string);
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestGroup_SubCmd);
+    auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_EQ(args->size(), 2);
+    EXPECT_EQ((*args)[0], "arg1"_st);
+    EXPECT_EQ((*args)[1], "arg2"_st);
 }
 
 // Subgroup inside other group
@@ -222,6 +246,9 @@ TEST(pfConsoleParser, ParseSubSubCommand)
     pfConsoleParser parser2(string);
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestGroup_SubGroup_SubSubCmd);
+    auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_TRUE(args->empty());
 }
 
 TEST(pfConsoleParser, ParseSubSubCommandArgs)
@@ -237,6 +264,11 @@ TEST(pfConsoleParser, ParseSubSubCommandArgs)
     pfConsoleParser parser2(string);
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestGroup_SubGroup_SubSubCmd);
+    auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_EQ(args->size(), 2);
+    EXPECT_EQ((*args)[0], "arg1"_st);
+    EXPECT_EQ((*args)[1], "arg2"_st);
 }
 
 TEST(pfConsoleParser, ParseSubSubCommandSpaces)
@@ -252,6 +284,9 @@ TEST(pfConsoleParser, ParseSubSubCommandSpaces)
     pfConsoleParser parser2(string);
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestGroup_SubGroup_SubSubCmd);
+    auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_TRUE(args->empty());
 }
 
 TEST(pfConsoleParser, ParseSubSubCommandSpacesArgs)
@@ -267,4 +302,9 @@ TEST(pfConsoleParser, ParseSubSubCommandSpacesArgs)
     pfConsoleParser parser2(string);
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestGroup_SubGroup_SubSubCmd);
+    auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_EQ(args->size(), 2);
+    EXPECT_EQ((*args)[0], "arg1"_st);
+    EXPECT_EQ((*args)[1], "arg2"_st);
 }

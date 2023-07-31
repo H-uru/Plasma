@@ -200,19 +200,25 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     /// tokenizing (with the new separators now, mind you) and turn them into
     /// params
 
-    std::optional<ST::string> token;
+    auto argTokens = parser.ParseArguments();
+    if (!argTokens) {
+        fErrorMsg = ST::format("Invalid syntax: {}", parser.GetErrorMsg());
+        return false;
+    }
+
     for (numParams = 0; numParams < fMaxNumParams
-                        && (token = parser.fTokenizer.NextArgument())
+                        && numParams < argTokens->size()
                         && valid; numParams++ )
     {
         // Special case for context variables--if we're specifying one, we want to just grab
         // the value of it and return that instead
         valid = false;
-        if (token->starts_with("$")) {
+        ST::string argString = (*argTokens)[numParams];
+        if (argString.starts_with("$")) {
             pfConsoleContext    &context = pfConsoleContext::GetRootContext();
 
             // Potential variable, see if we can find it
-            hsSsize_t idx = context.FindVar(token->substr(1));
+            hsSsize_t idx = context.FindVar(argString.substr(1));
             if( idx == -1 )
             {
                 fErrorMsg = ST_LITERAL("Invalid console variable name");
@@ -225,13 +231,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
         }
 
         if( !valid )
-            valid = IConvertToParam(cmd->GetSigEntry(numParams), *token, &paramArray[numParams]);
-    }
-
-    ST::string errorMsg = parser.fTokenizer.fErrorMsg;
-    if (!errorMsg.empty()) {
-        fErrorMsg = ST::format("Invalid syntax: {}", errorMsg);
-        return false;
+            valid = IConvertToParam(cmd->GetSigEntry(numParams), argString, &paramArray[numParams]);
     }
 
     for( i = numParams; i < fMaxNumParams + 1; i++ )

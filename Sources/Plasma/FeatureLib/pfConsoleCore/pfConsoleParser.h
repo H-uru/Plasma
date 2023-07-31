@@ -84,6 +84,8 @@ public:
     pfConsoleParser(ST::string::const_iterator begin, ST::string::const_iterator end) : fTokenizer(begin, end) {}
     pfConsoleParser(const ST::string& line) : pfConsoleParser(line.begin(), line.end()) {}
 
+    ST::string GetErrorMsg() const { return fTokenizer.fErrorMsg; }
+
     // Parse the command name part of the line as far as possible.
     // This consumes name part tokens and uses them to look up a command group
     // until a token is encountered that isn't a known group name.
@@ -95,6 +97,12 @@ public:
     // Returns the command corresponding to that name,
     // or nullptr if no matching command was found.
     pfConsoleCmd* ParseCommand();
+
+    // Parse the remainder of the line as command arguments.
+    // On success, returns the parsed arguments with any surrounding quotes removed.
+    // If any of the arguments couldn't be parsed,
+    // returns an empty std::optional (call GetErrorMsg for an error message).
+    std::optional<std::vector<ST::string>> ParseArguments();
 };
 
 #endif // _pfConsolePareser_h

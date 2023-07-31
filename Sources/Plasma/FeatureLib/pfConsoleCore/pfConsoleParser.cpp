@@ -142,3 +142,16 @@ pfConsoleCmd* pfConsoleParser::ParseCommand()
     }
     return group->FindCommandNoCase(*token);
 }
+
+std::optional<std::vector<ST::string>> pfConsoleParser::ParseArguments()
+{
+    std::vector<ST::string> args;
+    while (auto token = fTokenizer.NextArgument()) {
+        args.emplace_back(std::move(*token));
+    }
+    if (!fTokenizer.fErrorMsg.empty()) {
+        // Parse error in argument
+        return {};
+    }
+    return args;
+}
