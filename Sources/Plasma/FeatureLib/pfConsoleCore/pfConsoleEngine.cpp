@@ -343,14 +343,8 @@ ST::string pfConsoleEngine::FindPartialCmd(const ST::string& line, bool findAgai
     auto [group, token] = parser.ParseGroupAndName();
 
     // Add group name to replacement line.
-    std::vector<ST::string> reverseParts;
-    pfConsoleCmdGroup* parent = group;
-    while (parent != nullptr && parent != pfConsoleCmdGroup::GetBaseGroup()) {
-        reverseParts.emplace_back(parent->GetName());
-        parent = parent->GetParent();
-    }
-    for (auto it = reverseParts.crbegin(); it != reverseParts.crend(); ++it) {
-        newStr << *it << '.';
+    if (group != pfConsoleCmdGroup::GetBaseGroup()) {
+        newStr << group->GetFullName() << '.';
     }
 
     if (token) {
@@ -395,23 +389,8 @@ ST::string pfConsoleEngine::FindNestedPartialCmd(const ST::string& line, uint32_
     if (cmd == nullptr)
         return {};
 
-    /// Recurse back up and get the group hierarchy
-    std::vector<ST::string> reverseParts {cmd->GetName()};
-    pfConsoleCmdGroup* group = cmd->GetParent();
-    while (group != nullptr && group != pfConsoleCmdGroup::GetBaseGroup()) {
-        reverseParts.emplace_back(group->GetName());
-        group = group->GetParent();
-    }
-
     ST::string_stream name;
-    for (auto it = reverseParts.crbegin(); it != reverseParts.crend(); ++it) {
-        name << *it;
-        if (it + 1 == reverseParts.crend()) {
-            name << ' ';
-        } else {
-            name << '.';
-        }
-    }
+    name << cmd->GetFullName() << ' ';
 
     if( preserveParams )
     {
