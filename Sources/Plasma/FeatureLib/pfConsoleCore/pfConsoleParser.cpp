@@ -133,3 +133,12 @@ std::pair<pfConsoleCmdGroup*, std::optional<ST::string>> pfConsoleParser::ParseG
 
     return {group, token};
 }
+
+pfConsoleCmd* pfConsoleParser::ParseCommand()
+{
+    auto [group, token] = ParseGroupAndName();
+    if (!token) {
+        return nullptr;
+    }
+    return group->FindCommandNoCase(*token);
+}

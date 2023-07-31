@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <utility>
 #include <vector>
 
+class pfConsoleCmd;
 class pfConsoleCmdGroup;
 
 class pfConsoleTokenizer
@@ -89,6 +90,11 @@ public:
     // Returns the found group and the first non-group token
     // (which may be an empty std::optional if the end of the line was reached).
     std::pair<pfConsoleCmdGroup*, std::optional<ST::string>> ParseGroupAndName();
+
+    // Parse the command name part of the line.
+    // Returns the command corresponding to that name,
+    // or nullptr if no matching command was found.
+    pfConsoleCmd* ParseCommand();
 };
 
 #endif // _pfConsolePareser_h

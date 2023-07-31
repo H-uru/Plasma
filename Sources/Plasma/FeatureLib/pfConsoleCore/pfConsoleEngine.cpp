@@ -123,15 +123,7 @@ ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
     pfConsoleCmd        *cmd;
     
     pfConsoleParser parser(name);
-    auto [group, token] = parser.ParseGroupAndName();
-
-    if (!token) {
-        fErrorMsg = ST_LITERAL("Invalid command syntax");
-        return {};
-    }
-
-    /// OK, so what we found wasn't a group. Which means we need a command...
-    cmd = group->FindCommandNoCase(*token);
+    cmd = parser.ParseCommand();
     if (cmd == nullptr)
     {
         fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
@@ -197,15 +189,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     bool                valid = true;
 
     pfConsoleParser parser(line);
-    auto [group, token] = parser.ParseGroupAndName();
-
-    if (!token) {
-        fErrorMsg = ST_LITERAL("Invalid command syntax");
-        return false;
-    }
-
-    /// OK, so what we found wasn't a group. Which means we need a command next
-    cmd = group->FindCommandNoCase(*token);
+    cmd = parser.ParseCommand();
     if (cmd == nullptr)
     {
         fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
@@ -216,6 +200,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     /// tokenizing (with the new separators now, mind you) and turn them into
     /// params
 
+    std::optional<ST::string> token;
     for (numParams = 0; numParams < fMaxNumParams
                         && (token = parser.fTokenizer.NextArgument())
                         && valid; numParams++ )

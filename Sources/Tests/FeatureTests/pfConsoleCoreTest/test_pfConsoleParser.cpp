@@ -75,6 +75,10 @@ TEST(pfConsoleParser, ParseBaseCommand)
     EXPECT_EQ(group, pfConsoleCmdGroup::GetBaseGroup());
     EXPECT_EQ(token, "TestBaseCmd"_st);
     EXPECT_EQ(parser.fTokenizer.fPos, string.end());
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, &conCmd_TestBaseCmd);
 }
 
 TEST(pfConsoleParser, ParseBaseCommandArgs)
@@ -86,6 +90,10 @@ TEST(pfConsoleParser, ParseBaseCommandArgs)
     EXPECT_EQ(group, pfConsoleCmdGroup::GetBaseGroup());
     EXPECT_EQ(token, "TestBaseCmd"_st);
     EXPECT_EQ(parser.fTokenizer.fPos, string.begin() + sizeof("TestBaseCmd ") - 1);
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, &conCmd_TestBaseCmd);
 }
 
 // Top-level group
@@ -99,6 +107,10 @@ TEST(pfConsoleParser, ParseBaseGroup)
     EXPECT_EQ(group, &conGroup_TestGroup);
     EXPECT_FALSE(token);
     EXPECT_EQ(parser.fTokenizer.fPos, string.end());
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, nullptr);
 }
 
 // Command inside top-level group
@@ -112,6 +124,10 @@ TEST(pfConsoleParser, ParseSubCommand)
     EXPECT_EQ(group, &conGroup_TestGroup);
     EXPECT_EQ(token, "SubCmd"_st);
     EXPECT_EQ(parser.fTokenizer.fPos, string.end());
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, &conCmd_TestGroup_SubCmd);
 }
 
 TEST(pfConsoleParser, ParseSubCommandArgs)
@@ -123,6 +139,10 @@ TEST(pfConsoleParser, ParseSubCommandArgs)
     EXPECT_EQ(group, &conGroup_TestGroup);
     EXPECT_EQ(token, "SubCmd"_st);
     EXPECT_EQ(parser.fTokenizer.fPos, string.begin() + sizeof("TestGroup.SubCmd ") - 1);
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, &conCmd_TestGroup_SubCmd);
 }
 
 TEST(pfConsoleParser, ParseSubCommandSpace)
@@ -134,6 +154,10 @@ TEST(pfConsoleParser, ParseSubCommandSpace)
     EXPECT_EQ(group, &conGroup_TestGroup);
     EXPECT_EQ(token, "SubCmd"_st);
     EXPECT_EQ(parser.fTokenizer.fPos, string.end());
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, &conCmd_TestGroup_SubCmd);
 }
 
 TEST(pfConsoleParser, ParseSubCommandSpaceArgs)
@@ -145,6 +169,10 @@ TEST(pfConsoleParser, ParseSubCommandSpaceArgs)
     EXPECT_EQ(group, &conGroup_TestGroup);
     EXPECT_EQ(token, "SubCmd"_st);
     EXPECT_EQ(parser.fTokenizer.fPos, string.begin() + sizeof("TestGroup SubCmd ") - 1);
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, &conCmd_TestGroup_SubCmd);
 }
 
 // Subgroup inside other group
@@ -158,6 +186,10 @@ TEST(pfConsoleParser, ParseSubGroup)
     EXPECT_EQ(group, &conGroup_TestGroup_SubGroup);
     EXPECT_FALSE(token);
     EXPECT_EQ(parser.fTokenizer.fPos, string.end());
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, nullptr);
 }
 
 TEST(pfConsoleParser, ParseSubGroupSpace)
@@ -169,6 +201,10 @@ TEST(pfConsoleParser, ParseSubGroupSpace)
     EXPECT_EQ(group, &conGroup_TestGroup_SubGroup);
     EXPECT_FALSE(token);
     EXPECT_EQ(parser.fTokenizer.fPos, string.end());
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, nullptr);
 }
 
 // Command inside subgroup
@@ -182,6 +218,10 @@ TEST(pfConsoleParser, ParseSubSubCommand)
     EXPECT_EQ(group, &conGroup_TestGroup_SubGroup);
     EXPECT_EQ(token, "SubSubCmd"_st);
     EXPECT_EQ(parser.fTokenizer.fPos, string.end());
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, &conCmd_TestGroup_SubGroup_SubSubCmd);
 }
 
 TEST(pfConsoleParser, ParseSubSubCommandArgs)
@@ -193,6 +233,10 @@ TEST(pfConsoleParser, ParseSubSubCommandArgs)
     EXPECT_EQ(group, &conGroup_TestGroup_SubGroup);
     EXPECT_EQ(token, "SubSubCmd"_st);
     EXPECT_EQ(parser.fTokenizer.fPos, string.begin() + sizeof("TestGroup.SubGroup.SubSubCmd ") - 1);
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, &conCmd_TestGroup_SubGroup_SubSubCmd);
 }
 
 TEST(pfConsoleParser, ParseSubSubCommandSpaces)
@@ -204,6 +248,10 @@ TEST(pfConsoleParser, ParseSubSubCommandSpaces)
     EXPECT_EQ(group, &conGroup_TestGroup_SubGroup);
     EXPECT_EQ(token, "SubSubCmd"_st);
     EXPECT_EQ(parser.fTokenizer.fPos, string.end());
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, &conCmd_TestGroup_SubGroup_SubSubCmd);
 }
 
 TEST(pfConsoleParser, ParseSubSubCommandSpacesArgs)
@@ -215,4 +263,8 @@ TEST(pfConsoleParser, ParseSubSubCommandSpacesArgs)
     EXPECT_EQ(group, &conGroup_TestGroup_SubGroup);
     EXPECT_EQ(token, "SubSubCmd"_st);
     EXPECT_EQ(parser.fTokenizer.fPos, string.begin() + sizeof("TestGroup SubGroup SubSubCmd ") - 1);
+
+    pfConsoleParser parser2(string);
+    auto cmd = parser2.ParseCommand();
+    EXPECT_EQ(cmd, &conCmd_TestGroup_SubGroup_SubSubCmd);
 }
