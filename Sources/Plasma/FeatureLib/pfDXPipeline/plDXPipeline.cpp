@@ -8751,9 +8751,16 @@ inline void inlTESTPOINT(const hsPoint3& destP,
 //  format, blends them into the destination buffer given without the blending
 //  info.
 
+#define SPLIT_SKIN_BUFFER(src, pt, vec) \
+    decltype(src) pt = &src[0];         \
+    decltype(src) vec = &src[4];        //
+
+#define SPLIT_SKIN_TRIPLES(src, pt, vec)                    \
+    hsPoint3* pt = reinterpret_cast<hsPoint3*>(&src[0]);    \
+    hsVector3* vec = reinterpret_cast<hsVector3*>(&src[4]); //
+
 static inline void ISkinVertexFPU(const hsMatrix44& xfm, float wgt,
-                                  const float* pt_src, float* pt_dst,
-                                  const float* vec_src, float* vec_dst)
+                                  const float* srcBuf, float* dstBuf)
 {
     const float& m00 = xfm.fMap[0][0];
     const float& m01 = xfm.fMap[0][1];
@@ -8767,6 +8774,9 @@ static inline void ISkinVertexFPU(const hsMatrix44& xfm, float wgt,
     const float& m21 = xfm.fMap[2][1];
     const float& m22 = xfm.fMap[2][2];
     const float& m23 = xfm.fMap[2][3];
+
+    SPLIT_SKIN_BUFFER(srcBuf, pt_src, vec_src);
+    SPLIT_SKIN_BUFFER(dstBuf, pt_dst, vec_dst);
 
     // position
     {
@@ -8787,7 +8797,7 @@ static inline void ISkinVertexFPU(const hsMatrix44& xfm, float wgt,
 
         vec_dst[0] += (srcX * m00 + srcY * m01 + srcZ * m02) * wgt;
         vec_dst[1] += (srcX * m10 + srcY * m11 + srcZ * m12) * wgt;
-        vec_dst[1] += (srcX * m20 + srcY * m21 + srcZ * m22) * wgt;
+        vec_dst[2] += (srcX * m20 + srcY * m21 + srcZ * m22) * wgt;
     }
 }
 
@@ -8810,8 +8820,7 @@ static inline void ISkinDpSSE3(const float* src, float* dst, const __m128& mc0,
 #endif // HAVE_SSE3
 
 static inline void ISkinVertexSSE3(const hsMatrix44& xfm, float wgt,
-                                   const float* pt_src, float* pt_dst,
-                                   const float* vec_src, float* vec_dst)
+                                   const float* srcBuf, float* dstBuf)
 {
 #ifdef HAVE_SSE3
     __m128 mc0 = _mm_load_ps(xfm.fMap[0]);
@@ -8819,44 +8828,15 @@ static inline void ISkinVertexSSE3(const hsMatrix44& xfm, float wgt,
     __m128 mc2 = _mm_load_ps(xfm.fMap[2]);
     __m128 mwt = _mm_set_ps1(wgt);
 
+    SPLIT_SKIN_BUFFER(srcBuf, pt_src, vec_src);
+    SPLIT_SKIN_BUFFER(dstBuf, pt_dst, vec_dst);
+
     ISkinDpSSE3(pt_src, pt_dst, mc0, mc1, mc2, mwt);
     ISkinDpSSE3(vec_src, vec_dst, mc0, mc1, mc2, mwt);
 #endif // HAVE_SSE3
 }
 
-#ifdef HAVE_SSE41
-static inline void ISkinDpSSE41(const float* src, float* dst, const __m128& mc0,
-                                const __m128& mc1, const __m128& mc2, const __m128& mwt)
-{
-    enum { DP_F4_X = 0xF1, DP_F4_Y = 0xF2, DP_F4_Z = 0xF4 };
-
-    __m128 msr = _mm_load_ps(src);
-    __m128 _r =        _mm_dp_ps(msr, mc0, DP_F4_X);
-    _r = _mm_or_ps(_r, _mm_dp_ps(msr, mc1, DP_F4_Y));
-    _r = _mm_or_ps(_r, _mm_dp_ps(msr, mc2, DP_F4_Z));
-
-    __m128 _dst = _mm_load_ps(dst);
-    _dst = _mm_add_ps(_dst, _mm_mul_ps(_r, mwt));
-    _mm_store_ps(dst, _dst);
-}
-#endif // HAVE_SSE41
-
-static inline void ISkinVertexSSE41(const hsMatrix44& xfm, float wgt,
-                                    const float* pt_src, float* pt_dst,
-                                    const float* vec_src, float* vec_dst)
-{
-#ifdef HAVE_SSE41
-    __m128 mc0 = _mm_load_ps(xfm.fMap[0]);
-    __m128 mc1 = _mm_load_ps(xfm.fMap[1]);
-    __m128 mc2 = _mm_load_ps(xfm.fMap[2]);
-    __m128 mwt = _mm_set_ps1(wgt);
-
-    ISkinDpSSE41(pt_src, pt_dst, mc0, mc1, mc2, mwt);
-    ISkinDpSSE41(vec_src, vec_dst, mc0, mc1, mc2, mwt);
-#endif // HAVE_SSE41
-}
-
-typedef void(*skin_vert_ptr)(const hsMatrix44&, float, const float*, float*, const float*, float*);
+typedef void(*skin_vert_ptr)(const hsMatrix44&, float, const float*, float*);
 
 template<skin_vert_ptr T>
 static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMatrices,
@@ -8864,13 +8844,11 @@ static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMat
                              uint8_t* dest, uint32_t destStride, uint32_t count,
                              uint16_t localUVWChans)
 {
-    alignas(16) float pt_buf[] = { 0.f, 0.f, 0.f, 1.f };
-    alignas(16) float vec_buf[] = { 0.f, 0.f, 0.f, 0.f };
-    hsPoint3*       pt = reinterpret_cast<hsPoint3*>(pt_buf);
-    hsVector3*      vec = reinterpret_cast<hsVector3*>(vec_buf);
+    alignas(32) float srcBuf[8]{};
+    SPLIT_SKIN_TRIPLES(srcBuf, srcPt, srcVec);
 
-    uint32_t        indices;
-    float           weights[4];
+    uint32_t indices;
+    float weights[4];
 
     // Dropped support for localUVWChans at templatization of code
     hsAssert(localUVWChans == 0, "support for skinned UVWs dropped. reimplement me?");
@@ -8879,7 +8857,7 @@ static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMat
 
     for (uint32_t i = 0; i < count; ++i) {
         // Extract data
-        src = inlExtract<hsPoint3>(src, pt);
+        src = inlExtract<hsPoint3>(src, srcPt);
 
         float weightSum = 0.f;
         for (uint8_t j = 0; j < numWeights; ++j) {
@@ -8892,16 +8870,16 @@ static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMat
             src = inlExtract<uint32_t>(src, &indices);
         else
             indices = 1 << 8;
-        src = inlExtract<hsVector3>(src, vec);
+        src = inlExtract<hsVector3>(src, srcVec);
 
         // Destination buffers (float4 for SSE alignment)
-        alignas(16) float destNorm_buf[] = { 0.f, 0.f, 0.f, 0.f };
-        alignas(16) float destPt_buf[] = { 0.f, 0.f, 0.f, 1.f };
+        alignas(32) float destBuf[8]{};
+        SPLIT_SKIN_TRIPLES(destBuf, destPt, destVec);
 
         // Blend
         for (uint32_t j = 0; j < numWeights + 1; ++j) {
             if (weights[j])
-                T(matrixPalette[indices & 0xFF], weights[j], pt_buf, destPt_buf, vec_buf, destNorm_buf);
+                T(matrixPalette[indices & 0xFF], weights[j], srcBuf, destBuf);
             indices >>= 8;
         }
         // Probably don't really need to renormalize this. There errors are
@@ -8909,8 +8887,8 @@ static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMat
         /* hsFastMath::NormalizeAppr(destNorm); */
 
         // Slam data into position now
-        dest = inlStuff<hsPoint3>(dest, reinterpret_cast<hsPoint3*>(destPt_buf));
-        dest = inlStuff<hsVector3>(dest, reinterpret_cast<hsVector3*>(destNorm_buf));
+        dest = inlStuff<hsPoint3>(dest, reinterpret_cast<hsPoint3*>(destPt));
+        dest = inlStuff<hsVector3>(dest, reinterpret_cast<hsVector3*>(destVec));
 
         // memcpy the colors and UVs
         inlCopy(src, dest, sizeof(uint32_t) * 2 + uvChanSize);
@@ -8922,10 +8900,11 @@ hsCpuFunctionDispatcher<plDXPipeline::blend_vert_buffer_ptr> plDXPipeline::blend
     &IBlendVertBuffer<ISkinVertexFPU>,
     nullptr,                                // SSE1
     nullptr,                                // SSE2
-    &IBlendVertBuffer<ISkinVertexSSE3>,
-    nullptr,                                // SSSE3
-    &IBlendVertBuffer<ISkinVertexSSE41>
+    &IBlendVertBuffer<ISkinVertexSSE3>
 };
+
+#undef SPLIT_SKIN_TRIPLES
+#undef SPLIT_SKIN_BUFFER
 
 // ISetPipeConsts //////////////////////////////////////////////////////////////////
 // A shader can request that the pipeline fill in certain constants that are indeterminate
