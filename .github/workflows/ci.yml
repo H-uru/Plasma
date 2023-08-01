@@ -248,8 +248,8 @@ jobs:
     strategy:
       matrix:
         platform:
-          #- { str: macos-arm64, arch: arm64, triplet: arm64 }
-          - { str: macos-x64, arch: x86_64, triplet: x64 }
+          #- { str: macos-arm64, arch: arm64 }
+          - { str: macos-x64, arch: x86_64 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
           - { external: OFF, type: Debug, str: internal-debug }
@@ -287,16 +287,13 @@ jobs:
           cmake \
             -G Xcode \
             -DUSE_VCPKG=ON \
-            -DVCPKG_TARGET_TRIPLET="${{ matrix.platform.triplet}}-osx" \
-            -DVCPKG_OSX_ARCHITECTURES=${{ matrix.platform.arch }} \
-            -DVCPKG_OSX_DEPLOYMENT_TARGET=10.14 \
             -DCMAKE_OSX_ARCHITECTURES=${{ matrix.platform.arch }} \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 \
             -DCMAKE_FIND_FRAMEWORK=LAST \
             -DPLASMA_BUILD_TESTS=ON \
             -DPLASMA_BUILD_TOOLS=ON \
             -DPLASMA_EXTERNAL_RELEASE=${{ matrix.cfg.external }} \
-            ${{ (matrix.platform.triplet == 'x64' && '-DQt5_ROOT=$(brew --prefix qt@5)') || '' }} \
+            ${{ (matrix.platform.arch == 'x86_64' && '-DQt5_ROOT=$(brew --prefix qt@5)') || '' }} \
             -DVCPKG_INSTALL_OPTIONS=--clean-after-build \
             -S . -B build
         env:
