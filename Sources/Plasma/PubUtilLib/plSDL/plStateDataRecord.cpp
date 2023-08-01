@@ -235,6 +235,7 @@ bool plStateDataRecord::IHasUsedVars(const VarsList& vars) const
 //
 // read state vars and indices, return true on success
 //
+// Options: kSkipNotificationInfo, kTimeStampOnRead, kKeepDirty, kMakeDirty, kDirtyNonDefaults, kForceConvert
 bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOptions)
 {
     fFlags = s->ReadLE16();
@@ -348,6 +349,7 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
 //
 // write out the state vars, along with their index
 //
+// Options: kDirtyOnly, kSkipNotificationInfo, kWriteTimeStamps, kTimeStampOnRead, kTimeStampOnWrite, kDontWriteDirtyFlag, kMakeDirty, kDirtyNonDefaults
 void plStateDataRecord::Write(hsStream* s, float timeConvert, uint32_t writeOptions) const
 {
 #ifdef HS_DEBUGGING
@@ -457,6 +459,7 @@ void plStateDataRecord::WriteStreamHeader(hsStream* s, plUoid* objUoid) const
 //
 // create and prepare a net msg with this data
 //
+// Options: kDirtyOnly, kSkipNotificationInfo, kBroadcast, kWriteTimeStamps, kTimeStampOnRead, kTimeStampOnWrite, kDontWriteDirtyFlag, kMakeDirty, kDirtyNonDefaults
 plNetMsgSDLState* plStateDataRecord::PrepNetMsg(float timeConvert, uint32_t writeOptions) const
 {
     // save to stream
@@ -478,6 +481,7 @@ plNetMsgSDLState* plStateDataRecord::PrepNetMsg(float timeConvert, uint32_t writ
 //
 // Destroys 'this' and makes a total copy of other
 //
+// Options: all except for kDirtyOnly, kBroadcast, kForceConvert
 void plStateDataRecord::CopyFrom(const plStateDataRecord& other, uint32_t writeOptions/*=0*/)
 {
     fFlags = other.GetFlags();
@@ -501,6 +505,7 @@ void plStateDataRecord::CopyFrom(const plStateDataRecord& other, uint32_t writeO
 // copy them to my corresponding item.
 // Requires that records have the same descriptor.
 //
+// Options: all except for kBroadcast, kForceConvert
 void plStateDataRecord::UpdateFrom(const plStateDataRecord& other, uint32_t writeOptions/*=0*/)
 {
     if ( GetDescriptor()->GetVersion()!=other.GetDescriptor()->GetVersion() )

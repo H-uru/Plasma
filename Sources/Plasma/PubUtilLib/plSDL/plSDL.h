@@ -86,17 +86,58 @@ namespace plSDL
 
     enum RWOptions
     {
-        kDirtyOnly              = 1<< 0,            // write option
-        kSkipNotificationInfo   = 1<< 1,            // read/write option
-        kBroadcast              = 1<< 2,            // send option
-        kWriteTimeStamps        = 1<< 3,            // write out time stamps    
-        kTimeStampOnRead        = 1<< 4,            // read: timestamp each var when it gets read. write: request that the reader timestamp the dirty vars.
-        kTimeStampOnWrite       = 1<< 5,            // read: n/a. write: timestamp each var when it gets written.
-        kKeepDirty              = 1<< 6,            // don't clear dirty flag on read
-        kDontWriteDirtyFlag     = 1<< 7,            // write option. don't write var dirty flag.
-        kMakeDirty              = 1<< 8,            // read/write: set dirty flag on var read/write. 
-        kDirtyNonDefaults       = 1<< 9,            // dirty the var if non default value.
-        kForceConvert           = 1<<10,            // always try to convert rec to latest on read
+        // General note: when writing nested SDL variables (plSDStateVariable),
+        // only the kDirtyOnly option applies recursively.
+        // All other write options are ignored when writing the nested records!
+
+        // When writing: only write variables marked dirty.
+        // Default is to write all used variables, dirty or not.
+        kDirtyOnly = 1 << 0,
+
+        // When reading: ignore any notification infos in blob and leave them empty in the variables in memory.
+        // When writing: don't write notification infos to the blob and don't set kHasNotificationInfo flags.
+        kSkipNotificationInfo = 1 << 1,
+
+        // Only applies to plStateDataRecord::PrepNetMsg.
+        // Create a message of type plNetMsgSDLStateBCast instead of plNetMsgSDLState.
+        kBroadcast = 1 << 2,
+
+        // When writing: write timestamps of variables that have one.
+        // Default is to not write any variable timestamps unless specifically requested.
+        // If plSDLMgr has kDisallowTimeStamping set, this flag causes a debug assert.
+        kWriteTimeStamps = 1 << 3,
+
+        // When reading: for variables that will be set as dirty (depending on other read options) and that don't have a timestamp,
+        // set their timestamp to the current time upon reading, even if the variables don't have kWantTimeStamp set.
+        // Ignored if plSDLMgr has kDisallowTimeStamping set.
+        // When writing: set kWantTimeStamp flag for all variables.
+        kTimeStampOnRead = 1 << 4,
+
+        // When writing: enable writing variable timestamps and set all variables' timestamps to the current time before writing them.
+        kTimeStampOnWrite = 1 << 5,
+
+        // When reading: update variables' dirty status based on kHasDirtyFlag.
+        // May be overridden by kMakeDirty and kDirtyNonDefaults.
+        kKeepDirty = 1 << 6,
+
+        // When writing: don't set kHasDirtyFlag based on variables' dirty status.
+        // kMakeDirty and kDirtyNonDefaults may still cause kHasDirtyFlag to be set.
+        kDontWriteDirtyFlag = 1 << 7,
+
+        // When reading: set all variables as dirty, regardless of whether they have kHasDirtyFlag set.
+        // Takes priority over kKeepDirty and kDirtyNonDefaults.
+        // When writing: set kHasDirtyFlag for all variables, regardless of their dirty status.
+        // Takes priority over kDontWriteDirtyFlag.
+        kMakeDirty = 1 << 8,
+
+        // When reading: for variables that don't have kSameAsDefault set, always set them as dirty, even if they don't have kHasDirtyFlag.
+        // Takes priority over kKeepDirty, but may be overridden by kMakeDirty.
+        // When writing: for variables whose values are different from their default, always set kHasDirtyFlag, even if they aren't dirty.
+        // Takes priority over kDontWriteDirtyFlag.
+        kDirtyNonDefaults = 1 << 9,
+
+        // When reading: if the blob uses the latest known version, perform an "update" anyway, as if it had an older version.
+        kForceConvert = 1 << 10,
     };
 
     enum BehaviorFlags
@@ -117,8 +158,8 @@ public:
     void SetHintString(ST::string c) { fHintString = std::move(c); }
     ST::string GetHintString() const { return fHintString; }
 
-    void Read(hsStream* s, uint32_t readOptions);
-    void Write(hsStream* s, uint32_t writeOptions) const;
+    void Read(hsStream* s);
+    void Write(hsStream* s) const;
 };
 
 //
@@ -258,8 +299,8 @@ protected:
     bool IConvertFromRGB8(plVarDescriptor::Type newType);
     bool IConvertFromRGBA8(plVarDescriptor::Type newType);
 
-    bool IReadData(hsStream* s, float timeConvert, int idx, uint32_t readOptions);    
-    bool IWriteData(hsStream* s, float timeConvert, int idx, uint32_t writeOptions) const;
+    bool IReadData(hsStream* s, float timeConvert, int idx);
+    bool IWriteData(hsStream* s, float timeConvert, int idx) const;
 
 public:
 
