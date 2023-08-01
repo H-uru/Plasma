@@ -96,8 +96,10 @@ void CryptCreateRandomSeed(size_t length, uint8_t* data)
 void CryptHashPassword(const ST::string& username, const ST::string& password, ShaDigest dest)
 {
     ST::string_stream buf;
-    buf << password.left(password.size() - 1) << '\0';
-    buf << username.to_lower().left(username.size() - 1) << '\0';
+    if (!password.empty())
+        buf << password.left(password.size() - 1) << '\0';
+    if (!username.empty())
+        buf << username.to_lower().left(username.size() - 1) << '\0';
     ST::utf16_buffer result = buf.to_string().to_utf16();
     plSHAChecksum sum(result.size() * sizeof(char16_t), (uint8_t*)result.data());
 
