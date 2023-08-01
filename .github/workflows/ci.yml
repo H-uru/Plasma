@@ -37,8 +37,6 @@ jobs:
     steps:
       - name: Checkout Plasma
         uses: actions/checkout@v3
-        with:
-          submodules: true
 
       - name: Checkout MaxSDK
         continue-on-error: true
@@ -123,8 +121,6 @@ jobs:
     steps:
       - name: Checkout Plasma
         uses: actions/checkout@v3
-        with:
-          submodules: true
 
       - name: Checkout MaxSDK
         uses: actions/checkout@v3
@@ -186,8 +182,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          submodules: true
 
       - name: Install dependencies
         run: |
@@ -264,8 +258,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          submodules: true
 
       - name: Install dependencies
         run: |
