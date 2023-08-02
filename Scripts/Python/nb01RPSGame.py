@@ -389,6 +389,10 @@ class nb01RPSGame(ptResponder, object):
 
         # Finished sitting down.
         if self._HandleNotify(state, id, events, self._sitting, self._OnSitDown):
+            if self.playing:
+                PtEnableMouseMovement()
+            else:
+                PtDisableMouseMovement()
             return
 
         # A rock/paper/sics button was mashed
