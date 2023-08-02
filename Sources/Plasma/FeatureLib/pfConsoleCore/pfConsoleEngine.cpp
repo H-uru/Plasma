@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/format>
 #include <string_theory/string_stream>
 #include <utility>
-#include <vector>
 
 #include "plFile/plEncryptedStream.h"
 
@@ -184,9 +183,7 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const ST::string&))
 {
     pfConsoleCmd        *cmd;
-    int32_t               numParams, i;
     pfConsoleCmdParam   paramArray[ fMaxNumParams + 1 ];
-    bool                valid = true;
 
     pfConsoleParser parser(line);
     cmd = parser.ParseCommand();
@@ -206,40 +203,12 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
         return false;
     }
 
-    for (numParams = 0; numParams < fMaxNumParams
-                        && numParams < argTokens->size()
-                        && valid; numParams++ )
-    {
-        // Special case for context variables--if we're specifying one, we want to just grab
-        // the value of it and return that instead
-        valid = false;
-        ST::string argString = (*argTokens)[numParams];
-        if (argString.starts_with("$")) {
-            pfConsoleContext    &context = pfConsoleContext::GetRootContext();
+    hsSsize_t numParams = IResolveParams(cmd, std::move(*argTokens), paramArray);
 
-            // Potential variable, see if we can find it
-            hsSsize_t idx = context.FindVar(argString.substr(1));
-            if( idx == -1 )
-            {
-                fErrorMsg = ST_LITERAL("Invalid console variable name");
-            }
-            else
-            {
-                paramArray[ numParams ] = context.GetVarValue( idx );
-                valid = true;
-            }
-        }
-
-        if( !valid )
-            valid = IConvertToParam(cmd->GetSigEntry(numParams), argString, &paramArray[numParams]);
-    }
-
-    for( i = numParams; i < fMaxNumParams + 1; i++ )
-        paramArray[ i ].SetNone();
-
-    if (!valid || (cmd->GetSigEntry(numParams) != pfConsoleCmd::kAny &&
-                   cmd->GetSigEntry(numParams) != pfConsoleCmd::kNone))
-    {
+    if (numParams == -1 || (
+        cmd->GetSigEntry(numParams) != pfConsoleCmd::kAny
+        && cmd->GetSigEntry(numParams) != pfConsoleCmd::kNone
+    )) {
         // Print help string and return
         fErrorMsg.clear(); // Printed on next line
         PrintFn(ST_LITERAL("Invalid parameters to command"));
@@ -303,6 +272,39 @@ bool pfConsoleEngine::IConvertToParam(uint8_t type, ST::string string, pfConsole
     }
 
     return true;
+}
+
+hsSsize_t pfConsoleEngine::IResolveParams(pfConsoleCmd* cmd, std::vector<ST::string> argTokens, pfConsoleCmdParam* paramArray)
+{
+    size_t numParams;
+    for (numParams = 0; numParams < fMaxNumParams && numParams < argTokens.size(); numParams++) {
+        // Special case for context variables--if we're specifying one,
+        // we want to just grab the value of it and return that instead
+        ST::string& argString = argTokens[numParams];
+        if (argString.starts_with("$")) {
+            pfConsoleContext& context = pfConsoleContext::GetRootContext();
+
+            // Potential variable, see if we can find it
+            hsSsize_t idx = context.FindVar(argString.substr(1));
+            if (idx == -1) {
+                fErrorMsg = ST_LITERAL("Invalid console variable name");
+            } else {
+                paramArray[numParams] = context.GetVarValue(idx);
+                continue;
+            }
+        }
+
+        bool valid = IConvertToParam(cmd->GetSigEntry(numParams), std::move(argString), &paramArray[numParams]);
+        if (!valid) {
+            return -1;
+        }
+    }
+
+    for (size_t i = numParams; i < fMaxNumParams + 1; i++) {
+        paramArray[i].SetNone();
+    }
+
+    return numParams;
 }
 
 //// FindPartialCmd //////////////////////////////////////////////////////////
