@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsTimer.h"
 
+#include <string_theory/format>
+
 #include "pnKeyedObject/plKeyImp.h"
 
 #include "plAgeDescription/plAgeManifest.h"

@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
+#include <string_theory/format>
+
 #include "plPipeline/plDebugText.h"
 #include "plPipeline/plPlates.h"
 #include "plUnifiedTime/plUnifiedTime.h"

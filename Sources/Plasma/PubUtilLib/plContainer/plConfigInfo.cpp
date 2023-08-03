@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <fstream>
 #include <algorithm>
 #include <sstream>
+#include <string_theory/string_stream>
 
 const ST::string& plConfigInfo::GlobalSection()
 {

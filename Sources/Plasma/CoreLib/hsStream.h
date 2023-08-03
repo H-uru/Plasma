@@ -43,9 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsStream_Defined
 
 #include "HeadSpin.h"
-#include "hsMemory.h"
 #include "plFileSystem.h"
-#include <string_theory/format>
+
+#include <string_theory/string>
+#include <vector>
 
 class hsStream {
 public:
@@ -54,36 +55,30 @@ enum {
     kComment = '#'
     };
 protected:
-    uint32_t      fBytesRead;
     uint32_t      fPosition;
 
     bool      IsTokenSeparator(char c);
 public:
-                hsStream() : fBytesRead(0), fPosition(0) {}
+    hsStream() : fPosition(0) {}
     virtual     ~hsStream() { }
 
     virtual bool      Open(const plFileName &, const char * = "rb") = 0;
     virtual bool      Close()=0;
-    virtual bool      AtEnd();
+    virtual bool      AtEnd() = 0;
     virtual uint32_t  Read(uint32_t byteCount, void * buffer) = 0;
     virtual uint32_t  Write(uint32_t byteCount, const void* buffer) = 0;
     virtual void      Skip(uint32_t deltaByteCount) = 0;
     virtual void      Rewind() = 0;
-    virtual void      FastFwd();
+    virtual void      FastFwd() = 0;
     virtual uint32_t  GetPosition() const;
     virtual void      SetPosition(uint32_t position);
-    virtual void      Truncate();
+    virtual void      Truncate() = 0;
     virtual void      Flush() {}
 
-    virtual uint32_t  GetEOF();
+    virtual uint32_t  GetEOF() = 0;
     uint32_t          GetSizeLeft();
-    virtual void      CopyToMem(void* mem);
-    virtual bool      IsCompressed() { return false; }
 
     uint32_t        WriteString(const ST::string & string) { return Write((uint32_t)string.size(), string.c_str()); }
-
-    template        <typename... _Args>
-    uint32_t        WriteFmt(const char * fmt, _Args&&... args) { return WriteString(ST::format(fmt, std::forward<_Args>(args)...)); }
 
     uint32_t        WriteSafeString(const ST::string &string);
     uint32_t        WriteSafeWString(const ST::string &string);
@@ -158,10 +153,9 @@ public:
 class hsUNIXStream: public hsStream
 {   
     FILE*       fRef;
-    char*       fBuff;
 
 public:
-    hsUNIXStream(): fRef(), fBuff() { }
+    hsUNIXStream() : fRef() {}
     ~hsUNIXStream();
     bool  Open(const plFileName& name, const char* mode = "rb") override;
     bool  Close() override;
@@ -211,13 +205,17 @@ public:
     uint32_t  GetEOF() override;
 };
 
-class hsRAMStream : public hsStream {
-    hsAppender          fAppender;
-    hsAppenderIterator  fIter;
+//
+// In-memory only
+// Erase function lets you cut a chunk out of the middle of the stream
+//
+class hsRAMStream : public hsStream
+{
+    std::vector<uint8_t> fVector;
+
 public:
-                hsRAMStream();
-                hsRAMStream(uint32_t chunkSize);
-    virtual     ~hsRAMStream();
+    hsRAMStream() {}
+    hsRAMStream(uint32_t chunkSize) { fVector.reserve(chunkSize); }
 
     bool  Open(const plFileName &, const char *) override { hsAssert(0, "hsRAMStream::Open  NotImplemented"); return false; }
     bool  Close() override { return false; }
@@ -228,12 +226,21 @@ public:
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
+    void FastFwd() override;
     void      Truncate() override;
 
     uint32_t  GetEOF() override;
-    void    CopyToMem(void* mem) override;
+    void CopyToMem(void* mem);
 
     void            Reset();        // clears the buffers
+
+    // Erase number of bytes at the current position
+    void Erase(uint32_t bytes);
+    // A pointer to the beginning of the data in the stream.  This is only valid
+    // until someone modifies the stream.
+    const void* GetData();
+    // In case you want to try and be efficient with your memory allocations
+    void Reserve(uint32_t bytes) { fVector.reserve(bytes); }
 };
 
 class hsNullStream : public hsStream {
@@ -242,14 +249,16 @@ public:
     bool      Open(const plFileName &, const char *) override { return true; }
     bool      Close() override { return true; }
 
+    bool AtEnd() override;
     uint32_t  Read(uint32_t byteCount, void * buffer) override;  // throws exception
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
+    void FastFwd() override;
     void      Truncate() override;
 
-    uint32_t          GetBytesWritten() const { return fBytesRead; }
-    void              Reset( ) { fBytesRead = 0;   }
+    uint32_t GetEOF() override { return fPosition; }
+    void Reset() { fPosition = 0; }
 };
 
 // read only mem stream
@@ -270,10 +279,10 @@ public:
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;    // throws exception
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
+    void FastFwd() override;
     void      Truncate() override;
-    virtual uint32_t  GetBytesRead() const { return fBytesRead; }
     uint32_t  GetEOF() override { return (uint32_t)(fStop-fStart); }
-    void      CopyToMem(void* mem) override;
+    void CopyToMem(void* mem);
 };
 
 // write only mem stream
@@ -286,8 +295,6 @@ public:
     bool      Close() override { hsAssert(0, "hsWriteOnlyStream::Close  NotImplemented"); return false; }
     uint32_t  Read(uint32_t byteCount, void * buffer) override;  // throws exception
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
-    uint32_t  GetBytesRead() const override { return 0; }
-    virtual uint32_t  GetBytesWritten() const { return fBytesRead; }
 };
 
 // circular queue stream
@@ -310,8 +317,10 @@ public:
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
     void      FastFwd() override;
+    void Truncate() override;
     bool      AtEnd() override;
 
+    uint32_t GetEOF() override { return fWriteCursor - fReadCursor; }
     uint32_t GetSize() { return fSize; }
     const char* GetQueue() { return fQueue; }
     uint32_t GetReadCursor() { return fReadCursor; }
@@ -352,6 +361,7 @@ public:
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
     void      Skip(uint32_t deltaByteCount) override;
     void      Rewind() override;
+    void FastFwd() override;
     void      Truncate() override;
     uint32_t  GetEOF() override;
 

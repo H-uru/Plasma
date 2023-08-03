@@ -66,7 +66,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLoadMask.h"
 #include "hsMatrix44.h"
 #include "plRenderLevel.h"
-#include "hsSTLStream.h"
 #include "hsStream.h"
 #include "hsStringTokenizer.h"
 #include "plFileSystem.h"

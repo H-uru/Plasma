@@ -45,8 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSecureStream.h"
 #include "hsWindows.h"
 
-#include "hsSTLStream.h"
-
 #if !HS_BUILD_FOR_WIN32
 #include <errno.h>
 #define INVALID_HANDLE_VALUE nullptr
@@ -219,7 +217,7 @@ bool plSecureStream::Open(const plFileName& name, const char* mode)
     }
     else if (strcmp(mode, "wb") == 0)
     {
-        fRAMStream = new hsVectorStream;
+        fRAMStream = new hsRAMStream;
         fWriteFileName = name;
         fPosition = 0;
 
@@ -313,7 +311,6 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
     numItems = fread(buffer, bytes, 1, fRef);
     bool success = numItems != 0;
 #endif
-    fBytesRead += numItems;
     fPosition += numItems;
     if ((unsigned)numItems < bytes)
     {
@@ -338,7 +335,7 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
 
 void plSecureStream::IBufferFile()
 {
-    fRAMStream = new hsVectorStream;
+    fRAMStream = new hsRAMStream;
     char buf[1024];
     while (!AtEnd())
     {
@@ -374,7 +371,6 @@ void plSecureStream::Skip(uint32_t delta)
     }
     else if (fRef != INVALID_HANDLE_VALUE)
     {
-        fBytesRead += delta;
         fPosition += delta;
 #if HS_BUILD_FOR_WIN32
         SetFilePointer(fRef, delta, nullptr, FILE_CURRENT);
@@ -393,7 +389,6 @@ void plSecureStream::Rewind()
     }
     else if (fRef != INVALID_HANDLE_VALUE)
     {
-        fBytesRead = 0;
         fPosition = 0;
 #if HS_BUILD_FOR_WIN32
         SetFilePointer(fRef, kFileStartOffset, nullptr, FILE_BEGIN);
@@ -413,11 +408,21 @@ void plSecureStream::FastFwd()
     else if (fRef != INVALID_HANDLE_VALUE)
     {
 #if HS_BUILD_FOR_WIN32
-        fBytesRead = fPosition = SetFilePointer(fRef, kFileStartOffset + fActualFileSize, nullptr, FILE_BEGIN);
+        fPosition = SetFilePointer(fRef, kFileStartOffset + fActualFileSize, nullptr, FILE_BEGIN);
 #elif HS_BUILD_FOR_UNIX
-        fBytesRead = fPosition = fseek(fRef, 0, SEEK_END);
+        fPosition = fseek(fRef, 0, SEEK_END);
 #endif
     }
+}
+
+void plSecureStream::Truncate()
+{
+    if (fOpenMode != kOpenWrite) {
+        hsAssert(false, "Trying to write to a read stream");
+        return;
+    }
+
+    return fRAMStream->Truncate();
 }
 
 uint32_t plSecureStream::GetEOF()

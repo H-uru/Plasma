@@ -456,7 +456,7 @@ void VaultMarkerGameNode::GetMarkerData(std::vector<VaultMarker>& data) const
 //============================================================================
 void VaultMarkerGameNode::SetMarkerData(const std::vector<VaultMarker>& data)
 {
-    hsVectorStream stream;
+    hsRAMStream stream;
     stream.WriteLE32((uint32_t)data.size());
     for (const VaultMarker& marker : data) {
         stream.WriteLE32(marker.id);

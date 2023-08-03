@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plConfigInfo.h"
 
+#include <string_theory/format>
+
 plConfigInfoLogging::plConfigInfoLogging()
 {
 }

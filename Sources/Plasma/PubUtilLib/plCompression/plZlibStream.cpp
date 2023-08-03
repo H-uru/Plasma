@@ -181,6 +181,11 @@ void plZlibStream::FastFwd()
     hsAssert(0, "FastFwd not supported");
 }
 
+void plZlibStream::Truncate()
+{
+    hsAssert(false, "Truncate not supported");
+}
+
 uint32_t plZlibStream::GetEOF()
 {
     hsAssert(0, "GetEOF not supported");

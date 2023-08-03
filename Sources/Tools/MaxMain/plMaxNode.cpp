@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsFastMath.h"
 #include "pnKeyedObject/plKey.h"
 #include "plRenderLevel.h"
-#include "hsSTLStream.h"
 
 #include "plMaxNode.h"
 #include "plMaxNodeData.h"
@@ -708,7 +707,7 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     case plSimDefs::kProxyBounds:
     case plSimDefs::kExplicitBounds:
         {
-            recipe.meshStream = std::make_unique<hsVectorStream>();
+            recipe.meshStream = std::make_unique<hsRAMStream>();
             plPXCooking::WriteTriMesh(recipe.meshStream.get(), mesh.fNumFaces, mesh.fFaces,
                                       mesh.fNumVerts, mesh.fVerts);
             recipe.meshStream->Rewind();
@@ -741,7 +740,7 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
         break;
     case plSimDefs::kHullBounds:
         {
-            recipe.meshStream = std::make_unique<hsVectorStream>();
+            recipe.meshStream = std::make_unique<hsRAMStream>();
             plPXCooking::WriteConvexHull(recipe.meshStream.get(), mesh.fNumVerts, mesh.fVerts);
             recipe.meshStream->Rewind();
 

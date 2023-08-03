@@ -63,11 +63,11 @@ class plPhysicalProxy;
 struct hsPlane3;
 struct hsPoint3;
 class hsQuat;
+class hsRAMStream;
 class plPhysicalSndGroup;
 class plSceneObject;
 class plSDLModifier;
 class plSimulationMsg;
-class hsVectorStream;
 
 namespace physx
 {
@@ -106,7 +106,7 @@ public:
     hsPoint3 bDimensions;
     hsPoint3 bOffset;
 
-    std::unique_ptr<hsVectorStream> meshStream;
+    std::unique_ptr<hsRAMStream> meshStream;
 
     PhysRecipe();
     ~PhysRecipe();

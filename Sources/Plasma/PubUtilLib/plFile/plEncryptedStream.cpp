@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plEncryptedStream.h"
 
-#include "hsSTLStream.h"
-
 #include <ctime>
 #include <wchar.h>
 #include <algorithm>
@@ -147,7 +145,7 @@ bool plEncryptedStream::Open(const plFileName& name, const char* mode)
     }
     else if (strcmp(mode, "wb") == 0)
     {
-        fRAMStream = new hsVectorStream;
+        fRAMStream = new hsRAMStream;
         fWriteFileName = name;
         fPosition = 0;
 
@@ -198,7 +196,6 @@ uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
     if (!fRef)
         return 0;
     int numItems = (int)(::fread(buffer, 1 /*size*/, bytes /*count*/, fRef));
-    fBytesRead += numItems;
     fPosition += numItems;
     if ((unsigned)numItems < bytes) {
         if (feof(fRef)) {
@@ -216,7 +213,7 @@ uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
 
 void plEncryptedStream::IBufferFile()
 {
-    fRAMStream = new hsVectorStream;
+    fRAMStream = new hsRAMStream;
     char buf[1024];
     while (!AtEnd())
     {
@@ -248,7 +245,6 @@ void plEncryptedStream::Skip(uint32_t delta)
     }
     else if (fRef)
     {
-        fBytesRead += delta;
         fPosition += delta;
         fseek(fRef, delta, SEEK_CUR);
     }
@@ -263,7 +259,6 @@ void plEncryptedStream::Rewind()
     }
     else if (fRef)
     {
-        fBytesRead = 0;
         fPosition = 0;
         fseek(fRef, kFileStartOffset, SEEK_SET);
     }
@@ -279,8 +274,18 @@ void plEncryptedStream::FastFwd()
     else if (fRef)
     {
         fseek(fRef, kFileStartOffset+fActualFileSize, SEEK_SET);
-        fBytesRead = fPosition = ftell(fRef);
+        fPosition = ftell(fRef);
     }
+}
+
+void plEncryptedStream::Truncate()
+{
+    if (fOpenMode != kOpenWrite) {
+        hsAssert(false, "Trying to write to a read stream");
+        return;
+    }
+
+    return fRAMStream->Truncate();
 }
 
 uint32_t plEncryptedStream::GetEOF()
