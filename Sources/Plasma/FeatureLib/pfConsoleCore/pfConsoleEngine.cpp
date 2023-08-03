@@ -57,9 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFile/plEncryptedStream.h"
 
 
-const int32_t     pfConsoleEngine::fMaxNumParams = 16;
-
-
 //// Constructor & Destructor ////////////////////////////////////////////////
 
 pfConsoleEngine::pfConsoleEngine()
@@ -183,7 +180,6 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const ST::string&))
 {
     pfConsoleCmd        *cmd;
-    pfConsoleCmdParam   paramArray[ fMaxNumParams + 1 ];
 
     pfConsoleParser parser(line);
     cmd = parser.ParseCommand();
@@ -203,11 +199,11 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
         return false;
     }
 
-    hsSsize_t numParams = IResolveParams(cmd, std::move(*argTokens), paramArray);
+    auto params = IResolveParams(cmd, std::move(*argTokens));
 
-    if (numParams == -1 || (
-        cmd->GetSigEntry(numParams) != pfConsoleCmd::kAny
-        && cmd->GetSigEntry(numParams) != pfConsoleCmd::kNone
+    if (!params || (
+        cmd->GetSigEntry(params->size()) != pfConsoleCmd::kAny
+        && cmd->GetSigEntry(params->size()) != pfConsoleCmd::kNone
     )) {
         // Print help string and return
         fErrorMsg.clear(); // Printed on next line
@@ -217,7 +213,7 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
     }
 
     /// Execute it and return
-    cmd->Execute( numParams, paramArray, PrintFn );
+    cmd->Execute(params->size(), params->data(), PrintFn);
     return true;
 }
 
@@ -225,62 +221,62 @@ bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const S
 //  Converts a null-terminated string representing a parameter to a 
 //  pfConsoleCmdParam argument.
 
-bool pfConsoleEngine::IConvertToParam(uint8_t type, ST::string string, pfConsoleCmdParam *param)
+std::optional<pfConsoleCmdParam> pfConsoleEngine::IConvertToParam(uint8_t type, ST::string string)
 {
     if( type == pfConsoleCmd::kNone )
-        return false;
+        return {};
 
+    pfConsoleCmdParam param;
     if( type == pfConsoleCmd::kAny )
     {
         /// Want "any"
-        param->SetAny(std::move(string));
+        param.SetAny(std::move(string));
     }
     else if( type == pfConsoleCmd::kString )
     {
         /// Want just a string
-        param->SetString(std::move(string));
+        param.SetString(std::move(string));
     }
     else if( type == pfConsoleCmd::kFloat )
     {
         ST::conversion_result res;
         float value = string.to_float(res);
         if (!res.ok() || !res.full_match()) {
-            return false;
+            return {};
         }
 
-        param->SetFloat(value);
+        param.SetFloat(value);
     }
     else if( type == pfConsoleCmd::kInt )
     {
         ST::conversion_result res;
         int value = string.to_int(res, 10);
         if (!res.ok() || !res.full_match()) {
-            return false;
+            return {};
         }
 
-        param->SetInt(value);
+        param.SetInt(value);
     }
     else if( type == pfConsoleCmd::kBool )
     {
         if (string.compare_i("t") == 0) {
-            param->SetBool(true);
+            param.SetBool(true);
         } else if (string.compare_i("f") == 0) {
-            param->SetBool(false);
+            param.SetBool(false);
         } else {
-            param->SetBool(string.to_bool());
+            param.SetBool(string.to_bool());
         }
     }
 
-    return true;
+    return param;
 }
 
-hsSsize_t pfConsoleEngine::IResolveParams(pfConsoleCmd* cmd, std::vector<ST::string> argTokens, pfConsoleCmdParam* paramArray)
+std::optional<std::vector<pfConsoleCmdParam>> pfConsoleEngine::IResolveParams(pfConsoleCmd* cmd, std::vector<ST::string> argTokens)
 {
-    size_t numParams;
-    for (numParams = 0; numParams < fMaxNumParams && numParams < argTokens.size(); numParams++) {
+    std::vector<pfConsoleCmdParam> params;
+    for (ST::string& argString : argTokens) {
         // Special case for context variables--if we're specifying one,
         // we want to just grab the value of it and return that instead
-        ST::string& argString = argTokens[numParams];
         if (argString.starts_with("$")) {
             pfConsoleContext& context = pfConsoleContext::GetRootContext();
 
@@ -289,22 +285,19 @@ hsSsize_t pfConsoleEngine::IResolveParams(pfConsoleCmd* cmd, std::vector<ST::str
             if (idx == -1) {
                 fErrorMsg = ST_LITERAL("Invalid console variable name");
             } else {
-                paramArray[numParams] = context.GetVarValue(idx);
+                params.push_back(context.GetVarValue(idx));
                 continue;
             }
         }
 
-        bool valid = IConvertToParam(cmd->GetSigEntry(numParams), std::move(argString), &paramArray[numParams]);
-        if (!valid) {
-            return -1;
+        auto param = IConvertToParam(cmd->GetSigEntry(params.size()), std::move(argString));
+        if (!param) {
+            return {};
         }
+        params.emplace_back(std::move(*param));
     }
 
-    for (size_t i = numParams; i < fMaxNumParams + 1; i++) {
-        paramArray[i].SetNone();
-    }
-
-    return numParams;
+    return params;
 }
 
 //// FindPartialCmd //////////////////////////////////////////////////////////
