@@ -19,6 +19,8 @@ set(PATCHES
     0012-force-disable-curses.patch
     0013-configure-no-libcrypt.patch  # https://github.com/python/cpython/pull/28881
     0014-fix-get-python-inc-output.patch
+    0015-python-for-build.patch # Python 3.11: Use --with-build-python instead
+    0017-setup-search-paths.patch
 )
 
 if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
@@ -28,6 +30,13 @@ endif()
 # Fix build failures with GCC for built-in modules (https://github.com/microsoft/vcpkg/issues/26573)
 if(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Linux")
     list(APPEND PATCHES 0011-gcc-ldflags-fix.patch)
+endif()
+
+if(VCPKG_CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    list(APPEND PATCHES
+        0018-osx-static.patch
+        0016-osx-cross-build.patch
+    )
 endif()
 
 # Python 3.9 removed support for Windows 7. This patch re-adds support for Windows 7 and is therefore
@@ -158,14 +167,11 @@ if(VCPKG_TARGET_IS_WINDOWS OR VCPKG_TARGET_IS_UWP)
 
     # The extension modules must be placed in the DLLs directory, so we can't use vcpkg_copy_tools()
     if(PYTHON_ALLOW_EXTENSIONS)
-        file(GLOB_RECURSE PYTHON_EXTENSIONS_RELEASE "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/*.pyd")
-        file(COPY ${PYTHON_EXTENSIONS_RELEASE} DESTINATION "${CURRENT_PACKAGES_DIR}/bin")
-        file(COPY ${PYTHON_EXTENSIONS_RELEASE} DESTINATION "${CURRENT_PACKAGES_DIR}/tools/${PORT}/DLLs")
+        file(GLOB_RECURSE PYTHON_EXTENSIONS "${CURRENT_BUILDTREES_DIR}/*.pyd")
+        list(FILTER PYTHON_EXTENSIONS EXCLUDE REGEX [[.*_d\.pyd]])
+        file(COPY ${PYTHON_EXTENSIONS} DESTINATION "${CURRENT_PACKAGES_DIR}/tools/${PORT}/DLLs")
         vcpkg_copy_tool_dependencies("${CURRENT_PACKAGES_DIR}/tools/${PORT}/DLLs")
         file(REMOVE "${CURRENT_PACKAGES_DIR}/tools/${PORT}/DLLs/python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.dll")
-
-        file(GLOB_RECURSE PYTHON_EXTENSIONS_DEBUG "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg/*.pyd")
-        file(COPY ${PYTHON_EXTENSIONS_DEBUG} DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin")
     endif()
 
     file(COPY "${SOURCE_PATH}/Include/" "${SOURCE_PATH}/PC/pyconfig.h"
@@ -222,24 +228,71 @@ else()
         set(VCPKG_POLICY_MISMATCHED_NUMBER_OF_BINARIES enabled)
     endif()
 
+    if(NOT ENV{PKG_CONFIG})
+        vcpkg_find_acquire_program(PKGCONFIG)
+        set(ENV{PKG_CONFIG} "${PKGCONFIG}")
+    endif()
+
     set(OPTIONS
-        "--with-openssl=${CURRENT_INSTALLED_DIR}"
         "--without-ensurepip"
         "--with-suffix="
         "--with-system-expat"
         "--without-readline"
         "--disable-test-modules"
     )
-    if(VCPKG_TARGET_IS_OSX)
-        list(APPEND OPTIONS "LIBS=-liconv -lintl")
+    set(libs "")
+    if(EXISTS "${CURRENT_INSTALLED_DIR}/lib/libintl.a")
+        string(APPEND libs " -lintl")
+    endif()
+    if(EXISTS "${CURRENT_INSTALLED_DIR}/lib/libiconv.a" OR VCPKG_TARGET_IS_OSX)
+        string(APPEND libs " -liconv")
+    endif()
+    if(libs)
+        list(APPEND OPTIONS "LIBS=${libs}")
+    endif()
+
+    set(EXTRA_ARGUMENTS "")
+    if(VCPKG_CROSSCOMPILING)
+        list(APPEND EXTRA_ARGUMENTS DETERMINE_BUILD_TRIPLET)
+        list(APPEND OPTIONS
+            "--build=$(${SOURCE_PATH}/config.guess)"
+            # Python 3.11: Use --with-build-python instead
+            "PYTHON_FOR_BUILD=${CURRENT_HOST_INSTALLED_DIR}/tools/python3/python3.${PYTHON_VERSION_MINOR}${VCPKG_HOST_EXECUTABLE_SUFFIX}"
+            "PYTHON_FOR_REGEN=${CURRENT_HOST_INSTALLED_DIR}/tools/python3/python3.${PYTHON_VERSION_MINOR}${VCPKG_HOST_EXECUTABLE_SUFFIX}"
+            # Override python's AC_RUN_IFELSE cross compiling defaults.
+            # Users may override these values in VCPKG_CONFIGURE_MAKE_OPTIONS.
+            ac_cv_buggy_getaddrinfo=no
+            ac_cv_file__dev_ptc=no
+            ac_cv_file__dev_ptmx=no
+            ac_cv_pthread=yes
+            ac_osx_32bit=false
+            # Only used to determine runtime deps of readline, but the port disables readline.
+            ac_cv_prog_READELF=true # true, the program
+        )
+        if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
+            list(APPEND OPTIONS "LDFLAGS=\${LDFLAGS//-Wl,--no-undefined/}")
+        endif()
     endif()
 
     vcpkg_configure_make(
         SOURCE_PATH "${SOURCE_PATH}"
-        OPTIONS ${OPTIONS}
-        OPTIONS_DEBUG "--with-pydebug"
+        ${EXTRA_ARGUMENTS}
+        OPTIONS
+            ${OPTIONS}
+        OPTIONS_DEBUG
+            "--with-pydebug"
     )
-    vcpkg_install_make(ADD_BIN_TO_PATH INSTALL_TARGET altinstall)
+    vcpkg_install_make(
+        ADD_BIN_TO_PATH
+        INSTALL_TARGET altinstall
+        OPTIONS 
+            # The python buildsystem isn't canonical autotools:
+            # Flags are captured during configure AND injected again during build.
+            CPFLAGS=
+            CFLAGS=
+            CXXFLAGS=
+            LDFLAGS=
+    )
 
     file(COPY "${CURRENT_PACKAGES_DIR}/tools/${PORT}/bin/" DESTINATION "${CURRENT_PACKAGES_DIR}/tools/${PORT}")
 
@@ -313,6 +366,7 @@ _generate_finder(DIRECTORY "pythoninterp" PREFIX "PYTHON" NO_OVERRIDE)
 if (NOT VCPKG_TARGET_IS_WINDOWS)
     function(replace_dirs_in_config_file python_config_file)
         vcpkg_replace_string("${python_config_file}" "${CURRENT_INSTALLED_DIR}" "' + _base + '")
+        vcpkg_replace_string("${python_config_file}" "${CURRENT_HOST_INSTALLED_DIR}" "' + _base + '/../${HOST_TRIPLET}")
         vcpkg_replace_string("${python_config_file}" "${CURRENT_PACKAGES_DIR}" "' + _base + '")
         vcpkg_replace_string("${python_config_file}" "${CURRENT_BUILDTREES_DIR}" "not/existing")
     endfunction()
