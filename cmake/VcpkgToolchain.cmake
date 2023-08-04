@@ -17,6 +17,7 @@ string(ASCII ${_PLASMA_NUGET_TOKEN_ASCII} PLASMA_NUGET_TOKEN)
 # pass in an arbitrary vcpkg toolchain if one is not specified in CMakeSettings.json. We don't want
 # that either. Ugh, screw me.
 string(COMPARE EQUAL "${CMAKE_HOST_SYSTEM_NAME}" "Windows" _HOST_IS_WINDOWS)
+string(COMPARE EQUAL "${CMAKE_HOST_SYSTEM_NAME}" "Darwin" _HOST_IS_DARWIN)
 option(USE_VCPKG "Use the vcpkg submodule for dependency management." ${_HOST_IS_WINDOWS})
 if(NOT USE_VCPKG)
     return()
@@ -44,9 +45,6 @@ if(_HOST_IS_WINDOWS OR EXISTS "${_VCPKG_MONO}")
     set(ENV{VCPKG_BINARY_SOURCES} "$ENV{VCPKG_BINARY_SOURCES};nugetconfig,${_NUGET_CONFIG_PATH_NATIVE},read")
 endif()
 
-list(APPEND VCPKG_OVERLAY_PORTS "${CMAKE_SOURCE_DIR}/Scripts/Ports")
-list(APPEND VCPKG_OVERLAY_TRIPLETS "${CMAKE_SOURCE_DIR}/Scripts/Triplets")
-
 # Note that CMAKE_SIZEOF_VOID_P is currently undefined.
 if(_HOST_IS_WINDOWS AND NOT DEFINED VCPKG_TARGET_TRIPLET)
     if(CMAKE_GENERATOR_PLATFORM MATCHES "[Ww][Ii][Nn]32")
@@ -69,7 +67,34 @@ if(_HOST_IS_WINDOWS AND NOT DEFINED VCPKG_TARGET_TRIPLET)
     endif()
 endif()
 
-# Default to using the same triplet for the host and target to prevent unnesecary
+if(_HOST_IS_DARWIN AND NOT DEFINED VCPKG_TARGET_TRIPLET)
+    if(CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
+        set(VCPKG_TARGET_TRIPLET "x64-macos-plasma" CACHE STRING "")
+    elseif(CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
+        set(VCPKG_TARGET_TRIPLET "arm64-macos-plasma" CACHE STRING "")
+    elseif(DEFINED CMAKE_OSX_ARCHITECTURES)
+        set(VCPKG_TARGET_TRIPLET "universal-macos-plasma" CACHE STRING "")
+    endif()
+
+    # CMAKE_HOST_SYSTEM_PROCESSOR is undefined at this point
+    execute_process(
+        COMMAND uname -m
+        OUTPUT_VARIABLE _HOST_SYSTEM_PROCESSOR
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    if(_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        set(VCPKG_HOST_TRIPLET "x64-macos-plasma" CACHE STRING "")
+        set(VCPKG_TARGET_TRIPLET "x64-macos-plasma" CACHE STRING "")
+    elseif(_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
+        set(VCPKG_HOST_TRIPLET "arm64-macos-plasma" CACHE STRING "")
+        set(VCPKG_TARGET_TRIPLET "arm64-macos-plasma" CACHE STRING "")
+    else()
+        message(FATAL_ERROR "Unknown architecture: '${_HOST_SYSTEM_PROCESSOR}' - set VCPKG_TARGET_TRIPLET manually.")
+    endif()
+endif()
+
+# Default to using the same triplet for the host and target to prevent unnecessary
 # dependencies on cross-compilers when we're just building a Win32 static engine
 # on a Win64 machine.
 if(_HOST_IS_WINDOWS AND NOT DEFINED VCPKG_HOST_TRIPLET)

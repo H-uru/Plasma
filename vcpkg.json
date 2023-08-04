@@ -36,6 +36,18 @@
       },
       "zlib"
     ],
+    "overrides": [
+      {
+        "name": "openssl",
+        "version": "3.0.8#2",
+        "$comment": "OpenSSL 3.1.x has a bug on arm64 macOS that causes crashes in debug builds. Use 3.0.x for now."
+      },
+      {
+        "name": "physx",
+        "version": "4.1.2#6",
+        "$comment": "Upstream vcpkg updated to PhysX 5, which drops support for several target platforms. Stick with 4.1.2 for now."
+      }
+    ],
     "features": {
       "cairosvg": {
         "description": "Installs a functional cairosvg Python module for the resource.dat generator.",
@@ -51,5 +63,10 @@
           }
         ]
       }
+    },
+    "builtin-baseline": "9d47b24eacbd1cd94f139457ef6cd35e5d92cc84",
+    "vcpkg-configuration": {
+      "overlay-ports": ["./Scripts/Ports"],
+      "overlay-triplets": ["./Scripts/Triplets"]
     }
-  }
+}
