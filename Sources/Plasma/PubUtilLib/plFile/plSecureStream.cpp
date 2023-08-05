@@ -101,9 +101,9 @@ plSecureStream::~plSecureStream()
     }
 
     if (fRef != INVALID_HANDLE_VALUE) {
-#if HS_BUILD_FOR_WIN32
+#if defined(HS_BUILD_FOR_WIN32)
         CloseHandle(fRef);
-#elif HS_BUILD_FOR_UNIX
+#elif defined(HS_BUILD_FOR_UNIX)
         fclose(fRef);
 #endif
     }

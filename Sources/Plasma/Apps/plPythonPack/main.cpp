@@ -302,8 +302,7 @@ void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFi
 
         PythonInterface::initPython(rootPath, extraDirs, out, stderr);
     
-        std::vector<uint32_t> filePositions;
-        filePositions.resize(fileNames.size());
+        std::vector<uint32_t> filePositions(fileNames.size());
 
         for (size_t i = 0; i < fileNames.size(); i++)
         {
