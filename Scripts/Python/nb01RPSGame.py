@@ -382,10 +382,7 @@ class nb01RPSGame(ptResponder, object):
             raise RuntimeError("Got an SDL notify for {}, but no CB".format(VARname))
 
     def OnControlKeyEvent(self,controlKey,activeFlag):
-        PtDebugPrint(controlKey, activeFlag)
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
-            PtYesNoDialog(self.key, "Do you want to leave the Ahyoheek game?")
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
+        if controlKey in [PlasmaControlKeys.kKeyMoveBackward, PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight, PlasmaControlKeys.kKeyExitMode] and activeFlag:
             PtYesNoDialog(self.key, "Do you want to leave the Ahyoheek game?")
 
     def OnNotify(self, state, id, events):
@@ -399,8 +396,8 @@ class nb01RPSGame(ptResponder, object):
         if self._HandleNotify(state, id, events, self._sitting, self._OnSitDown):
             if not self.playing:
                 PtEnableControlKeyEvents(self.key)
-                #PtDisableMouseMovement()
                 PtDisableMovementKeys()
+                PtEnableMouseMovement()
             return
 
         # A rock/paper/sics button was mashed
@@ -958,6 +955,7 @@ class nb01RPSGame(ptResponder, object):
             if args["YesNo"]:
                 PtDisableControlKeyEvents(self.key)
                 PtEnableMovementKeys()
+                PtAvatarExitAFK()
                 return True
             else:
                 return False
