@@ -49,6 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plResMgr/plLocalization.h"
 
+#ifdef HS_BUILD_FOR_MACOS
+#include <Carbon/Carbon.h>
+#endif
+
 ControlEventCode plInputMap::ConvertCharToControlCode(const ST::string& c)
 {
     for (const auto& [code, desc] : fCmdConvert)
@@ -750,6 +754,65 @@ const std::map<uint32_t, ST::string> plKeyMap::fKeyConversionEnglish =
     { VK_OEM_5,     ST_LITERAL("Backslash") },
     { VK_OEM_6,     ST_LITERAL("RightBracket") },
     { VK_OEM_7,     ST_LITERAL("Quote") },
+#elif HS_BUILD_FOR_APPLE
+    { kVK_F1,    "F1"},
+    { kVK_F2,    "F2"},
+    { kVK_F3,    "F3"},
+    { kVK_F4,    "F4"},
+    { kVK_F5,    "F5"},
+    { kVK_F6,    "F6"},
+    { kVK_F7,    "F7"},
+    { kVK_F8,    "F8"},
+    { kVK_F9,    "F9"},
+    { kVK_F10,   "F10"},
+    { kVK_F11,   "F11"},
+    { kVK_F12,   "F12"},
+    { kVK_Escape, "Esc"},
+    { kVK_Tab,   "Tab"},
+    { kVK_UpArrow,    "UpArrow"},
+    { kVK_DownArrow,  "DownArrow"},
+    { kVK_LeftArrow,  "LeftArrow"},
+    { kVK_RightArrow, "RightArrow"},
+    { kVK_Delete,  "Backspace"},
+    { kVK_Return, "Enter"},
+    { kVK_F15, "Pause"},
+    { kVK_CapsLock, "CapsLock"},
+    { kVK_PageUp, "PageUp"},
+    { kVK_PageDown,  "PageDn"},
+    { kVK_End,   "End"},
+    { kVK_Home,  "Home"},
+    { kVK_F13,  "PrintScrn"},
+    { kVK_Help,    "Insert"},
+    { kVK_Delete,    "Delete"},
+    { kVK_ANSI_Keypad0,   "NumPad0"},
+    { kVK_ANSI_Keypad1,   "NumPad1"},
+    { kVK_ANSI_Keypad2,   "NumPad2"},
+    { kVK_ANSI_Keypad3,   "NumPad3"},
+    { kVK_ANSI_Keypad4,   "NumPad4"},
+    { kVK_ANSI_Keypad5,   "NumPad5"},
+    { kVK_ANSI_Keypad6,   "NumPad6"},
+    { kVK_ANSI_Keypad7,   "NumPad7"},
+    { kVK_ANSI_Keypad8,   "NumPad8"},
+    { kVK_ANSI_Keypad9,   "NumPad9"},
+    { kVK_ANSI_KeypadMultiply,  "NumPad*"},
+    { kVK_ANSI_KeypadPlus,       "NumPad+"},
+    { kVK_ANSI_KeypadMinus,  "NumPad-"},
+    { kVK_ANSI_KeypadDecimal,   "NumPad."},
+    { kVK_ANSI_KeypadDivide,    "NumPad/"},
+    { kVK_Space,     "SpaceBar"},
+    { kVK_ANSI_Comma, "Comma"},
+    { kVK_ANSI_Period,"Period"},
+    { kVK_ANSI_Minus, "Minus"},
+    { kVK_ANSI_Equal,  "Plus"},
+    { kVK_Shift,     "Shift" },
+    // not valid outside USA
+    { kVK_ANSI_Semicolon,     "Semicolon"},
+    { kVK_ANSI_Slash,     "ForewardSlash"},
+    { kVK_ANSI_Grave,     "Tilde"},
+    { kVK_ANSI_LeftBracket,     "LeftBracket"},
+    { kVK_ANSI_Backslash,     "Backslash"},
+    { kVK_ANSI_RightBracket,     "RightBracket"},
+    { kVK_ANSI_Quote,     "Quote"},
 #endif
 };
 

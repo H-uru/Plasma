@@ -310,9 +310,11 @@ jobs:
       - name: Install
         run: |
           cmake --build build --target install --config "${{ matrix.cfg.type }}" -j 2
+          cd build/install
+          zip -y -r ../../plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}.zip *
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}
-          path: build/install
+          path: plasma-${{ matrix.platform.str }}-${{ matrix.cfg.str }}.zip

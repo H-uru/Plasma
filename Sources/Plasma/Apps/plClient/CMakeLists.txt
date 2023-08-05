@@ -80,7 +80,6 @@ if(WIN32)
         win32/plClient_Win.cpp
         win32/winmain.cpp
     )
-
     list(APPEND plClient_RESOURCES
         win32/res/plClient.exe.manifest
         win32/res/plClient.rc
@@ -90,17 +89,92 @@ if(WIN32)
         win32/res/Dirt.ICO
         win32/res/headspin.ico
     )
+elseif(APPLE)
+    set(plClient_SOURCES ${plClient_SOURCES}
+        Mac-Cocoa/main.mm
+        Mac-Cocoa/PLSKeyboardEventMonitor.mm
+        Mac-Cocoa/PLSView.mm
+        Mac-Cocoa/PLSLoginWindowController.mm
+        Mac-Cocoa/PLSPatcherWindowController.mm
+        Mac-Cocoa/PLSPatcher.mm
+        Mac-Cocoa/PLSServerStatus.mm
+        Mac-Cocoa/StringTheory_NSString.mm
+    )
+    set(plClient_HEADERS ${plClient_HEADERS}
+        Mac-Cocoa/PLSKeyboardEventMonitor.h
+        Mac-Cocoa/PLSView.h
+        Mac-Cocoa/PLSLoginWindowController.h
+        Mac-Cocoa/PLSPatcherWindowController.h
+        Mac-Cocoa/PLSPatcher.h
+        Mac-Cocoa/PLSServerStatus.h
+        Mac-Cocoa/StringTheory_NSString.h
+    )
+    set(RESOURCES 
+        Mac-Cocoa/MainMenu.xib
+        Mac-Cocoa/PLSLoginWindowController.xib
+        Mac-Cocoa/PLSPatcherWindowController.xib
+        Mac-Cocoa/banner@2x.jpeg
+        win32/res/Dirt.ICO
+    )
+    
+    list(APPEND plClient_RESOURCES
+        win32/res/resource.h
+        win32/res/banner.bmp
+        win32/res/Dirt.ICO
+        win32/res/headspin.ico
+    )
 else()
     list(APPEND plClient_SOURCES
         main.cpp
     )
 endif()
 
-plasma_executable(plClient WIN32 CLIENT INSTALL_PDB
-    SOURCES
-        ${plClient_SOURCES} ${plClient_HEADERS}
-        ${plClient_TEXT} ${plClient_RESOURCES}
-)
+if(APPLE)
+    plasma_executable(plClient CLIENT INSTALL_PDB SOURCES ${plClient_SOURCES} ${plClient_HEADERS} ${RESOURCES})
+    set(MAIN_NIBFILE "MainMenu")
+    set_target_properties(plClient PROPERTIES
+        BUNDLE True
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/Info.plist.in"
+        MACOSX_BUNDLE_GUI_IDENTIFIER org.openuru.plClient
+        MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
+        XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon;
+        XCODE_ATTRIBUTE_MTL_FAST_MATH "YES";
+        XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=Debug] "INCLUDE_SOURCE";
+        XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=RelWithDebInfo] "INCLUDE_SOURCE";
+        XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=Debug] "YES";
+        XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS[variant=RelWithDebInfo] "YES";
+        XCODE_ATTRIBUTE_MTL_HEADER_SEARCH_PATHS ${Plasma_SOURCE_DIR}/Sources/Plasma/NucleusLib/inc/;
+        XCODE_ATTRIBUTE_INSTALL_PATH "/Applications";
+        XCODE_ATTRIBUTE_SKIP_INSTALL "NO";
+        XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS ${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/plClient.entitlements;
+        XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES";
+    )
+    target_compile_options(plClient PRIVATE -fobjc-arc)
+    target_sources(plClient PRIVATE Mac-Cocoa/Assets.xcassets)
+    set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
+         MACOSX_PACKAGE_LOCATION Resources
+    )
+    target_link_libraries(plClient PRIVATE "-framework Cocoa")
+    target_link_libraries(plClient PRIVATE "-framework QuartzCore")
+    install(
+        TARGETS plClient
+        DESTINATION client
+    )
+    
+    if(PLASMA_APPLE_DEVELOPMENT_TEAM_ID)
+            set_target_properties(plClient PROPERTIES
+                XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Apple Development"
+                XCODE_ATTRIBUTE_DEVELOPMENT_TEAM ${PLASMA_APPLE_DEVELOPMENT_TEAM_ID}
+            )
+    endif()
+else()
+    plasma_executable(plClient WIN32 CLIENT INSTALL_PDB
+        SOURCES
+            ${plClient_SOURCES} ${plClient_HEADERS}
+            ${plClient_TEXT} ${plClient_RESOURCES}
+    )
+endif()
 
 if(PLASMA_BUILD_RESOURCE_DAT)
     target_sources(plClient PRIVATE ${external_SCRIPTS} ${external_SOURCES} ${external_DAT})
@@ -168,6 +242,20 @@ target_include_directories(plClient PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
 endif(PLASMA_EXTERNAL_RELEASE)
+
+if(APPLE)
+    # CMake will attempt to strip rpaths, thus preventing fixup_bundle from finding libraries.
+    # Not sure why - turning that off.
+    set_target_properties(plClient PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+    install(
+        CODE [[
+            include("BundleUtilities")
+            fixup_bundle("${CMAKE_INSTALL_PREFIX}/client/$<TARGET_FILE_NAME:plClient>.app" "" "${searchDirs}" IGNORE_ITEM Python)
+            execute_process(COMMAND "codesign" "--remove-signature" "--deep" "-f" "${CMAKE_INSTALL_PREFIX}/client/$<TARGET_FILE_NAME:plClient>.app")
+            ]]
+        DESTINATION client
+    )
+endif()
 
 if(PLASMA_BUILD_RESOURCE_DAT)
     source_group("Client Resource Scripts" FILES ${external_SCRIPTS})

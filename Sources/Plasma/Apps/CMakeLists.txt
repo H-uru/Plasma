@@ -14,6 +14,12 @@ if(WIN32)
     endif()
 endif()
 
+if(APPLE)
+    if(PLASMA_BUILD_CLIENT)
+        add_subdirectory(plClient)
+    endif()
+endif()
+
 if(PLASMA_BUILD_TOOLS)
     add_subdirectory(plPythonPack)
     add_subdirectory(plFileSecure)

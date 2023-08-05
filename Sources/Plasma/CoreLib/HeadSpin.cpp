@@ -298,6 +298,7 @@ public:
 
 bool hsMessageBox_SuppressPrompts = false;
 
+#ifndef HS_BUILD_FOR_APPLE
 int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon)
 {
     if (hsMessageBox_SuppressPrompts)
@@ -350,6 +351,7 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* c
 #endif
     return hsMBoxCancel;
 }
+#endif
 
 int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wchar_t* caption, int kind, int icon)
 {
