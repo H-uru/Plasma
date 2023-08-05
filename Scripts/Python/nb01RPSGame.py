@@ -383,7 +383,7 @@ class nb01RPSGame(ptResponder, object):
 
     def OnControlKeyEvent(self,controlKey,activeFlag):
         if controlKey in [PlasmaControlKeys.kKeyMoveBackward, PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight, PlasmaControlKeys.kKeyExitMode] and activeFlag:
-            PtYesNoDialog(self.key, "Do you want to leave the Ahyoheek game?")
+            PtYesNoDialog(self.key, PtGetLocalizedString("Heek.Messages.Quit"))
 
     def OnNotify(self, state, id, events):
         """Handle Plasma Notification Messages"""
@@ -951,7 +951,6 @@ class nb01RPSGame(ptResponder, object):
             args[event[1]] = event[3]
 
         if "YesNo" in args:
-            PtDebugPrint("YesNo is",args["YesNo"])
             if args["YesNo"]:
                 PtDisableControlKeyEvents(self.key)
                 PtEnableMovementKeys()
@@ -959,7 +958,7 @@ class nb01RPSGame(ptResponder, object):
                 return True
             else:
                 return False
-        elif "type" in args:
+        else:
             # Now, let's fire it off!
             type = args["type"]
             del args["type"]
