@@ -833,7 +833,7 @@ void hsWriteOnlyStream::FastFwd()
 
 void hsWriteOnlyStream::Truncate()
 {
-    hsThrow("can't write to a readonly stream");
+    hsThrow("can't change size of hsWriteOnlyStream");
 }
 
 void hsWriteOnlyStream::CopyToMem(void* mem)
