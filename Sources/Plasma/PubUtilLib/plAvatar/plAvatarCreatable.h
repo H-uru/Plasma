@@ -76,7 +76,7 @@ REGISTER_NONCREATABLE(plAvTask);
 REGISTER_CREATABLE(plAvAnimTask);
 REGISTER_CREATABLE(plAvOneShotTask);
 REGISTER_CREATABLE(plAvOneShotLinkTask);
-REGISTER_CREATABLE(plAvSeekTask)
+REGISTER_CREATABLE(plAvSeekTask);
 
 #include "plAvBrain.h"
 REGISTER_NONCREATABLE(plArmatureBrain);
@@ -100,7 +100,7 @@ REGISTER_CREATABLE(plAvBrainGeneric);
 REGISTER_CREATABLE(plAvBrainHuman);
 
 #include "plAvBrainRideAnimatedPhysical.h"
-REGISTER_CREATABLE(plAvBrainRideAnimatedPhysical)
+REGISTER_CREATABLE(plAvBrainRideAnimatedPhysical);
 
 #include "plAvBrainSwim.h"
 REGISTER_CREATABLE(plAvBrainSwim);

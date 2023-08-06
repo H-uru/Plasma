@@ -186,7 +186,7 @@ REGISTER_CREATABLE(plSetListenerMsg);
 
 #include "plLoadAgeMsg.h"
 REGISTER_CREATABLE(plLoadAgeMsg);
-REGISTER_CREATABLE(plLinkInDoneMsg)
+REGISTER_CREATABLE(plLinkInDoneMsg);
 REGISTER_CREATABLE(plLinkOutUnloadMsg);
 
 #include "plLOSHitMsg.h"
