@@ -119,10 +119,7 @@ elseif(APPLE)
     )
     
     list(APPEND plClient_RESOURCES
-        win32/res/resource.h
-        win32/res/banner.bmp
         win32/res/Dirt.ICO
-        win32/res/headspin.ico
     )
 else()
     list(APPEND plClient_SOURCES
@@ -132,7 +129,6 @@ endif()
 
 if(APPLE)
     plasma_executable(plClient CLIENT INSTALL_PDB SOURCES ${plClient_SOURCES} ${plClient_HEADERS} ${RESOURCES})
-    set(MAIN_NIBFILE "MainMenu")
     set_target_properties(plClient PROPERTIES
         BUNDLE TRUE
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/Info.plist.in"
