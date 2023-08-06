@@ -151,7 +151,7 @@ pfPatcher* plResPatcher::CreatePatcher()
         // There is a very special case for local data, and that is the SDL. The SDL is a contract that we have with the
         // server. If the client and server have different ideas about what the SDL is, then we're really up poop creek.
         // So, we *always* ask for the server's SDL unless we really, really, really don't want it.
-        patcher->RequestGameCode(!(gDataServerLocal || gPythonLocal), !gSDLLocal);
+        patcher->RequestGameCode(!gPythonLocal, !gSDLLocal);
         fRequestedGameCode = true;
     }
 
