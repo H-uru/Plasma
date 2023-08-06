@@ -67,6 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #ifdef HS_BUILD_FOR_APPLE
+#    include <mach/mach.h>
 #    include <CoreFoundation/CoreFoundation.h>
 
     extern "C" {
@@ -114,6 +115,39 @@ static inline void ICPUID(cpuid_t* info, int function_id)
 #endif
 }
 
+#ifdef HS_BUILD_FOR_APPLE
+static inline ST::string IGetAppleCPUVendor()
+{
+    ST::string result;
+
+#ifdef HAVE_SYSCTL
+    size_t bufsize = 100;
+    char buffer[bufsize];
+
+    if (sysctlbyname("machdep.cpu.brand_string", &buffer, &bufsize, nullptr, 0) == 0) {
+        result = buffer;
+        return result;
+    }
+#endif
+
+    struct host_basic_info hostinfo;
+    host_name_port_t host = mach_host_self();
+    unsigned int size = sizeof(hostinfo) / sizeof(int);
+
+    if (host_info(host, HOST_BASIC_INFO, (host_info_t)&hostinfo, &size) != KERN_SUCCESS) {
+        return result;
+    }
+
+    char* cpu_name;
+    char* cpu_subname;
+    slot_name(hostinfo.cpu_type, hostinfo.cpu_subtype, &cpu_name, &cpu_subname);
+
+    result = cpu_subname;
+
+    return result;
+}
+#endif
+
 ST::string hsSystemInfo::GetCPUBrand()
 {
     cpuid_t cpuInfo[4]{};
@@ -131,6 +165,12 @@ ST::string hsSystemInfo::GetCPUBrand()
     }
 
     ST::string result(str);
+
+#ifdef HS_BUILD_FOR_APPLE
+    if (result.empty())
+        result = IGetAppleCPUVendor();
+#endif
+
     if (result.empty())
         result = ST_LITERAL("Unknown");
     return result;
