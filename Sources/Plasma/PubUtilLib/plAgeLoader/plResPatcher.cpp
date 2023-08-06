@@ -56,7 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plResManager.h"
 
 extern bool gDataServerLocal;
-bool gSkipPreload = false;
+bool gPythonLocal = false;
+bool gSDLLocal = false;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -144,9 +145,13 @@ pfPatcher* plResPatcher::CreatePatcher()
     patcher->OnProgressTick(std::bind(&plResPatcher::OnProgressTick, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
     // sneaky hax: do the old SecurePreloader thing.... except here
-    if (!fRequestedGameCode && !gSkipPreload) {
+    if (!fRequestedGameCode && (!gPythonLocal || !gSDLLocal)) {
         patcher->OnGameCodeDiscovery(std::bind(&plResPatcher::OnGameCodeDiscovered, this, std::placeholders::_1, std::placeholders::_2));
-        patcher->RequestGameCode();
+
+        // There is a very special case for local data, and that is the SDL. The SDL is a contract that we have with the
+        // server. If the client and server have different ideas about what the SDL is, then we're really up poop creek.
+        // So, we *always* ask for the server's SDL unless we really, really, really don't want it.
+        patcher->RequestGameCode(!(gDataServerLocal || gPythonLocal), !gSDLLocal);
         fRequestedGameCode = true;
     }
 
@@ -171,25 +176,19 @@ plResPatcher::~plResPatcher()
 
 void plResPatcher::Update(const std::vector<ST::string>& manifests)
 {
-    if (gDataServerLocal)
-        plgDispatch::Dispatch()->MsgSend(new plResPatcherMsg());
-     else {
-        InitProgress();
-        pfPatcher* patcher = CreatePatcher();
+    InitProgress();
+    pfPatcher* patcher = CreatePatcher();
+    if (!gDataServerLocal)
         patcher->RequestManifest(manifests);
-        patcher->Start(); // whoosh... off it goes
-    }
+    patcher->Start(); // whoosh... off it goes
 }
 
 void plResPatcher::Update(const ST::string& manifest)
 {
-    if (gDataServerLocal)
-        plgDispatch::Dispatch()->MsgSend(new plResPatcherMsg());
-    else {
-        InitProgress();
-        pfPatcher* patcher = CreatePatcher();
+    InitProgress();
+    pfPatcher* patcher = CreatePatcher();
+    if (!gDataServerLocal)
         patcher->RequestManifest(manifest);
-        patcher->Start(); // whoosh... off it goes
-    }
+    patcher->Start(); // whoosh... off it goes
 }
 

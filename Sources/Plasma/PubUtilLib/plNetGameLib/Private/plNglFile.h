@@ -66,6 +66,7 @@ void NetCliFileStartConnect (
     unsigned        fileAddrCount,
     bool            isPatcher = false
 );
+bool NetCliFileQueryConnected ();
 
 //============================================================================
 // Disconnect

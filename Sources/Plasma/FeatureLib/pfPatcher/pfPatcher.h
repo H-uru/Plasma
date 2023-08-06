@@ -131,7 +131,7 @@ public:
     /** This is called when the current application has been updated. */
     void OnSelfPatch(FileDownloadFunc cb);
 
-    void RequestGameCode();
+    void RequestGameCode(bool python = true, bool sdl = true);
     void RequestManifest(const ST::string& mfs);
     void RequestManifest(const std::vector<ST::string>& mfs);
 
