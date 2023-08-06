@@ -546,7 +546,7 @@ void plNetMsgGameMessage::WriteVersion(hsStream* s, hsResMgr* mgr)
 
 ST::string plNetMsgGameMessage::AsString() const
 {
-    const char* noc = plFactory::GetTheFactory()->GetNameOfClass(StreamInfo()->GetStreamType());
+    const char* noc = plFactory::GetNameOfClass(StreamInfo()->GetStreamType());
     return ST::format("{} {}", plNetMsgStream::AsString(), noc ? noc : "?");
 }
 
