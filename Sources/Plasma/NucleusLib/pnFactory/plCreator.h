@@ -81,8 +81,6 @@ public:
             return !(std::is_base_of_v<hsKeyedObject, _CreatableT>);
         return true;
     }
-
-    friend class plFactory;
 };
 
 #define VERIFY_CREATABLE(plClassName)                                                         \

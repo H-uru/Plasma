@@ -75,7 +75,6 @@ private:
 
 public:
     // Don't use this unless you're initializing a DLL
-    friend class plClient;
     static plFactory*   GetTheFactory();
 
 
