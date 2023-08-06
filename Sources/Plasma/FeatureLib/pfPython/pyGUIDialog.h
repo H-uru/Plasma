@@ -101,6 +101,7 @@ public:
         kMultiLineEdit=13,
         kPopUpMenu=14,
         kClickMap=15,
+        kProgress=16,
     };
     static PyObject* ConvertControl(const plKey& key);
     static uint32_t WhatControlType(const plKey& key);

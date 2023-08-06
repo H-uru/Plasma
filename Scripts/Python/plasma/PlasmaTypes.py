@@ -93,6 +93,9 @@ kCheckBox=10
 kRadioGroup=11
 kDynamicTextControl=12
 kMultiLineEdit=13
+kPopUpMenu=14
+kClickMap=15
+kProgress=16
 # GUIControlListBox String Justify Types
 kLeftJustify=1
 kRightJustify=2
