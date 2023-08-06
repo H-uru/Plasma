@@ -40,39 +40,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+// System Frameworks
+#import <Cocoa/Cocoa.h>
+#import <QuartzCore/QuartzCore.h>
+
+// Cocoa client
 #import "PLSKeyboardEventMonitor.h"
-#include "plClient/plClient.h"
-#include "plClient/plClientLoader.h"
-#include "plCmdParser.h"
-#include "plProduct.h"
-#if PLASMA_PIPELINE_GL
-#include "pfGLPipeline/plGLPipeline.h"
-#endif
+#import "PLSLoginWindowController.h"
+#import "PLSPatcherWindowController.h"
+#import "PLSServerStatus.h"
+#import "PLSView.h"
+#import "StringTheory_NSString.h"
+
+// stdlib
 #include <algorithm>
 #include <regex>
 #include <unordered_set>
 
-#include "PLSPatcherWindowController.h"
+// Plasma engine
+#include "plClient/plClient.h"
+#include "plClient/plClientLoader.h"
+#include "plCmdParser.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
 #include "plInputCore/plInputDevice.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plNetGameLib/plNetGameLib.h"
-
-#include "PLSLoginWindowController.h"
-#include "PLSServerStatus.h"
-
-#import "Cocoa/Cocoa.h"
-#if PLASMA_PIPELINE_GL
-#import <OpenGL/gl.h>
-#endif
-#import <QuartzCore/QuartzCore.h>
-#import "PLSKeyboardEventMonitor.h"
-#import "PLSView.h"
 #include "plMessage/plDisplayScaleChangedMsg.h"
 #include "plNetClient/plNetClientMgr.h"
+#include "plNetGameLib/plNetGameLib.h"
+#include "plProduct.h"
 
-#include "StringTheory_NSString.h"
+// Until a pipeline is integrated with macOS, need to import the
+// abstract definition.
+#include "plPipeline/pl3DPipeline.h"
 
 void PumpMessageQueueProc();
 
