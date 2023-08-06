@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsSystemInfo.h"
 #include "hsTimer.h"
 
+#include "pnFactory/plFactory.h"
 #include "pnMessage/plClientMsg.h"
 #include "pnMessage/plPlayerPageMsg.h"
 #include "pnMessage/plTimeMsg.h"

@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCreatableIndex.h"
 #include "plNetLinkingMgr.h"
 
+#include "pnFactory/plFactory.h"
 #include "pnMessage/plMessage.h"
 #include "pnNetCommon/plNetApp.h"
 

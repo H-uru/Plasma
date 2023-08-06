@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"        // just when debugging for GetSysSeconds
 
 // other
+#include "pnFactory/plFactory.h"
 #include "plInterp/plAnimTimeConvert.h"
 #include "pnNetCommon/plSDLTypes.h"
 #include "plMessage/plAnimCmdMsg.h"

@@ -43,8 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCreatable_inc
 #define plCreatable_inc
 
+#include "HeadSpin.h"
+
 #include "hsRefCnt.h"
-#include "plFactory.h"
 
 class plCreator;
 class hsStream;
@@ -97,7 +98,6 @@ public:
 //          as plClassName, return that, else nullptr. Incs the ref count of the object.
 //      static plClassName* ConvertNoRef(plCreatable* c) - Same as Convert(), but
 //          doesn't inc the ref count.
-//      static plClassName* Create() - returns a new object of type plClassName
 //  Insert into public section of class definition.
 //
 //  Normally one of the next 3 macros should follow CLASSNAME_REGISTER
@@ -124,13 +124,13 @@ public:
 //
 //  USAGE:
 //  There is a method of identifying an object's type. You should rarely need it,
-//  using Create() and Convert() instead.
+//  using Convert() instead.
 //  ClassIndex() the class handle is an immutable index to this class. It provides an 
 //      instantaneous lookup. It may be stored, loaded, sent over the wire, etc.
 //
 //  Create()
 //  If you know what type object you want to create at compile time, use
-//      <ObjectType>::Create()
+//      new <ObjectType>()
 //  But if you have a class index at run-time (e.g. loaded from file), use
 //      plCreatable* plFactory::Create(hClass); 
 //  The ultra-safe way to do this is:
@@ -139,7 +139,7 @@ public:
 //      hsRefCnt_SafeUnRef(tmp);
 //
 //  If you have a fred interface to an object f, and want a wilma interface, use
-//      fred* f = fred::Create();  more likely f was passed in.
+//      fred* f = new fred();  more likely f was passed in.
 //      wilma* w = wilma::Convert(f)
 //  NOTE that two strange things may be true here:
 //      1) f != nullptr, w == nullptr
@@ -178,10 +178,6 @@ public:                                                                     \
     static uint16_t Index() {                                               \
         return plClassName##ClassIndex;                                     \
     }                                                                       \
-    static plClassName* Create() {                                          \
-        return static_cast<plClassName*>(                                   \
-                plFactory::Create(plClassName##ClassIndex));                \
-    }                                                                       \
     static plClassName* ConvertNoRef(plCreatable* c) {                      \
         plClassName* retVal = c                                             \
             ? static_cast<plClassName*>(                                    \
@@ -200,9 +196,6 @@ public:                                                                     \
         plClassName* retVal = ConvertNoRef(c);                              \
         hsRefCnt_SafeRef(retVal);                                           \
         return retVal;                                                      \
-    }                                                                       \
-    static bool HasDerivedClass(uint16_t hDer) {                            \
-        return plFactory::DerivesFrom(plClassName##ClassIndex, hDer);       \
     }
 
 

@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
+#include "pnFactory/plFactory.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnNetCommon/plNetApp.h"
 

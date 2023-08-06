@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRegistryKeyList.h"
 #include "plVersion.h"
 
-#include "pnFactory/plFactory.h"
 #include "pnKeyedObject/plKeyImp.h"
 
 plRegistryPageNode::plRegistryPageNode(const plFileName& path)

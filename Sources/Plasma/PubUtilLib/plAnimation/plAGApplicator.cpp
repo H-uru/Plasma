@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsStream.h"
 
+#include "pnFactory/plFactory.h"
+
 #include "plAGChannel.h"
 #include "plAGModifier.h"
 

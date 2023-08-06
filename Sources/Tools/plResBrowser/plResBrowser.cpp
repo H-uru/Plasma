@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnAllCreatables.h"
 
+#include "pnFactory/plFactory.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plKeyImp.h"
 #include "pnKeyedObject/plUoid.h"

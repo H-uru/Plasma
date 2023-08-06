@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnDispatch/plDispatch.h"
 #include "pnFactory/plCreator.h"
+#include "pnFactory/plFactory.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnKeyedObject/plKeyImp.h"
