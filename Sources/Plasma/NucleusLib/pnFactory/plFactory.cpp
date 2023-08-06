@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#define PLFACTORY_PRIVATE
 #include "plFactory.h"
+
 #include "hsStream.h"
 #include "plCreatable.h"
 #include "plCreator.h"
