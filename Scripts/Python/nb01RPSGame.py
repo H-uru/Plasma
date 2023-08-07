@@ -191,6 +191,7 @@ MAX_NUM_HIGH_SCORES = 10
 NOTIFY_HELLO = 0
 NOTIFY_JOINLEAVE = 1
 NOTIFY_SCORE_UPDATE = 2
+NOTIFY_YESNO_QUIT = 3
 
 # Rank stuff
 RANK_UP = 100
@@ -292,6 +293,7 @@ class nb01RPSGame(ptResponder, object):
             NOTIFY_HELLO: self._OnHello,
             NOTIFY_JOINLEAVE: self._OnJoinLeave,
             NOTIFY_SCORE_UPDATE: self._OnGameOver,
+            NOTIFY_YESNO_QUIT: self._QuitGame,
         }
 
         # These get called when an SDL variable touches itself.
@@ -381,9 +383,16 @@ class nb01RPSGame(ptResponder, object):
         else:
             raise RuntimeError("Got an SDL notify for {}, but no CB".format(VARname))
 
-    def OnControlKeyEvent(self,controlKey,activeFlag):
+    def OnControlKeyEvent(self, controlKey, activeFlag):
         if controlKey in [PlasmaControlKeys.kKeyMoveBackward, PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight, PlasmaControlKeys.kKeyExitMode] and activeFlag:
-            PtYesNoDialog(self.key, PtGetLocalizedString("Heek.Messages.Quit"))
+            if self._round_played:
+                PtYesNoDialog(self.key, PtGetLocalizedString("Heek.Messages.Quit"))
+            else:
+                quit = {
+                    "type": NOTIFY_YESNO_QUIT,
+                    "YesNo": 1,
+                }
+                self._SendPyNotifyMsg(quit)
 
     def OnNotify(self, state, id, events):
         """Handle Plasma Notification Messages"""
@@ -394,10 +403,6 @@ class nb01RPSGame(ptResponder, object):
 
         # Finished sitting down.
         if self._HandleNotify(state, id, events, self._sitting, self._OnSitDown):
-            if not self.playing:
-                PtEnableControlKeyEvents(self.key)
-                PtDisableMovementKeys()
-                PtEnableMouseMovement()
             return
 
         # A rock/paper/sics button was mashed
@@ -451,6 +456,9 @@ class nb01RPSGame(ptResponder, object):
         if state:
             if PtWasLocallyNotified(self.key):
                 PtSendKIMessage(kDisableEntireYeeshaBook, 0)
+                PtEnableControlKeyEvents(self.key)
+                PtDisableMovementKeys()
+                PtEnableMouseMovement()
                 self._JoinTheGame(seat)
         else:
             self._seats[seat].enable()
@@ -719,6 +727,11 @@ class nb01RPSGame(ptResponder, object):
         """Sends a status chat message (purple text) to the local player's KI."""
         PtSendKIMessage(kKILocalChatStatusMsg, msg)
 
+    def _QuitGame(self, YesNo):
+        if YesNo:
+            PtDisableControlKeyEvents(self.key)
+            PtEnableMovementKeys()
+            PtAvatarExitAFK()
 
 #########
     def _ChangeButtonState(self, seat, enable=True, ff=False, force=False):
@@ -951,25 +964,19 @@ class nb01RPSGame(ptResponder, object):
             args[event[1]] = event[3]
 
         if "YesNo" in args:
-            if args["YesNo"]:
-                PtDisableControlKeyEvents(self.key)
-                PtEnableMovementKeys()
-                PtAvatarExitAFK()
-                return True
-            else:
-                return False
-        else:
-            # Now, let's fire it off!
-            type = args["type"]
-            del args["type"]
-            if type not in self._event_handlers:
-                PtDebugPrint("nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' doesn't have a handler!".format(type))
-                return False
-            try:
-                self._event_handlers[type](**args)
-            except TypeError:
-                PtDebugPrint("nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' has bad kwargs".format(type))
-            return True
+            args["type"] = NOTIFY_YESNO_QUIT
+
+        # Now, let's fire it off!
+        type = args["type"]
+        del args["type"]
+        if type not in self._event_handlers:
+            PtDebugPrint("nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' doesn't have a handler!".format(type))
+            return False
+        try:
+            self._event_handlers[type](**args)
+        except TypeError:
+            PtDebugPrint("nb01RPSGame._HandleVariableNotify():\tPyEvent '{}' has bad kwargs".format(type))
+        return True
 
     def _SendPyNotifyMsg(self, contents):
         """Sends variable events to everyone. The contents will be unpacked as method arguments."""
