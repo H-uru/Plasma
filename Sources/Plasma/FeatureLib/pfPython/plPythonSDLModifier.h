@@ -80,8 +80,6 @@ protected:
     SDLMap fMap;
     plPythonFileMod* fOwner;
 
-    plPythonSDLModifier() : fOwner() { }
-
     PyObject* ISDLVarToPython(plSimpleStateVariable* var);
     PyObject* ISDLVarIdxToPython(plSimpleStateVariable* var, int type, int idx);
 
@@ -94,6 +92,7 @@ protected:
     void IPutCurrentStateIn(plStateDataRecord* dstState) override;
     void ISetCurrentStateFrom(const plStateDataRecord* srcState) override;
 public:
+    plPythonSDLModifier() : fOwner() {}
     plPythonSDLModifier(plPythonFileMod* owner);
     ~plPythonSDLModifier();
 
