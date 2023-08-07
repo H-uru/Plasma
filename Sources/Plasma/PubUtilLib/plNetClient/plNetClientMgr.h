@@ -161,9 +161,8 @@ private:
     std::string         fSPDesiredPlayerName;   // SP: the player we want to load from vault.
     
     // server info
-    double              fServerTimeOffset;      // diff between our unified time and server's unified time
-    uint32_t              fTimeSamples;
-    double              fLastTimeUpdate;
+    plUnifiedTime       fLastServerTime;       // Last received time update from the server
+    double              fLastLocalTime;        // Last monotonic time (in seconds) when the above update was received
 
     uint8_t               fJoinOrder;         // returned by the server
     
@@ -379,7 +378,7 @@ public:
     void StoreSDLState(const plStateDataRecord* sdRec, const plUoid& uoid, uint32_t sendFlags, uint32_t writeOptions);
 
     void UpdateServerTimeOffset(plNetMessage* msg);
-    void ResetServerTimeOffset(bool delayed=false);
+    void ResetServerTimeOffset();
 
 private:
     plNetClientComm             fNetClientComm;

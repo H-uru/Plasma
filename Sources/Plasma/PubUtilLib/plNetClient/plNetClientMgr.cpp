@@ -102,10 +102,10 @@ plNetClientMgr::PendingLoad::~PendingLoad()
 //
 plNetClientMgr::plNetClientMgr()
     : fLocalPlayerKey(), fMsgHandler(this), fJoinOrder(), fTaskProgBar(),
-      fMsgRecorder(), fServerTimeOffset(), fTimeSamples(), fLastTimeUpdate(),
-      fListenListMode(kListenList_Distance), fAgeSDLObjectKey(), fExperimentalLevel(),
-      fOverrideAgeTimeOfDayPercent(-1.f), fNumInitialSDLStates(), fRequiredNumInitialSDLStates(),
-      fDisableMsg(), fIsOwner(true), fIniPlayerID(), fPingServerType()
+      fMsgRecorder(), fLastLocalTime(), fListenListMode(kListenList_Distance),
+      fAgeSDLObjectKey(), fExperimentalLevel(), fOverrideAgeTimeOfDayPercent(-1.f),
+      fNumInitialSDLStates(), fRequiredNumInitialSDLStates(), fDisableMsg(), fIsOwner(true),
+      fIniPlayerID(), fPingServerType()
 {   
 #ifndef HS_DEBUGGING
     // release code will timeout inactive players on servers by default
@@ -403,50 +403,36 @@ void plNetClientMgr::IUnloadNPCs()
 //
 void plNetClientMgr::UpdateServerTimeOffset(plNetMessage* msg)
 {
-    if ((hsTimer::GetSysSeconds() - fLastTimeUpdate) > 5)
-    {
-        fLastTimeUpdate = hsTimer::GetSysSeconds();
+    if (!msg->GetHasTimeSent())
+        return;
+    if (msg->GetTimeSent().AtEpoch())
+        return;
 
-        const plUnifiedTime& msgSentUT = msg->GetTimeSent();
-        if (!msgSentUT.AtEpoch())
-        {
-            double diff = plUnifiedTime::GetTimeDifference(msgSentUT, plUnifiedTime::GetCurrent());
+    double localTime = hsTimer::GetSeconds();
+    if (localTime - fLastLocalTime < 1.0)
+        return;
 
-            if (fServerTimeOffset == 0)
-            {
-                fServerTimeOffset = diff;
-            }
-            else
-            {
-                fServerTimeOffset = fServerTimeOffset + ((diff - fServerTimeOffset) / ++fTimeSamples);
-            }
-
-            DebugMsg("Setting server time offset to {f}", fServerTimeOffset);
-        }
-    }
+    fLastServerTime = msg->GetTimeSent();
+    fLastLocalTime = localTime;
 }
 
-void plNetClientMgr::ResetServerTimeOffset(bool delayed)
+void plNetClientMgr::ResetServerTimeOffset()
 {
-    if (!delayed)
-        fServerTimeOffset = 0;
-    fTimeSamples = 0;
-    fLastTimeUpdate = 0;
+    fLastServerTime.ToEpoch();
+    fLastLocalTime = 0.0;
 }
 
 //
 // return the gameservers time
 //
 plUnifiedTime plNetClientMgr::GetServerTime() const 
-{ 
-    if ( fServerTimeOffset==0 )     // offline mode or before connecting/calibrating to a server
+{
+    if (fLastServerTime.AtEpoch()) {
+        WarningMsg("WARNING: Someone asked for the server time, but we don't know it yet!");
         return plUnifiedTime::GetCurrent();
-    
-    plUnifiedTime serverUT;
-    if (fServerTimeOffset<0)
-        return plUnifiedTime::GetCurrent() - plUnifiedTime(fabs(fServerTimeOffset));
-    else
-        return  plUnifiedTime::GetCurrent() + plUnifiedTime(fServerTimeOffset);
+    }
+
+    return fLastServerTime + plUnifiedTime(hsTimer::GetSeconds() - fLastLocalTime);
 }
 
 //
