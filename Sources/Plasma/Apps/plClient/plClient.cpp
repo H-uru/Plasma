@@ -1341,8 +1341,6 @@ void    plClient::IStopProgress()
 *
 ***/
 
-extern  bool    gDataServerLocal;
-
 //============================================================================
 bool plClient::StartInit()
 {

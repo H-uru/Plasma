@@ -163,7 +163,7 @@ struct pfPatcherWorker : public hsThread
     std::deque<Request> fRequests;
     std::deque<pfPatcherQueuedFile> fQueuedFiles;
 
-    std::mutex fRequestMut;
+    std::recursive_mutex fRequestMut;
     std::mutex fFileMut;
     hsSemaphore fFileSignal;
 
@@ -179,6 +179,8 @@ struct pfPatcherWorker : public hsThread
     pfPatcher* fParent;
     volatile bool fStarted;
     volatile bool fRequestActive;
+    volatile bool fWantPython;
+    volatile bool fWantSDL;
 
     uint64_t fCurrBytes;
     uint64_t fTotalBytes;
@@ -195,6 +197,7 @@ struct pfPatcherWorker : public hsThread
     void IDecompressSound(const pfPatcherQueuedFile& sound) const;
     void ProcessFile();
     void WhitelistFile(const plFileName& file, bool justDownloaded, hsStream* s=nullptr);
+    void EnqueuePreloaderLists();
 };
 
 // ===================================================
@@ -355,19 +358,10 @@ static void IPreloaderManifestDownloadCB(ENetError result, void* param, const ch
 {
     pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
 
-    if (IS_NET_SUCCESS(result))
+    if (IS_NET_SUCCESS(result)) {
         IHandleManifestDownload(patcher, group, manifest, entryCount);
-    else {
-        PatcherLogYellow("\tWARNING: *** Falling back to AuthSrv file lists to get game code ***");
-
-        // so, we need to ask the AuthSrv about our game code
-        {
-            hsLockGuard(patcher->fRequestMut);
-            patcher->fRequests.emplace_back(ST::string(), pfPatcherWorker::Request::kPythonList);
-            patcher->fRequests.emplace_back(ST::string(), pfPatcherWorker::Request::kSdlList);
-        }
-
-        // continue pumping requests
+    } else {
+        patcher->EnqueuePreloaderLists();
         patcher->IssueRequest();
     }
 }
@@ -418,7 +412,8 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
 // ===================================================
 
 pfPatcherWorker::pfPatcherWorker() :
-    fStarted(false), fCurrBytes(0), fTotalBytes(0), fRequestActive(true), fParent(nullptr)
+    fStarted(false), fCurrBytes(0), fTotalBytes(0), fRequestActive(true), fParent(nullptr),
+    fWantPython(), fWantSDL()
 { }
 
 pfPatcherWorker::~pfPatcherWorker()
@@ -550,6 +545,16 @@ void pfPatcherWorker::Run()
 
 void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
 {
+    // Only accept game code if we want it
+    if (!fWantPython && file.fClientPath.GetFileExt().compare_i("pak") == 0) {
+        PatcherLogRed("\tDeclined unwanted Python code '{}'", file.fClientPath);
+        return;
+    }
+    if (!fWantSDL && file.fClientPath.GetFileExt().compare_i("sdl") == 0) {
+        PatcherLogRed("\tDeclined unwanted SDL '{}'", file.fClientPath);
+        return;
+    }
+
     // Check to see if ours matches
     plFileInfo mine(file.fClientPath);
     if (mine.FileSize() == file.fFileSize) {
@@ -643,6 +648,17 @@ void pfPatcherWorker::WhitelistFile(const plFileName& file, bool justDownloaded,
     }
 }
 
+void pfPatcherWorker::EnqueuePreloaderLists()
+{
+    PatcherLogYellow("\tWARNING: *** Falling back to AuthSrv file lists to get game code ***");
+
+    hsLockGuard(fRequestMut);
+    if (fWantPython)
+        fRequests.emplace_back(ST::string(), pfPatcherWorker::Request::kPythonList);
+    if (fWantSDL)
+        fRequests.emplace_back(ST::string(), pfPatcherWorker::Request::kSdlList);
+}
+
 // ===================================================
 
 plStatusLog* pfPatcher::GetLog()
@@ -705,10 +721,17 @@ void pfPatcher::OnSelfPatch(FileDownloadFunc cb)
 
 // ===================================================
 
-void pfPatcher::RequestGameCode()
+void pfPatcher::RequestGameCode(bool python, bool sdl)
 {
+    fWorker->fWantPython = python;
+    fWorker->fWantSDL = sdl;
+
     hsLockGuard(fWorker->fRequestMut);
-    fWorker->fRequests.emplace_back("SecurePreloader", pfPatcherWorker::Request::kSecurePreloader);
+    if (NetCliFileQueryConnected()) {
+        fWorker->fRequests.emplace_back("SecurePreloader", pfPatcherWorker::Request::kSecurePreloader);
+    } else {
+        fWorker->EnqueuePreloaderLists();
+    }
 }
 
 void pfPatcher::RequestManifest(const ST::string& mfs)

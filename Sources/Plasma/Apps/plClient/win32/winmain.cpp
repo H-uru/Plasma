@@ -97,14 +97,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ITaskbarList3* gTaskbarList = nullptr; // NT 6.1+ taskbar stuff
 
 extern bool gDataServerLocal;
-extern bool gSkipPreload;
+extern bool gPythonLocal;
+extern bool gSDLLocal;
 
 enum
 {
     kArgSkipLoginDialog,
     kArgServerIni,
     kArgLocalData,
-    kArgSkipPreload,
+    kArgLocalPython,
+    kArgLocalSDL,
     kArgPlayerId,
     kArgStartUpAgeName,
     kArgPvdFile,
@@ -116,7 +118,8 @@ static const plCmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeBool,       "SkipLoginDialog", kArgSkipLoginDialog },
     { kCmdArgFlagged  | kCmdTypeString,     "ServerIni",       kArgServerIni },
     { kCmdArgFlagged  | kCmdTypeBool,       "LocalData",       kArgLocalData   },
-    { kCmdArgFlagged  | kCmdTypeBool,       "SkipPreload",     kArgSkipPreload },
+    { kCmdArgFlagged  | kCmdTypeBool,       "LocalPython",     kArgLocalPython },
+    { kCmdArgFlagged  | kCmdTypeBool,       "LocalSDL",        kArgLocalSDL },
     { kCmdArgFlagged  | kCmdTypeInt,        "PlayerId",        kArgPlayerId },
     { kCmdArgFlagged  | kCmdTypeString,     "Age",             kArgStartUpAgeName },
     { kCmdArgFlagged  | kCmdTypeString,     "PvdFile",         kArgPvdFile },
@@ -1090,13 +1093,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 #ifndef PLASMA_EXTERNAL_RELEASE
     if (cmdParser.IsSpecified(kArgSkipLoginDialog))
         doIntroDialogs = false;
-    if (cmdParser.IsSpecified(kArgLocalData))
-    {
+    if (cmdParser.IsSpecified(kArgLocalData)) {
         gDataServerLocal = true;
-        gSkipPreload = true;
+        gPythonLocal = true;
     }
-    if (cmdParser.IsSpecified(kArgSkipPreload))
-        gSkipPreload = true;
+    if (cmdParser.IsSpecified(kArgLocalPython))
+        gPythonLocal = true;
+    if (cmdParser.IsSpecified(kArgLocalSDL))
+        gSDLLocal = true;
     if (cmdParser.IsSpecified(kArgPlayerId))
         NetCommSetIniPlayerId(cmdParser.GetInt(kArgPlayerId));
     if (cmdParser.IsSpecified(kArgStartUpAgeName))

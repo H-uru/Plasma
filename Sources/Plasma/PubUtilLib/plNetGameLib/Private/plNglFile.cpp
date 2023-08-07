@@ -1336,6 +1336,11 @@ void NetCliFileStartConnect (
 }
 
 //============================================================================
+bool NetCliFileQueryConnected () {
+    return FileQueryConnected();
+}
+
+//============================================================================
 void NetCliFileDisconnect () {
     hsLockGuard(s_critsect);
     while (CliFileConn * conn = s_conns.Head())
