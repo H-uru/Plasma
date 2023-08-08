@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsStream.h"
 
+#include "pnFactory/plFactory.h"
 #include "pnMessage/plNotifyMsg.h"
 
 #include "plNetMessage/plNetMessage.h"

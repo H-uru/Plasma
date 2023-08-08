@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsResMgr.h"
 #include "plDispatch.h"
+#include "pnFactory/plFactory.h"
 #define PLMESSAGE_PRIVATE
 #include "pnMessage/plMessage.h"
 #include "pnKeyedObject/hsKeyedObject.h"

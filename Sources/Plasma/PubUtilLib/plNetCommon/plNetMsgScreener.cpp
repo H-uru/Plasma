@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetMsgScreener.h"
 #include "plCreatableIndex.h"
 
+#include "pnFactory/plFactory.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnKeyedObject/plKey.h"
 

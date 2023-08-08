@@ -50,6 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfile.h"
 #include "plgDispatch.h"
 
+#if defined(HS_DEBUGGING) || defined(LOG_ACTIVE_REFS)
+#include "pnFactory/plFactory.h"
+#endif
+
 plProfile_CreateMemCounter("Keys", "Memory", KeyMem);
 
 static uint32_t CalcKeySize(plKeyImp* key)

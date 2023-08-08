@@ -45,9 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsRefCnt.h"
 #include "HeadSpin.h"
-#ifdef PLFACTORY_PRIVATE
-    #include <vector>
-#endif
+
+#include <vector>
 
 class plCreator;
 class plCreatable;
@@ -56,7 +55,6 @@ class hsResMgr;
 
 class plFactory : public hsRefCnt
 {
-#ifdef PLFACTORY_PRIVATE
 private:
     std::vector<plCreator*> fCreators;
 
@@ -74,11 +72,9 @@ private:
 
     plFactory();
     ~plFactory();
-#endif
 
 public:
     // Don't use this unless you're initializing a DLL
-    friend class plClient;
     static plFactory*   GetTheFactory();
 
 

@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iterator>
 #include <string_theory/string>
 
+#include "pnFactory/plFactory.h"
 #include "pnNetCommon/plGenericVar.h"
 #include "pnNetCommon/plNetApp.h"
 #include "pnNetCommon/pnNetCommon.h"

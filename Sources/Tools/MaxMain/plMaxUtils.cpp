@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxUtils.h"
 #include "plResMgr/plPageInfo.h"
 #include "pnKeyedObject/plUoid.h"
-#include "pnFactory/plFactory.h"
 
 class MaxUtilsClassDesc : public plMaxClassDesc<ClassDesc>
 {

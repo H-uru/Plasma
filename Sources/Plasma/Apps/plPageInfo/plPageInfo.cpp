@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string_theory/format>
 
+#include "pnFactory/plFactory.h"
 #include "pnKeyedObject/plKeyImp.h"
 
 #include "plAgeDescription/plAgeManifest.h"
