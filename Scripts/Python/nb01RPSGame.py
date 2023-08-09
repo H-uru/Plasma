@@ -384,9 +384,10 @@ class nb01RPSGame(ptResponder, object):
             raise RuntimeError("Got an SDL notify for {}, but no CB".format(VARname))
 
     def OnControlKeyEvent(self, controlKey, activeFlag):
+        """Captures movement keys and prompt a yes/no dialog during a game or standup animation otherwise"""
         if controlKey in [PlasmaControlKeys.kKeyMoveBackward, PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight, PlasmaControlKeys.kKeyExitMode] and activeFlag:
             if self._round_played:
-                PtYesNoDialog(self.key, PtGetLocalizedString("Heek.Messages.Quit"))
+                PtLocalizedYesNoDialog(self.key, "Heek.Messages.Quit")
             else:
                 quit = {
                     "type": NOTIFY_YESNO_QUIT,
@@ -455,6 +456,10 @@ class nb01RPSGame(ptResponder, object):
         # Manage game state if standing up
         if state:
             if PtWasLocallyNotified(self.key):
+                """Disable Yeesha Book to prevent linking out
+                   Enable control keys to capture button presses or mouse movements
+                   Disable all movement keys so sit modifier wont trigger before we want it to
+                   Enable the mouse movement so we can move the camera and use the sides of the screen to trigger a movement"""
                 PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                 PtEnableControlKeyEvents(self.key)
                 PtDisableMovementKeys()
@@ -728,6 +733,10 @@ class nb01RPSGame(ptResponder, object):
         PtSendKIMessage(kKILocalChatStatusMsg, msg)
 
     def _QuitGame(self, YesNo):
+        """Performs the standup animation when sitting down
+           Disable control key events
+           Enables the disabled movement keys
+           PtAvatarExitAFK() is actually just performing a GoToStage 2 which for the sit brain is the standup animation - https://github.com/H-uru/Plasma/blob/9956967363f383d91f43162d116ad3477148adb2/Sources/Plasma/FeatureLib/pfPython/cyAvatar.cpp#L1970"""
         if YesNo:
             PtDisableControlKeyEvents(self.key)
             PtEnableMovementKeys()
