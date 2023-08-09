@@ -67,6 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // specific value controls
 #include "pfGameGUIMgr/pfGUIKnobCtrl.h"
+#include "pfGameGUIMgr/pfGUIProgressCtrl.h"
 #include "pfGameGUIMgr/pfGUIUpDownPairMod.h"
 
 pyGUIDialog::pyGUIDialog(pyKey& gckey)
@@ -117,6 +118,8 @@ PyObject* pyGUIDialog::ConvertControl(const plKey& key)
         return pyGUIControlMultiLineEdit::New(key);
     case kClickMap:
         return pyGUIControlClickMap::New(key);
+    case kProgress:
+        return pyGUIControlProgress::New(key);
     default:
         return nullptr;
     }
@@ -156,6 +159,8 @@ uint32_t pyGUIDialog::WhatControlType(const plKey& key)
             return kKnob;
         else if ( pfGUIUpDownPairMod::ConvertNoRef(key->GetObjectPtr()) )
             return kUpDownPair;
+        else if ( pfGUIProgressCtrl::ConvertNoRef(key->GetObjectPtr()) )
+            return kProgress;
         else
             return 0;
     }
