@@ -77,7 +77,7 @@ ImagerPelletUpload = ptAttribBoolean(10, "Pellet Score Imager?", 0)
 ImagerClueObject = ptAttribSceneobject(11, "Imager Object (for puzzle clue)")
 ImagerClueTime = ptAttribInt(12, "Number of seconds until clue image shows",default=870)
 ImagerRandomTime = ptAttribInt(13, "Random number added to make timer more variable",default=0)
-ImagerPelletCheckVariable = ptAttribString(14,"Pellet upload SDL variable (optional)")
+ImagerPermissionCheck = ptAttribString(14,"Imager upload SDL variable (optional)")
 #----------
 # globals
 #----------
@@ -299,7 +299,7 @@ class xSimpleImager(ptModifier):
                         for event in events:
                             if event[0] == kCollisionEvent:
                                 kiLevel = PtDetermineKILevel()
-                                if (kiLevel < kNormalKI or not self.PelletUploadCheck()):
+                                if (kiLevel < kNormalKI or not self.PermissionCheck()):
                                     return
                                 if ImagerPelletUpload.value:
                                     messagetoki = str(ImagerName.value) + "<p>"
@@ -523,17 +523,17 @@ class xSimpleImager(ptModifier):
             else:
                 ageVault.setDeviceInbox(ImagerName.value, ageSDL[ImagerInboxVariable.value][0], self, kSettingDeviceInbox)
 
-    def PelletUploadCheck(self):
-        """Age SDL Check to prevent unwanted pellet drops"""
+    def PermissionCheck(self):
+        """Age SDL Check to prevent unwanted access to imager"""
         ageSDL = PtGetAgeSDL()
-        pelletCheck = 0
-        if ImagerPelletCheckVariable.value:
-            pelletCheck = ageSDL[ImagerPelletCheckVariable.value][0]
-        if pelletCheck >= 2: # Locked for everyone
+        permissionCheck = 0
+        if ImagerPermissionCheck.value:
+            permissionCheck = ageSDL[ImagerPermissionCheck.value][0]
+        if permissionCheck >= 2: # Locked for everyone
             return False
-        elif pelletCheck == 1 and ptVault().amOwnerOfCurrentAge(): #Hood members only
+        elif permissionCheck == 1 and ptVault().amOwnerOfCurrentAge(): #Hood members only
             return True
-        elif pelletCheck <= 0: # Anyone
+        elif permissionCheck <= 0: # Anyone
             return True
 
     def OnBackdoorMsg(self, target, param):
