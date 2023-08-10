@@ -71,8 +71,6 @@ pfConsoleEngine::~pfConsoleEngine()
 
 bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const ST::string&))
 {
-    pfConsoleCmd        *cmd;
-
     pfConsoleParser parser(name);
     auto [group, token] = parser.ParseGroupAndName();
 
@@ -88,7 +86,7 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
             PrintFn(ST::format("    {}", subGrp->GetName()));
         }
         PrintFn(ST_LITERAL("  Commands:"));
-        for (cmd = group->GetFirstCommand(); cmd != nullptr; cmd = cmd->GetNext())
+        for (pfConsoleCmd* cmd = group->GetFirstCommand(); cmd != nullptr; cmd = cmd->GetNext())
         {
             PrintFn(ST::format("    {}: {}", cmd->GetName(), cmd->GetHelp().before_first('\n')));
         }
@@ -97,7 +95,7 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
     }
 
     /// OK, so what we found wasn't a group. Which means we need a command...
-    cmd = group->FindCommandNoCase(*token);
+    pfConsoleCmd* cmd = group->FindCommandNoCase(*token);
     if (cmd == nullptr)
     {
         fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
@@ -116,10 +114,8 @@ bool pfConsoleEngine::PrintCmdHelp(const ST::string& name, void (*PrintFn)(const
 
 ST::string pfConsoleEngine::GetCmdSignature(const ST::string& name)
 {
-    pfConsoleCmd        *cmd;
-    
     pfConsoleParser parser(name);
-    cmd = parser.ParseCommand();
+    pfConsoleCmd* cmd = parser.ParseCommand();
     if (cmd == nullptr)
     {
         fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
@@ -140,8 +136,6 @@ void DummyPrintFn(const ST::string& line)
 
 bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 {
-    int     line;
-
     std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(fileName);
 
     if( !stream )
@@ -156,7 +150,7 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
     }
 
     ST::string string;
-    for (line = 1; stream->ReadLn(string); line++)
+    for (int line = 1; stream->ReadLn(string); line++)
     {
         fLastErrorLine = string;
 
@@ -179,10 +173,8 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 
 bool pfConsoleEngine::RunCommand(const ST::string& line, void (*PrintFn)(const ST::string&))
 {
-    pfConsoleCmd        *cmd;
-
     pfConsoleParser parser(line);
-    cmd = parser.ParseCommand();
+    pfConsoleCmd* cmd = parser.ParseCommand();
     if (cmd == nullptr)
     {
         fErrorMsg = ST_LITERAL("Invalid syntax: command not found");
