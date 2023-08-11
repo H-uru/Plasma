@@ -2038,7 +2038,7 @@ STATEDESC Neighborhood
     VAR BYTE            nb01LakeLightState[1]                   DEFAULT=0   DEFAULTOPTION=VAULT
     VAR BYTE            nb01PrivateRoomsState[1]                DEFAULT=0   DEFAULTOPTION=VAULT
     VAR BYTE            nb01PuzzleWallState[1]                  DEFAULT=0   DEFAULTOPTION=VAULT
-    VAR BYTE            nb01PelletUploadState[1]                DEFAULT=0
+    VAR BYTE            nb01PelletUploadState[1]                DEFAULT=0   DEFAULTOPTION=VAULT
     VAR BYTE            nb01CmnRmSpeech[1]                      DEFAULT=0
 
 ## Age Mechanisms   ##

@@ -103,6 +103,13 @@ AgeStartedIn = None
 kFlipImagesTimerStates = 5
 kFlipImagesTimerCurrent = 0
 
+#----------
+# Permission Check
+#----------
+kPermissionEveryone = 0
+kPermissionMembers = 1
+kPermissionNoOne = 2
+
 #====================================
 
 Instance = None
@@ -524,16 +531,16 @@ class xSimpleImager(ptModifier):
                 ageVault.setDeviceInbox(ImagerName.value, ageSDL[ImagerInboxVariable.value][0], self, kSettingDeviceInbox)
 
     def PermissionCheck(self):
-        """Age SDL Check to prevent unwanted access to imager"""
+        #Age SDL Check to prevent unwanted access to imager
         ageSDL = PtGetAgeSDL()
-        permissionCheck = 0
+        permissionCheck = kPermissionEveryone
         if ImagerPermissionCheck.value:
             permissionCheck = ageSDL[ImagerPermissionCheck.value][0]
-        if permissionCheck >= 2: # Locked for everyone
+        if permissionCheck >= kPermissionNoOne:
             return False
-        elif permissionCheck == 1 and ptVault().amOwnerOfCurrentAge(): #Hood members only
+        elif permissionCheck == kPermissionMembers and ptVault().amOwnerOfCurrentAge():
             return True
-        elif permissionCheck <= 0: # Anyone
+        elif permissionCheck <= kPermissionEveryone:
             return True
 
     def OnBackdoorMsg(self, target, param):
