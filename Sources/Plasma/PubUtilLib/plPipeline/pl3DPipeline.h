@@ -106,7 +106,7 @@ static const float kPerspLayerTrans  = 0.00002f;
 
 static const float kAvTexPoolShrinkThresh = 30.f; // seconds
 
-template <class DeviceType>
+template<class DeviceType>
 class pl3DPipeline : public plPipeline
 {
 protected:
@@ -836,7 +836,7 @@ protected:
 };
 
 
-template <class DeviceType>
+template<class DeviceType>
 pl3DPipeline<DeviceType>::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
 :   fMaxLayersAtOnce(-1),
     fMaxPiggyBacks(),
@@ -904,7 +904,7 @@ pl3DPipeline<DeviceType>::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
     fVSync = fInitialPipeParams.VSync;
 }
 
-template <class DeviceType>
+template<class DeviceType>
 pl3DPipeline<DeviceType>::~pl3DPipeline()
 {
     fCurrLay = nullptr;
@@ -924,7 +924,7 @@ pl3DPipeline<DeviceType>::~pl3DPipeline()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::Render(plDrawable* d, const std::vector<int16_t>& visList)
 {
     // Reset here, since we can push/pop renderTargets after BeginRender() but
@@ -939,7 +939,7 @@ void pl3DPipeline<DeviceType>::Render(plDrawable* d, const std::vector<int16_t>&
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::Draw(plDrawable* d)
 {
     plDrawableSpans *ds = plDrawableSpans::ConvertNoRef(d);
@@ -957,7 +957,7 @@ void pl3DPipeline<DeviceType>::Draw(plDrawable* d)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::RegisterLight(plLightInfo* liInfo)
 {
     if (liInfo->IsLinked())
@@ -969,7 +969,7 @@ void pl3DPipeline<DeviceType>::RegisterLight(plLightInfo* liInfo)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::UnRegisterLight(plLightInfo* liInfo)
 {
     liInfo->SetDeviceRef(nullptr);
@@ -977,7 +977,7 @@ void pl3DPipeline<DeviceType>::UnRegisterLight(plLightInfo* liInfo)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::PushRenderTarget(plRenderTarget* target)
 {
     fCurrRenderTarget = target;
@@ -993,7 +993,7 @@ void pl3DPipeline<DeviceType>::PushRenderTarget(plRenderTarget* target)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plRenderTarget* pl3DPipeline<DeviceType>::PopRenderTarget()
 {
     plRenderTarget* old = fRenderTargets.back();
@@ -1024,7 +1024,7 @@ plRenderTarget* pl3DPipeline<DeviceType>::PopRenderTarget()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::BeginVisMgr(plVisMgr* visMgr)
 {
     // Make Light Lists /////////////////////////////////////////////////////
@@ -1088,7 +1088,7 @@ void pl3DPipeline<DeviceType>::BeginVisMgr(plVisMgr* visMgr)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::EndVisMgr(plVisMgr* visMgr)
 {
     fCharLights.clear();
@@ -1096,7 +1096,7 @@ void pl3DPipeline<DeviceType>::EndVisMgr(plVisMgr* visMgr)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 bool pl3DPipeline<DeviceType>::CheckResources()
 {
     if ((fClothingOutfits.size() <= 1 && fAvRTPool.size() > 1) ||
@@ -1110,7 +1110,7 @@ bool pl3DPipeline<DeviceType>::CheckResources()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::SetZBiasScale(float scale)
 {
     scale += 1.0f;
@@ -1119,14 +1119,14 @@ void pl3DPipeline<DeviceType>::SetZBiasScale(float scale)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 float pl3DPipeline<DeviceType>::GetZBiasScale() const
 {
     return (fTweaks.fPerspLayerScale / fTweaks.fDefaultPerspLayerScale) - 1.0f;
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w)
 {
     plViewTransform& view_xform = fView.GetViewTransform();
@@ -1140,7 +1140,7 @@ void pl3DPipeline<DeviceType>::SetWorldToCamera(const hsMatrix44& w2c, const hsM
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ScreenToWorldPoint(int n, uint32_t stride, int32_t* scrX, int32_t* scrY, float dist, uint32_t strideOut, hsPoint3* worldOut)
 {
     while (n--) {
@@ -1151,7 +1151,7 @@ void pl3DPipeline<DeviceType>::ScreenToWorldPoint(int n, uint32_t stride, int32_
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::RefreshScreenMatrices()
 {
     fView.fCullTreeDirty = true;
@@ -1159,7 +1159,7 @@ void pl3DPipeline<DeviceType>::RefreshScreenMatrices()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 hsGMaterial* pl3DPipeline<DeviceType>::PushOverrideMaterial(hsGMaterial* mat)
 {
     hsGMaterial* ret = GetOverrideMaterial();
@@ -1171,7 +1171,7 @@ hsGMaterial* pl3DPipeline<DeviceType>::PushOverrideMaterial(hsGMaterial* mat)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::PopOverrideMaterial(hsGMaterial* restore)
 {
     hsGMaterial *pop = fOverrideMat.back();
@@ -1183,7 +1183,7 @@ void pl3DPipeline<DeviceType>::PopOverrideMaterial(hsGMaterial* restore)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plLayerInterface* pl3DPipeline<DeviceType>::AppendLayerInterface(plLayerInterface* li, bool onAllLayers)
 {
     fForceMatHandle = true;
@@ -1194,7 +1194,7 @@ plLayerInterface* pl3DPipeline<DeviceType>::AppendLayerInterface(plLayerInterfac
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plLayerInterface* pl3DPipeline<DeviceType>::RemoveLayerInterface(plLayerInterface* li, bool onAllLayers)
 {
     fForceMatHandle = true;
@@ -1212,7 +1212,7 @@ plLayerInterface* pl3DPipeline<DeviceType>::RemoveLayerInterface(plLayerInterfac
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 hsGMatState pl3DPipeline<DeviceType>::PushMaterialOverride(const hsGMatState& state, bool on)
 {
     hsGMatState ret = GetMaterialOverride(on);
@@ -1228,7 +1228,7 @@ hsGMatState pl3DPipeline<DeviceType>::PushMaterialOverride(const hsGMatState& st
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 hsGMatState pl3DPipeline<DeviceType>::PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, bool on)
 {
     hsGMatState ret = GetMaterialOverride(on);
@@ -1244,7 +1244,7 @@ hsGMatState pl3DPipeline<DeviceType>::PushMaterialOverride(hsGMatState::StateIdx
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::PopMaterialOverride(const hsGMatState& restore, bool on)
 {
     if (on) {
@@ -1258,7 +1258,7 @@ void pl3DPipeline<DeviceType>::PopMaterialOverride(const hsGMatState& restore, b
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::SubmitShadowSlave(plShadowSlave* slave)
 {
     // Check that it's a valid slave.
@@ -1284,7 +1284,7 @@ void pl3DPipeline<DeviceType>::SubmitShadowSlave(plShadowSlave* slave)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::SubmitClothingOutfit(plClothingOutfit* co)
 {
     auto iter = std::find(fClothingOutfits.cbegin(), fClothingOutfits.cend(), co);
@@ -1300,7 +1300,7 @@ void pl3DPipeline<DeviceType>::SubmitClothingOutfit(plClothingOutfit* co)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plLayerInterface* pl3DPipeline<DeviceType>::PushPiggyBackLayer(plLayerInterface* li)
 {
     fPiggyBackStack.push_back(li);
@@ -1313,7 +1313,7 @@ plLayerInterface* pl3DPipeline<DeviceType>::PushPiggyBackLayer(plLayerInterface*
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plLayerInterface* pl3DPipeline<DeviceType>::PopPiggyBackLayer(plLayerInterface* li)
 {
     auto iter = std::find(fPiggyBackStack.cbegin(), fPiggyBackStack.cend(), li);
@@ -1330,7 +1330,7 @@ plLayerInterface* pl3DPipeline<DeviceType>::PopPiggyBackLayer(plLayerInterface* 
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::SetViewTransform(const plViewTransform& v)
 {
     fView.SetViewTransform(v);
@@ -1349,7 +1349,7 @@ void pl3DPipeline<DeviceType>::SetViewTransform(const plViewTransform& v)
 
 /*** PROTECTED METHODS *******************************************************/
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IAttachSlaveToReceivers(size_t which, plDrawableSpans* drawable, const std::vector<int16_t>& visList)
 {
     plShadowSlave* slave = fShadows[which];
@@ -1397,7 +1397,7 @@ void pl3DPipeline<DeviceType>::IAttachSlaveToReceivers(size_t which, plDrawableS
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IAttachShadowsToReceivers(plDrawableSpans* drawable, const std::vector<int16_t>& visList)
 {
     for (size_t i = 0; i < fShadows.size(); i++)
@@ -1405,7 +1405,7 @@ void pl3DPipeline<DeviceType>::IAttachShadowsToReceivers(plDrawableSpans* drawab
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 bool pl3DPipeline<DeviceType>::IAcceptsShadow(const plSpan* span, plShadowSlave* slave)
 {
     // The span's shadow bits records which shadow maps that span was rendered
@@ -1414,7 +1414,7 @@ bool pl3DPipeline<DeviceType>::IAcceptsShadow(const plSpan* span, plShadowSlave*
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 bool pl3DPipeline<DeviceType>::IReceivesShadows(const plSpan* span, hsGMaterial* mat)
 {
     if (span->fProps & plSpan::kPropNoShadow)
@@ -1435,7 +1435,7 @@ bool pl3DPipeline<DeviceType>::IReceivesShadows(const plSpan* span, hsGMaterial*
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ISetShadowFromGroup(plDrawableSpans* drawable, const plSpan* span, plLightInfo* liInfo)
 {
     hsGMaterial* mat = drawable->GetMaterial(span->fMaterialIdx);
@@ -1460,7 +1460,7 @@ void pl3DPipeline<DeviceType>::ISetShadowFromGroup(plDrawableSpans* drawable, co
 
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IClearClothingOutfits(std::vector<plClothingOutfit*>* outfits)
 {
     while (!outfits->empty()) {
@@ -1473,7 +1473,7 @@ void pl3DPipeline<DeviceType>::IClearClothingOutfits(std::vector<plClothingOutfi
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IFillAvRTPool()
 {
     fAvNextFreeRT = 0;
@@ -1499,7 +1499,7 @@ void pl3DPipeline<DeviceType>::IFillAvRTPool()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 bool pl3DPipeline<DeviceType>::IFillAvRTPool(uint16_t numRTs, uint16_t width)
 {
     fAvRTPool.resize(numRTs);
@@ -1525,7 +1525,7 @@ bool pl3DPipeline<DeviceType>::IFillAvRTPool(uint16_t numRTs, uint16_t width)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IReleaseAvRTPool()
 {
     for (plClothingOutfit* outfit : fClothingOutfits)
@@ -1541,14 +1541,14 @@ void pl3DPipeline<DeviceType>::IReleaseAvRTPool()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 plRenderTarget *pl3DPipeline<DeviceType>::IGetNextAvRT()
 {
     return fAvRTPool[fAvNextFreeRT++];
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IFreeAvRT(plRenderTarget* tex)
 {
     auto iter = std::find(fAvRTPool.begin(), fAvRTPool.end(), tex);
@@ -1561,7 +1561,7 @@ void pl3DPipeline<DeviceType>::IFreeAvRT(plRenderTarget* tex)
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ICheckLighting(plDrawableSpans* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
     if (fView.fRenderState & kRenderNoLights)
@@ -1792,7 +1792,7 @@ void pl3DPipeline<DeviceType>::ICheckLighting(plDrawableSpans* drawable, std::ve
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 hsMatrix44 pl3DPipeline<DeviceType>::IGetCameraToNDC()
 {
     hsMatrix44 cam2ndc = GetViewTransform().GetCameraToNDC();
@@ -1830,7 +1830,7 @@ hsMatrix44 pl3DPipeline<DeviceType>::IGetCameraToNDC()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ISetLocalToWorld(const hsMatrix44& l2w, const hsMatrix44& w2l)
 {
     fView.SetLocalToWorld(l2w);
@@ -1846,7 +1846,7 @@ void pl3DPipeline<DeviceType>::ISetLocalToWorld(const hsMatrix44& l2w, const hsM
 
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ITransformsToDevice()
 {
     if (fView.fXformResetFlags & fView.kResetCamera)
@@ -1860,14 +1860,14 @@ void pl3DPipeline<DeviceType>::ITransformsToDevice()
 }
 
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IProjectionMatrixToDevice()
 {
     fDevice.SetProjectionMatrix(IGetCameraToNDC());
     fView.fXformResetFlags &= ~fView.kResetProjection;
 }
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::IWorldToCameraToDevice()
 {
     fDevice.SetWorldToCameraMatrix(fView.GetWorldToCamera());
@@ -1876,7 +1876,7 @@ void pl3DPipeline<DeviceType>::IWorldToCameraToDevice()
     fFrame++;
 }
 
-template <class DeviceType>
+template<class DeviceType>
 void pl3DPipeline<DeviceType>::ILocalToWorldToDevice()
 {
     fDevice.SetLocalToWorldMatrix(fView.GetLocalToWorld());
