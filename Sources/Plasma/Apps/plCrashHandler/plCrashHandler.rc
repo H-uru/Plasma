@@ -102,7 +102,7 @@ IDB_BITMAP              BITMAP                  "banner.bmp"
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON                    "Dirt.ICO"
+IDI_ICON1               ICON                    "Dirt.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
