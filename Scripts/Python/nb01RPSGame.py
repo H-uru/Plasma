@@ -384,7 +384,7 @@ class nb01RPSGame(ptResponder, object):
             raise RuntimeError("Got an SDL notify for {}, but no CB".format(VARname))
 
     def OnControlKeyEvent(self, controlKey, activeFlag):
-        #Captures movement keys and prompt a yes/no dialog during a game or standup animation otherwise
+        # Captures movement keys and prompt a yes/no dialog during a game or standup animation otherwise
         if controlKey in [PlasmaControlKeys.kKeyMoveBackward, PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight, PlasmaControlKeys.kKeyExitMode] and activeFlag:
             if self._round_played:
                 PtLocalizedYesNoDialog(self.key, "Heek.Messages.Quit")
@@ -456,10 +456,10 @@ class nb01RPSGame(ptResponder, object):
         # Manage game state if standing up
         if state:
             if PtWasLocallyNotified(self.key):
-                #Disable Yeesha Book to prevent linking out
-                #Enable control keys to capture button presses or mouse movements
-                #Disable all movement keys so sit modifier wont trigger before we want it to
-                #Enable the mouse movement so we can move the camera and use the sides of the screen to trigger a movement
+                # Disable Yeesha Book to prevent linking out
+                # Enable control keys to capture button presses or mouse movements
+                # Disable all movement keys so sit modifier wont trigger before we want it to
+                # Enable the mouse movement so we can move the camera and use the sides of the screen to trigger a movement
                 PtSendKIMessage(kDisableEntireYeeshaBook, 0)
                 PtEnableControlKeyEvents(self.key)
                 PtDisableMovementKeys()
@@ -733,10 +733,10 @@ class nb01RPSGame(ptResponder, object):
         PtSendKIMessage(kKILocalChatStatusMsg, msg)
 
     def _QuitGame(self, YesNo):
-        #Performs the standup animation when sitting down
-        #Disable control key events
-        #Enables the disabled movement keys
-        #PtAvatarExitAFK() is just doing IExitTopmostGenericMode()
+        # Performs the standup animation when sitting down
+        # Disable control key events
+        # Enables the disabled movement keys
+        # PtAvatarExitAFK() is just doing IExitTopmostGenericMode()
         if YesNo:
             PtDisableControlKeyEvents(self.key)
             PtEnableMovementKeys()
