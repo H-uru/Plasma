@@ -247,6 +247,35 @@ static void Score_Factory(QTreeWidgetItem* parent, ChunkBuffer& buffer)
         << QString("Game Name: %1").arg(readNodeString(buffer)));
 }
 
+static void Caps_Factory(QTreeWidgetItem* parent, ChunkBuffer& buffer)
+{
+    static const char* capNames[] = {
+        "kCapsScoreLeaderBoards",
+        "kCapsGameMgrBlueSpiral",
+        "kCapsGameMgrClimbingWall",
+        "kCapsGameMgrHeek",
+        "kCapsGameMgrMarker",
+        "kCapsGameMgrTTT",
+        "kCapsGameMgrVarSync",
+    };
+
+    unsigned wordCount = buffer.read<unsigned>();
+    for (unsigned i = 0; i < wordCount; ++i) {
+        unsigned bits = buffer.read<unsigned>();
+        for (unsigned b = 0; b < 32; ++b) {
+            if (bits & (1<<b)) {
+                unsigned bitIndex = (i * 32) + b;
+                QString bitName;
+                if (bitIndex < std::size(capNames))
+                    bitName = QString::fromUtf8(capNames[bitIndex]);
+                else
+                    bitName = QString("<Unknown cap %1>").arg(bitIndex);
+                new QTreeWidgetItem(parent, QStringList { bitName });
+            }
+        }
+    }
+}
+
 bool Auth_Factory(QTreeWidget* logger, const QString& timeFmt, int direction,
                   ChunkBuffer& buffer)
 {
@@ -879,6 +908,17 @@ bool Auth_Factory(QTreeWidget* logger, const QString& timeFmt, int direction,
                 QTreeWidgetItem* scores = new QTreeWidgetItem(top, QStringList() << "Scores");
                 for (unsigned i = 0; i < scoreCount; ++i)
                     Score_Factory(scores, buffer);
+                break;
+            }
+        case kAuth2Cli_ServerCaps:
+            {
+                QTreeWidgetItem* top = new QTreeWidgetItem(logger,
+                    QStringList {
+                        QString("%1 <-- Auth2Cli_ServerCaps").arg(timeFmt)
+                    });
+                top->setForeground(0, kColorAuth);
+                buffer.read<unsigned>();    // Size of BitVector
+                Caps_Factory(top, buffer);
                 break;
             }
         default:

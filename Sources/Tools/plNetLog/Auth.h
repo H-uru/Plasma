@@ -121,6 +121,10 @@ enum
 
     kCli2Auth_AccountExistsRequest,
 
+    // Extended (DirtSand) messages
+    kCli2Auth_AgeRequestEx = 0x1000,
+    kCli2Auth_ScoreGetHighScores,
+
     // -------------------------------------------------------------- //
 
     // Global
@@ -196,6 +200,11 @@ enum
     kAuth2Cli_ScoreGetRanksReply,
 
     kAuth2Cli_AccountExistsReply,
+
+    // Extended (DirtSand) messages
+    kAuth2Cli_AgeReplyEx = 0x1000,
+    kAuth2Cli_ScoreGetHighScoresReply,
+    kAuth2Cli_ServerCaps,
 };
 
 bool Auth_Factory(QTreeWidget* logger, const QString& timeFmt, int direction,
