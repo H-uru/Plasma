@@ -76,7 +76,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void PumpMessageQueueProc();
 
 extern bool gDataServerLocal;
-extern bool gSkipPreload;
+extern bool gPythonLocal;
+extern bool gSDLLocal;
 
 bool NeedsResolutionUpdate = false;
 
@@ -132,7 +133,8 @@ enum {
     kArgSkipLoginDialog,
     kArgServerIni,
     kArgLocalData,
-    kArgSkipPreload,
+    kArgLocalPython,
+    kArgLocalSDL,
     kArgPlayerId,
     kArgStartUpAgeName,
     kArgPvdFile,
@@ -141,15 +143,16 @@ enum {
 };
 
 static const plCmdArgDef s_cmdLineArgs[] = {
-    {kCmdArgFlagged | kCmdTypeBool, "SkipLoginDialog", kArgSkipLoginDialog},
-    {kCmdArgFlagged | kCmdTypeString, "ServerIni", kArgServerIni},
-    {kCmdArgFlagged | kCmdTypeBool, "LocalData", kArgLocalData},
-    {kCmdArgFlagged | kCmdTypeBool, "SkipPreload", kArgSkipPreload},
-    {kCmdArgFlagged | kCmdTypeInt, "PlayerId", kArgPlayerId},
-    {kCmdArgFlagged | kCmdTypeString, "Age", kArgStartUpAgeName},
-    {kCmdArgFlagged | kCmdTypeString, "PvdFile", kArgPvdFile},
-    {kCmdArgFlagged | kCmdTypeBool, "SkipIntroMovies", kArgSkipIntroMovies},
-    {kCmdArgFlagged | kCmdTypeString, "Renderer", kArgRenderer},
+    { kCmdArgFlagged  | kCmdTypeBool,       "SkipLoginDialog", kArgSkipLoginDialog },
+    { kCmdArgFlagged  | kCmdTypeString,     "ServerIni",       kArgServerIni },
+    { kCmdArgFlagged  | kCmdTypeBool,       "LocalData",       kArgLocalData   },
+    { kCmdArgFlagged  | kCmdTypeBool,       "LocalPython",     kArgLocalPython },
+    { kCmdArgFlagged  | kCmdTypeBool,       "LocalSDL",        kArgLocalSDL },
+    { kCmdArgFlagged  | kCmdTypeInt,        "PlayerId",        kArgPlayerId },
+    { kCmdArgFlagged  | kCmdTypeString,     "Age",             kArgStartUpAgeName },
+    { kCmdArgFlagged  | kCmdTypeString,     "PvdFile",         kArgPvdFile },
+    { kCmdArgFlagged  | kCmdTypeBool,       "SkipIntroMovies", kArgSkipIntroMovies },
+    { kCmdArgFlagged  | kCmdTypeString,     "Renderer",        kArgRenderer },
 };
 
 plCmdParser cmdParser(s_cmdLineArgs, std::size(s_cmdLineArgs));
@@ -308,9 +311,12 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 
     if (cmdParser.IsSpecified(kArgLocalData)) {
         gDataServerLocal = true;
-        gSkipPreload = true;
+        gPythonLocal = true;
     }
-    if (cmdParser.IsSpecified(kArgSkipPreload)) gSkipPreload = true;
+    if (cmdParser.IsSpecified(kArgLocalPython))
+        gPythonLocal = true;
+    if (cmdParser.IsSpecified(kArgLocalSDL))
+        gSDLLocal = true;
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     // if (cmdParser.IsSpecified(kArgSkipLoginDialog))
@@ -330,7 +336,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     NetCommConnect();
     [[PLSServerStatus sharedStatus] loadServerStatus];
 
-    if (gSkipPreload) {
+    if (gDataServerLocal) {
         [self initializeClient];
     } else {
         [self prepatch];
