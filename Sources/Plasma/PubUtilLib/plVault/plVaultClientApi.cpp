@@ -279,8 +279,6 @@ struct AddChildNodeFetchTrans {
 *
 ***/
 
-static bool s_running;
-
 static HASHTABLEDECL(
     RelVaultNodeLink,
     THashKeyVal<unsigned>,
@@ -299,8 +297,6 @@ static HASHTABLEDECL(
 ) s_notifyAfterDownload;
 
 static std::unordered_map<ST::string, ST::string, ST::hash> s_ageDeviceInboxes;
-
-static bool s_processPlayerInbox = false;
 
 static std::atomic<int> s_suppressCallbacks;
 
@@ -665,11 +661,8 @@ static void VaultNodeAdded (
         );
     }
     
-    if (parentId == inboxId) {
-        if (i > 0)
-            s_processPlayerInbox = true;
-        else
-            VaultProcessPlayerInbox();
+    if (parentId == inboxId && i == 0) {
+        VaultProcessPlayerInbox();
     }
 
     // if the added element is already downloaded then send the callbacks now
@@ -1529,8 +1522,6 @@ void VaultEnableCallbacks() {
 
 //============================================================================
 void VaultInitialize () {
-    s_running = true;
-    
     NetCliAuthVaultSetRecvNodeChangedHandler(VaultNodeChanged);
     NetCliAuthVaultSetRecvNodeAddedHandler(VaultNodeAdded);
     NetCliAuthVaultSetRecvNodeRemovedHandler(VaultNodeRemoved);
@@ -1539,8 +1530,6 @@ void VaultInitialize () {
 
 //============================================================================
 void VaultDestroy () {
-    s_running = false;
-
     NetCliAuthVaultSetRecvNodeChangedHandler(nullptr);
     NetCliAuthVaultSetRecvNodeAddedHandler(nullptr);
     NetCliAuthVaultSetRecvNodeRemovedHandler(nullptr);
