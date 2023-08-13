@@ -45,6 +45,7 @@ from Plasma import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
 from PlasmaTypes import *
+import PlasmaControlKeys
 
 # detectors
 detButtonRock = ptAttribActivatorList(1, "Rock ButtonClick det", netForce=True)
@@ -190,6 +191,7 @@ MAX_NUM_HIGH_SCORES = 10
 NOTIFY_HELLO = 0
 NOTIFY_JOINLEAVE = 1
 NOTIFY_SCORE_UPDATE = 2
+NOTIFY_YESNO_QUIT = 3
 
 # Rank stuff
 RANK_UP = 100
@@ -291,6 +293,7 @@ class nb01RPSGame(ptResponder, object):
             NOTIFY_HELLO: self._OnHello,
             NOTIFY_JOINLEAVE: self._OnJoinLeave,
             NOTIFY_SCORE_UPDATE: self._OnGameOver,
+            NOTIFY_YESNO_QUIT: self._QuitGame,
         }
 
         # These get called when an SDL variable touches itself.
@@ -380,6 +383,18 @@ class nb01RPSGame(ptResponder, object):
         else:
             raise RuntimeError("Got an SDL notify for {}, but no CB".format(VARname))
 
+    def OnControlKeyEvent(self, controlKey, activeFlag):
+        # Captures movement keys and prompt a yes/no dialog during a game or standup animation otherwise
+        if controlKey in [PlasmaControlKeys.kKeyMoveBackward, PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight, PlasmaControlKeys.kKeyExitMode] and activeFlag:
+            if self._round_played:
+                PtLocalizedYesNoDialog(self.key, "Heek.Messages.Quit")
+            else:
+                quit = {
+                    "type": NOTIFY_YESNO_QUIT,
+                    "YesNo": 1,
+                }
+                self._SendPyNotifyMsg(quit)
+
     def OnNotify(self, state, id, events):
         """Handle Plasma Notification Messages"""
 
@@ -441,7 +456,14 @@ class nb01RPSGame(ptResponder, object):
         # Manage game state if standing up
         if state:
             if PtWasLocallyNotified(self.key):
+                # Disable Yeesha Book to prevent linking out
+                # Enable control keys to capture button presses or mouse movements
+                # Disable all movement keys so sit modifier wont trigger before we want it to
+                # Enable the mouse movement so we can move the camera and use the sides of the screen to trigger a movement
                 PtSendKIMessage(kDisableEntireYeeshaBook, 0)
+                PtEnableControlKeyEvents(self.key)
+                PtDisableMovementKeys()
+                PtEnableMouseMovement()
                 self._JoinTheGame(seat)
         else:
             self._seats[seat].enable()
@@ -710,6 +732,15 @@ class nb01RPSGame(ptResponder, object):
         """Sends a status chat message (purple text) to the local player's KI."""
         PtSendKIMessage(kKILocalChatStatusMsg, msg)
 
+    def _QuitGame(self, YesNo):
+        # Performs the standup animation when sitting down
+        # Disable control key events
+        # Enables the disabled movement keys
+        # PtAvatarExitAFK() is just doing IExitTopmostGenericMode()
+        if YesNo:
+            PtDisableControlKeyEvents(self.key)
+            PtEnableMovementKeys()
+            PtAvatarExitAFK()
 
 #########
     def _ChangeButtonState(self, seat, enable=True, ff=False, force=False):
@@ -940,6 +971,9 @@ class nb01RPSGame(ptResponder, object):
         args = {}
         for event in events:
             args[event[1]] = event[3]
+
+        if "YesNo" in args:
+            args["type"] = NOTIFY_YESNO_QUIT
 
         # Now, let's fire it off!
         type = args["type"]
