@@ -124,7 +124,7 @@ class city(ptResponder):
             pages += ["canyon","cavetjunction","courtyard","ferry","greatstair","guildhall","harbor","HarborReflect"]
             pages += ["islmGreatZeroState","islmJCNote","islmNegilahnCreatureChartGUI","islmNickNote","islmPodMapGUI"]
             pages += ["islmWatsonLetterGUI","KahloPub","kahlopubtunnel","library","LibraryInterior"]
-            pages += ["MuseumInteriorPage","palace"]
+            pages += ["MuseumInteriorPage","palace","libraryDoors"]
             pages += ["islmBahroShoutFerry","islmBahroShoutLibrary","islmBahroShoutPalace"]
             #pages += ["islmDRCStageState01","islmDRCStageState02","islmDRCTentTablePic","islmFanSoundRun"]
             #pages += ["islmLibBanners00Vis","islmLibBanners02Vis","islmLibBanners03Vis"]
