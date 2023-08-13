@@ -60,18 +60,6 @@ struct IVaultCallback {
     VaultCallback *         cb;
 };
 
-struct INotifyAfterDownload : THashKeyVal<unsigned> {
-    HASHLINK(INotifyAfterDownload)  link;
-    unsigned                        parentId;
-    unsigned                        childId;
-
-    INotifyAfterDownload (unsigned parentId, unsigned childId)
-    :   THashKeyVal<unsigned>(childId)
-    ,   parentId(parentId)
-    ,   childId(childId)
-    {}
-};
-
 // A RelVaultNodeLink may be either stored in the global table,
 // or stored in an IRelVaultNode's parents or children table.
 struct RelVaultNodeLink : THashKeyVal<unsigned> {
@@ -290,11 +278,8 @@ static LISTDECL(
     link
 ) s_callbacks;
 
-static HASHTABLEDECL(
-    INotifyAfterDownload,
-    THashKeyVal<unsigned>,
-    link
-) s_notifyAfterDownload;
+// key: childId, value: parentId
+std::unordered_map<unsigned, unsigned> s_notifyAfterDownload;
 
 static std::unordered_map<ST::string, ST::string, ST::hash> s_ageDeviceInboxes;
 
@@ -325,12 +310,13 @@ static void VaultNodeFound (
 static void VaultNodeAddedDownloadCallback(ENetError result, void * param) {
     unsigned childId = (unsigned)((uintptr_t)param);
 
-    INotifyAfterDownload* notify = s_notifyAfterDownload.Find(childId);
+    auto it = s_notifyAfterDownload.find(childId);
 
-    if (notify) {
+    if (it != s_notifyAfterDownload.end()) {
+        unsigned parentId = it->second;
         if (IS_NET_SUCCESS(result)) {
-            RelVaultNodeLink* parentLink    = s_nodes.Find(notify->parentId);
-            RelVaultNodeLink* childLink     = s_nodes.Find(notify->childId);
+            RelVaultNodeLink* parentLink = s_nodes.Find(parentId);
+            RelVaultNodeLink* childLink = s_nodes.Find(childId);
 
             if (parentLink && childLink) {
                 if (childLink->node->GetNodeType() == plVault::kNodeType_TextNote) {
@@ -347,8 +333,6 @@ static void VaultNodeAddedDownloadCallback(ENetError result, void * param) {
                 }
             }
         }
-
-        delete notify;
     }
 }
 
@@ -412,8 +396,7 @@ static void BuildNodeTree (
                 }
             }
             else {
-                INotifyAfterDownload* notify = new INotifyAfterDownload(parentNode->GetNodeId(), childNode->GetNodeId());
-                s_notifyAfterDownload.Add(notify);
+                s_notifyAfterDownload.emplace(childNode->GetNodeId(), parentNode->GetNodeId());
             }
         }
     }
