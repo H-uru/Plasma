@@ -229,20 +229,19 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
     fPendingAgeCsvFiles.emplace_back(plFileName::Join("dat", ST::format("{}.csv", fAgeName)));
 
     plSynchEnabler p( false );  // turn off dirty tracking while in this function   
-
-    hsStream* stream=GetAgeDescFileStream(fAgeName);
-    if (!stream)
-    {
-        nc->ErrorMsg("Failed loading age.  Age desc file {} has nil stream", fAgeName);
-        fFlags &= ~kLoadingAge;
-        return false;
-    }
-
     plAgeDescription ad;
-    ad.Read(stream);
-    ad.SetAgeName(fAgeName);
-    stream->Close();
-    delete stream;
+    {
+        std::unique_ptr<hsStream> stream = GetAgeDescFileStream(fAgeName);
+        if (!stream)
+        {
+            nc->ErrorMsg("Failed loading age.  Age desc file {} has nil stream", fAgeName);
+            fFlags &= ~kLoadingAge;
+            return false;
+        }
+
+        ad.Read(stream.get());
+        ad.SetAgeName(fAgeName);
+    }
     ad.SeekFirstPage();
     
     plAgePage *page;
@@ -414,12 +413,10 @@ void plAgeLoader::ExecPendingAgeCsvFiles()
     int i;
     for (i=0;i<PendingAgeCsvFiles().size(); i++)
     {
-        hsStream* stream = plEncryptedStream::OpenEncryptedFile(fPendingAgeCsvFiles[i].AsString());
+        std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(fPendingAgeCsvFiles[i].AsString());
         if (stream)
         {
-            plRelevanceMgr::Instance()->ParseCsvInput(stream);
-            stream->Close();
-            delete stream;
+            plRelevanceMgr::Instance()->ParseCsvInput(stream.get());
         }
     }
     fPendingAgeCsvFiles.clear();
@@ -429,14 +426,14 @@ void plAgeLoader::ExecPendingAgeCsvFiles()
 // return alloced stream or nullptr
 // static
 //
-hsStream* plAgeLoader::GetAgeDescFileStream(const ST::string& ageName)
+std::unique_ptr<hsStream> plAgeLoader::GetAgeDescFileStream(const ST::string& ageName)
 {
     if (ageName.empty())
         return nullptr;
 
     plFileName ageDescFileName = plFileName::Join("dat", ST::format("{}.age", ageName));
 
-    hsStream* stream = plEncryptedStream::OpenEncryptedFile(ageDescFileName);
+    std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(ageDescFileName);
     if (!stream)
     {
         hsAssert(false, ST::format("Can't find age desc file {}", ageDescFileName).c_str());

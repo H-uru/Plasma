@@ -44,12 +44,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
+#include <memory>
+
 //
 // Encrypt a large file by running FileEncrypt on it.  Small files can be done
 // in the usual way, but they will be in memory until Close is called.  Files
 // will be decrypted on the fly during read.operations
 //
-class plEncryptedStream : public hsStream
+class plEncryptedStream : public hsFileSystemStream
 {
 protected:
     FILE* fRef;
@@ -59,7 +61,7 @@ protected:
 
     bool fBufferedStream;
 
-    hsStream* fRAMStream;
+    std::unique_ptr<hsStream> fRAMStream;
 
     plFileName fWriteFileName;
 
@@ -80,10 +82,14 @@ protected:
 public:
     // If you don't pass in a key (4 uint32_t's), the default one will be used
     plEncryptedStream(uint32_t* key=nullptr);
+    plEncryptedStream(const plEncryptedStream& other) = delete;
+    plEncryptedStream(plEncryptedStream&& other) = delete;
     ~plEncryptedStream();
 
+    const plEncryptedStream& operator=(const plEncryptedStream& other) = delete;
+    plEncryptedStream& operator=(plEncryptedStream&& other) = delete;
+
     bool    Open(const plFileName& name, const char* mode = "rb") override;
-    bool    Close() override;
 
     uint32_t  Read(uint32_t byteCount, void* buffer) override;
     uint32_t  Write(uint32_t byteCount, const void* buffer) override;
@@ -102,10 +108,9 @@ public:
     static bool IsEncryptedFile(const plFileName& fileName);
 
     // Attempts to create a read-binary stream for the requested file.  If it's
-    // encrypted, you'll get a plEncryptedStream, otherwise just a standard
-    // hsUNIXStream.  Remember to delete the stream when you're done with it.
-    static hsStream* OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey = nullptr);
-    static hsStream* OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey = nullptr);
+    // encrypted, you'll get a plEncryptedStream, otherwise just a standard hsUNIXStream.
+    static std::unique_ptr<hsStream> OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey = nullptr);
+    static std::unique_ptr<hsStream> OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey = nullptr);
 };
 
 #endif // plEncryptedStream_h_inc

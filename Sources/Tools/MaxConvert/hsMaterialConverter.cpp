@@ -5008,7 +5008,6 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, const std::vecto
         char buff[256];
         sprintf(buff, "");
         stream.WriteString("No Materials Generated\n");
-        stream.Close();
         return;
     }
 
@@ -5065,8 +5064,6 @@ void hsMaterialConverter::IPrintDoneMaterials(const char* path, const std::vecto
 
     sprintf(buff, "\nThank you, and have a lovely day.\n");
     stream.WriteString(buff);
-
-    stream.Close();
 }
 
 hsMaterialConverter::DoneMaterialData* hsMaterialConverter::IFindDoneMaterial(DoneMaterialData& done)

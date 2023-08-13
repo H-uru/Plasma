@@ -485,10 +485,12 @@ protected:
 public:
     MaxStream(ISave* isave) : fSave(isave), fLoad() { }
     MaxStream(ILoad* iload) : fSave(), fLoad(iload) { }
+    MaxStream(const MaxStream& other) = delete;
+    MaxStream(MaxStream&& other) = delete;
+    const MaxStream& operator=(const MaxStream& other) = delete;
+    MaxStream& operator=(MaxStream&& other) = delete;
 
     // Don't support any of this
-    bool Open(const plFileName &, const char * = "rb") override { hsAssert(0, "Not supported"); return false; }
-    bool Close() override { hsAssert(0, "Not supported"); return false; }
     bool AtEnd() override { hsAssert(false, "Not supported"); return false; }
     void Skip(uint32_t deltaByteCount) override { hsAssert(0, "Not supported"); }
     void Rewind() override { hsAssert(0, "Not supported"); }

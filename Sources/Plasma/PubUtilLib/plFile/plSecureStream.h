@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStream.h"
 
+#include <memory>
+
 #if HS_BUILD_FOR_WIN32
     typedef void* HANDLE;
 #   define hsFD HANDLE
@@ -57,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // to download the file from a server into a temporary directory (with a mangled name) and
 // delete that file on close, thereby minimizing the chance of having that file examined or
 // edited.
-class plSecureStream: public hsStream
+class plSecureStream : public hsFileSystemStream
 {
 protected:
     hsFD fRef;
@@ -67,7 +69,7 @@ protected:
 
     bool fBufferedStream;
 
-    hsStream* fRAMStream;
+    std::unique_ptr<hsStream> fRAMStream;
 
     plFileName fWriteFileName;
 
@@ -91,11 +93,15 @@ protected:
 public:
     plSecureStream(bool deleteOnExit = false, uint32_t* key = nullptr); // uses default key if you don't pass one in
     plSecureStream(hsStream* base, uint32_t* key = nullptr);
+    plSecureStream(const plSecureStream& other) = delete;
+    plSecureStream(plSecureStream&& other) = delete;
     ~plSecureStream();
+
+    const plSecureStream& operator=(const plSecureStream& other) = delete;
+    plSecureStream& operator=(plSecureStream&& other) = delete;
 
     bool Open(const plFileName& name, const char* mode = "rb") override;
     bool Open(hsStream* stream);
-    bool Close() override;
 
     uint32_t Read(uint32_t byteCount, void* buffer) override;
     uint32_t Write(uint32_t byteCount, const void* buffer) override;
@@ -119,12 +125,10 @@ public:
 
     static bool IsSecureFile(const plFileName& fileName);
 
-    // Attempts to create a read-binary stream for the requested file (delete the stream
-    // when you are done with it!)
-    static hsStream* OpenSecureFile(const plFileName& fileName, const uint32_t flags = kRequireEncryption, uint32_t* key = nullptr);
-    // Attempts to create a write-binary stream for the requested file (delete the stream
-    // when you are done with it!)
-    static hsStream* OpenSecureFileWrite(const plFileName& fileName, uint32_t* key = nullptr);
+    // Attempts to create a read-binary stream for the requested file
+    static std::unique_ptr<hsStream> OpenSecureFile(const plFileName& fileName, const uint32_t flags = kRequireEncryption, uint32_t* key = nullptr);
+    // Attempts to create a write-binary stream for the requested file
+    static std::unique_ptr<hsStream> OpenSecureFileWrite(const plFileName& fileName, uint32_t* key = nullptr);
 
     static const uint32_t kDefaultKey[4]; // our default encryption key
 

@@ -64,6 +64,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsStream.h"
+
+#include <memory>
 #include <vector>
 
 //// Base Section Class //////////////////////////////////////////////////////
@@ -115,7 +117,7 @@ class plInitFileReader
     protected:
 
         hsStream            *fStream;
-        hsStream            *fOurStream;
+        std::unique_ptr<hsStream> fOurStream;
         char                *fCurrLine;
         uint32_t              fLineSize;
 
@@ -142,7 +144,6 @@ class plInitFileReader
         bool    Open( const char *fileName );
         bool    Open( hsStream *stream );
         bool    Parse( uint32_t userData = 0 );
-        void    Close();
 
         bool    IsOpen() const { return fStream != nullptr; }
 };

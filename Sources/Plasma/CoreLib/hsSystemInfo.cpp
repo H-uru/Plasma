@@ -221,12 +221,10 @@ static inline bool IGetLinuxVersion(const plFileName& osVersionPath, ST::string&
                         system = ST::string::from_utf8(token);
                         // chop off the quotes
                         system = system.substr(1, system.size() - 2);
-                        s.Close();
                         return true;
                     }
                 }
             }
-            s.Close();
         }
     }
 

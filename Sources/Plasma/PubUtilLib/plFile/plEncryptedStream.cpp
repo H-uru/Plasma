@@ -71,6 +71,14 @@ plEncryptedStream::plEncryptedStream(uint32_t* key) :
 
 plEncryptedStream::~plEncryptedStream()
 {
+    if (fOpenMode == kOpenWrite) {
+        fRAMStream->Rewind();
+        IWriteEncypted(fRAMStream.get(), fWriteFileName);
+    }
+
+    if (fRef) {
+        fclose(fRef);
+    }
 }
 
 //
@@ -145,7 +153,7 @@ bool plEncryptedStream::Open(const plFileName& name, const char* mode)
     }
     else if (strcmp(mode, "wb") == 0)
     {
-        fRAMStream = new hsRAMStream;
+        fRAMStream = std::make_unique<hsRAMStream>();
         fWriteFileName = name;
         fPosition = 0;
 
@@ -160,35 +168,6 @@ bool plEncryptedStream::Open(const plFileName& name, const char* mode)
         fOpenMode = kOpenFail;
         return false;
     }
-}
-
-bool plEncryptedStream::Close()
-{
-    int rtn = false;
-
-    if (fOpenMode == kOpenWrite)
-    {
-        fRAMStream->Rewind();
-        rtn = IWriteEncypted(fRAMStream, fWriteFileName);
-    }
-    if (fRef)
-    {
-        rtn = (fclose(fRef) == 0);
-        fRef = nullptr;
-    }
-
-    if (fRAMStream)
-    {
-        delete fRAMStream;
-        fRAMStream = nullptr;
-    }
-
-    fWriteFileName = ST::string();
-    fActualFileSize = 0;
-    fBufferedStream = false;
-    fOpenMode = kOpenFail;
-
-    return rtn;
 }
 
 uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
@@ -213,7 +192,7 @@ uint32_t plEncryptedStream::IRead(uint32_t bytes, void* buffer)
 
 void plEncryptedStream::IBufferFile()
 {
-    fRAMStream = new hsRAMStream;
+    fRAMStream = std::make_unique<hsRAMStream>();
     char buf[1024];
     while (!AtEnd())
     {
@@ -422,30 +401,27 @@ bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const plFileName&
     outputStream.Skip(kMagicStringLen);
     outputStream.WriteLE32(actualSize);
 
-    outputStream.Close();
-
     return true;
 }
 
 bool plEncryptedStream::FileEncrypt(const plFileName& fileName)
 {
-    hsUNIXStream sIn;
-    if (!sIn.Open(fileName))
-        return false;
-
-    // Don't double encrypt any files
-    if (ICheckMagicString(sIn.GetFILE()))
+    bool wroteEncrypted;
     {
-        sIn.Close();
-        return true;
+        hsUNIXStream sIn;
+        if (!sIn.Open(fileName))
+            return false;
+
+        // Don't double encrypt any files
+        if (ICheckMagicString(sIn.GetFILE()))
+        {
+            return true;
+        }
+        sIn.Rewind();
+
+        plEncryptedStream sOut;
+        wroteEncrypted = sOut.IWriteEncypted(&sIn, "crypt.dat");
     }
-    sIn.Rewind();
-
-    plEncryptedStream sOut;
-    bool wroteEncrypted = sOut.IWriteEncypted(&sIn, "crypt.dat");
-
-    sIn.Close();
-    sOut.Close();
 
     if (wroteEncrypted)
     {
@@ -458,27 +434,25 @@ bool plEncryptedStream::FileEncrypt(const plFileName& fileName)
 
 bool plEncryptedStream::FileDecrypt(const plFileName& fileName)
 {
-    plEncryptedStream sIn;
-    if (!sIn.Open(fileName))
-        return false;
-
-    hsUNIXStream sOut;
-    if (!sOut.Open("crypt.dat", "wb"))
     {
-        sIn.Close();
-        return false;
+        plEncryptedStream sIn;
+        if (!sIn.Open(fileName))
+            return false;
+
+        hsUNIXStream sOut;
+        if (!sOut.Open("crypt.dat", "wb"))
+        {
+            return false;
+        }
+
+        char buf[1024];
+
+        while (!sIn.AtEnd())
+        {
+            uint32_t numRead = sIn.Read(sizeof(buf), buf);
+            sOut.Write(numRead, buf);
+        }
     }
-
-    char buf[1024];
-
-    while (!sIn.AtEnd())
-    {
-        uint32_t numRead = sIn.Read(sizeof(buf), buf);
-        sOut.Write(numRead, buf);
-    }
-
-    sIn.Close();
-    sOut.Close();
 
     plFileSystem::Unlink(fileName);
     plFileSystem::Move("crypt.dat", fileName);
@@ -507,28 +481,28 @@ bool plEncryptedStream::IsEncryptedFile(const plFileName& fileName)
     return isEncrypted;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey)
+std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey)
 {
 
     bool isEncrypted = IsEncryptedFile(fileName);
 
-    hsStream* s = nullptr;
+    std::unique_ptr<hsFileSystemStream> s;
     if (isEncrypted)
-        s = new plEncryptedStream(cryptKey);
+        s = std::make_unique<plEncryptedStream>(cryptKey);
     else
-        s = new hsUNIXStream;
+        s = std::make_unique<hsUNIXStream>();
 
     s->Open(fileName, "rb");
     return s;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey)
+std::unique_ptr<hsStream> plEncryptedStream::OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey)
 {
-    hsStream* s = nullptr;
+    std::unique_ptr<hsFileSystemStream> s;
     if (IsEncryptedFile(fileName))
-        s = new plEncryptedStream(cryptKey);
+        s = std::make_unique<plEncryptedStream>(cryptKey);
     else
-        s = new hsUNIXStream;
+        s = std::make_unique<hsUNIXStream>();
 
     s->Open(fileName, "wb");
     return s;

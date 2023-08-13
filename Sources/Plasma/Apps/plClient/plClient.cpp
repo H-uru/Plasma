@@ -820,7 +820,6 @@ bool plClient::MsgReceive(plMessage* msg)
             char buf[256];
             sprintf(buf, "%s %d\n", plAgeLoader::GetInstance()->GetCurrAgeFilename(), fNumPostLoadMsgs);
             s.WriteString(buf);
-            s.Close();
             #endif
 #endif
         }
@@ -2021,9 +2020,6 @@ void plClient::IDetectAudioVideoSettings()
 
     plPipeline::fDefaultPipeParams.VSync = false;
 
-    int val = 0;
-    hsStream *stream = nullptr;
-    hsUNIXStream s;
     plFileName audioIniFile = plFileName::Join(plFileSystem::GetInitPath(), "audio.ini");
     plFileName graphicsIniFile = plFileName::Join(plFileSystem::GetInitPath(), "graphics.ini");
 
@@ -2036,54 +2032,44 @@ void plClient::IDetectAudioVideoSettings()
 #endif
 
     //check to see if audio.ini exists
-    if (s.Open(audioIniFile))
-        s.Close();
-    else
+    if (!plFileInfo(audioIniFile).Exists())
         IWriteDefaultAudioSettings(audioIniFile);
 
     // check to see if graphics.ini exists
-    if (s.Open(graphicsIniFile))
-        s.Close();
-    else
+    if (!plFileInfo(graphicsIniFile).Exists())
         IWriteDefaultGraphicsSettings(graphicsIniFile);
 }
 
 void plClient::IWriteDefaultAudioSettings(const plFileName& destFile)
 {
-    hsStream *stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
-    WriteBool(stream, "Audio.Initialize",  true);
-    WriteBool(stream, "Audio.UseEAX", false);
-    WriteInt(stream, "Audio.SetPriorityCutoff", 6);
-    WriteInt(stream, "Audio.MuteAll", false);
-    WriteInt(stream, "Audio.SetChannelVolume SoundFX", 1);
-    WriteInt(stream, "Audio.SetChannelVolume BgndMusic", 1);
-    WriteInt(stream, "Audio.SetChannelVolume Ambience", 1);
-    WriteInt(stream, "Audio.SetChannelVolume NPCVoice", 1);
-    WriteInt(stream, "Audio.EnableVoiceRecording", 1);
-    WriteInt(stream, "Audio.EnableSubtitles", true);
-    stream->Close();
-    delete stream;
-    stream = nullptr;
+    std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
+    WriteBool(stream.get(), "Audio.Initialize",  true);
+    WriteBool(stream.get(), "Audio.UseEAX", false);
+    WriteInt(stream.get(), "Audio.SetPriorityCutoff", 6);
+    WriteInt(stream.get(), "Audio.MuteAll", false);
+    WriteInt(stream.get(), "Audio.SetChannelVolume SoundFX", 1);
+    WriteInt(stream.get(), "Audio.SetChannelVolume BgndMusic", 1);
+    WriteInt(stream.get(), "Audio.SetChannelVolume Ambience", 1);
+    WriteInt(stream.get(), "Audio.SetChannelVolume NPCVoice", 1);
+    WriteInt(stream.get(), "Audio.EnableVoiceRecording", 1);
+    WriteInt(stream.get(), "Audio.EnableSubtitles", true);
 }
 
 void plClient::IWriteDefaultGraphicsSettings(const plFileName& destFile)
 {
-    hsStream *stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
+    std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
 
-    WriteInt(stream, "Graphics.Width", plPipeline::fDefaultPipeParams.Width);
-    WriteInt(stream, "Graphics.Height", plPipeline::fDefaultPipeParams.Height);
-    WriteInt(stream, "Graphics.ColorDepth", plPipeline::fDefaultPipeParams.ColorDepth);
-    WriteBool(stream, "Graphics.Windowed", plPipeline::fDefaultPipeParams.Windowed);
-    WriteInt(stream, "Graphics.AntiAliasAmount", plPipeline::fDefaultPipeParams.AntiAliasingAmount);
-    WriteInt(stream, "Graphics.AnisotropicLevel", plPipeline::fDefaultPipeParams.AnisotropicLevel );
-    WriteInt(stream, "Graphics.TextureQuality", plPipeline::fDefaultPipeParams.TextureQuality);
-    WriteInt(stream, "Quality.Level", plPipeline::fDefaultPipeParams.VideoQuality);
-    WriteInt(stream, "Graphics.Shadow.Enable", plPipeline::fDefaultPipeParams.Shadows);
-    WriteInt(stream, "Graphics.EnablePlanarReflections", plPipeline::fDefaultPipeParams.PlanarReflections);
-    WriteBool(stream, "Graphics.EnableVSync", plPipeline::fDefaultPipeParams.VSync);
-    stream->Close();
-    delete stream;
-    stream = nullptr;
+    WriteInt(stream.get(), "Graphics.Width", plPipeline::fDefaultPipeParams.Width);
+    WriteInt(stream.get(), "Graphics.Height", plPipeline::fDefaultPipeParams.Height);
+    WriteInt(stream.get(), "Graphics.ColorDepth", plPipeline::fDefaultPipeParams.ColorDepth);
+    WriteBool(stream.get(), "Graphics.Windowed", plPipeline::fDefaultPipeParams.Windowed);
+    WriteInt(stream.get(), "Graphics.AntiAliasAmount", plPipeline::fDefaultPipeParams.AntiAliasingAmount);
+    WriteInt(stream.get(), "Graphics.AnisotropicLevel", plPipeline::fDefaultPipeParams.AnisotropicLevel );
+    WriteInt(stream.get(), "Graphics.TextureQuality", plPipeline::fDefaultPipeParams.TextureQuality);
+    WriteInt(stream.get(), "Quality.Level", plPipeline::fDefaultPipeParams.VideoQuality);
+    WriteInt(stream.get(), "Graphics.Shadow.Enable", plPipeline::fDefaultPipeParams.Shadows);
+    WriteInt(stream.get(), "Graphics.EnablePlanarReflections", plPipeline::fDefaultPipeParams.PlanarReflections);
+    WriteBool(stream.get(), "Graphics.EnableVSync", plPipeline::fDefaultPipeParams.VSync);
 }
 
 

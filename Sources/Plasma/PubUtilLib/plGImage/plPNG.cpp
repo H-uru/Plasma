@@ -187,9 +187,7 @@ plMipmap* plPNG::ReadFromFile(const plFileName& fileName)
         return nullptr;
     }
 
-    plMipmap* ret = IRead(&in);
-    in.Close();
-    return ret;
+    return IRead(&in);
 }
 
 bool plPNG::IWrite(plMipmap* source, hsStream* outStream, const std::multimap<ST::string, ST::string>& textFields)
@@ -293,7 +291,5 @@ bool plPNG::WriteToFile(const plFileName& fileName, plMipmap* sourceData, const 
         return false;
     }
 
-    bool ret = IWrite(sourceData, &out, textFields);
-    out.Close();
-    return ret;
+    return IWrite(sourceData, &out, textFields);
 }

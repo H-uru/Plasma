@@ -269,8 +269,5 @@ void plPageOptimizer::IRewritePage()
                 newPage.WriteLE32(dataLen);
             }
         }
-
-        newPage.Close();
-        oldPage.Close();
     }
 }

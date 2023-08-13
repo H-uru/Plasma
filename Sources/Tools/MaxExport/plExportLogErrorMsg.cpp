@@ -64,7 +64,6 @@ plExportLogErrorMsg::~plExportLogErrorMsg()
                     fErrfile->WriteString("(which is a disaster!)");
             else
                 fErrfile->WriteString("(which is way too many!)");
-        fErrfile->Close();
     }
 #ifdef ERRORLOG_ALWAYS_WRITE_SOMETHING
     else
@@ -73,7 +72,6 @@ plExportLogErrorMsg::~plExportLogErrorMsg()
         fErrfile->Open(fErrfile_name, "wt");
         setbuf(fErrfile->GetFILE(), nullptr);
         fErrfile->WriteString("No errors found! Good job.");
-        fErrfile->Close();
     }
 #endif // ERRORLOG_ALWAYS_WRITE_SOMETHING
 }

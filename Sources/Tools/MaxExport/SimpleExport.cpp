@@ -369,7 +369,6 @@ int HSExport2::DoExport(const MCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
             out_name, tm.wMonth, tm.wDay, tm.wYear, exportTime / 60, exportTime % 60
         )
     );
-    dbLog.Close();
 
     // Allow plugins to clean up after export
     BroadcastNotification(NOTIFY_POST_EXPORT);

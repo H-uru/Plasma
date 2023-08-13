@@ -70,13 +70,7 @@ plNetClientStreamRecorder::plNetClientStreamRecorder(TimeWrapper* timeWrapper) :
 
 
 plNetClientStreamRecorder::~plNetClientStreamRecorder()
-{
-    if (fRecordStream)
-    {
-        fRecordStream->Close();
-        delete fRecordStream;
-    }
-}
+{}
 
 hsResMgr* plNetClientStreamRecorder::GetResMgr()
 {
@@ -100,22 +94,21 @@ bool plNetClientStreamRecorder::BeginRecording(const char* recName)
 {
     if (!fRecordStream)
     {
-        fRecordStream = new hsUNIXStream;
         char path[256];
         IMakeFilename(recName, path);
 
-        if (!fRecordStream->Open(path, "wb"))
-        {
-            delete fRecordStream;
+        auto newStream = std::make_unique<hsUNIXStream>();
+        if (!newStream->Open(path, "wb")) {
             return false;
         }
+        fRecordStream = std::move(newStream);
 
         hsBitVector contentFlags;
         contentFlags.SetBit(kNetClientRecSDLDesc);
-        contentFlags.Write(fRecordStream);
+        contentFlags.Write(fRecordStream.get());
 
         // kNetClientRecSDLDesc
-        plSDLMgr::GetInstance()->Write(fRecordStream);
+        plSDLMgr::GetInstance()->Write(fRecordStream.get());
 
         return true;
     }
@@ -127,26 +120,22 @@ bool plNetClientStreamRecorder::BeginPlayback(const char* recName)
 {
     if (!fRecordStream)
     {
-        fRecordStream = new hsUNIXStream;
         char path[256];
         IMakeFilename(recName, path);
 
-        if (fRecordStream->Open(path, "rb"))
-        {
+        auto newStream = std::make_unique<hsUNIXStream>();
+        if (newStream->Open(path, "rb")) {
+            fRecordStream = std::move(newStream);
             hsBitVector contentFlags;
-            contentFlags.Read(fRecordStream);
+            contentFlags.Read(fRecordStream.get());
 
             if (contentFlags.IsBitSet(kNetClientRecSDLDesc))
-                plSDLMgr::GetInstance()->Read(fRecordStream);
+                plSDLMgr::GetInstance()->Read(fRecordStream.get());
 
             fPlaybackTimeOffset = GetTime();
             fNextPlaybackTime = fRecordStream->ReadLEDouble();
             fBetweenAges = false;
-        }
-        else
-        {
-            delete fRecordStream;
-            fRecordStream = nullptr;
+        } else {
             return false;
         }
 
@@ -164,7 +153,7 @@ void plNetClientStreamRecorder::RecordMsg(plNetMessage* msg, double secs)
     if (IProcessRecordMsg(msg,secs))
     {
         fRecordStream->WriteLEDouble(secs - fPlaybackTimeOffset);
-        GetResMgr()->WriteCreatableVersion(fRecordStream, msg);
+        GetResMgr()->WriteCreatableVersion(fRecordStream.get(), msg);
 
         ILogMsg(msg);
     }
@@ -211,7 +200,7 @@ plNetMessage* plNetClientStreamRecorder::IGetNextMessage()
 
     if (!IsQueueEmpty() && GetNextMessageTimeDelta() <= 0 )
     {
-        msg = plNetMessage::ConvertNoRef(GetResMgr()->ReadCreatableVersion(fRecordStream));
+        msg = plNetMessage::ConvertNoRef(GetResMgr()->ReadCreatableVersion(fRecordStream.get()));
         // msg->SetPeeked(true);
 
         // Fix the flags on game messages, so we won't get an assert later
@@ -239,9 +228,7 @@ plNetMessage* plNetClientStreamRecorder::IGetNextMessage()
         // If this was the last message, stop playing back
         if (fRecordStream->AtEnd())
         {
-            fRecordStream->Close();
-            delete fRecordStream;
-            fRecordStream = nullptr;
+            fRecordStream.reset();
         }
     }
     

@@ -206,9 +206,6 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
     delete [] code;
     Py_XDECREF(pythonCode);
     Py_XDECREF(fModule);
-
-    pyStream.Close();
-    glueStream.Close();
 }
 
 void FindFiles(std::vector<plFileName> &filenames, std::vector<plFileName> &pathnames, const plFileName& path)
@@ -291,40 +288,40 @@ void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFi
 
 
     // ok, we know how many files we're gonna pack, so make a fake index (we'll fill in later)
-    hsUNIXStream s;
-    if (!s.Open(pakName, "wb"))
-        return;
-
-    s.WriteLE32((uint32_t)fileNames.size());
-    for (const plFileName& fn : fileNames)
     {
-        s.WriteSafeString(fn.AsString());
-        s.WriteLE32(0);
+        hsUNIXStream s;
+        if (!s.Open(pakName, "wb"))
+            return;
+
+        s.WriteLE32((uint32_t)fileNames.size());
+        for (const plFileName& fn : fileNames)
+        {
+            s.WriteSafeString(fn.AsString());
+            s.WriteLE32(0);
+        }
+
+        PythonInterface::initPython(rootPath, extraDirs, out, stderr);
+    
+        std::vector<uint32_t> filePositions(fileNames.size());
+
+        for (size_t i = 0; i < fileNames.size(); i++)
+        {
+            // strip '.py' from the file name
+            plFileName properFileName = fileNames[i].StripFileExt();
+            uint32_t initialPos = s.GetPosition();
+            WritePythonFile(properFileName, pathNames[i], &s);
+    
+            filePositions[i] = initialPos;
+        }
+
+        s.SetPosition(sizeof(uint32_t));
+        for (size_t i = 0; i < fileNames.size(); i++)
+        {
+            s.WriteSafeString(fileNames[i].AsString());
+            s.WriteLE32(filePositions[i]);
+        }
     }
 
-    PythonInterface::initPython(rootPath, extraDirs, out, stderr);
-
-    std::vector<uint32_t> filePositions;
-    filePositions.resize(fileNames.size());
-
-    for (size_t i = 0; i < fileNames.size(); i++)
-    {
-        // strip '.py' from the file name
-        plFileName properFileName = fileNames[i].StripFileExt();
-        uint32_t initialPos = s.GetPosition();
-        WritePythonFile(properFileName, pathNames[i], &s);
-
-        filePositions[i] = initialPos;
-    }
-
-    s.SetPosition(sizeof(uint32_t));
-    for (size_t i = 0; i < fileNames.size(); i++)
-    {
-        s.WriteSafeString(fileNames[i].AsString());
-        s.WriteLE32(filePositions[i]);
-    }
-
-    s.Close();
     ST::printf(out, "\nPython Package written to {}\n", pakName);
 
     PythonInterface::finiPython();

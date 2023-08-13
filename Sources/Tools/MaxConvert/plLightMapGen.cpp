@@ -329,8 +329,6 @@ void DumpMipmap(plMipmap* mipmap, const char* prefix)
             dump.WriteString("\n");
         }
     }
-
-    dump.Close();
 }
 #endif // MIPMAP_LOG
 

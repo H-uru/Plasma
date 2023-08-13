@@ -143,7 +143,6 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
 
     hsUNIXStream inFp;
     if (!inFp.Open(inFile, "r")) {
-        outFp.Close();
         fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
         ST::printf(stderr, "Error opening file {} for input\n", inFile);
         fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
@@ -153,7 +152,6 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
     uint32_t shaderCodeLen = inFp.GetEOF();
     auto shaderCode = std::make_unique<char[]>(shaderCodeLen);
     inFp.Read(shaderCodeLen, shaderCode.get());
-    inFp.Close();
 
     try {
         auto compiledShader = ass.AssShader(shaderCode.get(), shaderCodeLen);
@@ -163,8 +161,6 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
         fputs(error.c_str(), stderr);
         fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
     }
-
-    outFp.Close();
 }
 
 int main(int argc, char* argv[])

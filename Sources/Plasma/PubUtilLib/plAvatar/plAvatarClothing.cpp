@@ -1468,7 +1468,6 @@ bool plClothingOutfit::WriteToFile(const plFileName &filename)
             S.Write(sdl.GetSDLData().size(), sdl.GetSDLData().data());
     }
 
-    S.Close();
     return true;
 }
 
@@ -1491,7 +1490,6 @@ bool plClothingOutfit::IReadFromFile(const plFileName &filename)
             else if (gender == plClothingMgr::kClothingBaseFemale)
                 plClothingMgr::ChangeAvatar("Female", filename);
         }
-        S.Close();
         return true;
     }
 
@@ -1517,7 +1515,6 @@ bool plClothingOutfit::IReadFromFile(const plFileName &filename)
         }
     }
 
-    S.Close();
     fSynchClients = true;
     ForceUpdate(true);
     SaveCustomizations(); // Sync with the vault

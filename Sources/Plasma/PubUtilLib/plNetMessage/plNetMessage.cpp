@@ -139,9 +139,8 @@ plNetMessage* plNetMessage::Create(const plNetCommonMessage* msg)
 {
     if (msg)
     {
-        hsReadOnlyStream readStream;
         ClassIndexType classIndex;
-        readStream.Init(sizeof(classIndex), msg->GetData());
+        hsReadOnlyStream readStream(sizeof(classIndex), msg->GetData());
         readStream.ReadLE16(&classIndex);
         if (!plFactory::IsValidClassIndex(classIndex))
             return nullptr;
@@ -170,8 +169,7 @@ int plNetMessage::PokeBuffer(char* bufIn, int bufLen, uint32_t peekOptions)
         memset(bufIn, 0, bufLen);
     
     ValidatePoke();
-    hsWriteOnlyStream writeStream;
-    writeStream.Init(bufLen, bufIn);
+    hsWriteOnlyStream writeStream(bufLen, bufIn);
     int ret;
     if (peekOptions & kBaseClassOnly)
     {
@@ -199,8 +197,7 @@ int plNetMessage::PeekBuffer(const char* bufIn, int bufLen, uint32_t peekOptions
     // set peek status based on peekOptions
     fPeekStatus = partialPeekOptions ? partialPeekOptions : kFullyPeeked;
     
-    hsReadOnlyStream readStream;
-    readStream.Init(bufLen, bufIn);
+    hsReadOnlyStream readStream(bufLen, bufIn);
     int ret;
     if (peekOptions & kBaseClassOnly)
     {

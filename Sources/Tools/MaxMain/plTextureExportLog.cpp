@@ -111,21 +111,21 @@ void    plTextureExportLog::AddTexture( plBitmap *texture )
 void    plTextureExportLog::Write()
 {
     plBMapNode      *node;
-    hsUNIXStream    *stream = new hsUNIXStream;
+    hsUNIXStream stream;
     char            str[ 128 ];
     uint32_t          size;
 
 
-    stream->Open( fFileName, "wt" );
-    stream->WriteString( "------------------------------------------------------------\n" );
-    stream->WriteString( "- Texture Export Data Log                                  -\n" );
-    stream->WriteString( "------------------------------------------------------------\n" );
-    stream->WriteString( "\n" );
+    stream.Open(fFileName, "wt");
+    stream.WriteString("------------------------------------------------------------\n");
+    stream.WriteString("- Texture Export Data Log                                  -\n");
+    stream.WriteString("------------------------------------------------------------\n");
+    stream.WriteString("\n");
     IWriteTabbedString( stream, "Name", 4 );
     IWriteTabbedString( stream, "Size", 3 );
     IWriteTabbedString( stream, "Type", 4 );
-    stream->WriteString( "\n" );
-    stream->WriteString( "------------------------------------------------------------\n" );
+    stream.WriteString("\n");
+    stream.WriteString("------------------------------------------------------------\n");
 
     for (node = fNodeList; node != nullptr; node = node->fNextNode)
     {
@@ -229,23 +229,20 @@ void    plTextureExportLog::Write()
         {
             IWriteTabbedString( stream, "Unknown", 3 );
         }
-        stream->WriteString( "\n" );
+        stream.WriteString("\n");
     }
-
-    stream->Close();
-    delete stream;
 
     // HACK: Prevent the destructor from writing out now
     fFileName = plFileName();
 }
 
-void    plTextureExportLog::IWriteTabbedString( hsStream *stream, const char *string, int numTabs )
+void plTextureExportLog::IWriteTabbedString(hsStream& stream, const char *string, int numTabs)
 {
     static char tabs[ 64 ];
     int         i;
 
 
-    stream->WriteString( string );
+    stream.WriteString(string);
 
     // Assumes 8 spaces per tab
     numTabs -= strlen( string ) / 8;
@@ -256,5 +253,5 @@ void    plTextureExportLog::IWriteTabbedString( hsStream *stream, const char *st
         tabs[ i ] = '\t';
     tabs[ i ] = 0;
 
-    stream->WriteString( tabs );
+    stream.WriteString(tabs);
 }

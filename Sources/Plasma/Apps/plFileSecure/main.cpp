@@ -104,7 +104,6 @@ void GenerateKey(bool useDefault)
     hsUNIXStream out;
     out.Open(plSecureStream::kKeyFilename, "wb");
     out.Write(sizeof(uint32_t) * std::size(key), (void*)key);
-    out.Close();
 }
 
 void SecureFiles(const plFileName& dir, const ST::string& ext, uint32_t* key)

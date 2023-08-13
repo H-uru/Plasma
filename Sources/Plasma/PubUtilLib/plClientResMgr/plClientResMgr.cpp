@@ -119,8 +119,6 @@ void plClientResMgr::ILoadResources(const plFileName& resfile)
             default:
                 break;
         }
-
-        in.Close();
     }
 }
 

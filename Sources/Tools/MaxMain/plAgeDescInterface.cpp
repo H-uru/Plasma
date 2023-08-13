@@ -1183,7 +1183,6 @@ void plAgeDescInterface::ISaveCurAge( const plFileName &path, bool checkSeqNum )
 
     // write it all out
     aged.Write(&s);
-    s.Close();
 }
 
 //// ICheckSequenceNumber /////////////////////////////////////////////////////
@@ -1310,7 +1309,6 @@ uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( bool getReservedPrefix
         if( stream.Open( fAgeFiles[ i ]->fPath, "rt" ) )
         {
             ages[ i ].Read( &stream );
-            stream.Close();
         }
     }
 

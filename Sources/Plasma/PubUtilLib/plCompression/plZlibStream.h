@@ -44,14 +44,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 
+#include <memory>
+
 //
 // This is for reading a .gz file from a buffer, and writing the uncompressed data to a file.
 // Call open with the name of the uncompressed file, then call write with the compressed data.
 //
-class plZlibStream : public hsStream
+class plZlibStream : public hsFileSystemStream
 {
 protected:
-    hsStream* fOutput;
+    std::unique_ptr<hsStream> fOutput;
     void* fZStream;
     bool fErrorOccurred;
     bool fDecompressedOk;
@@ -60,12 +62,18 @@ protected:
     plFileName fFilename;
     const char* fMode;
 
+    void Close();
+
 public:
     plZlibStream() : fOutput(), fZStream(), fErrorOccurred(), fDecompressedOk(), fMode() { }
+    plZlibStream(const plZlibStream& other) = delete;
+    plZlibStream(plZlibStream&& other) = delete;
     virtual ~plZlibStream();
 
+    const plZlibStream& operator=(const plZlibStream& other) = delete;
+    plZlibStream& operator=(plZlibStream&& other) = delete;
+
     bool     Open(const plFileName& filename, const char* mode) override;
-    bool     Close() override;
     uint32_t Write(uint32_t byteCount, const void* buffer) override;
 
     // Since most functions don't check the return value from Write, you can

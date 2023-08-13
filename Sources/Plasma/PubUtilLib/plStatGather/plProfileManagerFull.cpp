@@ -483,8 +483,6 @@ void plProfileManagerFull::ILogStats()
         }
         s.WriteByte((uint8_t)'\r');
         s.WriteByte((uint8_t)'\n');
-
-        s.Close();
     }
 
     fLogStats = false;

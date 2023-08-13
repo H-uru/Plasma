@@ -242,9 +242,7 @@ plMipmap*   plJPEG::ReadFromFile( const plFileName &fileName )
     delete [] tempbuffer;
     tempstream.Rewind();
 
-    plMipmap* ret = IRead(&tempstream);
-    in.Close();
-    return ret;
+    return IRead(&tempstream);
 }
 
 //// IWrite ///////////////////////////////////////////////////////////////////
@@ -360,7 +358,6 @@ bool    plJPEG::WriteToFile( const plFileName &fileName, plMipmap *sourceData )
 
         delete [] tempbuffer;
     }
-    out.Close();
     return ret;
 }
 

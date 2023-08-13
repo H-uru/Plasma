@@ -42,23 +42,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plRegistryNode.h"
 
+#include "hsStream.h"
 #include "plRegistryHelpers.h"
 #include "plRegistryKeyList.h"
 #include "plVersion.h"
 
 #include "pnKeyedObject/plKeyImp.h"
 
+plRegistryPageNode::plRegistryPageNode()
+{}
+
 plRegistryPageNode::plRegistryPageNode(const plFileName& path)
     : fValid(kPageCorrupt)
     , fPath(path)
     , fLoadedTypes(0)
+    , fStream(nullptr)
     , fOpenRequests(0)
     , fIsNewPage(false)
 {
     hsStream* stream = OpenStream();
     if (stream)
     {
-        fPageInfo.Read(&fStream);
+        fPageInfo.Read(stream);
         fValid = IVerify();
         CloseStream();
     }
@@ -69,6 +74,7 @@ plRegistryPageNode::plRegistryPageNode(const plLocation& location, const ST::str
     : fValid(kPageOk)
     , fPageInfo(location)
     , fLoadedTypes(0)
+    , fStream(nullptr)
     , fOpenRequests(0)
     , fIsNewPage(true)
 {
@@ -124,11 +130,15 @@ hsStream* plRegistryPageNode::OpenStream()
 {
     if (fOpenRequests == 0)
     {
-        if (!fStream.Open(fPath, "rb"))
+        hsAssert(fStream == nullptr, "plRegistryPageNode::fStream should be nullptr when not open!");
+        auto stream = std::make_unique<hsBufferedStream>();
+        if (!stream->Open(fPath, "rb")) {
             return nullptr;
+        }
+        fStream = std::move(stream);
     }
     fOpenRequests++;
-    return &fStream;
+    return fStream.get();
 }
 
 void plRegistryPageNode::CloseStream()
@@ -136,8 +146,9 @@ void plRegistryPageNode::CloseStream()
     if (fOpenRequests > 0)
         fOpenRequests--;
 
-    if (fOpenRequests == 0)
-        fStream.Close();
+    if (fOpenRequests == 0) {
+        fStream.reset();
+    }
 }
 
 void plRegistryPageNode::LoadKeys()
@@ -212,9 +223,11 @@ public:
 
 void plRegistryPageNode::Write()
 {
+    hsAssert(fStream == nullptr, "Trying to write while the page is open for reading");
     hsAssert(fOpenRequests == 0, "Trying to write while the page is open for reading");
 
-    if (!fStream.Open(fPath, "wb"))
+    hsBufferedStream stream;
+    if (!stream.Open(fPath, "wb"))
     {
         hsAssert(0, "Couldn't open file for writing");
         return;
@@ -233,31 +246,29 @@ void plRegistryPageNode::Write()
     }
 
     // First thing we write is the pageinfo.  Later we'll rewind and overwrite this with the final values
-    fPageInfo.Write(&fStream);
+    fPageInfo.Write(&stream);
 
-    fPageInfo.SetDataStart(fStream.GetPosition());
+    fPageInfo.SetDataStart(stream.GetPosition());
 
     // Write all our objects
-    plWriteIterator writer(&fStream);
+    plWriteIterator writer(&stream);
     IterateKeys(&writer);
 
-    fPageInfo.SetIndexStart(fStream.GetPosition());
+    fPageInfo.SetIndexStart(stream.GetPosition());
 
     // Write our keys
-    fStream.WriteLE32((uint32_t)fKeyLists.size());
+    stream.WriteLE32((uint32_t)fKeyLists.size());
     for (it = fKeyLists.begin(); it != fKeyLists.end(); it++)
     {
         plRegistryKeyList* keyList = it->second;
-        fStream.WriteLE16(keyList->GetClassType());
-        keyList->Write(&fStream);
+        stream.WriteLE16(keyList->GetClassType());
+        keyList->Write(&stream);
     }
 
     // Rewind and write the pageinfo with the correct data and index offsets
-    fStream.Rewind();
-    fPageInfo.SetChecksum(fStream.GetEOF() - fPageInfo.GetDataStart());
-    fPageInfo.Write(&fStream);
-
-    fStream.Close();
+    stream.Rewind();
+    fPageInfo.SetChecksum(stream.GetEOF() - fPageInfo.GetDataStart());
+    fPageInfo.Write(&stream);
 }
 
 //// IterateKeys /////////////////////////////////////////////////////////////

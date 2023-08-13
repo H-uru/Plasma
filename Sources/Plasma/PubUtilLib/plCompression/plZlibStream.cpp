@@ -54,7 +54,7 @@ void ZlibFree(voidpf opaque, voidpf address)
 
 plZlibStream::~plZlibStream()
 {
-    hsAssert(!fOutput && !fZStream, "plZlibStream not closed");
+    Close();
 }
 
 bool plZlibStream::Open(const plFileName& filename, const char* mode)
@@ -62,18 +62,18 @@ bool plZlibStream::Open(const plFileName& filename, const char* mode)
     fFilename = filename;
     fMode = mode;
 
-    fOutput = new hsUNIXStream;
-    return fOutput->Open(filename, "wb");
+    auto output = std::make_unique<hsUNIXStream>();
+    if (output->Open(filename, "wb")) {
+        fOutput = std::move(output);
+        return true;
+    } else {
+        return false;
+    }
 }
 
-bool plZlibStream::Close()
+void plZlibStream::Close()
 {
-    if (fOutput)
-    {
-        fOutput->Close();
-        delete fOutput;
-        fOutput = nullptr;
-    }
+    fOutput.reset();
     if (fZStream)
     {
         z_streamp zstream = (z_streamp)fZStream;
@@ -81,8 +81,6 @@ bool plZlibStream::Close()
         delete zstream;
         fZStream = nullptr;
     }
-
-    return true;
 }
 
 uint32_t plZlibStream::Write(uint32_t byteCount, const void* buffer)

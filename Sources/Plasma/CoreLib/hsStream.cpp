@@ -427,7 +427,9 @@ void hsStream::WriteLEFloat(size_t count, const float values[])
 
 hsUNIXStream::~hsUNIXStream()
 {
-    // Don't Close here, because Sub classes Don't always want that behaviour!
+    if (fRef) {
+        fclose(fRef);
+    }
 }
 
 bool hsUNIXStream::Open(const plFileName &name, const char *mode)
@@ -435,16 +437,6 @@ bool hsUNIXStream::Open(const plFileName &name, const char *mode)
     fPosition = 0;
     fRef = plFileSystem::Open(name, mode);
     return (fRef) ? true : false;
-}
-
-bool hsUNIXStream::Close()
-{
-    int rtn = true;
-    if (fRef)
-        rtn = fclose(fRef);
-    fRef = nullptr;
-
-    return !rtn;
 }
 
 uint32_t hsUNIXStream::Read(uint32_t bytes,  void* buffer)
@@ -549,16 +541,9 @@ void hsUNIXStream::Flush()
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-plReadOnlySubStream::~plReadOnlySubStream()
+plReadOnlySubStream::plReadOnlySubStream(hsStream* base, uint32_t offset, uint32_t length)
+    : fBase(base), fOffset(offset), fLength(length)
 {
-}
-
-void    plReadOnlySubStream::Open( hsStream *base, uint32_t offset, uint32_t length )
-{
-    fBase = base;
-    fOffset = offset;
-    fLength = length;
-
     fBase->SetPosition( fOffset );
     IFixPosition();
 }
@@ -803,6 +788,12 @@ void hsReadOnlyStream::CopyToMem(void* mem)
 
 
 ////////////////////////////////////////////////////////////////////////////////////
+
+bool hsWriteOnlyStream::AtEnd()
+{
+    return fData >= fStop;
+}
+
 uint32_t hsWriteOnlyStream::Read(uint32_t byteCount, void* buffer)
 {
     hsThrow( "can't read to a writeonly stream");
@@ -817,6 +808,39 @@ uint32_t hsWriteOnlyStream::Write(uint32_t byteCount, const void* buffer)
     fData += byteCount;
     fPosition += byteCount;
     return byteCount;
+}
+
+void hsWriteOnlyStream::Skip(uint32_t deltaByteCount)
+{
+    fPosition += deltaByteCount;
+    fData += deltaByteCount;
+    if (fData > fStop) {
+        hsThrow("Skip went past end of stream");
+    }
+}
+
+void hsWriteOnlyStream::Rewind()
+{
+    fPosition = 0;
+    fData = fStart;
+}
+
+void hsWriteOnlyStream::FastFwd()
+{
+    fPosition = GetEOF();
+    fData = fStop;
+}
+
+void hsWriteOnlyStream::Truncate()
+{
+    hsThrow("can't change size of hsWriteOnlyStream");
+}
+
+void hsWriteOnlyStream::CopyToMem(void* mem)
+{
+    if (fData < fStop) {
+        memmove(mem, fData, fStop - fData);
+    }
 }
 
 
@@ -972,6 +996,35 @@ hsBufferedStream::hsBufferedStream()
 {
 }
 
+hsBufferedStream::~hsBufferedStream()
+{
+    if (fRef) {
+        fclose(fRef);
+    }
+
+#ifdef LOG_BUFFERED
+    hsUNIXStream s;
+    static bool firstClose = true;
+    if (firstClose) {
+        firstClose = false;
+        s.Open("log\\BufferedStream.csv", "wt");
+        s.WriteString("File,Hits,Misses,Read In,Read Out,Read Direct,% Wasted,Reason\n");
+    } else {
+        s.Open("log\\BufferedStream.csv", "at");
+    }
+
+    int wasted = 100;
+    if (fBufferReadIn + fReadDirect > 0) {
+        wasted -= int((float(fBufferReadOut+fReadDirect) / float(fBufferReadIn+fReadDirect)) * 100.f);
+    }
+
+    s.WriteString(ST::format("{},{},{},{},{},{},{},{}\n",
+        fFilename, fBufferHits, fBufferMisses, fBufferReadIn, fBufferReadOut, fReadDirect,
+        wasted,
+        fCloseReason ? fCloseReason : "Unknown"));
+#endif // LOG_BUFFERED
+}
+
 bool hsBufferedStream::Open(const plFileName& name, const char* mode)
 {
     hsAssert(!fRef, "hsBufferedStream:Open Stream already opened");
@@ -989,40 +1042,6 @@ bool hsBufferedStream::Open(const plFileName& name, const char* mode)
 #endif // LOG_BUFFERED
 
     return true;
-}
-
-bool hsBufferedStream::Close()
-{
-    int rtn = true;
-    if (fRef)
-        rtn = fclose(fRef);
-    fRef = nullptr;
-
-#ifdef LOG_BUFFERED
-    hsUNIXStream s;
-    static bool firstClose = true;
-    if (firstClose)
-    {
-        firstClose = false;
-        s.Open("log\\BufferedStream.csv", "wt");
-        s.WriteString("File,Hits,Misses,Read In,Read Out,Read Direct,% Wasted,Reason\n");
-    }
-    else
-        s.Open("log\\BufferedStream.csv", "at");
-
-    int wasted = 100;
-    if (fBufferReadIn + fReadDirect > 0)
-        wasted -= int((float(fBufferReadOut+fReadDirect) / float(fBufferReadIn+fReadDirect)) * 100.f);
-
-    s.WriteString(ST::format("{},{},{},{},{},{},{},{}\n",
-        fFilename, fBufferHits, fBufferMisses, fBufferReadIn, fBufferReadOut, fReadDirect,
-        wasted,
-        fCloseReason ? fCloseReason : "Unknown"));
-
-    s.Close();
-#endif // LOG_BUFFERED
-
-    return !rtn;
 }
 
 FILE* hsBufferedStream::GetFileRef()

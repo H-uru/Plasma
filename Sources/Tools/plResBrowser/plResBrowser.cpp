@@ -254,6 +254,7 @@ void plResBrowser::SaveSelectedObject()
             stream->SetPosition(keyImp->GetStartPos());
             stream->Read(keyImp->GetDataLen(), buffer);
         }
+        pageNode->CloseStream();
 
         if (!buffer)
             return;
@@ -261,7 +262,6 @@ void plResBrowser::SaveSelectedObject()
         hsUNIXStream outStream;
         outStream.Open(fileName.toUtf8().constData(), "wb");
         outStream.Write(keyImp->GetDataLen(), buffer);
-        outStream.Close();
 
         delete[] buffer;
     }

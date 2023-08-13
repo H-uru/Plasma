@@ -233,7 +233,7 @@ public:
         : fParent(parent), fFilename(filename), fFlags(), fBytesWritten(), fDLStartTime(), plZlibStream()
     {
         fParent->fTotalBytes += size;
-        fOutput = new hsRAMStream;
+        fOutput = std::make_unique<hsRAMStream>();
     }
 
     pfPatcherStream(pfPatcherWorker* parent, const pfPatcherQueuedFile& file)
@@ -382,7 +382,6 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
 {
     pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
     pfPatcherStream* stream = static_cast<pfPatcherStream*>(writer);
-    stream->Close();
 
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded File '{}'", stream->GetFileName());
@@ -422,7 +421,6 @@ pfPatcherWorker::~pfPatcherWorker()
         hsLockGuard(fRequestMut);
         std::for_each(fRequests.begin(), fRequests.end(),
             [] (const Request& req) {
-                if (req.fStream) req.fStream->Close();
                 delete req.fStream;
             }
         );
@@ -632,8 +630,9 @@ void pfPatcherWorker::WhitelistFile(const plFileName& file, bool justDownloaded,
         ST::string ext = file.GetFileExt();
         if (ext.compare_i("pak") == 0 || ext.compare_i("sdl") == 0) {
             if (!stream) {
-                stream = new hsUNIXStream;
-                stream->Open(file, "rb");
+                hsUNIXStream* newStream = new hsUNIXStream;
+                newStream->Open(file, "rb");
+                stream = newStream;
             }
 
             // if something terrible goes wrong (eg bad encryption), we can exit sanely
@@ -641,9 +640,8 @@ void pfPatcherWorker::WhitelistFile(const plFileName& file, bool justDownloaded,
             if (!fGameCodeDiscovered(file, stream))
                 EndPatch(kNetErrInternalError, "SecurePreloader failed.");
         }
-    } else if (stream) {
+    } else {
         // no dad gum memory leaks, m'kay?
-        stream->Close();
         delete stream;
     }
 }
