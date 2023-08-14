@@ -61,10 +61,6 @@ struct RelVaultNodeLink {
     unsigned                    ownerId;
     bool                        seen;
 
-    RelVaultNodeLink(bool seen, unsigned ownerId)
-        : node(new RelVaultNode, hsStealRef), ownerId(ownerId), seen(seen)
-    { }
-
     RelVaultNodeLink(bool seen, unsigned ownerId, hsRef<RelVaultNode> node)
         : node(std::move(node)), ownerId(ownerId), seen(seen)
     { }
