@@ -75,7 +75,7 @@ struct IRelVaultNode {
     hsWeakRef<RelVaultNode> node;
 
     std::unordered_map<unsigned, hsRef<RelVaultNode>> parents;
-    std::unordered_map<unsigned, RelVaultNodeLink*> children;
+    std::unordered_map<unsigned, RelVaultNodeLink> children;
 
     IRelVaultNode(hsWeakRef<RelVaultNode> node);
     ~IRelVaultNode ();
@@ -363,8 +363,7 @@ static void BuildNodeTree (
         
         if (!isImmediateChild) {
             // Add child to parent's children table
-            RelVaultNodeLink* childLink = new RelVaultNodeLink(refs[i].seen, refs[i].ownerId, childNode);
-            parentNode->state->children.emplace(childNode->GetNodeId(), childLink);
+            parentNode->state->children.emplace(childNode->GetNodeId(), RelVaultNodeLink(refs[i].seen, refs[i].ownerId, childNode));
 
             if (notifyNow || childNode->GetNodeType() != 0) {
                 // We made a new link, so make the callbacks
@@ -1048,9 +1047,9 @@ void IRelVaultNode::UnlinkFromRelatives () {
     }
     for (auto it = children.begin(); it != children.end();) {
         // Advance the iterator before calling Unlink so that it doesn't get invalidated
-        RelVaultNodeLink* link = it->second;
+        hsRef<RelVaultNode> childNode = it->second.node;
         ++it;
-        link->node->state->Unlink(node);
+        childNode->state->Unlink(node);
     }
 
     ASSERT(parents.empty());
@@ -1074,13 +1073,12 @@ void IRelVaultNode::Unlink(hsWeakRef<RelVaultNode> other) {
 
     auto childIt = children.find(other->GetNodeId());
     if (childIt != children.end()) {
-        // Copy the link pointer - the erase call will invalidate the iterator!
-        RelVaultNodeLink* link = childIt->second;
+        // Grab the node ref - the erase call will invalidate the iterator!
+        hsRef<RelVaultNode> childNode = std::move(childIt->second.node);
         // make them non-findable in our children table
         children.erase(childIt);
         // remove us from other's tables.
-        link->node->state->Unlink(node);
-        delete link;
+        childNode->state->Unlink(node);
     }
 }
 
@@ -1108,9 +1106,11 @@ bool RelVaultNode::IsParentOf (unsigned childId, unsigned maxDepth) {
         return false;
     if (state->children.find(childId) != state->children.end())
         return true;
-    for (const auto& [nodeId, link] : state->children)
-        if (link->node->IsParentOf(childId, maxDepth - 1))
+    for (const auto& [nodeId, link] : state->children) {
+        if (link.node->IsParentOf(childId, maxDepth - 1)) {
             return true;
+        }
+    }
     return false;
 }
 
@@ -1155,8 +1155,8 @@ void RelVaultNode::GetChildNodeIds (
     if (!maxDepth)
         return;
     for (const auto& [nodeId, link] : state->children) {
-        nodeIds->emplace_back(link->node->GetNodeId());
-        link->node->GetChildNodeIds(nodeIds, maxDepth-1);
+        nodeIds->emplace_back(link.node->GetNodeId());
+        link.node->GetChildNodeIds(nodeIds, maxDepth-1);
     }
 }
 
@@ -1206,13 +1206,15 @@ hsRef<RelVaultNode> RelVaultNode::GetChildNode (
         return nullptr;
 
     for (const auto& [nodeId, link] : state->children) {
-        if (link->node->Matches(templateNode.Get()))
-            return link->node;
+        if (link.node->Matches(templateNode.Get())) {
+            return link.node;
+        }
     }
 
     for (const auto& [nodeId, link] : state->children) {
-        if (hsRef<RelVaultNode> node = link->node->GetChildNode(templateNode, maxDepth-1))
+        if (hsRef<RelVaultNode> node = link.node->GetChildNode(templateNode, maxDepth - 1)) {
             return node;
+        }
     }
 
     return nullptr;
@@ -1273,8 +1275,8 @@ void RelVaultNode::GetChildNodes (
         return;
 
     for (const auto& [nodeId, link] : state->children) {
-        nodes->push_back(link->node);
-        link->node->GetChildNodes(
+        nodes->push_back(link.node);
+        link.node->GetChildNodes(
             maxDepth - 1,
             nodes
         );
@@ -1288,10 +1290,11 @@ void RelVaultNode::GetChildNodes (
     RelVaultNode::RefList * nodes
 ) {
     for (const auto& [nodeId, link] : state->children) {
-        if (link->node->Matches(templateNode.Get()))
-            nodes->push_back(link->node);
+        if (link.node->Matches(templateNode.Get())) {
+            nodes->push_back(link.node);
+        }
 
-        link->node->GetChildNodes(
+        link.node->GetChildNodes(
             templateNode,
             maxDepth - 1,
             nodes
@@ -1339,8 +1342,7 @@ unsigned RelVaultNode::GetRefOwnerId (unsigned parentId) {
         const hsRef<RelVaultNode>& parentNode = parentIt->second;
         auto childIt = parentNode->state->children.find(GetNodeId());
         if (childIt != parentNode->state->children.end()) {
-            RelVaultNodeLink* childLink = childIt->second;
-            return childLink->ownerId;
+            return childIt->second.ownerId;
         }
     }
     return 0;
@@ -1354,8 +1356,7 @@ bool RelVaultNode::BeenSeen (unsigned parentId) const {
         const hsRef<RelVaultNode>& parentNode = parentIt->second;
         auto childIt = parentNode->state->children.find(GetNodeId());
         if (childIt != parentNode->state->children.end()) {
-            RelVaultNodeLink* childLink = childIt->second;
-            return childLink->seen;
+            return childIt->second.seen;
         }
     }
     return true;
@@ -1369,9 +1370,9 @@ void RelVaultNode::SetSeen (unsigned parentId, bool seen) {
         const hsRef<RelVaultNode>& parentNode = parentIt->second;
         auto childIt = parentNode->state->children.find(GetNodeId());
         if (childIt != parentNode->state->children.end()) {
-            RelVaultNodeLink* childLink = childIt->second;
-            if (childLink->seen != seen) {
-                childLink->seen = seen;
+            RelVaultNodeLink& childLink = childIt->second;
+            if (childLink.seen != seen) {
+                childLink.seen = seen;
                 NetCliAuthVaultSetSeen(parentId, GetNodeId(), seen);
             }
         }
@@ -1455,7 +1456,7 @@ void RelVaultNode::Print (const ST::string& tag, unsigned level) {
 void RelVaultNode::PrintTree (unsigned level) {
     Print("", level);
     for (const auto& [nodeId, link] : state->children) {
-        link->node->PrintTree(level + 1);
+        link.node->PrintTree(level + 1);
     }
 }
 
