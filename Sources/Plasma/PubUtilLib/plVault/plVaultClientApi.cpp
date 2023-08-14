@@ -55,8 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-// A RelVaultNodeLink may be either stored in the global table,
-// or stored in an IRelVaultNode's parents or children table.
+// A RelVaultNodeLink may be stored in an IRelVaultNode's parents or children table.
 struct RelVaultNodeLink {
     hsRef<RelVaultNode>         node;
     unsigned                    ownerId;
@@ -252,7 +251,7 @@ struct AddChildNodeFetchTrans {
 *
 ***/
 
-std::unordered_map<unsigned, RelVaultNodeLink*> s_nodes;
+std::unordered_map<unsigned, hsRef<RelVaultNode>> s_nodes;
 
 std::list<VaultCallback*> s_callbacks;
 
@@ -297,19 +296,20 @@ static void VaultNodeAddedDownloadCallback(ENetError result, void * param) {
             auto childIt = s_nodes.find(childId);
 
             if (parentIt != s_nodes.end() && childIt != s_nodes.end()) {
-                RelVaultNodeLink* parentLink = parentIt->second;
-                RelVaultNodeLink* childLink = childIt->second;
-                if (childLink->node->GetNodeType() == plVault::kNodeType_TextNote) {
-                    VaultTextNoteNode textNote(childLink->node);
-                    if (textNote.GetNoteType() == plVault::kNoteType_Visit)
-                        VaultProcessVisitNote(childLink->node);
-                    else if (textNote.GetNoteType() == plVault::kNoteType_UnVisit)
-                        VaultProcessUnvisitNote(childLink->node);
+                const hsRef<RelVaultNode>& parentNode = parentIt->second;
+                const hsRef<RelVaultNode>& childNode = childIt->second;
+                if (childNode->GetNodeType() == plVault::kNodeType_TextNote) {
+                    VaultTextNoteNode textNote(childNode);
+                    if (textNote.GetNoteType() == plVault::kNoteType_Visit) {
+                        VaultProcessVisitNote(childNode);
+                    } else if (textNote.GetNoteType() == plVault::kNoteType_UnVisit) {
+                        VaultProcessUnvisitNote(childNode);
+                    }
                 }
 
                 if (s_suppressCallbacks == 0) {
                     for (auto cb : s_callbacks) {
-                        cb->AddedChildNode(parentLink->node, childLink->node);
+                        cb->AddedChildNode(parentNode, childNode);
                     }
                 }
             }
@@ -329,47 +329,42 @@ static void BuildNodeTree (
     for (unsigned i = 0; i < refCount; ++i) {
         // Find/Create global links
         auto parentIt = s_nodes.find(refs[i].parentId);
-        RelVaultNodeLink* parentLink;
+        hsRef<RelVaultNode> parentNode;
         if (parentIt == s_nodes.end()) {
             newNodeIds->emplace_back(refs[i].parentId);
-            parentLink = new RelVaultNodeLink(false, 0);
-            parentLink->node->SetNodeId_NoDirty(refs[i].parentId);
-            s_nodes.emplace(refs[i].parentId, parentLink);
+            parentNode.Steal(new RelVaultNode());
+            parentNode->SetNodeId_NoDirty(refs[i].parentId);
+            parentIt = s_nodes.emplace(refs[i].parentId, parentNode).first;
         } else {
-            parentLink = parentIt->second;
+            parentNode = parentIt->second;
             existingNodeIds->emplace_back(refs[i].parentId);
         }
 
         auto childIt = s_nodes.find(refs[i].childId);
-        RelVaultNodeLink* childLink;
+        hsRef<RelVaultNode> childNode;
         if (childIt == s_nodes.end()) {
             newNodeIds->emplace_back(refs[i].childId);
-            childLink = new RelVaultNodeLink(refs[i].seen, refs[i].ownerId);
-            childLink->node->SetNodeId_NoDirty(refs[i].childId);
-            s_nodes.emplace(refs[i].childId, childLink);
+            childNode.Steal(new RelVaultNode());
+            childNode->SetNodeId_NoDirty(refs[i].childId);
+            s_nodes.emplace(refs[i].childId, childNode);
         } else {
-            childLink = childIt->second;
+            childNode = childIt->second;
             existingNodeIds->emplace_back(refs[i].childId);
-            if (unsigned ownerId = refs[i].ownerId)
-                childLink->ownerId = ownerId;
         }
 
-        hsRef<RelVaultNode> parentNode = parentLink->node;
-        hsRef<RelVaultNode> childNode = childLink->node;
-        
         bool isImmediateParent = parentNode->IsParentOf(refs[i].childId, 1);
         bool isImmediateChild = childNode->IsChildOf(refs[i].parentId, 1);
             
         if (!isImmediateParent) {
             // Add parent to child's parents table
-            parentLink = new RelVaultNodeLink(false, 0, parentNode);
+            RelVaultNodeLink* parentLink = new RelVaultNodeLink(false, 0, parentNode);
             childNode->state->parents.emplace(parentNode->GetNodeId(), parentLink);
             LogMsg(kLogDebug, "Added relationship: p:{},c:{}", refs[i].parentId, refs[i].childId);
         }
         
         if (!isImmediateChild) {
             // Add child to parent's children table
-            childLink = new RelVaultNodeLink(refs[i].seen, refs[i].ownerId, childNode);
+            RelVaultNodeLink* childLink = new RelVaultNodeLink(refs[i].seen, refs[i].ownerId, childNode);
             parentNode->state->children.emplace(childNode->GetNodeId(), childLink);
 
             if (notifyNow || childNode->GetNodeType() != 0) {
@@ -459,13 +454,15 @@ static void FetchNodesFromRefs (
     // Fetch the nodes that do not yet have a nodetype
     unsigned prevId = 0;
     for (unsigned nodeId : nodeIds) {
-        RelVaultNodeLink* link = s_nodes.at(nodeId);
-        if (link->node->GetNodeType() != 0)
+        const hsRef<RelVaultNode>& node = s_nodes.at(nodeId);
+        if (node->GetNodeType() != 0) {
             continue;
+        }
         // filter duplicates
-        if (link->node->GetNodeId() == prevId)
+        if (node->GetNodeId() == prevId) {
             continue;
-        prevId = link->node->GetNodeId();
+        }
+        prevId = node->GetNodeId();
         NetCliAuthVaultNodeFetch(
             nodeId,
             fetchCallback,
@@ -513,18 +510,18 @@ static void VaultNodeFetched (
 
     // Add to global node table
     auto it = s_nodes.find(node->GetNodeId());
-    RelVaultNodeLink* link;
+    hsRef<RelVaultNode> globalNode;
     if (it == s_nodes.end()) {
-        link = new RelVaultNodeLink(false, 0);
-        link->node->SetNodeId_NoDirty(node->GetNodeId());
-        s_nodes.emplace(node->GetNodeId(), link);
+        globalNode.Steal(new RelVaultNode());
+        globalNode->SetNodeId_NoDirty(node->GetNodeId());
+        it = s_nodes.emplace(node->GetNodeId(), globalNode).first;
     } else {
-        link = it->second;
+        globalNode = it->second;
     }
-    link->node->CopyFrom(node);
-    InitFetchedNode(link->node);
+    globalNode->CopyFrom(node);
+    InitFetchedNode(globalNode);
 
-    link->node->Print("Fetched", 0);
+    globalNode->Print("Fetched", 0);
 }
 
 //============================================================================
@@ -547,9 +544,9 @@ static void ChangedVaultNodeFetched (
     // that is to suppress spurious callbacks, but node changes are
     // probably not spurious.
     if (it != s_nodes.end()) {
-        RelVaultNodeLink* savedLink = it->second;
+        const hsRef<RelVaultNode>& savedNode = it->second;
         for (auto cb : s_callbacks) {
-            cb->ChangedNode(savedLink->node);
+            cb->ChangedNode(savedNode);
         }
     }
 }
@@ -569,15 +566,15 @@ static void VaultNodeChanged (
         LogMsg(kLogDebug, "rcvd change notification for node {}, but node doesn't exist locally.", nodeId);
         return;
     }
-    RelVaultNodeLink* link = it->second;
+    const hsRef<RelVaultNode>& node = it->second;
 
-    if (link->node->GetRevision() == revisionId) {
+    if (node->GetRevision() == revisionId) {
         // We are the party responsible for the change, so we already have the
         // latest version of the node; no need to fetch it. However, we do need to fire off
         // the "hey this was saved" callback.
         if (s_suppressCallbacks == 0) {
             for (auto cb : s_callbacks) {
-                cb->ChangedNode(link->node);
+                cb->ChangedNode(node);
             }
         }
     } else {
@@ -620,13 +617,15 @@ static void VaultNodeAdded (
     unsigned prevId = 0;
     unsigned i = 0;
     for (; i < nodeIds.size(); ++i) {
-        RelVaultNodeLink* link = s_nodes.at(nodeIds[i]);
-        if (link->node->GetNodeType() != 0)
+        const hsRef<RelVaultNode>& node = s_nodes.at(nodeIds[i]);
+        if (node->GetNodeType() != 0) {
             continue;
+        }
         // filter duplicates
-        if (link->node->GetNodeId() == prevId)
+        if (node->GetNodeId() == prevId) {
             continue;
-        prevId = link->node->GetNodeId();
+        }
+        prevId = node->GetNodeId();
         VaultDownload(
             "NodeAdded",
             nodeIds[i],
@@ -642,12 +641,12 @@ static void VaultNodeAdded (
     }
 
     // if the added element is already downloaded then send the callbacks now
-    RelVaultNodeLink* parentLink = s_nodes.at(parentId);
-    RelVaultNodeLink* childLink = s_nodes.at(childId);
+    const hsRef<RelVaultNode>& parentNode = s_nodes.at(parentId);
+    const hsRef<RelVaultNode>& childNode = s_nodes.at(childId);
 
-    if (childLink->node->GetNodeType() != 0 && s_suppressCallbacks == 0) {
+    if (childNode->GetNodeType() != 0 && s_suppressCallbacks == 0) {
         for (auto cb : s_callbacks) {
-            cb->AddedChildNode(parentLink->node, childLink->node);
+            cb->AddedChildNode(parentNode, childNode);
         }
     }
 }
@@ -670,17 +669,17 @@ static void VaultNodeRemoved (
             break;
         }
 
-        RelVaultNodeLink* parentLink = parentIt->second;
-        RelVaultNodeLink* childLink = childIt->second;
-        if (parentLink->node->IsParentOf(childId, 1) && s_suppressCallbacks == 0) {
+        const hsRef<RelVaultNode>& parentNode = parentIt->second;
+        const hsRef<RelVaultNode>& childNode = childIt->second;
+        if (parentNode->IsParentOf(childId, 1) && s_suppressCallbacks == 0) {
             // We have the relationship, so make the callbacks
             for (auto cb : s_callbacks) {
-                cb->RemovingChildNode(parentLink->node, childLink->node);
+                cb->RemovingChildNode(parentNode, childNode);
             }
         }
-            
-        parentLink->node->state->Unlink(childLink->node);
-        childLink->node->state->Unlink(parentLink->node);
+
+        parentNode->state->Unlink(childNode);
+        childNode->state->Unlink(parentNode);
         break;
     }
 }
@@ -703,13 +702,13 @@ static void SaveDirtyNodes () {
     if (!s_nextSaveMs || signed(s_nextSaveMs - currTimeMs) <= 0) {
         s_nextSaveMs = (currTimeMs + kSaveUpdateIntervalMs) | 1;
         unsigned bytesWritten = 0;
-        for (const auto& [nodeId, link] : s_nodes) {
+        for (const auto& [nodeId, node] : s_nodes) {
             if (bytesWritten >= kMaxBytesPerSaveUpdate)
                 break;
-            if (link->node->IsDirty()) {
-                if (unsigned bytes = NetCliAuthVaultNodeSave(link->node.Get(), nullptr, nullptr); bytes) {
+            if (node->IsDirty()) {
+                if (unsigned bytes = NetCliAuthVaultNodeSave(node.Get(), nullptr, nullptr); bytes) {
                     bytesWritten += bytes;
-                    link->node->Print("Saving", 0);
+                    node->Print("Saving", 0);
                 }
             }
         }
@@ -778,7 +777,7 @@ void VaultCreateNodeTrans::VaultNodeFetched (
     VaultCreateNodeTrans * trans = (VaultCreateNodeTrans *)param;
     
     if (IS_NET_SUCCESS(result)) {
-        trans->node = s_nodes.at(node->GetNodeId())->node;
+        trans->node = s_nodes.at(node->GetNodeId());
     } else {
         trans->node = nullptr;
     }
@@ -898,7 +897,7 @@ void VaultDownloadTrans::VaultNodeRefsFetched (
         else {
             // root node has no child heirarchy? Make sure we still d/l the root node if necessary.
             auto rootNodeIt = s_nodes.find(trans->vaultId);
-            if (rootNodeIt == s_nodes.end() || rootNodeIt->second->node->GetNodeType() == 0) {
+            if (rootNodeIt == s_nodes.end() || rootNodeIt->second->GetNodeType() == 0) {
                 NetCliAuthVaultNodeFetch(
                     trans->vaultId,
                     VaultDownloadTrans::VaultNodeFetched,
@@ -1531,10 +1530,8 @@ void VaultDestroy () {
     VaultClearDeviceInboxMap();
 
     for (auto it = s_nodes.begin(); it != s_nodes.end();) {
-        RelVaultNodeLink* link = it->second;
-        link->node->state->UnlinkFromRelatives();
+        it->second->state->UnlinkFromRelatives();
         it = s_nodes.erase(it);
-        delete link;
     }
 }
 
@@ -1555,9 +1552,9 @@ hsRef<RelVaultNode> VaultGetNode (
     hsWeakRef<NetVaultNode> templateNode
 ) {
     ASSERT(templateNode);
-    for (const auto& [nodeId, link] : s_nodes) {
-        if (link->node->Matches(templateNode.Get())) {
-            return link->node;
+    for (const auto& [nodeId, node] : s_nodes) {
+        if (node->Matches(templateNode.Get())) {
+            return node;
         }
     }
     return nullptr;
@@ -1568,7 +1565,7 @@ hsRef<RelVaultNode> VaultGetNode (
     unsigned nodeId
 ) {
     auto it = s_nodes.find(nodeId);
-    return it == s_nodes.end() ? nullptr : it->second->node;
+    return it == s_nodes.end() ? nullptr : it->second;
 }
 
 //============================================================================
@@ -1592,18 +1589,15 @@ void VaultAddChildNode (
 
     auto parentIt = s_nodes.find(parentId);
     if (parentIt != s_nodes.end()) {
-        RelVaultNodeLink* parentLink = parentIt->second;
+        const hsRef<RelVaultNode>& parentNode = parentIt->second;
         auto childIt = s_nodes.find(childId);
-        RelVaultNodeLink* childLink;
+        hsRef<RelVaultNode> childNode;
         if (childIt == s_nodes.end()) {
-            childLink = new RelVaultNodeLink(false, ownerId);
-            childLink->node->SetNodeId_NoDirty(childId);
-            s_nodes.emplace(childId, childLink);
+            childNode.Steal(new RelVaultNode());
+            childNode->SetNodeId_NoDirty(childId);
+            s_nodes.emplace(childId, childNode);
         } else {
-            childLink = childIt->second;
-            if (ownerId) {
-                childLink->ownerId = ownerId;
-            }
+            childNode = childIt->second;
         }
 
         // We can do a sanity check for a would-be circular link, but it isn't
@@ -1612,13 +1606,13 @@ void VaultAddChildNode (
         // before the authoritative check, we're risking the local client operating
         // on bad, possibly harmful vault state.  Not harmful in a national security
         // kinda way, but still harmful.
-        if (parentLink->node->IsChildOf(childId, 255)) {
+        if (parentNode->IsChildOf(childId, 255)) {
             LogMsg(kLogDebug, "Node relationship would be circular: p:{}, c:{}", parentId, childId);
             // callback now with error code
             if (callback)
                 callback(kNetErrCircularReference, param);
         }
-        else if (childLink->node->IsParentOf(parentId, 255)) {
+        else if (childNode->IsParentOf(parentId, 255)) {
             LogMsg(kLogDebug, "Node relationship would be circular: p:{}, c:{}", parentId, childId);
             // callback now with error code
             if (callback)
@@ -1634,10 +1628,10 @@ void VaultAddChildNode (
 
             BuildNodeTree(refs, std::size(refs), &newNodeIds, &existingNodeIds);
         
-            if (!childLink->node->GetNodeType() || !parentLink->node->GetNodeType()) {
+            if (!childNode->GetNodeType() || !parentNode->GetNodeType()) {
                 // One or more nodes need to be fetched before the callback is made
                 AddChildNodeFetchTrans * trans = new AddChildNodeFetchTrans(callback, param);
-                if (!childLink->node->GetNodeType()) {
+                if (!childNode->GetNodeType()) {
                     ++trans->opCount;
                     NetCliAuthVaultNodeFetch(
                         childId,
@@ -1651,7 +1645,7 @@ void VaultAddChildNode (
                         trans
                     );
                 }
-                if (!parentLink->node->GetNodeType()) {
+                if (!parentNode->GetNodeType()) {
                     ++trans->opCount;
                     NetCliAuthVaultNodeFetch(
                         parentId,
@@ -1762,19 +1756,19 @@ void VaultRemoveChildNode (
             break;
         }
 
-        RelVaultNodeLink* parentLink = parentIt->second;
-        RelVaultNodeLink* childLink = childIt->second;
-        if (parentLink->node->IsParentOf(childId, 1)) {
+        const hsRef<RelVaultNode>& parentNode = parentIt->second;
+        const hsRef<RelVaultNode>& childNode = childIt->second;
+        if (parentNode->IsParentOf(childId, 1)) {
             // We have the relationship, so make the callbacks
             if (s_suppressCallbacks == 0) {
                 for (auto cb : s_callbacks) {
-                    cb->RemovingChildNode(parentLink->node, childLink->node);
+                    cb->RemovingChildNode(parentNode, childNode);
                 }
             }
         }
-            
-        parentLink->node->state->Unlink(childLink->node);
-        childLink->node->state->Unlink(parentLink->node);
+
+        parentNode->state->Unlink(childNode);
+        childNode->state->Unlink(parentNode);
         break;
     }
     
@@ -2040,9 +2034,10 @@ void VaultLocalFindNodes (
     hsWeakRef<NetVaultNode> templateNode,
     std::vector<unsigned> * nodeIds
 ) {
-    for (const auto& [nodeId, link] : s_nodes) {
-        if (link->node->Matches(templateNode.Get()))
-            nodeIds->emplace_back(link->node->GetNodeId());
+    for (const auto& [nodeId, node] : s_nodes) {
+        if (node->Matches(templateNode.Get())) {
+            nodeIds->emplace_back(node->GetNodeId());
+        }
     }
 }
 
@@ -4689,40 +4684,37 @@ void VaultCull (unsigned vaultId) {
     // Remove the node from the global table
     auto nodeIt = s_nodes.find(vaultId);
     if (nodeIt != s_nodes.end()) {
-        RelVaultNodeLink* link = nodeIt->second;
-        LogMsg(kLogDebug, "Vault: Culling node {}", link->node->GetNodeId());
-        link->node->state->UnlinkFromRelatives();
+        LogMsg(kLogDebug, "Vault: Culling node {}", nodeIt->first);
+        nodeIt->second->state->UnlinkFromRelatives();
         s_nodes.erase(nodeIt);
-        delete link;
     }
 
     // Remove all orphaned nodes from the global table
     for (auto it = s_nodes.begin(); it != s_nodes.end();) {
-        RelVaultNodeLink* link = it->second;
+        const hsRef<RelVaultNode>& node = it->second;
 
-        if (link->node->GetNodeType() > plVault::kNodeType_VNodeMgrLow && link->node->GetNodeType() < plVault::kNodeType_VNodeMgrHigh) {
+        if (node->GetNodeType() > plVault::kNodeType_VNodeMgrLow && node->GetNodeType() < plVault::kNodeType_VNodeMgrHigh) {
             ++it;
             continue;
         }
 
         std::vector<unsigned> nodeIds;
-        link->node->GetRootIds(&nodeIds);
+        node->GetRootIds(&nodeIds);
         bool foundRoot = false;
         for (unsigned nodeId : nodeIds) {
             auto rootIt = s_nodes.find(nodeId);
             if (rootIt != s_nodes.end()) {
-                RelVaultNodeLink* root = rootIt->second;
-                if (root->node->GetNodeType() > plVault::kNodeType_VNodeMgrLow && root->node->GetNodeType() < plVault::kNodeType_VNodeMgrHigh) {
+                const hsRef<RelVaultNode>& root = rootIt->second;
+                if (root->GetNodeType() > plVault::kNodeType_VNodeMgrLow && root->GetNodeType() < plVault::kNodeType_VNodeMgrHigh) {
                     foundRoot = true;
                     break;
                 }
             }
         }
         if (!foundRoot) {
-            LogMsg(kLogDebug, "Vault: Culling node {}", link->node->GetNodeId());
-            link->node->state->UnlinkFromRelatives();
+            LogMsg(kLogDebug, "Vault: Culling node {}", it->first);
+            node->state->UnlinkFromRelatives();
             it = s_nodes.erase(it);
-            delete link;
         } else {
             ++it;
         }
