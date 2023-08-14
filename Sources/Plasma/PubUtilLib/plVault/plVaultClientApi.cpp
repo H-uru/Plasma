@@ -62,18 +62,17 @@ struct IVaultCallback {
 
 // A RelVaultNodeLink may be either stored in the global table,
 // or stored in an IRelVaultNode's parents or children table.
-struct RelVaultNodeLink : THashKeyVal<unsigned> {
-    HASHLINK(RelVaultNodeLink)  link;
+struct RelVaultNodeLink {
     hsRef<RelVaultNode>         node;
     unsigned                    ownerId;
     bool                        seen;
 
-    RelVaultNodeLink(bool seen, unsigned ownerId, unsigned nodeId)
-        : THashKeyVal<unsigned>(nodeId), node(new RelVaultNode, hsStealRef), ownerId(ownerId), seen(seen)
+    RelVaultNodeLink(bool seen, unsigned ownerId)
+        : node(new RelVaultNode, hsStealRef), ownerId(ownerId), seen(seen)
     { }
 
-    RelVaultNodeLink (bool seen, unsigned ownerId, unsigned nodeId, hsRef<RelVaultNode> node)
-        : THashKeyVal<unsigned>(nodeId), node(std::move(node)), ownerId(ownerId), seen(seen)
+    RelVaultNodeLink(bool seen, unsigned ownerId, hsRef<RelVaultNode> node)
+        : node(std::move(node)), ownerId(ownerId), seen(seen)
     { }
 };
 
@@ -81,17 +80,8 @@ struct RelVaultNodeLink : THashKeyVal<unsigned> {
 struct IRelVaultNode {
     hsWeakRef<RelVaultNode> node;
     
-    HASHTABLEDECL(
-        RelVaultNodeLink,
-        THashKeyVal<unsigned>,
-        link
-    ) parents;
-
-    HASHTABLEDECL(
-        RelVaultNodeLink,
-        THashKeyVal<unsigned>,
-        link
-    ) children;
+    std::unordered_map<unsigned, RelVaultNodeLink*> parents;
+    std::unordered_map<unsigned, RelVaultNodeLink*> children;
 
     IRelVaultNode(hsWeakRef<RelVaultNode> node);
     ~IRelVaultNode ();
@@ -267,11 +257,7 @@ struct AddChildNodeFetchTrans {
 *
 ***/
 
-static HASHTABLEDECL(
-    RelVaultNodeLink,
-    THashKeyVal<unsigned>,
-    link
-) s_nodes;
+std::unordered_map<unsigned, RelVaultNodeLink*> s_nodes;
 
 static LISTDECL(
     IVaultCallback,
@@ -315,10 +301,12 @@ static void VaultNodeAddedDownloadCallback(ENetError result, void * param) {
     if (it != s_notifyAfterDownload.end()) {
         unsigned parentId = it->second;
         if (IS_NET_SUCCESS(result)) {
-            RelVaultNodeLink* parentLink = s_nodes.Find(parentId);
-            RelVaultNodeLink* childLink = s_nodes.Find(childId);
+            auto parentIt = s_nodes.find(parentId);
+            auto childIt = s_nodes.find(childId);
 
-            if (parentLink && childLink) {
+            if (parentIt != s_nodes.end() && childIt != s_nodes.end()) {
+                RelVaultNodeLink* parentLink = parentIt->second;
+                RelVaultNodeLink* childLink = childIt->second;
                 if (childLink->node->GetNodeType() == plVault::kNodeType_TextNote) {
                     VaultTextNoteNode textNote(childLink->node);
                     if (textNote.GetNoteType() == plVault::kNoteType_Visit)
@@ -347,24 +335,27 @@ static void BuildNodeTree (
 ) {
     for (unsigned i = 0; i < refCount; ++i) {
         // Find/Create global links
-        RelVaultNodeLink * parentLink = s_nodes.Find(refs[i].parentId);
-        if (!parentLink) {
+        auto parentIt = s_nodes.find(refs[i].parentId);
+        RelVaultNodeLink* parentLink;
+        if (parentIt == s_nodes.end()) {
             newNodeIds->emplace_back(refs[i].parentId);
-            parentLink = new RelVaultNodeLink(false, 0, refs[i].parentId);
+            parentLink = new RelVaultNodeLink(false, 0);
             parentLink->node->SetNodeId_NoDirty(refs[i].parentId);
-            s_nodes.Add(parentLink);
-        }
-        else {
+            s_nodes.emplace(refs[i].parentId, parentLink);
+        } else {
+            parentLink = parentIt->second;
             existingNodeIds->emplace_back(refs[i].parentId);
         }
-        RelVaultNodeLink * childLink = s_nodes.Find(refs[i].childId);
-        if (!childLink) {
+
+        auto childIt = s_nodes.find(refs[i].childId);
+        RelVaultNodeLink* childLink;
+        if (childIt == s_nodes.end()) {
             newNodeIds->emplace_back(refs[i].childId);
-            childLink = new RelVaultNodeLink(refs[i].seen, refs[i].ownerId, refs[i].childId);
+            childLink = new RelVaultNodeLink(refs[i].seen, refs[i].ownerId);
             childLink->node->SetNodeId_NoDirty(refs[i].childId);
-            s_nodes.Add(childLink);
-        }
-        else {
+            s_nodes.emplace(refs[i].childId, childLink);
+        } else {
+            childLink = childIt->second;
             existingNodeIds->emplace_back(refs[i].childId);
             if (unsigned ownerId = refs[i].ownerId)
                 childLink->ownerId = ownerId;
@@ -378,15 +369,15 @@ static void BuildNodeTree (
             
         if (!isImmediateParent) {
             // Add parent to child's parents table
-            parentLink = new RelVaultNodeLink(false, 0, parentNode->GetNodeId(), parentNode);
-            childNode->state->parents.Add(parentLink);
+            parentLink = new RelVaultNodeLink(false, 0, parentNode);
+            childNode->state->parents.emplace(parentNode->GetNodeId(), parentLink);
             LogMsg(kLogDebug, "Added relationship: p:{},c:{}", refs[i].parentId, refs[i].childId);
         }
         
         if (!isImmediateChild) {
             // Add child to parent's children table
-            childLink = new RelVaultNodeLink(refs[i].seen, refs[i].ownerId, childNode->GetNodeId(), childNode);
-            parentNode->state->children.Add(childLink);
+            childLink = new RelVaultNodeLink(refs[i].seen, refs[i].ownerId, childNode);
+            parentNode->state->children.emplace(childNode->GetNodeId(), childLink);
 
             if (notifyNow || childNode->GetNodeType() != 0) {
                 // We made a new link, so make the callbacks
@@ -474,7 +465,7 @@ static void FetchNodesFromRefs (
     // Fetch the nodes that do not yet have a nodetype
     unsigned prevId = 0;
     for (unsigned nodeId : nodeIds) {
-        RelVaultNodeLink * link = s_nodes.Find(nodeId);
+        RelVaultNodeLink* link = s_nodes.at(nodeId);
         if (link->node->GetNodeType() != 0)
             continue;
         // filter duplicates
@@ -506,8 +497,9 @@ static void VaultNodeFound (
     for (unsigned i = 0; i < nodeIdCount; ++i) {
         
         // See if we already have this node
-        if (RelVaultNodeLink * link = s_nodes.Find(nodeIds[i]))
+        if (s_nodes.find(nodeIds[i]) != s_nodes.end()) {
             return;
+        }
 
         // Start fetching the node          
         NetCliAuthVaultNodeFetch(nodeIds[i], VaultNodeFetched, nullptr);
@@ -526,11 +518,14 @@ static void VaultNodeFetched (
     }
 
     // Add to global node table
-    RelVaultNodeLink * link = s_nodes.Find(node->GetNodeId());
-    if (!link) {
-        link = new RelVaultNodeLink(false, 0, node->GetNodeId());
+    auto it = s_nodes.find(node->GetNodeId());
+    RelVaultNodeLink* link;
+    if (it == s_nodes.end()) {
+        link = new RelVaultNodeLink(false, 0);
         link->node->SetNodeId_NoDirty(node->GetNodeId());
-        s_nodes.Add(link);
+        s_nodes.emplace(node->GetNodeId(), link);
+    } else {
+        link = it->second;
     }
     link->node->CopyFrom(node);
     InitFetchedNode(link->node);
@@ -551,13 +546,14 @@ static void ChangedVaultNodeFetched (
 
     VaultNodeFetched(result, param, node);
 
-    RelVaultNodeLink* savedLink = s_nodes.Find(node->GetNodeId());
+    auto it = s_nodes.find(node->GetNodeId());
 
     // Yeah, we are purposefully allowing this global callback to go out,
     // even if callback suppression has been enabled. The intent behind
     // that is to suppress spurious callbacks, but node changes are
     // probably not spurious.
-    if (savedLink) {
+    if (it != s_nodes.end()) {
+        RelVaultNodeLink* savedLink = it->second;
         for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
             cb->cb->ChangedNode(savedLink->node);
     }
@@ -570,14 +566,15 @@ static void VaultNodeChanged (
 ) {
     LogMsg(kLogDebug, "Notify: Node changed: {}", nodeId);
 
-    RelVaultNodeLink * link = s_nodes.Find(nodeId);
+    auto it = s_nodes.find(nodeId);
 
     // We don't have the node, so we don't care that it changed (we actually
     // shouldn't have been notified)
-    if (!link) {
+    if (it == s_nodes.end()) {
         LogMsg(kLogDebug, "rcvd change notification for node {}, but node doesn't exist locally.", nodeId);
         return;
     }
+    RelVaultNodeLink* link = it->second;
 
     if (link->node->GetRevision() == revisionId) {
         // We are the party responsible for the change, so we already have the
@@ -627,7 +624,7 @@ static void VaultNodeAdded (
     unsigned prevId = 0;
     unsigned i = 0;
     for (; i < nodeIds.size(); ++i) {
-        RelVaultNodeLink * link = s_nodes.Find(nodeIds[i]);
+        RelVaultNodeLink* link = s_nodes.at(nodeIds[i]);
         if (link->node->GetNodeType() != 0)
             continue;
         // filter duplicates
@@ -649,8 +646,8 @@ static void VaultNodeAdded (
     }
 
     // if the added element is already downloaded then send the callbacks now
-    RelVaultNodeLink* parentLink    = s_nodes.Find(parentId);
-    RelVaultNodeLink* childLink     = s_nodes.Find(childId);
+    RelVaultNodeLink* parentLink = s_nodes.at(parentId);
+    RelVaultNodeLink* childLink = s_nodes.at(childId);
 
     if (childLink->node->GetNodeType() != 0 && s_suppressCallbacks == 0) {
         for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
@@ -666,14 +663,18 @@ static void VaultNodeRemoved (
     LogMsg(kLogDebug, "Notify: Node removed: p:{},c:{}", parentId, childId);
     for (;;) {
         // Unlink 'em locally, if we can
-        RelVaultNodeLink * parentLink = s_nodes.Find(parentId);
-        if (!parentLink)
+        auto parentIt = s_nodes.find(parentId);
+        if (parentIt == s_nodes.end()) {
             break;
+        }
 
-        RelVaultNodeLink * childLink = s_nodes.Find(childId);
-        if (!childLink)
+        auto childIt = s_nodes.find(childId);
+        if (childIt == s_nodes.end()) {
             break;
-            
+        }
+
+        RelVaultNodeLink* parentLink = parentIt->second;
+        RelVaultNodeLink* childLink = childIt->second;
         if (parentLink->node->IsParentOf(childId, 1) && s_suppressCallbacks == 0) {
             // We have the relationship, so make the callbacks
             for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
@@ -704,7 +705,7 @@ static void SaveDirtyNodes () {
     if (!s_nextSaveMs || signed(s_nextSaveMs - currTimeMs) <= 0) {
         s_nextSaveMs = (currTimeMs + kSaveUpdateIntervalMs) | 1;
         unsigned bytesWritten = 0;
-        for (RelVaultNodeLink * link = s_nodes.Head(); link; link = s_nodes.Next(link)) {
+        for (const auto& [nodeId, link] : s_nodes) {
             if (bytesWritten >= kMaxBytesPerSaveUpdate)
                 break;
             if (link->node->IsDirty()) {
@@ -778,10 +779,11 @@ void VaultCreateNodeTrans::VaultNodeFetched (
 
     VaultCreateNodeTrans * trans = (VaultCreateNodeTrans *)param;
     
-    if (IS_NET_SUCCESS(result))
-        trans->node = s_nodes.Find(node->GetNodeId())->node;
-    else
+    if (IS_NET_SUCCESS(result)) {
+        trans->node = s_nodes.at(node->GetNodeId())->node;
+    } else {
         trans->node = nullptr;
+    }
     
     trans->Complete(result);
 }
@@ -897,8 +899,8 @@ void VaultDownloadTrans::VaultNodeRefsFetched (
         }
         else {
             // root node has no child heirarchy? Make sure we still d/l the root node if necessary.
-            RelVaultNodeLink* rootNodeLink = s_nodes.Find(trans->vaultId);
-            if (!rootNodeLink || rootNodeLink->node->GetNodeType() == 0) {
+            auto rootNodeIt = s_nodes.find(trans->vaultId);
+            if (rootNodeIt == s_nodes.end() || rootNodeIt->second->node->GetNodeType() == 0) {
                 NetCliAuthVaultNodeFetch(
                     trans->vaultId,
                     VaultDownloadTrans::VaultNodeFetched,
@@ -1028,16 +1030,16 @@ IRelVaultNode::IRelVaultNode(hsWeakRef<RelVaultNode> node)
 
 //============================================================================
 IRelVaultNode::~IRelVaultNode () {
-    ASSERT(!parents.Head());
-    ASSERT(!children.Head());
+    ASSERT(parents.empty());
+    ASSERT(children.empty());
 }
 
 //============================================================================
 void IRelVaultNode::UnlinkFromRelatives () {
-
-    RelVaultNodeLink * link, * next;
-    for (link = parents.Head(); link; link = next) {
-        next = parents.Next(link);
+    for (auto it = parents.begin(); it != parents.end();) {
+        // Advance the iterator before calling Unlink so that it doesn't get invalidated
+        RelVaultNodeLink* link = it->second;
+        ++it;
 
         // We have the relationship, so make the callbacks
         if (s_suppressCallbacks == 0) {
@@ -1047,31 +1049,39 @@ void IRelVaultNode::UnlinkFromRelatives () {
 
         link->node->state->Unlink(node);
     }
-    for (link = children.Head(); link; link = next) {
-        next = children.Next(link);
+    for (auto it = children.begin(); it != children.end();) {
+        // Advance the iterator before calling Unlink so that it doesn't get invalidated
+        RelVaultNodeLink* link = it->second;
+        ++it;
         link->node->state->Unlink(node);
     }
-    
-    ASSERT(!parents.Head());
-    ASSERT(!children.Head());
+
+    ASSERT(parents.empty());
+    ASSERT(children.empty());
 }
 
 
 //============================================================================
 void IRelVaultNode::Unlink(hsWeakRef<RelVaultNode> other) {
     ASSERT(other != node);
-    
-    RelVaultNodeLink * link;
-    if (link = parents.Find(other->GetNodeId()); link != nullptr) {
+
+    auto parentIt = parents.find(other->GetNodeId());
+    if (parentIt != parents.end()) {
+        // Copy the link pointer - the erase call will invalidate the iterator!
+        RelVaultNodeLink* link = parentIt->second;
         // make them non-findable in our parents table
-        link->link.Unlink();
+        parents.erase(parentIt);
         // remove us from other's tables.
         link->node->state->Unlink(node);
         delete link;
     }
-    if (link = children.Find(other->GetNodeId()); link != nullptr) {
+
+    auto childIt = children.find(other->GetNodeId());
+    if (childIt != children.end()) {
+        // Copy the link pointer - the erase call will invalidate the iterator!
+        RelVaultNodeLink* link = childIt->second;
         // make them non-findable in our children table
-        link->link.Unlink();
+        children.erase(childIt);
         // remove us from other's tables.
         link->node->state->Unlink(node);
         delete link;
@@ -1100,10 +1110,9 @@ bool RelVaultNode::IsParentOf (unsigned childId, unsigned maxDepth) {
         return false;
     if (maxDepth == 0)
         return false;
-    if (state->children.Find(childId))
+    if (state->children.find(childId) != state->children.end())
         return true;
-    RelVaultNodeLink * link = state->children.Head();
-    for (; link; link = state->children.Next(link))
+    for (const auto& [nodeId, link] : state->children)
         if (link->node->IsParentOf(childId, maxDepth - 1))
             return true;
     return false;
@@ -1115,10 +1124,9 @@ bool RelVaultNode::IsChildOf (unsigned parentId, unsigned maxDepth) {
         return false;
     if (maxDepth == 0)
         return false;
-    if (state->parents.Find(parentId))
+    if (state->parents.find(parentId) != state->parents.end())
         return true;
-    RelVaultNodeLink * link = state->parents.Head();
-    for (; link; link = state->parents.Next(link))
+    for (const auto& [nodeId, link] : state->parents)
         if (link->node->IsChildOf(parentId, maxDepth - 1))
             return true;
     return false;
@@ -1126,13 +1134,12 @@ bool RelVaultNode::IsChildOf (unsigned parentId, unsigned maxDepth) {
 
 //============================================================================
 void RelVaultNode::GetRootIds (std::vector<unsigned> * nodeIds) {
-    RelVaultNodeLink * link = state->parents.Head();
-    if (!link) {
+    if (state->parents.empty()) {
         nodeIds->emplace_back(GetNodeId());
-    }
-    else {
-        for (; link; link = state->parents.Next(link))
+    } else {
+        for (const auto& [nodeId, link] : state->parents) {
             link->node->GetRootIds(nodeIds);
+        }
     }
 }
 
@@ -1149,8 +1156,7 @@ void RelVaultNode::GetChildNodeIds (
 ) {
     if (!maxDepth)
         return;
-    RelVaultNodeLink * link = state->children.Head();
-    for (; link; link = state->children.Next(link)) {
+    for (const auto& [nodeId, link] : state->children) {
         nodeIds->emplace_back(link->node->GetNodeId());
         link->node->GetChildNodeIds(nodeIds, maxDepth-1);
     }
@@ -1163,8 +1169,7 @@ void RelVaultNode::GetParentNodeIds (
 ) {
     if (!maxDepth)
         return;
-    RelVaultNodeLink * link = state->parents.Head();
-    for (; link; link = state->parents.Next(link)) {
+    for (const auto& [nodeId, link] : state->parents) {
         nodeIds->emplace_back(link->node->GetNodeId());
         link->node->GetParentNodeIds(nodeIds, maxDepth-1);
     }
@@ -1179,15 +1184,12 @@ hsRef<RelVaultNode> RelVaultNode::GetParentNode (
     if (maxDepth == 0)
         return nullptr;
 
-    RelVaultNodeLink * link;
-    link = state->parents.Head();
-    for (; link; link = state->parents.Next(link)) {
+    for (const auto& [nodeId, link] : state->parents) {
         if (link->node->Matches(templateNode.Get()))
             return link->node;
     }
-    
-    link = state->parents.Head();
-    for (; link; link = state->parents.Next(link)) {
+
+    for (const auto& [nodeId, link] : state->parents) {
         if (hsRef<RelVaultNode> node = link->node->GetParentNode(templateNode, maxDepth - 1))
             return node;
     }
@@ -1203,15 +1205,12 @@ hsRef<RelVaultNode> RelVaultNode::GetChildNode (
     if (maxDepth == 0)
         return nullptr;
 
-    RelVaultNodeLink * link;
-    link = state->children.Head();
-    for (; link; link = state->children.Next(link)) {
+    for (const auto& [nodeId, link] : state->children) {
         if (link->node->Matches(templateNode.Get()))
             return link->node;
     }
-    
-    link = state->children.Head();
-    for (; link; link = state->children.Next(link)) {
+
+    for (const auto& [nodeId, link] : state->children) {
         if (hsRef<RelVaultNode> node = link->node->GetChildNode(templateNode, maxDepth-1))
             return node;
     }
@@ -1273,9 +1272,7 @@ void RelVaultNode::GetChildNodes (
     if (maxDepth == 0)
         return;
 
-    RelVaultNodeLink * link;
-    link = state->children.Head();
-    for (; link; link = state->children.Next(link)) {
+    for (const auto& [nodeId, link] : state->children) {
         nodes->push_back(link->node);
         link->node->GetChildNodes(
             maxDepth - 1,
@@ -1290,9 +1287,7 @@ void RelVaultNode::GetChildNodes (
     unsigned                maxDepth,
     RelVaultNode::RefList * nodes
 ) {
-    RelVaultNodeLink * link;
-    link = state->children.Head();
-    for (; link; link = state->children.Next(link)) {
+    for (const auto& [nodeId, link] : state->children) {
         if (link->node->Matches(templateNode.Get()))
             nodes->push_back(link->node);
 
@@ -1339,30 +1334,48 @@ void RelVaultNode::GetChildFolderNodes (
 //============================================================================
 unsigned RelVaultNode::GetRefOwnerId (unsigned parentId) {
     // find our parents' link to us and return its ownerId
-    if (RelVaultNodeLink * parentLink = state->parents.Find(parentId))
-        if (RelVaultNodeLink * childLink = parentLink->node->state->children.Find(GetNodeId()))
+    auto parentIt = state->parents.find(parentId);
+    if (parentIt != state->parents.end()) {
+        RelVaultNodeLink* parentLink = parentIt->second;
+        auto childIt = parentLink->node->state->children.find(GetNodeId());
+        if (childIt != parentLink->node->state->children.end()) {
+            RelVaultNodeLink* childLink = childIt->second;
             return childLink->ownerId;
+        }
+    }
     return 0;
 }
 
 //============================================================================
 bool RelVaultNode::BeenSeen (unsigned parentId) const {
     // find our parents' link to us and return its seen flag
-    if (RelVaultNodeLink * parentLink = state->parents.Find(parentId))
-        if (RelVaultNodeLink * childLink = parentLink->node->state->children.Find(GetNodeId()))
+    auto parentIt = state->parents.find(parentId);
+    if (parentIt != state->parents.end()) {
+        RelVaultNodeLink* parentLink = parentIt->second;
+        auto childIt = parentLink->node->state->children.find(GetNodeId());
+        if (childIt != parentLink->node->state->children.end()) {
+            RelVaultNodeLink* childLink = childIt->second;
             return childLink->seen;
+        }
+    }
     return true;
 }
 
 //============================================================================
 void RelVaultNode::SetSeen (unsigned parentId, bool seen) {
     // find our parents' link to us and set its seen flag
-    if (RelVaultNodeLink * parentLink = state->parents.Find(parentId))
-        if (RelVaultNodeLink * childLink = parentLink->node->state->children.Find(GetNodeId()))
+    auto parentIt = state->parents.find(parentId);
+    if (parentIt != state->parents.end()) {
+        RelVaultNodeLink* parentLink = parentIt->second;
+        auto childIt = parentLink->node->state->children.find(GetNodeId());
+        if (childIt != parentLink->node->state->children.end()) {
+            RelVaultNodeLink* childLink = childIt->second;
             if (childLink->seen != seen) {
                 childLink->seen = seen;
                 NetCliAuthVaultSetSeen(parentId, GetNodeId(), seen);
             }
+        }
+    }
 }
 
 //============================================================================
@@ -1441,8 +1454,9 @@ void RelVaultNode::Print (const ST::string& tag, unsigned level) {
 //============================================================================
 void RelVaultNode::PrintTree (unsigned level) {
     Print("", level);
-    for (RelVaultNodeLink * link = state->children.Head(); link; link = state->children.Next(link))
+    for (const auto& [nodeId, link] : state->children) {
         link->node->PrintTree(level + 1);
+    }
 }
 
 //============================================================================
@@ -1519,11 +1533,11 @@ void VaultDestroy () {
     NetCliAuthVaultSetRecvNodeDeletedHandler(nullptr);
 
     VaultClearDeviceInboxMap();
-    
-    RelVaultNodeLink * next, * link = s_nodes.Head();
-    for (; link; link = next) {
-        next = s_nodes.Next(link);
+
+    for (auto it = s_nodes.begin(); it != s_nodes.end();) {
+        RelVaultNodeLink* link = it->second;
         link->node->state->UnlinkFromRelatives();
+        it = s_nodes.erase(it);
         delete link;
     }
 }
@@ -1545,11 +1559,10 @@ hsRef<RelVaultNode> VaultGetNode (
     hsWeakRef<NetVaultNode> templateNode
 ) {
     ASSERT(templateNode);
-    RelVaultNodeLink * link = s_nodes.Head();
-    while (link) {
-        if (link->node->Matches(templateNode.Get()))
+    for (const auto& [nodeId, link] : s_nodes) {
+        if (link->node->Matches(templateNode.Get())) {
             return link->node;
-        link = s_nodes.Next(link);
+        }
     }
     return nullptr;
 }
@@ -1558,9 +1571,8 @@ hsRef<RelVaultNode> VaultGetNode (
 hsRef<RelVaultNode> VaultGetNode (
     unsigned nodeId
 ) {
-    if (RelVaultNodeLink * link = s_nodes.Find(nodeId))
-        return link->node;
-    return nullptr;
+    auto it = s_nodes.find(nodeId);
+    return it == s_nodes.end() ? nullptr : it->second->node;
 }
 
 //============================================================================
@@ -1582,15 +1594,20 @@ void VaultAddChildNode (
     // This directly affects: New clothing items added to the avatar outfit folder,
     // new chronicle entries in some ages, and I'm sure several other situations.
 
-    if (RelVaultNodeLink * parentLink = s_nodes.Find(parentId)) {
-        RelVaultNodeLink * childLink = s_nodes.Find(childId);
-        if (!childLink) {
-            childLink = new RelVaultNodeLink(false, ownerId, childId);
+    auto parentIt = s_nodes.find(parentId);
+    if (parentIt != s_nodes.end()) {
+        RelVaultNodeLink* parentLink = parentIt->second;
+        auto childIt = s_nodes.find(childId);
+        RelVaultNodeLink* childLink;
+        if (childIt == s_nodes.end()) {
+            childLink = new RelVaultNodeLink(false, ownerId);
             childLink->node->SetNodeId_NoDirty(childId);
-            s_nodes.Add(childLink);
-        }
-        else if (ownerId) {
-            childLink->ownerId = ownerId;
+            s_nodes.emplace(childId, childLink);
+        } else {
+            childLink = childIt->second;
+            if (ownerId) {
+                childLink->ownerId = ownerId;
+            }
         }
 
         // We can do a sanity check for a would-be circular link, but it isn't
@@ -1739,14 +1756,18 @@ void VaultRemoveChildNode (
 ) {
     for (;;) {
         // Unlink 'em locally, if we can
-        RelVaultNodeLink * parentLink = s_nodes.Find(parentId);
-        if (!parentLink)
+        auto parentIt = s_nodes.find(parentId);
+        if (parentIt == s_nodes.end()) {
             break;
+        }
 
-        RelVaultNodeLink * childLink = s_nodes.Find(childId);
-        if (!childLink)
+        auto childIt = s_nodes.find(childId);
+        if (childIt == s_nodes.end()) {
             break;
-            
+        }
+
+        RelVaultNodeLink* parentLink = parentIt->second;
+        RelVaultNodeLink* childLink = childIt->second;
         if (parentLink->node->IsParentOf(childId, 1)) {
             // We have the relationship, so make the callbacks
             if (s_suppressCallbacks == 0) {
@@ -2022,7 +2043,7 @@ void VaultLocalFindNodes (
     hsWeakRef<NetVaultNode> templateNode,
     std::vector<unsigned> * nodeIds
 ) {
-    for (RelVaultNodeLink * link = s_nodes.Head(); link != nullptr; link = s_nodes.Next(link)) {
+    for (const auto& [nodeId, link] : s_nodes) {
         if (link->node->Matches(templateNode.Get()))
             nodeIds->emplace_back(link->node->GetNodeId());
     }
@@ -2056,7 +2077,7 @@ void VaultFetchNodesAndWait (
         
         if (!force) {
             // See if we already have this node
-            if (RelVaultNodeLink * link = s_nodes.Find(nodeIds[i])) {
+            if (s_nodes.find(nodeIds[i]) != s_nodes.end()) {
                 --nodeCount;
                 continue;
             }
@@ -4669,33 +4690,44 @@ void VaultCull (unsigned vaultId) {
     VaultCallbackSuppressor suppress;
 
     // Remove the node from the global table
-    if (RelVaultNodeLink * link = s_nodes.Find(vaultId)) {
+    auto nodeIt = s_nodes.find(vaultId);
+    if (nodeIt != s_nodes.end()) {
+        RelVaultNodeLink* link = nodeIt->second;
         LogMsg(kLogDebug, "Vault: Culling node {}", link->node->GetNodeId());
         link->node->state->UnlinkFromRelatives();
+        s_nodes.erase(nodeIt);
         delete link;
     }
 
     // Remove all orphaned nodes from the global table
-    for (RelVaultNodeLink * next, * link = s_nodes.Head(); link; link = next) {
-        next = s_nodes.Next(link);
+    for (auto it = s_nodes.begin(); it != s_nodes.end();) {
+        RelVaultNodeLink* link = it->second;
 
-        if (link->node->GetNodeType() > plVault::kNodeType_VNodeMgrLow && link->node->GetNodeType() < plVault::kNodeType_VNodeMgrHigh)
+        if (link->node->GetNodeType() > plVault::kNodeType_VNodeMgrLow && link->node->GetNodeType() < plVault::kNodeType_VNodeMgrHigh) {
+            ++it;
             continue;
+        }
 
         std::vector<unsigned> nodeIds;
         link->node->GetRootIds(&nodeIds);
         bool foundRoot = false;
         for (unsigned nodeId : nodeIds) {
-            RelVaultNodeLink * root = s_nodes.Find(nodeId);
-            if (root && root->node->GetNodeType() > plVault::kNodeType_VNodeMgrLow && root->node->GetNodeType() < plVault::kNodeType_VNodeMgrHigh) {
-                foundRoot = true;
-                break;
+            auto rootIt = s_nodes.find(nodeId);
+            if (rootIt != s_nodes.end()) {
+                RelVaultNodeLink* root = rootIt->second;
+                if (root->node->GetNodeType() > plVault::kNodeType_VNodeMgrLow && root->node->GetNodeType() < plVault::kNodeType_VNodeMgrHigh) {
+                    foundRoot = true;
+                    break;
+                }
             }
         }
         if (!foundRoot) {
             LogMsg(kLogDebug, "Vault: Culling node {}", link->node->GetNodeId());
             link->node->state->UnlinkFromRelatives();
+            it = s_nodes.erase(it);
             delete link;
+        } else {
+            ++it;
         }
     }   
 }
