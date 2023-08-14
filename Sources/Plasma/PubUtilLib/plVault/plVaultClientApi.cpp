@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-// A RelVaultNodeLink may be stored in an IRelVaultNode's parents or children table.
+// A RelVaultNodeLink is stored in an IRelVaultNode's children table.
 struct RelVaultNodeLink {
     hsRef<RelVaultNode>         node;
     unsigned                    ownerId;
@@ -73,8 +73,8 @@ struct RelVaultNodeLink {
 
 struct IRelVaultNode {
     hsWeakRef<RelVaultNode> node;
-    
-    std::unordered_map<unsigned, RelVaultNodeLink*> parents;
+
+    std::unordered_map<unsigned, hsRef<RelVaultNode>> parents;
     std::unordered_map<unsigned, RelVaultNodeLink*> children;
 
     IRelVaultNode(hsWeakRef<RelVaultNode> node);
@@ -357,8 +357,7 @@ static void BuildNodeTree (
             
         if (!isImmediateParent) {
             // Add parent to child's parents table
-            RelVaultNodeLink* parentLink = new RelVaultNodeLink(false, 0, parentNode);
-            childNode->state->parents.emplace(parentNode->GetNodeId(), parentLink);
+            childNode->state->parents.emplace(parentNode->GetNodeId(), parentNode);
             LogMsg(kLogDebug, "Added relationship: p:{},c:{}", refs[i].parentId, refs[i].childId);
         }
         
@@ -1035,17 +1034,17 @@ IRelVaultNode::~IRelVaultNode () {
 void IRelVaultNode::UnlinkFromRelatives () {
     for (auto it = parents.begin(); it != parents.end();) {
         // Advance the iterator before calling Unlink so that it doesn't get invalidated
-        RelVaultNodeLink* link = it->second;
+        hsRef<RelVaultNode> parentNode = it->second;
         ++it;
 
         // We have the relationship, so make the callbacks
         if (s_suppressCallbacks == 0) {
             for (auto cb : s_callbacks) {
-                cb->RemovingChildNode(link->node, this->node);
+                cb->RemovingChildNode(parentNode, this->node);
             }
         }
 
-        link->node->state->Unlink(node);
+        parentNode->state->Unlink(node);
     }
     for (auto it = children.begin(); it != children.end();) {
         // Advance the iterator before calling Unlink so that it doesn't get invalidated
@@ -1065,13 +1064,12 @@ void IRelVaultNode::Unlink(hsWeakRef<RelVaultNode> other) {
 
     auto parentIt = parents.find(other->GetNodeId());
     if (parentIt != parents.end()) {
-        // Copy the link pointer - the erase call will invalidate the iterator!
-        RelVaultNodeLink* link = parentIt->second;
+        // Grab the node ref - the erase call will invalidate the iterator!
+        hsRef<RelVaultNode> parentNode = std::move(parentIt->second);
         // make them non-findable in our parents table
         parents.erase(parentIt);
         // remove us from other's tables.
-        link->node->state->Unlink(node);
-        delete link;
+        parentNode->state->Unlink(node);
     }
 
     auto childIt = children.find(other->GetNodeId());
@@ -1124,9 +1122,11 @@ bool RelVaultNode::IsChildOf (unsigned parentId, unsigned maxDepth) {
         return false;
     if (state->parents.find(parentId) != state->parents.end())
         return true;
-    for (const auto& [nodeId, link] : state->parents)
-        if (link->node->IsChildOf(parentId, maxDepth - 1))
+    for (const auto& [nodeId, node] : state->parents) {
+        if (node->IsChildOf(parentId, maxDepth - 1)) {
             return true;
+        }
+    }
     return false;
 }
 
@@ -1135,8 +1135,8 @@ void RelVaultNode::GetRootIds (std::vector<unsigned> * nodeIds) {
     if (state->parents.empty()) {
         nodeIds->emplace_back(GetNodeId());
     } else {
-        for (const auto& [nodeId, link] : state->parents) {
-            link->node->GetRootIds(nodeIds);
+        for (const auto& [nodeId, node] : state->parents) {
+            node->GetRootIds(nodeIds);
         }
     }
 }
@@ -1167,9 +1167,9 @@ void RelVaultNode::GetParentNodeIds (
 ) {
     if (!maxDepth)
         return;
-    for (const auto& [nodeId, link] : state->parents) {
-        nodeIds->emplace_back(link->node->GetNodeId());
-        link->node->GetParentNodeIds(nodeIds, maxDepth-1);
+    for (const auto& [nodeId, node] : state->parents) {
+        nodeIds->emplace_back(node->GetNodeId());
+        node->GetParentNodeIds(nodeIds, maxDepth-1);
     }
 }
 
@@ -1182,14 +1182,16 @@ hsRef<RelVaultNode> RelVaultNode::GetParentNode (
     if (maxDepth == 0)
         return nullptr;
 
-    for (const auto& [nodeId, link] : state->parents) {
-        if (link->node->Matches(templateNode.Get()))
-            return link->node;
+    for (const auto& [nodeId, node] : state->parents) {
+        if (node->Matches(templateNode.Get())) {
+            return node;
+        }
     }
 
-    for (const auto& [nodeId, link] : state->parents) {
-        if (hsRef<RelVaultNode> node = link->node->GetParentNode(templateNode, maxDepth - 1))
-            return node;
+    for (const auto& [nodeId, node] : state->parents) {
+        if (hsRef<RelVaultNode> parentNode = node->GetParentNode(templateNode, maxDepth - 1)) {
+            return parentNode;
+        }
     }
 
     return nullptr;
@@ -1334,9 +1336,9 @@ unsigned RelVaultNode::GetRefOwnerId (unsigned parentId) {
     // find our parents' link to us and return its ownerId
     auto parentIt = state->parents.find(parentId);
     if (parentIt != state->parents.end()) {
-        RelVaultNodeLink* parentLink = parentIt->second;
-        auto childIt = parentLink->node->state->children.find(GetNodeId());
-        if (childIt != parentLink->node->state->children.end()) {
+        const hsRef<RelVaultNode>& parentNode = parentIt->second;
+        auto childIt = parentNode->state->children.find(GetNodeId());
+        if (childIt != parentNode->state->children.end()) {
             RelVaultNodeLink* childLink = childIt->second;
             return childLink->ownerId;
         }
@@ -1349,9 +1351,9 @@ bool RelVaultNode::BeenSeen (unsigned parentId) const {
     // find our parents' link to us and return its seen flag
     auto parentIt = state->parents.find(parentId);
     if (parentIt != state->parents.end()) {
-        RelVaultNodeLink* parentLink = parentIt->second;
-        auto childIt = parentLink->node->state->children.find(GetNodeId());
-        if (childIt != parentLink->node->state->children.end()) {
+        const hsRef<RelVaultNode>& parentNode = parentIt->second;
+        auto childIt = parentNode->state->children.find(GetNodeId());
+        if (childIt != parentNode->state->children.end()) {
             RelVaultNodeLink* childLink = childIt->second;
             return childLink->seen;
         }
@@ -1364,9 +1366,9 @@ void RelVaultNode::SetSeen (unsigned parentId, bool seen) {
     // find our parents' link to us and set its seen flag
     auto parentIt = state->parents.find(parentId);
     if (parentIt != state->parents.end()) {
-        RelVaultNodeLink* parentLink = parentIt->second;
-        auto childIt = parentLink->node->state->children.find(GetNodeId());
-        if (childIt != parentLink->node->state->children.end()) {
+        const hsRef<RelVaultNode>& parentNode = parentIt->second;
+        auto childIt = parentNode->state->children.find(GetNodeId());
+        if (childIt != parentNode->state->children.end()) {
             RelVaultNodeLink* childLink = childIt->second;
             if (childLink->seen != seen) {
                 childLink->seen = seen;
