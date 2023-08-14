@@ -49,10 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plResMgr/plLocalization.h"
 
-#ifdef HS_BUILD_FOR_MACOS
-#include <Carbon/Carbon.h>
-#endif
-
 ControlEventCode plInputMap::ConvertCharToControlCode(const ST::string& c)
 {
     for (const auto& [code, desc] : fCmdConvert)
