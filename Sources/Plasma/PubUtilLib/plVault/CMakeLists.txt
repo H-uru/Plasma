@@ -31,7 +31,6 @@ target_link_libraries(
         pnAsyncCore
         pnDispatch
         pnNucleusInc
-        pnUtils
         plGImage
         plMessage
         plNetCommon

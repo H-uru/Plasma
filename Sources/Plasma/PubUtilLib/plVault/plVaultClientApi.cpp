@@ -55,11 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-struct IVaultCallback {
-    LINK(IVaultCallback)    link;
-    VaultCallback *         cb;
-};
-
 // A RelVaultNodeLink may be either stored in the global table,
 // or stored in an IRelVaultNode's parents or children table.
 struct RelVaultNodeLink {
@@ -259,10 +254,7 @@ struct AddChildNodeFetchTrans {
 
 std::unordered_map<unsigned, RelVaultNodeLink*> s_nodes;
 
-static LISTDECL(
-    IVaultCallback,
-    link
-) s_callbacks;
+std::list<VaultCallback*> s_callbacks;
 
 // key: childId, value: parentId
 std::unordered_map<unsigned, unsigned> s_notifyAfterDownload;
@@ -316,8 +308,9 @@ static void VaultNodeAddedDownloadCallback(ENetError result, void * param) {
                 }
 
                 if (s_suppressCallbacks == 0) {
-                    for (IVaultCallback* cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-                        cb->cb->AddedChildNode(parentLink->node, childLink->node);
+                    for (auto cb : s_callbacks) {
+                        cb->AddedChildNode(parentLink->node, childLink->node);
+                    }
                 }
             }
         }
@@ -382,8 +375,9 @@ static void BuildNodeTree (
             if (notifyNow || childNode->GetNodeType() != 0) {
                 // We made a new link, so make the callbacks
                 if (s_suppressCallbacks == 0) {
-                    for (IVaultCallback* cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-                        cb->cb->AddedChildNode(parentNode, childNode);
+                    for (auto cb : s_callbacks) {
+                        cb->AddedChildNode(parentNode, childNode);
+                    }
                 }
             }
             else {
@@ -554,8 +548,9 @@ static void ChangedVaultNodeFetched (
     // probably not spurious.
     if (it != s_nodes.end()) {
         RelVaultNodeLink* savedLink = it->second;
-        for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-            cb->cb->ChangedNode(savedLink->node);
+        for (auto cb : s_callbacks) {
+            cb->ChangedNode(savedLink->node);
+        }
     }
 }
 
@@ -581,8 +576,9 @@ static void VaultNodeChanged (
         // latest version of the node; no need to fetch it. However, we do need to fire off
         // the "hey this was saved" callback.
         if (s_suppressCallbacks == 0) {
-            for (IVaultCallback* cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-                cb->cb->ChangedNode(link->node);
+            for (auto cb : s_callbacks) {
+                cb->ChangedNode(link->node);
+            }
         }
     } else {
         // We have the node and we weren't the one that changed it, so fetch it.
@@ -650,8 +646,9 @@ static void VaultNodeAdded (
     RelVaultNodeLink* childLink = s_nodes.at(childId);
 
     if (childLink->node->GetNodeType() != 0 && s_suppressCallbacks == 0) {
-        for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-            cb->cb->AddedChildNode(parentLink->node, childLink->node);
+        for (auto cb : s_callbacks) {
+            cb->AddedChildNode(parentLink->node, childLink->node);
+        }
     }
 }
 
@@ -677,8 +674,9 @@ static void VaultNodeRemoved (
         RelVaultNodeLink* childLink = childIt->second;
         if (parentLink->node->IsParentOf(childId, 1) && s_suppressCallbacks == 0) {
             // We have the relationship, so make the callbacks
-            for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-                cb->cb->RemovingChildNode(parentLink->node, childLink->node);
+            for (auto cb : s_callbacks) {
+                cb->RemovingChildNode(parentLink->node, childLink->node);
+            }
         }
             
         parentLink->node->state->Unlink(childLink->node);
@@ -1043,8 +1041,9 @@ void IRelVaultNode::UnlinkFromRelatives () {
 
         // We have the relationship, so make the callbacks
         if (s_suppressCallbacks == 0) {
-            for (IVaultCallback* cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-                cb->cb->RemovingChildNode(link->node, this->node);
+            for (auto cb : s_callbacks) {
+                cb->RemovingChildNode(link->node, this->node);
+            }
         }
 
         link->node->state->Unlink(node);
@@ -1487,17 +1486,14 @@ hsRef<RelVaultNode> RelVaultNode::GetParentAgeLink () {
 
 //============================================================================
 void VaultRegisterCallback (VaultCallback * cb) {
-    IVaultCallback * internal = new IVaultCallback;
-    internal->cb = cb;
-    cb->internal = internal;
-    s_callbacks.Link(internal);
+    s_callbacks.emplace_back(cb);
 }
 
 //============================================================================
 void VaultUnregisterCallback (VaultCallback * cb) {
-    ASSERT(cb->internal);
-    delete cb->internal;
-    cb->internal = nullptr;
+    auto it = std::find(s_callbacks.begin(), s_callbacks.end(), cb);
+    ASSERT(it != s_callbacks.end());
+    s_callbacks.erase(it);
 }
 
 //============================================================================
@@ -1771,8 +1767,9 @@ void VaultRemoveChildNode (
         if (parentLink->node->IsParentOf(childId, 1)) {
             // We have the relationship, so make the callbacks
             if (s_suppressCallbacks == 0) {
-                for (IVaultCallback* cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
-                    cb->cb->RemovingChildNode(parentLink->node, childLink->node);
+                for (auto cb : s_callbacks) {
+                    cb->RemovingChildNode(parentLink->node, childLink->node);
+                }
             }
         }
             

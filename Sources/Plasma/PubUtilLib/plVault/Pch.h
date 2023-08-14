@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnAsyncCore/pnAsyncCore.h"
 #include "pnNetProtocol/pnNetProtocol.h"
-#include "pnUtils/pnUtils.h"
 
 #include "plVault.h"
 #include "plDniCoordinateInfo.h"
