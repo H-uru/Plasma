@@ -141,7 +141,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 - (void)mouseExited:(NSEvent*)event
 {
-    //[super mouseExited:event];
     [NSCursor unhide];
 }
 

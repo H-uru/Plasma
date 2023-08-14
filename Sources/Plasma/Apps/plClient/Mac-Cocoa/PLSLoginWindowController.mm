@@ -119,7 +119,8 @@ static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
     NSString* serverName = [NSString stringWithSTString:GetServerDisplayName()];
     NSMutableDictionary* settingsDictionary =
         [[[NSUserDefaults standardUserDefaults] dictionaryForKey:serverName] mutableCopy];
-    if (!settingsDictionary) settingsDictionary = [NSMutableDictionary dictionary];
+    if (!settingsDictionary)
+        settingsDictionary = [NSMutableDictionary dictionary];
     [settingsDictionary setObject:self.username forKey:@"LastAccountName"];
     [settingsDictionary setObject:[NSNumber numberWithBool:self.rememberPassword]
                            forKey:@"RememberPassword"];

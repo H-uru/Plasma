@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class Patcher
 {
-   public:
+public:
     PLSPatcher* parent;
     void IOnPatchComplete(ENetError result, const ST::string& msg);
     void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const ST::string& status);
@@ -88,8 +88,6 @@ class Patcher
     _patcher->OnCompletion(std::bind(&Patcher::IOnPatchComplete, _cppPatcher, std::placeholders::_1,
                                      std::placeholders::_2));
     _patcher->OnFileDownloadDesired(IApproveDownload);
-    _patcher->OnSelfPatch([&](const plFileName& file) {});
-    _patcher->OnRedistUpdate([&](const plFileName& file) {});
 
     self.networkPumpTimer = [NSTimer timerWithTimeInterval:1.0 / 1000.0
                                                    repeats:true
@@ -132,7 +130,7 @@ bool IApproveDownload(const plFileName& file)
 {
     ST::string ext = file.GetFileExt();
     // nothing from Windows, please
-    // temporary measure until macOS has it's own manifest
+    // temporary measure until macOS has its own manifest
     static std::unordered_set<ST::string, ST::hash_i, ST::equal_i> extExcludeList{
         "exe",
         "dll",
