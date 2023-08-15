@@ -280,10 +280,9 @@ void plPythonSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcState
         ST::string name = var->GetName();
 
         // Get the SDL value in Python format
-        PyObject* pyVar = ISDLVarToPython(var);
+        pyObjectRef pyVar = ISDLVarToPython(var);
 
-        SetItem(name, pyVar);
-        Py_DECREF(pyVar);
+        SetItem(name, pyVar.Get());
     }
 
     // Notify the Python code that we updated the SDL record
