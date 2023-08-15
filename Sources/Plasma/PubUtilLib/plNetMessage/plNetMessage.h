@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsBitVector.h"
 
-#include "pnNetBase/pnNetBase.h"
 #include "pnNetCommon/plNetGroup.h"
 #include "pnFactory/plCreatable.h"
 
@@ -53,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommon.h"
-#include "plNetCommon/plNetCommonConstants.h"
 #include "plNetCommon/plNetCommonHelpers.h"
 #include "plUnifiedTime/plClientUnifiedTime.h"
 
@@ -65,9 +63,7 @@ class plUUID;
 
 //
 // Base class for application network messages.
-// These become the data in a plNetCommonMessage when sent over the network.
 //
-class plNetCommonMessage;
 class plKey;
 
 class plNetMessage : public plCreatable
@@ -82,11 +78,9 @@ class plNetMessage : public plCreatable
     uint32_t fTransactionID;  // set by originator, included in reply. Only written if kHasTransactionID flag set
     uint32_t fPlayerID;       // set by originator. Only written if kHasPlayerID flag set
     plUUID fAcctUUID;       // set by sender (app level). Only written if kHasAcctUUID flag set
-    const plNetCommonMessage* fNetCoreMsg;  // not sent, set by the receiver
     uint32_t fPeekStatus;     // not sent. set on PeekBuffer, cleared on PokeBuffer
     uint8_t   fProtocolVerMajor;  // conditionally sent
     uint8_t   fProtocolVerMinor;  // conditionally sent
-    ENetProtocol fNetProtocol;  // the server this msg should be sent to. this value is not sent over wire.
 
     enum ContentFlags
     {
@@ -181,20 +175,16 @@ public:
 
     // ctor
     plNetMessage()
-        : fTimeRecvd(), fBytesRead(), fNetCoreMsg(), fContext(),
+        : fTimeRecvd(), fBytesRead(), fContext(),
           fPeekStatus(), fTransactionID(), fPlayerID(kInvalidPlayerID),
-          fNetProtocol(), fProtocolVerMajor(), fProtocolVerMinor(),
+          fProtocolVerMajor(), fProtocolVerMinor(),
           fFlags(0)
     { }
 
-    static plNetMessage* CreateAndRead(const plNetCommonMessage*);
-    static plNetMessage* Create(const plNetCommonMessage*);
-    int PokeBuffer(char* buf, int bufLen, uint32_t peekOptions=0);            // put msg in buffer
-    int PeekBuffer(const char* buf, int bufLen, uint32_t peekOptions=0, bool forcePeek=false);   // get msg out of buffer
+    int PokeBuffer(hsStream* s, uint32_t peekOptions = 0); // put msg in stream
+    int PeekBuffer(hsStream* s, uint32_t peekOptions = 0, bool forcePeek = false); // get msg out of stream
     bool NeedsReliableSend() const { return IsBitSet(kNeedsReliableSend); }
     bool IsSystemMessage() const { return IsBitSet(kIsSystemMessage);   }
-    virtual void ValidatePoke() const;
-    virtual void ValidatePeek() const;
     virtual bool NeedsBroadcast() const { return false; }           // should game server broadcast this message to other clients?
     virtual int ValidationSchemeID() const { return 1; }
 
@@ -204,8 +194,6 @@ public:
     bool GetHasTimeSent() const { return IsBitSet(kHasTimeSent); }
     double GetTimeReceived() const { return fTimeRecvd; }
     bool IsBitSet(int b) const { return (fFlags & b) != 0; }
-    const plNetCommonMessage* GetNetCoreMsg() const { return fNetCoreMsg; }
-    uint32_t GetNetCoreMsgLen() const;
     bool GetHasContext() const { return IsBitSet(kHasContext);}
     uint32_t GetContext() const { return fContext;}
     bool GetHasTransactionID() const { return IsBitSet(kHasTransactionID);}
@@ -217,14 +205,12 @@ public:
     const plUUID * GetAcctUUID() const { return &fAcctUUID; }
     uint8_t GetVersionMajor() const { return fProtocolVerMajor;   }
     uint8_t GetVersionMinor() const { return fProtocolVerMinor;   }
-    ENetProtocol GetNetProtocol () const { return fNetProtocol; }
 
     // setters
     void SetTimeSent(const plUnifiedTime& t) { fTimeSent=t;SetHasTimeSent(true); }
     void SetHasTimeSent(bool value) { SetBit( kHasTimeSent, value ); }
     void SetTimeReceived(double t) { fTimeRecvd=t; }
     void SetBit(int b, bool on=true) { if (on) fFlags |= b; else fFlags &= ~b; }
-    void SetNetCoreMsg(const plNetCommonMessage* ncmsg) { fNetCoreMsg=ncmsg; }
     void SetHasContext(bool value) { SetBit(kHasContext,value);}
     void SetContext(uint32_t value) { fContext=value; SetHasContext(true);}
     void SetHasTransactionID(bool value) { SetBit(kHasTransactionID,value);}
@@ -234,7 +220,6 @@ public:
     void SetHasAcctUUID( bool v ) { SetBit( kHasAcctUUID,v ); }
     void SetAcctUUID(const plUUID * v ) { fAcctUUID.CopyFrom(v); SetHasAcctUUID(true); }
     void SetVersion(uint8_t maj=kVerMajor, uint8_t min=kVerMinor) { SetBit(kHasVersion); fProtocolVerMajor=maj; fProtocolVerMinor=min;  }
-    void SetNetProtocol (ENetProtocol v ) { fNetProtocol = v; }
 
     // init fContext, fTransactionID, etc. if needed.
     void InitReplyFieldsFrom(plNetMessage * msg);

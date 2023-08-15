@@ -80,7 +80,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plNetClientMgr::ISendMembersListRequest()
 {
     plNetMsgMembersListReq  msg;
-    msg.SetNetProtocol(kNetProtocolCli2Game);
     SendMsg(&msg);
 }
 
@@ -91,7 +90,6 @@ void plNetClientMgr::ISendRoomsReset()
 {
     plNetMsgPagingRoom msg;
     msg.SetPageFlags(plNetMsgPagingRoom::kResetList);
-    msg.SetNetProtocol(kNetProtocolCli2Game);
     SendMsg(&msg);
 }
 
@@ -377,7 +375,6 @@ void plNetClientMgr::ISendGameMessage(plMessage* msg)
 #endif
 
     netMsgWrap->SetPlayerID(GetPlayerID());
-    netMsgWrap->SetNetProtocol(kNetProtocolCli2Game);
     SendMsg(netMsgWrap);
 
     if (plNetObjectDebugger::GetInstance()->IsDebugObject(msg->GetSender() ? msg->GetSender()->ObjectIsLoaded() : nullptr))
@@ -412,11 +409,11 @@ void plNetClientMgr::SendMsg(plNetMessage* msg)
     }
     
     msg->SetTimeSent(plUnifiedTime::GetCurrent());
-    int channel = IPrepMsg(msg);
+    IPrepMsg(msg);
     
 //  hsLogEntry( DebugMsg( "<SND> {} {}", msg->ClassName(), msg->AsStdString()) );
     
-    fTransport.SendMsg(channel, msg);
+    fTransport.SendMsg(msg);
 
     // Debug
     if (plNetMsgVoice::ConvertNoRef(msg))

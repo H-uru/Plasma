@@ -143,65 +143,12 @@ void NetCommActivateMsgDispatchers();
 
 /*****************************************************************************
 *
-*   Net message handlers
-*
-***/
-
-typedef plNetMsgHandler::Status (FNetCommMsgHandler)(
-    plNetMessage *  msg,
-    void *          userState
-);
-
-// Adds a msg handler for a msg that is convertable to specified type.
-void NetCommAddMsgHandlerForType (
-    unsigned                msgClassIdx,
-    FNetCommMsgHandler *    handler,
-    void *                  userState
-);
-// Adds a msg handler for a specific msg type.
-void NetCommAddMsgHandlerForExactType (
-    unsigned                msgClassIdx,
-    FNetCommMsgHandler *    handler,
-    void *                  userState
-);
-
-extern const unsigned       kNetCommAllMsgClasses;
-extern FNetCommMsgHandler * kNetCommAllMsgHandlers;
-extern const void *         kNetCommAllUserStates;
-
-void NetCommRemoveMsgHandler (
-    unsigned                msgClassIdx,
-    FNetCommMsgHandler *    handler,
-    const void *            userState
-);
-
-void NetCommSetDefaultMsgHandler (
-    FNetCommMsgHandler *    handler,
-    void *                  userState
-);
-void NetCommSetMsgPreHandler (
-    FNetCommMsgHandler *    handler,
-    void *                  userState
-);
-
-/*****************************************************************************
-*
 *   Network requests
 *   Network replies are posted via plDispatch
 *
 ***/
 
 void NetCommAuthenticate (  // --> plNetCommAuthMsg
-    void *                  param
-);
-void NetCommGetFileList (   // --> plNetCommFileListMsg
-    const char16_t          dir[],
-    const char16_t          ext[],
-    void *                  param
-);
-void NetCommGetFile (       // --> plNetCommFileDownloadMsg
-    const char16_t          filename[],
-    hsStream *              writer,
     void *                  param
 );
 void NetCommLinkToAge (     // --> plNetCommLinkToAgeMsg
@@ -232,46 +179,6 @@ void NetCommSetAgePublic (  // --> no msg
     unsigned                ageInfoId,
     bool                    makePublic
 );
-void NetCommCreatePublicAge (// --> plNetCommPublicAgeMsg
-    const char              ageName[],
-    const plUUID&           ageInstId,
-    void *                  param
-);
-void NetCommRemovePublicAge(// --> plNetCommPublicAgeMsg
-    const plUUID&           ageInstId,
-    void *                  param
-);
-void NetCommRegisterOwnedAge (
-    const NetCommAge &      age,
-    const char              ageInstDesc[],
-    unsigned                playerInt,
-    void *                  param
-);
-void NetCommUnregisterOwnedAge (
-    const char              ageName[],
-    unsigned                playerInt,
-    void *                  param
-);
-void NetCommRegisterVisitAge (
-    const NetCommAge &      age,
-    const char              ageInstDesc[],
-    unsigned                playerInt,
-    void *                  param
-);
-void NetCommUnregisterVisitAge (
-    const plUUID&           ageInstId,
-    unsigned                playerInt,
-    void *                  param
-);
-void NetCommConnectPlayerVault (
-    void *                  param
-);
-void NetCommDisconnectPlayerVault ();
-void NetCommConnectAgeVault (
-    const plUUID&           ageInstId,
-    void *                  param
-);
-void NetCommDisconnectAgeVault ();
 void NetCommUpgradeVisitorToExplorer (
     unsigned                playerInt,
     void *                  param
@@ -318,33 +225,7 @@ void NetCommLogStackDump(const ST::string& stackDump);
 class plNetClientComm
 {
 public:
-    // Message handler for unsolicited msgs or registered for specific msg types.
-    class MsgHandler
-    {
-    public:
-        static plNetMsgHandler::Status StaticMsgHandler(plNetMessage* msg, void* userState);
-        virtual plNetMsgHandler::Status HandleMessage(plNetMessage* msg) = 0;
-    };
-
-    ////////////////////////////////////////////////////////////////
-
-    plNetClientComm();
-    ~plNetClientComm();
-
-    ////////////////////////////////////////////////////////////////
-
-    // Adds a msg handler for a msg that is convertable to specified type.
-    void    AddMsgHandlerForType( uint16_t msgClassIdx, MsgHandler* handler );
-
-    // Adds a msg handler for a specific msg type.
-    void    AddMsgHandlerForExactType( uint16_t msgClassIdx, MsgHandler* handler );
-
-    bool    RemoveMsgHandler( MsgHandler* handler );
-
-    // Msgs not part of a task controlled by this
-    // object, and doesn't have a handler set for its type
-    // are sent to this handler (if set).
-    void    SetDefaultHandler( MsgHandler* msgHandler );
+    void SetMsgHandler(plNetMsgHandler* msgHandler);
 };
 
 ////////////////////////////////////////////////////////////////////

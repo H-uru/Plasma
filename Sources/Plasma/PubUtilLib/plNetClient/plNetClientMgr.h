@@ -81,25 +81,11 @@ class plCCRPetitionMsg;
 class plNetMsgPagingRoom;
 
 
-struct plNetClientCommMsgHandler : plNetClientComm::MsgHandler {
-    plNetMsgHandler::Status HandleMessage(plNetMessage* msg) override;
-};
-
 class plNetClientMgr : public plNetClientApp
 {
 private:
     typedef std::vector<plKey> plKeyVec;
 public:
-
-    enum NetChannels
-    {
-        kNetChanDefault,
-        kNetChanVoice,
-        kNetChanListenListUpdate,
-        kNetChanDirectedMsg,
-        kNetNumChannels
-    };
-
     enum DirectedSendFlags
     {
         kInterAgeMsg = 0x1
@@ -211,7 +197,7 @@ private:
     bool IUpdateListenList(double secs);
     void IHandleNetVoiceListMsg(plNetVoiceListMsg* msg);
     bool IApplyNewListenList(std::vector<DistSqInfo>& newListenList, bool forceSynch);
-    int IPrepMsg(plNetMessage* msg);
+    void IPrepMsg(plNetMessage* msg);
     void IPlayerChangeAge(bool exiting, int32_t spawnPt);   
     
     void IAddCloneRoom();
@@ -289,9 +275,6 @@ public:
 
     plKey GetLocalPlayerKey()  const override { return fLocalPlayerKey; }
     plSynchedObject* GetLocalPlayer(bool forceLoad=false) const override;
-    
-    bool IsPeerToPeer()               const { return false; }
-    bool IsConnected()                const { return true; }
 
     void IncNumInitialSDLStates();
     void ResetNumInitialSDLStates() { fNumInitialSDLStates=0; }
@@ -383,8 +366,7 @@ public:
 
 private:
     plNetClientComm             fNetClientComm;
-    plNetClientCommMsgHandler   fNetClientCommMsgHandler;
-    
+
     void IInitNetClientComm();
     void IDeInitNetClientComm();
     void INetClientCommOpStarted(uint32_t context);
@@ -395,7 +377,6 @@ private:
     friend class plNetDniInfoSource;
     friend class plNetTalkList;
     friend class plNetClientMsgHandler;
-    friend struct plNetClientCommMsgHandler;
 };
 
 #endif  // PL_NET_CLIENT_inc

@@ -315,7 +315,6 @@ void plNCAgeJoiner::ExecNextOp () {
 
                 // Request initial SDL state
                 plNetMsgGameStateRequest gsmsg;
-                gsmsg.SetNetProtocol(kNetProtocolCli2Game);
                 gsmsg.SetBit(plNetMessage::kInitialAgeStateRequest);
                 nc->SendMsg(&gsmsg);
                 

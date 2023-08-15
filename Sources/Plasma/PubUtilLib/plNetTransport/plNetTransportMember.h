@@ -47,12 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 
 #include <string_theory/string>
-#include <vector>
 
 //
 // This represents a participant in the game, ie. another 
 // remote user.
-// It is a basic net member with a list of channels that it subscribes to.
 //
 class plKey;
 
@@ -68,7 +66,6 @@ protected:
     plKey           fAvatarKey;
     ST::string      fPlayerName;
     uint32_t        fPlayerID;
-    std::vector<int> fSubscriptions;    // list of channelGrp subscriptions
     uint32_t        fTransportFlags;
     float           fDistSq;            // from local player, temp
     uint8_t         fCCRLevel;
@@ -97,19 +94,9 @@ public:
     void SetIsServer(bool value) { (value)?SetFlags(GetFlags()|kIsServer):SetFlags(GetFlags()&~kIsServer);}
     bool IsServer() const { return (GetFlags()&kIsServer)?true:false;}
 
-    bool AddSubscription(int chan);
-    bool RemoveSubscription(int chan);    // return true on success
-    int FindSubscription(int chan);         // return index into subscription array or -1
-
-    int GetNumSubscriptions() { return fSubscriptions.size(); }
-    int GetSubscription(int i) { return fSubscriptions[i]; }
-
-    void CopySubscriptions(std::vector<int>* channels) { *channels = fSubscriptions; }
-
     void SetTransportFlags(uint32_t f) { fTransportFlags=f; }
     uint32_t GetTransportFlags() const { return fTransportFlags; }
 
-    bool IsPeerToPeer() const { return hsCheckBits(fFlags, kRequestP2P); }
     ST::string AsString() const override;
     bool IsEqualTo(const plNetMember * other) const override
     {

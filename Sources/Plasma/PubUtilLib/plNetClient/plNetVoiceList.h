@@ -104,21 +104,9 @@ public:
 //
 class plNetTalkList : public plNetVoiceList
 {
-private:
-    enum
-    {
-        kDirty  = 0x1
-    };
-    uint32_t fFlags;
 public:
-    plNetTalkList() : fFlags(0) {}
-    ~plNetTalkList() {}
-
-    void UpdateTransportGroup(plNetClientMgr* nc);
-
     void AddMember(plNetTransportMember* e) override;
     void RemoveMember(plNetTransportMember* e) override;
-    void Clear() override;
 };
 
 #endif  // plNetVoiceList_h

@@ -4,7 +4,6 @@ set(plNetMessage_SOURCES
 )
 
 set(plNetMessage_HEADERS
-    plNetCommonMessage.h
     plNetMessage.h
     plNetMessageCreatable.h
     plNetMsgHelpers.h
@@ -18,7 +17,6 @@ target_link_libraries(
         CoreLib
         pnFactory
         pnKeyedObject
-        pnNetBase
         pnNetCommon
         plNetCommon
         plUnifiedTime

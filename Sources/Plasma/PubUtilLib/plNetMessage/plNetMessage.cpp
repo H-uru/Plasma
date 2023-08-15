@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "hsStream.h"
 
-#include "plNetCommonMessage.h"
 #include "plNetMsgVersion.h"
 
 #include "pnFactory/plFactory.h"
@@ -115,99 +114,39 @@ void plNetMessage::InitReplyFieldsFrom(plNetMessage * msg)
 #endif
 }
 
-//
-// STATIC
-// create and READ from lowlevel net buffer
-//
-plNetMessage* plNetMessage::CreateAndRead(const plNetCommonMessage* msg)
-{
-    // create
-    plNetMessage* pHdr = Create(msg);
-    if (!pHdr)
-        return nullptr;
-    
-    // read
-    pHdr->PeekBuffer(msg->GetData(), msg->GetLen(), 0, false);
-    return pHdr;
-}
-
-//
-// STATIC
-// create from lowlevel net buffer
-//
-plNetMessage* plNetMessage::Create(const plNetCommonMessage* msg)
-{
-    if (msg)
-    {
-        ClassIndexType classIndex;
-        hsReadOnlyStream readStream(sizeof(classIndex), msg->GetData());
-        readStream.ReadLE16(&classIndex);
-        if (!plFactory::IsValidClassIndex(classIndex))
-            return nullptr;
-        plNetMessage* pnm = plNetMessage::ConvertNoRef(plFactory::Create(classIndex));
-        if (pnm)
-            pnm->SetNetCoreMsg(msg);
-        else
-        {
-            char str[256];
-            sprintf(str, "Factory create failed, class index=%d, garbage msg?", classIndex);
-            hsAssert(false, str);
-        }
-        return pnm;
-    }
-    return nullptr;
-}
-
-int plNetMessage::PokeBuffer(char* bufIn, int bufLen, uint32_t peekOptions)
+int plNetMessage::PokeBuffer(hsStream* s, uint32_t peekOptions)
 {
     fPeekStatus = 0;
-    
-    if (!bufIn)
-        return 0;   
-    
-    if (! (peekOptions & kDontClearBuffer))
-        memset(bufIn, 0, bufLen);
-    
-    ValidatePoke();
-    hsWriteOnlyStream writeStream(bufLen, bufIn);
+
     int ret;
     if (peekOptions & kBaseClassOnly)
     {
-        ret=plNetMessage::IPokeBuffer(&writeStream, peekOptions);
+        ret=plNetMessage::IPokeBuffer(s, peekOptions);
     }
     else
     {
-        ret=IPokeBuffer(&writeStream, peekOptions);
+        ret=IPokeBuffer(s, peekOptions);
     }
     return ret;
 }
 
-int plNetMessage::PeekBuffer(const char* bufIn, int bufLen, uint32_t peekOptions, bool forcePeek)
+int plNetMessage::PeekBuffer(hsStream* s, uint32_t peekOptions, bool forcePeek)
 {
-    if(!bufLen || bufLen < 1)
-        return 0;
-
     uint32_t partialPeekOptions = (peekOptions & kPartialPeekMask);
     if (!forcePeek && (fPeekStatus & partialPeekOptions) )
         return 0;   // already peeked, fully or partially
-    
-    if (!bufIn)
-        return 0;
-    
+
     // set peek status based on peekOptions
     fPeekStatus = partialPeekOptions ? partialPeekOptions : kFullyPeeked;
-    
-    hsReadOnlyStream readStream(bufLen, bufIn);
+
     int ret;
     if (peekOptions & kBaseClassOnly)
     {
-        ret=plNetMessage::IPeekBuffer(&readStream, peekOptions);
-        plNetMessage::ValidatePeek();
+        ret=plNetMessage::IPeekBuffer(s, peekOptions);
     }
     else
     {
-        ret=IPeekBuffer(&readStream, peekOptions);
-        ValidatePeek();
+        ret=IPeekBuffer(s, peekOptions);
     }
     
     return ret;
@@ -373,21 +312,6 @@ int plNetMessage::GetPackSize()
 {
     hsNullStream nullStream;
     return IPokeBuffer(&nullStream);
-}
-
-uint32_t plNetMessage::GetNetCoreMsgLen() const
-{
-    return fNetCoreMsg ? fNetCoreMsg->GetLen() : 0;
-}
-
-void plNetMessage::ValidatePeek() const 
-{ 
-    
-}
-
-void plNetMessage::ValidatePoke() const 
-{ 
-    
 }
 
 ST::string plNetMessage::AsString() const

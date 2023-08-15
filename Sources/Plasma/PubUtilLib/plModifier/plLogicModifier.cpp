@@ -240,7 +240,6 @@ void plLogicModifier::UpdateSharedState(bool triggered) const
     ss.SetServerMayDelete(!lock);
 
     plNetMsgTestAndSet ts;
-    ts.SetNetProtocol(kNetProtocolCli2Game);
     ts.CopySharedState(&ss);
     ts.ObjectInfo()->SetFromKey(GetKey());
     ts.SetLockRequest(lock);        // if triggering, lock state, else unlock state

@@ -106,7 +106,6 @@ bool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList,
 
         plNetMsgListenListUpdate llu;
         llu.SetPlayerID(GetPlayerID());
-        llu.SetNetProtocol(kNetProtocolCli2Game);
         
         //
         // for each client in the old list, if not in the new list, send a ListenList remove msg
@@ -275,11 +274,6 @@ bool plNetClientMgr::IUpdateListenList(double secs)
                         // I can't listen to players that are more than 50 ft away 
                         if (distSq>plNetListenList::kMaxListenDistSq)
                             continue;
-                        // if we are p2p and member isn't, skip them.
-                        if ( IsPeerToPeer() && !fTransport.GetMember(i)->IsPeerToPeer() )
-                            continue;
-                        // otherwise, we aren't p2p so just update the listen list
-                        // normally so it will update in the gui as distance changes.
 #else
                         float distSq=1;
 #endif

@@ -74,11 +74,11 @@ void plNetClientMgr::IShowLists()
     y=startY;
     plSceneObject *player = plSceneObject::ConvertNoRef(GetLocalPlayer());
     hsPoint3 pos = (player ? player->GetLocalToWorld() * hsPoint3(0, 0, 0) : hsPoint3(0, 0, 0));
-    sprintf(str, "%s%s PlyrName=%s PlyrID=%d AcctID=%d P2P=%d Join#=%d Peers=%d %.1f,%.1f,%.1f",
+    sprintf(str, "%s%s PlyrName=%s PlyrID=%d Join#=%d %.1f,%.1f,%.1f",
         GetFlagsBit(kSendingVoice) ? "V" : " ",
         GetFlagsBit(kSendingActions) ? "A" : " ",
-        GetPlayerName().c_str(), GetPlayerID(), 0,
-        IsPeerToPeer(), GetJoinOrder(), 0,
+        GetPlayerName().c_str(), GetPlayerID(),
+        GetJoinOrder(),
         pos.fX, pos.fY, pos.fZ);
     txt.DrawString(x,y,str,255,255,255,255);
     SetFlagsBit(kSendingVoice, 0);
@@ -101,11 +101,10 @@ void plNetClientMgr::IShowLists()
         if (mbr->IsServer())
             continue;
         player = (mbr->GetAvatarKey() ? plSceneObject::ConvertNoRef(mbr->GetAvatarKey()->ObjectIsLoaded()) : nullptr);
-        sprintf(str, "%s%s %s p2p=%d dist=%.1f",
+        sprintf(str, "%s%s %s dist=%.1f",
             mbr->GetTransportFlags() & plNetTransportMember::kSendingVoice ? "V" : " ",
             mbr->GetTransportFlags() & plNetTransportMember::kSendingActions ? "A" : " ",
             mbr->AsString().c_str(),
-            mbr->IsPeerToPeer(),
             mbr->GetDistSq() != FLT_MAX ? sqrt(mbr->GetDistSq()) :-1.f);
         txt.DrawString(x,y,str);
         y+=yOff;

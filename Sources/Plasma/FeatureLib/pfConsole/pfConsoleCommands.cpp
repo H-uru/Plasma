@@ -5270,7 +5270,6 @@ PF_CONSOLE_CMD(Age, ResetPythonSDL, "", "Resets the Python Age SDL")
 
         constexpr uint32_t writeOptions = plSDL::kDirtyOnly | plSDL::kBroadcast | plSDL::kTimeStampOnRead;
         plNetMsgSDLState* netMsg = rec->PrepNetMsg(0.f, writeOptions);
-        netMsg->SetNetProtocol(kNetProtocolCli2Game);
         netMsg->ObjectInfo()->SetUoid(sdlMod->GetStateOwnerKey()->GetUoid());
         netMsg->SetPlayerID(plNetClientApp::GetInstance()->GetPlayerID());
         plNetClientApp::GetInstance()->SendMsg(netMsg);

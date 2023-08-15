@@ -12,7 +12,6 @@ set(plNetCommon_SOURCES
 set(plNetCommon_HEADERS
     plClientGuid.h
     plNetCommon.h
-    plNetCommonConstants.h
     plNetCommonCreatable.h
     plNetCommonHelpers.h
     plNetMember.h
