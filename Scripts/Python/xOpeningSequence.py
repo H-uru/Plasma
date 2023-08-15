@@ -446,7 +446,7 @@ class xOpeningSequence(ptModifier):
             ageSDL = PtGetAgeSDL()
             if StartInCleft():
                 gMovieFilePath = kAtrusIntroMovie
-            elif ageSDL["psnlIntroMovie"][0]:
+            elif any(ageSDL["psnlIntroMovie"]):
                 gMovieFilePath = ageSDL["psnlIntroMovie"][0]
             else:
                 gMovieFilePath = kReltoIntroMovie
