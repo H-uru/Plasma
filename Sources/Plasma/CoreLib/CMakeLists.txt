@@ -24,6 +24,7 @@ set(CoreLib_SOURCES
     plViewTransform.cpp
     hsWindows.cpp
     $<$<PLATFORM_ID:Darwin>:HeadSpin_Mac.mm>
+    $<$<PLATFORM_ID:Windows>:HeadSpin_Win.cpp>
 )
 
 if(CMAKE_USE_WIN32_THREADS_INIT)

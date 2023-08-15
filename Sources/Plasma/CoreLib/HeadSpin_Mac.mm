@@ -40,7 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Cocoa/Cocoa.h>
+#include "HeadSpin.h"
+
+#include <string_theory/string>
+#import <Cocoa/Cocoa.h>
 
 int hsMessageBoxWithOwner(hsWindowHndl owner, NSString* message, NSString* caption, int kind, int icon)
 {
@@ -52,7 +55,7 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, NSString* message, NSString* capti
         NSAlert *alert = [NSAlert new];
         alert.messageText = caption;
         alert.informativeText = message;
-        
+
         if (icon == hsMessageBoxIconError)
             alert.alertStyle = NSAlertStyleCritical;
         else if (icon == hsMessageBoxIconQuestion)
@@ -63,7 +66,7 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, NSString* message, NSString* capti
             alert.alertStyle = NSAlertStyleWarning;
         else
             alert.alertStyle = NSAlertStyleCritical;
-        
+
         if (kind == hsMessageBoxNormal)
             [alert addButtonWithTitle:@"OK"];
         else if (kind == hsMessageBoxAbortRetyIgnore) {
@@ -89,7 +92,7 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, NSString* message, NSString* capti
         [lock signal];
         [lock unlock];
     };
-    
+
     //Plasma may call dialogs from any thread, not just the main thread
     //Check to see if we're on the main thread and directly execute
     //the dialog if we are.
@@ -101,39 +104,19 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, NSString* message, NSString* capti
         [lock wait];
         [lock unlock];
     }
-    
+
     return (int)response;
 }
 
-int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon)
+int hsMessageBoxWithOwner(hsWindowHndl owner, const ST::string& message, const ST::string& caption, int kind, int icon)
 {
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
-    
-    @autoreleasepool {
-        return hsMessageBoxWithOwner(owner,
-                                     [NSString stringWithCString:caption encoding:NSUTF8StringEncoding],
-                                     [NSString stringWithCString:message encoding:NSUTF8StringEncoding],
-                                     kind,
-                                     icon);
-    }
-}
 
-int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wchar_t* caption, int kind, int icon)
-{
-    if (hsMessageBox_SuppressPrompts)
-        return hsMBoxOk;
-    
     @autoreleasepool {
         return hsMessageBoxWithOwner(owner,
-                                     [[[NSString alloc] initWithBytesNoCopy:(void *)caption
-                                                                     length:wcslen(caption)*sizeof(*caption)
-                                                                   encoding:NSUTF32LittleEndianStringEncoding freeWhenDone:NO
-                                      ] autorelease],
-                                     [[[NSString alloc] initWithBytesNoCopy:(void *)message
-                                                                     length:wcslen(caption)*sizeof(*caption)
-                                                                   encoding:NSUTF32LittleEndianStringEncoding freeWhenDone:NO
-                                      ] autorelease],
+                                     [NSString initWithUTF8String:message.data()],
+                                     [NSString initWithUTF8String:caption.data()],
                                      kind,
                                      icon);
     }

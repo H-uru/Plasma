@@ -273,149 +273,43 @@ void hsStatusMessageF(const char * fmt, ...)
 
 #endif
 
-class hsMinimizeClientGuard
-{
-    hsWindowHndl fWnd;
-
-public:
-    hsMinimizeClientGuard()
-    {
-#ifdef HS_BUILD_FOR_WIN32
-        fWnd = GetActiveWindow();
-        // If the application's topmost window is fullscreen, minimize it before displaying an error
-        if ((GetWindowLong(fWnd, GWL_STYLE) & WS_POPUP) != 0)
-            ShowWindow(fWnd, SW_MINIMIZE);
-#endif // HS_BUILD_FOR_WIN32
-    }
-
-    ~hsMinimizeClientGuard()
-    {
-#ifdef HS_BUILD_FOR_WIN32
-        ShowWindow(fWnd, SW_RESTORE);
-#endif // HS_BUILD_FOR_WIN32
-    }
-};
-
 bool hsMessageBox_SuppressPrompts = false;
 
-// macOS has its own implementation that needs to live
-// in an Obj-C C++ file.
-#ifndef HS_BUILD_FOR_APPLE
-int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon)
+#if !defined(HS_BUILD_FOR_APPLE) && !defined(HS_BUILD_FOR_WIN32)
+// Need a proper implementation for Linux, but for now let's just print out to the console
+int hsMessageBoxWithOwner(hsWindowHndl owner, const ST::string& message, const ST::string& caption, int kind, int icon)
 {
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
 
-#if HS_BUILD_FOR_WIN32
-    uint32_t flags = 0;
-
-    if (kind == hsMessageBoxNormal)
-        flags |= MB_OK;
-    else if (kind == hsMessageBoxAbortRetyIgnore)
-        flags |= MB_ABORTRETRYIGNORE;
-    else if (kind == hsMessageBoxOkCancel)
-        flags |= MB_OKCANCEL;
-    else if (kind == hsMessageBoxRetryCancel)
-        flags |= MB_RETRYCANCEL;
-    else if (kind == hsMessageBoxYesNo)
-        flags |= MB_YESNO;
-    else if (kind == hsMessageBoxYesNoCancel)
-        flags |= MB_YESNOCANCEL;
-    else
-        flags |= MB_OK;
-
-    if (icon == hsMessageBoxIconError)
-        flags |= MB_ICONERROR;
-    else if (icon == hsMessageBoxIconQuestion)
-        flags |= MB_ICONQUESTION;
-    else if (icon == hsMessageBoxIconExclamation)
-        flags |= MB_ICONEXCLAMATION;
-    else if (icon == hsMessageBoxIconAsterisk)
-        flags |= MB_ICONASTERISK;
-    else
-        flags |= MB_ICONERROR;
-
-    hsMinimizeClientGuard guard;
-    int ans = MessageBox(owner, message, caption, flags);
-
-    switch (ans)
-    {
-    case IDOK:          return hsMBoxOk;
-    case IDCANCEL:      return hsMBoxCancel;
-    case IDABORT:       return hsMBoxAbort;
-    case IDRETRY:       return hsMBoxRetry;
-    case IDIGNORE:      return hsMBoxIgnore;
-    case IDYES:         return hsMBoxYes;
-    case IDNO:          return hsMBoxNo;
-    default:            return hsMBoxCancel;
-    }
-
-#endif
+    hsStatusMessage(ST::format("{}\n{}", message, caption).c_str());
     return hsMBoxCancel;
+}
+#endif
+
+int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon)
+{
+    return hsMessageBoxWithOwner(owner, ST::string::from_latin_1(message), ST::string::from_latin_1(caption), kind, icon);
 }
 
 int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wchar_t* caption, int kind, int icon)
 {
-    if (hsMessageBox_SuppressPrompts)
-        return hsMBoxOk;
-
-#if HS_BUILD_FOR_WIN32
-    uint32_t flags = 0;
-
-    if (kind == hsMessageBoxNormal)
-        flags |= MB_OK;
-    else if (kind == hsMessageBoxAbortRetyIgnore)
-        flags |= MB_ABORTRETRYIGNORE;
-    else if (kind == hsMessageBoxOkCancel)
-        flags |= MB_OKCANCEL;
-    else if (kind == hsMessageBoxRetryCancel)
-        flags |= MB_RETRYCANCEL;
-    else if (kind == hsMessageBoxYesNo)
-        flags |= MB_YESNO;
-    else if (kind == hsMessageBoxYesNoCancel)
-        flags |= MB_YESNOCANCEL;
-    else
-        flags |= MB_OK;
-
-    if (icon == hsMessageBoxIconError)
-        flags |= MB_ICONERROR;
-    else if (icon == hsMessageBoxIconQuestion)
-        flags |= MB_ICONQUESTION;
-    else if (icon == hsMessageBoxIconExclamation)
-        flags |= MB_ICONEXCLAMATION;
-    else if (icon == hsMessageBoxIconAsterisk)
-        flags |= MB_ICONASTERISK;
-    else
-        flags |= MB_ICONERROR;
-
-    hsMinimizeClientGuard guard;
-    int ans = MessageBoxW(owner, message, caption, flags);
-
-    switch (ans)
-    {
-    case IDOK:          return hsMBoxOk;
-    case IDCANCEL:      return hsMBoxCancel;
-    case IDABORT:       return hsMBoxAbort;
-    case IDRETRY:       return hsMBoxRetry;
-    case IDIGNORE:      return hsMBoxIgnore;
-    case IDYES:         return hsMBoxYes;
-    case IDNO:          return hsMBoxNo;
-    default:            return hsMBoxCancel;
-    }
-
-#endif
-    return hsMBoxCancel;
+    return hsMessageBoxWithOwner(owner, ST::string::from_wchar(message), ST::string::from_wchar(caption), kind, icon);
 }
-#endif
+
+int hsMessageBox(const ST::string& message, const ST::string& caption, int kind, int icon)
+{
+    return hsMessageBoxWithOwner(nullptr, message, caption, kind, icon);
+}
 
 int hsMessageBox(const char* message, const char* caption, int kind, int icon)
 {
-    return hsMessageBoxWithOwner(nullptr, message, caption, kind, icon);
+    return hsMessageBoxWithOwner(nullptr, ST::string::from_latin_1(message), ST::string::from_latin_1(caption), kind, icon);
 }
 
 int hsMessageBox(const wchar_t* message, const wchar_t* caption, int kind, int icon)
 {
-    return hsMessageBoxWithOwner(nullptr, message, caption, kind, icon);
+    return hsMessageBoxWithOwner(nullptr, ST::string::from_wchar(message), ST::string::from_wchar(caption), kind, icon);
 }
 
 /**************************************/

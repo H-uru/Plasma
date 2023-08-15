@@ -58,6 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstdint>
 #include <type_traits>
 
+namespace ST { class string; }
+
 //======================================
 // Winblows Hacks
 //======================================
@@ -303,8 +305,10 @@ enum {          // RETURN VALUES FROM hsMessageBox
 };
 
 extern bool hsMessageBox_SuppressPrompts;
+int hsMessageBox(const ST::string& message, const ST::string& caption, int kind, int icon=hsMessageBoxIconAsterisk);
 int hsMessageBox(const char* message, const char* caption, int kind, int icon=hsMessageBoxIconAsterisk);
 int hsMessageBox(const wchar_t* message, const wchar_t* caption, int kind, int icon=hsMessageBoxIconAsterisk);
+int hsMessageBoxWithOwner(hsWindowHndl owner, const ST::string& message, const ST::string& caption, int kind, int icon=hsMessageBoxIconAsterisk);
 int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon=hsMessageBoxIconAsterisk);
 int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wchar_t* caption, int kind, int icon=hsMessageBoxIconAsterisk);
 
