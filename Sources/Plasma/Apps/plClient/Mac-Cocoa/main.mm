@@ -42,6 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // System Frameworks
 #import <Cocoa/Cocoa.h>
+#if PLASMA_PIPELINE_GL
+#import <OpenGL/gl.h>
+#endif
+#if PLASMA_PIPELINE_METAL
+#import <Metal/Metal.h>
+#endif
 #import <QuartzCore/QuartzCore.h>
 
 // Cocoa client
@@ -63,7 +69,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCmdParser.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
+#if PLASMA_PIPELINE_GL
+#include "pfGLPipeline/plGLPipeline.h"
+#endif
 #include "plInputCore/plInputDevice.h"
+#if PLASMA_PIPELINE_METAL
+#include "pfMetalPipeline/plMetalPipeline.h"
+#endif
 #include "plMessage/plDisplayScaleChangedMsg.h"
 #include "plMessageBox/hsMessageBox.h"
 #include "plNetClient/plNetClientMgr.h"
@@ -456,6 +468,35 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     gClient.SetClientWindow((hsWindowHndl)(__bridge void*)self.window);
     gClient.SetClientDisplay((hsWindowHndl)NULL);
 
+#if PLASMA_PIPELINE_METAL
+    plMetalPipeline *pipeline = (plMetalPipeline *)gClient->GetPipeline();
+    pipeline->currentDrawableCallback = [self] {
+        id< CAMetalDrawable > drawable;
+        drawable = [((CAMetalLayer *) _renderLayer) nextDrawable];
+        CA::MetalDrawable * mtlDrawable = ( __bridge CA::MetalDrawable* ) drawable;
+        mtlDrawable->retain();
+        return mtlDrawable;
+    };
+    
+    NSString *productTitle = [NSString stringWithCString:plProduct::LongName().c_str() encoding:NSUTF8StringEncoding];
+    id<MTLDevice> device = ((CAMetalLayer *) self.window.contentView.layer).device;
+#ifdef HS_DEBUGGING
+    [self.window setTitle:[NSString stringWithFormat:@"%@ - %@, %@",
+                           productTitle,
+#ifdef __arm64__
+                           @"ARM64",
+#else
+                           @"x86_64",
+#endif
+                           device.name]];
+#else
+    [self.window setTitle:productTitle];
+#endif
+    
+#else
+    [self.window setTitle:[NSString stringWithCString:plProduct::LongName().c_str() encoding:NSUTF8StringEncoding]];
+#endif
+    
     if (!gClient) {
         exit(0);
     }

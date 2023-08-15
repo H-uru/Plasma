@@ -40,34 +40,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef pfAllCreatables_inc
-#define pfAllCreatables_inc
+#ifndef plMetalFragmentShader_inc
+#define plMetalFragmentShader_inc
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfConsole/pfConsoleCreatable.h"
+#include "plMetalShader.h"
 
-#ifdef PLASMA_PIPELINE_DX
-    #include "pfDXPipeline/pfDXPipelineCreatable.h"
-#endif
+class plShader;
+class plMetalPipeline;
 
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
+class plMetalFragmentShader : public plMetalShader
+{
+protected:
 
-#ifdef PLASMA_PIPELINE_GL
-    #include "pfGLPipeline/pfGLPipelineCreatable.h"
-#endif"
 
-#ifdef PLASMA_PIPELINE_METAL
-    #include "pfMetalPipeline/pfMetalPipelineCreatable.h"
-#endif
+public:
+    virtual bool     ISetConstants(plMetalPipeline* pipe); // On error, sets error string.
+    plMetalFragmentShader(plShader* owner);
+    virtual ~plMetalFragmentShader();
 
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+    virtual void    Release();
+    void            Link(plMetalFragmentShader** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
+    plMetalFragmentShader*    GetNext() { return (plMetalFragmentShader*)fNext; }
+};
 
-#endif // pfAllCreatables_inc
+#endif // plMetalFragmentShader_inc

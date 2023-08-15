@@ -40,34 +40,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef pfAllCreatables_inc
-#define pfAllCreatables_inc
+#ifndef plDXShader_inc
+#define plDXShader_inc
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfConsole/pfConsoleCreatable.h"
+#include "plMetalDeviceRef.h"
+#include <string_theory/string>
+#include <Metal/Metal.hpp>
 
-#ifdef PLASMA_PIPELINE_DX
-    #include "pfDXPipeline/pfDXPipelineCreatable.h"
-#endif
+class plShader;
+class plMetalPipeline;
 
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
+class plMetalShader : public plMetalDeviceRef
+{
+protected:
+    plShader*           fOwner;
+    //ST::string          fErrorString;
+    plMetalPipeline*       fPipe;
+    MTL::Function*       fFunction;
 
-#ifdef PLASMA_PIPELINE_GL
-    #include "pfGLPipeline/pfGLPipelineCreatable.h"
-#endif"
+    //HRESULT             IOnError(HRESULT hr, const char* errStr);
+    //void                ISetError(const char* errStr) { fErrorString = errStr; }
 
-#ifdef PLASMA_PIPELINE_METAL
-    #include "pfMetalPipeline/pfMetalPipelineCreatable.h"
-#endif
+    //virtual HRESULT     ICreate(plDXPipeline* pipe) = 0;
+    virtual bool     ISetConstants(plMetalPipeline* pipe) = 0; // On error, sets error string.
 
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+public:
+    plMetalShader(plShader* owner);
+    virtual ~plMetalShader();
 
-#endif // pfAllCreatables_inc
+    //ST::string      GetErrorString() const { return fErrorString; }
+    void            SetOwner(plShader* owner);
+    MTL::Function*  GetShader(plMetalPipeline* pipe) { return fFunction; };
+};
+
+#endif // plDXShader_inc

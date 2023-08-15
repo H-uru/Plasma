@@ -110,13 +110,28 @@ elseif(APPLE)
         Mac-Cocoa/PLSServerStatus.h
     )
     list(APPEND plClient_RESOURCES
-        Mac-Cocoa/Assets.xcassets
         Mac-Cocoa/banner.png
         Mac-Cocoa/banner@2x.png
         Mac-Cocoa/MainMenu.xib
         Mac-Cocoa/PLSLoginWindowController.xib
         Mac-Cocoa/PLSPatcherWindowController.xib
+    ) 
+    #shaders need to be compiled as part of the app
+    #this could change in the future, but for now the Metal code expects the library to be compiled in the app
+    set(plClient_SHADERS
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/FixedPipelineShaders.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/PlateShaders.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/BiasNormals.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/CompCosines.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveSet7.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/Grass.metal
+	../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveDecEnv.metal
     )
+    set_source_files_properties(${plClient_SHADERS} PROPERTIES LANGUAGE METAL)
+    source_group("Metal Shaders" FILES ${plClient_SHADERS})
+    set(plClient_SOURCES ${plClient_SOURCES} ${plClient_SHADERS})
+    include_directories("../../FeatureLib/pfMetalPipeline/metal-cpp"
+                        "../../FeatureLib/pfMetalPipeline/ShaderSrc")
 else()
     list(APPEND plClient_SOURCES
         main.cpp
@@ -160,6 +175,10 @@ if(APPLE)
         XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC "YES"
     )
     target_compile_options(plClient PRIVATE -fobjc-arc)
+    target_sources(plClient PRIVATE Mac-Cocoa/Assets.xcassets)
+    set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
+         MACOSX_PACKAGE_LOCATION Resources
+    )
 
     if(PLASMA_APPLE_DEVELOPMENT_TEAM_ID)
             set_target_properties(plClient PROPERTIES
@@ -229,6 +248,7 @@ target_link_libraries(
         pfPython
         $<$<BOOL:${PLASMA_PIPELINE_DX}>:pfDXPipeline>
         $<$<BOOL:${PLASMA_PIPELINE_GL}>:pfGLPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipeline>
         CURL::libcurl
         "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
         "$<$<PLATFORM_ID:Darwin>:-framework QuartzCore>"

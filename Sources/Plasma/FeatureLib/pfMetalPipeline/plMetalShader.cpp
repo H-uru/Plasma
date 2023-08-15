@@ -39,35 +39,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include "HeadSpin.h"
 
-#ifndef pfAllCreatables_inc
-#define pfAllCreatables_inc
+#include "plMetalShader.h"
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfConsole/pfConsoleCreatable.h"
+#include "plSurface/plShader.h"
 
-#ifdef PLASMA_PIPELINE_DX
-    #include "pfDXPipeline/pfDXPipelineCreatable.h"
-#endif
+#include "plMetalPipeline.h"
 
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
+plMetalShader::plMetalShader(plShader* owner)
+:   fOwner(owner),
+    fPipe(nil)
+{
+    owner->SetDeviceRef(this);
+}
 
-#ifdef PLASMA_PIPELINE_GL
-    #include "pfGLPipeline/pfGLPipelineCreatable.h"
-#endif"
+plMetalShader::~plMetalShader()
+{
+    fPipe = nil;
 
-#ifdef PLASMA_PIPELINE_METAL
-    #include "pfMetalPipeline/pfMetalPipelineCreatable.h"
-#endif
+    //ISetError(nil);
+}
 
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+void plMetalShader::SetOwner(plShader* owner)
+{
+    if( owner != fOwner )
+    {
+        Release();
+        fOwner = owner;
+        owner->SetDeviceRef(this);
+    }
+}
 
-#endif // pfAllCreatables_inc
+/*HRESULT plMetalShader::IOnError(HRESULT hr, const char* errStr)
+{
+    ISetError(errStr);
+
+    fOwner->Invalidate();
+
+    hsStatusMessage(errStr);
+
+    return hr;
+}*/
+

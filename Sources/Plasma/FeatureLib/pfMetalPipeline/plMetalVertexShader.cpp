@@ -39,35 +39,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include "HeadSpin.h"
+#include "hsWindows.h"
 
-#ifndef pfAllCreatables_inc
-#define pfAllCreatables_inc
+#include <Metal/Metal.hpp>
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfConsole/pfConsoleCreatable.h"
+#include "plMetalVertexShader.h"
 
-#ifdef PLASMA_PIPELINE_DX
-    #include "pfDXPipeline/pfDXPipelineCreatable.h"
-#endif
+#include "plSurface/plShader.h"
 
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
+#include "plDrawable/plGBufferGroup.h"
+#include "plMetalPipeline.h"
 
-#ifdef PLASMA_PIPELINE_GL
-    #include "pfGLPipeline/pfGLPipelineCreatable.h"
-#endif"
+plMetalVertexShader::plMetalVertexShader(plShader* owner)
+:   plMetalShader(owner)
+{
+}
 
-#ifdef PLASMA_PIPELINE_METAL
-    #include "pfMetalPipeline/pfMetalPipelineCreatable.h"
-#endif
+plMetalVertexShader::~plMetalVertexShader()
+{
+    Release();
+}
 
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
+void plMetalVertexShader::Release()
+{
+    fPipe = nil;
 
-#endif // pfAllCreatables_inc
+    //ISetError(nil);
+}
+
+bool plMetalVertexShader::ISetConstants(plMetalPipeline* pipe)
+{
+    if( fOwner->GetNumConsts() )
+    {
+        float *ptr = (float *)fOwner->GetConstBasePtr();
+        pipe->GetMetalDevice()->CurrentRenderCommandEncoder()->setVertexBytes(ptr, fOwner->GetNumConsts()  * sizeof(float) * 4, BufferIndexUniforms);
+    }
+
+    return true;
+}
+

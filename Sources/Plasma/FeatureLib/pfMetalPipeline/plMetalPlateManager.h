@@ -40,34 +40,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef pfAllCreatables_inc
-#define pfAllCreatables_inc
+#ifndef plMetalPlateManager_hpp
+#define plMetalPlateManager_hpp
 
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-#include "pfConsole/pfConsoleCreatable.h"
+#include <stdio.h>
+#include "plPipeline/plPlates.h"
+#include <Metal/Metal.hpp>
+#include <simd/simd.h>
+#include "hsPoint2.h"
 
-#ifdef PLASMA_PIPELINE_DX
-    #include "pfDXPipeline/pfDXPipelineCreatable.h"
-#endif
+class plMetalPipeline;
 
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatable.h"
+class plMetalPlateManager : public plPlateManager
+{
+    friend class plMetalPipeline;
+public:
+    plMetalPlateManager(plMetalPipeline* pipe);
+    void IDrawToDevice(plPipeline *pipe) override;
+    void ICreateGeometry();
+    void IReleaseGeometry();
+    MTL::RenderPipelineState *fPlateRenderPipelineState;
+    void encodeVertexBuffer(MTL::RenderCommandEncoder *encoder);
+private:
+    struct plateVertexBuffer {
+        hsPoint2 vertices[4];
+        hsPoint2 uv[4];
+    };
+    MTL::Buffer *fVtxBuffer;
+    MTL::Buffer *idxBuffer;
+    MTL::DepthStencilState *fDepthState;
+};
 
-#ifdef PLASMA_PIPELINE_GL
-    #include "pfGLPipeline/pfGLPipelineCreatable.h"
-#endif"
-
-#ifdef PLASMA_PIPELINE_METAL
-    #include "pfMetalPipeline/pfMetalPipelineCreatable.h"
-#endif
-
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
-
-#endif // pfAllCreatables_inc
+#endif /* plMetalPlateManager_hpp */
