@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyObjectRef.h"
 #include "cyMisc.h"
 
+#include <optional>
+
 #include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "plResMgr/plKeyFinder.h"
@@ -313,6 +315,49 @@ void plPythonSDLModifier::IDirtySynchState(const ST::string& name, bool sendImme
     }
 }
 
+template<typename T>
+std::optional<T> IConvertPythonNumber(PyObject* o) = delete;
+
+template<>
+std::optional<int> IConvertPythonNumber(PyObject* o)
+{
+    if (PyLong_Check(o))
+        return PyLong_AsLong(o);
+    if (PyNumber_Check(o)) {
+        pyObjectRef pyLong = PyNumber_Long(o);
+        return PyLong_AsLong(pyLong.Get());
+    }
+    return std::nullopt;
+}
+
+template<>
+std::optional<double> IConvertPythonNumber(PyObject* o)
+{
+    if (PyFloat_Check(o))
+        return PyFloat_AS_DOUBLE(o);
+    if (PyNumber_Check(o)) {
+        pyObjectRef pyFloat = PyNumber_Float(o);
+        // pyFloat might have come from some strange land where they return
+        // unexpected things, so don't use the unsafe macro here.
+        return PyFloat_AsDouble(pyFloat.Get());
+    }
+    return std::nullopt;
+}
+
+template<>
+std::optional<float> IConvertPythonNumber(PyObject* o)
+{
+    if (PyFloat_Check(o))
+        return static_cast<float>(PyFloat_AS_DOUBLE(o));
+    if (PyNumber_Check(o)) {
+        pyObjectRef pyFloat = PyNumber_Float(o);
+        // pyFloat might have come from some strange land where they return
+        // unexpected things, so don't use the unsafe macro here.
+        return static_cast<float>(PyFloat_AsDouble(pyFloat.Get()));
+    }
+    return std::nullopt;
+}
+
 bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int varIdx, int type, PyObject* pyVar, 
                                              const ST::string& hintstring)
 {
@@ -321,21 +366,8 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
     case plVarDescriptor::kByte:
     case plVarDescriptor::kBool:
     case plVarDescriptor::kInt:
-        if (PyLong_Check(pyVar)) {
-            int v = PyLong_AsLong(pyVar);
-            var->Set(v, varIdx);
-            if (!hintstring.empty())
-                var->GetNotificationInfo().SetHintString(hintstring);
-            return true;
-        } else if (PyLong_Check(pyVar)) {
-            int v = (int)PyLong_AsLong(pyVar);
-            var->Set(v, varIdx);
-            if (!hintstring.empty())
-                var->GetNotificationInfo().SetHintString(hintstring);
-            return true;
-        } else if (PyFloat_Check(pyVar)) {
-            int v = (int)PyFloat_AsDouble(pyVar);
-            var->Set(v, varIdx);
+        if (auto v = IConvertPythonNumber<int>(pyVar)) {
+            var->Set(v.value(), varIdx);
             if (!hintstring.empty())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
@@ -343,15 +375,8 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         break;
 
     case plVarDescriptor::kFloat:
-        if (PyFloat_Check(pyVar)) {
-            float v = (float)PyFloat_AsDouble(pyVar);
-            var->Set(v, varIdx);
-            if (!hintstring.empty())
-                var->GetNotificationInfo().SetHintString(hintstring);
-            return true;
-        } else if (PyLong_Check(pyVar)) {
-            float v = (float)PyLong_AsLong(pyVar);
-            var->Set(v, varIdx);
+        if (auto v = IConvertPythonNumber<float>(pyVar)) {
+            var->Set(v.value(), varIdx);
             if (!hintstring.empty())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
@@ -379,15 +404,8 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         break;
 
     case plVarDescriptor::kDouble:
-        if (PyFloat_Check(pyVar)) {
-            double v = PyFloat_AsDouble(pyVar);
-            var->Set(v, varIdx);
-            if (!hintstring.empty())
-                var->GetNotificationInfo().SetHintString(hintstring);
-            return true;
-        } else if (PyLong_Check(pyVar)) {
-            double v = (double)PyLong_AsLong(pyVar);
-            var->Set(v, varIdx);
+        if (auto v = IConvertPythonNumber<double>(pyVar)) {
+            var->Set(v.value(), varIdx);
             if (!hintstring.empty())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
