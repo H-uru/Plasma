@@ -1132,7 +1132,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     {
         if(!CreateProcessW(s_patcherExeName, nullptr, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi))
         {
-            hsMessageBox("Failed to launch patcher", "Error", hsMessageBoxNormal);
+            hsMessageBox(ST_LITERAL("Failed to launch patcher"), ST_LITERAL("Error"), hsMessageBoxNormal);
         }
         CloseHandle( pi.hThread );
         CloseHandle( pi.hProcess );
@@ -1186,7 +1186,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
                 message = ST_LITERAL("Another copy of URU is already running");
                 break;
         }
-        hsMessageBox(message.to_wchar().c_str(), caption.to_wchar().c_str(), hsMessageBoxNormal);
+        hsMessageBox(message, caption, hsMessageBoxNormal);
         return PARABLE_NORMAL_EXIT;
     }
 #endif
@@ -1204,13 +1204,13 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
     else
     {
-        hsMessageBox("No server.ini file found.  Please check your URU installation.", "Error", hsMessageBoxNormal);
+        hsMessageBox(ST_LITERAL("No server.ini file found. Please check your URU installation."), ST_LITERAL("Error"), hsMessageBoxNormal);
         return PARABLE_NORMAL_EXIT;
     }
 
     // Begin initializing the client in the background
     if (!WinInit(hInst)) {
-        hsMessageBox("Failed to initialize plClient", "Error", hsMessageBoxNormal);
+        hsMessageBox(ST_LITERAL("Failed to initialize plClient"), ST_LITERAL("Error"), hsMessageBoxNormal);
         return PARABLE_NORMAL_EXIT;
     }
 

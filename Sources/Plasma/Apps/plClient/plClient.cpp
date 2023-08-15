@@ -442,7 +442,7 @@ bool plClient::InitPipeline(hsWindowHndl display, uint32_t devType)
 
     if (!devSel.GetRequested(&dmr, devType))
     {
-        hsMessageBox("No suitable rendering devices found.","Plasma", hsMessageBoxNormal, hsMessageBoxIconError);
+        hsMessageBox(ST_LITERAL("No suitable rendering devices found."), ST_LITERAL("Plasma"), hsMessageBoxNormal, hsMessageBoxIconError);
         return true;
     }
 
@@ -490,7 +490,7 @@ bool plClient::InitPipeline(hsWindowHndl display, uint32_t devType)
     {
         ISetGraphicsDefaults();
 #ifdef PLASMA_EXTERNAL_RELEASE
-        hsMessageBox("There was an error initializing the video card.\nSetting defaults.", "Error", hsMessageBoxNormal);
+        hsMessageBox(ST_LITERAL("There was an error initializing the video card.\nSetting defaults."), ST_LITERAL("Error"), hsMessageBoxNormal);
 #else
         hsMessageBox( pipe->GetErrorString(), "Error creating pipeline", hsMessageBoxNormal );
 #endif

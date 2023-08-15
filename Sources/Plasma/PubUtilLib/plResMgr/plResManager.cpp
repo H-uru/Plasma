@@ -1171,7 +1171,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
 
         ST::string msg = ST::format("Data Problem: Age:{}  Page:{}  Error:{}",
             pageNode->GetPageInfo().GetAge(), pageNode->GetPageInfo().GetPage(), condStr);
-        hsMessageBox(msg.c_str(), "Error", hsMessageBoxNormal, hsMessageBoxIconError);
+        hsMessageBox(msg, ST_LITERAL("Error"), hsMessageBoxNormal, hsMessageBoxIconError);
 
         hsRefCnt_SafeUnRef(refMsg);
         return;

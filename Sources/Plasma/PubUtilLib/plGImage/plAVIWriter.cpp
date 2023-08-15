@@ -237,7 +237,7 @@ bool plAVIWriterImp::Open(const char* fileName, plPipeline* pipeline)
                                     &fBitmapInfo,   // stream format
                                     fBitmapInfo.biSize);
     } while (err != AVIERR_OK &&
-            hsMessageBox("Codec unavailable, try again?", "AVI Writer", hsMessageBoxYesNo) == hsMBoxYes);
+            hsMessageBox(ST_LITERAL("Codec unavailable, try again?"), ST_LITERAL("AVI Writer"), hsMessageBoxYesNo) == hsMBoxYes);
 
     if (err != AVIERR_OK)
     {

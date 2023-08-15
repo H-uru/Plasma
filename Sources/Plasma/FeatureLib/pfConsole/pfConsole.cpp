@@ -358,7 +358,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
 #else
                         "\nPress OK to continue parsing files." );
 
-                hsMessageBox( msg.c_str(), str.c_str(), hsMessageBoxNormal );
+                hsMessageBox(msg, str, hsMessageBoxNormal);
 #endif
             }
         }

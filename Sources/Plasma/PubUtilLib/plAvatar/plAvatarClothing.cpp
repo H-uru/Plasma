@@ -253,7 +253,7 @@ void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
         if (accessoryKey == nullptr)
         {
             strBuf = ST::format("Couldn't find accessory \"{}\". It won't show at runtime.", fAccessoryName);
-            hsMessageBox(strBuf.c_str(), GetKeyName().c_str(), hsMessageBoxNormal);
+            hsMessageBox(strBuf, GetKeyName(), hsMessageBoxNormal);
         }
     }
     mgr->WriteKey(s, accessoryKey);

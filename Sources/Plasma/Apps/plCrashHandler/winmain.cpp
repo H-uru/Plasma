@@ -380,7 +380,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             IShowCrashDialog(hInstance);
             return 0;
         } else {
-            hsMessageBox("You should never run this manually.", "Error", hsMessageBoxNormal, hsMessageBoxIconExclamation);
+            hsMessageBox(ST_LITERAL("You should never run this manually."), ST_LITERAL("Error"), hsMessageBoxNormal, hsMessageBoxIconExclamation);
             return 1;
         }
     }

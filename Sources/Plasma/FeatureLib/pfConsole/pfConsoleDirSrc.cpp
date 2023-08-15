@@ -76,7 +76,7 @@ bool pfConsoleDirSrc::ParseDirectory(const plFileName& path, const char* mask /*
             error << fEngine->GetErrorMsg() << ":\n\nCommand: '" << fEngine->GetLastErrorLine()
                   << "'\n\nPress OK to continue parsing files.";
 
-            hsMessageBox(error.to_string().c_str(), caption.to_string().c_str(), hsMessageBoxNormal);
+            hsMessageBox(error.to_string(), caption.to_string(), hsMessageBoxNormal);
 
             SetCheckProcessedFiles(true);
             return false;

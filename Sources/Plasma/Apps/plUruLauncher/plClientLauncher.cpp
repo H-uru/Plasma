@@ -327,11 +327,11 @@ bool plClientLauncher::CompleteSelfPatch(const std::function<void()>& waitProc) 
         // so now we need to unlink the old patcher, and move ME into that fool's place...
         // then we can continue on our merry way!
         if (!plFileSystem::Unlink(plManifest::PatcherExecutable())) {
-            hsMessageBox("Failed to delete old patcher executable!", "Error", hsMessageBoxNormal, hsMessageBoxIconError);
+            hsMessageBox(ST_LITERAL("Failed to delete old patcher executable!"), ST_LITERAL("Error"), hsMessageBoxNormal, hsMessageBoxIconError);
             return true;
         }
         if (!plFileSystem::Move(plFileSystem::GetCurrentAppPath(), plManifest::PatcherExecutable())) {
-            hsMessageBox("Failed to move patcher executable!", "Error", hsMessageBoxNormal, hsMessageBoxIconError);
+            hsMessageBox(ST_LITERAL("Failed to move patcher executable!"), ST_LITERAL("Error"), hsMessageBoxNormal, hsMessageBoxIconError);
             return true;
         }
 
