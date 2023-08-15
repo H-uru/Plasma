@@ -298,6 +298,9 @@ public:
 
 bool hsMessageBox_SuppressPrompts = false;
 
+// macOS has its own implementation that needs to live
+// in an Obj-C C++ file.
+#ifndef HS_BUILD_FOR_APPLE
 int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon)
 {
     if (hsMessageBox_SuppressPrompts)
@@ -403,6 +406,7 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wcha
 #endif
     return hsMBoxCancel;
 }
+#endif
 
 int hsMessageBox(const char* message, const char* caption, int kind, int icon)
 {
