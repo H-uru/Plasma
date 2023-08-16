@@ -81,6 +81,7 @@ kElevDown = 0
 kElevMoving = 1
 kElevUp = 2
 elevatorStatus = kElevDown
+serverInitDone = False
 
 class grsnNexusBookMachine(ptResponder):
 
@@ -105,6 +106,8 @@ class grsnNexusBookMachine(ptResponder):
         return plyrList
 
     def OnServerInitComplete(self):
+        global serverInitDone
+        serverInitDone = True
         bookPillarSpinning.run(self.key,netPropagate=False)
         if not PtIsSolo():
             return
@@ -151,6 +154,8 @@ class grsnNexusBookMachine(ptResponder):
         global elevatorStatus
 
         #PtDebugPrint("id ",id)
+        if not serverInitDone:
+            return
 
         avatar=PtFindAvatar(events)
         local = PtGetLocalAvatar()
