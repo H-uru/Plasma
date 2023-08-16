@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 
 #include "plClientResMgr/plClientResMgr.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plPhysX/plSimulationMgr.h"
 #include "plResMgr/plResManager.h"

@@ -23,8 +23,6 @@ set(CoreLib_SOURCES
     plProduct.cpp
     plViewTransform.cpp
     hsWindows.cpp
-    $<$<PLATFORM_ID:Darwin>:HeadSpin_Mac.mm>
-    $<$<PLATFORM_ID:Windows>:HeadSpin_Win.cpp>
 )
 
 if(CMAKE_USE_WIN32_THREADS_INIT)
@@ -85,7 +83,6 @@ target_link_libraries(
         "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
     PRIVATE
         "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
-        "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
 )
 target_include_directories(
     CoreLib

@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <string_theory/format>
 
+#include "plMessageBox/hsMessageBox.h"
+
 #include "plComponentBase.h"
 #include "plComponentReg.h"
 #include "MaxMain/plMaxNodeBase.h"

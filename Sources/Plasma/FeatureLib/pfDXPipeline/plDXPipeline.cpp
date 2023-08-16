@@ -113,6 +113,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGLight/plShadowMaster.h"
 #include "plGLight/plShadowSlave.h"
 #include "plMessage/plDeviceRecreateMsg.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plResMgr/plLocalization.h"
 #include "plScene/plRenderRequest.h"
 #include "plScene/plVisMgr.h"

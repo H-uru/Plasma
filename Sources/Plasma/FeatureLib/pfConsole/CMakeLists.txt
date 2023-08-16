@@ -49,6 +49,7 @@ target_link_libraries(
         plNetGameLib
         plNetMessage
         plMessage
+        plMessageBox
         plModifier
         plParticleSystem
         plPhysical

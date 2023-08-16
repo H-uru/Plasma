@@ -74,6 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plConsoleMsg.h"
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plPipeline/plDebugText.h"
 
 #include "pfConsoleCore/pfConsoleEngine.h"

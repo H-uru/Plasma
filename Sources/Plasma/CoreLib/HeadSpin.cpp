@@ -273,45 +273,6 @@ void hsStatusMessageF(const char * fmt, ...)
 
 #endif
 
-bool hsMessageBox_SuppressPrompts = false;
-
-#if !defined(HS_BUILD_FOR_APPLE) && !defined(HS_BUILD_FOR_WIN32)
-// Need a proper implementation for Linux, but for now let's just print out to the console
-int hsMessageBoxWithOwner(hsWindowHndl owner, const ST::string& message, const ST::string& caption, int kind, int icon)
-{
-    if (hsMessageBox_SuppressPrompts)
-        return hsMBoxOk;
-
-    hsStatusMessage(ST::format("{}\n{}", message, caption).c_str());
-    return hsMBoxCancel;
-}
-#endif
-
-int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon)
-{
-    return hsMessageBoxWithOwner(owner, ST::string::from_latin_1(message), ST::string::from_latin_1(caption), kind, icon);
-}
-
-int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wchar_t* caption, int kind, int icon)
-{
-    return hsMessageBoxWithOwner(owner, ST::string::from_wchar(message), ST::string::from_wchar(caption), kind, icon);
-}
-
-int hsMessageBox(const ST::string& message, const ST::string& caption, int kind, int icon)
-{
-    return hsMessageBoxWithOwner(nullptr, message, caption, kind, icon);
-}
-
-int hsMessageBox(const char* message, const char* caption, int kind, int icon)
-{
-    return hsMessageBoxWithOwner(nullptr, ST::string::from_latin_1(message), ST::string::from_latin_1(caption), kind, icon);
-}
-
-int hsMessageBox(const wchar_t* message, const wchar_t* caption, int kind, int icon)
-{
-    return hsMessageBoxWithOwner(nullptr, ST::string::from_wchar(message), ST::string::from_wchar(caption), kind, icon);
-}
-
 /**************************************/
 char* hsStrcpy(char* dst, const char* src)
 {

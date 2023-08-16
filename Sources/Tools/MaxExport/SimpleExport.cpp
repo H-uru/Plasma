@@ -75,6 +75,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plCubicEnvironmap.h"
 #include "plGImage/plDynamicTextMap.h"
 #include "plGImage/plMipmap.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plScene/plSceneNode.h"
 
 #include "plExportDlg.h"

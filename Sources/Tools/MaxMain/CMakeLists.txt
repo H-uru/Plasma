@@ -92,6 +92,7 @@ target_link_libraries(
         plGImage
         plInterp
         plMessage
+        plMessageBox
         plModifier
         plParticleSystem
         plPhysical

@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plSpaceTree.h"
 #include "plGImage/plMipmap.h"
 #include "plMessage/plRenderMsg.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plResMgr/plKeyFinder.h"
 #include "plSDL/plSDL.h"
 #include "plSurface/hsGMaterial.h"

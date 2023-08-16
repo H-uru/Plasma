@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsExceptions.h"
+#include "plMessageBox/hsMessageBox.h"
 
 
 //// ParseDirectory //////////////////////////////////////////////////////////

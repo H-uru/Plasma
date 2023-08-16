@@ -27,6 +27,7 @@ target_link_libraries(
         CoreLib
         pnAsyncCore
         pnNetBase
+        plMessageBox
         plNetGameLib
         plStatusLog
         plWinDpi

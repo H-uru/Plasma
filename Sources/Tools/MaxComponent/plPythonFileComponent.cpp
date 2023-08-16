@@ -81,6 +81,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plGrassShaderMod.h"
 #include "plGrassComponent.h"
 
+#include "plMessageBox/hsMessageBox.h"
+
 #include "pfPython/plPythonFileMod.h"
 #include "pfPython/plPythonParameter.h"
 

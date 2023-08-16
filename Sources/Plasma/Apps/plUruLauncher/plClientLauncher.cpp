@@ -51,6 +51,7 @@ Mead, WA   99021
 
 #include "pnAsyncCore/pnAsyncCore.h"
 
+#include "plMessageBox/hsMessageBox.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plStatusLog/plStatusLog.h"
 

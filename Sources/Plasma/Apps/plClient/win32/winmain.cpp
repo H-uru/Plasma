@@ -68,6 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plMessage/plDisplayScaleChangedMsg.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plPhysX/plPXSimulation.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plResMgr/plLocalization.h"

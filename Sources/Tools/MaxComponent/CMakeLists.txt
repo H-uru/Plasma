@@ -197,6 +197,7 @@ target_link_libraries(
         plIntersect
         plMath
         plMessage
+        plMessageBox
         plModifier
         plNetCommon
         plPipeline

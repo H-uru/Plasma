@@ -60,6 +60,7 @@ target_link_libraries(plNetClient
         plContainer
         plDrawable
         plMessage
+        plMessageBox
         plModifier
         plNetClientRecorder
         plNetGameLib

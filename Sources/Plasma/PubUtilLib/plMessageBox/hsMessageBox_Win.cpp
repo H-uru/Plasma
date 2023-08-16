@@ -40,10 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
+#include "hsMessageBox.h"
 #include "hsWindows.h"
-
-#include <string_theory/string>
 
 class hsMinimizeClientGuard
 {
@@ -65,7 +63,7 @@ public:
 };
 
 
-int hsMessageBoxWithOwner(hsWindowHndl owner, const ST::string& message, const ST::string& caption, int kind, int icon)
+hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& caption, hsMessageBoxKind kind, hsMessageBoxIcon icon)
 {
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
@@ -99,7 +97,7 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const ST::string& message, const S
         flags |= MB_ICONERROR;
 
     hsMinimizeClientGuard guard;
-    int ans = MessageBoxW(owner, message.to_wchar().data(), caption.to_wchar().data(), flags);
+    int ans = MessageBoxW(nullptr, message.to_wchar().data(), caption.to_wchar().data(), flags);
 
     switch (ans)
     {
@@ -112,6 +110,4 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const ST::string& message, const S
     case IDNO:          return hsMBoxNo;
     default:            return hsMBoxCancel;
     }
-
-    return hsMBoxCancel;
 }

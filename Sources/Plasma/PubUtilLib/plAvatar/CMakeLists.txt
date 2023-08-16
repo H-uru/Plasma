@@ -96,6 +96,7 @@ target_link_libraries(
         plInputCore
         plInterp
         plMessage
+        plMessageBox
         plNetClient
         plNetCommon
         plNetMessage

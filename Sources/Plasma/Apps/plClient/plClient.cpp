@@ -106,6 +106,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plResPatcherMsg.h"
 #include "plMessage/plRoomLoadNotifyMsg.h"
 #include "plMessage/plTransitionMsg.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plModifier/plSimpleModifier.h"
 #include "plNetClient/plLinkEffectsMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"

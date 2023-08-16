@@ -71,6 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plSDLModifierStateMsg.h"
 #include "plMessage/plSynchEnableMsg.h"
 #include "plMessage/plVaultNotifyMsg.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plModifier/plResponderModifier.h"
 #include "plNetClientRecorder/plNetClientRecorder.h"
 #include "plNetCommon/plNetObjectDebugger.h"
