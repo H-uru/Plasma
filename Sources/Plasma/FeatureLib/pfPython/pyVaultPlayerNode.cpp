@@ -198,7 +198,7 @@ void pyVaultPlayerNode::RemoveOwnedAgeLink(const ST::string& ageFilename)
 {
     plAgeInfoStruct info;
     info.SetAgeFilename(ageFilename);
-    VaultUnregisterOwnedAgeAndWait(&info);
+    VaultUnregisterOwnedAge(&info);
 }
 
 PyObject *pyVaultPlayerNode::GetVisitAgeLink(const pyAgeInfoStruct *info)
@@ -214,7 +214,7 @@ void pyVaultPlayerNode::RemoveVisitAgeLink(const ST::string& guidstr)
     plAgeInfoStruct info;
     plUUID guid(guidstr);
     info.SetAgeInstanceGuid(&guid);
-    VaultUnregisterOwnedAgeAndWait(&info);
+    VaultUnregisterOwnedAge(&info);
 }
 
 PyObject *pyVaultPlayerNode::FindChronicleEntry(const ST::string& entryName)

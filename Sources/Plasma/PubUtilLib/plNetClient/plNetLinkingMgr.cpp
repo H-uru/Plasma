@@ -975,7 +975,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink()
                     // We have the age in our AgesIOwnFolder. If its volatile, dump it for the new one.
                     VaultAgeLinkNode linkAcc(linkNode);
                     if (linkAcc.GetVolatile()) {
-                        if (VaultUnregisterOwnedAgeAndWait(&ageInfo)) {
+                        if (VaultUnregisterOwnedAge(&ageInfo)) {
                             // Fill in fields for new age create.
                             if (!info->HasAgeUserDefinedName())
                             {

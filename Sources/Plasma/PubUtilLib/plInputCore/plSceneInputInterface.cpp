@@ -856,7 +856,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
         // We have the age in our AgesIOwnFolder. If its volatile, dump it for the new one.
         VaultAgeLinkNode linkAcc(linkNode);
         if (linkAcc.GetVolatile()) {
-            if (VaultUnregisterOwnedAgeAndWait(link.GetAgeInfo())) {
+            if (VaultUnregisterOwnedAge(link.GetAgeInfo())) {
                 plUUID guid = plUUID::Generate();
                 link.GetAgeInfo()->SetAgeInstanceGuid(&guid);
                 VaultRegisterOwnedAgeAndWait(&link);

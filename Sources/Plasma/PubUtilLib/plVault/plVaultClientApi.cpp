@@ -2343,17 +2343,17 @@ bool VaultAddOwnedAgeSpawnPoint (const plUUID& ageInstId, const plSpawnPointInfo
 }
 
 //============================================================================
-bool VaultSetOwnedAgePublicAndWait (const plAgeInfoStruct * info, bool publicOrNot) {
+bool VaultSetOwnedAgePublic(const plAgeInfoStruct* info, bool publicOrNot) {
     if (hsRef<RelVaultNode> rvnLink = VaultGetOwnedAgeLink(info)) {
         if (hsRef<RelVaultNode> rvnInfo = rvnLink->GetChildNode(plVault::kNodeType_AgeInfo, 1)) {
-            VaultSetAgePublicAndWait(rvnInfo, publicOrNot);
+            VaultSetAgePublic(rvnInfo, publicOrNot);
         }
     }
     return true;
 }
 
 //============================================================================
-bool VaultSetAgePublicAndWait(hsWeakRef<NetVaultNode> ageInfoNode, bool publicOrNot) {
+bool VaultSetAgePublic(hsWeakRef<NetVaultNode> ageInfoNode, bool publicOrNot) {
     NetCliAuthSetAgePublic(ageInfoNode->GetNodeId(), publicOrNot);
 
     VaultAgeInfoNode access(ageInfoNode);
@@ -3135,7 +3135,7 @@ void VaultRegisterVisitAge(const plAgeLinkStruct* link) {
 }
 
 //============================================================================
-bool VaultUnregisterOwnedAgeAndWait (const plAgeInfoStruct * info) {
+bool VaultUnregisterOwnedAge(const plAgeInfoStruct* info) {
 
     unsigned ageLinkId = 0;
     unsigned agesIOwnId;
@@ -3193,7 +3193,7 @@ bool VaultUnregisterOwnedAgeAndWait (const plAgeInfoStruct * info) {
 }
 
 //============================================================================
-bool VaultUnregisterVisitAgeAndWait (const plAgeInfoStruct * info) {
+bool VaultUnregisterVisitAge(const plAgeInfoStruct* info) {
 
     unsigned ageLinkId = 0;
     unsigned agesICanVisitId;
@@ -3442,7 +3442,7 @@ bool VaultAmCzarOfAge (const plUUID& ageInstId) {
 }
 
 //============================================================================
-bool VaultRegisterMTStationAndWait (
+bool VaultRegisterMTStation(
     const ST::string& stationName,
     const ST::string& linkBackSpawnPtObjName
 ) {
@@ -3477,7 +3477,7 @@ void VaultProcessUnvisitNote(hsWeakRef<RelVaultNode> rvnUnVisit) {
         plAgeInfoStruct info;
         if (unvisitAcc.GetVisitInfo(&info)) {
             // Remove it from our "ages i can visit" folder
-            VaultUnregisterVisitAgeAndWait(&info);
+            VaultUnregisterVisitAge(&info);
         }
         // remove it from the inbox
         VaultRemoveChildNode(rvnInbox->GetNodeId(), rvnUnVisit->GetNodeId(), nullptr, nullptr);
@@ -3519,7 +3519,7 @@ void VaultProcessPlayerInbox () {
                 plAgeInfoStruct info;
                 if (unvisitAcc.GetVisitInfo(&info)) {
                     // Remove it from our "ages i can visit" folder
-                    VaultUnregisterVisitAgeAndWait(&info);
+                    VaultUnregisterVisitAge(&info);
                 }
                 // remove it from the inbox
                 VaultRemoveChildNode(rvnInbox->GetNodeId(), rvnUnVisit->GetNodeId(), nullptr, nullptr);

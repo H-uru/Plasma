@@ -458,8 +458,7 @@ bool pyVault::AmAgeCzar( const pyAgeInfoStruct * ageInfo )
 
 void pyVault::RegisterMTStation( const ST::string& stationName, const ST::string& backLinkSpawnPtObjName )
 {
-    // Note: This doesn't actually block (~Hoikas)
-    VaultRegisterMTStationAndWait(stationName, backLinkSpawnPtObjName);
+    VaultRegisterMTStation(stationName, backLinkSpawnPtObjName);
 }
 
 void pyVault::RegisterOwnedAge( const pyAgeLinkStruct & link )
@@ -471,7 +470,7 @@ void pyVault::UnRegisterOwnedAge(const ST::string& ageFilename)
 {
     plAgeInfoStruct info;
     info.SetAgeFilename(ageFilename);
-    VaultUnregisterOwnedAgeAndWait(&info);
+    VaultUnregisterOwnedAge(&info);
 }
 
 void pyVault::RegisterVisitAge( const pyAgeLinkStruct & link )
@@ -484,7 +483,7 @@ void pyVault::UnRegisterVisitAge(const ST::string& guidstr)
     plAgeInfoStruct info;
     plUUID guid(guidstr);
     info.SetAgeInstanceGuid(&guid);
-    VaultUnregisterVisitAgeAndWait(&info);
+    VaultUnregisterVisitAge(&info);
 }
 
 //============================================================================
@@ -544,10 +543,9 @@ void pyVault::CreateNeighborhood()
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
 
     // Unregister old hood
-    // Note: This doesn't actually block (~Hoikas)
     plAgeInfoStruct info;
     info.SetAgeFilename(kNeighborhoodAgeFilename);
-    VaultUnregisterOwnedAgeAndWait(&info);
+    VaultUnregisterOwnedAge(&info);
 
     // Register new hood    
     plAgeLinkStruct link;
@@ -578,13 +576,12 @@ void pyVault::CreateNeighborhood()
 
 bool pyVault::SetAgePublic( const pyAgeInfoStruct * ageInfo, bool makePublic )
 {
-    // Note: This doesn't actually block (~Hoikas)
-    return VaultSetOwnedAgePublicAndWait(ageInfo->GetAgeInfo(), makePublic);
+    return VaultSetOwnedAgePublic(ageInfo->GetAgeInfo(), makePublic);
 }
 
 bool pyVault::SetAgePublic( const pyVaultAgeInfoNode * ageInfoNode, bool makePublic )
 {
-    return VaultSetAgePublicAndWait(ageInfoNode->GetNode(), makePublic);
+    return VaultSetAgePublic(ageInfoNode->GetNode(), makePublic);
 }
 
 

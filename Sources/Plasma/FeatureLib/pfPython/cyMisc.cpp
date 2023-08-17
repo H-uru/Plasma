@@ -2195,7 +2195,7 @@ void cyMisc::GetPublicAgeList(const ST::string& ageName, PyObject * cbObject)
 //
 void cyMisc::CreatePublicAge( pyAgeInfoStruct * ageInfo, PyObject * cbObject )
 {
-    VaultSetOwnedAgePublicAndWait(ageInfo->GetAgeInfo(), true);
+    VaultSetOwnedAgePublic(ageInfo->GetAgeInfo(), true);
     // TODO: make the callback here
 }
 
@@ -2211,7 +2211,7 @@ void cyMisc::RemovePublicAge(const ST::string& ageInstanceGuid, PyObject * cbObj
     plAgeInfoStruct info;
     plUUID uuid(ageInstanceGuid);
     info.SetAgeInstanceGuid(&uuid);
-    VaultSetOwnedAgePublicAndWait(&info, false);
+    VaultSetOwnedAgePublic(&info, false);
     // TODO: make the callback here
 }
 
