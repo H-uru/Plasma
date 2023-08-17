@@ -408,7 +408,8 @@ hsRef<RelVaultNode> VaultAgeAddDeviceAndWait(const ST::string& deviceName);   //
 void VaultAgeRemoveDevice (const ST::string& deviceName);
 bool VaultAgeHasDevice (const ST::string& deviceName);
 hsRef<RelVaultNode> VaultAgeGetDevice(const ST::string& deviceName);
-hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait(const ST::string& deviceName, const ST::string& inboxName); // blocks until completion
+typedef void (*FVaultAgeSetDeviceInboxCallback)(ENetError result, hsRef<RelVaultNode> inbox, void* param);
+void VaultAgeSetDeviceInbox(const ST::string& deviceName, const ST::string& inboxName, FVaultAgeSetDeviceInboxCallback callback, void* param);
 hsRef<RelVaultNode> VaultAgeGetDeviceInbox(const ST::string& deviceName);
 void VaultClearDeviceInboxMap ();
 

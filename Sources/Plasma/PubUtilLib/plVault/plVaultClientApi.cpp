@@ -3740,36 +3740,66 @@ hsRef<RelVaultNode> VaultAgeGetDevice (const ST::string& deviceName) {
 }
 
 //============================================================================
-hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait (const ST::string& deviceName, const ST::string& inboxName) {
+namespace _VaultAgeSetDeviceInbox
+{
+    struct _Params
+    {
+        ST::string inboxName;
+        FVaultAgeSetDeviceInboxCallback callback;
+        void* param;
+        hsRef<RelVaultNode> device;
+        hsRef<RelVaultNode> inbox;
+    };
+
+    static void _AddDeviceInboxChildCallback(ENetError result, void* param)
+    {
+        _Params* p = static_cast<_Params*>(param);
+        p->callback(result, IS_NET_SUCCESS(result) ? std::move(p->inbox) : nullptr, p->param);
+        delete p;
+    }
+
+    static void _CreateDefaultInboxCallback(ENetError result, void* state, void* param, hsWeakRef<RelVaultNode> node)
+    {
+        _Params* p = static_cast<_Params*>(param);
+        if (IS_NET_SUCCESS(result)) {
+            VaultFolderNode access(node);
+            access.SetFolderName(p->inboxName);
+            access.SetFolderType(plVault::kDeviceInboxFolder);
+
+            p->inbox = node;
+            VaultAddChildNode(p->device->GetNodeId(), node->GetNodeId(), 0, _AddDeviceInboxChildCallback, p);
+        } else {
+            p->callback(result, nullptr, p->param);
+            delete p;
+        }
+    }
+}
+
+void VaultAgeSetDeviceInbox(const ST::string& deviceName, const ST::string& inboxName, FVaultAgeSetDeviceInboxCallback callback, void* param)
+{
+    using namespace _VaultAgeSetDeviceInbox;
+
     s_ageDeviceInboxes[deviceName] = inboxName;
 
     // if we found the inbox or its a global inbox then return here, otherwise if its the default inbox and
     // it wasn't found then continue on and create the inbox
     hsRef<RelVaultNode> existing = VaultAgeGetDeviceInbox(deviceName);
-    if (existing || inboxName != DEFAULT_DEVICE_INBOX)
-        return existing;
-
-    hsRef<RelVaultNode> device, inbox;
-
-    for (;;) {
-        device = VaultAgeGetDevice(deviceName);
-        if (!device)
-            break;
-
-        ENetError result;
-        inbox = VaultCreateNodeAndWait(plVault::kNodeType_Folder, &result);
-        if (!inbox)
-            break;
-            
-        VaultFolderNode access(inbox);
-        access.SetFolderName(inboxName);
-        access.SetFolderType(plVault::kDeviceInboxFolder);
-
-        VaultAddChildNodeAndWait(device->GetNodeId(), inbox->GetNodeId(), 0);
-        break;
+    if (existing) {
+        callback(kNetSuccess, std::move(existing), param);
+        return;
+    } else if (inboxName != DEFAULT_DEVICE_INBOX) {
+        callback(kNetErrVaultNodeNotFound, nullptr, param);
+        return;
     }
 
-    return inbox;
+    hsRef<RelVaultNode> device = VaultAgeGetDevice(deviceName);
+    if (!device) {
+        callback(kNetErrVaultNodeNotFound, nullptr, param);
+        return;
+    }
+
+    _Params* p = new _Params {inboxName, callback, param, std::move(device)};
+    VaultCreateNode(plVault::kNodeType_Folder, _CreateDefaultInboxCallback, nullptr, p);
 }
 
 //============================================================================

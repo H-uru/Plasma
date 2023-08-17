@@ -144,6 +144,13 @@ PyObject * pyVaultTextNoteNode::GetDeviceInbox() const
         PYTHON_RETURN_NONE;
 }
 
+static void _SetDeviceInboxCallback(ENetError result, hsRef<RelVaultNode> inbox, void* param)
+{
+    auto cb = static_cast<pyVaultNode::pyVaultNodeOperationCallback*>(param);
+    cb->SetNode(std::move(inbox));
+    cb->VaultOperationComplete(result);
+}
+
 void pyVaultTextNoteNode::SetDeviceInbox(const ST::string& devName, PyObject * cbObject, uint32_t cbContext)
 {
     if (!fNode)
@@ -152,9 +159,5 @@ void pyVaultTextNoteNode::SetDeviceInbox(const ST::string& devName, PyObject * c
     pyVaultNode::pyVaultNodeOperationCallback * cb = new pyVaultNode::pyVaultNodeOperationCallback( cbObject );
     cb->VaultOperationStarted( cbContext );
 
-    if (hsRef<RelVaultNode> rvn = VaultAgeSetDeviceInboxAndWait(devName, DEFAULT_DEVICE_INBOX))
-        cb->SetNode(rvn);
-
-    // cb deletes itself here.
-    cb->VaultOperationComplete(cbContext, cb->GetNode() ? kNetSuccess : kNetErrInternalError);
+    VaultAgeSetDeviceInbox(devName, DEFAULT_DEVICE_INBOX, _SetDeviceInboxCallback, cb);
 }
