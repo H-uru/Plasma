@@ -428,7 +428,7 @@ void plNetClientMgr::ResetServerTimeOffset()
 plUnifiedTime plNetClientMgr::GetServerTime() const 
 {
     if (fLastServerTime.AtEpoch()) {
-        WarningMsg("WARNING: Someone asked for the server time, but we don't know it yet!");
+        WarningMsg("Someone asked for the server time, but we don't know it yet!");
         return plUnifiedTime::GetCurrent();
     }
 
