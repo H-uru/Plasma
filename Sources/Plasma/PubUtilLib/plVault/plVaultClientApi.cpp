@@ -325,28 +325,26 @@ static void BuildNodeTree (
     for (unsigned i = 0; i < refCount; ++i) {
         // Find/Create global links
         auto parentIt = s_nodes.find(refs[i].parentId);
-        hsRef<RelVaultNode> parentNode;
         if (parentIt == s_nodes.end()) {
             newNodeIds->emplace_back(refs[i].parentId);
-            parentNode.Steal(new RelVaultNode());
-            parentNode->SetNodeId_NoDirty(refs[i].parentId);
-            parentIt = s_nodes.emplace(refs[i].parentId, parentNode).first;
+            hsRef<RelVaultNode> newParentNode(new RelVaultNode(), hsStealRef);
+            newParentNode->SetNodeId_NoDirty(refs[i].parentId);
+            parentIt = s_nodes.emplace(refs[i].parentId, std::move(newParentNode)).first;
         } else {
-            parentNode = parentIt->second;
             existingNodeIds->emplace_back(refs[i].parentId);
         }
+        const hsRef<RelVaultNode>& parentNode = parentIt->second;
 
         auto childIt = s_nodes.find(refs[i].childId);
-        hsRef<RelVaultNode> childNode;
         if (childIt == s_nodes.end()) {
             newNodeIds->emplace_back(refs[i].childId);
-            childNode.Steal(new RelVaultNode());
-            childNode->SetNodeId_NoDirty(refs[i].childId);
-            s_nodes.emplace(refs[i].childId, childNode);
+            hsRef<RelVaultNode> newChildNode(new RelVaultNode(), hsStealRef);
+            newChildNode->SetNodeId_NoDirty(refs[i].childId);
+            childIt = s_nodes.emplace(refs[i].childId, std::move(newChildNode)).first;
         } else {
-            childNode = childIt->second;
             existingNodeIds->emplace_back(refs[i].childId);
         }
+        const hsRef<RelVaultNode>& childNode = childIt->second;
 
         bool isImmediateParent = parentNode->IsParentOf(refs[i].childId, 1);
         bool isImmediateChild = childNode->IsChildOf(refs[i].parentId, 1);
@@ -504,14 +502,12 @@ static void VaultNodeFetched (
 
     // Add to global node table
     auto it = s_nodes.find(node->GetNodeId());
-    hsRef<RelVaultNode> globalNode;
     if (it == s_nodes.end()) {
-        globalNode.Steal(new RelVaultNode());
-        globalNode->SetNodeId_NoDirty(node->GetNodeId());
-        it = s_nodes.emplace(node->GetNodeId(), globalNode).first;
-    } else {
-        globalNode = it->second;
+        hsRef<RelVaultNode> newGlobalNode(new RelVaultNode(), hsStealRef);
+        newGlobalNode->SetNodeId_NoDirty(node->GetNodeId());
+        it = s_nodes.emplace(node->GetNodeId(), std::move(newGlobalNode)).first;
     }
+    const hsRef<RelVaultNode>& globalNode = it->second;
     globalNode->CopyFrom(node);
     InitFetchedNode(globalNode);
 
@@ -1029,7 +1025,7 @@ IRelVaultNode::~IRelVaultNode () {
 void IRelVaultNode::UnlinkFromRelatives () {
     for (auto it = parents.begin(); it != parents.end();) {
         // Advance the iterator before calling Unlink so that it doesn't get invalidated
-        hsRef<RelVaultNode> parentNode = it->second;
+        hsWeakRef<RelVaultNode> parentNode = it->second;
         ++it;
 
         // We have the relationship, so make the callbacks
@@ -1043,7 +1039,7 @@ void IRelVaultNode::UnlinkFromRelatives () {
     }
     for (auto it = children.begin(); it != children.end();) {
         // Advance the iterator before calling Unlink so that it doesn't get invalidated
-        hsRef<RelVaultNode> childNode = it->second.node;
+        hsWeakRef<RelVaultNode> childNode = it->second.node;
         ++it;
         childNode->state->Unlink(node);
     }
@@ -1590,14 +1586,12 @@ void VaultAddChildNode (
     if (parentIt != s_nodes.end()) {
         const hsRef<RelVaultNode>& parentNode = parentIt->second;
         auto childIt = s_nodes.find(childId);
-        hsRef<RelVaultNode> childNode;
         if (childIt == s_nodes.end()) {
-            childNode.Steal(new RelVaultNode());
-            childNode->SetNodeId_NoDirty(childId);
-            s_nodes.emplace(childId, childNode);
-        } else {
-            childNode = childIt->second;
+            hsRef<RelVaultNode> newChildNode(new RelVaultNode(), hsStealRef);
+            newChildNode->SetNodeId_NoDirty(childId);
+            childIt = s_nodes.emplace(childId, std::move(newChildNode)).first;
         }
+        const hsRef<RelVaultNode>& childNode = childIt->second;
 
         // We can do a sanity check for a would-be circular link, but it isn't
         // authoritative.  The db will prevent circular links from entering into
