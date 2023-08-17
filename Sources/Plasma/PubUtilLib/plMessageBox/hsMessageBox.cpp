@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 bool hsMessageBox_SuppressPrompts = false;
 
 #if !defined(HS_BUILD_FOR_APPLE) && !defined(HS_BUILD_FOR_WIN32)
+#include <string_theory/string>
 #include <string_theory/format>
 
 // Need a proper implementation for Linux, but for now let's just print out to the console
@@ -57,13 +58,3 @@ hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& cap
     return hsMBoxCancel;
 }
 #endif
-
-hsMessageBoxResult hsMessageBox(const char* message, const char* caption, hsMessageBoxKind kind, hsMessageBoxIcon icon)
-{
-    return hsMessageBox(ST::string::from_latin_1(message), ST::string::from_latin_1(caption), kind, icon);
-}
-
-hsMessageBoxResult hsMessageBox(const wchar_t* message, const wchar_t* caption, hsMessageBoxKind kind, hsMessageBoxIcon icon)
-{
-    return hsMessageBox(ST::string::from_wchar(message), ST::string::from_wchar(caption), kind, icon);
-}

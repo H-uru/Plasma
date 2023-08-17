@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsMessageBox.h"
 
+#include <string_theory/string>
 #import <Cocoa/Cocoa.h>
 
 hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& caption, hsMessageBoxKind kind, hsMessageBoxIcon icon)

@@ -493,7 +493,7 @@ bool plClient::InitPipeline(hsWindowHndl display, uint32_t devType)
 #ifdef PLASMA_EXTERNAL_RELEASE
         hsMessageBox(ST_LITERAL("There was an error initializing the video card.\nSetting defaults."), ST_LITERAL("Error"), hsMessageBoxNormal);
 #else
-        hsMessageBox( pipe->GetErrorString(), "Error creating pipeline", hsMessageBoxNormal );
+        hsMessageBox(ST::string(pipe->GetErrorString()), ST_LITERAL("Error creating pipeline"), hsMessageBoxNormal);
 #endif
         delete pipe;
         devSel.GetDefault(&dmr);

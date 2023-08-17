@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsMessageBox.h"
 #include "hsWindows.h"
+#include <string_theory/string>
 
 class hsMinimizeClientGuard
 {

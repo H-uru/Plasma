@@ -44,7 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _hsMessageBox_h_
 
 #include "HeadSpin.h"
-#include <string_theory/string>
+
+namespace ST { class string; }
 
 enum hsMessageBoxKind {              // Kind of MessageBox...passed to hsMessageBox
     hsMessageBoxAbortRetyIgnore,
@@ -75,7 +76,5 @@ enum hsMessageBoxResult {          // RETURN VALUES FROM hsMessageBox
 extern bool hsMessageBox_SuppressPrompts;
 
 hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& caption, hsMessageBoxKind kind, hsMessageBoxIcon icon=hsMessageBoxIconAsterisk);
-hsMessageBoxResult hsMessageBox(const char* message, const char* caption, hsMessageBoxKind kind, hsMessageBoxIcon icon=hsMessageBoxIconAsterisk);
-hsMessageBoxResult hsMessageBox(const wchar_t* message, const wchar_t* caption, hsMessageBoxKind kind, hsMessageBoxIcon icon=hsMessageBoxIconAsterisk);
 
 #endif // _hsMessageBox_h_
