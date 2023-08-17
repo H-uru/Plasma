@@ -212,7 +212,7 @@ void plNCAgeJoiner::Start () {
 
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
     nc->SetFlagsBit(plNetClientMgr::kPlayingGame, false);
-    nc->fServerTimeOffset               = 0;    // reset since we're connecting to a new server
+    nc->ResetServerTimeOffset();
     nc->fRequiredNumInitialSDLStates    = 0;
     nc->fNumInitialSDLStates            = 0;
     nc->SetFlagsBit(plNetClientApp::kNeedInitialAgeStateCount);

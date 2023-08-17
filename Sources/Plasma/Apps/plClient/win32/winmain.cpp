@@ -210,14 +210,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     // Handle messages
     switch (message) {
-        case WM_TIMECHANGE:
-            // To prevent cheating and keep things better synchronized,
-            // we will completely re-eval the offsets on the next NetMsg we
-            // get from the server
-            if (plNetClientMgr* nc = plNetClientMgr::GetInstance())
-                nc->ResetServerTimeOffset(true);
-            break;
-
         case WM_LBUTTONDOWN:
         case WM_RBUTTONDOWN:
         case WM_LBUTTONDBLCLK:
