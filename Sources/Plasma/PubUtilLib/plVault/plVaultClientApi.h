@@ -243,10 +243,6 @@ void VaultSetNodeSeen (
 void VaultDeleteNode (
     unsigned    nodeId
 );
-void VaultPublishNode (
-    unsigned        nodeId,
-    const ST::string& deviceName
-);
 void VaultSendNode (
     hsWeakRef<RelVaultNode> srcNode,
     unsigned                dstPlayerId

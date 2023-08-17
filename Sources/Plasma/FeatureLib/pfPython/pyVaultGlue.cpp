@@ -228,25 +228,6 @@ PYTHON_METHOD_DEFINITION(ptVault, findNode, args)
     return self->fThis->FindNode(templateNode);
 }
 
-PYTHON_METHOD_DEFINITION(ptVault, sendToDevice, args)
-{
-    PyObject* nodeObj = nullptr;
-    ST::string deviceName;
-    if (!PyArg_ParseTuple(args, "OO&", &nodeObj, PyUnicode_STStringConverter, &deviceName))
-    {
-        PyErr_SetString(PyExc_TypeError, "sendToDevice expects a ptVaultNode and a string");
-        PYTHON_RETURN_ERROR;
-    }
-    if (!pyVaultNode::Check(nodeObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "sendToDevice expects a ptVaultNode and a string");
-        PYTHON_RETURN_ERROR;
-    }
-    pyVaultNode* node = pyVaultNode::ConvertFrom(nodeObj);
-    self->fThis->SendToDevice(*node, deviceName);
-    PYTHON_RETURN_NONE;
-}
-
 PYTHON_METHOD_DEFINITION_NOARGS(ptVault, getPsnlAgeSDL)
 {
     return self->fThis->GetPsnlAgeSDL();
@@ -501,7 +482,6 @@ PYTHON_START_METHODS_TABLE(ptVault)
     PYTHON_BASIC_METHOD(ptVault, createGlobalInbox, "Creates the global inbox folder."),
 #endif
     PYTHON_METHOD(ptVault, findNode, "Params: templateNode\nFind the node matching the template"),
-    PYTHON_METHOD(ptVault, sendToDevice, "Params: node,deviceName\nSends a ptVaultNode object to an Age's device by deviceName."),
     PYTHON_METHOD_NOARGS(ptVault, getPsnlAgeSDL, "Returns the personal age SDL"),
     PYTHON_METHOD(ptVault, updatePsnlAgeSDL, "Params: pyrec\nUpdates the personal age SDL to the specified data"),
     PYTHON_METHOD_NOARGS(ptVault, inMyPersonalAge, "Are we in the player's personal age?"),

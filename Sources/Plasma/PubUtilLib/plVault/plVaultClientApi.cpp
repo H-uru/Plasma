@@ -1791,28 +1791,6 @@ void VaultDeleteNode (
 }
 
 //============================================================================
-void VaultPublishNode (
-    unsigned          nodeId,
-    const ST::string& deviceName
-) {
-    hsRef<RelVaultNode> rvn;
-
-    rvn = VaultAgeGetDeviceInbox(deviceName);
-    if (!rvn) {
-        LogMsg(kLogDebug, "Failed to find inbox for device {}, adding it on-the-fly", deviceName);
-        VaultAgeSetDeviceInboxAndWait(deviceName, DEFAULT_DEVICE_INBOX);
-
-        rvn = VaultAgeGetDeviceInbox(deviceName);
-        if (!rvn) {
-            LogMsg(kLogDebug, "Failed to add inbox to device {} on-the-fly", deviceName);
-            return;
-        }
-    }
-    
-    VaultAddChildNode(rvn->GetNodeId(), nodeId, VaultGetPlayerId(), nullptr, nullptr);
-}
-
-//============================================================================
 void VaultSendNode (
     hsWeakRef<RelVaultNode> srcNode,
     unsigned                dstPlayerId

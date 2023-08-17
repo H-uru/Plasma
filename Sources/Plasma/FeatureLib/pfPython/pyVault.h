@@ -122,9 +122,6 @@ public:
     PyObject* FindChronicleEntry(const ST::string& entryName); // returns pyVaultChronicleNode
     void AddChronicleEntry(const ST::string& name, uint32_t type, const ST::string& value);
     ///////////////
-    // publishing
-    void    SendToDevice(pyVaultNode& node, const ST::string& deviceName);
-    ///////////////
     // yeesha pages, etc.
     PyObject* GetPsnlAgeSDL() const; // returns pySDLStateDataRecord
     void UpdatePsnlAgeSDL( pySDLStateDataRecord & rec );

@@ -6531,10 +6531,6 @@ Returns a ptVaultFolderNode of the avatars outfit."""
         """Register this age as visitable by this player"""
         pass
 
-    def sendToDevice(self,node,deviceName):
-        """Sends a ptVaultNode object to an Age's device by deviceName."""
-        pass
-
     def setAgePublic(self,ageInfo,makePublic):
         """Makes the specified age public or private"""
         pass

@@ -332,16 +332,6 @@ void pyVault::AddChronicleEntry(const ST::string& name, uint32_t type, const ST:
 }
 
 
-void pyVault::SendToDevice(pyVaultNode& node, const ST::string& deviceName)
-{
-    if (!node.GetNode())
-        return;
-
-    // Note: This actually blocks (~Hoikas)
-    VaultPublishNode(node.GetNode()->GetNodeId(), deviceName);
-}
-
-
 PyObject* pyVault::GetAgesICanVisitFolder()
 {
     PyObject * result = GetAgeInfoList(plVault::kAgesICanVisitFolder);
