@@ -424,17 +424,7 @@ bool VaultAgeGetSubAgeLink (
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
 );
-bool VaultAgeFindOrCreateSubAgeLinkAndWait (
-    const plAgeInfoStruct * info,
-    plAgeLinkStruct *       link,
-    const plUUID&           parentAgeInstId
-);
 bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const plUUID& arentUuid);
-bool VaultAgeFindOrCreateChildAgeLinkAndWait (
-    const ST::string&       parentAgeName,    // nil --> current age, non-nil --> owned age by given name
-    const plAgeInfoStruct * info,
-    plAgeLinkStruct *       link
-);
 enum class plVaultChildAgeLinkResult
 {
     kFailed,
