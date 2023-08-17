@@ -404,7 +404,8 @@ void           VaultAddAgeChronicleEntry (
     int               entryType,
     const ST::string& entryValue
 );
-hsRef<RelVaultNode> VaultAgeAddDeviceAndWait(const ST::string& deviceName);   // blocks until completion
+typedef void (*FVaultAgeAddDeviceCallback)(ENetError result, hsRef<RelVaultNode> device, void* param);
+void VaultAgeAddDevice(const ST::string& deviceName, FVaultAgeAddDeviceCallback callback, void* param);
 void VaultAgeRemoveDevice (const ST::string& deviceName);
 bool VaultAgeHasDevice (const ST::string& deviceName);
 hsRef<RelVaultNode> VaultAgeGetDevice(const ST::string& deviceName);

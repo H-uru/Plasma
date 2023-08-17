@@ -3668,31 +3668,58 @@ void VaultAddAgeChronicleEntry (
 }
 
 //============================================================================
-hsRef<RelVaultNode> VaultAgeAddDeviceAndWait (const ST::string& deviceName) {
-    if (hsRef<RelVaultNode> existing = VaultAgeGetDevice(deviceName))
-        return existing;
-        
-    hsRef<RelVaultNode> device, folder;
-    
-    for (;;) {
-        folder = VaultGetAgeDevicesFolder();
-        if (!folder)
-            break;
+namespace _VaultAgeAddDevice
+{
+    struct _Params
+    {
+        ST::string deviceName;
+        FVaultAgeAddDeviceCallback callback;
+        void* param;
+        hsRef<RelVaultNode> folder;
+        hsRef<RelVaultNode> device;
+    };
 
-        ENetError result;
-        device = VaultCreateNodeAndWait(plVault::kNodeType_TextNote, &result);
-        if (!device)
-            break;
-
-        VaultTextNoteNode access(device);
-        access.SetNoteType(plVault::kNoteType_Device);
-        access.SetNoteTitle(deviceName);
-
-        VaultAddChildNodeAndWait(folder->GetNodeId(), device->GetNodeId(), 0);
-        break;
+    static void _AddFolderDeviceChildCallback(ENetError result, void* param)
+    {
+        _Params* p = static_cast<_Params*>(param);
+        p->callback(result, IS_NET_SUCCESS(result) ? std::move(p->device) : nullptr, p->param);
+        delete p;
     }
 
-    return device;
+    static void _CreateDeviceCallback(ENetError result, void* state, void* param, hsWeakRef<RelVaultNode> node)
+    {
+        _Params* p = static_cast<_Params*>(param);
+        if (IS_NET_SUCCESS(result)) {
+            VaultTextNoteNode access(node);
+            access.SetNoteType(plVault::kNoteType_Device);
+            access.SetNoteTitle(p->deviceName);
+
+            p->device = node;
+            VaultAddChildNode(p->folder->GetNodeId(), node->GetNodeId(), 0, _AddFolderDeviceChildCallback, p);
+        } else {
+            p->callback(result, nullptr, p->param);
+            delete p;
+        }
+    }
+}
+
+void VaultAgeAddDevice(const ST::string& deviceName, FVaultAgeAddDeviceCallback callback, void* param)
+{
+    using namespace _VaultAgeAddDevice;
+
+    if (hsRef<RelVaultNode> existing = VaultAgeGetDevice(deviceName)) {
+        callback(kNetSuccess, std::move(existing), param);
+        return;
+    }
+
+    hsRef<RelVaultNode> folder = VaultGetAgeDevicesFolder();
+    if (!folder) {
+        callback(kNetErrVaultNodeNotFound, nullptr, param);
+        return;
+    }
+
+    _Params* p = new _Params {deviceName, callback, param, std::move(folder)};
+    VaultCreateNode(plVault::kNodeType_TextNote, _CreateDeviceCallback, nullptr, p);
 }
 
 //============================================================================
