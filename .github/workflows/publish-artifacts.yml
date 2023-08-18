@@ -52,10 +52,11 @@ jobs:
               fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/artifacts/${art.name}.zip`, Buffer.from(download.data));
             }));
 
-      - name: Delete Previous Tag
-        run: |
-          git tag -d last-successful || true
-          git push origin :refs/tags/last-successful || true
+      - name: Delete Previous Release
+        uses: dev-drprasad/delete-tag-and-release@v1.0.0
+        with:
+          tag_name: last-successful
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update Release
         id: release
