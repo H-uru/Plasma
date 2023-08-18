@@ -53,7 +53,7 @@ jobs:
             }));
 
       - name: Delete Previous Release
-        uses: dev-drprasad/delete-tag-and-release@v1.0.0
+        uses: dev-drprasad/delete-tag-and-release@v1.0.1
         with:
           tag_name: last-successful
           github_token: ${{ secrets.GITHUB_TOKEN }}
