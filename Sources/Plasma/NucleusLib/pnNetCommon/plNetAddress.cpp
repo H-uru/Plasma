@@ -46,10 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetAddress.h"
 #include "pnNetCommon.h"
 
-#ifndef AF_INET
-#   define AF_INET 2
-#endif
-
 ST::string plNetAddress::GetHostString() const
 {
     return pnNetCommon::GetTextAddr(fHost);
@@ -105,5 +101,5 @@ void plNetAddress::Write(hsStream * s)
     s->WriteLE16(fPort);
 
     // Family is always AF_INET
-    s->WriteLE16((uint16_t)AF_INET);
+    s->WriteLE16(static_cast<uint16_t>(2));
 }
