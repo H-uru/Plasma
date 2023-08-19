@@ -61,6 +61,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  */
 class plNetAddress
 {
+    // This is used in the Read/Write format and so must not use the potentially OS-dependent AF_* constants.
+    enum class Family : uint16_t
+    {
+        kInet = 2, // matches AF_INET from Winsock <ws2def.h>
+    };
+
     uint32_t    fHost;
     uint16_t    fPort;
 

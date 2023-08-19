@@ -49,8 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /** \file hsWindows.h
  *  \brief Pulls in Windows core headers
  *
- *  This file pulls in the core Windows headers and Winsock2. It is separate from
- *  HeadSpin.h to improve build times and to facillitate adding precompiled headers.
+ *  This file pulls in the core Windows headers. It is separate from HeadSpin.h
+ *  to improve build times and to facilitate adding precompiled headers.
  *  You should avoid including this header from other headers!
  */
 
@@ -75,7 +75,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
-#   include <ws2tcpip.h> // Pulls in WinSock 2 for us
 
     // This needs to be after #include <windows.h>, since it also includes windows.h
 #   ifdef USE_VLD
