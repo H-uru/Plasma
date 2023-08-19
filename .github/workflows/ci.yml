@@ -264,7 +264,6 @@ jobs:
           brew install \
               autoconf \
               automake \
-              cairo \
               libtool \
               nasm \
               qt@5
