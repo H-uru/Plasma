@@ -13,3 +13,7 @@ if(PORT STREQUAL cairo)
     set(VCPKG_BUILD_TYPE release)
 endif()
 
+if(PORT STREQUAL python3)
+    set(VCPKG_CONFIGURE_MAKE_OPTIONS "LDFLAGS_NODIST=-rpath ${CURRENT_INSTALLED_DIR}/lib")
+endif()
+
