@@ -91,7 +91,7 @@ void plNetAddress::Read(hsStream * s)
     fHost = s->ReadLE32();
     fPort = s->ReadLE16();
 
-    // Family is always AF_INET
+    // Family is always kInet
     (void) s->ReadLE16();
 }
 
@@ -100,6 +100,5 @@ void plNetAddress::Write(hsStream * s)
     s->WriteLE32(fHost);
     s->WriteLE16(fPort);
 
-    // Family is always AF_INET
-    s->WriteLE16(static_cast<uint16_t>(2));
+    s->WriteLE16(static_cast<uint16_t>(Family::kInet));
 }
