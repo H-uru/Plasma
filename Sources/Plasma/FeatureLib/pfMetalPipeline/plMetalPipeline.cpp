@@ -4619,4 +4619,9 @@ void plMetalPipeline::plMetalPipelineCurrentState::Reset()
     fCurrentDepthStencilState = nullptr;
     fCurrentVertexBuffer = nullptr;
     fCurrentCullMode.reset();
+    
+    for(auto& layer: layerStates)
+    {
+        layer.clampFlag = hsGMatState::hsGMatClampFlags(-1);
+    }
 }

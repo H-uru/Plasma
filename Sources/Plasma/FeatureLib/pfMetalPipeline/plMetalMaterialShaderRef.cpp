@@ -311,8 +311,13 @@ void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *enc
         
     }
     
-    MTL::SamplerState* samplerState = fPipeline->fDevice.SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
-    encoder->setFragmentSamplerState(samplerState, offsetFromRootLayer);
+    if (fPipeline->fState.layerStates[offsetFromRootLayer].clampFlag != layer->GetClampFlags())
+    {
+        MTL::SamplerState* samplerState = fPipeline->fDevice.SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
+        encoder->setFragmentSamplerState(samplerState, offsetFromRootLayer);
+        
+        fPipeline->fState.layerStates[offsetFromRootLayer].clampFlag = hsGMatState::hsGMatClampFlags(layer->GetClampFlags());
+    }
 }
 
 uint32_t plMetalMaterialShaderRef::ILayersAtOnce(uint32_t which)

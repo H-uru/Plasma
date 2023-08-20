@@ -269,7 +269,17 @@ private:
     
     NS::AutoreleasePool* fCurrentPool;
     
+    /// Describes the state for the "fixed function" shader.
     struct plMetalPipelineCurrentState {
+        
+        // notes state of a given layer for a draw pass
+        // index is the offset from the curent root layer
+        // for the draw pass, not the overall index in the
+        // material
+        struct plMetalPipelineLayerState {
+            hsGMatState::hsGMatClampFlags clampFlag;
+        } layerStates[8];
+        
         std::optional<MTL::CullMode>            fCurrentCullMode;
         const MTL::RenderPipelineState*         fCurrentPipelineState;
         MTL::Buffer*                            fCurrentVertexBuffer;
