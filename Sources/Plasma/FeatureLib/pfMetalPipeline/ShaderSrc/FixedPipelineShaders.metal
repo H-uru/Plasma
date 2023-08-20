@@ -139,7 +139,7 @@ typedef struct  {
     const constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(BufferIndexFragArgBuffer)   ]];
     half4 sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const;
     //number of layers is variable, so have to declare these samplers the ugly way
-    sampler samplers  [[ sampler(0), function_constant(hasLayer1)    ]];
+    sampler samplers  [[ sampler(0), function_constant(hasLayer1)  ]];
     sampler sampler2  [[ sampler(1), function_constant(hasLayer2)  ]];
     sampler sampler3  [[ sampler(2), function_constant(hasLayer3)  ]];
     sampler sampler4  [[ sampler(3), function_constant(hasLayer4)  ]];

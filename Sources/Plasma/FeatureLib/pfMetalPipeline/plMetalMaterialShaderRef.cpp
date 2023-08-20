@@ -291,6 +291,10 @@ const hsGMatState plMetalMaterialShaderRef::ICompositeLayerState(const plLayerIn
 
 void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer)
 {
+    // Reminder: Encoder is allowed to be null when Plasma is precompiling pipeline states
+    // Metal needs to know if a shader is 2D or Cubic to compile shaders
+    // A null encoder signifies we should build the texture but not bind state
+    
     fPipeline->CheckTextureRef(layer);
     plBitmap* texture = layer->GetTexture();
     
@@ -309,14 +313,13 @@ void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *enc
             encoder->setFragmentTexture(deviceTexture->fTexture, FragmentShaderArgumentAttributeTextures + offsetFromRootLayer);
         }
         
-    }
-    
-    if (fPipeline->fState.layerStates[offsetFromRootLayer].clampFlag != layer->GetClampFlags())
-    {
-        MTL::SamplerState* samplerState = fPipeline->fDevice.SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
-        encoder->setFragmentSamplerState(samplerState, offsetFromRootLayer);
-        
-        fPipeline->fState.layerStates[offsetFromRootLayer].clampFlag = hsGMatState::hsGMatClampFlags(layer->GetClampFlags());
+        if (fPipeline->fState.layerStates[offsetFromRootLayer].clampFlag != layer->GetClampFlags())
+        {
+            MTL::SamplerState* samplerState = fPipeline->fDevice.SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
+            encoder->setFragmentSamplerState(samplerState, offsetFromRootLayer);
+            
+            fPipeline->fState.layerStates[offsetFromRootLayer].clampFlag = hsGMatState::hsGMatClampFlags(layer->GetClampFlags());
+        }
     }
 }
 
