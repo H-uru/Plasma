@@ -3,12 +3,10 @@ set(pnUtils_HEADERS
     pnUtils.h
     pnUtCoreLib.h
     pnUtAllIncludes.h
-    pnUtCrypt.h
     pnUtStr.h
 )
 
 set(pnUtils_SOURCES
-    pnUtCrypt.cpp
     pnUtStr.cpp
 )
 
@@ -21,9 +19,6 @@ target_link_libraries(
     pnUtils
     PUBLIC
         CoreLib
-        pnEncryption
-    PRIVATE
-        OpenSSL::Crypto
 )
 
 source_group("Header Files" FILES ${pnUtils_HEADERS})

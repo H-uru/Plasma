@@ -20,7 +20,6 @@ target_link_libraries(
     PRIVATE
         pnAsyncCore
         pnNetBase
-        pnUtils
         pnUUID
 )
 

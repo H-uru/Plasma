@@ -51,6 +51,5 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnUtCoreLib.h"    // must be first in list
 #include "pnUtStr.h"
-#include "pnUtCrypt.h"
 
 #endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PRIVATE_PNUTALLINCLUDES_H
