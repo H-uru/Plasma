@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "../Pch.h"
 
+#include <list>
 
 namespace Ngl {
 /*****************************************************************************
@@ -64,7 +65,7 @@ static const unsigned kDefaultTimeoutMs = 5 * 60 * 1000;
 
 static bool                         s_running;
 static std::recursive_mutex         s_critsect;
-static LISTDECL(NetTrans, m_link)   s_transactions;
+static std::list<NetTrans*> s_transactions;
 static std::atomic<long>            s_perf[kNumPerf];
 static unsigned                     s_timeoutMs = kDefaultTimeoutMs;
 
@@ -78,11 +79,12 @@ static unsigned                     s_timeoutMs = kDefaultTimeoutMs;
 //============================================================================
 static NetTrans * FindTransIncRef_CS (unsigned transId, const char tag[]) {
     // There shouldn't be more than a few transactions; just do a linear scan
-    for (NetTrans * trans = s_transactions.Head(); trans; trans = s_transactions.Next(trans))
+    for (NetTrans* trans : s_transactions) {
         if (trans->m_transId == transId) {
             trans->Ref(tag);
             return trans;
         }
+    }
 
     return nullptr;
 }
@@ -128,7 +130,15 @@ NetTrans::NetTrans (ENetProtocol protocol, ETransType transType)
 
 //============================================================================
 NetTrans::~NetTrans () {
-    ASSERT(!m_link.IsLinked());
+#if defined(HS_DEBUGGING)
+    {
+        hsLockGuard(s_critsect);
+        hsAssert(
+            std::find(s_transactions.begin(), s_transactions.end(), this) == s_transactions.end(),
+            "Destroying a transaction that's still in progress!"
+        );
+    }
+#endif
     --s_perfTransCount[m_transType];
     --s_perf[kPerfCurrTransactions];
 //  DebugMsg("%s@%p destroyed", s_transTypes[m_transType], this);
@@ -193,7 +203,7 @@ void NetTransSend (NetTrans * trans) {
     static unsigned s_transId;
     while (!trans->m_transId)
         trans->m_transId = ++s_transId;
-    s_transactions.Link(trans, kListTail);
+    s_transactions.push_back(trans);
     if (!s_running)
         CancelTrans_CS(trans, kNetErrRemoteShutdown);
 }
@@ -220,8 +230,7 @@ bool NetTransRecv (unsigned transId, const uint8_t msg[], unsigned bytes) {
 //============================================================================
 void NetTransCancel (unsigned transId, ENetError error) {
     hsLockGuard(s_critsect);
-    NetTrans * trans = s_transactions.Head();
-    for (; trans; trans = trans->m_link.Next()) {
+    for (NetTrans* trans : s_transactions) {
         if (trans->m_transId == transId) {
             CancelTrans_CS(trans, error);
             break;
@@ -232,8 +241,7 @@ void NetTransCancel (unsigned transId, ENetError error) {
 //============================================================================
 void NetTransCancelByProtocol (ENetProtocol protocol, ENetError error) {
     hsLockGuard(s_critsect);
-    NetTrans * trans = s_transactions.Head();
-    for (; trans; trans = trans->m_link.Next()) {
+    for (NetTrans* trans : s_transactions) {
         if (trans->m_protocol == protocol)
             CancelTrans_CS(trans, error);
     }
@@ -242,8 +250,7 @@ void NetTransCancelByProtocol (ENetProtocol protocol, ENetError error) {
 //============================================================================
 void NetTransCancelByConnId (unsigned connId, ENetError error) {
     hsLockGuard(s_critsect);
-    NetTrans * trans = s_transactions.Head();
-    for (; trans; trans = trans->m_link.Next()) {
+    for (NetTrans* trans : s_transactions) {
         if (trans->m_connId == connId)
             CancelTrans_CS(trans, error);
     }
@@ -252,31 +259,36 @@ void NetTransCancelByConnId (unsigned connId, ENetError error) {
 //============================================================================
 void NetTransCancelAll (ENetError error) {
     hsLockGuard(s_critsect);
-    NetTrans * trans = s_transactions.Head();
-    for (; trans; trans = trans->m_link.Next())
+    for (NetTrans* trans : s_transactions) {
         CancelTrans_CS(trans, error);
+    }
 }
 
 //============================================================================
 void NetTransUpdate () {
-    LISTDECL(NetTrans, m_link) completed;
-    LISTDECL(NetTrans, m_link) parentCompleted;
+    std::list<NetTrans*> completed;
+    std::list<NetTrans*> parentCompleted;
 
     {
         hsLockGuard(s_critsect);
 
-        NetTrans * next, * trans = s_transactions.Head();
-        for (; trans; trans = next) {
-            next = s_transactions.Next(trans);
+        for (auto it = s_transactions.begin(); it != s_transactions.end();) {
+            NetTrans* trans = *it;
+            // Increment a copy of the iterator here already,
+            // because the original iterator may be invalidated by an erase call below.
+            auto next = it;
+            next++;
 
             bool done = false;
             while (!done) {
                 switch (trans->m_state) {
                     case kTransStateComplete:
-                        if (trans->m_hasSubTrans)
-                            parentCompleted.Link(trans);
-                        else
-                            completed.Link(trans);
+                        s_transactions.erase(it);
+                        if (trans->m_hasSubTrans) {
+                            parentCompleted.push_back(trans);
+                        } else {
+                            completed.push_back(trans);
+                        }
                         done = true;
                     break;
 
@@ -316,18 +328,18 @@ void NetTransUpdate () {
                     DEFAULT_FATAL(trans->m_state);
                 }
             }
+
+            it = next;
         }
     }
 
-    // Post completed transactions    
-    while (NetTrans * trans = completed.Head()) {
-        completed.Unlink(trans);
+    // Post completed transactions
+    for (NetTrans* trans : completed) {
         trans->Post();
         trans->UnRef("Lifetime");
     }
     // Post completed parent transactions
-    while (NetTrans * trans = parentCompleted.Head()) {
-        parentCompleted.Unlink(trans);
+    for (NetTrans* trans : parentCompleted) {
         trans->Post();
         trans->UnRef("Lifetime");
     }
