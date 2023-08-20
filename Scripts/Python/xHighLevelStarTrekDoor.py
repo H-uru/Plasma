@@ -49,16 +49,26 @@ Karl
 
 from Plasma import *
 from PlasmaTypes import *
+from enum import IntEnum
 
 
 strDoorClosedVar =  ptAttribString(1, "Door Closed SDL Var")
 xrgnDoorBlocker = ptAttribExcludeRegion(2,"Exclude Region")
 rgnSensor = ptAttribActivator(3, "Region Sensor")
-respOpenDoor = ptAttribResponder(4, "Open door Responder", netForce=0)
-respCloseDoor = ptAttribResponder(5, "Close door Responder", netForce=0)
+respOpenDoor = ptAttribResponder(4, "Open door Responder", netForce=False, netPropagate=False)
+respCloseDoor = ptAttribResponder(5, "Close door Responder", netForce=False, netPropagate=False)
 strDoorEnabledVar = ptAttribString(6, "Door Enabled SDL Var (optional)")
 
-doorSDLstates = {'closed':0,'opening':1,'open':2,'closing':3,'opentoclose':4,'closetoopen':5,'movingopen':6,'movingclosed':7}
+#doorSDLstates = {'closed':0,'opening':1,'open':2,'closing':3,'opentoclose':4,'closetoopen':5,'movingopen':6,'movingclosed':7}
+class doorSDLstates(IntEnum):
+    closed = 0
+    opening = 1
+    open = 2
+    closing = 3
+    opentoclose = 4
+    closetoopen = 5
+    movingopen = 6
+    movingclosed = 7
 
 class xHighLevelStarTrekDoor(ptModifier):
     ##########################################
@@ -69,9 +79,8 @@ class xHighLevelStarTrekDoor(ptModifier):
 
         PtDebugPrint("DEBUG: xHighLevelStarTrekDoor.__init__: v. %d" % self.version)
 
-        self.PrevDoorState = 0
         self.DoorEnabled = 1
-        self.respondertime = 30
+        rgnSensor.volumeSensorNoArbitration(True)
 
     ##########################################
     def OnServerInitComplete(self):
@@ -91,18 +100,23 @@ class xHighLevelStarTrekDoor(ptModifier):
         else:
             self.DoorEnabled = 1
 
-        PtDebugPrint("xHighLevelStarTrekDoor: self.SDL = %d" % self.SDL['DoorState'][0])
+        try:
+            self.SDL['DoorState'][0]
+        except:
+            self.SDL['DoorState'] = (0,)
+
+        PtDebugPrint(f"xHighLevelStarTrekDoor: {self.SDL['DoorState'][0]=}")
 
         if not PtIsSolo():
 
             PtDebugPrint("xHighLevelStarTrekDoor: Somebody is already in the age. Attempting to sync states.")
 
             if self.SDL['DoorState'][0] in (doorSDLstates['opening'], doorSDLstates['movingopen'], doorSDLstates['opentoclose']):
-                respOpenDoor.run(self.key,netPropagate=0)
+                respOpenDoor.run(self.key)
             elif self.SDL['DoorState'][0] in (doorSDLstates['closing'], doorSDLstates['movingclosed'], doorSDLstates['closetoopen']):
-                respCloseDoor.run(self.key,netPropagate=0)
+                respCloseDoor.run(self.key)
             elif self.SDL['DoorState'][0] == doorSDLstates['open']:
-                respOpenDoor.run(self.key,fastforward=1)
+                respOpenDoor.run(self.key,fastforward=True)
 
         else:
             # the door is really shut, someone left it open
@@ -119,9 +133,9 @@ class xHighLevelStarTrekDoor(ptModifier):
             doorClosed = ageSDL[strDoorClosedVar.value][0]
             PtDebugPrint("HighLevelStarTrekDoor.OnSDLNotify: Door Closed SDL Updated to: %d" % doorClosed)
             if doorClosed:
-                respCloseDoor.run(self.key,netPropagate=0)
+                respCloseDoor.run(self.key)
             else:
-                respOpenDoor.run(self.key,netPropagate=0)
+                respOpenDoor.run(self.key)
 
     ##########################################
     def OnNotify(self,state,id,events):
@@ -135,7 +149,6 @@ class xHighLevelStarTrekDoor(ptModifier):
             for event in events:
                 #true when you enter the region
                 if event[0] == 1 and event[1] == 1:
-                    PtDebugPrint("xHighLevelStarTrekDoor: Door region entered.")
                     if doorState == doorSDLstates['closed']:
                         self.UpdateDoorState(doorSDLstates['opening'])
                         PtDebugPrint("xHighLevelStarTrekDoor: Setting Door to opening.")
@@ -191,3 +204,4 @@ class xHighLevelStarTrekDoor(ptModifier):
                 ageSDL[strDoorClosedVar.value] = (0,)
             elif self.SDL['DoorState'][0] == doorSDLstates['closing']:
                 ageSDL[strDoorClosedVar.value] = (1,)
+
