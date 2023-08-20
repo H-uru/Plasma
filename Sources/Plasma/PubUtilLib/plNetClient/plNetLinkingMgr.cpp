@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plClientMsg.h"
 #include "pnNetCommon/pnNetCommon.h"
 #include "pnSceneObject/plSceneObject.h"
+#include "pnUtils/pnUtStr.h"
 
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"

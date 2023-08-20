@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <regex>
 #include "pnEncryption/plChallengeHash.h"
+#include "pnUtils/pnUtStr.h"
+
 #include "plVault/plVaultConstants.h"
 
 namespace Ngl { namespace Auth {

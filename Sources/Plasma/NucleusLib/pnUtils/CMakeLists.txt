@@ -1,8 +1,4 @@
 set(pnUtils_HEADERS
-    Pch.h
-    pnUtils.h
-    pnUtCoreLib.h
-    pnUtAllIncludes.h
     pnUtStr.h
 )
 
@@ -10,11 +6,7 @@ set(pnUtils_SOURCES
     pnUtStr.cpp
 )
 
-plasma_library(pnUtils
-    SOURCES ${pnUtils_HEADERS} ${pnUtils_SOURCES}
-    PRECOMPILED_HEADERS Pch.h
-    UNITY_BUILD
-)
+plasma_library(pnUtils SOURCES ${pnUtils_HEADERS} ${pnUtils_SOURCES})
 target_link_libraries(
     pnUtils
     PUBLIC
