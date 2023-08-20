@@ -2426,6 +2426,10 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
         /// out of existence instead of pop out.
 
         //FIXME: In Metal, I'm not sure what this is doing. These lights won't be visible, and visible lights are always fully scaled.
+        // Note from the DX version of the source:
+        // Find the strongest numLights lights to illuminate the span with.
+        // Weaker lights are faded out in effect so they won't pop when the
+        // strongest N changes membership.
         /*if (i < spanLights.size() - 1 && i > 0) {
             threshhold = span->GetLightStrength(i, proj);
             i--;
