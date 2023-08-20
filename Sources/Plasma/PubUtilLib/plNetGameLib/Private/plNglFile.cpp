@@ -69,7 +69,6 @@ namespace Ngl { namespace File {
 ***/
 
 struct CliFileConn : hsRefCnt {
-    LINK(CliFileConn)   link;
     hsReaderWriterLock  sockLock; // to protect the socket pointer so we don't nuke it while using it
     AsyncSocket         sock;
     ST::string          name;
@@ -234,7 +233,7 @@ enum {
 
 static bool                         s_running;
 static std::recursive_mutex         s_critsect;
-static LISTDECL(CliFileConn, link)  s_conns;
+static CliFileConn* s_conn = nullptr;
 static CliFileConn *                s_active;
 static std::atomic<long>            s_perf[kNumPerf];
 static unsigned                     s_connectBuildId;
@@ -275,8 +274,7 @@ static CliFileConn * GetConnIncRef (const char tag[]) {
 }
 
 //============================================================================
-static void UnlinkAndAbandonConn_CS (CliFileConn * conn) {
-    s_conns.Unlink(conn);
+static void AbandonConn(CliFileConn* conn) {
     conn->abandoned = true;
 
     if (conn->AutoReconnectEnabled())
@@ -325,7 +323,9 @@ static void NotifyConnSocketConnectFailed (CliFileConn * conn) {
     {
         hsLockGuard(s_critsect);
         conn->cancelId = nullptr;
-        s_conns.Unlink(conn);
+        if (s_conn == conn) {
+            s_conn = nullptr;
+        }
 
         if (conn == s_active)
             s_active = nullptr;
@@ -355,7 +355,9 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
     {
         hsLockGuard(s_critsect);
         conn->cancelId = nullptr;
-        s_conns.Unlink(conn);
+        if (s_conn == conn) {
+            s_conn = nullptr;
+        }
 
         if (conn == s_active)
             s_active = nullptr;
@@ -493,13 +495,13 @@ static void Connect (CliFileConn * conn) {
 
     {
         hsLockGuard(s_critsect);
-        while (CliFileConn * oldConn = s_conns.Head()) {
-            if (oldConn != conn)
-                UnlinkAndAbandonConn_CS(oldConn);
-            else
-                s_conns.Unlink(oldConn);
+        if (CliFileConn* oldConn = s_conn) {
+            s_conn = nullptr;
+            if (oldConn != conn) {
+                AbandonConn(oldConn);
+            }
         }
-        s_conns.Link(conn);
+        s_conn = conn;
     }
 
     Cli2File_Connect connect;
@@ -587,7 +589,10 @@ void CliFileConn::TimerReconnect () {
     
     if (!s_running) {
         hsLockGuard(s_critsect);
-        UnlinkAndAbandonConn_CS(this);
+        if (s_conn == this) {
+            s_conn = nullptr;
+            AbandonConn(this);
+        }
     }
     else {
         Ref("Connecting");
@@ -1303,8 +1308,10 @@ void FileDestroy (bool wait) {
 
     {
         hsLockGuard(s_critsect);
-        while (CliFileConn * conn = s_conns.Head())
-            UnlinkAndAbandonConn_CS(conn);
+        if (CliFileConn* conn = s_conn) {
+            s_conn = nullptr;
+            AbandonConn(conn);
+        }
         s_active = nullptr;
     }
 
@@ -1379,8 +1386,10 @@ bool NetCliFileQueryConnected () {
 //============================================================================
 void NetCliFileDisconnect () {
     hsLockGuard(s_critsect);
-    while (CliFileConn * conn = s_conns.Head())
-        UnlinkAndAbandonConn_CS(conn);
+    if (CliFileConn* conn = s_conn) {
+        s_conn = nullptr;
+        AbandonConn(conn);
+    }
     s_active = nullptr;
 }
 

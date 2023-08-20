@@ -88,7 +88,6 @@ struct CliAuConn : hsRefCnt {
     void Send (const uintptr_t fields[], unsigned count);
 
     std::recursive_mutex  critsect;
-    LINK(CliAuConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
     ST::string      name;
@@ -1249,7 +1248,7 @@ enum {
 
 static bool                         s_running;
 static std::recursive_mutex         s_critsect;
-static LISTDECL(CliAuConn, link)    s_conns;
+static CliAuConn* s_conn = nullptr;
 static CliAuConn *                  s_active;
 static ST::string                   s_accountName;
 static ShaDigest                    s_accountNamePassHash;
@@ -1327,8 +1326,7 @@ static CliAuConn * GetConnIncRef (const char tag[]) {
 }
 
 //============================================================================
-static void UnlinkAndAbandonConn_CS (CliAuConn * conn) {
-    s_conns.Unlink(conn);
+static void AbandonConn(CliAuConn* conn) {
     conn->abandoned = true;
 
     conn->StopAutoReconnect();
@@ -1425,7 +1423,9 @@ static void NotifyConnSocketConnectFailed (CliAuConn * conn) {
     {
         hsLockGuard(s_critsect);
         conn->cancelId = nullptr;
-        s_conns.Unlink(conn);
+        if (s_conn == conn) {
+            s_conn = nullptr;
+        }
 
         if (conn == s_active)
             s_active = nullptr;
@@ -1444,7 +1444,9 @@ static void NotifyConnSocketDisconnect (CliAuConn * conn) {
     {
         hsLockGuard(s_critsect);
         conn->cancelId = nullptr;
-        s_conns.Unlink(conn);
+        if (s_conn == conn) {
+            s_conn = nullptr;
+        }
             
         if (conn == s_active)
             s_active = nullptr;
@@ -1525,13 +1527,13 @@ static void Connect (
 
     {
         hsLockGuard(s_critsect);
-        while (CliAuConn * oldConn = s_conns.Head()) {
-            if (oldConn != conn)
-                UnlinkAndAbandonConn_CS(oldConn);
-            else
-                s_conns.Unlink(oldConn);
+        if (CliAuConn* oldConn = s_conn) {
+            s_conn = nullptr;
+            if (oldConn != conn) {
+                AbandonConn(oldConn);
+            }
         }
-        s_conns.Link(conn);
+        s_conn = conn;
     }
     
     Cli2Auth_Connect connect;
@@ -1643,7 +1645,10 @@ void CliAuConn::TimerReconnect () {
     
     if (!s_running) {
         hsLockGuard(s_critsect);
-        UnlinkAndAbandonConn_CS(this);
+        if (s_conn == this) {
+            s_conn = nullptr;
+        }
+        AbandonConn(this);
     }
     else {
         Ref("Connecting");
@@ -4671,8 +4676,10 @@ void AuthDestroy (bool wait) {
 
     {
         hsLockGuard(s_critsect);
-        while (CliAuConn * conn = s_conns.Head())
-            UnlinkAndAbandonConn_CS(conn);
+        if (CliAuConn* conn = s_conn) {
+            s_conn = nullptr;
+            AbandonConn(conn);
+        }
         s_active = nullptr;
     }
 
@@ -4769,8 +4776,10 @@ void NetCliAuthAutoReconnectEnable (bool enable) {
 void NetCliAuthDisconnect () {
 
     hsLockGuard(s_critsect);
-    while (CliAuConn * conn = s_conns.Head())
-        UnlinkAndAbandonConn_CS(conn);
+    if (CliAuConn* conn = s_conn) {
+        s_conn = nullptr;
+        AbandonConn(conn);
+    }
     s_active = nullptr;
 }
 

@@ -85,7 +85,6 @@ struct CliGkConn : hsRefCnt {
     void Send (const uintptr_t fields[], unsigned count);
 
     std::recursive_mutex  critsect;
-    LINK(CliGkConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
     ST::string      name;
@@ -184,7 +183,7 @@ enum {
 
 static bool                         s_running;
 static std::recursive_mutex         s_critsect;
-static LISTDECL(CliGkConn, link)    s_conns;
+static CliGkConn* s_conn = nullptr;
 static CliGkConn *                  s_active;
 
 static std::atomic<long>            s_perf[kNumPerf];
@@ -220,8 +219,7 @@ static CliGkConn * GetConnIncRef (const char tag[]) {
 }
 
 //============================================================================
-static void UnlinkAndAbandonConn_CS (CliGkConn * conn) {
-    s_conns.Unlink(conn);
+static void AbandonConn(CliGkConn* conn) {
     conn->abandoned = true;
 
     conn->StopAutoReconnect();
@@ -312,7 +310,9 @@ static void NotifyConnSocketConnectFailed (CliGkConn * conn) {
     {
         hsLockGuard(s_critsect);
         conn->cancelId = nullptr;
-        s_conns.Unlink(conn);
+        if (s_conn == conn) {
+            s_conn = nullptr;
+        }
 
         if (conn == s_active)
             s_active = nullptr;
@@ -331,7 +331,9 @@ static void NotifyConnSocketDisconnect (CliGkConn * conn) {
     {
         hsLockGuard(s_critsect);
         conn->cancelId = nullptr;
-        s_conns.Unlink(conn);
+        if (s_conn == conn) {
+            s_conn = nullptr;
+        }
             
         if (conn == s_active)
             s_active = nullptr;
@@ -412,13 +414,13 @@ static void Connect (
 
     {
         hsLockGuard(s_critsect);
-        while (CliGkConn * oldConn = s_conns.Head()) {
-            if (oldConn != conn)
-                UnlinkAndAbandonConn_CS(oldConn);
-            else
-                s_conns.Unlink(oldConn);
+        if (CliGkConn* oldConn = s_conn) {
+            s_conn = nullptr;
+            if (oldConn != conn) {
+                AbandonConn(oldConn);
+            }
         }
-        s_conns.Link(conn);
+        s_conn = conn;
     }
     
     Cli2GateKeeper_Connect connect;
@@ -523,7 +525,10 @@ void CliGkConn::TimerReconnect () {
     
     if (!s_running) {
         hsLockGuard(s_critsect);
-        UnlinkAndAbandonConn_CS(this);
+        if (s_conn == this) {
+            s_conn = nullptr;
+        }
+        AbandonConn(this);
     }
     else {
         Ref("Connecting");
@@ -926,8 +931,10 @@ void GateKeeperDestroy (bool wait) {
 
     {
         hsLockGuard(s_critsect);
-        while (CliGkConn * conn = s_conns.Head())
-            UnlinkAndAbandonConn_CS(conn);
+        if (CliGkConn* conn = s_conn) {
+            s_conn = nullptr;
+            AbandonConn(conn);
+        }
         s_active = nullptr;
     }
 
@@ -994,8 +1001,10 @@ void NetCliGateKeeperStartConnect (
 //============================================================================
 void NetCliGateKeeperDisconnect () {
     hsLockGuard(s_critsect);
-    while (CliGkConn * conn = s_conns.Head())
-        UnlinkAndAbandonConn_CS(conn);
+    if (CliGkConn* conn = s_conn) {
+        s_conn = nullptr;
+        AbandonConn(conn);
+    }
     s_active = nullptr;
 }
 
