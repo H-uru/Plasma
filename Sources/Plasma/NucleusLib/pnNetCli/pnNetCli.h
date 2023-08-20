@@ -262,9 +262,8 @@ struct NetMsg {
     unsigned            count;
 };
 
-// Opaque types
+// Opaque type
 struct NetCli;
-struct NetCliQueue;
 
 
 /*****************************************************************************
@@ -339,29 +338,6 @@ void NetMsgProtocolDestroy (
 
 /*****************************************************************************
 *
-*   NetCliQueue
-*
-***/
-
-NetCliQueue * NetCliQueueCreate (
-    unsigned        flushTimeMs
-);
-
-void NetCliQueueDestroy (
-    NetCliQueue *   queue
-);
-
-void NetCliQueueFlush (
-    NetCliQueue *   queue
-);
-
-float NetCliQueueQueryFlush (
-    NetCliQueue *   queue
-);
-
-
-/*****************************************************************************
-*
 *   NetCli
 *
 ***/
@@ -383,11 +359,6 @@ NetCli * NetCliConnectAccept (
 
 void NetCliClearSocket (
     NetCli *        cli
-);
-
-void NetCliSetQueue (
-    NetCli *        cli,
-    NetCliQueue *   queue
 );
 
 void NetCliDisconnect (
