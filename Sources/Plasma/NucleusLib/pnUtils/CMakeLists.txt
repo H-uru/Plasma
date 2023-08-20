@@ -5,13 +5,11 @@ set(pnUtils_HEADERS
     pnUtAllIncludes.h
     pnUtCrypt.h
     pnUtStr.h
-    pnUtTime.h
 )
 
 set(pnUtils_SOURCES
     pnUtCrypt.cpp
     pnUtStr.cpp
-    pnUtTime.cpp
 )
 
 plasma_library(pnUtils

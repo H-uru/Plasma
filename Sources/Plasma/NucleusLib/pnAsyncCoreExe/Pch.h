@@ -68,10 +68,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Private/pnAceInt.h"
 #include "hsThread.h"
+#include "hsTimer.h"
 #include "plProduct.h"
 #include "pnAsyncCore/pnAsyncCore.h"
 #include "pnNetBase/pnNetBase.h"
-#include "pnUtils/pnUtils.h"
 
 #ifdef USE_VLD
 #include <vld.h>

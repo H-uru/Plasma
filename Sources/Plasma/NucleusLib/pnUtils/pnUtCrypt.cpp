@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnUtCrypt.h"
 #include "pnUtStr.h"
-#include "pnUtTime.h"
 
 #include <openssl/rc4.h>
 

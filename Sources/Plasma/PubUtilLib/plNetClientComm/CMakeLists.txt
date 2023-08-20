@@ -22,6 +22,7 @@ target_link_libraries(
         pnNetCli
         pnNetCommon
         pnNucleusInc
+        pnUtils
         plFile
         plNetGameLib
         plNetMessage

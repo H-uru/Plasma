@@ -1655,7 +1655,7 @@ void CliAuConn::TimerReconnect () {
         Ref("Connecting");
 
         // Remember the time we started the reconnect attempt, guarding against
-        // TimeGetMs() returning zero (unlikely), as a value of zero indicates
+        // hsTimer::GetMilliSeconds() returning zero (unlikely), as a value of zero indicates
         // a first-time connect condition to StartAutoReconnect()
         reconnectStartMs = GetNonZeroTimeMs();
 

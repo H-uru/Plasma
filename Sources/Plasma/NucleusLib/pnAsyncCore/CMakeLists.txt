@@ -25,7 +25,6 @@ target_link_libraries(
     PRIVATE
         pnAsyncCoreExe # Implementation is here
         pnNetBase
-        pnUtils
         plStatusLog # :(
 )
 
