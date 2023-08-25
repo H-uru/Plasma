@@ -300,54 +300,64 @@ static void BufferedSendData (
             case kNetMsgFieldInteger: {
                 const unsigned count = cmd->count ? cmd->count : 1;
                 const unsigned bytes = cmd->size * count;
-                void * temp = malloc(bytes);
-                
-                if (count == 1)
-                {
+                auto temp = std::make_unique<uint8_t[]>(bytes);
+
+                if (count == 1) {
                     // Single values are passed by value
                     if (cmd->size == sizeof(uint8_t)) {
-                        *(uint8_t*)temp = *(uint8_t*)msg;
+                        *(uint8_t*)&temp[0] = *(uint8_t*)msg;
                     } else if (cmd->size == sizeof(uint16_t)) {
-                        *(uint16_t*)temp = hsToLE16(*(uint16_t*)msg);
+                        *(uint16_t*)&temp[0] = hsToLE16(*(uint16_t*)msg);
                     } else if (cmd->size == sizeof(uint32_t)) {
-                        *(uint32_t*)temp = hsToLE32(*(uint32_t*)msg);
+                        *(uint32_t*)&temp[0] = hsToLE32(*(uint32_t*)msg);
                     } else if (cmd->size == sizeof(uint64_t)) {
-                        *(uint64_t*)temp = hsToLE64(*(uint64_t*)msg);
+                        *(uint64_t*)&temp[0] = hsToLE64(*(uint64_t*)msg);
                     }
-                }
-                else
-                {
+                } else {
                     // Value arrays are passed in by ptr
                     for (size_t i = 0; i < count; i++) {
                         if (cmd->size == sizeof(uint8_t)) {
-                            ((uint8_t*)temp)[i] = ((uint8_t*)*msg)[i];
+                            *(uint8_t*)&temp[i] = ((uint8_t*)*msg)[i];
                         } else if (cmd->size == sizeof(uint16_t)) {
-                            ((uint16_t*)temp)[i] = hsToLE16(((uint16_t*)*msg)[i]);
+                            *(uint16_t*)&temp[i] = hsToLE16(((uint16_t*)*msg)[i]);
                         } else if (cmd->size == sizeof(uint32_t)) {
-                            ((uint32_t*)temp)[i] = hsToLE32(((uint32_t*)*msg)[i]);
+                            *(uint32_t*)&temp[i] = hsToLE32(((uint32_t*)*msg)[i]);
                         } else if (cmd->size == sizeof(uint64_t)) {
-                            ((uint64_t*)temp)[i] = hsToLE64(((uint64_t*)*msg)[i]);
+                            *(uint64_t*)&temp[i] = hsToLE64(((uint64_t*)*msg)[i]);
                         }
                     }
                 }
-                
-                // Write values to send buffer
-                AddToSendBuffer(cli, bytes, temp);
 
-                free(temp);
+                // Write values to send buffer
+                AddToSendBuffer(cli, bytes, temp.get());
             }
             break;
 
             case kNetMsgFieldReal: {
                 const unsigned count = cmd->count ? cmd->count : 1;
                 const unsigned bytes = cmd->size * count;
-                
-                if (count == 1)
+                auto temp = std::make_unique<uint8_t[]>(bytes);
+
+                if (count == 1) {
                     // Single values are passed in by value
-                    AddToSendBuffer(cli, bytes, (const void *) msg);
-                else
+                    if (cmd->size == sizeof(float)) {
+                        *(float*)&temp[0] = hsToLEFloat(*(float*)msg);
+                    } else if (cmd->size == sizeof(double)) {
+                        *(double*)&temp[0] = hsToLEFloat(*(double*)msg);
+                    }
+                } else {
                     // Value arrays are passed in by ptr
-                    AddToSendBuffer(cli, bytes, (const void *) *msg);
+                    for (size_t i = 0; i < count; i++) {
+                        if (cmd->size == sizeof(float)) {
+                            *(float*)&temp[i] = hsToLEFloat(((float*)*msg)[i]);
+                        } else if (cmd->size == sizeof(double)) {
+                            *(double*)&temp[i] = hsToLEFloat(((double*)*msg)[i]);
+                        }
+                    }
+                }
+
+                // Write values to send buffer
+                AddToSendBuffer(cli, bytes, temp.get());
             }
             break;
 
@@ -356,11 +366,18 @@ static void BufferedSendData (
                 // we reserve one space for the NULL terminator
                 const uint16_t length = (uint16_t) std::char_traits<char16_t>::length((const char16_t *) *msg);
                 ASSERT_MSG_VALID(length < cmd->count);
+
                 // Write actual string length
                 uint16_t size = hsToLE16(length);
                 AddToSendBuffer(cli, sizeof(uint16_t), (const void*)&size);
+
+                auto temp = std::make_unique<char16_t[]>(length);
+                for (size_t i = 0; i < length; i++) {
+                    temp[i] = hsToLE16(((char16_t*)*msg)[i]);
+                }
+
                 // Write string data
-                AddToSendBuffer(cli, length * sizeof(char16_t), (const void *) *msg);
+                AddToSendBuffer(cli, length * sizeof(char16_t), temp.get());
             }
             break;
 
@@ -461,8 +478,7 @@ static bool DispatchData (NetCli * cli, void * param) {
                         goto NEED_MORE_DATA;
                     }
 
-                    // byte-swap integers
-                    // This is so screwed up >.<
+                    // Convert to platform endianness
                     for (size_t i = 0; i < count; i++) {
                         if (cli->recvField->size == sizeof(uint16_t)) {
                             ((uint16_t*)data)[i] = hsToLE16(((uint16_t*)data)[i]);
@@ -491,6 +507,15 @@ static bool DispatchData (NetCli * cli, void * param) {
                     if (!cli->input.Get(bytes, data)) {
                         cli->recvBuffer.resize(oldSize);
                         goto NEED_MORE_DATA;
+                    }
+
+                    // Convert to platform endianness
+                    for (size_t i = 0; i < count; i++) {
+                        if (cli->recvField->size == sizeof(float)) {
+                            ((float*)data)[i] = hsToLEFloat(((float*)data)[i]);
+                        } else if (cli->recvField->size == sizeof(double)) {
+                            ((double*)data)[i] = hsToLEDouble(((double*)data)[i]);
+                        }
                     }
 
                     // Field complete
@@ -572,6 +597,11 @@ static bool DispatchData (NetCli * cli, void * param) {
                     if (!cli->input.Get(cli->recvFieldBytes, data)) {
                         cli->recvBuffer.resize(oldSize);
                         goto NEED_MORE_DATA;
+                    }
+
+                    // Convert to platform endianness
+                    for (size_t i = 0; i < cli->recvField->count; i++) {
+                        ((char16_t*)data)[i] = hsToLE16(((char16_t*)data)[i]);
                     }
 
                     // Insert NULL terminator
