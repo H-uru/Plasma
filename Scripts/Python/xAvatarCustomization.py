@@ -758,7 +758,7 @@ class xAvatarCustomization(ptModifier):
                             descbox = AvCustGUI.dialog.getControlModFromTag(kClothingDesc)
                             descbox.setString(newitem.description)
                             # set up the color pickers
-                            colorbar1 = pAvCustGUI.dialog.getControlModFromTag(kColorbarName1)
+                            colorbar1 = AvCustGUI.dialog.getControlModFromTag(kColorbarName1)
                             if newitem.colorlabel1 == "":
                                 self.IHideColorPicker(kColor1ClickMap)
                             else:
