@@ -44,31 +44,6 @@
 
 STATEDESC GreatTreePub
 {
-	VERSION 1
-
-## Age Mechanics ##
-    VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-
-}
-
-STATEDESC GreatTreePub
-{
-	VERSION 2
-
-## Age Mechanics ##
-    VAR BOOL grtpErcanaLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL grtpAhnonayLinkingBookVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL grtpDRCWatchersJournalVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL grtpWatchersJournalsVis[1] 		DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL islmGZBeamVis[1] 			DEFAULT=0 DEFAULTOPTION=VAULT
-
-}
-
-STATEDESC GreatTreePub
-{
 	VERSION 3
 
 ## Age Mechanics ##

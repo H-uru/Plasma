@@ -45,18 +45,6 @@
 #	below the current one and make your changes there.
 #==============================================================
 
-
-STATEDESC spyroom
-{
-    VERSION 1
-
-## Age Mechanics
-
-    VAR BOOL	SpyRmTakotahMeetingVis[1]    DEFAULT=0
-
-}
-
-
 STATEDESC spyroom
 {
     VERSION 2

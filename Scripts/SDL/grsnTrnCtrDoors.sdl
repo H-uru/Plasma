@@ -39,14 +39,9 @@
 #       Mead, WA   99021
 # 
 # *==LICENSE==*/
-STATEDESC grsnTrnCtrDoors
-{
-	VERSION 1
-	VAR INT    grsnDoorState[1]    DEFAULT=0 DEFAULTOPTION=HIDDEN
-}
 
 STATEDESC grsnTrnCtrDoors
 {
-	VERSION 2
-	VAR INT    grsnDoorState[1]    DEFAULT=0
+    VERSION 2
+    VAR INT    grsnDoorState[1]    DEFAULT=0
 }

@@ -47,59 +47,16 @@
 
 
 #
-# State Description Language for the Descent
-
-
-STATEDESC Descent
-{
-	VERSION 1
-
-# Boolean variables
-    VAR BOOL    dsntGZMarkerVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL    dsntYeeshaPageMusicPlayerVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL    dsntCalendarSpark06[1]          DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL    dsntKILightFunc[1]              DEFAULT=0 DEFAULTOPTION=VAULT
-
-}
-
-
-# State Description Language for the Descent
+# State Description Language for Descent
 
 STATEDESC Descent
 {
-	VERSION 2
-
-# Boolean variables
-    VAR BOOL    dsntGZMarkerVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL    dsntYeeshaPageMusicPlayerVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL    dsntCalendarSpark05[1]          DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL    dsntKILightFunc[1]              DEFAULT=0 DEFAULTOPTION=VAULT
-
-}
-
-
-STATEDESC Descent
-{
-	VERSION 3
-
-# Boolean variables
-    VAR BOOL     dsntGZMarkerVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL     dsntYeeshaPageMusicPlayerVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR BOOL     dsntCalendarSpark05[1]          DEFAULT=0 DEFAULTOPTION=VAULT
-    VAR INT      dsntKILightFunc[1]              DEFAULT=0 DEFAULTOPTION=VAULT
-
-}
-
-
-STATEDESC Descent
-{
-	VERSION 4
+    VERSION 4
 
 # Boolean variables
     VAR BOOL     dsntGZMarkerVis[1]              DEFAULT=0 DEFAULTOPTION=VAULT
     VAR BOOL     dsntYeeshaPageMusicPlayerVis[1] DEFAULT=0 DEFAULTOPTION=VAULT
     VAR BOOL     dsntCalendarSpark05[1]          DEFAULT=0 DEFAULTOPTION=VAULT
     VAR BYTE     dsntKILightFunc[1]              DEFAULT=0 DEFAULTOPTION=VAULT
-
 }
 
