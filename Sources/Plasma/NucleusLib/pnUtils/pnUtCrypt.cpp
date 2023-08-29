@@ -95,7 +95,11 @@ static void Rc4Codec (
 ) {
     // RC4 uses the same algorithm to both encrypt and decrypt
     uint8_t * temp = (uint8_t *)malloc(bytes);
+
+    IGNORE_WARNINGS_BEGIN("deprecated-declarations")
     RC4((RC4_KEY *)key->handle, bytes, (const unsigned char *)data, temp);
+    IGNORE_WARNINGS_END
+
     memcpy(data, temp, bytes);
 
     free(temp);
@@ -119,8 +123,11 @@ CryptKey * CryptKeyCreate (
     CryptKey * key = nullptr;
     switch (algorithm) {
         case kCryptRc4: {
+            IGNORE_WARNINGS_BEGIN("deprecated-declarations")
             RC4_KEY * rc4 = new RC4_KEY;
             RC4_set_key(rc4, bytes, (const unsigned char *)data);
+            IGNORE_WARNINGS_END
+
             key = new CryptKey;
             key->algorithm = kCryptRc4;
             key->handle = rc4;
