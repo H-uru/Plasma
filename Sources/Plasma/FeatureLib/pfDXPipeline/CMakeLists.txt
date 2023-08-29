@@ -47,6 +47,7 @@ target_link_libraries(pfDXPipeline
         plGImage
         plGLight
         plMessage
+        plMessageBox
         plResMgr
         plScene
         plStatusLog

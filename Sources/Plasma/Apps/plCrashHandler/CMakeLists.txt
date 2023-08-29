@@ -13,6 +13,7 @@ target_link_libraries(
     PRIVATE
         CoreLib
         plClipboard
+        plMessageBox
         pfCrashHandler
 
         $<$<PLATFORM_ID:Windows>:Comctl32>

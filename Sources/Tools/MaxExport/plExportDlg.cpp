@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxCFGFile.h"
 #include "MaxMain/plMaxNode.h"
 #include "plFileSystem.h"
+#include "plMessageBox/hsMessageBox.h"
 
 extern HINSTANCE hInstance;
 

@@ -71,6 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plSDLModifierStateMsg.h"
 #include "plMessage/plSynchEnableMsg.h"
 #include "plMessage/plVaultNotifyMsg.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plModifier/plResponderModifier.h"
 #include "plNetClientRecorder/plNetClientRecorder.h"
 #include "plNetCommon/plNetObjectDebugger.h"
@@ -1148,7 +1149,8 @@ void plNetClientMgr::IDisableNet () {
             {
                 // KI may not be loaded
                 ST::string title = ST::format("{} Error", plProduct::CoreName());
-                hsMessageBox(fDisableMsg->str, title.c_str(), hsMessageBoxNormal, hsMessageBoxIconError );
+                ST::string errMsg = ST::string(fDisableMsg->str);
+                hsMessageBox(errMsg, title, hsMessageBoxNormal, hsMessageBoxIconError);
                 plClientMsg *quitMsg = new plClientMsg(plClientMsg::kQuit);
                 quitMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
             }

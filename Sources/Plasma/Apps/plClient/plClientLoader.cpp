@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline.h"
 
 #include "plClientResMgr/plClientResMgr.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plPhysX/plSimulationMgr.h"
 #include "plResMgr/plResManager.h"
@@ -57,7 +58,7 @@ void plClientLoader::Run()
     hsgResMgr::Init(resMgr);
 
     if (!plFileInfo("resource.dat").Exists()) {
-        hsMessageBox("Required file 'resource.dat' not found.", "Error", hsMessageBoxNormal);
+        hsMessageBox(ST_LITERAL("Required file 'resource.dat' not found."), ST_LITERAL("Error"), hsMessageBoxNormal);
         return;
     }
     plClientResMgr::Instance().ILoadResources("resource.dat");

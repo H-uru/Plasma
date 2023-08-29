@@ -65,6 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
 #include "plInputCore/plInputDevice.h"
 #include "plMessage/plDisplayScaleChangedMsg.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plProduct.h"
@@ -304,8 +305,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
         pfConsoleEngine tempConsole;
         tempConsole.ExecuteFile(serverIni);
     } else {
-        hsMessageBox("No server.ini file found.  Please check your URU installation.", "Error",
-                     hsMessageBoxNormal);
+        hsMessageBox(ST_LITERAL("No server.ini file found.  Please check your URU installation."), ST_LITERAL("Error"), hsMessageBoxNormal);
         [NSApplication.sharedApplication terminate:nil];
     }
 

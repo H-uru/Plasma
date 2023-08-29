@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 
 #include "plClipboard/plClipboard.h"
+#include "plMessageBox/hsMessageBox.h"
 
 #include "pfCrashHandler/plCrashSrv.h"
 
@@ -380,7 +381,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             IShowCrashDialog(hInstance);
             return 0;
         } else {
-            hsMessageBox("You should never run this manually.", "Error", hsMessageBoxNormal, hsMessageBoxIconExclamation);
+            hsMessageBox(ST_LITERAL("You should never run this manually."), ST_LITERAL("Error"), hsMessageBoxNormal, hsMessageBoxIconExclamation);
             return 1;
         }
     }

@@ -49,6 +49,7 @@ target_link_libraries(
         pnDispatch
         pnMessage
         pnNucleusInc
+        plMessageBox
         plResMgr
         JPEG::JPEG
         PNG::PNG

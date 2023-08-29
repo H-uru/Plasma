@@ -210,6 +210,7 @@ target_link_libraries(
         plGLight
         plInputCore
         plMessage
+        plMessageBox
         plModifier
         plNetClient
         plNetCommon

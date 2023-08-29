@@ -31,6 +31,7 @@ target_link_libraries(
         pnKeyedObject
         plAvatar
         plGImage
+        plMessageBox
         plPhysX
         plResMgr
         plScene

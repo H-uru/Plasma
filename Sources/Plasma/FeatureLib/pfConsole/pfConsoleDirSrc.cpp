@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsExceptions.h"
+#include "plMessageBox/hsMessageBox.h"
 
 
 //// ParseDirectory //////////////////////////////////////////////////////////
@@ -76,7 +77,7 @@ bool pfConsoleDirSrc::ParseDirectory(const plFileName& path, const char* mask /*
             error << fEngine->GetErrorMsg() << ":\n\nCommand: '" << fEngine->GetLastErrorLine()
                   << "'\n\nPress OK to continue parsing files.";
 
-            hsMessageBox(error.to_string().c_str(), caption.to_string().c_str(), hsMessageBoxNormal);
+            hsMessageBox(error.to_string(), caption.to_string(), hsMessageBoxNormal);
 
             SetCheckProcessedFiles(true);
             return false;

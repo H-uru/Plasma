@@ -113,6 +113,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGLight/plShadowMaster.h"
 #include "plGLight/plShadowSlave.h"
 #include "plMessage/plDeviceRecreateMsg.h"
+#include "plMessageBox/hsMessageBox.h"
 #include "plResMgr/plLocalization.h"
 #include "plScene/plRenderRequest.h"
 #include "plScene/plVisMgr.h"
@@ -1879,7 +1880,7 @@ void plDXPipeline::IPrintDeviceInitError()
             message = ST_LITERAL("There was an error initializing your video card. We have reset it to its Default settings.");
             break;
     }
-    hsMessageBox(message.to_wchar().c_str(), caption.to_wchar().c_str(), hsMessageBoxNormal, hsMessageBoxIconError);
+    hsMessageBox(message, caption, hsMessageBoxNormal, hsMessageBoxIconError);
 }
 
 // Reset device creation parameters to default and write to ini file

@@ -39,6 +39,7 @@ target_link_libraries(
         pnMessage
         pnNetCommon
         plMessage
+        plMessageBox
         plStatusLog
     INTERFACE
         pnFactory
