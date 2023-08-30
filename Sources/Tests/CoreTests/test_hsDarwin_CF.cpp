@@ -40,46 +40,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import "PLSServerStatus.h"
-#import "NSString+StringTheory.h"
-#include "plNetGameLib/plNetGameLib.h"
+#include <gtest/gtest.h>
 
-@interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString* serverStatusString;
-@end
+#include "hsDarwin.h"
 
-@implementation PLSServerStatus
-
-+ (id)sharedStatus
+TEST(hsDarwin_CoreFoundation, converts_to_ST_string)
 {
-    static PLSServerStatus* shared = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        shared = [[self alloc] init];
-    });
-    return shared;
+    CFStringRef str = CFSTR("Test ö");
+    ST::string st = STStringFromCFString(str);
+    EXPECT_STREQ(st.c_str(), "Test \xc3\xb6");
 }
 
-- (void)loadServerStatus
+TEST(hsDarwin_CoreFoundation, converts_to_CFString)
 {
-    NSString* urlString = [NSString stringWithSTString:GetServerStatusUrl()];
-    NSURL* url = [NSURL URLWithString:urlString];
-    NSURLSessionConfiguration* URLSessionConfiguration =
-        [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
-                                                          delegate:self
-                                                     delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask* statusTask = [session
-          dataTaskWithURL:url
-        completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response,
-                            NSError* _Nullable error) {
-            if (data) {
-                NSString* statusString = [[NSString alloc] initWithData:data
-                                                               encoding:NSUTF8StringEncoding];
-                self.serverStatusString = statusString;
-            }
-        }];
-    [statusTask resume];
+    ST::string st = ST_LITERAL("Test ö");
+    CFStringRef cf = CFStringCreateWithSTString(st);
+    EXPECT_EQ(kCFCompareEqualTo, CFStringCompare(cf, CFSTR("Test ö"), 0));
+    CFRelease(cf);
 }
 
-@end
+TEST(hsDarwin_CoreFoundation, returns_retained_CFString)
+{
+    ST::string st = ST::format("{} Test {}", 12345, "Hello");
+    CFStringRef cf = CFStringCreateWithSTString(st);
+    EXPECT_EQ(1, CFGetRetainCount(cf));
+    CFRelease(cf);
+}
+
+TEST(hsDarwin_CoreFoundation, copies_CFString_contents)
+{
+    CFStringRef cf = CFStringCreateWithFormat(nullptr, nullptr, CFSTR("%d Test %s"), 12345, "Hello");
+    ST::string st = STStringFromCFString(cf);
+    CFRelease(cf);
+
+    EXPECT_STREQ(st.c_str(), "12345 Test Hello");
+}

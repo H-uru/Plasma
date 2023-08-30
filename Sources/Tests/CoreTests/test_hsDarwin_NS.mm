@@ -40,46 +40,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import "PLSServerStatus.h"
-#import "NSString+StringTheory.h"
-#include "plNetGameLib/plNetGameLib.h"
+#include <gtest/gtest.h>
 
-@interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString* serverStatusString;
-@end
+#include "hsDarwin.h"
+#import <Foundation/Foundation.h>
 
-@implementation PLSServerStatus
-
-+ (id)sharedStatus
+TEST(hsDarwin_Foundation, converts_to_ST_string)
 {
-    static PLSServerStatus* shared = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        shared = [[self alloc] init];
-    });
-    return shared;
+    NSString* str = @"Test ö";
+    ST::string st = STStringFromNSString(str);
+    EXPECT_STREQ(st.c_str(), "Test \xc3\xb6");
 }
 
-- (void)loadServerStatus
+TEST(hsDarwin_Foundation, converts_to_NSString)
 {
-    NSString* urlString = [NSString stringWithSTString:GetServerStatusUrl()];
-    NSURL* url = [NSURL URLWithString:urlString];
-    NSURLSessionConfiguration* URLSessionConfiguration =
-        [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
-                                                          delegate:self
-                                                     delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask* statusTask = [session
-          dataTaskWithURL:url
-        completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response,
-                            NSError* _Nullable error) {
-            if (data) {
-                NSString* statusString = [[NSString alloc] initWithData:data
-                                                               encoding:NSUTF8StringEncoding];
-                self.serverStatusString = statusString;
-            }
-        }];
-    [statusTask resume];
+    ST::string st = ST_LITERAL("Test ö");
+    NSString* nstr = NSStringCreateWithSTString(st);
+    EXPECT_EQ(YES, [nstr isEqualToString:@"Test ö"]);
 }
 
-@end
+TEST(hsDarwin_Foundation, returns_retained_NSString)
+{
+    ST::string st = ST::format("{} Test {}", 12345, "Hello");
+    NSString* nstr = NSStringCreateWithSTString(st);
+    EXPECT_EQ(1, [nstr retainCount]);
+}

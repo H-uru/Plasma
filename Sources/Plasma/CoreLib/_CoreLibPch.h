@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
+#include "hsDarwin.h"
 
 #include <string_theory/formatter>
 #include <string_theory/string>

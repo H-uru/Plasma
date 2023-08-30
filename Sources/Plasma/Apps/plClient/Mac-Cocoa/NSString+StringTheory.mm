@@ -40,24 +40,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "StringTheory_NSString.h"
+#include "NSString+StringTheory.h"
+#include "hsDarwin.h"
 
 @implementation NSString (StringTheory)
 
-- (id)initWithSTString:(const ST::string&)string
-{
-    self = [self initWithUTF8String:string.c_str()];
-    return self;
-}
-
 + (id)stringWithSTString:(const ST::string&)string
 {
-    return [[NSString alloc] initWithSTString:string];
+    return NSStringCreateWithSTString(string);
 }
 
 - (const ST::string)STString
 {
-    return ST::string([self UTF8String]);
+    return STStringFromNSString(self);
 }
 
 @end

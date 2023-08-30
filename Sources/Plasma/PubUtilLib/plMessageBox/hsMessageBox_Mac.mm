@@ -41,8 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "hsMessageBox.h"
-
+#include "hsDarwin.h"
 #include <string_theory/string>
+
 #import <Cocoa/Cocoa.h>
 
 hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& caption, hsMessageBoxKind kind, hsMessageBoxIcon icon)
@@ -51,8 +52,8 @@ hsMessageBoxResult hsMessageBox(const ST::string& message, const ST::string& cap
         return hsMBoxOk;
 
     @autoreleasepool {
-        NSString* nsMessage = [NSString stringWithUTF8String:message.data()];
-        NSString* nsCaption = [NSString stringWithUTF8String:caption.data()];
+        NSString* nsMessage = NSStringCreateWithSTString(message);
+        NSString* nsCaption = NSStringCreateWithSTString(caption);
 
         __block NSModalResponse response;
         NSCondition* lock = [NSCondition new];

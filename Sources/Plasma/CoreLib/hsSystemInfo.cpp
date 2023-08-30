@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFileSystem.h"
 #include "hsStream.h"
 #include "hsWindows.h"
+#include "hsDarwin.h"
 
 #include <cstring>
 #include <iterator>
@@ -191,13 +192,7 @@ static inline bool IGetAppleVersion(ST::string& system)
         CFRelease(name);
         CFRelease(dict);
 
-        CFIndex infoLen = CFStringGetLength(info);
-        CFIndex infoBufSz = 0;
-        CFStringGetBytes(info, CFRangeMake(0, infoLen), kCFStringEncodingUTF8, 0, false, nullptr, 0, &infoBufSz);
-        ST::char_buffer systemBuf;
-        systemBuf.allocate(infoBufSz);
-        CFStringGetBytes(info, CFRangeMake(0, infoLen), kCFStringEncodingUTF8, 0, false, (UInt8*)systemBuf.data(), infoLen, nullptr);
-        system = ST::string(systemBuf);
+        system = STStringFromCFString(info);
 
         CFRelease(info);
 

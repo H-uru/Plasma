@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #import "PLSPatcherWindowController.h"
-#include <string_theory/string>
+#import "NSString+StringTheory.h"
 #include "PLSServerStatus.h"
 #include "plProduct.h"
 
@@ -111,8 +111,7 @@ static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
     [super windowDidLoad];
 
     [self.progressBar startAnimation:self];
-    self.productLabel.stringValue =
-        [NSString stringWithUTF8String:plProduct::ProductString().c_str()];
+    self.productLabel.stringValue = [NSString stringWithSTString:plProduct::ProductString()];
     // register for an async notification of when status loads
     [[PLSServerStatus sharedStatus]
         addObserver:self
