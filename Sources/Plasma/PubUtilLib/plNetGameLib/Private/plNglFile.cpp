@@ -495,14 +495,14 @@ static void Connect (CliFileConn * conn) {
 
     Cli2File_Connect connect;
     connect.hdr.connType    = kConnTypeCliToFile;
-    connect.hdr.hdrBytes    = sizeof(connect.hdr);
-    connect.hdr.buildId     = kFileSrvBuildId;
-    connect.hdr.buildType   = plProduct::BuildType();
-    connect.hdr.branchId    = plProduct::BranchId();
+    connect.hdr.hdrBytes    = hsToLE16(sizeof(connect.hdr));
+    connect.hdr.buildId     = hsToLE32(kFileSrvBuildId);
+    connect.hdr.buildType   = hsToLE32(plProduct::BuildType());
+    connect.hdr.branchId    = hsToLE32(plProduct::BranchId());
     connect.hdr.productId   = plProduct::UUID();
-    connect.data.buildId    = conn->buildId;
-    connect.data.serverType = conn->serverType;
-    connect.data.dataBytes  = sizeof(connect.data);
+    connect.data.buildId    = hsToLE32(conn->buildId);
+    connect.data.serverType = hsToLE32(conn->serverType);
+    connect.data.dataBytes  = hsToLE32(sizeof(connect.data));
 
     AsyncSocketConnect(
         &conn->cancelId,
