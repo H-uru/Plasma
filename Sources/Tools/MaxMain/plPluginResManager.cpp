@@ -373,6 +373,18 @@ plLocation plPluginResManager::ICreateLocation(const ST::string& age, const ST::
     return newLoc;
 }
 
+class plObjectIDSortingPageIterator : public plRegistryPageIterator
+{
+public:
+    plObjectIDSortingPageIterator() {}
+    bool EatPage(plRegistryPageNode *page) override
+    {
+        if (page->GetPageInfo().GetLocation() != plLocation::kGlobalFixedLoc)
+            page->PrepForWrite();
+        return true;
+    }
+};
+
 class plWritePageIterator : public plRegistryPageIterator
 {
 public:
@@ -387,6 +399,9 @@ public:
 
 void plPluginResManager::WriteAllPages()
 {
+    plObjectIDSortingPageIterator idSort;
+    IteratePages(&idSort);
+
     plWritePageIterator iter;
     IteratePages(&iter);
 }

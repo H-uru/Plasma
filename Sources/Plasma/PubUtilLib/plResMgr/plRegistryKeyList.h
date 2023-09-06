@@ -97,6 +97,10 @@ public:
     void SetKeyUsed(plKeyImp* key) { ++fReffedKeys; }
     bool SetKeyUnused(plKeyImp* key, LoadStatus& loadStatusChange);
 
+    // Export time only.  Before we write to disk, assign all the loaded keys
+    // sequential object IDs that they can use to do fast lookups at load time.
+    void PrepForWrite();
+
     void Read(hsStream* s);
     void Write(hsStream* s);
 };

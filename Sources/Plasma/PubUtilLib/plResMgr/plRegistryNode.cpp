@@ -204,6 +204,15 @@ void plRegistryPageNode::UnloadKeys()
     fLoadedTypes = 0;
 }
 
+void plRegistryPageNode::PrepForWrite()
+{
+    if (!fIsNewPage)
+        return;
+
+    for (auto [idx, keyList] : fKeyLists)
+        keyList->PrepForWrite();
+}
+
 //// plWriteIterator /////////////////////////////////////////////////////////
 //  Key iterator for writing objects
 class plWriteIterator : public plRegistryKeyIterator
