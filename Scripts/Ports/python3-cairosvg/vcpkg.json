@@ -6,7 +6,6 @@
   "dependencies": [
     {
       "name": "cairo",
-      "platform": "windows",
       "default-features": false
     },
     "python3"

@@ -53,11 +53,6 @@
         "description": "Installs a functional cairosvg Python module for the resource.dat generator.",
         "dependencies": [
           {
-            "name": "cairo",
-            "platform": "windows",
-            "default-features": false
-          },
-          {
             "name": "python3-cairosvg",
             "host": true
           }
