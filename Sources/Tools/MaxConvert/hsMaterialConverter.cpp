@@ -1607,7 +1607,7 @@ hsGMaterial *hsMaterialConverter::IProcessCompositeMtl(Mtl *mtl, plMaxNode *node
                     {
                         bool ignore = fErrorMsg->Set(!(fWarned & kWarnedCompMtlBadBlend), node->GetName(),
                             ST::format(
-                                "Composite material %s has a submaterial, %s, that requires too many textures in a single pass "
+                                "Composite material {} has a submaterial, {}, that requires too many textures in a single pass "
                                 "(for blending effects). To cut this down, try some of the following:\n"
                                 "1. Make sure all multi-layered submaterials (except the base)"
                                 " choose 'alpha' for 'layer blending', and 'base alpha only' for 'layer alpha blending'\n"
