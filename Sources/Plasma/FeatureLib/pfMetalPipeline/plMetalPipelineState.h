@@ -223,6 +223,7 @@ public:
     const NS::String* GetDescription() override {
         return NS::MakeConstantString("Shadow Span Render Pipeline");
     };
+    MTL::Function*  GetVertexFunction(MTL::Library* library) override;
     MTL::Function*  GetFragmentFunction(MTL::Library* library) override;
     void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) override;
     virtual uint16_t GetID() const override { return 3; } ;

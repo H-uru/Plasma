@@ -58,7 +58,7 @@ using namespace metal;
 
 #include "hsGMatStateEnums.h"
     
-enum plUVWSrcModifiers: uint32_t {
+enum plUVWSrcModifiers: uint32_t{
     kUVWPassThru                                = 0x00000000,
     kUVWIdxMask                                 = 0x0000ffff,
     kUVWNormal                                  = 0x00010000,
@@ -246,17 +246,7 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
     //out.vCamNormal = uniforms.worldToCameraMatrix * (uniforms.localToWorldMatrix * float4(in.position, 0.0));
     
     //Fog
-    out.fogColor.a = 1.0;
-    if (uniforms.fogExponential > 0) {
-        out.fogColor.a = exp(-pow(uniforms.fogValues.y * length(vCamPosition), uniforms.fogValues.x));
-    } else {
-        if (uniforms.fogValues.y > 0.0) {
-            const float start = uniforms.fogValues.x;
-            const float end = uniforms.fogValues.y;
-            out.fogColor.a = (end - length(vCamPosition.xyz)) / (end - start);
-        }
-    }
-    out.fogColor.rgb = uniforms.fogColor;
+    out.fogColor = uniforms.calcFog(vCamPosition);
     
     const float4 normal = (uniforms.localToWorldMatrix * float4(in.normal, 0.0)) * uniforms.worldToCameraMatrix;
     
@@ -387,6 +377,23 @@ float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, co
         break;
     }
     return sampleCoord.xyz;
+}
+
+half4 VertexUniforms::calcFog(float4 camPosition) constant {
+    half4 resultColor;
+    if (fogExponential > 0) {
+        resultColor.a = exp(-pow(fogValues.y * length(camPosition), fogValues.x));
+    } else {
+        if (fogValues.y > 0.0) {
+            const float start = fogValues.x;
+            const float end = fogValues.y;
+            resultColor.a = (end - length(camPosition.xyz)) / (end - start);
+        } else {
+            resultColor.a = 1.0h;
+        }
+    }
+    resultColor.rgb = fogColor;
+    return resultColor;
 }
     
 half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const {
@@ -591,6 +598,62 @@ fragment half4 shadowFragmentShader(ShadowCasterInOut in [[stage_in]])
     const half currentAlpha = in.texCoord1.x;
 
     return half4(1.0h, 1.0h, 1.0h, currentAlpha);
+}
+
+//MARK: Shadow Casting shaders
+
+/*
+ In the Direct3D pipeline, lights were created and manipulated to draw shadows in the fixed function pipelines.
+ 
+ This re-implements shadows in a programmable pipeline without altering the light state. This change should
+ allow lights to be managed more efficiently in since the same light no longer needs to be changed multiple
+ times mid render. The Direct3D pipeline would alter lights mid render to control shadow strength onto a mesh.
+ Instead, this shader takes a shadow state struct that describes the shadow source and has strength as a discrete
+ property. There is no need to push an entirely new light table.
+ */
+
+vertex ColorInOut shadowCastVertexShader(Vertex in [[stage_in]],
+                                         constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
+                                         constant plShadowState & shadowState [[ buffer(VertexShaderArgumentIndexShadowState) ]])
+{
+    ColorInOut out;
+    
+    float4 position = (float4(in.position, 1.0) * uniforms.localToWorldMatrix);
+    const float3 Ndirection = normalize(float4(in.normal, 0.0) * uniforms.localToWorldMatrix).xyz;
+    // Shadow casting uses the diffuse material color to control opacity
+    const half4 MDiffuse = uniforms.diffuseCol;
+        
+    //w is attenation
+    float4 direction;
+
+    if (shadowState.directional == true) {
+        // Directional Light with no attenuation
+        direction = float4(-(shadowState.lightDirection).xyz, 1.0);
+    } else {
+        // Omni Light in all directions
+        const float3 v2l = shadowState.lightPosition.xyz - position.xyz;
+        direction.xyz = normalize(v2l);
+        direction.w = 1.0;
+    }
+
+    const float3 dotResult = dot(Ndirection, direction.xyz);
+    const half3 diffuse = MDiffuse.rgb * half3(max(0.0, dotResult)) * shadowState.power;
+    out.vtxColor = half4(diffuse, 1.f);
+    
+    const float4 vCamPosition = position * uniforms.worldToCameraMatrix;
+    
+    //Fog
+    out.fogColor = uniforms.calcFog(vCamPosition);
+    
+    const float4 normal = (uniforms.localToWorldMatrix * float4(in.normal, 0.0)) * uniforms.worldToCameraMatrix;
+    
+    for(size_t layer=0; layer<num_layers; layer++) {
+        (&out.texCoord1)[layer] = uniforms.sampleLocation(layer, &in.texCoord1, normal, vCamPosition);
+    }
+    
+    out.position = vCamPosition * uniforms.projectionMatrix;
+
+    return out;
 }
     
 fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],

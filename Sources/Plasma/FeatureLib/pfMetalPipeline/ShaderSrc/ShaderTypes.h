@@ -52,34 +52,44 @@ typedef __attribute__((__ext_vector_type__(3))) half half3;
 typedef __attribute__((__ext_vector_type__(4))) half half4;
 #endif
 
-enum plMetalShaderArgumentIndex
+enum plMetalVertexShaderArgumentIndex
 {
-    //Texture is a legacy argument for the simpler plate shader
-    Texture    = 1,
+    /// Material State
     BufferIndexState      = 2,
+    /// Uniform table for Plasma dynamic shaders
     BufferIndexUniforms      = 3,
+    /// Light Table
     BufferIndexLights        = 4,
-    BufferIndexFragArgBuffer  = 5,
+    /// Blend matrix for GPU side animation blending
+    BufferIndexBlendMatrix1  = 6,
+    /// Describes the state of a shadow caster for shadow cast shader
+    VertexShaderArgumentIndexShadowState = 9
+};
+
+enum plMetalFragmentShaderArgumentIndex
+{
+    /// Texture is a legacy argument for the simpler plate shader
+    Texture    = 1,
+    /// Fragment uniforms
     BufferIndexShadowCastFragArgBuffer  = 4,
-    BufferIndexBlendMatrix1      = 6
+    /// Legacy argument buffer
+    BufferIndexFragArgBuffer  = 5,
+    /// Layer index of alpha for shadow fragment shader
+    FragmentShaderArgumentShadowAlphaSrc = 8
 };
 
-enum plMetalVertexShaderUniform
+enum plMetalVertexAttribute
 {
+    /// position of a vertex
     VertexAttributePosition  = 0,
+    /// UV of a vertex. Reserves IDs 1-8.
     VertexAttributeTexcoord  = 1,
+    /// Normal attribute of a vertex
     VertexAttributeNormal  = 9,
-    VertexAttributeUVCount = 10,
-    VertexAttributeColor = 11,
-    VertexAttributeWeights  = 12,
-};
-
-enum plMetalFragmentShaderUniform
-{
-    FragmentShaderArgumentShadowAlphaSrc = 8,
-    FragmentShaderArgumentPiggybackLayers = 9,
-    FragmentShaderArgumentNumPiggybackLayers = 10,
-    FragmentShaderOverrideLayer = 11
+    /// Color attribute of a vertex
+    VertexAttributeColor = 10,
+    /// Animation weight of a vertex
+    VertexAttributeWeights  = 11,
 };
 
 enum plMetalFunctionConstant
@@ -160,6 +170,7 @@ typedef struct
     UVOutDescriptor uvTransforms[8];
 #ifdef __METAL_VERSION__
     float3 sampleLocation(size_t index, thread float3 *texCoords, const float4 normal, const float4 camPosition) constant;
+    half4 calcFog(float4 camPosition) constant;
 #endif
 } VertexUniforms;
 
@@ -169,6 +180,14 @@ typedef struct {
     uint8_t count;
     plMetalShaderLightSource lampSources[kMetalMaxLightCount];
 } plMetalLights;
+
+typedef struct {
+    simd::float3 lightPosition;
+    simd::float3 lightDirection;
+    bool directional;
+    float power;
+    half opacity;
+} plShadowState;
 
 #endif /* ShaderTypes_h */
 

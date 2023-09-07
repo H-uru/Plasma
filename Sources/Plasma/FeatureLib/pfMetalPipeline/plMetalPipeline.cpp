@@ -3462,7 +3462,7 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
     return true;
 }
 
-// ISetupShadowLight //////////////////////////////////////////////////////////////////
+// ISetupShadowState //////////////////////////////////////////////////////////////////
 // We use the shadow light to modulate the shadow effect in two ways while
 // projecting the shadow map onto the scene.
 // First, the intensity of the shadow follows the N dot L of the light on
@@ -3472,49 +3472,30 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
 // Second, we attenuate the whole shadow effect through the lights diffuse color.
 // We attenuate for different reasons, like the intensity of the light, or
 // to fade out a shadow as it gets too far in the distance to matter.
-void plMetalPipeline::ISetupShadowLight(plShadowSlave* slave)
+void plMetalPipeline::ISetupShadowState(plShadowSlave* slave, plShadowState& shadowState)
 {
-    plMetalShaderLightSource lRef = {};
-
-    lRef.diffuse.r
-        = lRef.diffuse.g
-        = lRef.diffuse.b
-        = slave->fPower;
+    shadowState.power = slave->fPower;
 
     slave->fSelfShadowOn = false;
 
     if( slave->Positional() )
     {
         hsPoint3 position = slave->fLightPos;
-        lRef.position.x = position.fX;
-        lRef.position.y = position.fY;
-        lRef.position.z = position.fZ;
+        shadowState.lightPosition.x = position.fX;
+        shadowState.lightPosition.y = position.fY;
+        shadowState.lightPosition.z = position.fZ;
 
-        //const float maxRange = 32767.f;
-        //lRef->fD3DInfo.Range = maxRange;
-        lRef.constAtten = 1.f;
-        lRef.linAtten = 0;
-        lRef.quadAtten = 0;
-
-        //lRef->fD3DInfo.Type = D3DLIGHT_POINT;
-        lRef.position.w = 1.0;
+        shadowState.directional = false;
     }
     else
     {
         hsVector3 dir = slave->fLightDir;
-        lRef.direction.x = dir.fX;
-        lRef.direction.y = dir.fY;
-        lRef.direction.z = dir.fZ;
+        shadowState.lightDirection.x = dir.fX;
+        shadowState.lightDirection.y = dir.fY;
+        shadowState.lightDirection.z = dir.fZ;
         
-        lRef.position.w = 0.0;
+        shadowState.directional = true;
     }
-
-    //fD3DDevice->SetLight( lRef->fD3DIndex, &lRef->fD3DInfo );
-        fLights.lampSources[0] = lRef;
-    fLights.count = 1;
-
-    //Not sure hot to link lights in Metal. Do we even need to?
-    //slave->fLightIndex = lRef->fD3DIndex;
 }
 
 
@@ -3958,7 +3939,8 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             // See ISetupShadowLight below for how the shadow light is used.
             // The shadow light isn't used in generating the shadow map, it's used
             // in projecting the shadow map onto the scene.
-            ISetupShadowLight(fShadows[i]);
+            plShadowState shadowState;
+            ISetupShadowState(fShadows[i], shadowState);
             
             struct plMetalFragmentShaderDescription passDescription;
             memset(&passDescription, 0, sizeof(passDescription));
@@ -4002,9 +3984,8 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             // so we cache whether the shadow light is set for regular or
             // self shadowing intensity. If what we're doing now is different
             // than what we're currently set for, set it again.
-            //if( selfShadowNow != fShadows[i]->fSelfShadowOn )
-            //{
-                plMetalShaderLightSource lRef = fLights.lampSources[0];
+            if( selfShadowNow != fShadows[i]->fSelfShadowOn )
+            {
 
                 // We lower the power on self shadowing, because the artists like to
                 // crank up the shadow strength to huge values to get a darker shadow
@@ -4016,29 +3997,23 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
                 {
                     plConst(float) kMaxSelfPower = 0.3f;
                     float power = (float) fShadows[i]->fPower > kMaxSelfPower ? (float) kMaxSelfPower : ((float) fShadows[i]->fPower);
-                    lRef.diffuse.r = lRef.diffuse.b = lRef.diffuse.g = power;
+                    shadowState.power = power;
                 }
                 else
                 {
-                    lRef.diffuse.r = lRef.diffuse.b = lRef.diffuse.g = fShadows[i]->fPower;
+                    shadowState.power = fShadows[i]->fPower;
                 }
-                lRef.scale = 1.0;
-                fLights.lampSources[0] = lRef;
 
                 // record which our intensity is now set for.
                 fShadows[i]->fSelfShadowOn = selfShadowNow;
-            //}
+            }
 
-            // Enable the light.
-            //fD3DDevice->LightEnable(fShadows[i]->fLightIndex, true);*/
+            fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&shadowState, sizeof(shadowState), VertexShaderArgumentIndexShadowState);
 
 #ifndef PLASMA_EXTERNAL_RELEASE
             if (!IsDebugFlagSet(plPipeDbg::kFlagNoShadowApply))
 #endif // PLASMA_EXTERNAL_RELEASE
                 render.RenderPrims();
-            
-            // Disable it again.
-            //fD3DDevice->LightEnable(fShadows[i]->fLightIndex, false);
 
         }
     }
@@ -4112,9 +4087,6 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
 // Set the D3D lighting/material model for projecting the shadow map onto this material.
 void plMetalPipeline::ISetShadowLightState(hsGMaterial* mat)
 {
-    IDisableLightsForShadow();
-    //inlEnsureLightingOn();
-
     fCurrLightingMethod = plSpan::kLiteShadow;
 
     if( mat && mat->GetNumLayers() && mat->GetLayer(0) )
@@ -4129,9 +4101,6 @@ void plMetalPipeline::ISetShadowLightState(hsGMaterial* mat)
     fCurrentRenderPassUniforms->specularSrc = 0.0;
     fCurrentRenderPassUniforms->ambientSrc = 0.0;
     fCurrentRenderPassUniforms->globalAmb = 0.0;
-
-    //fD3DDevice->SetMaterial(&d3dMat);
-    //fD3DDevice->SetRenderState( D3DRS_AMBIENT, 0 );*/
 }
 
 // IDisableLightsForShadow ///////////////////////////////////////////////////////////
@@ -4139,6 +4108,7 @@ void plMetalPipeline::ISetShadowLightState(hsGMaterial* mat)
 // the surface.
 void plMetalPipeline::IDisableLightsForShadow()
 {
+    //FIXME: Planned for removal - but used by projections. New light code will obsolete.
     int i;
     for( i = 0; i < 8; i++ )
     {

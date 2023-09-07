@@ -337,6 +337,13 @@ bool plMetalMaterialPassPipelineState::IsEqual(const plMetalPipelineState &p) co
     return plMetalRenderSpanPipelineState::IsEqual(p) && static_cast<const plMetalMaterialPassPipelineState*>(&p)->fFragmentShaderDescription == this->fFragmentShaderDescription;
 }
 
+MTL::Function* plMetalRenderShadowPipelineState::GetVertexFunction(MTL::Library* library) {
+    return library->newFunction(
+                                NS::String::string("shadowCastVertexShader", NS::ASCIIStringEncoding),
+                                MakeFunctionConstants(),
+                                (NS::Error **)NULL
+                             )->autorelease();
+}
 
 MTL::Function* plMetalRenderShadowPipelineState::GetFragmentFunction(MTL::Library* library) {
     return library->newFunction(

@@ -229,13 +229,13 @@ private:
     void IResetRenderTargetPools();
     void IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSpans* drawable, const plIcicle& span);
     plMetalTextureRef* fULutTextureRef;
-    void ISetupShadowLight(plShadowSlave* slave);
     void IMakeRenderTargetPools();
     hsGDeviceRef* SharedRenderTargetRef(plRenderTarget* share, plRenderTarget *owner);
     void IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const plSpan* span, hsGMaterial* mat, plMetalVertexBufferRef *vRef);
     void ISetupShadowRcvTextureStages(hsGMaterial* mat);
     void ISetupShadowSlaveTextures(plShadowSlave* slave);
     void ISetShadowLightState(hsGMaterial* mat);
+    void ISetupShadowState(plShadowSlave* slave, plShadowState& shadowState);
     void IDisableLightsForShadow();
     void IReleaseRenderTargetPools();
     void IRenderProjectionEach(const plRenderPrimFunc& render, hsGMaterial* material, int iPass, const plSpan& span, const plMetalVertexBufferRef* vRef);

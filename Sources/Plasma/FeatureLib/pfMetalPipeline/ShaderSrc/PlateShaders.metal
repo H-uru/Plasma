@@ -89,7 +89,6 @@ vertex ColorInOut plateVertexShader(PlateVertex in [[stage_in]],
 
 fragment float4 fragmentShader(ColorInOut in [[stage_in]],
                                constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
-                               constant plMetalFragmentShaderArgumentBuffer & fragmentShaderArgs [[ buffer(BufferIndexFragArgBuffer) ]],
                                constant float & alpha [[ buffer(6) ]],
                                texture2d<half> colorMap     [[ texture(Texture) ]])
 {
