@@ -135,13 +135,6 @@ namespace {
 */
         }
     }
-
-    const char  sWarnBaseTextureMissing[] = "The object \"%s\"'s material has a base layer that is assigned texture \"%s\", but the texture file is missing. "
-                                        "This can cause unwanted effects during runtime."; 
-    const char  sWarnUpperTextureMissing[] = "The object \"%s\"'s material has an upper layer that is assigned texture \"%s\", but the texture file is missing. "
-                                        "This is not supported in the engine, so the upper layer will be ignored."; 
-    const char  sWarnNoUpperTexture[] = "The object \"%s\"'s material has an uppper layer that is not assigned a texture. "
-                                        "This is not supported in the engine, so the upper layer will be disabled."; 
 }
 
 static uint32_t MakeUInt32Color(float r, float g, float b, float a)
