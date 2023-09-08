@@ -111,16 +111,16 @@ class xHighLevelStarTrekDoor(ptModifier):
 
             PtDebugPrint("xHighLevelStarTrekDoor: Somebody is already in the age. Attempting to sync states.")
 
-            if self.SDL['DoorState'][0] in (doorSDLstates['opening'], doorSDLstates['movingopen'], doorSDLstates['opentoclose']):
+            if self.SDL['DoorState'][0] in (doorSDLstates.opening, doorSDLstates.movingopen, doorSDLstates.opentoclose):
                 respOpenDoor.run(self.key)
-            elif self.SDL['DoorState'][0] in (doorSDLstates['closing'], doorSDLstates['movingclosed'], doorSDLstates['closetoopen']):
+            elif self.SDL['DoorState'][0] in (doorSDLstates.closing, doorSDLstates.movingclosed, doorSDLstates.closetoopen):
                 respCloseDoor.run(self.key)
-            elif self.SDL['DoorState'][0] == doorSDLstates['open']:
+            elif self.SDL['DoorState'][0] == doorSDLstates.open:
                 respOpenDoor.run(self.key,fastforward=True)
 
         else:
             # the door is really shut, someone left it open
-            self.SDL['DoorState'] = (doorSDLstates['closed'],)
+            self.SDL['DoorState'] = (doorSDLstates.closed,)
             ageSDL[strDoorClosedVar.value] = (1,)
 
     ##########################################
@@ -149,49 +149,49 @@ class xHighLevelStarTrekDoor(ptModifier):
             for event in events:
                 #true when you enter the region
                 if event[0] == 1 and event[1] == 1:
-                    if doorState == doorSDLstates['closed']:
-                        self.UpdateDoorState(doorSDLstates['opening'])
+                    if doorState == doorSDLstates.closed:
+                        self.UpdateDoorState(doorSDLstates.opening)
                         PtDebugPrint("xHighLevelStarTrekDoor: Setting Door to opening.")
 
-                    elif doorState in (doorSDLstates['movingclosed'], doorSDLstates['closing']):
-                        self.UpdateDoorState(doorSDLstates['closetoopen'])
+                    elif doorState in (doorSDLstates.movingclosed, doorSDLstates.closing):
+                        self.UpdateDoorState(doorSDLstates.closetoopen)
                         PtDebugPrint("xHighLevelStarTrekDoor: Setting Door to closetoopen.")
 
-                    elif doorState == doorSDLstates['opentoclose']:
-                        self.UpdateDoorState(doorSDLstates['movingopen'])
+                    elif doorState == doorSDLstates.opentoclose:
+                        self.UpdateDoorState(doorSDLstates.movingopen)
                         PtDebugPrint("xHighLevelStarTrekDoor: Setting Door to movingopen.")
                     return
 
                 #true when you leave the region
                 elif event[0] == 1 and event[1] == 0:
-                    if doorState == doorSDLstates['open']:
-                        self.UpdateDoorState(doorSDLstates['closing'])
+                    if doorState == doorSDLstates.open:
+                        self.UpdateDoorState(doorSDLstates.closing)
                         PtDebugPrint("xHighLevelStarTrekDoor: Setting Door to closing.")
 
-                    elif doorState in (doorSDLstates['movingopen'], doorSDLstates['opening']):
-                        self.UpdateDoorState(doorSDLstates['opentoclose'])
+                    elif doorState in (doorSDLstates.movingopen, doorSDLstates.opening):
+                        self.UpdateDoorState(doorSDLstates.opentoclose)
                         PtDebugPrint("xHighLevelStarTrekDoor: Setting Door to opentoclose.")
 
-                    elif doorState == doorSDLstates['closetoopen']:
-                        self.UpdateDoorState(doorSDLstates['movingclosed'])
+                    elif doorState == doorSDLstates.closetoopen:
+                        self.UpdateDoorState(doorSDLstates.movingclosed)
                         PtDebugPrint("xHighLevelStarTrekDoor: Setting Door to movingclosed.")
                     return
 
         elif id == respOpenDoor.id:
             PtDebugPrint("xHighLevelStarTrekDoor: Door is now open.")
-            if doorState == doorSDLstates['opentoclose']:
-                self.UpdateDoorState(doorSDLstates['closing'])
+            if doorState == doorSDLstates.opentoclose:
+                self.UpdateDoorState(doorSDLstates.closing)
 
-            elif doorState in (doorSDLstates['movingopen'], doorSDLstates['opening']):
-                self.UpdateDoorState(doorSDLstates['open'])
+            elif doorState in (doorSDLstates.movingopen, doorSDLstates.opening):
+                self.UpdateDoorState(doorSDLstates.open)
 
         elif id == respCloseDoor.id:
             PtDebugPrint("xHighLevelStarTrekDoor: Door is now closed.")
-            if doorState == doorSDLstates['closetoopen']:
-                self.UpdateDoorState(doorSDLstates['opening'])
+            if doorState == doorSDLstates.closetoopen:
+                self.UpdateDoorState(doorSDLstates.opening)
 
-            elif doorState in (doorSDLstates['movingclosed'], doorSDLstates['closing']):
-                self.UpdateDoorState(doorSDLstates['closed'])
+            elif doorState in (doorSDLstates.movingclosed, doorSDLstates.closing):
+                self.UpdateDoorState(doorSDLstates.closed)
 
     ##########################################
     def UpdateDoorState (self, StateNum):
@@ -200,8 +200,8 @@ class xHighLevelStarTrekDoor(ptModifier):
             self.SDL['DoorState'] = (StateNum,)
             if self.DoorEnabled == 0:
                 return
-            if self.SDL['DoorState'][0] == doorSDLstates['opening']:
+            if self.SDL['DoorState'][0] == doorSDLstates.opening:
                 ageSDL[strDoorClosedVar.value] = (0,)
-            elif self.SDL['DoorState'][0] == doorSDLstates['closing']:
+            elif self.SDL['DoorState'][0] == doorSDLstates.closing:
                 ageSDL[strDoorClosedVar.value] = (1,)
 
