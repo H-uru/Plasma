@@ -613,6 +613,8 @@ static bool DispatchData (NetCli * cli, void * param) {
                     cli->recvFieldBytes = 0;
                 }
                 break;
+
+                default: break;
             }
         }
 
