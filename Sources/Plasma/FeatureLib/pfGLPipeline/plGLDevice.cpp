@@ -85,7 +85,9 @@ plGLDevice::plGLDevice()
     : fErrorMsg(), fPipeline(), fImpl(), fWindow(), fDevice(), fActiveThread(), fCurrentProgram()
 {
     memcpy(fMatrixL2W, kIdentityMatrix, sizeof(GLfloat) * 16);
+    memcpy(fMatrixW2L, kIdentityMatrix, sizeof(GLfloat) * 16);
     memcpy(fMatrixW2C, kIdentityMatrix, sizeof(GLfloat) * 16);
+    memcpy(fMatrixC2W, kIdentityMatrix, sizeof(GLfloat) * 16);
     memcpy(fMatrixProj, kIdentityMatrix, sizeof(GLfloat) * 16);
 }
 
