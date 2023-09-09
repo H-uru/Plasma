@@ -69,8 +69,6 @@ public:
 
 class plGLDevice
 {
-    friend class plGLPipeline;
-
 public:
     typedef plGLVertexBufferRef VertexBufferRef;
     typedef plGLIndexBufferRef  IndexBufferRef;
@@ -93,6 +91,7 @@ protected:
 public:
     plGLDevice();
 
+    void Setup(plGLPipeline* pipe, hsWindowHndl window, hsWindowHndl device);
     void Shutdown();
 
     /**
@@ -131,7 +130,17 @@ public:
     void SetWorldToCameraMatrix(const hsMatrix44& src);
     void SetLocalToWorldMatrix(const hsMatrix44& src);
 
+    void SetCurrentProgram(GLuint program) { fCurrentProgram = program; }
+
     const char* GetErrorString() const { return fErrorMsg; }
+
+    bool HasContext() const { return fImpl != nullptr; }
+
+    const GLfloat* GetL2WMatrix() const { return fMatrixL2W; }
+    const GLfloat* GetW2LMatrix() const { return fMatrixW2L; }
+    const GLfloat* GetC2WMatrix() const { return fMatrixC2W; }
+    const GLfloat* GetW2CMatrix() const { return fMatrixW2C; }
+    const GLfloat* GetProjectionMatrix() const { return fMatrixProj; }
 
 private:
     /**
