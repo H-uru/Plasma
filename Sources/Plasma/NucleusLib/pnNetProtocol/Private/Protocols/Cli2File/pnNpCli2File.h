@@ -109,7 +109,7 @@ static const unsigned   kFileSrvBuildId = 0;
 struct Cli2File_ConnData {
     uint32_t       dataBytes;
     uint32_t       buildId;
-    unsigned    serverType;
+    uint32_t       serverType;
 };
 struct Cli2File_Connect {
     AsyncSocketConnectPacket    hdr;

@@ -1536,13 +1536,13 @@ static void Connect (
     
     Cli2Auth_Connect connect;
     connect.hdr.connType        = kConnTypeCliToAuth;
-    connect.hdr.hdrBytes        = sizeof(connect.hdr);
-    connect.hdr.buildId         = plProduct::BuildId();
-    connect.hdr.buildType       = plProduct::BuildType();
-    connect.hdr.branchId        = plProduct::BranchId();
+    connect.hdr.hdrBytes        = hsToLE16(sizeof(connect.hdr));
+    connect.hdr.buildId         = hsToLE32(plProduct::BuildId());
+    connect.hdr.buildType       = hsToLE32(plProduct::BuildType());
+    connect.hdr.branchId        = hsToLE32(plProduct::BranchId());
     connect.hdr.productId       = plProduct::UUID();
     connect.data.token          = conn->token;
-    connect.data.dataBytes      = sizeof(connect.data);
+    connect.data.dataBytes      = hsToLE32(sizeof(connect.data));
 
     AsyncSocketConnect(
         &conn->cancelId,
