@@ -83,7 +83,7 @@ plCrashSrv::~plCrashSrv()
 static inline bool IGetCrashedThreadContext(HANDLE process, const LPEXCEPTION_POINTERS ptrs, LPCONTEXT context)
 {
     if (process == GetCurrentProcess()) {
-        memcpy(context, ptrs->ContextRecord, sizeof(ptrs->ContextRecord));
+        memcpy(context, ptrs->ContextRecord, sizeof(CONTEXT));
         return true;
     }
 

@@ -137,7 +137,7 @@ bool plStackWalker::iterator::next()
 class plStackWalkError : public std::runtime_error
 {
 public:
-    plStackWalkError() = default;
+    plStackWalkError() = delete;
     explicit plStackWalkError(const char* msg) : std::runtime_error(msg) { }
     explicit plStackWalkError(const ST::string& msg) : std::runtime_error(msg.c_str()) { }
 };
