@@ -54,22 +54,24 @@ class plLayerInterface;
 class plMipmap;
 class plRenderTarget;
 
+class plGLDeviceImpl
+{
+protected:
+    hsWindowHndl    fWindow;
+    hsWindowHndl    fDevice;
+
+    plGLDeviceImpl(hsWindowHndl window, hsWindowHndl device)
+        : fWindow(window), fDevice(device) {};
+
+public:
+    virtual void Shutdown() = 0;
+    virtual bool BeginRender(ST::string& error) = 0;
+    virtual bool EndRender(ST::string& error) = 0;
+};
+
 class plGLDevice
 {
     friend class plGLPipeline;
-    friend void InitEGLDevice(plGLDevice* dev);
-    friend void FiniEGLDevice(plGLDevice* dev);
-    friend void InitWGLDevice(plGLDevice* dev);
-    friend void FiniWGLDevice(plGLDevice* dev);
-    friend void InitCGLDevice(plGLDevice* dev);
-    friend void FiniCGLDevice(plGLDevice* dev);
-
-    enum ContextType {
-        kNone = 0,
-        kWGL,
-        kCGL,
-        kEGL
-    };
 
 public:
     typedef plGLVertexBufferRef VertexBufferRef;
@@ -79,12 +81,9 @@ public:
 protected:
     ST::string fErrorMsg;
     plGLPipeline*       fPipeline;
-    ContextType         fContextType;
+    plGLDeviceImpl*     fImpl;
     hsWindowHndl        fWindow;
     hsWindowHndl        fDevice;
-    void*               fDisplay;
-    void*               fSurface;
-    void*               fContext;
     size_t              fActiveThread;
     GLuint              fCurrentProgram;
     GLfloat             fMatrixL2W[16];
@@ -96,10 +95,6 @@ protected:
 public:
     plGLDevice();
 
-    /**
-     * Initializes the OpenGL rendering context.
-     */
-    bool InitDevice();
     void Shutdown();
 
     /**
@@ -141,6 +136,11 @@ public:
     ST::string GetErrorString() const { return fErrorMsg; }
 
 private:
+    /**
+     * Initializes the OpenGL rendering context.
+     */
+    bool InitDevice();
+
     void BindTexture(TextureRef* tRef, plMipmap* img, GLuint mapping);
 };
 
