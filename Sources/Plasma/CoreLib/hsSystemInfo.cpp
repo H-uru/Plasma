@@ -294,7 +294,7 @@ static inline bool IGetWindowsVersion(const RTL_OSVERSIONINFOEXW& info, ST::stri
     if (info.wProductType == VER_NT_WORKSTATION)
         ss << "Professional ";
 
-    if (info.szCSDVersion && *info.szCSDVersion)
+    if (info.szCSDVersion[0])
         ss << info.szCSDVersion << ' ';
 
     ss << "(Build " << info.dwBuildNumber << ')';
