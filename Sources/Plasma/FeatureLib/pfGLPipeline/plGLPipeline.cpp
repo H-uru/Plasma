@@ -609,7 +609,7 @@ void plGLPipeline::LoadResources()
 
     IReleaseAvRTPool();
 
-    if (fDevice.fContextType == plGLDevice::kNone) {
+    if (!fDevice.fImpl) {
         // We can't create anything if the OpenGL context isn't initialized
         plProfile_IncCount(PipeReload, 1);
 
