@@ -269,6 +269,8 @@ static inline bool IGetWindowsVersion(const RTL_OSVERSIONINFOEXW& info, ST::stri
         ss << "Server 2016 ";
     else if (info.dwMajorVersion == 10 && info.dwBuildNumber == 17763 && server.value())
         ss << "Server 2019 ";
+    else if (info.dwMajorVersion == 10 && info.dwBuildNumber == 20348 && server.value())
+        ss << "Server 2022 ";
     else if (info.dwMajorVersion == 10 && info.dwBuildNumber >= 22000 && !server.value())
         ss << "11 ";
     else if (info.dwPlatformId & VER_PLATFORM_WIN32_NT)
