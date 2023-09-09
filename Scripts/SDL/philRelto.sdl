@@ -47,15 +47,6 @@
 
 STATEDESC philRelto
 {
-    VERSION 1
-
-    VAR BOOL	philLibraryDoorClosed[1]    	DEFAULT=1
-    VAR BOOL    philBlindsClosed[1] 		DEFAULT=1
-    VAR BOOL    philDRCVest[1]      		DEFAULT=1
-}
-
-STATEDESC philRelto
-{
     VERSION 2
 
     VAR BOOL	philLibraryDoorClosed[1]    	DEFAULT=1

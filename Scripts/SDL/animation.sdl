@@ -54,19 +54,7 @@
 #
 # Defines the state of an animation controller
 #
-STATEDESC AnimTimeConvert
-{
-	VERSION 5	
-	VAR INT			flags[1]				DEFAULT=0
-	VAR FLOAT		lastStateAnimTime[1]	DEFAULT=0
-	VAR FLOAT		loopEnd[1]				DEFAULT=0
-	VAR FLOAT		loopBegin[1]			DEFAULT=0
-	VAR FLOAT		speed[1]				DEFAULT=1
-	VAR CREATABLE	speedEaseCurve[1]
-	VAR BYTE		currentEaseCurve[1]		DEFAULT=0	# 0=nil, 1=easeIn, 2=easeOut, 3=speed
-	VAR TIME		currentEaseBeginWorldTime[1]	DEFAULT=0
-	VAR TIME		lastStateChange[1]		DEFAULT=0
-}
+
 STATEDESC AnimTimeConvert
 {
 	VERSION 6	
