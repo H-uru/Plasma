@@ -195,9 +195,7 @@ plGLPipeline::plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG
     plStatusLog::AddLineS("pipeline.log", "Constructing plGLPipeline");
     plStatusLog::AddLineSF("pipeline.log", "Driver vendor: {}", devMode->GetDevice()->GetDriverDesc());
 
-    fDevice.fWindow = window;
-    fDevice.fDevice = display;
-    fDevice.fPipeline = this;
+    fDevice.Setup(this, window, display);
 
     fPlateMgr = new plGLPlateManager(this);
 }
@@ -609,7 +607,7 @@ void plGLPipeline::LoadResources()
 
     IReleaseAvRTPool();
 
-    if (!fDevice.fImpl) {
+    if (!fDevice.HasContext()) {
         // We can't create anything if the OpenGL context isn't initialized
         plProfile_IncCount(PipeReload, 1);
 
@@ -744,7 +742,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
                 mRef->Link(&fMatRefList);
 
             glUseProgram(mRef->fRef);
-            fDevice.fCurrentProgram = mRef->fRef;
+            fDevice.SetCurrentProgram(mRef->fRef);
             LOG_GL_ERROR_CHECK(ST::format("Use Program with material \"{}\" failed", material->GetKeyName()));
 
             GLuint vao = 0;
@@ -823,13 +821,13 @@ void plGLPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& spa
 
     if (mRef) {
         /* Push the matrices into the GLSL shader now */
-        glUniformMatrix4fv(mRef->uMatrixProj, 1, GL_TRUE, fDevice.fMatrixProj);
-        glUniformMatrix4fv(mRef->uMatrixW2C, 1, GL_TRUE, fDevice.fMatrixW2C);
-        glUniformMatrix4fv(mRef->uMatrixL2W, 1, GL_TRUE, fDevice.fMatrixL2W);
-        glUniformMatrix4fv(mRef->uMatrixW2L, 1, GL_TRUE, fDevice.fMatrixW2L);
+        glUniformMatrix4fv(mRef->uMatrixProj, 1, GL_TRUE, fDevice.GetProjectionMatrix());
+        glUniformMatrix4fv(mRef->uMatrixW2C, 1, GL_TRUE, fDevice.GetW2CMatrix());
+        glUniformMatrix4fv(mRef->uMatrixL2W, 1, GL_TRUE, fDevice.GetL2WMatrix());
+        glUniformMatrix4fv(mRef->uMatrixW2L, 1, GL_TRUE, fDevice.GetW2LMatrix());
 
         if (mRef->uMatrixC2W != -1)
-            glUniformMatrix4fv(mRef->uMatrixC2W, 1, GL_TRUE, fDevice.fMatrixC2W);
+            glUniformMatrix4fv(mRef->uMatrixC2W, 1, GL_TRUE, fDevice.GetC2WMatrix());
     }
 }
 
@@ -1490,7 +1488,7 @@ void plGLPipeline::IDrawPlate(plPlate* plate)
         mRef->Link(&fMatRefList);
 
     glUseProgram(mRef->fRef);
-    fDevice.fCurrentProgram = mRef->fRef;
+    fDevice.SetCurrentProgram(mRef->fRef);
 
     mRef->SetupTextureRefs();
 
@@ -1503,12 +1501,12 @@ void plGLPipeline::IDrawPlate(plPlate* plate)
 
     /* Push the matrices into the GLSL shader now */
     glUniformMatrix4fv(mRef->uMatrixProj, 1, GL_TRUE, projMat);
-    glUniformMatrix4fv(mRef->uMatrixW2C, 1, GL_TRUE, fDevice.fMatrixW2C);
-    glUniformMatrix4fv(mRef->uMatrixC2W, 1, GL_TRUE, fDevice.fMatrixC2W);
-    glUniformMatrix4fv(mRef->uMatrixL2W, 1, GL_TRUE, fDevice.fMatrixL2W);
+    glUniformMatrix4fv(mRef->uMatrixW2C, 1, GL_TRUE, fDevice.GetW2CMatrix());
+    glUniformMatrix4fv(mRef->uMatrixC2W, 1, GL_TRUE, fDevice.GetC2WMatrix());
+    glUniformMatrix4fv(mRef->uMatrixL2W, 1, GL_TRUE, fDevice.GetL2WMatrix());
 
     if (mRef->uMatrixW2L != -1)
-        glUniformMatrix4fv(mRef->uMatrixW2L, 1, GL_TRUE, fDevice.fMatrixW2L);
+        glUniformMatrix4fv(mRef->uMatrixW2L, 1, GL_TRUE, fDevice.GetW2LMatrix());
 
     glUniform1f(mRef->uInvertVtxAlpha, 0.f);
     glUniform1f(mRef->uAlphaThreshold, 0.f);
@@ -1657,7 +1655,7 @@ void plGLPipeline::IPreprocessAvatarTextures()
 
         glUseProgram(sProgram);
         LOG_GL_ERROR_CHECK("Use Program failed");
-        fDevice.fCurrentProgram = sProgram;
+        fDevice.SetCurrentProgram(sProgram);
 
         glUniform1i(0, 0);
         glUniform4f(1, 1.f, 1.f, 1.f, 1.f);
