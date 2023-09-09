@@ -91,6 +91,13 @@ plGLDevice::plGLDevice()
     memcpy(fMatrixProj, kIdentityMatrix, sizeof(GLfloat) * 16);
 }
 
+void plGLDevice::Setup(plGLPipeline* pipe, hsWindowHndl window, hsWindowHndl device)
+{
+    fPipeline = pipe;
+    fWindow = window;
+    fDevice = device;
+}
+
 bool plGLDevice::InitDevice()
 {
 #ifdef USE_EGL
