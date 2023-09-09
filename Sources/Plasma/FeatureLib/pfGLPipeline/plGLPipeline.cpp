@@ -839,8 +839,8 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
 {
     plProfile_BeginTiming(RenderBuff);
 
-    typename DeviceType::VertexBufferRef* vRef = (typename DeviceType::VertexBufferRef*)vb;
-    typename DeviceType::IndexBufferRef* iRef = (typename DeviceType::IndexBufferRef*)ib;
+    plGLVertexBufferRef* vRef = static_cast<plGLVertexBufferRef*>(vb);
+    plGLIndexBufferRef* iRef = static_cast<plGLIndexBufferRef*>(ib);
     plGLMaterialShaderRef* mRef = static_cast<plGLMaterialShaderRef*>(material->GetDeviceRef());
 
     if (!vRef->fRef || !iRef->fRef) {
