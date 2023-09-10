@@ -1344,6 +1344,7 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
     fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(tex->fTexture, 0);
     MTL::SamplerState* samplerState = fDevice.SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(proj->GetClampFlags()));
     fDevice.CurrentRenderCommandEncoder()->setFragmentSamplerState(samplerState, 0);
+    fState.layerStates[0].clampFlag = hsGMatState::hsGMatClampFlags(proj->GetClampFlags());
 
     // Okay, render it already.
 
