@@ -14,6 +14,9 @@ target_link_libraries(pfFeatureInc
         pfGameMgr
         pfJournalBook
         pfMessage
+        $<$<BOOL:${PLASMA_PIPELINE_DX}>:pfDXPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_GL}>:pfGLPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipeline>
         pfPython
         pfSurface
 )
