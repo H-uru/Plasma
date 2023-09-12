@@ -29,10 +29,10 @@ cmake_dependent_option(RESOURCE_BRUTE "Allow pngcrush brute-force optimization" 
 if(PLASMA_BUILD_RESOURCE_DAT)
     set(external_DAT "${CMAKE_CURRENT_BINARY_DIR}/resource.dat")
     if(RESOURCE_OPTIMIZE)
-        string(APPEND OPTIMIZE_ARGUMENT "--pngcrush \"${PNGCRUSH_EXECUTABLE}\" ")
+        list(APPEND OPTIMIZE_ARGUMENT --pngcrush "${PNGCRUSH_EXECUTABLE}")
     endif()
     if(RESOURCE_BRUTE)
-        string(APPEND OPTIMIZE_ARGUMENT "--brute ")
+        list(APPEND OPTIMIZE_ARGUMENT "--brute")
     endif()
 
     add_custom_command(
