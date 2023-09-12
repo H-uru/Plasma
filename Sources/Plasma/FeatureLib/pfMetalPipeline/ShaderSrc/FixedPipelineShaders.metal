@@ -136,7 +136,7 @@ typedef struct  {
     texturecube<half> cubicTexture6  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 5), function_constant(hasCubicTexture6)  ]];
     texturecube<half> cubicTexture7  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 6), function_constant(hasCubicTexture7)  ]];
     texturecube<half> cubicTexture8  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 7), function_constant(hasCubicTexture8)  ]];
-    const constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(BufferIndexFragArgBuffer)   ]];
+    const constant plMetalFragmentShaderArgumentBuffer*     bufferedUniforms   [[ buffer(FragmentShaderArgumentUniforms)   ]];
     half4 sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const;
     //number of layers is variable, so have to declare these samplers the ugly way
     sampler samplers  [[ sampler(0), function_constant(hasLayer1)  ]];
@@ -174,9 +174,9 @@ typedef struct
 } ShadowCasterInOut;
 
 vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
-                                       constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
-                                       constant plMetalLights & lights [[ buffer(BufferIndexLights) ]],
-                                       constant float4x4 & blendMatrix1 [[ buffer(BufferIndexBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
+                                       constant VertexUniforms & uniforms [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
+                                       constant plMetalLights & lights [[ buffer(VertexShaderArgumentLights) ]],
+                                       constant float4x4 & blendMatrix1 [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
 {
     ColorInOut out;
     //we should have been able to swizzle, but it didn't work in Xcode beta? Try again later.
@@ -577,7 +577,7 @@ constexpr void blend(half4 srcSample, thread half4 &destSample, const uint32_t b
 }
     
 vertex ShadowCasterInOut shadowVertexShader(Vertex in [[stage_in]],
-                                       constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]])
+                                       constant VertexUniforms & uniforms [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]])
 {
     ShadowCasterInOut out;
     
@@ -613,8 +613,8 @@ fragment half4 shadowFragmentShader(ShadowCasterInOut in [[stage_in]])
  */
 
 vertex ColorInOut shadowCastVertexShader(Vertex in [[stage_in]],
-                                         constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
-                                         constant plShadowState & shadowState [[ buffer(VertexShaderArgumentIndexShadowState) ]])
+                                         constant VertexUniforms & uniforms [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
+                                         constant plShadowState & shadowState [[ buffer(VertexShaderArgumentShadowState) ]])
 {
     ColorInOut out;
     
@@ -658,9 +658,9 @@ vertex ColorInOut shadowCastVertexShader(Vertex in [[stage_in]],
     
 fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
                                         texture2d<half> texture     [[ texture(16) ]],
-                                        constant plMetalShadowCastFragmentShaderArgumentBuffer & fragmentUniforms [[ buffer(BufferIndexShadowCastFragArgBuffer) ]],
+                                        constant plMetalShadowCastFragmentShaderArgumentBuffer & fragmentUniforms [[ buffer(FragmentShaderArgumentShadowCastUniforms) ]],
                                         FragmentShaderArguments layers,
-                                        constant int & alphaSrc [[ buffer(FragmentShaderArgumentShadowAlphaSrc) ]])
+                                        constant int & alphaSrc [[ buffer(FragmentShaderArgumentShadowCastAlphaSrc) ]])
 {
     float3 sampleCoords = in.texCoord1;
     if(fragmentUniforms.pointLightCast) {

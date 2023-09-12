@@ -71,7 +71,7 @@ typedef struct
 } ColorInOut;
 
 vertex ColorInOut plateVertexShader(PlateVertex in [[stage_in]],
-                                    constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
+                                    constant VertexUniforms & uniforms [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
                                     uint v_id [[vertex_id]])
 {
     ColorInOut out;
@@ -88,9 +88,9 @@ vertex ColorInOut plateVertexShader(PlateVertex in [[stage_in]],
 }
 
 fragment float4 fragmentShader(ColorInOut in [[stage_in]],
-                               constant VertexUniforms & uniforms [[ buffer(BufferIndexState) ]],
+                               constant VertexUniforms & uniforms [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
                                constant float & alpha [[ buffer(6) ]],
-                               texture2d<half> colorMap     [[ texture(Texture) ]])
+                               texture2d<half> colorMap     [[ texture(    FragmentShaderArgumentTexture) ]])
 {
     constexpr sampler colorSampler(mip_filter::linear,
                                    mag_filter::linear,

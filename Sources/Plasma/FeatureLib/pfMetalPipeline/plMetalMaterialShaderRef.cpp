@@ -150,7 +150,7 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder *en
         IBuildLayerTexture(encoder, i - GetPassIndex(pass), layer);
     }
     
-    encoder->setFragmentBuffer(fPassArgumentBuffers[pass], 0, BufferIndexFragArgBuffer);
+    encoder->setFragmentBuffer(fPassArgumentBuffers[pass], 0, FragmentShaderArgumentUniforms);
 }
 
 void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder *encoder, VertexUniforms *vertexUniforms, uint pass, plMetalFragmentShaderDescription* passDescription, std::vector<plLayerInterface*> *piggyBacks, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform)
@@ -180,7 +180,7 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder *encode
         return layer;
     });
     
-    encoder->setFragmentBytes(&uniforms, sizeof(plMetalFragmentShaderArgumentBuffer), BufferIndexFragArgBuffer);
+    encoder->setFragmentBytes(&uniforms, sizeof(plMetalFragmentShaderArgumentBuffer), FragmentShaderArgumentUniforms);
 }
 
 void plMetalMaterialShaderRef::EncodeTransform(plLayerInterface* layer, UVOutDescriptor *transform) {
@@ -216,7 +216,7 @@ void plMetalMaterialShaderRef::prepareTextures(MTL::RenderCommandEncoder *encode
     
     if (plCubicEnvironmap::ConvertNoRef(layer->GetTexture()) != nullptr) {
     } else if (plMipmap::ConvertNoRef(layer->GetTexture()) != nullptr || plRenderTarget::ConvertNoRef(layer->GetTexture()) != nullptr) {
-            encoder->setFragmentTexture(texRef->fTexture, Texture);
+            encoder->setFragmentTexture(texRef->fTexture,     FragmentShaderArgumentTexture);
     }
 }
 

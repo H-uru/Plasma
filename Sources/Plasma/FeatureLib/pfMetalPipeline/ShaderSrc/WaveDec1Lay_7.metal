@@ -92,7 +92,7 @@ typedef struct {
 } vs_WaveDev1Lay_7InOut;
 
 vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in [[stage_in]],
-                               constant vs_WaveDev1Lay_7Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]]) {
+                               constant vs_WaveDev1Lay_7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_WaveDev1Lay_7InOut out;
     // Store our input position in world space in r6
     float4 worldPosition = float4(0);

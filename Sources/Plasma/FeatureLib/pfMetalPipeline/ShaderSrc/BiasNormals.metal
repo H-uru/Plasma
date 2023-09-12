@@ -67,7 +67,7 @@ typedef struct {
 } vs_BiasNormalsOut;
 
 vertex vs_BiasNormalsOut vs_BiasNormals(Vertex in [[stage_in]],
-                               constant vs_BiasNormalsUniforms & uniforms [[ buffer(BufferIndexUniforms) ]]) {
+                               constant vs_BiasNormalsUniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_BiasNormalsOut out;
     
     out.position = float4(in.position, 1.0);

@@ -52,55 +52,62 @@ typedef __attribute__((__ext_vector_type__(3))) half half3;
 typedef __attribute__((__ext_vector_type__(4))) half half4;
 #endif
 
-enum plMetalVertexShaderArgumentIndex
+enum plMetalVertexShaderArgument
 {
     /// Material State
-    BufferIndexState      = 2,
+    VertexShaderArgumentFixedFunctionUniforms           = 2,
     /// Uniform table for Plasma dynamic shaders
-    BufferIndexUniforms      = 3,
+    VertexShaderArgumentMaterialShaderUniforms          = 3,
     /// Light Table
-    BufferIndexLights        = 4,
+    VertexShaderArgumentLights                          = 4,
     /// Blend matrix for GPU side animation blending
-    BufferIndexBlendMatrix1  = 6,
+    VertexShaderArgumentBlendMatrix1                    = 6,
     /// Describes the state of a shadow caster for shadow cast shader
-    VertexShaderArgumentIndexShadowState = 9
+    VertexShaderArgumentShadowState                     = 9
 };
 
 enum plMetalFragmentShaderArgumentIndex
 {
     /// Texture is a legacy argument for the simpler plate shader
-    Texture    = 1,
+    FragmentShaderArgumentTexture                       = 1,
     /// Fragment uniforms
-    BufferIndexShadowCastFragArgBuffer  = 4,
+    FragmentShaderArgumentShadowCastUniforms            = 4,
     /// Legacy argument buffer
-    BufferIndexFragArgBuffer  = 5,
+    FragmentShaderArgumentUniforms                      = 5,
     /// Layer index of alpha for shadow fragment shader
-    FragmentShaderArgumentShadowAlphaSrc = 8
+    FragmentShaderArgumentShadowCastAlphaSrc            = 8
 };
 
 enum plMetalVertexAttribute
 {
     /// position of a vertex
-    VertexAttributePosition  = 0,
+    VertexAttributePosition                             = 0,
     /// UV of a vertex. Reserves IDs 1-8.
-    VertexAttributeTexcoord  = 1,
+    VertexAttributeTexcoord                             = 1,
     /// Normal attribute of a vertex
-    VertexAttributeNormal  = 9,
+    VertexAttributeNormal                               = 9,
     /// Color attribute of a vertex
-    VertexAttributeColor = 10,
+    VertexAttributeColor                                = 10,
     /// Animation weight of a vertex
-    VertexAttributeWeights  = 11,
+    VertexAttributeWeights                              = 11,
 };
 
+/// Arguments to the shader compiler to control output
 enum plMetalFunctionConstant
 {
-    FunctionConstantNumUVs    = 0,
-    FunctionConstantNumLayers    = 1,
-    FunctionConstantSources    = 2,
-    FunctionConstantBlendModes    = 10,
-    FunctionConstantLayerFlags    = 18,
-    FunctionConstantNumWeights    = 26,
-    FunctionConstantSampleTypes   = 34,
+    /// Numbrer of UVs in the FVF vertex layout.
+    FunctionConstantNumUVs                              = 0,
+    /// Number of layers the shader will need to render
+    FunctionConstantNumLayers                           = 1,
+    /// Source type of the material texture. Metal needs to know if the texture will
+    /// be cubic or 2D in advance.  Eight values reserved.
+    FunctionConstantSources                             = 2,
+    /// Blend modes for each of the layers.
+    FunctionConstantBlendModes                          = 10,
+    /// Render flags for each layer. Eight values reserved.
+    FunctionConstantLayerFlags                          = 18,
+    /// Numbrer of weights in the FVF vertex layout.
+    FunctionConstantNumWeights                          = 26,
 };
 
 enum plMetalLayerPassType: uint8_t

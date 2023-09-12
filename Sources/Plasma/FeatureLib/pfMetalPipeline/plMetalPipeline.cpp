@@ -151,12 +151,12 @@ bool plRenderTriListFunc::RenderPrims() const
     plProfile_Inc(DrawPrimStatic);
     
     size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
-    fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), BufferIndexState);
+    fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms),     VertexShaderArgumentFixedFunctionUniforms);
     
     plMetalLights* lights = &fDevice->fPipeline->fLights;
     size_t lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * lights->count);
     
-    fDevice->CurrentRenderCommandEncoder()->setVertexBytes(lights, sizeof(plMetalLights), BufferIndexLights);
+    fDevice->CurrentRenderCommandEncoder()->setVertexBytes(lights, sizeof(plMetalLights), VertexShaderArgumentLights);
     fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
 }
 
@@ -1133,7 +1133,7 @@ void plMetalPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& 
     {
         matrix_float4x4 mat;
         hsMatrix2SIMD(drawable->GetPaletteMatrix(span.fBaseMatrix+1), &mat);
-        fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&mat, sizeof(matrix_float4x4), BufferIndexBlendMatrix1);
+        fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&mat, sizeof(matrix_float4x4), VertexShaderArgumentBlendMatrix1);
     }
 
     fCurrentRenderPassUniforms->projectionMatrix = fDevice.fMatrixProj;
@@ -2615,7 +2615,7 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     //FIXME: Hacking the old texture drawing into the plate path
     mRef->prepareTextures(fDevice.CurrentRenderCommandEncoder(), 0);
     
-    fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&uniforms, sizeof(VertexUniforms), BufferIndexState);
+    fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&uniforms, sizeof(VertexUniforms),     VertexShaderArgumentFixedFunctionUniforms);
     
     pm->EncodeDraw(fDevice.CurrentRenderCommandEncoder());
     
@@ -4009,7 +4009,7 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
                 fShadows[i]->fSelfShadowOn = selfShadowNow;
             }
 
-            fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&shadowState, sizeof(shadowState), VertexShaderArgumentIndexShadowState);
+            fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&shadowState, sizeof(shadowState), VertexShaderArgumentShadowState);
 
 #ifndef PLASMA_EXTERNAL_RELEASE
             if (!IsDebugFlagSet(plPipeDbg::kFlagNoShadowApply))
@@ -4081,7 +4081,7 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
         fCurrentRenderPassUniforms->uvTransforms[2].transform = tXfm;
     }
     
-    fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&layerIndex, sizeof(int), FragmentShaderArgumentShadowAlphaSrc);
+    fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&layerIndex, sizeof(int), FragmentShaderArgumentShadowCastAlphaSrc);
 }
 
 // ISetShadowLightState //////////////////////////////////////////////////////////////////
@@ -4144,7 +4144,7 @@ void plMetalPipeline::ISetupShadowSlaveTextures(plShadowSlave* slave)
 
     plMetalShadowCastFragmentShaderArgumentBuffer uniforms;
     uniforms.pointLightCast = slave->fView.GetOrthogonal() ? false : true;
-    fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&uniforms, sizeof(plMetalShadowCastFragmentShaderArgumentBuffer), BufferIndexShadowCastFragArgBuffer);
+    fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&uniforms, sizeof(plMetalShadowCastFragmentShaderArgumentBuffer), FragmentShaderArgumentShadowCastUniforms);
     
     hsMatrix44 cameraToTexture = slave->fWorldToTexture * c2w;
     simd_float4x4 tXfm;

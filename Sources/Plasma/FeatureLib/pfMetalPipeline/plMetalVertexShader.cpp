@@ -73,7 +73,7 @@ bool plMetalVertexShader::ISetConstants(plMetalPipeline* pipe)
     if( fOwner->GetNumConsts() )
     {
         float *ptr = (float *)fOwner->GetConstBasePtr();
-        pipe->GetMetalDevice()->CurrentRenderCommandEncoder()->setVertexBytes(ptr, fOwner->GetNumConsts()  * sizeof(float) * 4, BufferIndexUniforms);
+        pipe->GetMetalDevice()->CurrentRenderCommandEncoder()->setVertexBytes(ptr, fOwner->GetNumConsts()  * sizeof(float) * 4, VertexShaderArgumentMaterialShaderUniforms);
     }
 
     return true;

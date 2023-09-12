@@ -33,7 +33,7 @@ typedef struct {
 } vs_GrassInOut;
 
 vertex vs_GrassInOut vs_GrassShader(Vertex in [[stage_in]],
-                                           constant vs_GrassUniforms & uniforms [[ buffer(BufferIndexUniforms) ]]) {
+                                           constant vs_GrassUniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_GrassInOut out;
     
     float4 r0 = (in.position.x * uniforms.waveDirX) + (in.position.y * uniforms.waveDirX);

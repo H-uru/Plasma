@@ -62,7 +62,7 @@ typedef struct {
 } vs_CompCosinesnInOut;
 
 vertex vs_CompCosinesnInOut vs_CompCosines(Vertex in [[stage_in]],
-                                           constant vs_CompCosinesUniforms & uniforms [[ buffer(BufferIndexUniforms) ]]) {
+                                           constant vs_CompCosinesUniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_CompCosinesnInOut out;
     
     out.position = float4(in.position, 1.0);
@@ -94,7 +94,7 @@ fragment float4 ps_CompCosines(vs_CompCosinesnInOut in [[stage_in]],
                              texture2d<float> t1 [[ texture(1) ]],
                              texture2d<float> t2 [[ texture(2) ]],
                              texture2d<float> t3 [[ texture(3) ]],
-                            constant ps_CompCosinesUniforms & uniforms [[ buffer(BufferIndexUniforms) ]]) {
+                            constant ps_CompCosinesUniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     // Composite the cosines together.
     // Input map is cosine(pix) for each of
     // the 4 waves.

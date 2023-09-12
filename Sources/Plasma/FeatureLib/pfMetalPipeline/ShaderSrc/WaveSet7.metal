@@ -94,7 +94,7 @@ typedef struct {
 } vs_WaveFixedFin7InOut;
 
 vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
-                               constant vs_WaveFixedFin7Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]]) {
+                               constant vs_WaveFixedFin7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_WaveFixedFin7InOut out;
     
     // Store our input position in world space in r6

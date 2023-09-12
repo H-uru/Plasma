@@ -89,7 +89,7 @@ typedef struct {
 } waveRipInOut;
 
 vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
-                               constant vs_WaveRip7Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]]) {
+                               constant vs_WaveRip7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     waveRipInOut out;
     
     // Store our input position in world space in r6

@@ -60,7 +60,7 @@ typedef struct {
 } vs_WaveDecEnv7InOut;
 
 vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
-                               constant vs_WaveDecEnv7Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]]) {
+                               constant vs_WaveDecEnv7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_WaveDecEnv7InOut out;
     
     // Store our input position in world space in r6
