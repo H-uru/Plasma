@@ -4,7 +4,6 @@ set(pnUtils_HEADERS
     pnUtCoreLib.h
     pnUtAllIncludes.h
     pnUtCrypt.h
-    pnUtHash.h
     pnUtList.h
     pnUtStr.h
     pnUtTime.h
@@ -12,7 +11,6 @@ set(pnUtils_HEADERS
 
 set(pnUtils_SOURCES
     pnUtCrypt.cpp
-    pnUtHash.cpp
     pnUtList.cpp
     pnUtStr.cpp
     pnUtTime.cpp
