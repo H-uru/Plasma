@@ -45,12 +45,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #import <QuartzCore/QuartzCore.h>
 
 // Cocoa client
+#import "NSString+StringTheory.h"
 #import "PLSKeyboardEventMonitor.h"
 #import "PLSLoginWindowController.h"
 #import "PLSPatcherWindowController.h"
 #import "PLSServerStatus.h"
 #import "PLSView.h"
-#import "StringTheory_NSString.h"
 
 // stdlib
 #include <algorithm>

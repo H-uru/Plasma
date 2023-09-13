@@ -92,22 +92,22 @@ if(WIN32)
 elseif(APPLE)
     set(plClient_SOURCES ${plClient_SOURCES}
         Mac-Cocoa/main.mm
+        Mac-Cocoa/NSString+StringTheory.mm
         Mac-Cocoa/PLSKeyboardEventMonitor.mm
         Mac-Cocoa/PLSView.mm
         Mac-Cocoa/PLSLoginWindowController.mm
         Mac-Cocoa/PLSPatcherWindowController.mm
         Mac-Cocoa/PLSPatcher.mm
         Mac-Cocoa/PLSServerStatus.mm
-        Mac-Cocoa/StringTheory_NSString.mm
     )
     set(plClient_HEADERS ${plClient_HEADERS}
+        Mac-Cocoa/NSString+StringTheory.h
         Mac-Cocoa/PLSKeyboardEventMonitor.h
         Mac-Cocoa/PLSView.h
         Mac-Cocoa/PLSLoginWindowController.h
         Mac-Cocoa/PLSPatcherWindowController.h
         Mac-Cocoa/PLSPatcher.h
         Mac-Cocoa/PLSServerStatus.h
-        Mac-Cocoa/StringTheory_NSString.h
     )
     set(RESOURCES 
         Mac-Cocoa/MainMenu.xib

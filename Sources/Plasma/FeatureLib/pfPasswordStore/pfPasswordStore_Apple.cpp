@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnNetBase/pnNbSrvs.h"
 
-#include <string_theory/string>
+#include "hsDarwin.h"
 #include <Security/Security.h>
 
 /*****************************************************************************
@@ -54,67 +54,67 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ST::string pfApplePasswordStore::GetPassword(const ST::string& username)
 {
     ST::string service = GetServerDisplayName();
-    
-    CFStringRef accountName = CFStringCreateWithCStringNoCopy(nullptr, username.c_str(), kCFStringEncodingUTF8, kCFAllocatorNull);
-    CFStringRef serviceName = CFStringCreateWithCStringNoCopy(nullptr, service.c_str(), kCFStringEncodingUTF8, kCFAllocatorNull);
-    
+
+    CFStringRef accountName = CFStringCreateWithSTString(username);
+    CFStringRef serviceName = CFStringCreateWithSTString(service);
+
     CFAutorelease(accountName);
     CFAutorelease(serviceName);
-    
+
     const void* keys[] = { kSecClass, kSecAttrAccount, kSecAttrService, kSecReturnData };
     const void* values[] = { kSecClassGenericPassword, accountName, serviceName, kCFBooleanTrue };
-    
+
     CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 4, nullptr, nullptr);
     CFAutorelease(query);
-    
+
     CFDataRef result;
 
     if (SecItemCopyMatching(query, (CFTypeRef*)&result) != errSecSuccess)
     {
         return ST::string();
     }
-    
+
     ST::string ret(reinterpret_cast<const char*>(CFDataGetBytePtr(result)), size_t(CFDataGetLength(result)));
-    
+
     CFRelease(result);
-    
+
     return ret;
 }
 
 bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::string& password)
 {
     ST::string service = GetServerDisplayName();
-    
-    CFStringRef accountName  = CFStringCreateWithCStringNoCopy(nullptr, username.c_str(), kCFStringEncodingUTF8, kCFAllocatorNull);
-    CFStringRef serviceName  = CFStringCreateWithCStringNoCopy(nullptr, service.c_str(), kCFStringEncodingUTF8, kCFAllocatorNull);
+
+    CFStringRef accountName = CFStringCreateWithSTString(username);
+    CFStringRef serviceName = CFStringCreateWithSTString(service);
     CFDataRef   passwordData = CFDataCreate(nullptr, (const UInt8*)password.c_str(), password.size());
-    
+
     CFAutorelease(accountName);
     CFAutorelease(serviceName);
     CFAutorelease(passwordData);
-    
+
     const void* keys[] = { kSecClass, kSecAttrService, kSecReturnData, kSecValueData };
     const void* values[] = { kSecClassGenericPassword, serviceName, kCFBooleanTrue, passwordData };
-    
+
     CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 4, nullptr, nullptr);
     CFAutorelease(query);
-    
+
     OSStatus err = SecItemAdd(query, nullptr);
-    
+
     if (err == errSecDuplicateItem) {
         // the keychain item already exists, update it
-        
+
         const void* queryKeys[2] = { kSecClass, kSecAttrService };
         const void* queryValues[2] = { kSecClassGenericPassword, serviceName };
         CFDictionaryRef updateQuery = CFDictionaryCreate(nullptr, queryKeys, queryValues, 2, nullptr, nullptr);
         CFAutorelease(updateQuery);
-        
+
         const void* attributeKeys[2] = { kSecAttrAccount, kSecValueData };
         const void* attributeValues[2] = { accountName, passwordData };
         CFDictionaryRef attributes = CFDictionaryCreate(nullptr, attributeKeys, attributeValues, 2, nullptr, nullptr);
-        
+
         err = SecItemUpdate(updateQuery, attributes);
-        
+
         CFRelease(attributes);
     }
 

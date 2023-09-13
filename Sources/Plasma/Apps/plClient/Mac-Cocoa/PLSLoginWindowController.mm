@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #import "PLSLoginWindowController.h"
 #include <regex>
 #import "PLSServerStatus.h"
-#include "StringTheory_NSString.h"
+#import "NSString+StringTheory.h"
 #include "pfPasswordStore/pfPasswordStore.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plProduct.h"
@@ -128,8 +128,8 @@ static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
     [[NSUserDefaults standardUserDefaults] synchronize];
 
     if (self.password && ![self.password isEqualToString:FAKE_PASS_STRING]) {
-        ST::string username = ST::string([self.username cStringUsingEncoding:NSUTF8StringEncoding]);
-        ST::string password = ST::string([self.password cStringUsingEncoding:NSUTF8StringEncoding]);
+        ST::string username = [self.username STString];
+        ST::string password = [self.password STString];
 
         pfPasswordStore* store = pfPasswordStore::Instance();
         if (self.rememberPassword)
@@ -160,8 +160,8 @@ static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
     //  Hash username and password before sending over the 'net.
     //  -- Legacy compatibility: @gametap (and other usernames with domains in them) need
     //     to be hashed differently.
-    ST::string username = ST::string([self.username cStringUsingEncoding:NSUTF8StringEncoding]);
-    ST::string password = ST::string([self.password cStringUsingEncoding:NSUTF8StringEncoding]);
+    ST::string username = [self.username STString];
+    ST::string password = [self.password STString];
     static const std::regex re_domain("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
     std::cmatch match;
     std::regex_search(username.c_str(), match, re_domain);
@@ -185,7 +185,7 @@ static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
     ShaDigest hash;
     [self storeHash:hash];
 
-    ST::string username = ST::string([self.username cStringUsingEncoding:NSUTF8StringEncoding]);
+    ST::string username = [self.username STString];
     NetCommSetAccountUsernamePassword(username, hash);
     NetCommSetAuthTokenAndOS(nullptr, u"mac");
 }
@@ -214,7 +214,7 @@ static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
 
     [self.window center];
     [self.productTextField
-        setStringValue:[NSString stringWithSTString:plProduct::ProductString().c_str()]];
+        setStringValue:[NSString stringWithSTString:plProduct::ProductString()]];
 }
 
 - (NSNibName)windowNibName

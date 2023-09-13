@@ -40,6 +40,7 @@ set(CoreLib_HEADERS
     hsBounds.h
     hsColorRGBA.h
     hsCpuID.h
+    hsDarwin.h
     hsExceptions.h
     hsExceptionStack.h
     hsFastMath.h
@@ -81,7 +82,6 @@ target_link_libraries(
         Threads::Threads
         $<$<AND:$<CONFIG:Debug>,$<BOOL:${USE_VLD}>>:VLD::VLD>
         "$<$<PLATFORM_ID:Darwin>:-framework Accelerate>"
-    PRIVATE
         "$<$<PLATFORM_ID:Darwin>:-framework CoreFoundation>"
 )
 target_include_directories(
