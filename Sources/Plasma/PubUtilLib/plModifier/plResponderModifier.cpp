@@ -351,6 +351,7 @@ bool plResponderModifier::IContinueSending()
                     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
                     if(avatar)
                     {
+                        swMsg->ClearReceivers();
                         swMsg->AddReceiver(avatar->GetKey());
                     }
                 }
