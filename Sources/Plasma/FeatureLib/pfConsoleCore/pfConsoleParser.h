@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <optional>
 #include <string_theory/string>
-#include <utility>
+#include <tuple>
 #include <vector>
 
 class pfConsoleCmd;
@@ -91,7 +91,7 @@ public:
     // until a token is encountered that isn't a known group name.
     // Returns the found group and the first non-group token
     // (which may be an empty std::optional if the end of the line was reached).
-    std::pair<pfConsoleCmdGroup*, std::optional<ST::string>> ParseGroupAndName();
+    std::tuple<pfConsoleCmdGroup*, std::optional<ST::string>> ParseGroupAndName();
 
     // Parse the command name part of the line.
     // Returns the command corresponding to that name,
