@@ -581,14 +581,14 @@ class nxusBookMachine(ptModifier):
         hoodInfo = self.IGetHoodInfoNode()
         if hoodInfo is not None:
             infoStruct = hoodInfo.asAgeInfoStruct()
-            PtCreatePublicAge(infoStruct, self)
+            PtCreatePublicAge(infoStruct)
 
 
     def IMakeHoodPrivate(self):
         hoodInfo = self.IGetHoodInfoNode()
         if hoodInfo is not None:
             guid = hoodInfo.getAgeInstanceGuid()
-            PtRemovePublicAge(guid, self)
+            PtRemovePublicAge(guid)
 
     def IPublicAgeCreated(self, ageName):
         PtDebugPrint("IPublicAgeCreated: " + ageName)
