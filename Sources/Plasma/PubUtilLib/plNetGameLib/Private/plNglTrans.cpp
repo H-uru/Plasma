@@ -275,7 +275,7 @@ void NetTransUpdate () {
         for (auto it = s_transactions.begin(); it != s_transactions.end();) {
             NetTrans* trans = *it;
             // Increment a copy of the iterator here already,
-            // because the original iterator may be invalidated by an erase call below.
+            // because the original iterator's meaning may be changed by a splice call below.
             auto next = it;
             next++;
 
@@ -283,11 +283,11 @@ void NetTransUpdate () {
             while (!done) {
                 switch (trans->m_state) {
                     case kTransStateComplete:
-                        s_transactions.erase(it);
+                        // Move the completed transaction out of s_transactions.
                         if (trans->m_hasSubTrans) {
-                            parentCompleted.push_back(trans);
+                            parentCompleted.splice(parentCompleted.end(), s_transactions, it);
                         } else {
-                            completed.push_back(trans);
+                            completed.splice(completed.end(), s_transactions, it);
                         }
                         done = true;
                     break;
