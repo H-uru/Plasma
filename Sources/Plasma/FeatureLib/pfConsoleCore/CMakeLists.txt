@@ -3,12 +3,14 @@ set(pfConsoleCore_SOURCES
     pfConsoleCommandsCore.cpp
     pfConsoleContext.cpp
     pfConsoleEngine.cpp
+    pfConsoleParser.cpp
 )
 
 set(pfConsoleCore_HEADERS
     pfConsoleCmd.h
     pfConsoleContext.h
     pfConsoleEngine.h
+    pfConsoleParser.h
 )
 
 plasma_library(pfConsoleCore SOURCES ${pfConsoleCore_SOURCES} ${pfConsoleCore_HEADERS})

@@ -57,21 +57,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <optional>
 #include <string_theory/string>
+#include <vector>
 
 class plFileName;
 
 //// pfConsoleEngine Class Definition ////////////////////////////////////////
 
+class pfConsoleCmd;
 class pfConsoleCmdParam;
 class pfConsoleCmdGroup;
 class pfConsoleEngine
 {
     private:
-
-        static const int32_t      fMaxNumParams;
-
-        bool IConvertToParam(uint8_t type, ST::string string, pfConsoleCmdParam *param);
+        std::optional<pfConsoleCmdParam> IConvertToParam(uint8_t type, ST::string string);
+        std::optional<std::vector<pfConsoleCmdParam>> IResolveParams(pfConsoleCmd* cmd, std::vector<ST::string> argTokens);
 
         ST::string fErrorMsg;
         ST::string fLastErrorLine;

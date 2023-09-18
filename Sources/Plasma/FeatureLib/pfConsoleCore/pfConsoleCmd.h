@@ -95,6 +95,7 @@ class pfConsoleCmdGroup
 
         pfConsoleCmdGroup   *GetNext() { return fNext; }
         ST::string GetName() { return fName; }
+        ST::string GetFullName();
         pfConsoleCmdGroup   *GetParent() { return fParentGroup; }
 
         static pfConsoleCmdGroup    *GetBaseGroup();
@@ -262,6 +263,7 @@ class pfConsoleCmd
 
         pfConsoleCmd    *GetNext() { return fNext; }
         ST::string GetName() { return fName; }
+        ST::string GetFullName();
         ST::string GetHelp() { return fHelpString; }
         ST::string GetSignature();
 

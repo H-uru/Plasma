@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfConsoleCmd.h"
 
+#include <string_theory/format>
 #include <string_theory/string_stream>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -132,6 +133,15 @@ void    pfConsoleCmdGroup::AddSubGroup( pfConsoleCmdGroup *group )
 {
     group->Link( &fSubGroups );
     fBaseCmdGroupRef++;
+}
+
+ST::string pfConsoleCmdGroup::GetFullName()
+{
+    if (fParentGroup == nullptr || fParentGroup == GetBaseGroup()) {
+        return fName;
+    } else {
+        return ST::format("{}.{}", fParentGroup->GetFullName(), fName);
+    }
 }
 
 //// FindCommand /////////////////////////////////////////////////////////////
@@ -444,6 +454,15 @@ void    pfConsoleCmd::Unlink()
     if( fNext )
         fNext->fPrevPtr = fPrevPtr;
     *fPrevPtr = fNext;
+}
+
+ST::string pfConsoleCmd::GetFullName()
+{
+    if (fParentGroup == pfConsoleCmdGroup::GetBaseGroup()) {
+        return fName;
+    } else {
+        return ST::format("{}.{}", fParentGroup->GetFullName(), fName);
+    }
 }
 
 //// GetSigEntry /////////////////////////////////////////////////////////////
