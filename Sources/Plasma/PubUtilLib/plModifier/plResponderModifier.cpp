@@ -208,6 +208,8 @@ bool plResponderModifier::IIsLocalOnlyCmd(plMessage* cmd)
         return true;
     if (plCameraMsg::ConvertNoRef(cmd))     // don't want to change our camera
         return true;
+    if (plSubWorldMsg::ConvertNoRef(cmd))   // don't want to enter a subworld (changes the avatar SDL)
+        return true;
 
     plSoundMsg *snd = plSoundMsg::ConvertNoRef( cmd );
     if (snd != nullptr && snd->Cmd(plSoundMsg::kIsLocalOnly))
@@ -351,6 +353,7 @@ bool plResponderModifier::IContinueSending()
                     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
                     if(avatar)
                     {
+                        swMsg->ClearReceivers();
                         swMsg->AddReceiver(avatar->GetKey());
                     }
                 }

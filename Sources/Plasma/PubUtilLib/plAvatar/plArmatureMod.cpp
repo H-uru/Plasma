@@ -1379,7 +1379,7 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
         if (fController)
         {
             fController->SetSubworld(subMsg->fWorldKey);
-            DirtySynchState(kSDLAvatar, plSynchedObject::kBCastToClients);
+            DirtyPhysicalSynchState(plSynchedObject::kBCastToClients);
         }
         return true;
     }
