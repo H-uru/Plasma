@@ -63,7 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #cmakedefine USE_VPX
 #cmakedefine USE_WEBM
 
-#cmakedefine HAVE_PTHREAD_TIMEDJOIN_NP
 #cmakedefine HAVE_SYSCTL
 #cmakedefine HAVE_SYSDIR
 #cmakedefine HAVE_SYSINFO

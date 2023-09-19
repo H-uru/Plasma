@@ -47,11 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 
-#if defined(HAVE_PTHREAD_TIMEDJOIN_NP)
-#include <pthread.h>
-#include <time.h>
-#endif
-
 static void CreateThreadProc(AsyncThreadRef thread)
 {
 #ifdef USE_VLD
