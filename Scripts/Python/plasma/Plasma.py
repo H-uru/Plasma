@@ -164,9 +164,8 @@ def PtCreatePlayer(playerName, avatarShape, invitation):
     """Creates a new player"""
     pass
 
-def PtCreatePublicAge(ageInfo, cbObject=None):
-    """Create a public instance of the given age.
-cbObject, if supplied should have a member called publicAgeCreated(self,ageInfo)"""
+def PtCreatePublicAge(ageInfo):
+    """Create a public instance of the given age."""
     pass
 
 def PtDebugAssert(cond, msg):
@@ -686,9 +685,8 @@ def PtRecenterCamera():
     """re-centers the camera"""
     pass
 
-def PtRemovePublicAge(ageInstanceGuid, cbObject=None):
-    """Remove a public instance of the given age.
-cbObject, if supplied should have a member called publicAgeRemoved(self,ageInstanceGuid)"""
+def PtRemovePublicAge(ageInstanceGuid):
+    """Remove a public instance of the given age."""
     pass
 
 def PtRequestLOSScreen(selfKey,ID,xPos,yPos,distance,what,reportType):
@@ -6529,10 +6527,6 @@ Returns a ptVaultFolderNode of the avatars outfit."""
 
     def registerVisitAge(self,link):
         """Register this age as visitable by this player"""
-        pass
-
-    def sendToDevice(self,node,deviceName):
-        """Sends a ptVaultNode object to an Age's device by deviceName."""
         pass
 
     def setAgePublic(self,ageInfo,makePublic):

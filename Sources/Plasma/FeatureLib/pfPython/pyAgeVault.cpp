@@ -176,6 +176,13 @@ void pyAgeVault::AddChronicleEntry( const ST::string& name, uint32_t type, const
     VaultAddAgeChronicleEntry(name, type, value);
 }
 
+static void _AddDeviceCallback(ENetError result, hsRef<RelVaultNode> device, void* param)
+{
+    auto cb = static_cast<pyVaultNode::pyVaultNodeOperationCallback*>(param);
+    cb->SetNode(std::move(device));
+    cb->VaultOperationComplete(result);
+}
+
 // AGE DEVICES. AKA IMAGERS, WHATEVER.
 // Add a new device.
 void pyAgeVault::AddDevice(const ST::string& deviceName, PyObject * cbObject, uint32_t cbContext)
@@ -183,11 +190,7 @@ void pyAgeVault::AddDevice(const ST::string& deviceName, PyObject * cbObject, ui
     pyVaultNode::pyVaultNodeOperationCallback * cb = new pyVaultNode::pyVaultNodeOperationCallback( cbObject );
     cb->VaultOperationStarted( cbContext );
 
-    if (hsRef<RelVaultNode> rvn = VaultAgeAddDeviceAndWait(deviceName))
-        cb->SetNode(rvn);
-
-    // cb deletes itself here.
-    cb->VaultOperationComplete(cbContext, cb->GetNode() ? kNetSuccess : kNetErrInternalError);
+    VaultAgeAddDevice(deviceName, _AddDeviceCallback, cb);
 }
 
 // Remove a device.
@@ -210,17 +213,20 @@ PyObject * pyAgeVault::GetDevice(const ST::string& deviceName)
     PYTHON_RETURN_NONE;
 }
 
+static void _SetDeviceInboxCallback(ENetError result, hsRef<RelVaultNode> inbox, void* param)
+{
+    auto cb = static_cast<pyVaultNode::pyVaultNodeOperationCallback*>(param);
+    cb->SetNode(std::move(inbox));
+    cb->VaultOperationComplete(result);
+}
+
 // Sets the inbox associated with a device.
 void pyAgeVault::SetDeviceInbox(const ST::string& deviceName, const ST::string& inboxName, PyObject * cbObject, uint32_t cbContext)
 {
     pyVaultNode::pyVaultNodeOperationCallback * cb = new pyVaultNode::pyVaultNodeOperationCallback( cbObject );
     cb->VaultOperationStarted( cbContext );
 
-    if (hsRef<RelVaultNode> rvn = VaultAgeSetDeviceInboxAndWait(deviceName, inboxName))
-        cb->SetNode(rvn);
-
-    // cb deletes itself here.
-    cb->VaultOperationComplete(cbContext, cb->GetNode() ? kNetSuccess : kNetErrInternalError);
+    VaultAgeSetDeviceInbox(deviceName, inboxName, _SetDeviceInboxCallback, cb);
 }
 
 PyObject * pyAgeVault::GetDeviceInbox(const ST::string& deviceName)

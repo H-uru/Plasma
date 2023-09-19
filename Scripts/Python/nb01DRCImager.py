@@ -71,6 +71,10 @@ def doneAddingDevice(node,nodeRef,resultCode):
     "initializes new imager device with default inbox folder."
     PtDebugPrint("nb01DRCImager: doneAddingDevice, result code = %d" % resultCode)
 
+    if resultCode == 0:
+        PtDebugPrint("nb01DRCImager: doneAddingDevice, setting device inbox - %s" % ("DRCImagerState%d" % nb01DRCImager.Instance.current_state))
+        ptAgeVault().setDeviceInbox("DRCImager", "DRCImagerState%d" % nb01DRCImager.Instance.current_state, doneSettingDeviceInbox)
+
 #====================================
 class nb01DRCImager(ptModifier):
     Instance = None
@@ -156,8 +160,6 @@ class nb01DRCImager(ptModifier):
             
             PtDebugPrint("nb01DRCImager.OnServerInitComplete: Adding device")
             ptAgeVault().addDevice("DRCImager",doneAddingDevice)
-            PtDebugPrint("nb01DRCImager.OnServerInitComplete: Setting device inbox - %s" % ("DRCImagerState%d" % self.current_state))
-            ptAgeVault().setDeviceInbox("DRCImager", "DRCImagerState%d" % self.current_state, doneSettingDeviceInbox)
     
     def OnTimer(self,id):
         PtDebugPrint("nb01DRCImager.OnTimer executing")

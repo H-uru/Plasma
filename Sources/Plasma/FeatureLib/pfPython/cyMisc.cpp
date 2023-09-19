@@ -2189,30 +2189,28 @@ void cyMisc::GetPublicAgeList(const ST::string& ageName, PyObject * cbObject)
 //////////////////////////////////////////////////////////////////////////////
 //
 // Function   : CreatePublicAge
-// PARAMETERS : ageInfo, callback object
+// PARAMETERS : ageInfo
 //
 // PURPOSE    : Add a public age to the list of available ones.
 //
-void cyMisc::CreatePublicAge( pyAgeInfoStruct * ageInfo, PyObject * cbObject )
+void cyMisc::CreatePublicAge(pyAgeInfoStruct* ageInfo)
 {
-    VaultSetOwnedAgePublicAndWait(ageInfo->GetAgeInfo(), true);
-    // TODO: make the callback here
+    VaultSetOwnedAgePublic(ageInfo->GetAgeInfo(), true);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 // Function   : RemovePublicAge
-// PARAMETERS : ageInstanceGuid, callback object
+// PARAMETERS : ageInstanceGuid
 //
 // PURPOSE    : Remove a public age from the list of available ones.
 //
-void cyMisc::RemovePublicAge(const ST::string& ageInstanceGuid, PyObject * cbObject/*=nullptr */)
+void cyMisc::RemovePublicAge(const ST::string& ageInstanceGuid)
 {
     plAgeInfoStruct info;
     plUUID uuid(ageInstanceGuid);
     info.SetAgeInstanceGuid(&uuid);
-    VaultSetOwnedAgePublicAndWait(&info, false);
-    // TODO: make the callback here
+    VaultSetOwnedAgePublic(&info, false);
 }
 
 int cyMisc::GetKILevel()

@@ -753,20 +753,20 @@ public:
     //////////////////////////////////////////////////////////////////////////////
     //
     // Function   : CreatePublicAge
-    // PARAMETERS : ageInfo, callback object
+    // PARAMETERS : ageInfo
     //
     // PURPOSE    : Add a public age to the list of available ones.
     //
-    static void CreatePublicAge(pyAgeInfoStruct * ageInfo, PyObject * cbObject = nullptr);
+    static void CreatePublicAge(pyAgeInfoStruct* ageInfo);
 
     //////////////////////////////////////////////////////////////////////////////
     //
     // Function   : RemovePublicAge
-    // PARAMETERS : ageInstanceGuid, callback object
+    // PARAMETERS : ageInstanceGuid
     //
     // PURPOSE    : Remove a public age from the list of available ones.
     //
-    static void RemovePublicAge(const ST::string& ageInstanceGuid, PyObject * cbObject = nullptr);
+    static void RemovePublicAge(const ST::string& ageInstanceGuid);
 
     //////////////////////////////////////////////////////////////////////////////
     //

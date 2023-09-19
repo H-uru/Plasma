@@ -243,37 +243,33 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetPublicAgeList, args, "Params: ageName, cbOb
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtCreatePublicAge, args, "Params: ageInfo, cbObject=None\nCreate a public instance of the given age.\n"
-            "cbObject, if supplied should have a member called publicAgeCreated(self,ageInfo)")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtCreatePublicAge, args, "Params: ageInfo\nCreate a public instance of the given age.")
 {
     PyObject* ageInfoObj = nullptr;
-    PyObject* cbObject = nullptr;
-    if (!PyArg_ParseTuple(args, "O|O", &ageInfoObj, &cbObject))
+    if (!PyArg_ParseTuple(args, "O", &ageInfoObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtCreatePublicAge expects a ptAgeInfoStruct object and an optional object with a publicAgeCreated() method");
+        PyErr_SetString(PyExc_TypeError, "PtCreatePublicAge expects a ptAgeInfoStruct object");
         PYTHON_RETURN_ERROR;
     }
     if (!pyAgeInfoStruct::Check(ageInfoObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtCreatePublicAge expects a ptAgeInfoStruct object and an optional object with a publicAgeCreated() method");
+        PyErr_SetString(PyExc_TypeError, "PtCreatePublicAge expects a ptAgeInfoStruct object");
         PYTHON_RETURN_ERROR;
     }
     pyAgeInfoStruct* ageInfo = pyAgeInfoStruct::ConvertFrom(ageInfoObj);
-    cyMisc::CreatePublicAge(ageInfo, cbObject);
+    cyMisc::CreatePublicAge(ageInfo);
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtRemovePublicAge, args, "Params: ageInstanceGuid, cbObject=None\nRemove a public instance of the given age.\n"
-            "cbObject, if supplied should have a member called publicAgeRemoved(self,ageInstanceGuid)")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtRemovePublicAge, args, "Params: ageInstanceGuid\nRemove a public instance of the given age.")
 {
     ST::string ageInstanceGUID;
-    PyObject* cbObject = nullptr;
-    if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &ageInstanceGUID, &cbObject))
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &ageInstanceGUID))
     {
-        PyErr_SetString(PyExc_TypeError, "PtRemovePublicAge expects a string and an optional object with a publicAgeRemoved() method");
+        PyErr_SetString(PyExc_TypeError, "PtRemovePublicAge expects a string");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::RemovePublicAge(ageInstanceGUID, cbObject);
+    cyMisc::RemovePublicAge(ageInstanceGUID);
     PYTHON_RETURN_NONE;
 }
 

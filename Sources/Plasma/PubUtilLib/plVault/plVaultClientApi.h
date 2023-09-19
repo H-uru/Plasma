@@ -243,10 +243,6 @@ void VaultSetNodeSeen (
 void VaultDeleteNode (
     unsigned    nodeId
 );
-void VaultPublishNode (
-    unsigned        nodeId,
-    const ST::string& deviceName
-);
 void VaultSendNode (
     hsWeakRef<RelVaultNode> srcNode,
     unsigned                dstPlayerId
@@ -343,16 +339,16 @@ hsRef<RelVaultNode> VaultGetOwnedAgeLink(const plAgeInfoStruct * info);
 hsRef<RelVaultNode> VaultGetOwnedAgeInfo(const plAgeInfoStruct * info);
 bool                VaultGetOwnedAgeLink(const plAgeInfoStruct * info, plAgeLinkStruct * link);
 bool                VaultAddOwnedAgeSpawnPoint(const plUUID& ageInstId, const plSpawnPointInfo & spawnPt);
-bool                VaultSetOwnedAgePublicAndWait(const plAgeInfoStruct * info, bool publicOrNot);
-bool                VaultSetAgePublicAndWait(hsWeakRef<NetVaultNode> ageInfoNode, bool publicOrNot);
+bool                VaultSetOwnedAgePublic(const plAgeInfoStruct* info, bool publicOrNot);
+bool                VaultSetAgePublic(hsWeakRef<NetVaultNode> ageInfoNode, bool publicOrNot);
 hsRef<RelVaultNode> VaultGetVisitAgeLink(const plAgeInfoStruct * info);
 bool                VaultGetVisitAgeLink(const plAgeInfoStruct * info, class plAgeLinkStruct * link);
 bool                VaultRegisterOwnedAgeAndWait(const plAgeLinkStruct * link);
 void                VaultRegisterOwnedAge(const plAgeLinkStruct* link);
 bool                VaultRegisterVisitAgeAndWait(const plAgeLinkStruct * link);
 void                VaultRegisterVisitAge(const plAgeLinkStruct* link);
-bool                VaultUnregisterOwnedAgeAndWait(const plAgeInfoStruct * info);
-bool                VaultUnregisterVisitAgeAndWait(const plAgeInfoStruct * info);
+bool                VaultUnregisterOwnedAge(const plAgeInfoStruct* info);
+bool                VaultUnregisterVisitAge(const plAgeInfoStruct* info);
 hsRef<RelVaultNode> VaultFindChronicleEntry(const ST::string& entryName, int entryType = -1);
 bool                VaultHasChronicleEntry(const ST::string& entryName, int entryType = -1);
 // if entry of same name and type already exists, value is updated
@@ -373,7 +369,7 @@ bool VaultAmOwnerOfCurrentAge ();
 bool VaultAmCzarOfCurrentAge ();
 bool VaultAmOwnerOfAge (const plUUID& ageInstId);
 bool VaultAmCzarOfAge (const plUUID& ageInstId);
-bool VaultRegisterMTStationAndWait (
+bool VaultRegisterMTStation(
     const ST::string& stationName,
     const ST::string& linkBackSpawnPtObjName
 );
@@ -408,11 +404,13 @@ void           VaultAddAgeChronicleEntry (
     int               entryType,
     const ST::string& entryValue
 );
-hsRef<RelVaultNode> VaultAgeAddDeviceAndWait(const ST::string& deviceName);   // blocks until completion
+typedef void (*FVaultAgeAddDeviceCallback)(ENetError result, hsRef<RelVaultNode> device, void* param);
+void VaultAgeAddDevice(const ST::string& deviceName, FVaultAgeAddDeviceCallback callback, void* param);
 void VaultAgeRemoveDevice (const ST::string& deviceName);
 bool VaultAgeHasDevice (const ST::string& deviceName);
 hsRef<RelVaultNode> VaultAgeGetDevice(const ST::string& deviceName);
-hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait(const ST::string& deviceName, const ST::string& inboxName); // blocks until completion
+typedef void (*FVaultAgeSetDeviceInboxCallback)(ENetError result, hsRef<RelVaultNode> inbox, void* param);
+void VaultAgeSetDeviceInbox(const ST::string& deviceName, const ST::string& inboxName, FVaultAgeSetDeviceInboxCallback callback, void* param);
 hsRef<RelVaultNode> VaultAgeGetDeviceInbox(const ST::string& deviceName);
 void VaultClearDeviceInboxMap ();
 
@@ -426,17 +424,7 @@ bool VaultAgeGetSubAgeLink (
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
 );
-bool VaultAgeFindOrCreateSubAgeLinkAndWait (
-    const plAgeInfoStruct * info,
-    plAgeLinkStruct *       link,
-    const plUUID&           parentAgeInstId
-);
 bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const plUUID& arentUuid);
-bool VaultAgeFindOrCreateChildAgeLinkAndWait (
-    const ST::string&       parentAgeName,    // nil --> current age, non-nil --> owned age by given name
-    const plAgeInfoStruct * info,
-    plAgeLinkStruct *       link
-);
 enum class plVaultChildAgeLinkResult
 {
     kFailed,
