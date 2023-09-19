@@ -193,6 +193,7 @@ static CliGmConn * GetConnIncRef (const char tag[]) {
 
 //============================================================================
 static void AbandonConn(CliGmConn* conn) {
+    hsLockGuard(s_critsect);
     conn->abandoned = true;
     if (conn->cancelId) {
         AsyncSocketConnectCancel(conn->cancelId);

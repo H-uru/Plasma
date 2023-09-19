@@ -275,6 +275,7 @@ static CliFileConn * GetConnIncRef (const char tag[]) {
 
 //============================================================================
 static void AbandonConn(CliFileConn* conn) {
+    hsLockGuard(s_critsect);
     conn->abandoned = true;
 
     if (conn->AutoReconnectEnabled())

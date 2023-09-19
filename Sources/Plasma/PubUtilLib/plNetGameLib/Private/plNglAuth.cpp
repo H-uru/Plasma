@@ -1327,6 +1327,7 @@ static CliAuConn * GetConnIncRef (const char tag[]) {
 
 //============================================================================
 static void AbandonConn(CliAuConn* conn) {
+    hsLockGuard(s_critsect);
     conn->abandoned = true;
 
     conn->StopAutoReconnect();

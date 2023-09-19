@@ -220,6 +220,7 @@ static CliGkConn * GetConnIncRef (const char tag[]) {
 
 //============================================================================
 static void AbandonConn(CliGkConn* conn) {
+    hsLockGuard(s_critsect);
     conn->abandoned = true;
 
     conn->StopAutoReconnect();
