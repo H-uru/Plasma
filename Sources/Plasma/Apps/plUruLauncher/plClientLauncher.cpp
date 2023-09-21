@@ -58,8 +58,7 @@ Mead, WA   99021
 #include "pfPatcher/plManifests.h"
 #include "pfPatcher/pfPatcher.h"
 
-#include "pfConsoleCore/pfConsoleEngine.h"
-PF_CONSOLE_LINK_FILE(Core)
+#include "pfConsoleCore/pfServerIni.h"
 
 #include <algorithm>
 #include <curl/curl.h>
@@ -441,12 +440,9 @@ void plClientLauncher::ShutdownNetCore()
 
 // ===================================================
 
-bool plClientLauncher::LoadServerIni() const
+ST::string plClientLauncher::LoadServerIni() const
 {
-    PF_CONSOLE_INITIALIZE(Core);
-
-    pfConsoleEngine console;
-    return console.ExecuteFile(fServerIni);
+    return pfServerIni::Load(fServerIni);
 }
 
 void plClientLauncher::ParseArguments()

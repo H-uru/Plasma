@@ -408,8 +408,9 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
         return PLASMA_OK; // see you on the other side...
 
     // Load the doggone server.ini
-    if (!launcher.LoadServerIni()) {
-        IShowErrorDialog(L"No server.ini file found.  Please check your URU installation.");
+    ST::string errorMsg = launcher.LoadServerIni();
+    if (!errorMsg.empty()) {
+        IShowErrorDialog(ST::format("server.ini file not found or invalid. Please check your URU installation.\n{}", errorMsg).to_wchar().c_str());
         return PLASMA_PHAILURE;
     }
 
