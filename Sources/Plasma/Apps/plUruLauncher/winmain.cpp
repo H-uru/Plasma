@@ -103,10 +103,10 @@ static void WaitForOldPatcher()
 
 // ===================================================
 
-static inline void IShowErrorDialog(const wchar_t* msg)
+static inline void IShowErrorDialog(const ST::string& msg)
 {
     // This bypasses all that hsClientMinimizeGuard crap we have in CoreLib.
-    MessageBoxW(nullptr, msg, L"Error", MB_ICONERROR | MB_OK);
+    MessageBoxW(nullptr, msg.to_wchar().c_str(), L"Error", MB_ICONERROR | MB_OK);
 }
 
 static inline void IQuit(int exitCode=PLASMA_OK)
@@ -410,14 +410,13 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     // Load the doggone server.ini
     ST::string errorMsg = launcher.LoadServerIni();
     if (!errorMsg.empty()) {
-        IShowErrorDialog(ST::format("server.ini file not found or invalid. Please check your URU installation.\n{}", errorMsg).to_wchar().c_str());
+        IShowErrorDialog(ST::format("server.ini file not found or invalid. Please check your URU installation.\n{}", errorMsg));
         return PLASMA_PHAILURE;
     }
 
     // Ensure there is only ever one patcher running...
     if (IsPatcherRunning()) {
-        ST::string text = ST::format("{} is already running", plProduct::LongName());
-        IShowErrorDialog(text.to_wchar().data());
+        IShowErrorDialog(ST::format("{} is already running", plProduct::LongName()));
         return PLASMA_OK;
     }
     HANDLE _onePatcherMut = CreatePatcherMutex().release();
@@ -432,8 +431,9 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
     // So there appears to be some sort of issue with calling MessageBox once we've set up our dialog...
     // WTF?!?! So, to hack around that, we'll wait until everything shuts down to display any error.
-    if (!s_error.empty())
-        IShowErrorDialog(s_error.to_wchar().data());
+    if (!s_error.empty()) {
+        IShowErrorDialog(s_error);
+    }
 
     // Alrighty now we just need to clean up behind ourselves!
     // NOTE: We shut down the netcore in the WM_QUIT handler so
