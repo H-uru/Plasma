@@ -104,6 +104,36 @@ TEST(pfConsoleParser, ParseBaseCommandArgs)
     EXPECT_EQ((*args)[1], "arg2"_st);
 }
 
+TEST(pfConsoleParser, ParseBaseCommandUnknown)
+{
+    ST::string string = "UnkBaseCmd"_st;
+    pfConsoleParser parser(string);
+
+    auto name = parser.ParseUnknownCommandName();
+    EXPECT_EQ(name.size(), 1);
+    EXPECT_EQ(name[0], "UnkBaseCmd"_st);
+    EXPECT_EQ(parser.fTokenizer.fPos, string.end());
+    auto args = parser.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_TRUE(args->empty());
+}
+
+TEST(pfConsoleParser, ParseBaseCommandUnknownArgs)
+{
+    ST::string string = "UnkBaseCmd arg1 arg2"_st;
+    pfConsoleParser parser(string);
+
+    auto name = parser.ParseUnknownCommandName();
+    EXPECT_EQ(name.size(), 1);
+    EXPECT_EQ(name[0], "UnkBaseCmd"_st);
+    EXPECT_EQ(parser.fTokenizer.fPos, string.begin() + sizeof("UnkBaseCmd ") - 1);
+    auto args = parser.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_EQ(args->size(), 2);
+    EXPECT_EQ((*args)[0], "arg1"_st);
+    EXPECT_EQ((*args)[1], "arg2"_st);
+}
+
 // Top-level group
 
 TEST(pfConsoleParser, ParseBaseGroup)
@@ -193,6 +223,38 @@ TEST(pfConsoleParser, ParseSubCommandSpaceArgs)
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestGroup_SubCmd);
     auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_EQ(args->size(), 2);
+    EXPECT_EQ((*args)[0], "arg1"_st);
+    EXPECT_EQ((*args)[1], "arg2"_st);
+}
+
+TEST(pfConsoleParser, ParseSubCommandUnknown)
+{
+    ST::string string = "UnkGroup.SubCmd"_st;
+    pfConsoleParser parser(string);
+
+    auto name = parser.ParseUnknownCommandName();
+    EXPECT_EQ(name.size(), 2);
+    EXPECT_EQ(name[0], "UnkGroup"_st);
+    EXPECT_EQ(name[1], "SubCmd"_st);
+    EXPECT_EQ(parser.fTokenizer.fPos, string.end());
+    auto args = parser.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_TRUE(args->empty());
+}
+
+TEST(pfConsoleParser, ParseSubCommandUnknownArgs)
+{
+    ST::string string = "UnkGroup.SubCmd arg1 arg2"_st;
+    pfConsoleParser parser(string);
+
+    auto name = parser.ParseUnknownCommandName();
+    EXPECT_EQ(name.size(), 2);
+    EXPECT_EQ(name[0], "UnkGroup"_st);
+    EXPECT_EQ(name[1], "SubCmd"_st);
+    EXPECT_EQ(parser.fTokenizer.fPos, string.begin() + sizeof("UnkGroup.SubCmd ") - 1);
+    auto args = parser.ParseArguments();
     EXPECT_TRUE(args);
     EXPECT_EQ(args->size(), 2);
     EXPECT_EQ((*args)[0], "arg1"_st);
@@ -303,6 +365,40 @@ TEST(pfConsoleParser, ParseSubSubCommandSpacesArgs)
     auto cmd = parser2.ParseCommand();
     EXPECT_EQ(cmd, &conCmd_TestGroup_SubGroup_SubSubCmd);
     auto args = parser2.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_EQ(args->size(), 2);
+    EXPECT_EQ((*args)[0], "arg1"_st);
+    EXPECT_EQ((*args)[1], "arg2"_st);
+}
+
+TEST(pfConsoleParser, ParseSubSubCommandUnknown)
+{
+    ST::string string = "UnkGroup.SubGroup.SubSubCmd"_st;
+    pfConsoleParser parser(string);
+
+    auto name = parser.ParseUnknownCommandName();
+    EXPECT_EQ(name.size(), 3);
+    EXPECT_EQ(name[0], "UnkGroup"_st);
+    EXPECT_EQ(name[1], "SubGroup"_st);
+    EXPECT_EQ(name[2], "SubSubCmd"_st);
+    EXPECT_EQ(parser.fTokenizer.fPos, string.end());
+    auto args = parser.ParseArguments();
+    EXPECT_TRUE(args);
+    EXPECT_TRUE(args->empty());
+}
+
+TEST(pfConsoleParser, ParseSubSubCommandUnknownArgs)
+{
+    ST::string string = "UnkGroup.SubGroup.SubSubCmd arg1 arg2"_st;
+    pfConsoleParser parser(string);
+
+    auto name = parser.ParseUnknownCommandName();
+    EXPECT_EQ(name.size(), 3);
+    EXPECT_EQ(name[0], "UnkGroup"_st);
+    EXPECT_EQ(name[1], "SubGroup"_st);
+    EXPECT_EQ(name[2], "SubSubCmd"_st);
+    EXPECT_EQ(parser.fTokenizer.fPos, string.begin() + sizeof("UnkGroup.SubGroup.SubSubCmd ") - 1);
+    auto args = parser.ParseArguments();
     EXPECT_TRUE(args);
     EXPECT_EQ(args->size(), 2);
     EXPECT_EQ((*args)[0], "arg1"_st);
