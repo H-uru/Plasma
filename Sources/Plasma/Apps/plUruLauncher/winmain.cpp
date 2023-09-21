@@ -105,7 +105,7 @@ static void WaitForOldPatcher()
 
 static inline void IShowErrorDialog(const ST::string& msg)
 {
-    // This bypasses all that hsClientMinimizeGuard crap we have in CoreLib.
+    // This bypasses all that hsMinimizeClientGuard crap we have in plMessageBox.
     MessageBoxW(nullptr, msg.to_wchar().c_str(), L"Error", MB_ICONERROR | MB_OK);
 }
 
