@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef _pfConsolePareser_h
-#define _pfConsolePareser_h
+#ifndef _pfConsoleParser_h
+#define _pfConsoleParser_h
 
 #include "HeadSpin.h"
 
@@ -116,4 +116,4 @@ public:
     std::optional<std::vector<ST::string>> ParseArguments();
 };
 
-#endif // _pfConsolePareser_h
+#endif // _pfConsoleParser_h
