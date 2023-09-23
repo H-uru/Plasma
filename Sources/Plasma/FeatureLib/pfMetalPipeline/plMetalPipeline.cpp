@@ -183,14 +183,8 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     // Won't hurt us unless we try to many things at once.
     fMaxPiggyBacks = fMaxLayersAtOnce >> 1;
     
-    // Less than 4 layers at once means we have to fallback on uv bumpmapping
-    if (fMaxLayersAtOnce < 4)
-        SetDebugFlag(plPipeDbg::kFlagBumpUV, true);
-    //plDynamicCamMap::SetCapable(false);
-    //plQuality::SetQuality(fDefaultPipeParams.VideoQuality);
-    //plQuality::SetCapability(fDefaultPipeParams.VideoQuality);
+    // Metal is always PS3 capable
     plQuality::SetCapability(plQuality::kPS_3);
-    //plShadowCaster::EnableShadowCast(false);
     
     fDevice.SetMaxAnsiotropy(fInitialPipeParams.AnisotropicLevel);
     fDevice.SetMSAASampleCount(fInitialPipeParams.AntiAliasingAmount);
@@ -261,27 +255,22 @@ bool plMetalPipeline::PrepForRender(plDrawable *drawable, std::vector<int16_t> &
         return false;
     }
 
-    // Other stuff that we're ignoring for now...
-
     plProfile_EndTiming(PrepDrawable);
 
     return true;
 }
 
 plTextFont *plMetalPipeline::MakeTextFont(ST::string face, uint16_t size) {
-    plTextFont  *font;
-
-
-    font = new plMetalTextFont( this, &fDevice );
-    if (font == nullptr)
-        return nullptr;
+    plTextFont  *font = new plMetalTextFont( this, &fDevice );
     font->Create( face, size );
     font->Link( &fTextFontRefList );
-
     return font;
 }
 
-bool plMetalPipeline::OpenAccess(plAccessSpan &dst, plDrawableSpans *d, const plVertexSpan *span, bool readOnly) { return false; }
+bool plMetalPipeline::OpenAccess(plAccessSpan &dst, plDrawableSpans *d, const plVertexSpan *span, bool readOnly) {
+    //FIXME: Whats this?
+    return false;
+}
 
 bool plMetalPipeline::CloseAccess(plAccessSpan &acc) { return false; }
 
@@ -381,12 +370,9 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
     plCubicRenderTarget     *cubicRT;
 
     // If we have Shader Model 3 and support non-POT textures, let's make reflections the pipe size
-#if 1
     if (plDynamicCamMap* camMap = plDynamicCamMap::ConvertNoRef(owner)) {
-        //if ((plQuality::GetCapability() > plQuality::kPS_2) && fSettings.fD3DCaps & kCapsNpotTextures)
-            camMap->ResizeViewport(IGetViewTransform());
+        camMap->ResizeViewport(IGetViewTransform());
     }
-#endif
 
     /// Check--is this renderTarget really a child of a cubicRenderTarget?
     if (owner->GetParent()) {
@@ -410,6 +396,9 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
                                                                                                      owner->GetHeight(),
                                                                                                      false);
         if (fDevice.fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
+            // on Apple Silicon GPUs - don't allocate memory to back the render target
+            // this assumes the render target only needs to survive this render pass
+            //FIXME: Do we need to promise the output survives the render pass?
             depthTextureDescriptor->setStorageMode(MTL::StorageModeMemoryless);
         }   else {
             depthTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
@@ -609,6 +598,8 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
 
 bool plMetalPipeline::BeginRender()
 {
+    // leaking is bad - create an autorelease pool to dispose
+    // of autoreleased Metal resources at the end of the pass
     fCurrentPool = NS::AutoreleasePool::alloc()->init();
     // offset transform
     RefreshScreenMatrices();
@@ -638,6 +629,7 @@ bool plMetalPipeline::BeginRender()
         drawable->release();
         
         /// If we have a renderTarget active, use its viewport
+        //FIXME: New drawables should inherit existing viewport
         //fDevice.SetViewport();
     }
 
@@ -872,6 +864,12 @@ bool plMetalPipeline::SetGamma(const uint16_t *const tabR, const uint16_t *const
         fDevice.fGammaLUTTexture = nullptr;
     }
     
+    /*
+     Plasma has multiple types of gamma corrections it can do - and the engine reserves
+     the right to create any color correct LUT. Ugh. Load the LUT into a texture as 8 bit
+     per channel data. The Metal renderer supports up to 10 bit colors - but it can subsample
+     the texture to interpolate the colors in between what the LUT defines.
+     */
     MTL::TextureDescriptor* texDescriptor = MTL::TextureDescriptor::alloc()->init()->autorelease();
     texDescriptor->setTextureType(MTL::TextureType1DArray);
     texDescriptor->setWidth(256);
@@ -895,6 +893,13 @@ bool plMetalPipeline::SetGamma10(const uint16_t *const tabR, const uint16_t *con
         fDevice.fGammaLUTTexture = nullptr;
     }
     
+    /*
+     Loads in a real 10 bit color LUT for fancy displays. This LUT contains
+     way more data - but the shader doesn't care. The shader does an x lookup
+     by normalized co-ordinate - not value. So the width of the texture can
+     vary.
+     */
+    
     MTL::TextureDescriptor* texDescriptor = MTL::TextureDescriptor::alloc()->init()->autorelease();
     texDescriptor->setTextureType(MTL::TextureType1DArray);
     texDescriptor->setWidth(1024);
@@ -913,6 +918,7 @@ bool plMetalPipeline::SetGamma10(const uint16_t *const tabR, const uint16_t *con
 bool plMetalPipeline::CaptureScreen(plMipmap *dest, bool flipVertical, uint16_t desiredWidth, uint16_t desiredHeight)
 {
     //FIXME: Screen capture
+    //FIXME: Double fix me - wasn't this working?
     return false;
 }
 
@@ -937,7 +943,7 @@ plMipmap *plMetalPipeline::ExtractMipMap(plRenderTarget *targ)
     plMipmap* mipMap = new plMipmap(width, height, plMipmap::kARGB32Config, 1);
 
     uint8_t* ptr = (uint8_t*)(ref->fTexture->buffer()->contents());
-    const int pitch = ref->fTexture->width() * 4;
+    const NS::UInteger pitch = ref->fTexture->width() * 4;
     
     ref->fTexture->getBytes(mipMap->GetAddr32(0, 0), pitch, MTL::Region(0, 0, width, height), 0);
 
@@ -1200,7 +1206,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
     
     IPushPiggyBacks(material);
     hsRefCnt_SafeAssign(fCurrMaterial, material);
-    size_t pass;
+    uint32_t pass;
     for (pass = 0; pass < mRef->GetNumPasses(); pass++) {
         
         if ( IHandleMaterialPass(material, pass, &span, vRef) ) {
@@ -1489,8 +1495,7 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     
     plRenderTriListFunc render(&fDevice, 0, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength);
     
-    size_t pass;
-    for (pass = 0; pass < mRef->GetNumPasses(); pass++) {
+    for (int32_t pass = 0; pass < mRef->GetNumPasses(); pass++) {
         IHandleMaterialPass(material, pass, &span, vRef);
         if( aux->fFlags & plAuxSpan::kOverrideLiteModel )
         {
@@ -1636,7 +1641,7 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial *material, uint32_t pass, 
         
         std::vector<plLightInfo*>& spanLights = currSpan->GetLightList(false);
         
-        int numActivePiggyBacks = 0;
+        size_t numActivePiggyBacks = 0;
         if( !(s.fMiscFlags & hsGMatState::kMiscBumpChans) && !(s.fShadeFlags & hsGMatState::kShadeEmissive) )
         {
             /// Tack lightmap onto last stage if we have one
@@ -1700,7 +1705,7 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial *material, uint32_t pass, 
 // Note that the lighting pipe constants are NOT implemented.
 void plMetalPipeline::ISetPipeConsts(plShader* shader)
 {
-    int n = shader->GetNumPipeConsts();
+    size_t n = shader->GetNumPipeConsts();
     int i;
     for( i = 0; i < n; i++ )
     {
@@ -1906,6 +1911,8 @@ void plMetalPipeline::ISetPipeConsts(plShader* shader)
         case plPipeConst::kPointLight2:
         case plPipeConst::kPointLight3:
         case plPipeConst::kPointLight4:
+        case plPipeConst::kColorFilter:
+        case plPipeConst::kMaxType:
             break;
         }
     }
@@ -2396,7 +2403,7 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj)
 {
     const size_t numLights = kMetalMaxLightCount;
-    size_t i = 0;
+    int32_t i = 0;
     int32_t startScale;
     float threshhold;
     float overHold = 0.3;
@@ -2735,7 +2742,7 @@ void plMetalPipeline::IPushProjPiggyBack(plLayerInterface* li)
         return;
 
     fPiggyBackStack.push_back(li);
-    fActivePiggyBacks = fPiggyBackStack.size() - fMatPiggyBacks;
+    fActivePiggyBacks = uint32_t(fPiggyBackStack.size()) - fMatPiggyBacks;
     fForceMatHandle = true;
 }
 
@@ -2806,9 +2813,9 @@ void plMetalPipeline::IPopPiggyBacks()
 
 // ISetNumActivePiggyBacks /////////////////////////////////////////////
 // Calculate the number of active piggy backs.
-int plMetalPipeline::ISetNumActivePiggyBacks()
+size_t plMetalPipeline::ISetNumActivePiggyBacks()
 {
-    return fActivePiggyBacks = std::min(static_cast<size_t>(fMaxPiggyBacks), fPiggyBackStack.size());
+    return fActivePiggyBacks = std::min(fMaxPiggyBacks, uint32_t(fPiggyBackStack.size()));
 }
 
 struct plAVTexVert {

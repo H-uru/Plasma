@@ -206,7 +206,7 @@ private:
     void IPopPiggyBacks();
     void IPushProjPiggyBack(plLayerInterface* li);
     void IPopProjPiggyBacks();
-    int ISetNumActivePiggyBacks();
+    size_t ISetNumActivePiggyBacks();
     bool ICheckAuxBuffers(const plAuxSpan* span);
     
     void ISetPipeConsts(plShader* shader);

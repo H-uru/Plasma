@@ -546,9 +546,8 @@ void plMetalDevice::FillVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* gr
         uint8_t* srcVPtr = group->GetVertBufferData(idx);
         plGBufferColor* const srcCPtr = group->GetColorBufferData(idx);
 
-        const int numCells = group->GetNumCells(idx);
-        int i;
-        for (i = 0; i < numCells; i++)
+        const size_t numCells = group->GetNumCells(idx);
+        for (size_t i = 0; i < numCells; i++)
         {
             plGBufferCell* cell = group->GetCell(idx, i);
 
@@ -789,8 +788,8 @@ void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef *tRef, plMipmap *i
 #define HACK_LEVEL_SIZE 1
         
 #if HACK_LEVEL_SIZE
-        uint width = tRef->fTexture->width();
-        uint height = tRef->fTexture->height();
+        NS::UInteger width = tRef->fTexture->width();
+        NS::UInteger height = tRef->fTexture->height();
 #endif
         
         if (tRef->fLevels == -1) {
@@ -801,11 +800,11 @@ void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef *tRef, plMipmap *i
         for (int lvl = 0; lvl <= tRef->fLevels; lvl++) {
             img->SetCurrLevel(lvl);
 #if HACK_LEVEL_SIZE
-            uint levelWidth = (width / exp2(lvl));
-            uint levelHeight = (height / exp2(lvl));
+            NS::UInteger levelWidth = (width / exp2(lvl));
+            NS::UInteger levelHeight = (height / exp2(lvl));
 #else
-            uint levelWidth = img->GetCurrWidth();
-            uint levelHeight = img->GetCurrHeight();
+            NS::UInteger levelWidth = img->GetCurrWidth();
+            NS::UInteger levelHeight = img->GetCurrHeight();
 #endif
             
             switch (img->fDirectXInfo.fCompressionType) {
@@ -867,6 +866,7 @@ void plMetalDevice::MakeTextureRef(plMetalDevice::TextureRef* tRef, plMipmap* im
     }
     
     tRef->fLevels = img->GetNumLevels() - 1;
+    //FIXME: Is this texture check actually needed
     //if(!tRef->fTexture) {
         ConfigureAllowedLevels(tRef, img);
         
@@ -1177,14 +1177,15 @@ void plMetalDevice::SubmitCommandBuffer()
     
     fCurrentCommandBuffer->presentDrawable(fCurrentDrawable);
     fCurrentCommandBuffer->commit();
-    //as we more tightly manage resource sync we may be able to avoid waiting for the frame to complete
-    //fCurrentCommandBuffer->waitUntilCompleted();
     fCurrentCommandBuffer->release();
     fCurrentCommandBuffer = nil;
     
     fCurrentDrawable->release();
     fCurrentDrawable = nil;
     
+    // Reset the clear colors for the next pass
+    // Metal clears on framebuffer load - so don't cause a clear
+    // command in this pass to affect the next pass.
     fClearRenderTargetColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
     fClearDrawableColor = simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f);
     fShouldClearRenderTarget = false;
@@ -1286,6 +1287,7 @@ CA::MetalDrawable* plMetalDevice::GetCurrentDrawable()
 
 void plMetalDevice::BlitTexture(MTL::Texture* src, MTL::Texture* dst)
 {
+    //FIXME: BlitTexture current unused - this used to create private GPU only textures through a copy from a CPU texture.
     if (fBlitCommandEncoder == nullptr) {
         fBlitCommandBuffer = fCommandQueue->commandBuffer()->retain();
         //enqueue so we go to the front of the line before render

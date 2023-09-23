@@ -62,7 +62,7 @@ protected:
     //temporary holder for the fragment shader to use, we don't own this reference
     MTL::Function*                      fFragFunction;
 private:
-    std::vector<size_t>                 fPassIndices;
+    std::vector<uint32_t>                 fPassIndices;
     //FIXME: This should be retained/released
     MTL::Device*                        fDevice;
     std::vector<MTL::Buffer *>          fPassArgumentBuffers;
@@ -77,9 +77,9 @@ public:
     void Release();
     void CheckMateralRef();
     
-    size_t GetNumPasses() const { return fNumPasses; }
+    uint32_t GetNumPasses() const { return fNumPasses; }
     
-    size_t GetPassIndex(size_t which) const { return fPassIndices[which]; }
+    uint32_t GetPassIndex(size_t which) const { return fPassIndices[which]; }
     const std::vector<plLayerInterface *> GetLayersForPass(size_t pass) { return fPasses[pass]; }
     
     void EncodeArguments(MTL::RenderCommandEncoder *encoder, VertexUniforms *vertexUniforms, uint pass, plMetalFragmentShaderDescription *passDescription, std::vector<plLayerInterface*> *piggyBacks, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform);
@@ -87,7 +87,7 @@ public:
     //probably not a good idea to call prepareTextures directly
     //mostly just a hack to keep plates working for now
     void prepareTextures(MTL::RenderCommandEncoder *encoder, uint pass);
-    std::vector<size_t>                 fPassLengths;
+    std::vector<uint32_t>                 fPassLengths;
     
     // Set the current Plasma state based on the input layer state and the material overrides.
     // fMatOverOn overrides to set a state bit whether it is set in the layer or not.

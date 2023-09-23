@@ -107,7 +107,7 @@ public:
         }
         
         //update the current buffer focused, if the is no buffer to focus set it to null
-        uint currentSize = fBuffers[fCurrentFrame].size();
+        uint32_t currentSize = uint32_t(fBuffers[fCurrentFrame].size());
         if(fCurrentPass < currentSize) {
             fBuffer = fBuffers[fCurrentFrame][fCurrentPass];
         } else {
@@ -121,7 +121,7 @@ public:
     
     void SetBuffer(MTL::Buffer* buffer) {
         fBuffer = buffer->retain();
-        uint currentSize = fBuffers[fCurrentFrame].size();
+        uint32_t currentSize = uint32_t(fBuffers[fCurrentFrame].size());
         //if the current vector doesn't have enough room for the entry, resize it
         if(fCurrentPass >= currentSize) {
             fBuffers[fCurrentFrame].resize(++currentSize);

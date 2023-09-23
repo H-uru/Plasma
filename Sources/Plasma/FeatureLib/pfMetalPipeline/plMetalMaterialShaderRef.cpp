@@ -123,8 +123,7 @@ void plMetalMaterialShaderRef::CheckMateralRef()
 //fast encode doesn't support piggybacks or push over layers, but it does use preloaded data on the GPU so it's much faster. Use this encoder if there are no piggybacks or pushover layers
 void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder *encoder, VertexUniforms *vertexUniforms, uint pass)
 {
-    size_t i = 0;
-    for (i = GetPassIndex(pass); i < GetPassIndex(pass) + fPassLengths[pass]; i++) {
+    for (uint32_t i = GetPassIndex(pass); i < GetPassIndex(pass) + fPassLengths[pass]; i++) {
         plLayerInterface* layer = fMaterial->GetLayer(i);
         
         if (!layer) {
@@ -222,12 +221,11 @@ void plMetalMaterialShaderRef::prepareTextures(MTL::RenderCommandEncoder *encode
 
 void plMetalMaterialShaderRef::ILoopOverLayers()
 {
-    size_t j = 0;
-    size_t pass = 0;
+    uint32_t pass = 0;
 
-    for (j = 0; j < fMaterial->GetNumLayers(); )
+    for (uint32_t j = 0; j < fMaterial->GetNumLayers(); )
     {
-        size_t currLayer = j;
+        uint32_t currLayer = j;
         
         //Create "fast encode" buffers
         //Fast encode can be used when there are no piggybacks or pushover layers. We'll load as much of the
@@ -343,13 +341,12 @@ uint32_t plMetalMaterialShaderRef::ILayersAtOnce(uint32_t which)
         return currNumLayers;
     }
 
-    int i;
-    int maxLayers = 8;
+    uint32_t maxLayers = 8;
     if (which + maxLayers > fMaterial->GetNumLayers()) {
-        maxLayers = fMaterial->GetNumLayers() - which;
+        maxLayers = uint32_t(fMaterial->GetNumLayers()) - which;
     }
 
-    for (i = currNumLayers; i < maxLayers; i++) {
+    for (uint32_t i = currNumLayers; i < maxLayers; i++) {
         plLayerInterface* lay = fMaterial->GetLayer(which + i);
 
         // Ignoring max UVW limit

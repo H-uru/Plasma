@@ -73,6 +73,7 @@ public:
     
     virtual void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) = 0;
     virtual void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) = 0;
+    virtual ~plMetalPipelineState() = default;
 protected:
     plMetalDevice* fDevice;
     virtual void GetFunctionConstants(MTL::FunctionConstantValues*) const = 0;

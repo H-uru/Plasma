@@ -119,7 +119,7 @@ constant const bool hasCubicTexture6 = (sourceType6 == PassTypeCubicTexture && h
 constant const bool hasCubicTexture7 = (sourceType7 == PassTypeCubicTexture && hasLayer7);
 constant const bool hasCubicTexture8 = (sourceType8 == PassTypeCubicTexture && hasLayer8);
 
-typedef struct  {
+struct FragmentShaderArguments  {
     texture2d<half> textures  [[ texture(FragmentShaderArgumentAttributeTextures), function_constant(has2DTexture1)  ]];
     texture2d<half> texture2  [[ texture(FragmentShaderArgumentAttributeTextures + 1), function_constant(has2DTexture2)    ]];
     texture2d<half> texture3  [[ texture(FragmentShaderArgumentAttributeTextures + 2), function_constant(has2DTexture3)    ]];
@@ -147,7 +147,7 @@ typedef struct  {
     sampler sampler6  [[ sampler(5), function_constant(hasLayer6)  ]];
     sampler sampler7  [[ sampler(6), function_constant(hasLayer7)  ]];
     sampler sampler8  [[ sampler(7), function_constant(hasLayer8)  ]];
-} FragmentShaderArguments;
+};
 
 typedef struct
 {
