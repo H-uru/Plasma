@@ -42,20 +42,141 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfServerIni.h"
 
-#include <string_theory/string>
+#include <string_theory/codecs>
+#include <string_theory/format>
+#include <vector>
 
-#include "pfConsoleEngine.h"
+#include "pfConsoleParser.h"
 
-PF_CONSOLE_LINK_FILE(Core)
+#include "pnNetBase/pnNetBase.h"
+
+#include "plFile/plEncryptedStream.h"
+
+static ST::string ParseIntegerInto(const ST::string& value, unsigned int& out)
+{
+    ST::conversion_result res;
+    out = value.to_uint(res);
+    if (res.ok() && res.full_match()) {
+        return {};
+    } else {
+        return ST::format("Invalid integer value: {}", value);
+    }
+}
+
+using NetDhKey = uint8_t[kNetDiffieHellmanKeyBits / 8];
+
+static ST::string ParseBase64KeyInto(const ST::string& base64key, NetDhKey& output)
+{
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if (base64len < 0) {
+        return ST::format("Invalid key: Invalid base-64 data (did you forget to put quotes around the value?)");
+    } else if (sizeof(output) != base64len) {
+        return ST::format("Invalid key: Should be exactly {} bytes, not {}", sizeof(output), base64len);
+    }
+
+    ST_ssize_t bytes = ST::base64_decode(base64key, output, sizeof(output));
+    if (bytes < 0) {
+        return ST::format("Invalid key: Invalid base-64 data");
+    }
+    return {};
+}
+
+static ST::string ApplyServerIniOption(const std::vector<ST::string>& name, const ST::string& value)
+{
+    if (name.empty() || name[0].compare_i("Server") != 0) {
+        return ST_LITERAL("Unknown option name");
+    }
+
+    if (name.size() == 2 && name[1].compare_i("Status") == 0) {
+        SetServerStatusUrl(value);
+    } else if (name.size() == 2 && name[1].compare_i("Signup") == 0) {
+        SetServerSignupUrl(value);
+    } else if (name.size() == 2 && name[1].compare_i("DispName") == 0) {
+        SetServerDisplayName(value);
+    } else if (name.size() == 2 && name[1].compare_i("Port") == 0) {
+        unsigned int port;
+        ST::string errorMsg = ParseIntegerInto(value, port);
+        if (!errorMsg.empty()) {
+            return errorMsg;
+        }
+        SetClientPort(port);
+    } else if (name.size() == 3 && name[1].compare_i("File") == 0 && name[2].compare_i("Host") == 0) {
+        SetFileSrvHostname(value);
+    } else if (name.size() == 3 && name[1].compare_i("Auth") == 0) {
+        if (name[2].compare_i("Host") == 0) {
+            SetAuthSrvHostname(value);
+        } else if (name[2].compare_i("N") == 0) {
+            return ParseBase64KeyInto(value, kAuthDhNData);
+        } else if (name[2].compare_i("X") == 0) {
+            return ParseBase64KeyInto(value, kAuthDhXData);
+        } else if (name[2].compare_i("G") == 0) {
+            return ParseIntegerInto(value, kAuthDhGValue);
+        } else {
+            return ST_LITERAL("Unknown option name");
+        }
+    } else if (name.size() == 3 && name[1].compare_i("Game") == 0) {
+        if (name[2].compare_i("N") == 0) {
+            return ParseBase64KeyInto(value, kGameDhNData);
+        } else if (name[2].compare_i("X") == 0) {
+            return ParseBase64KeyInto(value, kGameDhXData);
+        } else if (name[2].compare_i("G") == 0) {
+            return ParseIntegerInto(value, kGameDhGValue);
+        } else {
+            return ST_LITERAL("Unknown option name");
+        }
+    } else if (name.size() == 3 && name[1].compare_i("Gate") == 0) {
+        if (name[2].compare_i("Host") == 0) {
+            SetGateKeeperSrvHostname(value);
+        } else if (name[2].compare_i("N") == 0) {
+            return ParseBase64KeyInto(value, kGateKeeperDhNData);
+        } else if (name[2].compare_i("X") == 0) {
+            return ParseBase64KeyInto(value, kGateKeeperDhXData);
+        } else if (name[2].compare_i("G") == 0) {
+            return ParseIntegerInto(value, kGateKeeperDhGValue);
+        } else {
+            return ST_LITERAL("Unknown option name");
+        }
+    } else {
+        return ST_LITERAL("Unknown option name");
+    }
+
+    return {};
+}
 
 ST::string pfServerIni::Load(const plFileName& fileName)
 {
-    PF_CONSOLE_INITIALIZE(Core);
-
-    pfConsoleEngine console;
-    if (console.ExecuteFile(fileName)) {
-        return {};
-    } else {
-        return console.GetErrorMsg();
+    std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(fileName);
+    if (!stream) {
+        return ST::format("File not found or could not be opened: {}", fileName);
     }
+
+    ST::string line;
+    for (int lineno = 1; stream->ReadLn(line); lineno++) {
+        // Note: comments are already handled by hsStream::ReadLn.
+        pfConsoleParser parser(line);
+        auto name = parser.ParseUnknownCommandName();
+        if (name.empty()) {
+            if (!parser.GetErrorMsg().empty()) {
+                return ST::format("Line {}: {}", lineno, parser.GetErrorMsg());
+            } else {
+                // No error, just an empty line.
+                continue;
+            }
+        }
+
+        auto args = parser.ParseArguments();
+        if (!args) {
+            return ST::format("Line {}: {}", lineno, parser.GetErrorMsg());
+        }
+
+        // TODO Warn/error if there isn't exactly one argument after the name?
+        ST::string value = args->empty() ? ST::string() : std::move((*args)[0]);
+        ST::string errorMsg = ApplyServerIniOption(name, value);
+        if (!errorMsg.empty()) {
+            return ST::format("Line {}: {}", lineno, errorMsg);
+        }
+    }
+
+    // Everything went ok!
+    return {};
 }
