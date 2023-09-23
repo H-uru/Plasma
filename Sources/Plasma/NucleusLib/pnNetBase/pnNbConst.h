@@ -60,6 +60,9 @@ const unsigned kNetDefaultStringSize            = 260;
 //============================================================================
 const unsigned kNetMaxSymmetricSeedBytes        = 7;    // 56 bits
 const unsigned kNetDiffieHellmanKeyBits         = 512;
+const unsigned kNetAuthDefaultDhGValue = 41;
+const unsigned kNetGameDefaultDhGValue = 73;
+const unsigned kNetGateKeeperDefaultDhGValue = 4;
 
 //============================================================================
 // Data constants

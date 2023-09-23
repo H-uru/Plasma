@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <functional>
 
 #include "pnEncryption/plBigNum.h"
+#include "pnNetBase/pnNbKeys.h"
 
 /*****************************************************************************
 *
@@ -284,10 +285,7 @@ NetMsgChannel* NetMsgChannelCreate(
     uint32_t                sendMsgCount,
     const NetMsgInitRecv    recvMsgs[],     // messages this program can receive
     uint32_t                recvMsgCount,
-    // Diffie-Hellman keys
-    uint32_t                dh_g,
-    const plBigNum&         dh_x,
-    const plBigNum&         dh_n
+    NetDhConstants          dhConstants
 );
 
 void NetMsgChannelDelete(

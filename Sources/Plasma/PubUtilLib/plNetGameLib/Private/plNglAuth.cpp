@@ -4583,9 +4583,7 @@ void AuthInitialize () {
         kNetProtocolCli2Auth,
         s_send, std::size(s_send),
         s_recv, std::size(s_recv),
-        kAuthDhGValue,
-        plBigNum(sizeof(kAuthDhXData), kAuthDhXData),
-        plBigNum(sizeof(kAuthDhNData), kAuthDhNData)
+        gNetAuthDhConstants
     );
 }
 
