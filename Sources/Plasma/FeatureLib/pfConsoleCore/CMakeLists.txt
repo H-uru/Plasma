@@ -1,6 +1,5 @@
 set(pfConsoleCore_SOURCES
     pfConsoleCmd.cpp
-    pfConsoleCommandsCore.cpp
     pfConsoleContext.cpp
     pfConsoleEngine.cpp
     pfConsoleParser.cpp
