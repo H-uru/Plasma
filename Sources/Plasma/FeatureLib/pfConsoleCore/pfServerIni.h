@@ -43,12 +43,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfServerIni_h
 #define _pfServerIni_h
 
+#include <string_theory/string>
+#include <vector>
+
+#include "pnNetBase/pnNbConst.h"
+#include "pnNetBase/pnNbKeys.h"
+
 class plFileName;
-namespace ST { class string; }
 
 class pfServerIni
 {
 public:
+    ST::string fStatusUrl;
+    ST::string fSignupUrl;
+    ST::string fDisplayName;
+    unsigned int fPort;
+    ST::string fFileHostname;
+    ST::string fAuthHostname;
+    NetDhConstants fAuthDhConstants;
+    NetDhConstants fGameDhConstants;
+    ST::string fGateKeeperHostname;
+    NetDhConstants fGateKeeperDhConstants;
+
+    pfServerIni()
+        : fStatusUrl(),
+          fSignupUrl(),
+          fDisplayName(),
+          fPort(kDefaultClientPort),
+          fFileHostname(),
+          fAuthHostname(),
+          fAuthDhConstants {kNetAuthDefaultDhGValue},
+          fGameDhConstants {kNetGameDefaultDhGValue},
+          fGateKeeperHostname(),
+          fGateKeeperDhConstants {kNetGateKeeperDefaultDhGValue}
+    {}
+
+private:
+    ST::string IParseOption(const std::vector<ST::string>& name, const ST::string& value);
+
+public:
+    ST::string Parse(const plFileName& fileName);
+    void Apply();
+
     static ST::string Load(const plFileName& fileName);
 };
 

@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string_theory/codecs>
 #include <string_theory/format>
-#include <vector>
 
 #include "pfConsoleParser.h"
 
@@ -79,58 +78,53 @@ static ST::string ParseBase64KeyInto(const ST::string& base64key, NetDhKey& outp
     return {};
 }
 
-static ST::string ApplyServerIniOption(const std::vector<ST::string>& name, const ST::string& value)
+ST::string pfServerIni::IParseOption(const std::vector<ST::string>& name, const ST::string& value)
 {
     if (name.empty() || name[0].compare_i("Server") != 0) {
         return ST_LITERAL("Unknown option name");
     }
 
     if (name.size() == 2 && name[1].compare_i("Status") == 0) {
-        SetServerStatusUrl(value);
+        fStatusUrl = value;
     } else if (name.size() == 2 && name[1].compare_i("Signup") == 0) {
-        SetServerSignupUrl(value);
+        fSignupUrl = value;
     } else if (name.size() == 2 && name[1].compare_i("DispName") == 0) {
-        SetServerDisplayName(value);
+        fDisplayName = value;
     } else if (name.size() == 2 && name[1].compare_i("Port") == 0) {
-        unsigned int port;
-        ST::string errorMsg = ParseIntegerInto(value, port);
-        if (!errorMsg.empty()) {
-            return errorMsg;
-        }
-        SetClientPort(port);
+        return ParseIntegerInto(value, fPort);
     } else if (name.size() == 3 && name[1].compare_i("File") == 0 && name[2].compare_i("Host") == 0) {
-        SetFileSrvHostname(value);
+        fFileHostname = value;
     } else if (name.size() == 3 && name[1].compare_i("Auth") == 0) {
         if (name[2].compare_i("Host") == 0) {
-            SetAuthSrvHostname(value);
+            fAuthHostname = value;
         } else if (name[2].compare_i("N") == 0) {
-            return ParseBase64KeyInto(value, gNetAuthDhConstants.n);
+            return ParseBase64KeyInto(value, fAuthDhConstants.n);
         } else if (name[2].compare_i("X") == 0) {
-            return ParseBase64KeyInto(value, gNetAuthDhConstants.x);
+            return ParseBase64KeyInto(value, fAuthDhConstants.x);
         } else if (name[2].compare_i("G") == 0) {
-            return ParseIntegerInto(value, gNetAuthDhConstants.g);
+            return ParseIntegerInto(value, fAuthDhConstants.g);
         } else {
             return ST_LITERAL("Unknown option name");
         }
     } else if (name.size() == 3 && name[1].compare_i("Game") == 0) {
         if (name[2].compare_i("N") == 0) {
-            return ParseBase64KeyInto(value, gNetGameDhConstants.n);
+            return ParseBase64KeyInto(value, fGameDhConstants.n);
         } else if (name[2].compare_i("X") == 0) {
-            return ParseBase64KeyInto(value, gNetGameDhConstants.x);
+            return ParseBase64KeyInto(value, fGameDhConstants.x);
         } else if (name[2].compare_i("G") == 0) {
-            return ParseIntegerInto(value, gNetGameDhConstants.g);
+            return ParseIntegerInto(value, fGameDhConstants.g);
         } else {
             return ST_LITERAL("Unknown option name");
         }
     } else if (name.size() == 3 && name[1].compare_i("Gate") == 0) {
         if (name[2].compare_i("Host") == 0) {
-            SetGateKeeperSrvHostname(value);
+            fGateKeeperHostname = value;
         } else if (name[2].compare_i("N") == 0) {
-            return ParseBase64KeyInto(value, gNetGateKeeperDhConstants.n);
+            return ParseBase64KeyInto(value, fGateKeeperDhConstants.n);
         } else if (name[2].compare_i("X") == 0) {
-            return ParseBase64KeyInto(value, gNetGateKeeperDhConstants.x);
+            return ParseBase64KeyInto(value, fGateKeeperDhConstants.x);
         } else if (name[2].compare_i("G") == 0) {
-            return ParseIntegerInto(value, gNetGateKeeperDhConstants.g);
+            return ParseIntegerInto(value, fGateKeeperDhConstants.g);
         } else {
             return ST_LITERAL("Unknown option name");
         }
@@ -141,7 +135,7 @@ static ST::string ApplyServerIniOption(const std::vector<ST::string>& name, cons
     return {};
 }
 
-ST::string pfServerIni::Load(const plFileName& fileName)
+ST::string pfServerIni::Parse(const plFileName& fileName)
 {
     std::unique_ptr<hsStream> stream = plEncryptedStream::OpenEncryptedFile(fileName);
     if (!stream) {
@@ -169,12 +163,39 @@ ST::string pfServerIni::Load(const plFileName& fileName)
 
         // TODO Warn/error if there isn't exactly one argument after the name?
         ST::string value = args->empty() ? ST::string() : std::move((*args)[0]);
-        ST::string errorMsg = ApplyServerIniOption(name, value);
+        ST::string errorMsg = IParseOption(name, value);
         if (!errorMsg.empty()) {
             return ST::format("Line {}: {}", lineno, errorMsg);
         }
     }
 
     // Everything went ok!
+    return {};
+}
+
+void pfServerIni::Apply()
+{
+    SetServerStatusUrl(fStatusUrl);
+    SetServerSignupUrl(fSignupUrl);
+    SetServerDisplayName(fDisplayName);
+    SetClientPort(fPort);
+    SetFileSrvHostname(fFileHostname);
+    SetAuthSrvHostname(fAuthHostname);
+    gNetAuthDhConstants = fAuthDhConstants;
+    gNetGameDhConstants = fGameDhConstants;
+    SetGateKeeperSrvHostname(fGateKeeperHostname);
+    gNetGateKeeperDhConstants = fGateKeeperDhConstants;
+}
+
+ST::string pfServerIni::Load(const plFileName& fileName)
+{
+    pfServerIni ini;
+
+    ST::string errorMsg = ini.Parse(fileName);
+    if (!errorMsg.empty()) {
+        return errorMsg;
+    }
+
+    ini.Apply();
     return {};
 }
