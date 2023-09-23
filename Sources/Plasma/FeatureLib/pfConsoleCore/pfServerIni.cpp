@@ -63,8 +63,6 @@ static ST::string ParseIntegerInto(const ST::string& value, unsigned int& out)
     }
 }
 
-using NetDhKey = uint8_t[kNetDiffieHellmanKeyBits / 8];
-
 static ST::string ParseBase64KeyInto(const ST::string& base64key, NetDhKey& output)
 {
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
@@ -106,21 +104,21 @@ static ST::string ApplyServerIniOption(const std::vector<ST::string>& name, cons
         if (name[2].compare_i("Host") == 0) {
             SetAuthSrvHostname(value);
         } else if (name[2].compare_i("N") == 0) {
-            return ParseBase64KeyInto(value, kAuthDhNData);
+            return ParseBase64KeyInto(value, gNetAuthDhConstants.n);
         } else if (name[2].compare_i("X") == 0) {
-            return ParseBase64KeyInto(value, kAuthDhXData);
+            return ParseBase64KeyInto(value, gNetAuthDhConstants.x);
         } else if (name[2].compare_i("G") == 0) {
-            return ParseIntegerInto(value, kAuthDhGValue);
+            return ParseIntegerInto(value, gNetAuthDhConstants.g);
         } else {
             return ST_LITERAL("Unknown option name");
         }
     } else if (name.size() == 3 && name[1].compare_i("Game") == 0) {
         if (name[2].compare_i("N") == 0) {
-            return ParseBase64KeyInto(value, kGameDhNData);
+            return ParseBase64KeyInto(value, gNetGameDhConstants.n);
         } else if (name[2].compare_i("X") == 0) {
-            return ParseBase64KeyInto(value, kGameDhXData);
+            return ParseBase64KeyInto(value, gNetGameDhConstants.x);
         } else if (name[2].compare_i("G") == 0) {
-            return ParseIntegerInto(value, kGameDhGValue);
+            return ParseIntegerInto(value, gNetGameDhConstants.g);
         } else {
             return ST_LITERAL("Unknown option name");
         }
@@ -128,11 +126,11 @@ static ST::string ApplyServerIniOption(const std::vector<ST::string>& name, cons
         if (name[2].compare_i("Host") == 0) {
             SetGateKeeperSrvHostname(value);
         } else if (name[2].compare_i("N") == 0) {
-            return ParseBase64KeyInto(value, kGateKeeperDhNData);
+            return ParseBase64KeyInto(value, gNetGateKeeperDhConstants.n);
         } else if (name[2].compare_i("X") == 0) {
-            return ParseBase64KeyInto(value, kGateKeeperDhXData);
+            return ParseBase64KeyInto(value, gNetGateKeeperDhConstants.x);
         } else if (name[2].compare_i("G") == 0) {
-            return ParseIntegerInto(value, kGateKeeperDhGValue);
+            return ParseIntegerInto(value, gNetGateKeeperDhConstants.g);
         } else {
             return ST_LITERAL("Unknown option name");
         }
