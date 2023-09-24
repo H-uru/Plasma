@@ -95,9 +95,6 @@ plTextFont::~plTextFont()
 
 uint16_t  *plTextFont::IInitFontTexture()
 {
-    int     x, y, c;
-    char    myChar[ 2 ] = "x";
-
     FT_Library  library;
     FT_Face     face;
     FT_Error ftError = FT_Init_FreeType(&library);
@@ -214,9 +211,9 @@ uint16_t  *plTextFont::IInitFontTexture()
     } size;
 
     // Loop through characters, drawing them one at a time
-    for( c = 32, x = 1, y = 0; c < 127; c++ )
-    {
-        myChar[ 0 ] = c;
+    int x = 1;
+    int y = 0;
+    for (char32_t c = 32; c < 127; c++) {
         ftError = FT_Load_Char( face, c, FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_NO_AUTOHINT );
 
         FT_GlyphSlot slot = face->glyph;
@@ -275,11 +272,11 @@ uint16_t  *plTextFont::IInitFontTexture()
     fCharInfo[ 32 ].fUVs[ 1 ].fX = fCharInfo[ 32 ].fUVs[ 0 ].fX;
 
     // Special case the tab key
-    fCharInfo[ '\t' ].fUVs[ 1 ].fX = fCharInfo[ '\t' ].fUVs[ 0 ].fX = fCharInfo[ 32 ].fUVs[ 0 ].fX;
-    fCharInfo[ '\t' ].fUVs[ 1 ].fY = fCharInfo[ '\t' ].fUVs[ 0 ].fY = 0;
-    fCharInfo[ '\t' ].fUVs[ 0 ].fZ = fCharInfo[ '\t' ].fUVs[ 1 ].fZ = 0;
-    fCharInfo[ '\t' ].fW = fCharInfo[ 32 ].fW * 4;
-    fCharInfo[ '\t' ].fH = fCharInfo[ 32 ].fH;
+    fCharInfo[U'\t'].fUVs[1].fX = fCharInfo[U'\t'].fUVs[0].fX = fCharInfo[32].fUVs[0].fX;
+    fCharInfo[U'\t'].fUVs[1].fY = fCharInfo[U'\t'].fUVs[0].fY = 0;
+    fCharInfo[U'\t'].fUVs[0].fZ = fCharInfo[U'\t'].fUVs[1].fZ = 0;
+    fCharInfo[U'\t'].fW = fCharInfo[32].fW * 4;
+    fCharInfo[U'\t'].fH = fCharInfo[32].fH;
 
     FT_Done_Face(face);
     FT_Done_FreeType(library);
@@ -332,8 +329,9 @@ void plTextFont::DrawString(const ST::string& string, int sX, int sY, uint32_t h
 
     /// Set up to draw
     italOffset = ( style & plDebugText::kStyleItalic ) ? fSize / 2: 0;
-    count = string.size();
-    const char* strPtr = string.data();
+    ST::utf32_buffer codepoints = string.to_utf32();
+    count = codepoints.size();
+    const char32_t* codepointsPtr = codepoints.data();
     while( count > 0 )
     {
         thisCount = ( count > 64 ) ? 64 : count;
@@ -351,13 +349,14 @@ void plTextFont::DrawString(const ST::string& string, int sX, int sY, uint32_t h
 
         for( i = 0, j = 0; i < thisCount; i++, j += 6 )
         {
-            char c = strPtr[i];
-            if (!(c >= 32 && c < 127) && c != '\t') {
+            char32_t c = codepointsPtr[i];
+            if (!(c >= 32 && c < 127) && c != U'\t') {
                 // Unsupported or non-printable character
-                c = '?';
+                c = U'?';
             }
-            width = fCharInfo[uint8_t(c)].fW + 1;
-            height = fCharInfo[uint8_t(c)].fH + 1;
+            plDXCharInfo const& info = fCharInfo[c];
+            width = info.fW + 1;
+            height = info.fH + 1;
 
             if( rightEdge > 0 && x + width + italOffset >= rightEdge )
             {
@@ -366,33 +365,33 @@ void plTextFont::DrawString(const ST::string& string, int sX, int sY, uint32_t h
                 break;
             }
 
-            verts[ j ].fPoint.fX = x + italOffset;
-            verts[ j ].fPoint.fY = (float)sY;
-            verts[ j ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
+            verts[j].fPoint.fX = x + italOffset;
+            verts[j].fPoint.fY = (float)sY;
+            verts[j].fUV = info.fUVs[0];
 
-            verts[ j + 1 ].fPoint.fX = x + width + italOffset;
-            verts[ j + 1 ].fPoint.fY = (float)sY;
-            verts[ j + 1 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
-            verts[ j + 1 ].fUV.fX = fCharInfo[uint8_t(c)].fUVs[ 1 ].fX;
+            verts[j + 1].fPoint.fX = x + width + italOffset;
+            verts[j + 1].fPoint.fY = (float)sY;
+            verts[j + 1].fUV = info.fUVs[0];
+            verts[j + 1].fUV.fX = info.fUVs[1].fX;
 
-            verts[ j + 2 ].fPoint.fX = x;
-            verts[ j + 2 ].fPoint.fY = (float)sY + height;
-            verts[ j + 2 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
-            verts[ j + 2 ].fUV.fY = fCharInfo[uint8_t(c)].fUVs[ 1 ].fY;
+            verts[j + 2].fPoint.fX = x;
+            verts[j + 2].fPoint.fY = (float)sY + height;
+            verts[j + 2].fUV = info.fUVs[0];
+            verts[j + 2].fUV.fY = info.fUVs[1].fY;
 
-            verts[ j + 3 ].fPoint.fX = x;
-            verts[ j + 3 ].fPoint.fY = (float)sY + height;
-            verts[ j + 3 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
-            verts[ j + 3 ].fUV.fY = fCharInfo[uint8_t(c)].fUVs[ 1 ].fY;
+            verts[j + 3].fPoint.fX = x;
+            verts[j + 3].fPoint.fY = (float)sY + height;
+            verts[j + 3].fUV = info.fUVs[0];
+            verts[j + 3].fUV.fY = info.fUVs[1].fY;
 
-            verts[ j + 4 ].fPoint.fX = x + width + italOffset;
-            verts[ j + 4 ].fPoint.fY = (float)sY;
-            verts[ j + 4 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
-            verts[ j + 4 ].fUV.fX = fCharInfo[uint8_t(c)].fUVs[ 1 ].fX;
+            verts[j + 4].fPoint.fX = x + width + italOffset;
+            verts[j + 4].fPoint.fY = (float)sY;
+            verts[j + 4].fUV = info.fUVs[0];
+            verts[j + 4].fUV.fX = info.fUVs[1].fX;
 
-            verts[ j + 5 ].fPoint.fX = x + width;
-            verts[ j + 5 ].fPoint.fY = (float)sY + height;
-            verts[ j + 5 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 1 ];
+            verts[j + 5].fPoint.fX = x + width;
+            verts[j + 5].fPoint.fY = (float)sY + height;
+            verts[j + 5].fUV = info.fUVs[1];
 
             x += width + 1;
         }
@@ -442,7 +441,7 @@ void plTextFont::DrawString(const ST::string& string, int sX, int sY, uint32_t h
         /// Draw a set of tris now
         IDrawPrimitive(thisCount * uint32_t((style & plDebugText::kStyleBold) ? 4 : 2), verts.data());
 
-        strPtr += thisCount;
+        codepointsPtr += thisCount;
     }
 
     /// All done!
@@ -457,12 +456,12 @@ uint32_t plTextFont::CalcStringWidth(const ST::string& string)
     if( !fInitialized )
         IInitObjects();
     
-    for (char c : string) {
-        if (!(c >= 32 && c < 127) && c != '\t') {
+    for (char32_t c : string.to_utf32()) {
+        if (!(c >= 32 && c < 127) && c != U'\t') {
             // Unsupported or non-printable character
-            c = '?';
+            c = U'?';
         }
-        width += fCharInfo[uint8_t(c)].fW + 2;
+        width += fCharInfo[c].fW + 2;
     }
 
     return width;
