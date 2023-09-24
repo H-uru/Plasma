@@ -122,6 +122,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     void* fontData = std::malloc( fontDataSize );
     GetFontData(hDC, 0, 0, fontData, fontDataSize);
     ftError = FT_New_Memory_Face(library, (FT_Byte *) fontData, fontDataSize, 0, &face);
+    ASSERT(ftError == FT_Err_Ok);
     FT_UInt freeTypeResolution = plWinDpi::Instance().GetDpi();
 
     DeleteDC( hDC );
@@ -142,6 +143,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     CFStringGetCString(fileSystemPath, cPath, PATH_MAX, kCFStringEncodingUTF8);
     
     ftError = FT_New_Face(library, cPath, 0, &face);
+    ASSERT(ftError == FT_Err_Ok);
     
     CFRelease(fulfilledFontDescriptor);
     CFRelease(fontURL);
@@ -162,7 +164,8 @@ uint16_t  *plTextFont::IInitFontTexture()
     FcPatternDestroy(pattern);
 
     if (result) {
-        FT_Done_FreeType(library);
+        ftError = FT_Done_FreeType(library);
+        ASSERT(ftError == FT_Err_Ok);
         return nullptr;
     }
 
@@ -172,7 +175,8 @@ uint16_t  *plTextFont::IInitFontTexture()
     if (result) {
         FcPatternDestroy(match);
 
-        FT_Done_FreeType(library);
+        ftError = FT_Done_FreeType(library);
+        ASSERT(ftError == FT_Err_Ok);
         return nullptr;
     }
 
@@ -182,11 +186,13 @@ uint16_t  *plTextFont::IInitFontTexture()
     FcPatternDestroy(match);
 
     ftError = FT_New_Face(library, filename, 0, &face);
+    ASSERT(ftError == FT_Err_Ok);
 
     FT_UInt freeTypeResolution = 96;
 #endif
 
     ftError = FT_Set_Char_Size(face, 0, fSize * 64, freeTypeResolution, freeTypeResolution);
+    ASSERT(ftError == FT_Err_Ok);
     FT_Size_Metrics fontMetrics = face->size->metrics;
 
     fFontHeight = int(fontMetrics.height / 64.f);
@@ -221,7 +227,8 @@ uint16_t  *plTextFont::IInitFontTexture()
         FT_GlyphSlot slot = face->glyph;
 
         FT_Glyph glyph;
-        FT_Get_Glyph(slot, &glyph);
+        ftError = FT_Get_Glyph(slot, &glyph);
+        ASSERT(ftError == FT_Err_Ok);
 
         FT_BBox cBox;
         FT_Glyph_Get_CBox( glyph, FT_GLYPH_BBOX_TRUNCATE, &cBox );
@@ -280,8 +287,10 @@ uint16_t  *plTextFont::IInitFontTexture()
     fCharInfo[U'\t'].fW = fCharInfo[32].fW * 4;
     fCharInfo[U'\t'].fH = fCharInfo[32].fH;
 
-    FT_Done_Face(face);
-    FT_Done_FreeType(library);
+    ftError = FT_Done_Face(face);
+    ASSERT(ftError == FT_Err_Ok);
+    ftError = FT_Done_FreeType(library);
+    ASSERT(ftError == FT_Err_Ok);
 
     return data;
 }
