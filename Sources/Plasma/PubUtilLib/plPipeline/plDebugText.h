@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDebugText_h
 #define _plDebugText_h
 
+#include <string_theory/string>
+#include <utility>
 #include <vector>
 
 #include "HeadSpin.h"
@@ -69,9 +71,9 @@ class plDebugText
         { 
             fManager = nullptr;
 #ifdef PLASMA_EXTERNAL_RELEASE
-            SetFont( "Trebuchet MS Bold", 8 );
+            SetFont(ST_LITERAL("Trebuchet MS Bold"), 8);
 #else
-            SetFont( "Courier New", 8 );
+            SetFont(ST_LITERAL("Courier New"), 8);
 #endif
             SetEnable( true );
             fLockEnable = false;
@@ -82,7 +84,7 @@ class plDebugText
 
         plDebugTextManager  *fManager;
 
-        char            fFontFace[ 128 ];
+        ST::string fFontFace;
         uint16_t          fFontSize;
         bool            fEnabled, fLockEnable, fDrawOnTopMode;
 
@@ -149,8 +151,8 @@ class plDebugText
 
         void    SetManager( plDebugTextManager *m ) { fManager = m; }
 
-        void            SetFont(const char *face, uint16_t size ) { hsStrncpy( fFontFace, face, sizeof( fFontFace ) ); fFontSize = size; }
-        const char     *GetFontFace() { return fFontFace; }
+        void SetFont(ST::string face, uint16_t size) { fFontFace = std::move(face); fFontSize = size; }
+        ST::string GetFontFace() { return fFontFace; }
         uint16_t        GetFontSize() { return fFontSize; }
         uint16_t        GetFontHeight();
 

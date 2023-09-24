@@ -77,7 +77,7 @@ public:
     bool PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
     bool PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
     void Render(plDrawable* d, const std::vector<int16_t>& visList) override;
-    plTextFont* MakeTextFont(char* face, uint16_t size) override;
+    plTextFont* MakeTextFont(ST::string face, uint16_t size) override;
     void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
     void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
     bool OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) override;

@@ -92,6 +92,7 @@ class plVisMgr;
 
 class plViewTransform;
 
+namespace ST { class string; }
 
 struct PipelineParams
 {
@@ -169,7 +170,7 @@ public:
     virtual void                        Draw(plDrawable* d) = 0;
     
     // Device-specific ref creation. Includes buffers and fonts
-    virtual plTextFont                  *MakeTextFont( char *face, uint16_t size ) = 0;
+    virtual plTextFont* MakeTextFont(ST::string face, uint16_t size) = 0;
 
     // Create and/or Refresh geometry buffers
     virtual void            CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;

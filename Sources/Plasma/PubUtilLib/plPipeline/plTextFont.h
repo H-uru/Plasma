@@ -54,6 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plTextFont_h
 #define _plTextFont_h
 
+#include <string_theory/string>
+
 #include "hsGeometry3.h"
 
 //// plTextFont Class Definition //////////////////////////////////////////////
@@ -89,7 +91,7 @@ class plTextFont
         uint32_t  fMaxNumIndices;
         uint32_t  fTextureWidth, fTextureHeight;
 
-        char    fFace[ 128 ];
+        ST::string fFace;
         uint16_t  fSize;
         bool    fInitialized;
         uint16_t  fFontHeight;
@@ -126,7 +128,7 @@ class plTextFont
         plTextFont( plPipeline *pipe );
         virtual ~plTextFont();
 
-        void    Create( char *face, uint16_t size );
+        void Create(ST::string face, uint16_t size);
         void    DrawString( const char *string, int x, int y, uint32_t hexColor, uint8_t style, uint32_t rightEdge = 0 );
         void    DrawRect( int left, int top, int right, int bottom, uint32_t hexColor );
         void    Draw3DBorder( int left, int top, int right, int bottom, uint32_t hexColor1, uint32_t hexColor2 );

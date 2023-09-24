@@ -240,7 +240,7 @@ public:
     void Draw(plDrawable* d) override;
 
 
-    //virtual plTextFont* MakeTextFont(char* face, uint16_t size) = 0;
+    //virtual plTextFont* MakeTextFont(ST::string face, uint16_t size) = 0;
     //virtual void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
     //virtual void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
     //virtual bool OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) = 0;

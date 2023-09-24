@@ -128,6 +128,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 #include <string_theory/string>
+#include <utility>
 
 //#define MF_TOSSER
 
@@ -2280,7 +2281,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
 
 //// MakeTextFont /////////////////////////////////////////////////////////////
 
-plTextFont  *plDXPipeline::MakeTextFont( char *face, uint16_t size )
+plTextFont* plDXPipeline::MakeTextFont(ST::string face, uint16_t size)
 {
     plTextFont  *font;
 
@@ -2288,7 +2289,7 @@ plTextFont  *plDXPipeline::MakeTextFont( char *face, uint16_t size )
     font = new plDXTextFont( this, fD3DDevice );
     if (font == nullptr)
         return nullptr;
-    font->Create( face, size );
+    font->Create(std::move(face), size);
     font->Link( &fTextFontRefList );
 
     return font;

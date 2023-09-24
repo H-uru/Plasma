@@ -62,6 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include FT_GLYPH_H
 
 #include <memory>
+#include <utility>
 
 #ifdef HS_BUILD_FOR_WIN32
 #   include "plWinDpi/plWinDpi.h"
@@ -70,6 +71,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if defined(HS_BUILD_FOR_APPLE)
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreText/CoreText.h>
+
+#include "hsDarwin.h"
 #elif defined(HS_BUILD_FOR_UNIX)
 #include <fontconfig/fontconfig.h>
 #endif
@@ -112,8 +115,8 @@ uint16_t  *plTextFont::IInitFontTexture()
 
     int nHeight = -MulDiv( fSize, plWinDpi::Instance().GetDpi(), 72);
     
-    hFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, fFace );
+    hFont = CreateFontW(nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, fFace.to_wchar().c_str());
     hsAssert(hFont != nullptr, "Cannot create Windows font");
 
     SelectObject(hDC, hFont);
@@ -129,7 +132,7 @@ uint16_t  *plTextFont::IInitFontTexture()
 
 #elif defined(HS_BUILD_FOR_APPLE)
     
-    CFStringRef fontName = CFStringCreateWithCString(nullptr, fFace, kCFStringEncodingUTF8);
+    CFStringRef fontName = CFStringCreateWithSTString(fFace);
     CTFontDescriptorRef fontDescriptor = CTFontDescriptorCreateWithNameAndSize( fontName, 0.0f );
     CTFontDescriptorRef fulfilledFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(fontDescriptor, nullptr);
     hsAssert(fulfilledFontDescriptor != nullptr, "Cannot create Mac font");
@@ -152,7 +155,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     fTextureWidth *= 2;
     fTextureHeight *= 2;
 #else
-    FcPattern* pattern = FcNameParse((FcChar8*)fFace);
+    FcPattern* pattern = FcNameParse((FcChar8*)fFace.c_str());
     FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
     FcDefaultSubstitute(pattern);
 
@@ -286,10 +289,10 @@ uint16_t  *plTextFont::IInitFontTexture()
 
 //// Create ///////////////////////////////////////////////////////////////////
 
-void    plTextFont::Create( char *face, uint16_t size )
+void plTextFont::Create(ST::string face, uint16_t size)
 {
     // Init normal stuff
-    strncpy( fFace, face, sizeof( fFace ) );
+    fFace = std::move(face);
     fSize = size;
 }
 

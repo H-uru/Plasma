@@ -200,8 +200,7 @@ void    plDebugTextManager::DrawToDevice( plPipeline *pipe )
     if (fFont == nullptr)
     {
         // Create font first time around
-        fFont = pipe->MakeTextFont( (char *)plDebugText::Instance().GetFontFace(), 
-                                        plDebugText::Instance().GetFontSize() );
+        fFont = pipe->MakeTextFont(plDebugText::Instance().GetFontFace(), plDebugText::Instance().GetFontSize());
 
         if (fFont == nullptr)
         {

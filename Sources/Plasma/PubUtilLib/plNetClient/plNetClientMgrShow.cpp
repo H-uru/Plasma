@@ -292,7 +292,7 @@ void plNetClientMgr::IShowRelevanceRegions()
 void plNetClientMgr::IShowAvatars()
 {
     plDebugText     &txt = plDebugText::Instance();
-    txt.SetFont( "Courier New", 6 );
+    txt.SetFont(ST_LITERAL("Courier New"), 6);
 
     int y, x;
     const int yOff=10, xOff=285, startY=100, startX=10;
@@ -372,5 +372,5 @@ void plNetClientMgr::IShowAvatars()
 
     }
 
-    txt.SetFont( "Courier New", 8 );
+    txt.SetFont(ST_LITERAL("Courier New"), 8);
 }

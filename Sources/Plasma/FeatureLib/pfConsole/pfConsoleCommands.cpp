@@ -1247,8 +1247,7 @@ PF_CONSOLE_CMD( Graphics_DebugText,         // Group name
                 "string face, int size",    // Params
                 "Sets the font face and size used for drawing debug text" ) // Help string
 {
-    const ST::string& face = params[0];
-    plDebugText::Instance().SetFont(face.c_str(), (uint16_t)(int)params[1]);
+    plDebugText::Instance().SetFont(params[0], (uint16_t)(int)params[1]);
 }
 
 PF_CONSOLE_CMD( Graphics_DebugText,         // Group name
