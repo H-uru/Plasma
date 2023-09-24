@@ -351,6 +351,10 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hex
         for( i = 0, j = 0; i < thisCount; i++, j += 6 )
         {
             c = strPtr[ i ];
+            if (!(c >= 32 && c < 127) && c != '\t') {
+                // Unsupported or non-printable character
+                c = '?';
+            }
             width = fCharInfo[uint8_t(c)].fW + 1;
             height = fCharInfo[uint8_t(c)].fH + 1;
 
@@ -455,7 +459,12 @@ uint32_t  plTextFont::CalcStringWidth( const char *string )
     
     for( i = 0; i < strlen( string ); i++ )
     {
-        width += fCharInfo[uint8_t(string[i])].fW + 2;
+        char c = string[ i ];
+        if (!(c >= 32 && c < 127) && c != '\t') {
+            // Unsupported or non-printable character
+            c = '?';
+        }
+        width += fCharInfo[uint8_t(c)].fW + 2;
     }
 
     return width;
