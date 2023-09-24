@@ -107,8 +107,8 @@ void CreateStandardGraphs(const char* groupName, bool create)
         {
             if (ICreateStdPlate(&fFPSPlate))
             {
-                fFPSPlate->SetTitle("mSecs");       
-                fFPSPlate->SetLabelText("Tot", "Draw", "Upd");
+                fFPSPlate->SetTitle(ST_LITERAL("mSecs"));
+                fFPSPlate->SetLabelText({ST_LITERAL("Tot"), ST_LITERAL("Draw"), ST_LITERAL("Upd")});
             }
         }
         else

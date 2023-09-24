@@ -86,7 +86,7 @@ protected:
     void IPrintGroup(hsStream* s, const char* groupName, bool printTitle=false);
     void ILogStats();
 
-    plProfileVar* IFindTimer(const char* name);
+    plProfileVar* IFindTimer(const ST::string& name);
 
     void ISetActive(const char* groupName, bool active);
 

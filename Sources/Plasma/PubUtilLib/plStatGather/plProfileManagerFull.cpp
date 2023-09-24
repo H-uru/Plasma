@@ -143,12 +143,13 @@ void plProfileManagerFull::ShowNextGroup()
     }
 }
 
-plProfileVar* plProfileManagerFull::IFindTimer(const char *name)
+plProfileVar* plProfileManagerFull::IFindTimer(const ST::string& name)
 {
     for (int i = 0; i < fVars.size(); i++)
     {
-        if (stricmp(fVars[i]->GetName(), name) == 0)
+        if (name.compare_i(fVars[i]->GetName()) == 0) {
             return fVars[i];
+        }
     }
 
     return nullptr;
@@ -532,8 +533,7 @@ void plProfileManagerFull::CreateGraph(const char* varName, uint32_t min, uint32
     // If the graph is already created, destroy it
     for (int i = 0; i < fGraphs.size(); i++)
     {
-        if (strcmp(fGraphs[i]->GetTitle(), varName) == 0)
-        {
+        if (fGraphs[i]->GetTitle() == varName) {
             plPlateManager::Instance().DestroyPlate(fGraphs[i]);
             fGraphs.erase(fGraphs.begin()+i);
             return;
@@ -580,7 +580,7 @@ void plProfileManagerFull::ShowDetailGraph()
     fDetailGraph->SetSize(0.9f, 0.9f);
     fDetailGraph->SetDataRange(0,500,500);
     fDetailGraph->SetDataLabels(0,100); // should be relatively simple to cast everything to a 0-100 range
-    fDetailGraph->SetTitle("Detail");
+    fDetailGraph->SetTitle(ST_LITERAL("Detail"));
     UpdateDetailLabels();
 }
 
@@ -635,7 +635,7 @@ void plProfileManagerFull::UpdateDetailLabels()
     if (fDetailGraph)
     {
         int i;
-        std::vector<std::string> labels;
+        std::vector<ST::string> labels;
         for (i=0; i<fDetailVars.size(); i++)
             labels.push_back(fDetailVars[i].var->GetName());
 

@@ -117,8 +117,8 @@ void plVoiceRecorder::ShowGraph(bool b)
     if (!fGraph) {
         plPlateManager::Instance().CreateGraphPlate(&fGraph);
         fGraph->SetDataRange(0, 100, 100);
-        fGraph->SetLabelText("Voice Send Rate");
-        fGraph->SetTitle("Voice Recorder");
+        fGraph->SetLabelText({ST_LITERAL("Voice Send Rate")});
+        fGraph->SetTitle(ST_LITERAL("Voice Recorder"));
     }
 
     fGraph->SetSize(.4f, .25f);
@@ -205,8 +205,9 @@ void plVoiceRecorder::SetMicOpen(bool b)
             fCaptureOpenSecs = hsTimer::GetSeconds<float>();
         } else {
             plgAudioSys::EndCapture();
-            if (fGraph)
-                fGraph->SetTitle("Voice Recorder");
+            if (fGraph) {
+                fGraph->SetTitle(ST_LITERAL("Voice Recorder"));
+            }
         }
         DrawTalkIcon(b);
         fMicOpen = b;
@@ -317,7 +318,7 @@ void plVoiceRecorder::Update(double time)
                 float sendRate = ((float)bytesSent / (now - fCaptureOpenSecs)) / 1024.f;
                 // Scale the graph such that 8 KiB/s is the max
                 fGraph->AddData((int32_t)((100.f * sendRate) / 8.f));
-                fGraph->SetTitle(ST::format("{.2f} KiB/s", sendRate).c_str());
+                fGraph->SetTitle(ST::format("{.2f} KiB/s", sendRate));
             }
             fCaptureOpenSecs = now;
         }
