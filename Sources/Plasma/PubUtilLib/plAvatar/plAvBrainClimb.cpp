@@ -890,14 +890,12 @@ void plAvBrainClimb::LoadFromSDL(const plStateDataRecord *sdl)
 // ------------------
 void plAvBrainClimb::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, "Brain type: Climb");
+    debugTxt.DrawString(x, y, ST_LITERAL("Brain type: Climb"));
     y += lineHeight;
     const char * worldDir = WorldDirStr(fDesiredDirection);
     const char * modeStr = ModeStr(fCurMode);
 
-    char buffy[256];
-    sprintf(buffy, "direction: %s mode: %s controlDir: %f", worldDir, modeStr, fControlDir);
-    debugTxt.DrawString(x,y, buffy);
+    debugTxt.DrawString(x, y, ST::format("direction: {} mode: {} controlDir: {}", worldDir, modeStr, fControlDir));
     y += lineHeight;
     
     IDumpClimbDirections(x, y, lineHeight, debugTxt);

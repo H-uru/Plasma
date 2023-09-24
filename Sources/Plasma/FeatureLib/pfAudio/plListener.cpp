@@ -75,7 +75,7 @@ bool plListener::IEval(double secs, float del, uint32_t dirty)
 
     int y = 16 + 12, x = 400;
     if( fPrintDbgInfo ) 
-        plDebugText::Instance().DrawString( x, 16, "Listener:", (uint32_t)0xffffffff, plDebugText::kStyleBold );
+        plDebugText::Instance().DrawString(x, 16, ST_LITERAL("Listener:"), (uint32_t)0xffffffff, plDebugText::kStyleBold);
 
     // Get the avatar's SceneObject
     plKey key = plNetClientApp::GetInstance()->GetLocalPlayerKey();
@@ -86,7 +86,7 @@ bool plListener::IEval(double secs, float del, uint32_t dirty)
     {
         // We don't have a position to init by, so do NOT eval yet!!!
         if( fPrintDbgInfo ) 
-            plDebugText::Instance().DrawString( x, y, "Not eval-ing yet", (uint32_t)0xffffffff );
+            plDebugText::Instance().DrawString(x, y, ST_LITERAL("Not eval-ing yet"), (uint32_t)0xffffffff);
         return true;
     }
 
@@ -171,7 +171,7 @@ bool plListener::IEval(double secs, float del, uint32_t dirty)
     if( facingType == kInvalid || posType == kInvalid || velType == kInvalid )
     {
         if( fPrintDbgInfo ) 
-            plDebugText::Instance().DrawString( x, y, "Not eval-ing: missing one or more parameter bases", (uint32_t)0xff0000ff );
+            plDebugText::Instance().DrawString(x, y, ST_LITERAL("Not eval-ing: missing one or more parameter bases"), (uint32_t)0xff0000ff);
         return true;
     }
 
@@ -191,22 +191,22 @@ bool plListener::IEval(double secs, float del, uint32_t dirty)
         ST::string str;
         str = ST::format("Direction: ({3.2f},{3.2f},{3.2f}) from {}", dir.fX, dir.fY, dir.fZ,
                          (facingType == kObject) ? pRefObject->GetKeyName() : "VCam");
-        plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
+        plDebugText::Instance().DrawString(x, y, str, (uint32_t)0xffffffff);
         y += 12;
 
         str = ST::format("Up: ({3.2f},{3.2f},{3.2f}) from {}", up.fX, up.fY, up.fZ,
                          (facingType == kObject) ? pRefObject->GetKeyName() : "VCam");
-        plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
+        plDebugText::Instance().DrawString(x, y, str, (uint32_t)0xffffffff);
         y += 12;
 
         str = ST::format("Position: ({3.2f},{3.2f},{3.2f}) from {}", position.fX, position.fY, position.fZ,
                          (posType == kObject) ? pRefObject->GetKeyName() : "VCam");
-        plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
+        plDebugText::Instance().DrawString(x, y, str, (uint32_t)0xffffffff);
         y += 12;
 
         str = ST::format("Velocity: ({3.2f},{3.2f},{3.2f}) from {}", velocity.fX, velocity.fY, velocity.fZ,
                          (velType == kObject) ? pRefObject->GetKeyName() : "VCam");
-        plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
+        plDebugText::Instance().DrawString(x, y, str, (uint32_t)0xffffffff);
         y += 12;
     }
     plgDispatch::MsgSend( msg );

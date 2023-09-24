@@ -131,11 +131,8 @@ void plVoiceRecorder::IncreaseRecordingThreshhold()
     fRecordThreshhold += (100 * hsTimer::GetDelSysSeconds());
     if (fRecordThreshhold >= 10000.0f)
         fRecordThreshhold = 10000.0f;
-    
-    plDebugText &txt = plDebugText::Instance();
-    char str[256];
-    sprintf(str, "RecordThreshhold %f\n", fRecordThreshhold);
-    txt.DrawString(400,300,str);
+
+    plDebugText::Instance().DrawString(400, 300, ST::format("RecordThreshhold {}\n", fRecordThreshhold));
 }
 
 void plVoiceRecorder::DecreaseRecordingThreshhold()
@@ -143,11 +140,8 @@ void plVoiceRecorder::DecreaseRecordingThreshhold()
     fRecordThreshhold -= (100 * hsTimer::GetDelSysSeconds());
     if (fRecordThreshhold <= 50.0f)
         fRecordThreshhold = 50.0f;
-    
-    plDebugText &txt = plDebugText::Instance();
-    char str[256];
-    sprintf(str, "RecordThreshhold %f\n", fRecordThreshhold);
-    txt.DrawString(400,300,str);
+
+    plDebugText::Instance().DrawString(400, 300, ST::format("RecordThreshhold {}\n", fRecordThreshhold));
 }
 
 void plVoiceRecorder::SetSampleRate(uint32_t rate)

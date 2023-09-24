@@ -114,7 +114,7 @@ void plAnimDebugList::ShowReport()
 
     x = startX;
     y = startY;
-    txt.DrawString(x, y, "Material Animations:", 255, 255, 255, 255, plDebugText::kStyleBold);
+    txt.DrawString(x, y, ST_LITERAL("Material Animations:"), 255, 255, 255, 255, plDebugText::kStyleBold);
     y += yOff;
     for (const plKey& matKey : fMaterialKeys)
     {
@@ -141,7 +141,7 @@ void plAnimDebugList::ShowReport()
         }
     }
     y += yOff;
-    txt.DrawString(x, y, "AGMaster Anims", 255, 255, 255, 255, plDebugText::kStyleBold);
+    txt.DrawString(x, y, ST_LITERAL("AGMaster Anims"), 255, 255, 255, 255, plDebugText::kStyleBold);
     y += yOff;
 
     for (const plKey& soKey : fSOKeys)

@@ -129,10 +129,10 @@ class plTextFont
         virtual ~plTextFont();
 
         void Create(ST::string face, uint16_t size);
-        void    DrawString( const char *string, int x, int y, uint32_t hexColor, uint8_t style, uint32_t rightEdge = 0 );
+        void DrawString(const ST::string& string, int x, int y, uint32_t hexColor, uint8_t style, uint32_t rightEdge = 0);
         void    DrawRect( int left, int top, int right, int bottom, uint32_t hexColor );
         void    Draw3DBorder( int left, int top, int right, int bottom, uint32_t hexColor1, uint32_t hexColor2 );
-        uint32_t  CalcStringWidth( const char *string );
+        uint32_t CalcStringWidth(const ST::string& string);
         uint32_t  GetFontSize() { return fSize; }
 
         uint16_t  GetFontHeight() { return fFontHeight; }

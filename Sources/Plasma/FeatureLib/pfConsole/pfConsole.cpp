@@ -770,8 +770,6 @@ void    pfConsole::IClear()
 void    pfConsole::Draw( plPipeline *p )
 {
     int         i, yOff, y, x, eOffset, height;
-    char        *line;
-    char        tmp[ kMaxCharsWide ];
     bool        showTooltip = false;
     float       thisTime;   // For making the console FX speed konstant regardless of framerate
     const float kEffectDuration = 0.5f;
@@ -786,7 +784,7 @@ void    pfConsole::Draw( plPipeline *p )
         if( fMsgTimeoutTimer > 0 )
         {
             /// Message hint--draw the last line of the console for a bit
-            drawText.DrawString( 10, 4, fDisplayBuffer + kMaxCharsWide * ( fNumDisplayLines - 1 ), fConsoleTextColor );
+            drawText.DrawString(10, 4, ST::string::from_latin_1(fDisplayBuffer + kMaxCharsWide * (fNumDisplayLines - 1)), fConsoleTextColor);
             fMsgTimeoutTimer--;
         }
         fLastTime = thisTime;
@@ -827,28 +825,28 @@ void    pfConsole::Draw( plPipeline *p )
     if( fMode == kModeSingleLine )
     {
         // Bgnd (TEMP ONLY)
-        x = kMaxCharsWide * drawText.CalcStringWidth( "W" ) + 4;
+        x = kMaxCharsWide * drawText.CalcStringWidth(ST_LITERAL("W")) + 4;
         y = height - eOffset;
         drawText.DrawRect( 4, 0, x, y, /*color*/0, 0, 0, 127 );
 
         /// Actual text
         if( fEffectCounter == 0 )
-            drawText.DrawString( 10, 4, "Plasma 2.0 Console", 255, 255, 255, 255 );
+            drawText.DrawString(10, 4, ST_LITERAL("Plasma 2.0 Console"), 255, 255, 255, 255);
 
         if( !showTooltip )
-            drawText.DrawString( 10, 4 + yOff - eOffset, fDisplayBuffer + kMaxCharsWide * ( fNumDisplayLines - 1 ), fConsoleTextColor );
+            drawText.DrawString(10, 4 + yOff - eOffset, ST::string::from_latin_1(fDisplayBuffer + kMaxCharsWide * (fNumDisplayLines - 1)), fConsoleTextColor);
 
         y = 4 + yOff + yOff - eOffset;
     }
     else
     {
         // Bgnd (TEMP ONLY)
-        x = kMaxCharsWide * drawText.CalcStringWidth( "W" ) + 4;
+        x = kMaxCharsWide * drawText.CalcStringWidth(ST_LITERAL("W")) + 4;
         y = yOff * ( fNumDisplayLines + 2 ) + 14 - eOffset;
         drawText.DrawRect( 4, 0, x, y, /*color*/0, 0, 0, 127 );
 
         /// Actual text
-        drawText.DrawString( 10, 4, "Plasma 2.0 Console", 255, 255, 255, 255 );
+        drawText.DrawString(10, 4, ST_LITERAL("Plasma 2.0 Console"), 255, 255, 255, 255);
 
         static int  countDown = 3000;
         if( fHelpTimer > 0 || fEffectCounter > 0 || fMode != kModeFull )
@@ -861,7 +859,6 @@ void    pfConsole::Draw( plPipeline *p )
         static char tmpSrc[ kMaxCharsWide ];
         if( !rezLoaded )
         {
-            memset( tmp, 0, sizeof( tmp ) );
             memset( tmpSrc, 0, sizeof( tmpSrc ) );
             // Our concession to windows
 #ifdef HS_BUILD_FOR_WIN32
@@ -886,23 +883,23 @@ void    pfConsole::Draw( plPipeline *p )
             // Need to define for other platforms?
 #endif
         }
-        memcpy( tmp, tmpSrc, sizeof( tmp ) );
 
         if( countDown <= 0 )
         {
             y = 4 + yOff - eOffset;
             if( countDown <= -480 )
             {
-                tmp[ ( (-countDown - 480)>> 4 ) + 1 ] = 0;
+                ST::string tmp = ST::string::from_latin_1(tmpSrc).left(((-countDown - 480) >> 4) + 1);
                 drawText.DrawString( 10, y, tmp, fConsoleTextColor );
             }
             y += yOff * ( fNumDisplayLines - ( showTooltip ? 1 : 0 ) );
         }
         else
         {
-            for( i = 0, y = 4 + yOff - eOffset, line = fDisplayBuffer; i < fNumDisplayLines - ( showTooltip ? 1 : 0 ); i++ )
-            {
-                drawText.DrawString( 10, y, line, fConsoleTextColor );
+            y = 4 + yOff - eOffset;
+            const char* line = fDisplayBuffer;
+            for (i = 0; i < fNumDisplayLines - (showTooltip ? 1 : 0); i++) {
+                drawText.DrawString(10, y, ST::string::from_latin_1(line), fConsoleTextColor);
                 y += yOff;
                 line += kMaxCharsWide;
             }
@@ -912,27 +909,28 @@ void    pfConsole::Draw( plPipeline *p )
             y += yOff;
     }
 
-//  strcpy( tmp, fHelpMode ? "Get Help On:" : "]" );
-    if ( fHelpMode )
-        strcpy( tmp, "Get Help On:");
-    else if (fPythonMode )
-        if ( fPythonMultiLines == 0 )
-            strcpy( tmp, ">>>");
-        else
-            strcpy( tmp, "...");
-    else
-        strcpy( tmp, "]" );
+    ST::string prompt;
+    if (fHelpMode) {
+        prompt = ST_LITERAL("Get Help On:");
+    } else if (fPythonMode) {
+        if (fPythonMultiLines == 0) {
+            prompt = ST_LITERAL(">>>");
+        } else {
+            prompt = ST_LITERAL("...");
+        }
+    } else {
+        prompt = ST_LITERAL("]");
+    }
 
-    drawText.DrawString( 10, y, tmp, 255, 255, 255, 255 );
-    i = 19 + drawText.CalcStringWidth( tmp );
-    drawText.DrawString( i, y, fWorkingLine, fConsoleTextColor );
+    drawText.DrawString(10, y, prompt, 255, 255, 255, 255);
+    i = 19 + drawText.CalcStringWidth(prompt);
+    drawText.DrawString(i, y, IGetWorkingLine(), fConsoleTextColor);
 
     if( fCursorTicks >= 0 )
     {
-        strcpy( tmp, fWorkingLine );
-        tmp[ fWorkingCursor ] = 0;
-        x = drawText.CalcStringWidth( tmp );
-        drawText.DrawString( i + x, y + 2, "_", 255, 255, 255 );
+        ST::string lineUpToCursor = ST::string::from_latin_1(fWorkingLine, fWorkingCursor);
+        x = drawText.CalcStringWidth(lineUpToCursor);
+        drawText.DrawString(i + x, y + 2, ST_LITERAL("_"), 255, 255, 255);
     }
     fCursorTicks--;
     if( fCursorTicks < -kCursorBlinkRate )
@@ -940,10 +938,8 @@ void    pfConsole::Draw( plPipeline *p )
 
     if (showTooltip) {
         ST::char_buffer helpMsgBuf = fLastHelpMsg.to_latin_1();
-        if (helpMsgBuf.size() > kMaxCharsWide - 2) {
-            helpMsgBuf[kMaxCharsWide - 2] = 0;
-        }
-        drawText.DrawString(i, y - yOff, helpMsgBuf.c_str(), 255, 255, 0);
+        ST::string helpMsg = ST::string::from_latin_1(helpMsgBuf.data(), std::min(helpMsgBuf.size(), static_cast<size_t>(kMaxCharsWide - 2)));
+        drawText.DrawString(i, y - yOff, helpMsg, 255, 255, 0);
     } else {
         fHelpTimer--;
     }

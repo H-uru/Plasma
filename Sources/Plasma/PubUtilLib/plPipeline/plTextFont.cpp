@@ -318,24 +318,22 @@ void    plTextFont::IInitObjects()
 
 //// DrawString ///////////////////////////////////////////////////////////////
 
-void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hexColor, 
-                                uint8_t style, uint32_t rightEdge )
+void plTextFont::DrawString(const ST::string& string, int sX, int sY, uint32_t hexColor,
+                            uint8_t style, uint32_t rightEdge)
 {
     static std::vector<plFontVertex> verts;
     
     size_t     i, j, width, height, count, thisCount;
     uint32_t   italOffset;
     float   x = (float)sX;
-    char    c, *strPtr;
-
 
     if( !fInitialized )
         IInitObjects();
 
     /// Set up to draw
     italOffset = ( style & plDebugText::kStyleItalic ) ? fSize / 2: 0;
-    count = strlen( string );
-    strPtr = (char *)string;
+    count = string.size();
+    const char* strPtr = string.data();
     while( count > 0 )
     {
         thisCount = ( count > 64 ) ? 64 : count;
@@ -353,7 +351,7 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hex
 
         for( i = 0, j = 0; i < thisCount; i++, j += 6 )
         {
-            c = strPtr[ i ];
+            char c = strPtr[i];
             if (!(c >= 32 && c < 127) && c != '\t') {
                 // Unsupported or non-printable character
                 c = '?';
@@ -452,17 +450,14 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hex
 
 //// CalcStringWidth //////////////////////////////////////////////////////////
 
-uint32_t  plTextFont::CalcStringWidth( const char *string )
+uint32_t plTextFont::CalcStringWidth(const ST::string& string)
 {
-    int     i, width = 0;
-
+    int width = 0;
 
     if( !fInitialized )
         IInitObjects();
     
-    for( i = 0; i < strlen( string ); i++ )
-    {
-        char c = string[ i ];
+    for (char c : string) {
         if (!(c >= 32 && c < 127) && c != '\t') {
             // Unsupported or non-printable character
             c = '?';

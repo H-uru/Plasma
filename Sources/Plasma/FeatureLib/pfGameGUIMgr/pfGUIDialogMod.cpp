@@ -426,9 +426,7 @@ static bool     showBounds = false;
                     float x = sW * ctrl->fBoundsPoints[j].fX;
                     float y = sH * ctrl->fBoundsPoints[j].fY;
                     plDebugText::Instance().DrawRect( (uint16_t)(x - 2), (uint16_t)(y - 2), (uint16_t)(x + 2), (uint16_t)(y + 2), color );
-                    char str[24];
-                    snprintf(str, std::size(str), "%zu", j);
-                    plDebugText::Instance().DrawString( (uint16_t)(x + 8), (uint16_t)(y - 8), str, color );
+                    plDebugText::Instance().DrawString((uint16_t)(x + 8), (uint16_t)(y - 8), ST::string::from_uint(j), color);
                 }
             }
             else
@@ -484,7 +482,7 @@ static bool     showBounds = false;
         {
             const hsBounds3 &bnds = fMousedCtrl->GetBounds();
             plDebugText::Instance().DrawString((uint16_t)(bnds.GetMins().fX), (uint16_t)(bnds.GetMins().fY),
-                                               fMousedCtrl->GetKeyName().c_str(), (uint32_t)0xffffff00);
+                                               fMousedCtrl->GetKeyName(), (uint32_t)0xffffff00);
         }
 #endif
 

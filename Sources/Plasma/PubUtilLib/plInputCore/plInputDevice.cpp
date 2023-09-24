@@ -304,7 +304,7 @@ void plMouseDevice::AddCCRToCursor()
     if (fInstance)
     {
         plDebugText     &txt = plDebugText::Instance();
-        txt.DrawString(fInstance->fWXPos + 12 * fScale, fInstance->fWYPos - 17, "CCR");
+        txt.DrawString(fInstance->fWXPos + 12 * fScale, fInstance->fWYPos - 17, ST_LITERAL("CCR"));
     }
 }
 void plMouseDevice::AddIDNumToCursor(uint32_t idNum)
@@ -326,10 +326,6 @@ void plMouseDevice::SetCursorX(float x)
     if (fCursor)
         fCursor->SetPosition( ( x * 2.0f ) - 1.0f, 
                           ( fYPos * 2.0f ) - 1.0f );
-
-//  plDebugText     &txt = plDebugText::Instance();
-//  txt.DrawString(fWXPos + 20,fWYPos - 5,"test");
-
 }
 void plMouseDevice::SetCursorY(float y)
 {
@@ -340,10 +336,6 @@ void plMouseDevice::SetCursorY(float y)
     if (fCursor)
         fCursor->SetPosition( ( fXPos * 2.0f ) - 1.0f, 
                           ( y * 2.0f ) - 1.0f );
-
-//  plDebugText     &txt = plDebugText::Instance();
-//  txt.DrawString(fWXPos + 20,fWYPos - 10,"test");
-
 }
 
 

@@ -181,7 +181,7 @@ enum
 
 typedef std::vector<plProfileBase*> ProfileGroup;
 
-static void PrintColumn(ProfileGroup& group, const char* groupName, int column, int x, int y, int& width, int& height, int off =0)
+static void PrintColumn(ProfileGroup& group, const ST::string& groupName, int column, int x, int y, int& width, int& height, int off =0)
 {
     plDebugText& txt = plDebugText::Instance();
     int yInc = txt.GetFontHeight() + 2;
@@ -193,16 +193,17 @@ static void PrintColumn(ProfileGroup& group, const char* groupName, int column, 
     txt.DrawString(x, y+height, groupName, 255, 255, 255, 255, plDebugText::kStyleBold);
     height += yInc;
 
-    uint32_t samplesWidth = txt.CalcStringWidth("[000]");
+    uint32_t samplesWidth = txt.CalcStringWidth(ST_LITERAL("[000]"));
 
     for (int i = 0; i < group.size(); i++)
     {
-        char str[1024];
+        char buf[1024];
+        ST::string str;
 
         switch (column)
         {
         case kColName:
-            strcpy(str, group[i]->GetName());
+            str = group[i]->GetName();
 
             // Since we don't draw the samples text for stats that only have 1 sample, 
             // if the stat with the longest name is fluctuating between 1 and more than
@@ -214,22 +215,23 @@ static void PrintColumn(ProfileGroup& group, const char* groupName, int column, 
             // Now add on the samples text, if we have any
             if (group[i]->GetTimerSamples())
             {
-                char cnt[20];
-                sprintf(cnt, "[%d]", group[i]->GetTimerSamples());
-                strcat(str, cnt);
+                str = ST::format("{}[{}]", str, group[i]->GetTimerSamples());
             }
             break;
         case kColValue:
-            group[i]->PrintValue(str);
+            group[i]->PrintValue(buf);
+            str = buf;
             break;
         case kColAvg:
-            group[i]->PrintAvg(str);
+            group[i]->PrintAvg(buf);
+            str = buf;
             break;
         case kColMax:
-            group[i]->PrintMax(str);
+            group[i]->PrintMax(buf);
+            str = buf;
             break;
         case kColIndex:
-            sprintf(str,"[%3d]",i+off);
+            str = ST::format("[{3d}]", i + off);
             break;
         }
 
@@ -240,46 +242,46 @@ static void PrintColumn(ProfileGroup& group, const char* groupName, int column, 
     }
 
     // So the columns don't jump around as much as values change, pad them out to a certain width
-    width = std::max(width, static_cast<int>(txt.CalcStringWidth("000.0 ms") + 1));
+    width = std::max(width, static_cast<int>(txt.CalcStringWidth(ST_LITERAL("000.0 ms")) + 1));
 }
 
-static void PrintGroup(ProfileGroup& group, const char* groupName, int& x, int& y)
+static void PrintGroup(ProfileGroup& group, const ST::string& groupName, int& x, int& y)
 {
     int width, height;
 
     PrintColumn(group, groupName, kColName, x, y, width, height);
     x += width + 10;
 
-    PrintColumn(group, "Avg", kColAvg, x, y, width, height);
+    PrintColumn(group, ST_LITERAL("Avg"), kColAvg, x, y, width, height);
     x += width + 10;
 
-    PrintColumn(group, "Cur", kColValue, x, y, width, height);
+    PrintColumn(group, ST_LITERAL("Cur"), kColValue, x, y, width, height);
     x += width + 10;
 
-    PrintColumn(group, "Max", kColMax, x, y, width, height);
+    PrintColumn(group, ST_LITERAL("Max"), kColMax, x, y, width, height);
     x += width + 10;
 
     y += height;
 }
 
 
-static void PrintLapGroup(ProfileGroup& group, const char* groupName, int& x, int& y, int min)
+static void PrintLapGroup(ProfileGroup& group, const ST::string& groupName, int& x, int& y, int min)
 {
     int width, height;
 
     if(min > 0)
     {
-        PrintColumn(group, "Index", kColIndex, x, y, width, height, min);
+        PrintColumn(group, ST_LITERAL("Index"), kColIndex, x, y, width, height, min);
         x += width + 10;
     }
 
-    PrintColumn(group, "Avg", kColAvg, x, y, width, height);
+    PrintColumn(group, ST_LITERAL("Avg"), kColAvg, x, y, width, height);
     x += width + 10;
     
     PrintColumn(group, groupName, kColName, x, y, width, height);
     x += width + 10;
 
-    PrintColumn(group, "Cur", kColValue, x, y, width, height);
+    PrintColumn(group, ST_LITERAL("Cur"), kColValue, x, y, width, height);
     x += width + 10;
 
     y += height;
@@ -313,7 +315,7 @@ void plProfileManagerFull::Update()
                 group.push_back(fVars[i]);
 
         int x = 10;
-        PrintGroup(group, groupName.c_str(), x, y);
+        PrintGroup(group, groupName, x, y);
 
         maxX = std::max(maxX, x);
         y += 10;
@@ -337,9 +339,7 @@ void plProfileManagerFull::Update()
                 group.push_back(laps->GetLap(i));
         }
         y = 10;
-        char buf[256];
-        sprintf(buf, "%s - %s", fShowLaps->GetGroup(), fShowLaps->GetName());
-        PrintLapGroup(group, buf, maxX, y, fMinLap);
+        PrintLapGroup(group, ST::format("{} - {}", fShowLaps->GetGroup(), fShowLaps->GetName()), maxX, y, fMinLap);
     }
 
     //

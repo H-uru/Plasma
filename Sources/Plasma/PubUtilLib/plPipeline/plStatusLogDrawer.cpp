@@ -65,7 +65,7 @@ void plStatusLogDrawer::IDrawLogNames(plStatusLog* curLog, plStatusLog* firstLog
     plStatusLog* iLog = firstLog;
     while (iLog)
     {
-        width = std::max(drawText.CalcStringWidth_TEMP(iLog->GetFileName().AsString()) + 4, width);
+        width = std::max(drawText.CalcStringWidth(iLog->GetFileName().AsString()) + 4, width);
         iLog = iLog->fNext;
         numLogs++;
     }
@@ -120,7 +120,7 @@ void    plStatusLogDrawer::Draw(plStatusLog* curLog, plStatusLog* firstLog)
     y += lineHt * 2;
     for( i = 0; i < IGetMaxNumLines( curLog ); i++ )
     {
-        drawText.DrawString_TEMP( x + 4, y, IGetLines( curLog )[ i ], IGetColors( curLog )[ i ] );
+        drawText.DrawString(x + 4, y, IGetLines(curLog)[i], IGetColors(curLog)[i]);
         y += lineHt;
     }
 

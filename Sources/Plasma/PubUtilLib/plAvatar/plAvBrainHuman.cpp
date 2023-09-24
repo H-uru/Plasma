@@ -879,7 +879,7 @@ bool plAvBrainHuman::LeaveAge()
 
 void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, "Brain type: Human");
+    debugTxt.DrawString(x, y, ST_LITERAL("Brain type: Human"));
     y += lineHeight;
     
     const char *grounded = fWalkingStrategy->IsOnGround() ? "yes" : "no";
@@ -891,12 +891,12 @@ void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugT
     for (plArmatureBehavior* behavior : fBehaviors)
         behavior->DumpDebug(x, y, lineHeight, debugTxt);
 
-    debugTxt.DrawString(x, y, "Tasks:");
+    debugTxt.DrawString(x, y, ST_LITERAL("Tasks:"));
     y += lineHeight;
 
     if(fCurTask)
     {
-        debugTxt.DrawString(x, y, "Current task:");
+        debugTxt.DrawString(x, y, ST_LITERAL("Current task:"));
         y += lineHeight;
 
         int indentedX = x + 4;
@@ -905,7 +905,7 @@ void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugT
     int tasks = fTaskQueue.size();
     if(tasks > 0)
     {
-        debugTxt.DrawString(x, y, "Tasks in the Queue:");
+        debugTxt.DrawString(x, y, ST_LITERAL("Tasks in the Queue:"));
         y += lineHeight;
 
         int indentedX = x + 4;
