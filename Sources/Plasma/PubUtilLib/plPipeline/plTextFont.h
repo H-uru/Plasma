@@ -101,7 +101,7 @@ class plTextFont
         plTextFont      *fNext;
         plTextFont      **fPrevPtr;
 
-        plDXCharInfo    fCharInfo[ 128 ];
+        plDXCharInfo fCharInfo[256];
 
 
         virtual void    IInitObjects();

@@ -211,10 +211,12 @@ uint16_t  *plTextFont::IInitFontTexture()
     } size;
 
     // Loop through characters, drawing them one at a time
+    hsAssert(face->charmap != nullptr, "Font has no Unicode-compatible character map!");
     int x = 1;
     int y = 0;
-    for (char32_t c = 32; c < 127; c++) {
+    for (char32_t c = 32; c < std::size(fCharInfo); c++) {
         ftError = FT_Load_Char( face, c, FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_NO_AUTOHINT );
+        hsAssert(ftError == FT_Err_Ok, "Failed to load character");
 
         FT_GlyphSlot slot = face->glyph;
 
@@ -350,9 +352,9 @@ void plTextFont::DrawString(const ST::string& string, int sX, int sY, uint32_t h
         for( i = 0, j = 0; i < thisCount; i++, j += 6 )
         {
             char32_t c = codepointsPtr[i];
-            if (!(c >= 32 && c < 127) && c != U'\t') {
+            if (!(c >= 32 && c < std::size(fCharInfo)) && c != U'\t') {
                 // Unsupported or non-printable character
-                c = U'?';
+                c = U'\xbf';
             }
             plDXCharInfo const& info = fCharInfo[c];
             width = info.fW + 1;
@@ -457,9 +459,9 @@ uint32_t plTextFont::CalcStringWidth(const ST::string& string)
         IInitObjects();
     
     for (char32_t c : string.to_utf32()) {
-        if (!(c >= 32 && c < 127) && c != U'\t') {
+        if (!(c >= 32 && c < std::size(fCharInfo)) && c != U'\t') {
             // Unsupported or non-printable character
-            c = U'?';
+            c = U'\xbf';
         }
         width += fCharInfo[c].fW + 2;
     }
