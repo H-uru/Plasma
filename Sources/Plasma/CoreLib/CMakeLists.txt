@@ -12,7 +12,6 @@ set(CoreLib_SOURCES
     hsQuat.cpp
     hsRefCnt.cpp
     hsStream.cpp
-    hsStringTokenizer.cpp
     hsSystemInfo.cpp
     hsThread.cpp
     pcSmallRect.cpp
