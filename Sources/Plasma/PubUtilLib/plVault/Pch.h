@@ -62,7 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unordered_map>
 
 #include "hsGeometry3.h"
-#include "hsStringTokenizer.h"
 #include "hsTimer.h"
 
 #include "pnDispatch/plDispatch.h"
