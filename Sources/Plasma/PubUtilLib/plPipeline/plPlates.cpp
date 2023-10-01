@@ -82,7 +82,6 @@ plPlate::plPlate( plPlate **owningHandle )
     fPrevPtr = nullptr;
     fOwningHandle = owningHandle;
     fMipmap = nullptr;
-    memset( fTitle, 0, sizeof( fTitle ) );
 }
 
 plPlate::~plPlate()
@@ -300,7 +299,6 @@ bool plPlate::IsVisible()
 plGraphPlate::plGraphPlate( plPlate **owningHandle ) : plPlate( owningHandle )
 {
     fFlags |= kFlagIsAGraph;
-    SetLabelText(nullptr);
 }
 
 plGraphPlate::~plGraphPlate()
@@ -531,33 +529,6 @@ void    plGraphPlate::SetDataColors( uint32_t hexColor1, uint32_t hexColor2, uin
 void    plGraphPlate::SetDataColors( const std::vector<uint32_t> & hexColors )
 {
     fDataHexColors = hexColors;
-}
-
-//// SetLabelText ////////////////////////////////////////////////////////////
-
-void    plGraphPlate::SetLabelText(const char *text1, const char *text2, const char *text3, const char *text4 )
-{
-    std::vector<std::string> strings;
-    if (text1 != nullptr)
-        strings.push_back(text1);
-    else
-        strings.push_back("");
-
-    if (text2 != nullptr)
-        strings.push_back(text2);
-    else
-        strings.push_back("");
-
-    if (text3 != nullptr)
-        strings.push_back(text3);
-    else
-        strings.push_back("");
-
-    if (text4 != nullptr)
-        strings.push_back(text4);
-    else
-        strings.push_back("");
-    SetLabelText(strings);
 }
 
 //// IDrawNumber /////////////////////////////////////////////////////////////

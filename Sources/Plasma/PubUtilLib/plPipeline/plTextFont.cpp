@@ -62,6 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include FT_GLYPH_H
 
 #include <memory>
+#include <utility>
 
 #ifdef HS_BUILD_FOR_WIN32
 #   include "plWinDpi/plWinDpi.h"
@@ -70,6 +71,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if defined(HS_BUILD_FOR_APPLE)
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreText/CoreText.h>
+
+#include "hsDarwin.h"
 #elif defined(HS_BUILD_FOR_UNIX)
 #include <fontconfig/fontconfig.h>
 #endif
@@ -92,9 +95,6 @@ plTextFont::~plTextFont()
 
 uint16_t  *plTextFont::IInitFontTexture()
 {
-    int     x, y, c;
-    char    myChar[ 2 ] = "x";
-
     FT_Library  library;
     FT_Face     face;
     FT_Error ftError = FT_Init_FreeType(&library);
@@ -112,8 +112,8 @@ uint16_t  *plTextFont::IInitFontTexture()
 
     int nHeight = -MulDiv( fSize, plWinDpi::Instance().GetDpi(), 72);
     
-    hFont = CreateFont( nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, fFace );
+    hFont = CreateFontW(nHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+                        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, fFace.to_wchar().c_str());
     hsAssert(hFont != nullptr, "Cannot create Windows font");
 
     SelectObject(hDC, hFont);
@@ -122,6 +122,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     void* fontData = std::malloc( fontDataSize );
     GetFontData(hDC, 0, 0, fontData, fontDataSize);
     ftError = FT_New_Memory_Face(library, (FT_Byte *) fontData, fontDataSize, 0, &face);
+    ASSERT(ftError == FT_Err_Ok);
     FT_UInt freeTypeResolution = plWinDpi::Instance().GetDpi();
 
     DeleteDC( hDC );
@@ -129,7 +130,7 @@ uint16_t  *plTextFont::IInitFontTexture()
 
 #elif defined(HS_BUILD_FOR_APPLE)
     
-    CFStringRef fontName = CFStringCreateWithCString(nullptr, fFace, kCFStringEncodingUTF8);
+    CFStringRef fontName = CFStringCreateWithSTString(fFace);
     CTFontDescriptorRef fontDescriptor = CTFontDescriptorCreateWithNameAndSize( fontName, 0.0f );
     CTFontDescriptorRef fulfilledFontDescriptor = CTFontDescriptorCreateMatchingFontDescriptor(fontDescriptor, nullptr);
     hsAssert(fulfilledFontDescriptor != nullptr, "Cannot create Mac font");
@@ -142,6 +143,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     CFStringGetCString(fileSystemPath, cPath, PATH_MAX, kCFStringEncodingUTF8);
     
     ftError = FT_New_Face(library, cPath, 0, &face);
+    ASSERT(ftError == FT_Err_Ok);
     
     CFRelease(fulfilledFontDescriptor);
     CFRelease(fontURL);
@@ -152,7 +154,7 @@ uint16_t  *plTextFont::IInitFontTexture()
     fTextureWidth *= 2;
     fTextureHeight *= 2;
 #else
-    FcPattern* pattern = FcNameParse((FcChar8*)fFace);
+    FcPattern* pattern = FcNameParse((FcChar8*)fFace.c_str());
     FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
     FcDefaultSubstitute(pattern);
 
@@ -162,7 +164,8 @@ uint16_t  *plTextFont::IInitFontTexture()
     FcPatternDestroy(pattern);
 
     if (result) {
-        FT_Done_FreeType(library);
+        ftError = FT_Done_FreeType(library);
+        ASSERT(ftError == FT_Err_Ok);
         return nullptr;
     }
 
@@ -172,7 +175,8 @@ uint16_t  *plTextFont::IInitFontTexture()
     if (result) {
         FcPatternDestroy(match);
 
-        FT_Done_FreeType(library);
+        ftError = FT_Done_FreeType(library);
+        ASSERT(ftError == FT_Err_Ok);
         return nullptr;
     }
 
@@ -182,11 +186,13 @@ uint16_t  *plTextFont::IInitFontTexture()
     FcPatternDestroy(match);
 
     ftError = FT_New_Face(library, filename, 0, &face);
+    ASSERT(ftError == FT_Err_Ok);
 
     FT_UInt freeTypeResolution = 96;
 #endif
 
     ftError = FT_Set_Char_Size(face, 0, fSize * 64, freeTypeResolution, freeTypeResolution);
+    ASSERT(ftError == FT_Err_Ok);
     FT_Size_Metrics fontMetrics = face->size->metrics;
 
     fFontHeight = int(fontMetrics.height / 64.f);
@@ -211,15 +217,18 @@ uint16_t  *plTextFont::IInitFontTexture()
     } size;
 
     // Loop through characters, drawing them one at a time
-    for( c = 32, x = 1, y = 0; c < 127; c++ )
-    {
-        myChar[ 0 ] = c;
+    hsAssert(face->charmap != nullptr, "Font has no Unicode-compatible character map!");
+    int x = 1;
+    int y = 0;
+    for (char32_t c = 32; c < std::size(fCharInfo); c++) {
         ftError = FT_Load_Char( face, c, FT_LOAD_RENDER | FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_NO_AUTOHINT );
+        hsAssert(ftError == FT_Err_Ok, "Failed to load character");
 
         FT_GlyphSlot slot = face->glyph;
 
         FT_Glyph glyph;
-        FT_Get_Glyph(slot, &glyph);
+        ftError = FT_Get_Glyph(slot, &glyph);
+        ASSERT(ftError == FT_Err_Ok);
 
         FT_BBox cBox;
         FT_Glyph_Get_CBox( glyph, FT_GLYPH_BBOX_TRUNCATE, &cBox );
@@ -272,24 +281,26 @@ uint16_t  *plTextFont::IInitFontTexture()
     fCharInfo[ 32 ].fUVs[ 1 ].fX = fCharInfo[ 32 ].fUVs[ 0 ].fX;
 
     // Special case the tab key
-    fCharInfo[ '\t' ].fUVs[ 1 ].fX = fCharInfo[ '\t' ].fUVs[ 0 ].fX = fCharInfo[ 32 ].fUVs[ 0 ].fX;
-    fCharInfo[ '\t' ].fUVs[ 1 ].fY = fCharInfo[ '\t' ].fUVs[ 0 ].fY = 0;
-    fCharInfo[ '\t' ].fUVs[ 0 ].fZ = fCharInfo[ '\t' ].fUVs[ 1 ].fZ = 0;
-    fCharInfo[ '\t' ].fW = fCharInfo[ 32 ].fW * 4;
-    fCharInfo[ '\t' ].fH = fCharInfo[ 32 ].fH;
+    fCharInfo[U'\t'].fUVs[1].fX = fCharInfo[U'\t'].fUVs[0].fX = fCharInfo[32].fUVs[0].fX;
+    fCharInfo[U'\t'].fUVs[1].fY = fCharInfo[U'\t'].fUVs[0].fY = 0;
+    fCharInfo[U'\t'].fUVs[0].fZ = fCharInfo[U'\t'].fUVs[1].fZ = 0;
+    fCharInfo[U'\t'].fW = fCharInfo[32].fW * 4;
+    fCharInfo[U'\t'].fH = fCharInfo[32].fH;
 
-    FT_Done_Face(face);
-    FT_Done_FreeType(library);
+    ftError = FT_Done_Face(face);
+    ASSERT(ftError == FT_Err_Ok);
+    ftError = FT_Done_FreeType(library);
+    ASSERT(ftError == FT_Err_Ok);
 
     return data;
 }
 
 //// Create ///////////////////////////////////////////////////////////////////
 
-void    plTextFont::Create( char *face, uint16_t size )
+void plTextFont::Create(ST::string face, uint16_t size)
 {
     // Init normal stuff
-    strncpy( fFace, face, sizeof( fFace ) );
+    fFace = std::move(face);
     fSize = size;
 }
 
@@ -315,24 +326,23 @@ void    plTextFont::IInitObjects()
 
 //// DrawString ///////////////////////////////////////////////////////////////
 
-void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hexColor, 
-                                uint8_t style, uint32_t rightEdge )
+void plTextFont::DrawString(const ST::string& string, int sX, int sY, uint32_t hexColor,
+                            uint8_t style, uint32_t rightEdge)
 {
     static std::vector<plFontVertex> verts;
     
     size_t     i, j, width, height, count, thisCount;
     uint32_t   italOffset;
     float   x = (float)sX;
-    char    c, *strPtr;
-
 
     if( !fInitialized )
         IInitObjects();
 
     /// Set up to draw
     italOffset = ( style & plDebugText::kStyleItalic ) ? fSize / 2: 0;
-    count = strlen( string );
-    strPtr = (char *)string;
+    ST::utf32_buffer codepoints = string.to_utf32();
+    count = codepoints.size();
+    const char32_t* codepointsPtr = codepoints.data();
     while( count > 0 )
     {
         thisCount = ( count > 64 ) ? 64 : count;
@@ -350,9 +360,14 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hex
 
         for( i = 0, j = 0; i < thisCount; i++, j += 6 )
         {
-            c = strPtr[ i ];
-            width = fCharInfo[uint8_t(c)].fW + 1;
-            height = fCharInfo[uint8_t(c)].fH + 1;
+            char32_t c = codepointsPtr[i];
+            if (!(c >= 32 && c < std::size(fCharInfo)) && c != U'\t') {
+                // Unsupported or non-printable character
+                c = U'\xbf';
+            }
+            plDXCharInfo const& info = fCharInfo[c];
+            width = info.fW + 1;
+            height = info.fH + 1;
 
             if( rightEdge > 0 && x + width + italOffset >= rightEdge )
             {
@@ -361,33 +376,33 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hex
                 break;
             }
 
-            verts[ j ].fPoint.fX = x + italOffset;
-            verts[ j ].fPoint.fY = (float)sY;
-            verts[ j ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
+            verts[j].fPoint.fX = x + italOffset;
+            verts[j].fPoint.fY = (float)sY;
+            verts[j].fUV = info.fUVs[0];
 
-            verts[ j + 1 ].fPoint.fX = x + width + italOffset;
-            verts[ j + 1 ].fPoint.fY = (float)sY;
-            verts[ j + 1 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
-            verts[ j + 1 ].fUV.fX = fCharInfo[uint8_t(c)].fUVs[ 1 ].fX;
+            verts[j + 1].fPoint.fX = x + width + italOffset;
+            verts[j + 1].fPoint.fY = (float)sY;
+            verts[j + 1].fUV = info.fUVs[0];
+            verts[j + 1].fUV.fX = info.fUVs[1].fX;
 
-            verts[ j + 2 ].fPoint.fX = x;
-            verts[ j + 2 ].fPoint.fY = (float)sY + height;
-            verts[ j + 2 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
-            verts[ j + 2 ].fUV.fY = fCharInfo[uint8_t(c)].fUVs[ 1 ].fY;
+            verts[j + 2].fPoint.fX = x;
+            verts[j + 2].fPoint.fY = (float)sY + height;
+            verts[j + 2].fUV = info.fUVs[0];
+            verts[j + 2].fUV.fY = info.fUVs[1].fY;
 
-            verts[ j + 3 ].fPoint.fX = x;
-            verts[ j + 3 ].fPoint.fY = (float)sY + height;
-            verts[ j + 3 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
-            verts[ j + 3 ].fUV.fY = fCharInfo[uint8_t(c)].fUVs[ 1 ].fY;
+            verts[j + 3].fPoint.fX = x;
+            verts[j + 3].fPoint.fY = (float)sY + height;
+            verts[j + 3].fUV = info.fUVs[0];
+            verts[j + 3].fUV.fY = info.fUVs[1].fY;
 
-            verts[ j + 4 ].fPoint.fX = x + width + italOffset;
-            verts[ j + 4 ].fPoint.fY = (float)sY;
-            verts[ j + 4 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 0 ];
-            verts[ j + 4 ].fUV.fX = fCharInfo[uint8_t(c)].fUVs[ 1 ].fX;
+            verts[j + 4].fPoint.fX = x + width + italOffset;
+            verts[j + 4].fPoint.fY = (float)sY;
+            verts[j + 4].fUV = info.fUVs[0];
+            verts[j + 4].fUV.fX = info.fUVs[1].fX;
 
-            verts[ j + 5 ].fPoint.fX = x + width;
-            verts[ j + 5 ].fPoint.fY = (float)sY + height;
-            verts[ j + 5 ].fUV = fCharInfo[uint8_t(c)].fUVs[ 1 ];
+            verts[j + 5].fPoint.fX = x + width;
+            verts[j + 5].fPoint.fY = (float)sY + height;
+            verts[j + 5].fUV = info.fUVs[1];
 
             x += width + 1;
         }
@@ -437,7 +452,7 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hex
         /// Draw a set of tris now
         IDrawPrimitive(thisCount * uint32_t((style & plDebugText::kStyleBold) ? 4 : 2), verts.data());
 
-        strPtr += thisCount;
+        codepointsPtr += thisCount;
     }
 
     /// All done!
@@ -445,17 +460,19 @@ void    plTextFont::DrawString( const char *string, int sX, int sY, uint32_t hex
 
 //// CalcStringWidth //////////////////////////////////////////////////////////
 
-uint32_t  plTextFont::CalcStringWidth( const char *string )
+uint32_t plTextFont::CalcStringWidth(const ST::string& string)
 {
-    int     i, width = 0;
-
+    int width = 0;
 
     if( !fInitialized )
         IInitObjects();
     
-    for( i = 0; i < strlen( string ); i++ )
-    {
-        width += fCharInfo[uint8_t(string[i])].fW + 2;
+    for (char32_t c : string.to_utf32()) {
+        if (!(c >= 32 && c < std::size(fCharInfo)) && c != U'\t') {
+            // Unsupported or non-printable character
+            c = U'\xbf';
+        }
+        width += fCharInfo[c].fW + 2;
     }
 
     return width;

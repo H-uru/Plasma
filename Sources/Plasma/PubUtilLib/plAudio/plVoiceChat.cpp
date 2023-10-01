@@ -117,8 +117,8 @@ void plVoiceRecorder::ShowGraph(bool b)
     if (!fGraph) {
         plPlateManager::Instance().CreateGraphPlate(&fGraph);
         fGraph->SetDataRange(0, 100, 100);
-        fGraph->SetLabelText("Voice Send Rate");
-        fGraph->SetTitle("Voice Recorder");
+        fGraph->SetLabelText({ST_LITERAL("Voice Send Rate")});
+        fGraph->SetTitle(ST_LITERAL("Voice Recorder"));
     }
 
     fGraph->SetSize(.4f, .25f);
@@ -131,11 +131,8 @@ void plVoiceRecorder::IncreaseRecordingThreshhold()
     fRecordThreshhold += (100 * hsTimer::GetDelSysSeconds());
     if (fRecordThreshhold >= 10000.0f)
         fRecordThreshhold = 10000.0f;
-    
-    plDebugText &txt = plDebugText::Instance();
-    char str[256];
-    sprintf(str, "RecordThreshhold %f\n", fRecordThreshhold);
-    txt.DrawString(400,300,str);
+
+    plDebugText::Instance().DrawString(400, 300, ST::format("RecordThreshhold {}\n", fRecordThreshhold));
 }
 
 void plVoiceRecorder::DecreaseRecordingThreshhold()
@@ -143,11 +140,8 @@ void plVoiceRecorder::DecreaseRecordingThreshhold()
     fRecordThreshhold -= (100 * hsTimer::GetDelSysSeconds());
     if (fRecordThreshhold <= 50.0f)
         fRecordThreshhold = 50.0f;
-    
-    plDebugText &txt = plDebugText::Instance();
-    char str[256];
-    sprintf(str, "RecordThreshhold %f\n", fRecordThreshhold);
-    txt.DrawString(400,300,str);
+
+    plDebugText::Instance().DrawString(400, 300, ST::format("RecordThreshhold {}\n", fRecordThreshhold));
 }
 
 void plVoiceRecorder::SetSampleRate(uint32_t rate)
@@ -211,8 +205,9 @@ void plVoiceRecorder::SetMicOpen(bool b)
             fCaptureOpenSecs = hsTimer::GetSeconds<float>();
         } else {
             plgAudioSys::EndCapture();
-            if (fGraph)
-                fGraph->SetTitle("Voice Recorder");
+            if (fGraph) {
+                fGraph->SetTitle(ST_LITERAL("Voice Recorder"));
+            }
         }
         DrawTalkIcon(b);
         fMicOpen = b;
@@ -323,7 +318,7 @@ void plVoiceRecorder::Update(double time)
                 float sendRate = ((float)bytesSent / (now - fCaptureOpenSecs)) / 1024.f;
                 // Scale the graph such that 8 KiB/s is the max
                 fGraph->AddData((int32_t)((100.f * sendRate) / 8.f));
-                fGraph->SetTitle(ST::format("{.2f} KiB/s", sendRate).c_str());
+                fGraph->SetTitle(ST::format("{.2f} KiB/s", sendRate));
             }
             fCaptureOpenSecs = now;
         }

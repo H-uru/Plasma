@@ -128,6 +128,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 #include <string_theory/string>
+#include <utility>
 
 //#define MF_TOSSER
 
@@ -2280,7 +2281,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
 
 //// MakeTextFont /////////////////////////////////////////////////////////////
 
-plTextFont  *plDXPipeline::MakeTextFont( char *face, uint16_t size )
+plTextFont* plDXPipeline::MakeTextFont(ST::string face, uint16_t size)
 {
     plTextFont  *font;
 
@@ -2288,7 +2289,7 @@ plTextFont  *plDXPipeline::MakeTextFont( char *face, uint16_t size )
     font = new plDXTextFont( this, fD3DDevice );
     if (font == nullptr)
         return nullptr;
-    font->Create( face, size );
+    font->Create(std::move(face), size);
     font->Link( &fTextFontRefList );
 
     return font;
@@ -9811,9 +9812,8 @@ void    plDXPlateManager::IDrawToDevice( plPipeline *pipe )
         {
             dxPipe->IDrawPlate( plate );
 
-            const char *title = plate->GetTitle();
-            if( plDebugText::Instance().IsEnabled() && title[ 0 ] != 0 )
-            {
+            ST::string title = plate->GetTitle();
+            if (plDebugText::Instance().IsEnabled() && !title.empty()) {
                 hsPoint3 pt;
                 pt.Set( 0, -0.5, 0 );
                 pt = plate->GetTransform() * pt;
@@ -9829,26 +9829,21 @@ void    plDXPlateManager::IDrawToDevice( plPipeline *pipe )
                 hsPoint3        pt, pt2;
                 int             i;
 
-                if( graph->GetLabelText( 0 )[ 0 ] != 0 )
-                {
+                uint32_t numLabels = graph->GetNumLabels();
+                if (numLabels > 0) {
                     /// Draw key
-                    const char *str;
-
                     pt.Set( -0.5, -0.5, 0 );
                     pt = plate->GetTransform() * pt;
                     pt.fX = pt.fX * scrnWidthDiv2 + scrnWidthDiv2;
                     pt.fY = pt.fY * scrnHeightDiv2 + scrnHeightDiv2;
                     pt.fY += plDebugText::Instance().GetFontHeight();
 
-                    uint32_t numLabels = graph->GetNumLabels();
                     if (numLabels > graph->GetNumColors())
                         numLabels = graph->GetNumColors();
 
                     for( i = 0; i < numLabels; i++ )
                     {
-                        str = graph->GetLabelText( i );
-                        if( str[ 0 ] == 0 )
-                            break;
+                        ST::string str = graph->GetLabelText(i);
 
                         pt2 = pt;
                         pt2.fX -= plDebugText::Instance().CalcStringWidth( str );

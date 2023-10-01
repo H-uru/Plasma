@@ -447,7 +447,7 @@ void plAvBrainCritter::RemoveReceiver(const plKey& key)
 
 void plAvBrainCritter::DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebugText& debugTxt)
 {
-    debugTxt.DrawString(x, y, "Brain type: Critter", 0, 255, 255);
+    debugTxt.DrawString(x, y, ST_LITERAL("Brain type: Critter"), 0, 255, 255);
     y += lineHeight;
 
     // extract the name from the behavior running

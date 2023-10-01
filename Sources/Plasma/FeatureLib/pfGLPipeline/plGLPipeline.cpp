@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsWindows.h"
 
+#include <string_theory/string>
+
 #include "plPipeline/hsWinRef.h"
 
 #include "plGLPipeline.h"
@@ -79,7 +81,7 @@ bool plGLPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>& vis
 void plGLPipeline::Render(plDrawable* d, const std::vector<int16_t>& visList)
 {}
 
-plTextFont* plGLPipeline::MakeTextFont(char* face, uint16_t size)
+plTextFont* plGLPipeline::MakeTextFont(ST::string face, uint16_t size)
 {
     return nullptr;
 }

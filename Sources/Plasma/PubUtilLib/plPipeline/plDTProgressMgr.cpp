@@ -201,7 +201,7 @@ bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress 
     // draw the title
     if (!prog->GetTitle().empty()) {
         y -= downsz;
-        text.DrawString_TEMP(x, y, prog->GetTitle(), kTitleColor);
+        text.DrawString(x, y, prog->GetTitle(), kTitleColor);
         y += downsz;
         drew_something = true;
     }
@@ -232,14 +232,14 @@ bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress 
 
     // draw the left justified status text
     if (!prog->GetStatusText().empty()) {
-        text.DrawString_TEMP(x, y, prog->GetStatusText(), kInfoColor);
+        text.DrawString(x, y, prog->GetStatusText(), kInfoColor);
         drew_something = true;
     }
 
     // draw the right justified info text
     if (!prog->GetInfoText().empty()) {
-        uint16_t right_x = 2 + x + width - text.CalcStringWidth_TEMP(prog->GetInfoText());
-        text.DrawString_TEMP(right_x, y, prog->GetInfoText(), kInfoColor);
+        uint16_t right_x = 2 + x + width - text.CalcStringWidth(prog->GetInfoText());
+        text.DrawString(right_x, y, prog->GetInfoText(), kInfoColor);
         drew_something = true;
     }
 

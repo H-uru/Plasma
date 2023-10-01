@@ -96,11 +96,10 @@ void plAvTaskBrain::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double
 // ----------
 void plAvTaskBrain::DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt)
 {
-    if(fBrain)
-    {
-        debugTxt.DrawString(x, y, "Brain task -- Push New Brain.");
+    if (fBrain) {
+        debugTxt.DrawString(x, y, ST_LITERAL("Brain task -- Push New Brain."));
     } else {
-        debugTxt.DrawString(x, y, "Brain task -- Pop Current Brain.");
+        debugTxt.DrawString(x, y, ST_LITERAL("Brain task -- Pop Current Brain."));
     }
     y += lineHeight;
 }

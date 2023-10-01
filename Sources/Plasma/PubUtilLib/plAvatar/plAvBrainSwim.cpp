@@ -604,21 +604,21 @@ bool plAvBrainSwim::IHandleControlMsg(plControlEventMsg* msg)
 
 void plAvBrainSwim::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, "Brain type: Swim", 0, 255, 255);
+    debugTxt.DrawString(x, y, ST_LITERAL("Brain type: Swim"), 0, 255, 255);
     y += lineHeight;
     
     switch(fMode) {
         case kWading:
-            debugTxt.DrawString(x, y, "Mode: Wading");
+            debugTxt.DrawString(x, y, ST_LITERAL("Mode: Wading"));
             break;
         case kSwimming2D:
-            debugTxt.DrawString(x, y, "Mode: Swimming2D");
+            debugTxt.DrawString(x, y, ST_LITERAL("Mode: Swimming2D"));
             break;
         case kSwimming3D:
-            debugTxt.DrawString(x, y, "Mode: Swimming3D");
+            debugTxt.DrawString(x, y, ST_LITERAL("Mode: Swimming3D"));
             break;
         case kAbort:
-            debugTxt.DrawString(x, y, "Mode: Abort (you should never see this)");
+            debugTxt.DrawString(x, y, ST_LITERAL("Mode: Abort (you should never see this)"));
             break;
         default:
             break;

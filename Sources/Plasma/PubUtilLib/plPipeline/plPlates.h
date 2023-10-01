@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include <string>
+#include <string_theory/string>
 #include <vector>
 
 #include "hsColorRGBA.h"
@@ -81,7 +81,7 @@ class plPlate
         plMipmap        *fMipmap;
         float        fDepth, fOpacity;
         uint32_t          fFlags;
-        char            fTitle[ 64 ];
+        ST::string fTitle;
 
         plPlate         *fNext;
         plPlate         **fPrevPtr;
@@ -122,11 +122,11 @@ class plPlate
         void    SetTransform( hsMatrix44 &matrix, bool reSort = true );
         void    SetMaterial( hsGMaterial *material );
         void    SetTexture(plBitmap *texture); // Creates a new single layer material to use the texture.
-        void    SetTitle(const char *title) { if (title != nullptr) strncpy(fTitle, title, sizeof(fTitle)); else fTitle[0] = 0; }
+        void SetTitle(ST::string title) { fTitle = std::move(title); }
 
         hsGMaterial     *GetMaterial() { return fMaterial; }
         hsMatrix44      &GetTransform() { return fXformMatrix; }
-        const char      *GetTitle() { return fTitle; }
+        ST::string GetTitle() { return fTitle; }
         uint32_t          GetFlags() { return fFlags; }
         const plMipmap  *GetMipmap() { return fMipmap; }
 
@@ -160,7 +160,7 @@ class plGraphPlate : public plPlate
         std::vector<uint32_t> fDataHexColors;
         uint32_t          fMin, fMax, fLabelMin, fLabelMax;
         std::vector<int32_t>  fLastValues;
-        std::vector<std::string>    fLabelText;
+        std::vector<ST::string> fLabelText;
 
         uint32_t      IMakePow2( uint32_t value );
         void        IDrawNumber( uint32_t number, uint32_t *dataPtr, uint32_t stride, uint32_t color );
@@ -172,8 +172,7 @@ class plGraphPlate : public plPlate
 
         void    SetDataRange( uint32_t min, uint32_t max, uint32_t width );
         void    SetDataLabels( uint32_t min, uint32_t max );
-        void    SetLabelText(const char *text1, const char *text2 = nullptr, const char *text3 = nullptr, const char *text4 = nullptr);
-        void    SetLabelText(std::vector<std::string> text) { fLabelText = std::move(text); }
+        void SetLabelText(std::vector<ST::string> text) { fLabelText = std::move(text); }
         void    ClearData();
 
         void    AddData( int32_t value, int32_t value2 = -1, int32_t value3 = -1, int32_t value4 = -1 );
@@ -183,7 +182,7 @@ class plGraphPlate : public plPlate
         void    SetDataColors( uint32_t hexColor1 = 0xff00ff00, uint32_t hexColor2 = 0xff0000ff, uint32_t hexColor3 = 0xffffff00, uint32_t hexColor4 = 0xffff00ff );
         void    SetDataColors( const std::vector<uint32_t> & hexColors );
 
-        const char      *GetLabelText( int i ) { return fLabelText[ i ].c_str(); }
+        ST::string GetLabelText(int i) { return fLabelText[i]; }
         uint32_t        GetDataColor( int i ) { return fDataHexColors[ i ]; }
         uint32_t        GetNumLabels() { return (uint32_t)fLabelText.size(); }
         uint32_t        GetNumColors() { return (uint32_t)fDataHexColors.size(); }

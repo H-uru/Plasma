@@ -327,7 +327,7 @@ bool plAutoProfileImp::MsgReceive(plMessage* msg)
     if (evalMsg)
     {
         if (fStatusMessage.size() > 0)
-            plDebugText::Instance().DrawString(10, 10, fStatusMessage.c_str());
+            plDebugText::Instance().DrawString(10, 10, fStatusMessage);
     }
 
     plAgeLoadedMsg* ageLoaded = plAgeLoadedMsg::ConvertNoRef(msg);

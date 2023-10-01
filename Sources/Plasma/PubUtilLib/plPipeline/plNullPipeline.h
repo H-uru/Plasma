@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plNullPipeline_inc_
 #define _plNullPipeline_inc_
 
+#include <string_theory/string>
+
 #include "pl3DPipeline.h"
 
 class plNullPipelineDevice
@@ -71,7 +73,7 @@ public:
 
     bool PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override { return false; }
     bool PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override { return false; }
-    plTextFont* MakeTextFont(char* face, uint16_t size) override { return nullptr; }
+    plTextFont* MakeTextFont(ST::string face, uint16_t size) override { return nullptr; }
     void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override { }
     void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override { }
     bool OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) override { return false; }

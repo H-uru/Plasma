@@ -2661,7 +2661,7 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
     {
         y += lineHeight;
 
-        debugTxt.DrawString(x, y, "ItemsWorn:");
+        debugTxt.DrawString(x, y, ST_LITERAL("ItemsWorn:"));
         y += lineHeight;
         ST::string_stream outfit;
         int itemCount = 0; 
@@ -2695,7 +2695,7 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
     {
         y += lineHeight;
 
-        debugTxt.DrawString(x, y, "Relevance Regions:");
+        debugTxt.DrawString(x, y, ST_LITERAL("Relevance Regions:"));
         y += lineHeight;
         debugTxt.DrawString(x, y, ST::format("          In: {}",
                 plRelevanceMgr::Instance()->GetRegionNames(fRegionsImIn)));

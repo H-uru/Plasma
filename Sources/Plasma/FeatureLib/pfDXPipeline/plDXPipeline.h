@@ -557,7 +557,7 @@ public:
     void                        LoadResources() override;    // Tells us where it's a good time to load in unmanaged resources.
 
     // Create a debug text font object
-    plTextFont      *MakeTextFont(char *face, uint16_t size) override;
+    plTextFont* MakeTextFont(ST::string face, uint16_t size) override;
 
     // Create and/or Refresh geometry buffers
     void            CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
