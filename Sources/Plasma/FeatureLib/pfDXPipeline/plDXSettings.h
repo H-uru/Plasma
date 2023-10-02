@@ -73,6 +73,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// General Settings /////////////////////////////////////////////////////////
 
+class plLightInfo;
 class plRenderRequest;
 class plRenderTarget;
 struct IDirect3DSurface9;
