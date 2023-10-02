@@ -1222,7 +1222,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
     }
     else if( plRenderMsg::ConvertNoRef( msg ) )
     {
-        plProfile_BeginLap(PalletteHack, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_BeginLap(PalletteHack, this->GetKey()->GetUoid().GetObjectName());
     
         IUpdateMatrixPaletteBoundsHack();
 
@@ -1233,7 +1233,7 @@ bool plDrawableSpans::MsgReceive( plMessage* msg )
         // The pipeline will then clear out those bits as it blends them, and then we simply
         // re-set them here, since plRenderMsg is sent once before all the rendering is done :)
         fFakeBlendingSpanVector = fBlendingSpanVector;
-        plProfile_EndLap(PalletteHack, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_EndLap(PalletteHack, this->GetKey()->GetUoid().GetObjectName());
     
         return true;
     }
@@ -1433,7 +1433,7 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
 {
     plProfile_Inc(FaceSortCalls);
 
-    plProfile_BeginLap(FaceSort, "0");
+    plProfile_BeginLap(FaceSort, ST_LITERAL("0"));
 
     plIcicle            *span = (plIcicle *)fSpans[ index ];
     plGBufferTriangle   *list, temp;
@@ -1462,8 +1462,8 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
     tempTriList.resize(numTris * 3);
     elem = sortList.data();
 
-    plProfile_EndLap(FaceSort, "0");
-    plProfile_BeginLap(FaceSort, "1");
+    plProfile_EndLap(FaceSort, ST_LITERAL("0"));
+    plProfile_BeginLap(FaceSort, ST_LITERAL("1"));
 
     hsVector3 vec(w2cMatrix.fMap[2][0], w2cMatrix.fMap[2][1], w2cMatrix.fMap[2][2]);
     float trans = w2cMatrix.fMap[2][3];
@@ -1478,15 +1478,15 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
     }
     elem[i - 1].fNext = nullptr;
 
-    plProfile_EndLap(FaceSort, "1");
-    plProfile_BeginLap(FaceSort, "2");
+    plProfile_EndLap(FaceSort, ST_LITERAL("1"));
+    plProfile_BeginLap(FaceSort, ST_LITERAL("2"));
 
     // Do da sort thingy
     hsRadixSort         rad;
     hsRadixSort::Elem   *sortedList = rad.Sort( elem, 0 );
 
-    plProfile_EndLap(FaceSort, "2");
-    plProfile_BeginLap(FaceSort, "3");
+    plProfile_EndLap(FaceSort, ST_LITERAL("2"));
+    plProfile_BeginLap(FaceSort, ST_LITERAL("3"));
 
     uint16_t* indices = tempTriList.data();
     // Stuff into the temp array
@@ -1498,8 +1498,8 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
         elem = elem->fNext;
     }
 
-    plProfile_EndLap(FaceSort, "3");
-    plProfile_BeginLap(FaceSort, "4");
+    plProfile_EndLap(FaceSort, ST_LITERAL("3"));
+    plProfile_BeginLap(FaceSort, ST_LITERAL("4"));
 
     /// Now send them on to the buffer group
     fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
@@ -1515,7 +1515,7 @@ void    plDrawableSpans::SortSpan( uint32_t index, plPipeline *pipe )
     /// All done! (force buffer groups to refresh during next render call)
     fReadyToRender = false;
 
-    plProfile_EndLap(FaceSort, "4");
+    plProfile_EndLap(FaceSort, ST_LITERAL("4"));
 }
 
 //// SortVisibleSpans ////////////////////////////////////////////////////////
@@ -1757,7 +1757,7 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
 
     plProfile_EndTiming(FaceSort);
 
-    plProfile_BeginLap(FaceSort, "0");
+    plProfile_BeginLap(FaceSort, ST_LITERAL("0"));
 
     startIndex.resize(fSpans.size());
 
@@ -1777,7 +1777,7 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
     }
     if( totTris == 0 )
     {
-        plProfile_EndLap(FaceSort, "0");
+        plProfile_EndLap(FaceSort, ST_LITERAL("0"));
         return;
     }
 
@@ -1788,12 +1788,12 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
 
     hsRadixSort::Elem* elem = sortScratch.data();
 
-    plProfile_EndLap(FaceSort, "0");
+    plProfile_EndLap(FaceSort, ST_LITERAL("0"));
 
     size_t iVis = 0;
     while (iVis < visList.size())
     {
-        plProfile_BeginLap(FaceSort, "1");
+        plProfile_BeginLap(FaceSort, ST_LITERAL("1"));
 
         // Pack them into the sort structure. We probably want to make the 
         // plGBufferTriangle look like plTriSortData (just add span index) 
@@ -1824,15 +1824,15 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
         }
         elem[cnt-1].fNext = nullptr;
 
-        plProfile_EndLap(FaceSort, "1");
-        plProfile_BeginLap(FaceSort, "2");
+        plProfile_EndLap(FaceSort, ST_LITERAL("1"));
+        plProfile_BeginLap(FaceSort, ST_LITERAL("2"));
 
         // Actual sort
         hsRadixSort         rad;
         hsRadixSort::Elem* sortedList = rad.Sort( elem, 0 );
 
-        plProfile_EndLap(FaceSort, "2");
-        plProfile_BeginLap(FaceSort, "3");
+        plProfile_EndLap(FaceSort, ST_LITERAL("2"));
+        plProfile_BeginLap(FaceSort, ST_LITERAL("3"));
 
         counters.assign(fSpans.size(), 0);
 
@@ -1853,10 +1853,10 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
             sortedList = sortedList->fNext;
         }
 
-        plProfile_EndLap(FaceSort, "3");
+        plProfile_EndLap(FaceSort, ST_LITERAL("3"));
     }
 
-    plProfile_BeginLap(FaceSort, "4");
+    plProfile_BeginLap(FaceSort, ST_LITERAL("4"));
 
     constexpr size_t kMaxBufferGroups = 20;
     constexpr size_t kMaxIndexBuffers = 20;
@@ -1882,7 +1882,7 @@ void plDrawableSpans::SortVisibleSpans(const std::vector<int16_t>& visList, plPi
                                                       span->fILength / 3, triList.data() + startIndex[idx]);
     }
 
-    plProfile_EndLap(FaceSort, "4");
+    plProfile_EndLap(FaceSort, ST_LITERAL("4"));
 
     fReadyToRender = false;
 
