@@ -2400,6 +2400,10 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
     }
 }
 
+// ISelectLights ///////////////////////////////////////////////////////////////
+// Find the strongest numLights lights to illuminate the span with.
+// Weaker lights are faded out in effect so they won't pop when the
+// strongest N changes membership.
 void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj)
 {
     const size_t numLights = kMetalMaxLightCount;
@@ -2433,12 +2437,7 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
         /// fade them out to nothing as they get closer to the bottom. This way, they fade
         /// out of existence instead of pop out.
 
-        //FIXME: In Metal, I'm not sure what this is doing. These lights won't be visible, and visible lights are always fully scaled.
-        // Note from the DX version of the source:
-        // Find the strongest numLights lights to illuminate the span with.
-        // Weaker lights are faded out in effect so they won't pop when the
-        // strongest N changes membership.
-        /*if (i < spanLights.size() - 1 && i > 0) {
+        if (i < spanLights.size() - 1 && i > 0) {
             threshhold = span->GetLightStrength(i, proj);
             i--;
             overHold = threshhold * 1.5f;
@@ -2453,8 +2452,7 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
                 IScaleLight(i, (1 - scale) * span->GetLightScale(i, proj));
             }
             startScale = i + 1;
-        }*/
-
+        }
 
         /// Make sure those lights that aren't scaled....aren't
         for (i = 0; i < startScale; i++) {
