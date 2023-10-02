@@ -115,7 +115,7 @@ public:
     /*** VIRTUAL METHODS ***/
     bool PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
     bool PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
-    plTextFont* MakeTextFont(char* face, uint16_t size) override;
+    plTextFont* MakeTextFont(ST::string face, uint16_t size) override;
     bool OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) override;
     bool CloseAccess(plAccessSpan& acc) override;
     void PushRenderRequest(plRenderRequest* req) override;
@@ -255,6 +255,8 @@ private:
     std::vector<plMetalShaderLightSource *> fLightSourceStack;
     
     static plMetalEnumerate enumerator;
+    
+    plTextFont*             fTextFontRefList;
     
     NS::AutoreleasePool* fCurrentPool;
     

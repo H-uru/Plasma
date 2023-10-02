@@ -74,6 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plDrawable/plAuxSpan.h"
 #include "plSurface/plLayerShadowBase.h"
+#include "plMetalTextFont.h"
 
 #include "plGImage/plMipmap.h"
 #include "plGImage/plCubicEnvironmap.h"
@@ -162,6 +163,7 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     fVtxBuffRefList = nullptr;
     fIdxBuffRefList = nullptr;
     fMatRefList = nullptr;
+    fTextFontRefList = nullptr;
     
     fCurrLayerIdx = 0;
     fDevice.fPipeline = this;
@@ -277,8 +279,17 @@ bool plMetalPipeline::PrepForRender(plDrawable *drawable, std::vector<int16_t> &
     return true;
 }
 
-plTextFont *plMetalPipeline::MakeTextFont(char *face, uint16_t size) {
-    return nullptr;
+plTextFont *plMetalPipeline::MakeTextFont(ST::string face, uint16_t size) {
+    plTextFont  *font;
+
+
+    font = new plMetalTextFont( this, fDevice.fMetalDevice );
+    if (font == nullptr)
+        return nullptr;
+    font->Create( face, size );
+    font->Link( &fTextFontRefList );
+
+    return font;
 }
 
 bool plMetalPipeline::OpenAccess(plAccessSpan &dst, plDrawableSpans *d, const plVertexSpan *span, bool readOnly) { return false; }
@@ -3000,6 +3011,9 @@ void plMetalPipeline::IReleaseDynDeviceObjects()
     // themselves from their parent objects yet
     delete fDebugTextMgr;
     fDebugTextMgr = nil;
+    
+    while( fTextFontRefList )
+        delete fTextFontRefList;
 
     while( fRenderTargetRefList )
     {
