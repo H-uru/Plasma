@@ -83,12 +83,12 @@ protected:
     plProfileVar* fShowLaps;
     uint32_t fMinLap; // For Display
 
-    void IPrintGroup(hsStream* s, const char* groupName, bool printTitle=false);
+    void IPrintGroup(hsStream* s, const ST::string& groupName, bool printTitle = false);
     void ILogStats();
 
     plProfileVar* IFindTimer(const ST::string& name);
 
-    void ISetActive(const char* groupName, bool active);
+    void ISetActive(const ST::string& groupName, bool active);
 
     plProfileManagerFull();
 
@@ -99,24 +99,24 @@ public:
     void Update();
 
     void GetGroups(GroupSet& groups);
-    void ShowGroup(const char* groupName);
+    void ShowGroup(const ST::string& groupName);
     void ShowNextGroup();
 
-    struct LapPair { const char* group; const char* varName; };
+    struct LapPair { ST::string group; ST::string varName; };
     typedef std::vector<LapPair> LapNames;
     void GetLaps(LapNames& lapNames);
-    void ShowLaps(const char* groupName, const char* varName);
+    void ShowLaps(const ST::string& groupName, const ST::string& varName);
     void SetMinLap(int m) { fMinLap = m; };
     void PageDownLaps() { fMinLap += 40; }
     void PageUpLaps() { fMinLap = (fMinLap < 40) ? 0 : fMinLap - 40;}
 
-    void CreateGraph(const char* varName, uint32_t min, uint32_t max);
+    void CreateGraph(const ST::string& varName, uint32_t min, uint32_t max);
 
     void ResetDefaultDetailVars();
     void ShowDetailGraph();
     void HideDetailGraph();
-    void AddDetailVar(const char* varName, uint32_t min, uint32_t max);
-    void RemoveDetailVar(const char* varName);
+    void AddDetailVar(const ST::string& varName, uint32_t min, uint32_t max);
+    void RemoveDetailVar(const ST::string& varName);
     void UpdateDetailLabels();
 
     void ResetMax();

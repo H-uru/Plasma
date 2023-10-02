@@ -73,11 +73,8 @@ void plProfileManagerFull::GetGroups(GroupSet& groups)
         groups.insert(fVars[i]->GetGroup());
 }
 
-void plProfileManagerFull::ShowGroup(const char* groupName)
+void plProfileManagerFull::ShowGroup(const ST::string& groupName)
 {
-    if (!groupName)
-        groupName = "General";
-
     // If we're already showing this group, stop
     if (fShowGroups.find(groupName) != fShowGroups.end())
     {
@@ -87,10 +84,10 @@ void plProfileManagerFull::ShowGroup(const char* groupName)
     }
     else
     {
-        const char* shareGroupName = nullptr;
+        ST::string shareGroupName;
         for (int i = 0; i < fVars.size(); i++)
         {
-            if (stricmp(fVars[i]->GetGroup(), groupName) == 0)
+            if (fVars[i]->GetGroup().compare_i(groupName) == 0)
             {
                 shareGroupName = fVars[i]->GetGroup();
             }
@@ -98,7 +95,7 @@ void plProfileManagerFull::ShowGroup(const char* groupName)
 
         // We do have a group with this name, so insert one of the variable's
         // pointers to the name into our list (we can hang on to those pointers)
-        if (shareGroupName)
+        if (!shareGroupName.empty())
         {
             ISetActive(shareGroupName, true);
             CreateStandardGraphs(shareGroupName, true);
@@ -119,7 +116,7 @@ void plProfileManagerFull::ShowNextGroup()
     ST::string nextGroup;
     if (!curGroup.empty())
     {
-        CreateStandardGraphs(curGroup.c_str(), false);
+        CreateStandardGraphs(curGroup, false);
 
         GroupSet::iterator it = groups.find(curGroup);
         it++;
@@ -127,7 +124,7 @@ void plProfileManagerFull::ShowNextGroup()
         {
             nextGroup = *it;
         }
-        ISetActive(curGroup.c_str(), false);
+        ISetActive(curGroup, false);
     }
     else
     {
@@ -137,8 +134,8 @@ void plProfileManagerFull::ShowNextGroup()
     fShowGroups.clear();
     if (!nextGroup.empty())
     {
-        ISetActive(nextGroup.c_str(), true);
-        CreateStandardGraphs(nextGroup.c_str(), true);
+        ISetActive(nextGroup, true);
+        CreateStandardGraphs(nextGroup, true);
         fShowGroups.insert(nextGroup);
     }
 }
@@ -198,7 +195,6 @@ static void PrintColumn(ProfileGroup& group, const ST::string& groupName, int co
 
     for (int i = 0; i < group.size(); i++)
     {
-        char buf[1024];
         ST::string str;
 
         switch (column)
@@ -220,16 +216,13 @@ static void PrintColumn(ProfileGroup& group, const ST::string& groupName, int co
             }
             break;
         case kColValue:
-            group[i]->PrintValue(buf);
-            str = buf;
+            str = group[i]->PrintValue();
             break;
         case kColAvg:
-            group[i]->PrintAvg(buf);
-            str = buf;
+            str = group[i]->PrintAvg();
             break;
         case kColMax:
-            group[i]->PrintMax(buf);
-            str = buf;
+            str = group[i]->PrintMax();
             break;
         case kColIndex:
             str = ST::format("[{3d}]", i + off);
@@ -304,16 +297,14 @@ void plProfileManagerFull::Update()
     int maxX = 0;
 
     int y = 10;
-    GroupSet::iterator it;
-    for (it = fShowGroups.begin(); it != fShowGroups.end(); it++)
-    {
-        ST::string groupName = *it;
-
+    for (const ST::string& groupName : fShowGroups) {
         std::vector<plProfileBase*> group;
 
-        for (int i = 0; i < fVars.size(); i++)
-            if (groupName.compare(fVars[i]->GetGroup()) == 0)
+        for (int i = 0; i < fVars.size(); i++) {
+            if (groupName == fVars[i]->GetGroup()) {
                 group.push_back(fVars[i]);
+            }
+        }
 
         int x = 10;
         PrintGroup(group, groupName, x, y);
@@ -398,21 +389,19 @@ void plProfileManagerFull::ActivateAllStats()
     }
 }
 
-void plProfileManagerFull::IPrintGroup(hsStream* s, const char* groupName, bool printTitle)
+void plProfileManagerFull::IPrintGroup(hsStream* s, const ST::string& groupName, bool printTitle)
 {
-    char buf[256];
-
-    for (int i = 0; i < fVars.size(); i++)
-    {
+    for (int i = 0; i < fVars.size(); i++) {
         plProfileVar* var = fVars[i];
-        if (strcmp(var->GetGroup(), groupName) == 0)
-        {
-            if (printTitle)
-                sprintf(buf, "%s:%s", var->GetGroup(), var->GetName());
-            else
-                var->PrintAvg(buf, false);
+        if (var->GetGroup() == groupName) {
+            ST::string str;
+            if (printTitle) {
+                str = ST::format("{}:{}", var->GetGroup(), var->GetName());
+            } else {
+                str = var->PrintAvg(false);
+            }
 
-            s->Write(strlen(buf), buf);
+            s->WriteString(str);
             s->WriteByte((uint8_t)',');
         }
     }
@@ -457,30 +446,22 @@ void plProfileManagerFull::ILogStats()
         GroupSet groups;
         GetGroups(groups);
 
-        GroupSet::iterator it;
-
         if (!exists)
         {
-            static const char kSpawn[] = "Spawn";
-            s.Write(strlen(kSpawn), kSpawn);
-            s.WriteByte((uint8_t)',');
+            s.WriteString(ST_LITERAL("Spawn,"));
 
-            for (it = groups.begin(); it != groups.end(); it++)
-            {
-                ST::string groupName = *it;
-                IPrintGroup(&s, groupName.c_str(), true);
+            for (const ST::string& groupName : groups) {
+                IPrintGroup(&s, groupName, true);
             }
             s.WriteByte((uint8_t)'\r');
             s.WriteByte((uint8_t)'\n');
         }
 
-        s.Write(fLogSpawnName.size(), fLogSpawnName.c_str());
+        s.WriteString(fLogSpawnName);
         s.WriteByte((uint8_t)',');
 
-        for (it = groups.begin(); it != groups.end(); it++)
-        {
-            ST::string groupName = *it;
-            IPrintGroup(&s, groupName.c_str());
+        for (const ST::string& groupName : groups) {
+            IPrintGroup(&s, groupName);
         }
         s.WriteByte((uint8_t)'\r');
         s.WriteByte((uint8_t)'\n');
@@ -492,7 +473,7 @@ void plProfileManagerFull::ILogStats()
 }
 
 
-void plProfileManagerFull::ShowLaps(const char* groupName, const char* varName)
+void plProfileManagerFull::ShowLaps(const ST::string& groupName, const ST::string& varName)
 {
     plProfileVar* var = nullptr;
 
@@ -502,11 +483,9 @@ void plProfileManagerFull::ShowLaps(const char* groupName, const char* varName)
 
     for (int i = 0; i < fVars.size(); i++)
     {
-        int j = 0;
-        while(fVars[i]->GetName()[j++] == ' ') {}
-        if (stricmp(&(fVars[i]->GetName()[j-1]), varName) == 0 &&
-            stricmp(fVars[i]->GetGroup(), groupName) == 0)
-        {
+        if (fVars[i]->GetName().trim_left(" ").compare_i(varName) == 0 &&
+            fVars[i]->GetGroup().compare_i(groupName) == 0
+        ) {
             var = fVars[i];
             break;
         }
@@ -528,7 +507,7 @@ void plProfileManagerFull::ShowLaps(const char* groupName, const char* varName)
         fShowLaps->SetLapsActive(true);
 }
 
-void plProfileManagerFull::CreateGraph(const char* varName, uint32_t min, uint32_t max)
+void plProfileManagerFull::CreateGraph(const ST::string& varName, uint32_t min, uint32_t max)
 {
     // If the graph is already created, destroy it
     for (int i = 0; i < fGraphs.size(); i++)
@@ -556,16 +535,16 @@ void plProfileManagerFull::CreateGraph(const char* varName, uint32_t min, uint32
 void plProfileManagerFull::ResetDefaultDetailVars()
 {
     fDetailVars.clear();
-    AddDetailVar("ApplyAnimation",0,50);
-    AddDetailVar("AnimatingPhysicals",0,50);
-    AddDetailVar("StoppedAnimPhysicals",0,50);
-    AddDetailVar("DrawableTime",0,50);
-    AddDetailVar("Polys",0,150000);
-    AddDetailVar("Step",0,50);
-    AddDetailVar("LineOfSight",0,50);
-    AddDetailVar("  PhysicsUpdates",0,50);
-    AddDetailVar("Stream Shove Time",0,50);
-    AddDetailVar("RenderSetup",0,50);
+    AddDetailVar(ST_LITERAL("ApplyAnimation"), 0, 50);
+    AddDetailVar(ST_LITERAL("AnimatingPhysicals"), 0, 50);
+    AddDetailVar(ST_LITERAL("StoppedAnimPhysicals"), 0, 50);
+    AddDetailVar(ST_LITERAL("DrawableTime"), 0, 50);
+    AddDetailVar(ST_LITERAL("Polys"), 0, 150000);
+    AddDetailVar(ST_LITERAL("Step"), 0, 50);
+    AddDetailVar(ST_LITERAL("LineOfSight"), 0, 50);
+    AddDetailVar(ST_LITERAL("  PhysicsUpdates"), 0, 50);
+    AddDetailVar(ST_LITERAL("Stream Shove Time"), 0, 50);
+    AddDetailVar(ST_LITERAL("RenderSetup"), 0, 50);
 }
 
 void plProfileManagerFull::ShowDetailGraph()
@@ -593,13 +572,14 @@ void plProfileManagerFull::HideDetailGraph()
     }
 }
 
-void plProfileManagerFull::AddDetailVar(const char* varName, uint32_t min, uint32_t max)
+void plProfileManagerFull::AddDetailVar(const ST::string& varName, uint32_t min, uint32_t max)
 {
     int i=0;
     for (i=0; i<fDetailVars.size(); i++)
     {
-        if (stricmp(fDetailVars[i].var->GetName(), varName) == 0)
+        if (fDetailVars[i].var->GetName().compare_i(varName) == 0) {
             return; // don't add it again
+        }
     }
 
     plProfileVar* var = IFindTimer(varName);
@@ -617,12 +597,12 @@ void plProfileManagerFull::AddDetailVar(const char* varName, uint32_t min, uint3
     UpdateDetailLabels();
 }
 
-void plProfileManagerFull::RemoveDetailVar(const char* varName)
+void plProfileManagerFull::RemoveDetailVar(const ST::string& varName)
 {
     int i=0;
     for (i=0; i<fDetailVars.size(); i++)
     {
-        if (stricmp(fDetailVars[i].var->GetName(), varName) == 0)
+        if (fDetailVars[i].var->GetName().compare_i(varName) == 0)
         {
             fDetailVars.erase(fDetailVars.begin()+i);
         }
@@ -664,12 +644,11 @@ void plProfileManagerFull::ResetMax()
         fVars[i]->ResetMax();
 }
 
-void plProfileManagerFull::ISetActive(const char* groupName, bool active)
+void plProfileManagerFull::ISetActive(const ST::string& groupName, bool active)
 {
     for (int i = 0; i < fVars.size(); i++)
     {
-        if (stricmp(fVars[i]->GetGroup(), groupName) == 0)
-        {
+        if (fVars[i]->GetGroup().compare_i(groupName) == 0) {
             fVars[i]->SetActive(active);
         }
     }

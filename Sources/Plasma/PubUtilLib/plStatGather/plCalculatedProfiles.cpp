@@ -53,7 +53,7 @@ plProfile_CreateMemCounter("Allocated", "Memory", MemAllocated);
 plProfile_CreateMemCounter("Peak Alloc", "Memory", MemPeakAlloc);
 #endif
 
-static plProfileVar gVarRFPS("RFPS", "General", plProfileVar::kDisplayTime | plProfileVar::kDisplayFPS);
+static plProfileVar gVarRFPS(ST_LITERAL("RFPS"), ST_LITERAL("General"), plProfileVar::kDisplayTime | plProfileVar::kDisplayFPS);
 
 plProfile_Extern(DrawTriangles);
 plProfile_Extern(MatChange);
@@ -99,10 +99,9 @@ static bool ICreateStdPlate(plGraphPlate** graph)
     return false;
 }
 
-void CreateStandardGraphs(const char* groupName, bool create)
+void CreateStandardGraphs(const ST::string& groupName, bool create)
 {
-    if (strcmp(groupName, "General") == 0)
-    {
+    if (groupName == "General") {
         if (create)
         {
             if (ICreateStdPlate(&fFPSPlate))

@@ -72,11 +72,11 @@ bool plFollowMod::MsgReceive(plMessage* msg)
     plRenderMsg* rend = plRenderMsg::ConvertNoRef(msg);
     if( rend )
     {
-        plProfile_BeginLap(FollowMod, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_BeginLap(FollowMod, this->GetKey()->GetUoid().GetObjectName());
         fLeaderL2W = rend->Pipeline()->GetCameraToWorld();
         fLeaderW2L = rend->Pipeline()->GetWorldToCamera();
         fLeaderSet = true;
-        plProfile_EndLap(FollowMod, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_EndLap(FollowMod, this->GetKey()->GetUoid().GetObjectName());
         return true;
     }
     plListenerMsg* list = plListenerMsg::ConvertNoRef(msg);

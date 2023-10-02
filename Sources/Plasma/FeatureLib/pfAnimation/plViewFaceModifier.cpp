@@ -274,7 +274,7 @@ bool plViewFaceModifier::MsgReceive(plMessage* msg)
 
     if( rend )
     {
-        plProfile_BeginLap(ViewFace, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_BeginLap(ViewFace, this->GetKey()->GetUoid().GetObjectName());
 
         if( HasFlag(kFaceCam) )
         {
@@ -310,7 +310,7 @@ bool plViewFaceModifier::MsgReceive(plMessage* msg)
 
         IFacePoint(rend->Pipeline(), fFacePoint);
         
-        plProfile_EndLap(ViewFace, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_EndLap(ViewFace, this->GetKey()->GetUoid().GetObjectName());
         return true;
     }
     plArmatureUpdateMsg* armMsg = plArmatureUpdateMsg::ConvertNoRef(msg);

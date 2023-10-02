@@ -1617,7 +1617,7 @@ bool plClient::IUpdate()
     plgDispatch::MsgSend(eval);
     plProfile_EndTiming(EvalMsg);
 
-    const char *xFormLap1 = "Main";
+    const ST::string xFormLap1 = ST_LITERAL("Main");
     plProfile_BeginLap(TransformMsg, xFormLap1);
     plTransformMsg* xform = new plTransformMsg(nullptr, nullptr, nullptr, nullptr);
     plgDispatch::MsgSend(xform);
@@ -1635,7 +1635,7 @@ bool plClient::IUpdate()
     // At this point, we just register for a plDelayedTransformMsg when dirtied.
     if (!plCoordinateInterface::GetDelayedTransformsEnabled())
     {
-        const char *xFormLap2 = "Simulation";
+        const ST::string xFormLap2 = ST_LITERAL("Simulation");
         plProfile_BeginLap(TransformMsg, xFormLap2);
         xform = new plTransformMsg(nullptr, nullptr, nullptr, nullptr);
         plgDispatch::MsgSend(xform);
@@ -1643,7 +1643,7 @@ bool plClient::IUpdate()
     }
     else
     {
-        const char *xFormLap3 = "Delayed";
+        const ST::string xFormLap3 = ST_LITERAL("Delayed");
         plProfile_BeginLap(TransformMsg, xFormLap3);
         xform = new plDelayedTransformMsg(nullptr, nullptr, nullptr, nullptr);
         plgDispatch::MsgSend(xform);

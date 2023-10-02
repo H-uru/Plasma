@@ -242,7 +242,7 @@ bool plAGMasterMod::IEval(double secs, float del, uint32_t dirty)
 // APPLYANIMATIONS
 void plAGMasterMod::ApplyAnimations(double time, float elapsed)
 {
-    plProfile_BeginLap(ApplyAnimation, this->GetKey()->GetUoid().GetObjectName().c_str());
+    plProfile_BeginLap(ApplyAnimation, this->GetKey()->GetUoid().GetObjectName());
 
     // update any fades
     for (int i = 0; i < fAnimInstances.size(); i++)
@@ -252,7 +252,7 @@ void plAGMasterMod::ApplyAnimations(double time, float elapsed)
     
     AdvanceAnimsToTime(time);
 
-    plProfile_EndLap(ApplyAnimation,this->GetKey()->GetUoid().GetObjectName().c_str());
+    plProfile_EndLap(ApplyAnimation,this->GetKey()->GetUoid().GetObjectName());
 }
 
 void plAGMasterMod::AdvanceAnimsToTime(double time)

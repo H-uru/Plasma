@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/hsKeyedObject.h"
 
+namespace ST { class string; }
+
 class plAutoProfile : public hsKeyedObject
 {
 public:
@@ -52,8 +54,8 @@ public:
 
     static plAutoProfile* Instance();
 
-    // If ageName is nil, do all ages
-    virtual void StartProfile(const char* ageName = nullptr) = 0;
+    // If ageName is empty, do all ages
+    virtual void StartProfile(ST::string ageName) = 0;
 
     // For when we just want to link to each age, for other reasons (profiling load times)
     virtual void LinkToAllAges()=0;

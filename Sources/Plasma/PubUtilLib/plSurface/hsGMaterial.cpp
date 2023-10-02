@@ -262,7 +262,7 @@ void hsGMaterial::Read(hsStream *stream, hsResMgr *group)
 
 void hsGMaterial::Eval(double secs, uint32_t frame)
 {
-    plProfile_BeginLap(MaterialAnims, GetKeyName().c_str());
+    plProfile_BeginLap(MaterialAnims, GetKeyName());
 
     for (size_t i = 0; i < GetNumLayers(); i++)
     {
@@ -275,7 +275,7 @@ void hsGMaterial::Eval(double secs, uint32_t frame)
             fPiggyBacks[i]->Eval(secs, frame, 0);
     }
 
-    plProfile_EndLap(MaterialAnims, GetKeyName().c_str());
+    plProfile_EndLap(MaterialAnims, GetKeyName());
 }
 
 void hsGMaterial::Reset()

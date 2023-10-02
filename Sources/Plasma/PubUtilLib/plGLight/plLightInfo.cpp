@@ -370,7 +370,7 @@ bool plLightInfo::MsgReceive(plMessage* msg)
     plRenderMsg* rendMsg = plRenderMsg::ConvertNoRef(msg);
     if( rendMsg )
     {
-        plProfile_BeginLap(LightInfo, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_BeginLap(LightInfo, this->GetKey()->GetUoid().GetObjectName());
 
         if( !fDeviceRef && !GetProperty(kLPShadowOnly) )
         {
@@ -379,7 +379,7 @@ bool plLightInfo::MsgReceive(plMessage* msg)
 
         ICheckMaxStrength();
 
-        plProfile_EndLap(LightInfo, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_EndLap(LightInfo, this->GetKey()->GetUoid().GetObjectName());
         return true;
     }
     plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg);
