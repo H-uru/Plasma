@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pl3DPipeline_inc_
 
 #include <stack>
+#include <string_theory/string>
 #include <vector>
 
 #include "plPipeline.h"
@@ -683,7 +684,8 @@ public:
     //virtual plMipmap* ExtractMipMap(plRenderTarget* targ) = 0;
 
     /** Return the current error string. */
-    const char* GetErrorString() override {
+    ST::string GetErrorString() override
+    {
         return fDevice.GetErrorString();
     }
 

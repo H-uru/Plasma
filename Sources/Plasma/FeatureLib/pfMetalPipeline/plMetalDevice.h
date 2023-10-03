@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Metal/Metal.hpp>
 #include <QuartzCore/QuartzCore.hpp>
 #include <condition_variable>
+#include <string_theory/string>
 #include <unordered_map>
 
 #include "HeadSpin.h"
@@ -85,7 +86,7 @@ public:
     hsWindowHndl fDevice;
     hsWindowHndl fWindow;
 
-    const char* fErrorMsg;
+    ST::string fErrorMsg;
 
     MTL::RenderCommandEncoder* CurrentRenderCommandEncoder();
     MTL::Device*               fMetalDevice;
@@ -140,7 +141,7 @@ public:
     void MakeTextureRef(TextureRef* tRef, plMipmap* img);
     void MakeCubicTextureRef(TextureRef* tRef, plCubicEnvironmap* img);
 
-    const char* GetErrorString() const { return fErrorMsg; }
+    ST::string GetErrorString() const { return fErrorMsg; }
 
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
