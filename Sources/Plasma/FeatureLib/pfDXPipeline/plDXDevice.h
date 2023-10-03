@@ -54,6 +54,7 @@ class plDXPipeline;
 class plRenderTarget;
 struct IDirect3DDevice9;
 struct IDirect3DSurface9;
+namespace ST { class string; }
 
 class plDXDevice
 {
@@ -98,7 +99,7 @@ public:
     void SetWorldToCameraMatrix(const hsMatrix44& src);
     void SetLocalToWorldMatrix(const hsMatrix44& src);
 
-    const char* GetErrorString() const;
+    ST::string GetErrorString() const;
 };
 
 #endif

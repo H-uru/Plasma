@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsGDirect3DTnLEnumerate_h
 #define hsGDirect3DTnLEnumerate_h
 
+#include <string_theory/string>
 #include <vector>
 
 #include "HeadSpin.h"
@@ -60,9 +61,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct D3DEnum_ModeInfo
 {
     D3DDISPLAYMODE      fDDmode;
-    CHAR                fStrDesc[40];
+    ST::string fStrDesc;
     BOOL                fWindowed;
-    char                fBitDepth;
+    uint8_t fBitDepth;
     DWORD               fDDBehavior;
     std::vector<D3DFORMAT> fDepthFormats;
     std::vector<D3DMULTISAMPLE_TYPE> fFSAATypes;
@@ -82,7 +83,7 @@ struct D3DEnum_ModeInfo
 struct D3DEnum_RendererInfo
 {
     D3DDEVTYPE          fDDType;
-    CHAR                fStrName[40];
+    ST::string fStrName;
     D3DCAPS9            fDDCaps;
     BOOL                fCanWindow;
     BOOL                fCompatibleWithDesktop;
@@ -110,8 +111,8 @@ struct D3DEnum_DisplayInfo
 {
     GUID                 fGuid;
 
-    CHAR                 fStrDesc[40];
-    CHAR                 fStrName[40];
+    ST::string fStrDesc;
+    ST::string fStrName;
 
     unsigned int         fMemory;
 
@@ -136,7 +137,7 @@ class hsG3DDeviceMode;
 class hsGDirect3DTnLEnumerate
 {
 protected:
-    char    fEnumeErrorStr[128];            // Driver & device enumeration error message buffer
+    ST::string fEnumeErrorStr; // Driver & device enumeration error message buffer
 
     std::vector<D3DEnum_DisplayInfo> fDisplays;
 
@@ -160,8 +161,6 @@ public:
 
     VOID    D3DEnum_FreeResources();
 
-    char* GetErrorString() { return (fEnumeErrorStr[0] ? fEnumeErrorStr : nullptr); }
-
     bool SelectFromDevMode(const hsG3DDeviceRecord* devRec, const hsG3DDeviceMode* devMode);
     HRESULT D3DEnum_SelectDefaultMode(int width, int height, int depth);
     HRESULT D3DEnum_SelectDefaultDisplay( DWORD dwFlags );
@@ -177,8 +176,7 @@ public:
     void SetCurrentRenderer(D3DEnum_RendererInfo* d) { hsAssert(GetCurrentDisplay(), "Set Display first"); GetCurrentDisplay()->fCurrentRenderer = d; } 
     void SetCurrentMode(D3DEnum_ModeInfo* m) { hsAssert(GetCurrentDisplay(), "Set Display first"); GetCurrentDisplay()->fCurrentMode = m; } 
 
-    char* GetEnumeErrorStr() { return fEnumeErrorStr; }
-    void SetEnumeErrorStr(const char* s);
+    ST::string GetEnumeErrorStr() { return fEnumeErrorStr; }
 };
 
 

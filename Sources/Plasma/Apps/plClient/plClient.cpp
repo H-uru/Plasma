@@ -495,19 +495,17 @@ bool plClient::InitPipeline(hsWindowHndl display, uint32_t devType)
     }
 
     plPipeline *pipe = ICreatePipeline(display, fWindowHndl, &dmr);
-    if (pipe->GetErrorString() != nullptr)
-    {
+    if (!pipe->GetErrorString().empty()) {
         ISetGraphicsDefaults();
 #ifdef PLASMA_EXTERNAL_RELEASE
         hsMessageBox(ST_LITERAL("There was an error initializing the video card.\nSetting defaults."), ST_LITERAL("Error"), hsMessageBoxNormal);
 #else
-        hsMessageBox(ST::string(pipe->GetErrorString()), ST_LITERAL("Error creating pipeline"), hsMessageBoxNormal);
+        hsMessageBox(pipe->GetErrorString(), ST_LITERAL("Error creating pipeline"), hsMessageBoxNormal);
 #endif
         delete pipe;
         devSel.GetDefault(&dmr);
         pipe = ICreatePipeline(display, fWindowHndl, &dmr);
-        if (pipe->GetErrorString() != nullptr)
-        {
+        if (!pipe->GetErrorString().empty()) {
             // not much else we can do
             return true;
         }

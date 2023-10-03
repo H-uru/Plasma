@@ -59,7 +59,7 @@ public:
     void SetProjectionMatrix(const hsMatrix44& src) { }
     void SetWorldToCameraMatrix(const hsMatrix44& src) { }
     void SetLocalToWorldMatrix(const hsMatrix44& src) { }
-    const char* GetErrorString() const { return nullptr; }
+    ST::string GetErrorString() const { return {}; }
 };
 
 class plNullPipeline : public pl3DPipeline<plNullPipelineDevice>

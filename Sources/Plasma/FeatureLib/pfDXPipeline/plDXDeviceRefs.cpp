@@ -144,7 +144,7 @@ void    plDXVertexBufferRef::Release()
         if (!Volatile())
         {
             plProfile_DelMem(MemVertex, fCount * fVertexSize);
-            PROFILE_POOL_MEM(D3DPOOL_MANAGED, fCount * fVertexSize, false, "VtxBuff");
+            PROFILE_POOL_MEM(D3DPOOL_MANAGED, fCount * fVertexSize, false, ST_LITERAL("VtxBuff"));
             plDXPipeline::FreeManagedVertex(fCount * fVertexSize);
         }
     }
@@ -159,7 +159,7 @@ void    plDXIndexBufferRef::Release()
     if (fD3DBuffer != nullptr)
     {
         plProfile_DelMem(MemIndex, fCount * sizeof(uint16_t));
-        PROFILE_POOL_MEM(fPoolType, fCount * sizeof(uint16_t), false, "IndexBuff");
+        PROFILE_POOL_MEM(fPoolType, fCount * sizeof(uint16_t), false, ST_LITERAL("IndexBuff"));
         ReleaseObject( fD3DBuffer );
     }
 
@@ -221,7 +221,7 @@ void    plDXTextureRef::Release()
 {
     plProfile_DelMem(MemTexture, fDataSize + sizeof(plDXTextureRef));
     plProfile_Extern(ManagedMem);
-    PROFILE_POOL_MEM(D3DPOOL_MANAGED, fDataSize, false, (fOwner ? fOwner->GetKey() ? fOwner->GetKey()->GetUoid().GetObjectName().c_str() : "(UnknownTexture)" : "(UnknownTexture)"));
+    PROFILE_POOL_MEM(D3DPOOL_MANAGED, fDataSize, false, fOwner && fOwner->GetKey() ? fOwner->GetKey()->GetUoid().GetObjectName() : ST_LITERAL("(UnknownTexture)"));
     plDXPipeline::FreeManagedTexture(fDataSize);
     fDataSize = 0;
 
