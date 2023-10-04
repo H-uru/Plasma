@@ -22,5 +22,4 @@ endif()
 
 if(PLASMA_BUILD_TOOLS)
     add_subdirectory(SoundDecompress)
-    add_subdirectory(plPythonPack)
 endif()

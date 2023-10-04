@@ -10,6 +10,7 @@ if(PLASMA_BUILD_TOOLS)
     add_subdirectory(plFileSecure)
     add_subdirectory(plPageInfo)
     add_subdirectory(plPageOptimizer)
+    add_subdirectory(plPythonPack)
 
     if(Qt_FOUND)
         add_subdirectory(plLocalizationEditor)
