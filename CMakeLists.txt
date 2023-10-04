@@ -203,12 +203,17 @@ endif(MSVC)
 
 set(PLASMA_SOURCE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Plasma")
 set(PLASMA_TOOLS_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Tools")
+set(PLASMA_MAX_PLUGIN_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/MaxPlugin")
 
 add_subdirectory(Scripts)
 add_subdirectory(Sources/Plasma)
 
 if(PLASMA_BUILD_TOOLS)
     add_subdirectory(Sources/Tools)
+endif()
+
+if(PLASMA_BUILD_MAX_PLUGIN)
+    add_subdirectory(Sources/MaxPlugin)
 endif()
 
 if(PLASMA_BUILD_TESTS)

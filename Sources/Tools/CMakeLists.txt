@@ -27,13 +27,3 @@ endif()
 if(TARGET freetype AND Qt_FOUND)
     add_subdirectory(plFontConverter)
 endif()
-
-# Max Stuff goes below here...
-if(PLASMA_BUILD_MAX_PLUGIN)
-    add_subdirectory(MaxComponent)
-    add_subdirectory(MaxConvert)
-    add_subdirectory(MaxExport)
-    add_subdirectory(MaxMain)
-    add_subdirectory(MaxPlasmaLights)
-    add_subdirectory(MaxPlasmaMtls)
-endif()
