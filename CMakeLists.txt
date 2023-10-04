@@ -206,7 +206,10 @@ set(PLASMA_TOOLS_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Sources/Tools")
 
 add_subdirectory(Scripts)
 add_subdirectory(Sources/Plasma)
-add_subdirectory(Sources/Tools)
+
+if(PLASMA_BUILD_TOOLS)
+    add_subdirectory(Sources/Tools)
+endif()
 
 if(PLASMA_BUILD_TESTS)
     enable_testing()
