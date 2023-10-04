@@ -21,6 +21,7 @@ if(APPLE)
 endif()
 
 if(PLASMA_BUILD_TOOLS)
+    add_subdirectory(SoundDecompress)
     add_subdirectory(plPythonPack)
     add_subdirectory(plFileSecure)
     add_subdirectory(plFileEncrypt)
