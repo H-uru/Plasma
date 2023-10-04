@@ -6,6 +6,7 @@ include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
 if(PLASMA_BUILD_TOOLS)
     add_subdirectory(plSystemInfo)
     add_subdirectory(plFilePatcher)
+    add_subdirectory(plFileSecure)
     add_subdirectory(plPageInfo)
     add_subdirectory(plPageOptimizer)
 
