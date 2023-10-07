@@ -236,8 +236,7 @@ void plWGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
 
 void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    IGNORE_WARNINGS_BEGIN("deprecated-declarations")
     CGLPixelFormatObj pix = nullptr;
     CGLContextObj ctx = nullptr;
 
@@ -275,7 +274,7 @@ void plCGLEnumerate(std::vector<hsG3DDeviceRecord>& records)
 
     if (pix)
         CGLReleasePixelFormat(pix);
-#pragma clang diagnostic pop
+    IGNORE_WARNINGS_END
 }
 #endif // HS_BUILD_FOR_MACOS
 
