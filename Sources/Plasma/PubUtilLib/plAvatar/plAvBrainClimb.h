@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef plAvBrainClimb_Include
 #define plAvBrainClimb_Include
-#pragma once
 
 /////////////////////////////////////////////////////////////////
 //
