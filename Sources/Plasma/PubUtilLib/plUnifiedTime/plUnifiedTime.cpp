@@ -226,17 +226,10 @@ int plUnifiedTime::GetMillis() const
     return fMicros/1000;
 }
 
-#ifdef _MSC_VER
-#   pragma optimize( "g", off )    // disable global optimizations
-#endif
 double plUnifiedTime::GetSecsDouble() const
 {
-    double ret = GetSecs() + GetMicros() / 1000000.0;
-    return ret;
+    return GetSecs() + GetMicros() / 1000000.0;
 }
-#ifdef _MSC_VER
-#   pragma optimize( "", on )  // restore optimizations to their defaults
-#endif
 
 void plUnifiedTime::Read(hsStream* s)
 {

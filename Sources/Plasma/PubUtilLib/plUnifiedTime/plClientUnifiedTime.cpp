@@ -61,9 +61,6 @@ void plClientUnifiedTime::SetSysTime()
 //
 // convert from game clock to unified time
 //
-#ifdef _MSC_VER
-#   pragma optimize( "g", off )    // disable global optimizations
-#endif
 void plClientUnifiedTime::SetFromGameTime(double gameTime)
 {
     SetSecsDouble(gameTime - fSysTimeOffset);
@@ -76,6 +73,3 @@ double plClientUnifiedTime::ConvertToGameTime()
 {
     return GetSecsDouble() + fSysTimeOffset;
 }
-#ifdef _MSC_VER
-#   pragma optimize( "", on )  // restore optimizations to their defaults
-#endif
