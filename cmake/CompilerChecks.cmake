@@ -1,5 +1,4 @@
 # Use LTCG if available.
-cmake_policy(SET CMP0069 NEW)   # gtest projects use old cmake compatibility...
 if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
     include(CheckIPOSupported)
     check_ipo_supported(RESULT _IPO_SUPPORTED LANGUAGES CXX OUTPUT _IPO_OUTPUT)
