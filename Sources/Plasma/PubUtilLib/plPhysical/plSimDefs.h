@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef PLSIMDEFS_H
 #define PLSIMDEFS_H
-#pragma once
 
 namespace plSimDefs
 {
