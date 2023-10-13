@@ -1861,7 +1861,7 @@ bool RecvMsg<Auth2Cli_ServerAddr>(const uint8_t in[], unsigned, void*)
     hsLockGuard(s_critsect);
     if (s_active) {
         s_active->token = msg.token;
-        s_active->addr.SetHost(msg.srvAddr);
+        s_active->addr.SetHost(hsToBE32(msg.srvAddr));
 
         LogMsg(kLogPerf, "SrvAuth addr: {}", s_active->addr.GetHostString());
     }

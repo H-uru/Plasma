@@ -88,7 +88,8 @@ ST::string plNetAddress::AsString() const
 
 void plNetAddress::Read(hsStream * s)
 {
-    fHost = s->ReadLE32();
+    // No endianness conversion here - fHost is always big-endian in memory and in the stream!
+    s->Read(sizeof(fHost), &fHost);
     fPort = s->ReadLE16();
 
     // Family is always kInet
@@ -97,7 +98,8 @@ void plNetAddress::Read(hsStream * s)
 
 void plNetAddress::Write(hsStream * s)
 {
-    s->WriteLE32(fHost);
+    // No endianness conversion here - fHost is always big-endian in memory and in the stream!
+    s->Write(sizeof(fHost), &fHost);
     s->WriteLE16(fPort);
 
     s->WriteLE16(static_cast<uint16_t>(Family::kInet));
