@@ -78,6 +78,11 @@ public:
     bool operator==(const plKeyData* rhs) const { return fKeyData == rhs; }
     bool operator!=(const plKey& rhs) const { return !(*this == rhs); }
     bool operator!=(const plKeyData* rhs) const { return !(*this == rhs); }
+    // Ordering operators for stdlib containers, etc. that rely on < (std::less) by default
+    bool operator<(const plKey& rhs) const { return fKeyData < rhs.fKeyData; }
+    bool operator>(const plKey& rhs) const { return fKeyData > rhs.fKeyData; }
+    bool operator<=(const plKey& rhs) const { return fKeyData <= rhs.fKeyData; }
+    bool operator>=(const plKey& rhs) const { return fKeyData >= rhs.fKeyData; }
 
     plKeyData* operator->() const;
     plKeyData& operator*() const;
