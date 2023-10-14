@@ -518,7 +518,7 @@ void plKeyImp::INotifySelf(hsKeyedObject* ko)
                     // GetNumReceivers() should always be 1 for a refMsg.
                     for (int k = 0; k < refMsg->GetNumReceivers(); k++)
                     {
-                        if (&(*refMsg->GetReceiver(k)) == (plKeyData*)this)
+                        if (refMsg->GetReceiver(k) == this)
                         {
                             ref->SetNotified(j);
                             ref->SatisfyPending(refMsg);
@@ -612,7 +612,7 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
         plMessage* rcvMsg = iTargetKey->GetNotifyCreated(i);
         for (int j = 0; j < rcvMsg->GetNumReceivers(); j++)
         {
-            if (&(*rcvMsg->GetReceiver(j)) == (plKeyData*)this)
+            if (rcvMsg->GetReceiver(j) == this)
             {
                 isActive = iTargetKey->IsActiveRef(iTarg = (hsSsize_t)i);
                 break;
