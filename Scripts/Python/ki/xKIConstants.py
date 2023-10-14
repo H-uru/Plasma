@@ -52,7 +52,7 @@ kContentListScrollSize = 5
 kJalakPythonComponent = "cPythField"
 
 ## Keys to ignore (Escape, Enter, Space).
-kDefaultKeyIgnoreList = [ 10, 27, 32 ]
+kDefaultKeyIgnoreList = [10, 27, 32]
 
 # "New Item" alerts (flashing KI and Relto Book).
 kAlertTimeDefault = 10.0
@@ -64,7 +64,7 @@ kAlertBookAlert = 61
 kMessageHistoryListMax = 50
 
 ## KI light responders.
-kListLightResps = ["respKILightOff","respKILightOn" ]
+kListLightResps = ["respKILightOff", "respKILightOn"]
 
 ## The name of the KI light scene object.
 kKILightObjectName = "RTOmniKILight"
@@ -110,97 +110,97 @@ kColorNames = {
 ##     *Default Value*: Comma-separated list of player names from GetPlayersInChatDistance
 ##         OR " nobody in particular." if there are no nearby players
 kEasterEggs = {
-    "city" : {
-        "see" : "You see the remnants of a great civilization, ready to be rebuilt. Where are the flying monkeys?",
-        "exits" : " NorthWest and South."
+    "city": {
+        "see": "You see the remnants of a great civilization, ready to be rebuilt. Where are the flying monkeys?",
+        "exits": " NorthWest and South."
     },
-    "Personal" : {
-        "see" : "You see a small hut... looks deserted.",
-        "exits" : None
+    "Personal": {
+        "see": "You see a small hut... looks deserted.",
+        "exits": None
     },
-    "Teledahn" : {
-        "see" : "You see 'shrooms everywhere! Big ones, small ones. Are they edible?",
-        "exits" : " East."
+    "Teledahn": {
+        "see": "You see 'shrooms everywhere! Big ones, small ones. Are they edible?",
+        "exits": " East."
     },
-    "Nexus" : {
-        "see" : "You see a jukebox-like machine.",
-        "exits" : None
+    "Nexus": {
+        "see": "You see a jukebox-like machine.",
+        "exits": None
     },
-    "Garden" : {
-        "see" : "You see bugs. BUGS! I hate bugs.",
-        "exits" : " North and South."
+    "Garden": {
+        "see": "You see bugs. BUGS! I hate bugs.",
+        "exits": " North and South."
     },
-    "EderTsogal" : {
-        "see" : "You see grass, water and things floating in the air (not feathers).",
-        "exits" : " North. But you'll have to climb or fly to get there."
+    "EderTsogal": {
+        "see": "You see grass, water and things floating in the air (not feathers).",
+        "exits": " North. But you'll have to climb or fly to get there."
     },
-    "Dereno" : {
-        "see" : "Ah, Dah-Ree-Toe. You see... Well, if someone would clean those stupid windows you could see a *lot*. Have I been here before? Maybe all pods just look the same.",
-        "exits" : " SouthWest and East. But they are both blocked."
+    "Dereno": {
+        "see": "Ah, Dah-Ree-Toe. You see... Well, if someone would clean those stupid windows you could see a *lot*. Have I been here before? Maybe all pods just look the same.",
+        "exits": " SouthWest and East. But they are both blocked."
     },
-    "BahroCave" : {
-        "see" : "You see a darkly lit cavern. Strange images on the wall next to you, flickering in the subdued light.Be afraid. Be very afraid!",
-        "exits" : " North, West and East. But they are blocked by a large hole in the floor."
+    "BahroCave": {
+        "see": "You see a darkly lit cavern. Strange images on the wall next to you, flickering in the subdued light.Be afraid. Be very afraid!",
+        "exits": " North, West and East. But they are blocked by a large hole in the floor."
     },
-    "Minkata" : {
-        "see" : "You see sand and dust in all directions. Above you there is a filtered sun or two... or more. Somewhere there is a horse with no name.",
-        "exits" : " East. Nine days away."
+    "Minkata": {
+        "see": "You see sand and dust in all directions. Above you there is a filtered sun or two... or more. Somewhere there is a horse with no name.",
+        "exits": " East. Nine days away."
     },
-    "Cleft" : {
-        "see" : "You see sand for as far as the eye can see. Gonna need a vehicle of some sort.",
-        "exits" : "... well, I don't know. Maybe you can ask the old man (if he ever stops listening to that music!).",
-        "people" : " an old man. Ok, maybe he's not standing. BTW, wasn't he on M*A*S*H?"
+    "Cleft": {
+        "see": "You see sand for as far as the eye can see. Gonna need a vehicle of some sort.",
+        "exits": "... well, I don't know. Maybe you can ask the old man (if he ever stops listening to that music!).",
+        "people": " an old man. Ok, maybe he's not standing. BTW, wasn't he on M*A*S*H?"
     },
-    "GoMePubNew" : {
-        "see" : "You are in a festively yet dimly lit Pub. The echoes of Messenger work and play echo along the walls of the massive main chamber.",
-        "exits" : "... wait, where ARE the exits? Who built this place anyway?",
-        "people" : " a large group of people... unless you are here by yourself... in which case, you don't."
+    "GoMePubNew": {
+        "see": "You are in a festively yet dimly lit Pub. The echoes of Messenger work and play echo along the walls of the massive main chamber.",
+        "exits": "... wait, where ARE the exits? Who built this place anyway?",
+        "people": " a large group of people... unless you are here by yourself... in which case, you don't."
     },
-    "ChisoPreniv" : {
-        "see" : "All around you are bookshelves upon bookshelves but not a book to read. To the south is a large set of windows that reveal a vast landscape that you'll never be able to access.",
-        "exits" : "... I guess in this library, the only exit is through the window, but let's not do that."
+    "ChisoPreniv": {
+        "see": "All around you are bookshelves upon bookshelves but not a book to read. To the south is a large set of windows that reveal a vast landscape that you'll never be able to access.",
+        "exits": "... I guess in this library, the only exit is through the window, but let's not do that."
     }
 }
 
 ## Constants for Age display names.
 class kAges:
     Display = {
-        "Ae'gura" : "D'ni-Ae'gura",
-        "AhnonayCathedral" : "Ahnonay Cathedral",
-        "AvatarCustomization" : "Avatar Customization",
-        "BaronCityOffice" : "D'ni-Ae'gura",
-        "city" : "D'ni-Ae'gura",
-        "Cleft" : "D'ni-Riltagamin",
-        "Descent" : "D'ni-Tiwah",
-        "EderDelin" : "Eder Delin",
-        "EderTsogal" : "Eder Tsogal",
-        "Er'canaCitySilo" : "D'ni-Ashem'en",
-        "ErcanaCitySilo" : "D'ni-Ashem'en",
-        "GreatTreePub" : "D'ni-Watcher's Pub",
-        "Great Zero" : "D'ni-Rezeero",
-        "GreatZero" : "D'ni-Rezeero",
-        "GuildPub-Cartographers" : "D'ni-Cartographers' Pub",
-        "GuildPub-Greeters" : "D'ni-Greeters' Pub",
-        "GuildPub-Maintainers" : "D'ni-Maintainers' Pub",
-        "GuildPub-Messengers" : "D'ni-Messengers' Pub",
-        "GuildPub-Writers" : "D'ni-Writers' Pub",
-        "Kirel" : "D'ni-Kirel",
-        "K'veer" : "D'ni-K'veer",
-        "Kveer" : "D'ni-K'veer",
-        "Neighborhood02" : "D'ni-Kirel",
-        "Old Spy Room" : "D'ni-Ae'gura",
-        "philRelto" : "Phil's Relto",
-        "Shaft" : "D'ni-Tiwah",
-        "Spy Room" : "D'ni-Ae'gura",
-        "spyroom" : "D'ni-Ae'gura",
+        "Ae'gura": "D'ni-Ae'gura",
+        "AhnonayCathedral": "Ahnonay Cathedral",
+        "AvatarCustomization": "Avatar Customization",
+        "BaronCityOffice": "D'ni-Ae'gura",
+        "city": "D'ni-Ae'gura",
+        "Cleft": "D'ni-Riltagamin",
+        "Descent": "D'ni-Tiwah",
+        "EderDelin": "Eder Delin",
+        "EderTsogal": "Eder Tsogal",
+        "Er'canaCitySilo": "D'ni-Ashem'en",
+        "ErcanaCitySilo": "D'ni-Ashem'en",
+        "GreatTreePub": "D'ni-Watcher's Pub",
+        "Great Zero": "D'ni-Rezeero",
+        "GreatZero": "D'ni-Rezeero",
+        "GuildPub-Cartographers": "D'ni-Cartographers' Pub",
+        "GuildPub-Greeters": "D'ni-Greeters' Pub",
+        "GuildPub-Maintainers": "D'ni-Maintainers' Pub",
+        "GuildPub-Messengers": "D'ni-Messengers' Pub",
+        "GuildPub-Writers": "D'ni-Writers' Pub",
+        "Kirel": "D'ni-Kirel",
+        "K'veer": "D'ni-K'veer",
+        "Kveer": "D'ni-K'veer",
+        "Neighborhood02": "D'ni-Kirel",
+        "Old Spy Room": "D'ni-Ae'gura",
+        "philRelto": "Phil's Relto",
+        "Shaft": "D'ni-Tiwah",
+        "Spy Room": "D'ni-Ae'gura",
+        "spyroom": "D'ni-Ae'gura",
 ##      Fan Ages
-        "Trebivdil" : "Tre'bivdil",
-        "trebivdil" : "Tre'bivdil",
-        "vothol" : "D'ni-Vothol Gallery",
-        "FehnirHouse" : "D'ni-Fehnir's House",
-        "GoMePubNew" : "D'ni-Messengers' Pub - Ae'gura",
-        "ChisoPreniv" : "Chiso Preniv",
-        "VeeTsah" : "Veelay Tsahvahn"
+        "Trebivdil": "Tre'bivdil",
+        "trebivdil": "Tre'bivdil",
+        "vothol": "D'ni-Vothol Gallery",
+        "FehnirHouse": "D'ni-Fehnir's House",
+        "GoMePubNew": "D'ni-Messengers' Pub - Ae'gura",
+        "ChisoPreniv": "Chiso Preniv",
+        "VeeTsah": "Veelay Tsahvahn"
     }
     Hide = {"BahroCave", "PelletBahroCave", "Pellet Cave", "LiveBahroCave", "LiveBahroCaves"}
     NoInvite = {
@@ -210,11 +210,11 @@ class kAges:
         "Descent", "Spyroom", "Myst", "ChisoPreniv"
     }
     Replace = {
-        "Ercana" : "Er'cana",
-        "Garden" : "Eder Kemo",
-        "Garrison" : "Gahreesen",
-        "Gira" : "Eder Gira",
-        "Personal" : "Relto"
+        "Ercana": "Er'cana",
+        "Garden": "Eder Kemo",
+        "Garrison": "Gahreesen",
+        "Gira": "Eder Gira",
+        "Personal": "Relto"
     }
 
 ## Constants used for the chat.
@@ -288,8 +288,8 @@ class kColors:
     DniShowRed  = ptColor(1.0, 0.851, 0.874, 1.0)
     DniHideBlue = ptColor(0.780, 0.706, 0.870, 0.3)
     
-    DniShowBtn     = DniShowRed
-    DniGhostBtn    = DniHideBlue
+    DniShowBtn  = DniShowRed
+    DniGhostBtn = DniHideBlue
 
     TextNoteURL = DniLilac
 
@@ -313,32 +313,44 @@ class kColors:
 
 ## Constants for KI Chat commands.
 class kCommands:
-    Localized = {PtGetLocalizedString("KI.Commands.ChatClearAll") : "ClearChat",
-                 PtGetLocalizedString("KI.Commands.ChatSetTextColor") : "SetTextColor",
-                 PtGetLocalizedString("KI.Commands.ChatStartLog") : "StartLog",
-                 PtGetLocalizedString("KI.Commands.ChatStopLog") : "StopLog",
-                 PtGetLocalizedString("KI.Commands.AddBuddy") : "AddBuddy",
-                 PtGetLocalizedString("KI.Commands.RemoveBuddy") : "RemoveBuddy",
-                 PtGetLocalizedString("KI.Commands.Ignore") : "IgnorePlayer",
-                 PtGetLocalizedString("KI.Commands.Unignore") : "UnignorePlayer",
-                 PtGetLocalizedString("KI.Commands.DumpLogs") : "DumpLogs",
-                 PtGetLocalizedString("KI.Commands.DumpLog") : "DumpLogs",
-                 PtGetLocalizedString("KI.Commands.ChangePassword") : "ChangePassword"}
-    Jalak = {"/savecolumns" : "SaveColumns",
-             "/loadcolumns" : "LoadColumns"}
-    Internal = {"/revisitcleft" : "RevisitCleft",
-                "/restart" : "RestartGame",
-                "/gamereward" : "MarkerGameReward"}
-    EasterEggs = {"/look in pocket" : "LookForFeathers",
-                  "/look" : "LookAround",
-                  "/get feather" : "GetFeather"}
-    Text = {"/go" : "Put one foot in front of the other and eventually you will get there.",
-            "/fly" : "You close your eyes, you feel light headed and the ground slips away from your feet... Then you open your eyes and WAKE UP! (Ha, you can only dream about flying.)"}
-    Other = {"/party" : "PartyTime",
-             "/saveclothing" : "SaveClothing",
-             "/loadclothing" : "LoadClothing",
-             "/threaten" : "CoopExample",
-             "/roll": "RollDice"}
+    Localized = {
+        PtGetLocalizedString("KI.Commands.ChatClearAll"): "ClearChat",
+        PtGetLocalizedString("KI.Commands.ChatSetTextColor"): "SetTextColor",
+        PtGetLocalizedString("KI.Commands.ChatStartLog"): "StartLog",
+        PtGetLocalizedString("KI.Commands.ChatStopLog"): "StopLog",
+        PtGetLocalizedString("KI.Commands.AddBuddy"): "AddBuddy",
+        PtGetLocalizedString("KI.Commands.RemoveBuddy"): "RemoveBuddy",
+        PtGetLocalizedString("KI.Commands.Ignore"): "IgnorePlayer",
+        PtGetLocalizedString("KI.Commands.Unignore"): "UnignorePlayer",
+        PtGetLocalizedString("KI.Commands.DumpLogs"): "DumpLogs",
+        PtGetLocalizedString("KI.Commands.DumpLog"): "DumpLogs",
+        PtGetLocalizedString("KI.Commands.ChangePassword"): "ChangePassword"
+    }
+    Jalak = {
+        "/savecolumns": "SaveColumns",
+        "/loadcolumns": "LoadColumns"
+    }
+    Internal = {
+        "/revisitcleft": "RevisitCleft",
+        "/restart": "RestartGame",
+        "/gamereward": "MarkerGameReward"
+    }
+    EasterEggs = {
+        "/look in pocket": "LookForFeathers",
+        "/look": "LookAround",
+        "/get feather": "GetFeather"
+    }
+    Text = {
+        "/go": "Put one foot in front of the other and eventually you will get there.",
+        "/fly": "You close your eyes, you feel light headed and the ground slips away from your feet... Then you open your eyes and WAKE UP! (Ha, you can only dream about flying.)"
+    }
+    Other = {
+        "/party": "PartyTime",
+        "/saveclothing": "SaveClothing",
+        "/loadclothing": "LoadClothing",
+        "/threaten": "CoopExample",
+        "/roll": "RollDice"
+    }
 
 ## Numeric limits for the KI.
 class kLimits:
@@ -388,16 +400,16 @@ class kGUI:
     miniMarkerIndicator01 = 601
     miniMarkerIndicatorLast = 625
     miniMarkerColors = {
-                        "off"       : 0.0,
-                        "redlt"     : 1.5,
-                        "red"       : 3.5,
-                        "yellowlt"  : 6.0,
-                        "yellow"    : 8.5,
-                        "purplelt"  : 11.0,
-                        "purple"    : 13.5,
-                        "greenlt"   : 16.0,
-                        "green"     : 18.5,
-                        }
+        "off": 0.0,
+        "redlt": 1.5,
+        "red": 3.5,
+        "yellowlt": 6.0,
+        "yellow": 8.5,
+        "purplelt": 11.0,
+        "purple": 13.5,
+        "greenlt": 16.0,
+        "green": 18.5,
+    }
     miniGZDrip = 700
     miniGZActive = 701
     miniGZMarkerGameActive = 702
@@ -574,9 +586,11 @@ class kGUI:
     BKEditIDtextbox = 0
     BKEditIDbutton = 1
     BKEditIDeditbox = 2
-    BKEditFieldIDs = [ [BKIJRNTitle, BKIJRNTitleButton, BKIJRNTitleEdit],
-                       [BKIJRNNote, BKIJRNNoteButton, BKIJRNNoteEdit],
-                       [BKIPICTitle, BKIPICTitleButton, BKIPICTitleEdit] ]
+    BKEditFieldIDs = [
+        [BKIJRNTitle, BKIJRNTitleButton, BKIJRNTitleEdit],
+        [BKIJRNNote, BKIJRNNoteButton, BKIJRNNoteEdit],
+        [BKIPICTitle, BKIPICTitleButton, BKIPICTitleEdit]
+    ]
     BKEditFieldJRNTitle = 0
     BKEditFieldJRNNote = 1
     BKEditFieldPICTitle = 2
@@ -604,7 +618,12 @@ class kGUI:
     MarkerGameLabel1 = 1006
     MarkerGameLabel2 = 1007
     MarkerGameLabel3 = 1008
-    MarkerGameStates = { MarkerGameType1 : 0, "UNKNOWN" : 1, MarkerGameType2 : 2, MarkerGameType3 : 3 }
+    MarkerGameStates = {
+        MarkerGameType1: 0,
+        "UNKNOWN": 1,
+        MarkerGameType2: 2,
+        MarkerGameType3: 3
+    }
     
     # Pellet score upload button.
     PelletScoreButton = 1020
@@ -652,34 +671,34 @@ class kLoc:
     ]
     
     OKDialogDict = {
-        "" :                                                                        PtGetLocalizedString("KI.Errors.EmptyError"),               #01
-        "TERMINATED: Server LogOff. Reason: Logged In Elsewhere" :                  PtGetLocalizedString("KI.Errors.LoggedInElsewhere"),        #02
-        "TERMINATED: Server LogOff. Reason: Timed Out" :                            PtGetLocalizedString("KI.Errors.TimedOut"),                 #03
-        "TERMINATED: Server LogOff. Reason: Not Authenticated" :                    PtGetLocalizedString("KI.Errors.NotAuthenticated"),         #04
-        "TERMINATED: Server LogOff. Reason: Kicked Off" :                           PtGetLocalizedString("KI.Errors.KickedOff"),                #05
-        "TERMINATED: Server LogOff. Reason: Unknown Reason" :                       PtGetLocalizedString("KI.Errors.UnknownReason"),            #06
-        "TERMINATED: Server LogOff. Reason: UNKNOWN REASON CODE" :                  PtGetLocalizedString("KI.Errors.UnknownReason2"),           #09
-        "SERVER SILENCE" :                                                          PtGetLocalizedString("KI.Errors.ServerSilence"),            #10
-        "BAD VERSION" :                                                             PtGetLocalizedString("KI.Errors.OldVersion"),               #11
-        "Player Disabled" :                                                         PtGetLocalizedString("KI.Errors.PlayerDisabled"),           #12
-        "CAN'T FIND AGE" :                                                          PtGetLocalizedString("KI.Errors.CantFindAge"),              #13
-        "AUTH RESPONSE FAILED" :                                                    PtGetLocalizedString("KI.Errors.AuthFailed"),               #14
-        "AUTH TIMEOUT" :                                                            PtGetLocalizedString("KI.Errors.AuthTimeout"),              #15
-        "SDL Desc Problem" :                                                        PtGetLocalizedString("KI.Errors.SDLDescProblem"),           #16
-        "Unspecified error" :                                                       PtGetLocalizedString("KI.Errors.UnspecifiedError"),         #17
-        "Failed to send msg" :                                                      PtGetLocalizedString("KI.Errors.FailedToSendMsg"),          #18
-        "Authentication timed out" :                                                PtGetLocalizedString("KI.Errors.AuthenticationTimedOut"),   #19
-        "Peer timed out" :                                                          PtGetLocalizedString("KI.Errors.PeerTimedOut"),             #20
-        "Server silence" :                                                          PtGetLocalizedString("KI.Errors.ServerSilence2"),           #21
-        "Protocol version mismatch" :                                               PtGetLocalizedString("KI.Errors.ProtocolVersionMismatch"),  #22
-        "Auth failed" :                                                             PtGetLocalizedString("KI.Errors.AuthFailed2"),              #23
-        "Failed to create player" :                                                 PtGetLocalizedString("KI.Errors.FailedToCreatePlayer"),     #24
-        "Invalid error code" :                                                      PtGetLocalizedString("KI.Errors.InvalidErrorCode"),         #25
-        "linking banned" :                                                          PtGetLocalizedString("KI.Errors.LinkingBanned"),            #26
-        "linking restored" :                                                        PtGetLocalizedString("KI.Errors.LinkingRestored"),          #27
-        "silenced" :                                                                PtGetLocalizedString("KI.Errors.Silenced"),                 #28
-        "unsilenced" :                                                              PtGetLocalizedString("KI.Errors.Unsilenced"),               #29
-        }
+        "":                                                        PtGetLocalizedString("KI.Errors.EmptyError"),               #01
+        "TERMINATED: Server LogOff. Reason: Logged In Elsewhere":  PtGetLocalizedString("KI.Errors.LoggedInElsewhere"),        #02
+        "TERMINATED: Server LogOff. Reason: Timed Out":            PtGetLocalizedString("KI.Errors.TimedOut"),                 #03
+        "TERMINATED: Server LogOff. Reason: Not Authenticated":    PtGetLocalizedString("KI.Errors.NotAuthenticated"),         #04
+        "TERMINATED: Server LogOff. Reason: Kicked Off":           PtGetLocalizedString("KI.Errors.KickedOff"),                #05
+        "TERMINATED: Server LogOff. Reason: Unknown Reason":       PtGetLocalizedString("KI.Errors.UnknownReason"),            #06
+        "TERMINATED: Server LogOff. Reason: UNKNOWN REASON CODE":  PtGetLocalizedString("KI.Errors.UnknownReason2"),           #09
+        "SERVER SILENCE":                                          PtGetLocalizedString("KI.Errors.ServerSilence"),            #10
+        "BAD VERSION":                                             PtGetLocalizedString("KI.Errors.OldVersion"),               #11
+        "Player Disabled":                                         PtGetLocalizedString("KI.Errors.PlayerDisabled"),           #12
+        "CAN'T FIND AGE":                                          PtGetLocalizedString("KI.Errors.CantFindAge"),              #13
+        "AUTH RESPONSE FAILED":                                    PtGetLocalizedString("KI.Errors.AuthFailed"),               #14
+        "AUTH TIMEOUT":                                            PtGetLocalizedString("KI.Errors.AuthTimeout"),              #15
+        "SDL Desc Problem":                                        PtGetLocalizedString("KI.Errors.SDLDescProblem"),           #16
+        "Unspecified error":                                       PtGetLocalizedString("KI.Errors.UnspecifiedError"),         #17
+        "Failed to send msg":                                      PtGetLocalizedString("KI.Errors.FailedToSendMsg"),          #18
+        "Authentication timed out":                                PtGetLocalizedString("KI.Errors.AuthenticationTimedOut"),   #19
+        "Peer timed out":                                          PtGetLocalizedString("KI.Errors.PeerTimedOut"),             #20
+        "Server silence":                                          PtGetLocalizedString("KI.Errors.ServerSilence2"),           #21
+        "Protocol version mismatch":                               PtGetLocalizedString("KI.Errors.ProtocolVersionMismatch"),  #22
+        "Auth failed":                                             PtGetLocalizedString("KI.Errors.AuthFailed2"),              #23
+        "Failed to create player":                                 PtGetLocalizedString("KI.Errors.FailedToCreatePlayer"),     #24
+        "Invalid error code":                                      PtGetLocalizedString("KI.Errors.InvalidErrorCode"),         #25
+        "linking banned":                                          PtGetLocalizedString("KI.Errors.LinkingBanned"),            #26
+        "linking restored":                                        PtGetLocalizedString("KI.Errors.LinkingRestored"),          #27
+        "silenced":                                                PtGetLocalizedString("KI.Errors.Silenced"),                 #28
+        "unsilenced":                                              PtGetLocalizedString("KI.Errors.Unsilenced"),               #29
+    }
 
 ## Pellet Score operation types.
 class kPellets:
