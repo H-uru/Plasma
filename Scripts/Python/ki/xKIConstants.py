@@ -329,9 +329,9 @@ class kCommands:
     Internal = {"/revisitcleft" : "RevisitCleft",
                 "/restart" : "RestartGame",
                 "/gamereward" : "MarkerGameReward"}
-    EasterEggs = {"/look" : "LookAround",
-                  "/get feather" : "GetFeather",
-                  "/look in pocket" : "LookForFeathers"}
+    EasterEggs = {"/look in pocket" : "LookForFeathers",
+                  "/look" : "LookAround",
+                  "/get feather" : "GetFeather"}
     Text = {"/go" : "Put one foot in front of the other and eventually you will get there.",
             "/fly" : "You close your eyes, you feel light headed and the ground slips away from your feet... Then you open your eyes and WAKE UP! (Ha, you can only dream about flying.)"}
     Other = {"/party" : "PartyTime",
