@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResManager.h"
 
 #include "pnFactory/plFactory.h"
-#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
 
 plResManager* IGetResMgr() { return (plResManager*)hsgResMgr::ResMgr(); }
 
@@ -438,7 +438,7 @@ plKey plKeyFinder::IFindSceneNodeKey(plRegistryPageNode* page) const
     {
         if (keyList->fKeys.size() == 1)
         {
-            return plKey::Make((plKeyData*)keyList->fKeys[0]);
+            return plKey::Make(keyList->fKeys[0]);
         }
     }
 
@@ -453,7 +453,7 @@ plKey plKeyFinder::IFindSceneNodeKey(plRegistryPageNode* page) const
     keyList = page->IGetKeyList(CLASS_INDEX_SCOPED(plSceneNode));
     if (keyList && keyList->fKeys.size() == 1)
     {
-        retVal = plKey::Make((plKeyData*)keyList->fKeys[0]);
+        retVal = plKey::Make(keyList->fKeys[0]);
     }
     // If we just loaded up all the keys for this page, then we
     // may have a bunch of keys with a refcount of 0. For any of 
