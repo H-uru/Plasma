@@ -8,12 +8,12 @@ ColumnLimit: 0
 BraceWrapping:
   AfterClass:      true
   AfterControlStatement: MultiLine
-  AfterEnum:       false
+  AfterEnum:       true
   AfterFunction:   true
-  AfterNamespace:  false
-  AfterObjCDeclaration: false
+  AfterNamespace:  true
+  AfterObjCDeclaration: true
   AfterStruct:     true
-  AfterUnion:      false
+  AfterUnion:      true
   BeforeCatch:     false
   BeforeElse:      false
   IndentBraces:    false
@@ -27,4 +27,7 @@ AllowShortBlocksOnASingleLine: true
 AllowShortFunctionsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: true
 PackConstructorInitializers: CurrentLine
+ObjCBlockIndentWidth: 4
 ---
+Language: ObjC
+# Obj-C specific settings go here
