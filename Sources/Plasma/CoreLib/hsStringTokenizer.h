@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <string>
+
 template<typename CharT>
 class hsBasicStringTokenizer
 {
@@ -132,18 +134,20 @@ public:
     {
         delete[] fString;
         if (string) {
-            size_t count = StrLen(string);
+            size_t count = std::char_traits<CharT>::length(string);
             fString = new CharT[count + 1];
-            memcpy(fString, string, sizeof(CharT) * (count + 1));
+            std::char_traits<CharT>::copy(fString, string, count);
+            fString[count] = 0;
         } else {
             fString = nullptr;
         }
 
         delete[] fSeps;
         if (seps) {
-            fNumSeps = StrLen(seps);
+            fNumSeps = std::char_traits<CharT>::length(seps);
             fSeps = new CharT[fNumSeps + 1];
-            memcpy(fSeps, seps, sizeof(CharT) * (fNumSeps + 1));
+            std::char_traits<CharT>::copy(fSeps, seps, fNumSeps);
+            fSeps[fNumSeps] = 0;
         } else {
             fNumSeps = 0;
             fSeps = nullptr;
@@ -174,15 +178,6 @@ public:
     CharT* fString;
 
 private:
-    static size_t StrLen(const CharT* str)
-    {
-        size_t i = 0;
-        while (str[i] != 0) {
-            i++;
-        }
-        return i;
-    }
-
     bool IsSep(CharT c)
     {
         if (!fQAsTok || !fInQuote) {
