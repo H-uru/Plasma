@@ -89,7 +89,9 @@ class plInitSectionReader
 //  Half-way derived class for parsing lines by tokens rather than pure 
 //  strings.
 
-class hsStringTokenizer;
+template<typename CharT>
+class hsBasicStringTokenizer;
+using hsStringTokenizer = hsBasicStringTokenizer<char>;
 
 class plInitSectionTokenReader : public plInitSectionReader
 {

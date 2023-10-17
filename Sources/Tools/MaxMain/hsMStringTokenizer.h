@@ -47,10 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxMain/MaxCompat.h"
 
-#ifdef MCHAR_IS_WCHAR
-using hsMStringTokenizer = hsWStringTokenizer;
-#else
-using hsMStringTokenizer = hsStringTokenizer;
-#endif
+using hsMStringTokenizer = hsBasicStringTokenizer<MCHAR>;
 
 #endif

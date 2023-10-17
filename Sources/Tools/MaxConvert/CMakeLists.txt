@@ -15,7 +15,6 @@ set(MaxConvert_HEADERS
     plMeshConverter.h
     plRenderGlobalContext.h
     plRenderInstance.h
-    StringTokenizer.h
     UserPropMgr.h
 )
 
@@ -34,7 +33,6 @@ set(MaxConvert_SOURCES
     plMeshConverter.cpp
     plRenderGlobalContext.cpp
     plRenderInstance.cpp
-    StringTokenizer.cpp
     UserPropMgr.cpp
 )
 

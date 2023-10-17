@@ -45,66 +45,159 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-class hsStringTokenizer 
+#include <string>
+
+template<typename CharT>
+class hsBasicStringTokenizer
 {
 private:
-    char *fSeps;
-    char *fTok;
-    char *fLastTerminator;
-    char fLastRep;
+    CharT* fSeps;
+    CharT* fTok;
+    CharT* fLastTerminator;
+    CharT fLastRep;
 
-    int32_t fNumSeps;
+    size_t fNumSeps;
     bool fQAsTok;
     bool fInQuote;
     bool fCheckAlphaNum;
+
 public:
-    hsStringTokenizer(const char *string = nullptr, const char *seps = nullptr);
-    ~hsStringTokenizer();
-    char *next();
-    bool Next( char *token, uint32_t maxTokLen );
-    bool HasMoreTokens();
-    void Reset(const char *string, const char *seps);
-    void ParseQuotes(bool qAsTok);
+    hsBasicStringTokenizer(const CharT* string = nullptr, const CharT* seps = nullptr) :
+        fSeps(), fLastTerminator(), fQAsTok(true), fInQuote(), fString()
+    {
+        Reset(string, seps);
+    }
 
-    char    *GetRestOfString() const { return fTok; }
+    ~hsBasicStringTokenizer()
+    {
+        delete[] fString;
+        delete[] fSeps;
+    }
 
-    char *fString;
+    bool HasMoreTokens()
+    {
+        return *fTok != 0;
+    }
 
-    void    RestoreLastTerminator();
+    CharT* next()
+    {
+        if (*fTok == 0) {
+            return nullptr;
+        }
+
+        CharT* cur = fTok;
+        while (*fTok != 0 && !IsSep(*fTok)) {
+            fTok++;
+        }
+
+        if (*fTok != 0) {
+            fLastRep = *fTok;
+            fLastTerminator = fTok;
+
+            *fTok = 0;
+            fTok++;
+        }
+        while (*fTok != 0 && IsSep(*fTok)) {
+            fTok++;
+        }
+
+        return cur;
+    }
+
+    // Slightly more loop-friendly version of next
+    bool Next(CharT* token, size_t maxTokLen)
+    {
+        CharT* t = next();
+        if (t == nullptr) {
+            return false;
+        }
+
+        for (size_t i = 0; i < maxTokLen; i++) {
+            token[i] = t[i];
+            if (t[i] == 0) {
+                break;
+            }
+        }
+        return true;
+    }
+
+    // Restores the last character replaced to generate a terminator
+    void RestoreLastTerminator()
+    {
+        if (fLastTerminator != nullptr) {
+            *fLastTerminator = fLastRep;
+            fLastTerminator = nullptr;
+        }
+    }
+
+    void Reset(const CharT* string, const CharT* seps)
+    {
+        delete[] fString;
+        if (string) {
+            size_t count = std::char_traits<CharT>::length(string);
+            fString = new CharT[count + 1];
+            std::char_traits<CharT>::copy(fString, string, count);
+            fString[count] = 0;
+        } else {
+            fString = nullptr;
+        }
+
+        delete[] fSeps;
+        if (seps) {
+            fNumSeps = std::char_traits<CharT>::length(seps);
+            fSeps = new CharT[fNumSeps + 1];
+            std::char_traits<CharT>::copy(fSeps, seps, fNumSeps);
+            fSeps[fNumSeps] = 0;
+        } else {
+            fNumSeps = 0;
+            fSeps = nullptr;
+        }
+
+        fCheckAlphaNum = false;
+        for (size_t i = 0; i < fNumSeps; i++) {
+            if (fSeps[i] >= 0 && fSeps[i] < 128 && isalnum(fSeps[i])) {
+                fCheckAlphaNum = true;
+                break;
+            }
+        }
+
+        fTok = fString;
+
+        fLastTerminator = nullptr;
+        fLastRep = 0;
+
+        // don't skip empty fields.
+        //  if (fTok && IsSep(*fTok))
+        //      next();
+    }
+
+    void ParseQuotes(bool qAsTok) { fQAsTok = qAsTok; }
+
+    CharT* GetRestOfString() const { return fTok; }
+
+    CharT* fString;
 
 private:
-    bool IsSep(char c);
+    bool IsSep(CharT c)
+    {
+        if (!fQAsTok || !fInQuote) {
+            if (fCheckAlphaNum || !(c >= 0 && c <= 127 && isalnum(c))) {
+                for (size_t i = 0; i < fNumSeps; i++) {
+                    if (fSeps[i] == c) {
+                        return true;
+                    }
+                }
+            }
+        }
+        if (fQAsTok && c == '\"') {
+            fInQuote = !fInQuote;
+            return true;
+        }
+        return false;
+    }
 };
 
-class hsWStringTokenizer 
-{
-private:
-    wchar_t *fSeps;
-    wchar_t *fTok;
-    wchar_t *fLastTerminator;
-    wchar_t fLastRep;
-
-    int32_t fNumSeps;
-    bool fQAsTok;
-    bool fInQuote;
-    bool fCheckAlphaNum;
-public:
-    hsWStringTokenizer(const wchar_t *string = nullptr, const wchar_t *seps = nullptr);
-    ~hsWStringTokenizer();
-    wchar_t *next();
-    bool Next( wchar_t *token, uint32_t maxTokLen );
-    bool HasMoreTokens();
-    void Reset(const wchar_t *string, const wchar_t *seps);
-    void ParseQuotes(bool qAsTok);
-
-    wchar_t   *GetRestOfString() const { return fTok; }
-
-    wchar_t *fString;
-
-    void    RestoreLastTerminator();
-
-private:
-    bool IsSep(wchar_t c);
-};
+using hsStringTokenizer = hsBasicStringTokenizer<char>;
+using hsWStringTokenizer = hsBasicStringTokenizer<wchar_t>;
 
 #endif // _hsStringTokenizer_Included_
