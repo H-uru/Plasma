@@ -122,10 +122,6 @@ struct NetCli {
     NetMsgChannel *         channel;
     bool                    server;
 
-    // message queue
-    LINK(NetCli)            link;
-    NetCliQueue *           queue;
-
     // message send/recv
     const NetMsgInitRecv *  recvMsg;
     const NetMsgField *     recvField;
@@ -147,18 +143,12 @@ struct NetCli {
     std::vector<uint8_t>       recvBuffer;
 
     NetCli()
-        : sock(), protocol(), channel(), server(), queue(), recvMsg()
+        : sock(), protocol(), channel(), server(), recvMsg()
         , recvField(), recvFieldBytes(), recvDispatch(), sendCurr(), mode()
         , encryptFcn(), seed(), cryptIn(), cryptOut(), encryptParam()
         , sendBuffer()
     {
     }
-};
-
-struct NetCliQueue {
-    LISTDECL(NetCli, link)      list;
-    unsigned                    lastSendMs;
-    unsigned                    flushTimeMs;
 };
 
 
@@ -419,10 +409,6 @@ static void BufferedSendData (
             DEFAULT_FATAL(cmd->type);
         }
     }
-
-    // prepare to flush this connection
-    if (cli->queue)
-        cli->queue->list.Link(cli);
 }
 
 //===========================================================================
@@ -1025,14 +1011,6 @@ NetCli * NetCliConnectAccept (
 //============================================================================
 void NetCliClearSocket (NetCli * cli) {
     cli->sock = nullptr;
-}
-
-//============================================================================
-void NetCliSetQueue (
-    NetCli *        cli,
-    NetCliQueue *   queue
-) {
-    cli->queue = queue;
 }
 
 //============================================================================

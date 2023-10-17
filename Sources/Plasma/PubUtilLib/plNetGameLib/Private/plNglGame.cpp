@@ -55,8 +55,6 @@ namespace Ngl { namespace Game {
 ***/
 
 struct CliGmConn : hsRefCnt {
-    LINK(CliGmConn) link;
-
     std::recursive_mutex  critsect;
     AsyncSocket     sock;
     AsyncCancelId   cancelId;
@@ -157,7 +155,7 @@ enum {
 
 static bool                             s_running;
 static std::recursive_mutex             s_critsect;
-static LISTDECL(CliGmConn, link)        s_conns;
+static CliGmConn* s_conn = nullptr;
 static CliGmConn *                      s_active;
 static FNetCliGameRecvBufferHandler     s_bufHandler;
 static FNetCliGameRecvGameMgrMsgHandler s_gameMgrMsgHandler;
@@ -194,8 +192,8 @@ static CliGmConn * GetConnIncRef (const char tag[]) {
 }
 
 //============================================================================
-static void UnlinkAndAbandonConn_CS (CliGmConn * conn) {
-    s_conns.Unlink(conn);
+static void AbandonConn(CliGmConn* conn) {
+    hsLockGuard(s_critsect);
     conn->abandoned = true;
     if (conn->cancelId) {
         AsyncSocketConnectCancel(conn->cancelId);
@@ -244,7 +242,9 @@ static void NotifyConnSocketConnectFailed (CliGmConn * conn) {
     {
         hsLockGuard(s_critsect);
         conn->cancelId = nullptr;
-        s_conns.Unlink(conn);
+        if (s_conn == conn) {
+            s_conn = nullptr;
+        }
         
         notify
             =  s_running
@@ -270,7 +270,9 @@ static void NotifyConnSocketDisconnect (CliGmConn * conn) {
     bool notify;
     {
         hsLockGuard(s_critsect);
-        s_conns.Unlink(conn);
+        if (s_conn == conn) {
+            s_conn = nullptr;
+        }
 
         notify
             =  s_running
@@ -377,9 +379,11 @@ static void Connect (
 
     {
         hsLockGuard(s_critsect);
-        while (CliGmConn * conn = s_conns.Head())
-            UnlinkAndAbandonConn_CS(conn);
-        s_conns.Link(conn);
+        if (CliGmConn* oldConn = s_conn) {
+            s_conn = nullptr;
+            AbandonConn(oldConn);
+        }
+        s_conn = conn;
     }
 
     Cli2Game_Connect connect;
@@ -722,8 +726,10 @@ void GameDestroy (bool wait) {
     
     {
         hsLockGuard(s_critsect);
-        while (CliGmConn * conn = s_conns.Head())
-            UnlinkAndAbandonConn_CS(conn);
+        if (CliGmConn* conn = s_conn) {
+            s_conn = nullptr;
+            AbandonConn(conn);
+        }
         s_active = nullptr;
     }
     
@@ -783,8 +789,10 @@ void NetCliGameStartConnect (
 //============================================================================
 void NetCliGameDisconnect () {
     hsLockGuard(s_critsect);
-    while (CliGmConn * conn = s_conns.Head())
-        UnlinkAndAbandonConn_CS(conn);
+    if (CliGmConn* conn = s_conn) {
+        s_conn = nullptr;
+        AbandonConn(conn);
+    }
     s_active = nullptr;
 }
 

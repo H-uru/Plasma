@@ -290,7 +290,6 @@ enum ENetTransState {
 };
 
 struct NetTrans : hsRefCnt {
-    LINK(NetTrans)  m_link;
     ENetTransState  m_state;
     ENetError       m_result;
     unsigned        m_transId;
