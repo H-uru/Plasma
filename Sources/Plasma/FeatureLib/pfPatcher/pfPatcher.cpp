@@ -264,6 +264,13 @@ public:
         return retVal;
     }
 
+    void Close()
+    {
+        if (hsCheckBits(fFlags, kFlagZipped))
+            plZlibStream::Close();
+        fOutput.reset();
+    }
+
     uint32_t Write(uint32_t count, const void* buf) override
     {
         // tick whatever progress bar we have
@@ -382,6 +389,14 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
 {
     pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
     pfPatcherStream* stream = static_cast<pfPatcherStream*>(writer);
+
+    // We need to explicitly close any underlying streams NOW because we
+    // might be about to signal the client that this file needs to be acted
+    // on, eg installed, decompressed from ogg to wave, etc. We can't wait
+    // for hsStream's RAII to close the stream at the end of this function or
+    // the callback code may crash due to either a permissions error or the
+    // zlib decompression not being complete.
+    stream->Close();
 
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded File '{}'", stream->GetFileName());
