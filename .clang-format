@@ -21,13 +21,17 @@ BreakBeforeBraces: Custom
 AlignConsecutiveDeclarations: AcrossComments
 AlignConsecutiveAssignments:
   Enabled: False
-ReflowComments: false
+ReflowComments: true
 LambdaBodyIndentation: OuterScope
 AllowShortBlocksOnASingleLine: true
 AllowShortFunctionsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: true
 PackConstructorInitializers: CurrentLine
 ObjCBlockIndentWidth: 4
+SpacesInLineCommentPrefix:
+  Minimum: 1
+  Maximum: -1
+SpacesBeforeTrailingComments: 1
 ---
 Language: ObjC
 # Obj-C specific settings go here
