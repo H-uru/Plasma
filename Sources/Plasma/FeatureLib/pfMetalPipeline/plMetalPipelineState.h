@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plMetalPipelineState_hpp
-#define plMetalPipelineState_hpp
+#ifndef plMetalPipelineState_h
+#define plMetalPipelineState_h
 
 #include <stdio.h>
 
@@ -401,4 +401,4 @@ private:
     bool fShouldClearDepth;
 };
 
-#endif /* plMetalPipelineState_hpp */
+#endif /* plMetalPipelineState_h */

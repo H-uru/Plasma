@@ -39,8 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef _plDXTextFont_h
-#define _plDXTextFont_h
+#ifndef _plMetalTextFont_h
+#define _plMetalTextFont_h
 
 #include <Metal/Metal.hpp>
 
@@ -99,4 +99,4 @@ public:
     void DestroyObjects() override;
 };
 
-#endif // _plDXTextFont_h
+#endif // _plMetalTextFont_h
