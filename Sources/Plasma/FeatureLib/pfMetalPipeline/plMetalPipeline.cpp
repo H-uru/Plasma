@@ -39,59 +39,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include <string_theory/format>
+#include "plMetalPipeline.h"
 
-#include <Metal/Metal.hpp>
 #import <simd/simd.h>
 
-#include "plQuality.h"
+#include <Metal/Metal.hpp>
+#include <string_theory/format>
 
-#include "plMetalPipeline.h"
-#include "plMetalMaterialShaderRef.h"
-#include "plMetalPlateManager.h"
-#include "plMetalPipelineState.h"
-
+#include "HeadSpin.h"
+#include "hsGMatState.inl"
 #include "hsTimer.h"
-#include "plPipeDebugFlags.h"
-#include "plPipeResReq.h"
-
-#include "pnNetCommon/plNetApp.h"   // for dbg logging
-#include "pnMessage/plPipeResMakeMsg.h"
+#include "pfCamera/plVirtualCamNeu.h"
 #include "plAvatar/plAvatarClothing.h"
+#include "plDrawable/plAuxSpan.h"
 #include "plDrawable/plDrawableSpans.h"
 #include "plDrawable/plGBufferGroup.h"
+#include "plGImage/plCubicEnvironmap.h"
 #include "plGImage/plMipmap.h"
 #include "plGLight/plLightInfo.h"
+#include "plGLight/plShadowCaster.h"
+#include "plGLight/plShadowSlave.h"
+#include "plMessage/plDeviceRecreateMsg.h"
+#include "plMetalFragmentShader.h"
+#include "plMetalMaterialShaderRef.h"
+#include "plMetalPipelineState.h"
+#include "plMetalPlateManager.h"
+#include "plMetalTextFont.h"
+#include "plMetalVertexShader.h"
+#include "plPipeDebugFlags.h"
+#include "plPipeResReq.h"
 #include "plPipeline/plCubicRenderTarget.h"
 #include "plPipeline/plDebugText.h"
 #include "plPipeline/plDynamicEnvMap.h"
+#include "plProfile.h"
+#include "plQuality.h"
 #include "plScene/plRenderRequest.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayer.h"
-#include "pfCamera/plVirtualCamNeu.h"
-#include "plMessage/plDeviceRecreateMsg.h"
-#include "plgDispatch.h"
-#include "plDrawable/plAuxSpan.h"
 #include "plSurface/plLayerShadowBase.h"
-#include "plMetalTextFont.h"
-
-#include "plGImage/plMipmap.h"
-#include "plGImage/plCubicEnvironmap.h"
-
-#include "plGLight/plShadowSlave.h"
-#include "plGLight/plShadowCaster.h"
-
 #include "plTweak.h"
+#include "plgDispatch.h"
+#include "pnMessage/plPipeResMakeMsg.h"
+#include "pnNetCommon/plNetApp.h" // for dbg logging
 
-#include "plMetalVertexShader.h"
-#include "plMetalFragmentShader.h"
-
-#include "hsGMatState.inl"
-
-#include "plProfile.h"
-
-uint32_t  fDbgSetupInitFlags;     // HACK temp only
+uint32_t fDbgSetupInitFlags; // HACK temp only
 
 plProfile_CreateCounter("Feed Triangles", "Draw", DrawFeedTriangles);
 plProfile_CreateCounter("Draw Prim Static", "Draw", DrawPrimStatic);
@@ -130,16 +121,22 @@ plMetalEnumerate plMetalPipeline::enumerator;
 class plRenderTriListFunc : public plRenderPrimFunc
 {
 protected:
-    plMetalDevice*        fDevice;
-    int                 fBaseVertexIndex;
-    int                 fVStart;
-    int                 fVLength;
-    int                 fIStart;
-    int                 fNumTris;
+    plMetalDevice* fDevice;
+    int            fBaseVertexIndex;
+    int            fVStart;
+    int            fVLength;
+    int            fIStart;
+    int            fNumTris;
+
 public:
     plRenderTriListFunc(plMetalDevice* device, int baseVertexIndex,
                         int vStart, int vLength, int iStart, int iNumTris)
-        : fDevice(device), fBaseVertexIndex(baseVertexIndex), fVStart(vStart), fVLength(vLength), fIStart(iStart), fNumTris(iNumTris) {}
+        : fDevice(device),
+          fBaseVertexIndex(baseVertexIndex),
+          fVStart(vStart),
+          fVLength(vLength),
+          fIStart(iStart),
+          fNumTris(iNumTris) {}
 
     bool RenderPrims() const override;
 };
@@ -149,48 +146,55 @@ bool plRenderTriListFunc::RenderPrims() const
     plProfile_IncCount(DrawFeedTriangles, fNumTris);
     plProfile_IncCount(DrawTriangles, fNumTris);
     plProfile_Inc(DrawPrimStatic);
-    
+
     size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
-    fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms),     VertexShaderArgumentFixedFunctionUniforms);
-    
+    fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
+
     plMetalLights* lights = &fDevice->fPipeline->fLights;
-    size_t lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * lights->count);
-    
+    size_t         lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * lights->count);
+
     fDevice->CurrentRenderCommandEncoder()->setVertexBytes(lights, sizeof(plMetalLights), VertexShaderArgumentLights);
     fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
 }
 
-
-
-plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode) :   pl3DPipeline(devMode), fRenderTargetRefList(), fMatRefList(), fCurrentRenderPassUniforms(nullptr), currentDrawableCallback(nullptr), fFragFunction(nullptr), fVShaderRefList(nullptr), fPShaderRefList(nullptr), fULutTextureRef(nullptr), fCurrRenderLayer()
+plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord* devMode) : pl3DPipeline(devMode),
+                                                                                                                    fRenderTargetRefList(),
+                                                                                                                    fMatRefList(),
+                                                                                                                    fCurrentRenderPassUniforms(nullptr),
+                                                                                                                    currentDrawableCallback(nullptr),
+                                                                                                                    fFragFunction(nullptr),
+                                                                                                                    fVShaderRefList(nullptr),
+                                                                                                                    fPShaderRefList(nullptr),
+                                                                                                                    fULutTextureRef(nullptr),
+                                                                                                                    fCurrRenderLayer()
 {
     fTextureRefList = nullptr;
     fVtxBuffRefList = nullptr;
     fIdxBuffRefList = nullptr;
     fMatRefList = nullptr;
     fTextFontRefList = nullptr;
-    
+
     fCurrLayerIdx = 0;
     fDevice.fPipeline = this;
-    
+
     fMaxLayersAtOnce = 8;
-    
+
     // Default our output format to 8 bit BGRA. Client may immediately change this to
     // the actual framebuffer format.
     SetFramebufferFormat(MTL::PixelFormatBGRA8Unorm);
-    
+
     // Alloc half our simultaneous textures to piggybacks.
     // Won't hurt us unless we try to many things at once.
     fMaxPiggyBacks = fMaxLayersAtOnce >> 1;
-    
+
     // Metal is always PS3 capable
     plQuality::SetCapability(plQuality::kPS_3);
-    
+
     fDevice.SetMaxAnsiotropy(fInitialPipeParams.AnisotropicLevel);
     fDevice.SetMSAASampleCount(fInitialPipeParams.AntiAliasingAmount);
-    
-    fCurrentRenderPassUniforms = (VertexUniforms *) calloc(sizeof(VertexUniforms), sizeof(char));
-    
+
+    fCurrentRenderPassUniforms = (VertexUniforms*)calloc(sizeof(VertexUniforms), sizeof(char));
+
     // RenderTarget pools are shared for our shadow generation algorithm.
     // Different sizes for different resolutions.
     ICreateDeviceObjects();
@@ -200,19 +204,19 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
 
 plMetalPipeline::~plMetalPipeline()
 {
-    if (plMetalPlateManager* pm = static_cast<plMetalPlateManager*>(fPlateMgr))
-    {
+    if (plMetalPlateManager* pm = static_cast<plMetalPlateManager*>(fPlateMgr)) {
         pm->IReleaseGeometry();
     }
 }
 
-void plMetalPipeline::ICreateDeviceObjects() {
+void plMetalPipeline::ICreateDeviceObjects()
+{
     fPlateMgr = new plMetalPlateManager(this);
 }
 
-bool plMetalPipeline::PreRender(plDrawable *drawable, std::vector<int16_t> &visList, plVisMgr *visMgr)
+bool plMetalPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
-    plDrawableSpans *ds = plDrawableSpans::ConvertNoRef(drawable);
+    plDrawableSpans* ds = plDrawableSpans::ConvertNoRef(drawable);
     if (!ds) {
         return false;
     }
@@ -226,7 +230,7 @@ bool plMetalPipeline::PreRender(plDrawable *drawable, std::vector<int16_t> &visL
     return visList.size() > 0;
 }
 
-bool plMetalPipeline::PrepForRender(plDrawable *drawable, std::vector<int16_t> &visList, plVisMgr *visMgr)
+bool plMetalPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
     plProfile_BeginTiming(PrepDrawable);
 
@@ -248,7 +252,7 @@ bool plMetalPipeline::PrepForRender(plDrawable *drawable, std::vector<int16_t> &
     // do any last minute updates for its buffers, including
     // generating particle tri lists.
     ice->PrepForRender(this);
-    
+
     // Any skinning necessary
     if (!ISoftwareVertexBlend(ice, visList)) {
         plProfile_EndTiming(PrepDrawable);
@@ -260,21 +264,23 @@ bool plMetalPipeline::PrepForRender(plDrawable *drawable, std::vector<int16_t> &
     return true;
 }
 
-plTextFont *plMetalPipeline::MakeTextFont(ST::string face, uint16_t size) {
-    plTextFont  *font = new plMetalTextFont( this, &fDevice );
-    font->Create( face, size );
-    font->Link( &fTextFontRefList );
+plTextFont* plMetalPipeline::MakeTextFont(ST::string face, uint16_t size)
+{
+    plTextFont* font = new plMetalTextFont(this, &fDevice);
+    font->Create(face, size);
+    font->Link(&fTextFontRefList);
     return font;
 }
 
-bool plMetalPipeline::OpenAccess(plAccessSpan &dst, plDrawableSpans *d, const plVertexSpan *span, bool readOnly) {
-    //FIXME: Whats this?
+bool plMetalPipeline::OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly)
+{
+    // FIXME: Whats this?
     return false;
 }
 
-bool plMetalPipeline::CloseAccess(plAccessSpan &acc) { return false; }
+bool plMetalPipeline::CloseAccess(plAccessSpan& acc) { return false; }
 
-void plMetalPipeline::PushRenderRequest(plRenderRequest *req)
+void plMetalPipeline::PushRenderRequest(plRenderRequest* req)
 {
     // Save these, since we want to copy them to our current view
     hsMatrix44 l2w = fView.GetLocalToWorld();
@@ -315,16 +321,16 @@ void plMetalPipeline::PushRenderRequest(plRenderRequest *req)
     fState.Reset();
 }
 
-void plMetalPipeline::PopRenderRequest(plRenderRequest *req)
+void plMetalPipeline::PopRenderRequest(plRenderRequest* req)
 {
     if (req->GetOverrideMat()) {
         PopOverrideMaterial(nil);
     }
-    
-    //new render target means we can't use the previous pipeline state
-    //it won't be set yet on the new target
-    //in theory we could have a stack of these so when we unwind we
-    //could get the state back.
+
+    // new render target means we can't use the previous pipeline state
+    // it won't be set yet on the new target
+    // in theory we could have a stack of these so when we unwind we
+    // could get the state back.
     fState.Reset();
 
     hsRefCnt_SafeUnRef(fView.fRenderRequest);
@@ -335,39 +341,39 @@ void plMetalPipeline::PopRenderRequest(plRenderRequest *req)
     fView.fXformResetFlags = fView.kResetProjection | fView.kResetCamera;
 }
 
-plRenderTarget* plMetalPipeline::PopRenderTarget() {
+plRenderTarget* plMetalPipeline::PopRenderTarget()
+{
     pl3DPipeline::PopRenderTarget();
     fState.Reset();
 }
 
-void plMetalPipeline::ClearRenderTarget(plDrawable *d)
+void plMetalPipeline::ClearRenderTarget(plDrawable* d)
 {
     plDrawableSpans* src = plDrawableSpans::ConvertNoRef(d);
 
-    if( !src )
-    {
+    if (!src) {
         ClearRenderTarget();
         return;
     }
-    
+
     Draw(d);
 }
 
-void plMetalPipeline::ClearRenderTarget(const hsColorRGBA *col, const float *depth)
+void plMetalPipeline::ClearRenderTarget(const hsColorRGBA* col, const float* depth)
 {
     if (fView.fRenderState & (kRenderClearColor | kRenderClearDepth)) {
         hsColorRGBA clearColor = col ? *col : GetClearColor();
-        float clearDepth = depth ? *depth : fView.GetClearDepth();
+        float       clearDepth = depth ? *depth : fView.GetClearDepth();
         fDevice.Clear(fView.fRenderState & kRenderClearColor, {clearColor.r, clearColor.g, clearColor.b, clearColor.a}, fView.fRenderState & kRenderClearDepth, 1.0);
         fState.Reset();
     }
 }
 
-hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
+hsGDeviceRef* plMetalPipeline::MakeRenderTargetRef(plRenderTarget* owner)
 {
     plMetalRenderTargetRef* ref = nullptr;
-    MTL::Texture *depthBuffer = nullptr;
-    plCubicRenderTarget     *cubicRT;
+    MTL::Texture*           depthBuffer = nullptr;
+    plCubicRenderTarget*    cubicRT;
 
     // If we have Shader Model 3 and support non-POT textures, let's make reflections the pipe size
     if (plDynamicCamMap* camMap = plDynamicCamMap::ConvertNoRef(owner)) {
@@ -384,68 +390,62 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
     // If we already have a rendertargetref, we just need it filled out with D3D resources.
     if (owner->GetDeviceRef())
         ref = (plMetalRenderTargetRef*)owner->GetDeviceRef();
-    
+
     /// Create the render target now
     // Start with the depth surface.
     // Note that we only ever give a cubic rendertarget a single shared depth buffer,
     // since we only render one face at a time. If we were rendering part of face X, then part
     // of face Y, then more of face X, then they would all need their own depth buffers.
     if (owner->GetZDepth() && (owner->GetFlags() & (plRenderTarget::kIsTexture | plRenderTarget::kIsOffscreen))) {
-        MTL::TextureDescriptor *depthTextureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatDepth32Float_Stencil8,
+        MTL::TextureDescriptor* depthTextureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatDepth32Float_Stencil8,
                                                                                                      owner->GetWidth(),
                                                                                                      owner->GetHeight(),
                                                                                                      false);
         if (fDevice.fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
             // on Apple Silicon GPUs - don't allocate memory to back the render target
             // this assumes the render target only needs to survive this render pass
-            //FIXME: Do we need to promise the output survives the render pass?
+            // FIXME: Do we need to promise the output survives the render pass?
             depthTextureDescriptor->setStorageMode(MTL::StorageModeMemoryless);
-        }   else {
+        } else {
             depthTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
         }
         depthTextureDescriptor->setUsage(MTL::TextureUsageRenderTarget);
         depthBuffer = fDevice.fMetalDevice->newTexture(depthTextureDescriptor);
     }
-    
 
     // See if it's a cubic render target.
     // Primary consumer here is the vertex/pixel shader water.
-    cubicRT = plCubicRenderTarget::ConvertNoRef( owner );
-    if( cubicRT )
-    {
+    cubicRT = plCubicRenderTarget::ConvertNoRef(owner);
+    if (cubicRT) {
         if (!ref)
             ref = new plMetalRenderTargetRef();
-        
-        MTL::TextureDescriptor *textureDescriptor = MTL::TextureDescriptor::textureCubeDescriptor(MTL::PixelFormatBGRA8Unorm, owner->GetWidth(), false);
+
+        MTL::TextureDescriptor* textureDescriptor = MTL::TextureDescriptor::textureCubeDescriptor(MTL::PixelFormatBGRA8Unorm, owner->GetWidth(), false);
         textureDescriptor->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead | MTL::TextureUsagePixelFormatView);
         textureDescriptor->setStorageMode(MTL::StorageModePrivate);
-        
-        plMetalDeviceRef *device = (plMetalDeviceRef *)owner->GetDeviceRef();
-        MTL::Texture * texture = fDevice.fMetalDevice->newTexture(textureDescriptor);
-        
-        /// Create a CUBIC texture
-        for( int i = 0; i < 6; i++ )
-        {
-            plRenderTarget          *face = cubicRT->GetFace( i );
-            plMetalRenderTargetRef *fRef;
 
-            if( face->GetDeviceRef() != nil )
-            {
-                fRef = (plMetalRenderTargetRef *)face->GetDeviceRef();
-                if( !fRef->IsLinked() )
-                    fRef->Link( &fRenderTargetRefList );
-            }
-            else
-            {
+        plMetalDeviceRef* device = (plMetalDeviceRef*)owner->GetDeviceRef();
+        MTL::Texture*     texture = fDevice.fMetalDevice->newTexture(textureDescriptor);
+
+        /// Create a CUBIC texture
+        for (int i = 0; i < 6; i++) {
+            plRenderTarget*         face = cubicRT->GetFace(i);
+            plMetalRenderTargetRef* fRef;
+
+            if (face->GetDeviceRef() != nil) {
+                fRef = (plMetalRenderTargetRef*)face->GetDeviceRef();
+                if (!fRef->IsLinked())
+                    fRef->Link(&fRenderTargetRefList);
+            } else {
                 fRef = new plMetalRenderTargetRef();
-                
+
                 face->SetDeviceRef(fRef);
-                ( (plMetalRenderTargetRef *)face->GetDeviceRef())->Link( &fRenderTargetRefList );
+                ((plMetalRenderTargetRef*)face->GetDeviceRef())->Link(&fRenderTargetRefList);
                 // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
-                hsRefCnt_SafeUnRef( face->GetDeviceRef() );
+                hsRefCnt_SafeUnRef(face->GetDeviceRef());
             }
-            
-            //in since the root texture has changed reload all the face textures
+
+            // in since the root texture has changed reload all the face textures
             static const uint kFaceMapping[] = {
                 1, // kLeftFace
                 0, // kRightFace
@@ -454,32 +454,32 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
                 2, // kTopFace
                 3  // kBottomFace
             };
-            
-            if(fRef->fTexture) {
+
+            if (fRef->fTexture) {
                 fRef->fTexture->release();
                 fRef->fTexture = nullptr;
             }
-            
-            if(fRef->fDepthBuffer) {
+
+            if (fRef->fDepthBuffer) {
                 fRef->fDepthBuffer->release();
                 fRef->fDepthBuffer = nullptr;
             }
-            
+
             fRef->fTexture = texture->newTextureView(MTL::PixelFormatBGRA8Unorm, MTL::TextureType2D, NS::Range::Make(0, 1), NS::Range::Make(kFaceMapping[i], 1));
-            //in since the depth buffer is shared each render target gets their own retain
+            // in since the depth buffer is shared each render target gets their own retain
             fRef->fDepthBuffer = depthBuffer->retain();
             fRef->SetDirty(false);
         }
-        
-        //if the ref already has an old texture, release it
-        if(ref->fTexture)
+
+        // if the ref already has an old texture, release it
+        if (ref->fTexture)
             ref->fTexture->release();
-        if(ref->fDepthBuffer)
+        if (ref->fDepthBuffer)
             ref->fDepthBuffer->release();
         ref->fTexture = texture;
         ref->fDepthBuffer = depthBuffer;
         ref->fOwner = owner;
-        
+
         // Keep it in a linked list for ready destruction.
         if (owner->GetDeviceRef() != ref) {
             owner->SetDeviceRef(ref);
@@ -492,33 +492,32 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
                 ref->Link(&fRenderTargetRefList);
         }
         ref->SetDirty(false);
-        
+
         return ref;
-    }
-    else if (owner->GetFlags() & plRenderTarget::kIsTexture) {
+    } else if (owner->GetFlags() & plRenderTarget::kIsTexture) {
         if (!ref)
             ref = new plMetalRenderTargetRef();
-        
-        MTL::TextureDescriptor *textureDescriptor = MTL::TextureDescriptor::alloc()->init();
+
+        MTL::TextureDescriptor* textureDescriptor = MTL::TextureDescriptor::alloc()->init();
         textureDescriptor->setWidth(owner->GetWidth());
         textureDescriptor->setHeight(owner->GetHeight());
         textureDescriptor->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
         textureDescriptor->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead | MTL::TextureUsageShaderWrite);
         textureDescriptor->setStorageMode(MTL::StorageModePrivate);
-        
-        plMetalDeviceRef *device = (plMetalDeviceRef *)owner->GetDeviceRef();
-        MTL::Texture * texture = fDevice.fMetalDevice->newTexture(textureDescriptor);
+
+        plMetalDeviceRef* device = (plMetalDeviceRef*)owner->GetDeviceRef();
+        MTL::Texture*     texture = fDevice.fMetalDevice->newTexture(textureDescriptor);
         textureDescriptor->release();
-        
-        //if the ref already has an old texture, release it
-        if(ref->fTexture)
+
+        // if the ref already has an old texture, release it
+        if (ref->fTexture)
             ref->fTexture->release();
-        if(ref->fDepthBuffer)
+        if (ref->fDepthBuffer)
             ref->fDepthBuffer->release();
         ref->fTexture = texture;
         ref->fDepthBuffer = depthBuffer;
         ref->fOwner = owner;
-        
+
         // Keep it in a linked list for ready destruction.
         if (owner->GetDeviceRef() != ref) {
             owner->SetDeviceRef(ref);
@@ -530,53 +529,53 @@ hsGDeviceRef *plMetalPipeline::MakeRenderTargetRef(plRenderTarget *owner)
             if (ref != nullptr && !ref->IsLinked())
                 ref->Link(&fRenderTargetRefList);
         }
-        
+
         return ref;
     }
-    
+
     // Not a texture either, must be a plain offscreen.
     // Offscreen isn't currently used for anything.
     else if (owner->GetFlags() & plRenderTarget::kIsOffscreen) {
         /// Create a blank surface
-        
-            if (!ref)
-                ref = new plMetalRenderTargetRef();
-            
-            MTL::TextureDescriptor *textureDescriptor = MTL::TextureDescriptor::alloc()->init();
-            textureDescriptor->setWidth(owner->GetWidth());
-            textureDescriptor->setHeight(owner->GetHeight());
-            textureDescriptor->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
-            textureDescriptor->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead);
-            textureDescriptor->setStorageMode(MTL::StorageModeManaged);
-            
-            plMetalDeviceRef *device = (plMetalDeviceRef *)owner->GetDeviceRef();
-            MTL::Texture * texture = fDevice.fMetalDevice->newTexture(textureDescriptor);
-            textureDescriptor->release();
-            
-            //if the ref already has an old texture, release it
-            if(ref->fTexture)
-                ref->fTexture->release();
-            if(ref->fDepthBuffer)
-                ref->fDepthBuffer->release();
-            ref->fTexture = texture;
-            ref->fDepthBuffer = depthBuffer;
-            ref->fOwner = owner;
-            
-            // Keep it in a linked list for ready destruction.
-            if (owner->GetDeviceRef() != ref) {
-                owner->SetDeviceRef(ref);
-                // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
-                hsRefCnt_SafeUnRef(ref);
-                if (ref != nullptr && !ref->IsLinked())
-                    ref->Link(&fRenderTargetRefList);
-            } else {
-                if (ref != nullptr && !ref->IsLinked())
-                    ref->Link(&fRenderTargetRefList);
-            }
-            
-            return ref;
+
+        if (!ref)
+            ref = new plMetalRenderTargetRef();
+
+        MTL::TextureDescriptor* textureDescriptor = MTL::TextureDescriptor::alloc()->init();
+        textureDescriptor->setWidth(owner->GetWidth());
+        textureDescriptor->setHeight(owner->GetHeight());
+        textureDescriptor->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
+        textureDescriptor->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead);
+        textureDescriptor->setStorageMode(MTL::StorageModeManaged);
+
+        plMetalDeviceRef* device = (plMetalDeviceRef*)owner->GetDeviceRef();
+        MTL::Texture*     texture = fDevice.fMetalDevice->newTexture(textureDescriptor);
+        textureDescriptor->release();
+
+        // if the ref already has an old texture, release it
+        if (ref->fTexture)
+            ref->fTexture->release();
+        if (ref->fDepthBuffer)
+            ref->fDepthBuffer->release();
+        ref->fTexture = texture;
+        ref->fDepthBuffer = depthBuffer;
+        ref->fOwner = owner;
+
+        // Keep it in a linked list for ready destruction.
+        if (owner->GetDeviceRef() != ref) {
+            owner->SetDeviceRef(ref);
+            // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
+            hsRefCnt_SafeUnRef(ref);
+            if (ref != nullptr && !ref->IsLinked())
+                ref->Link(&fRenderTargetRefList);
+        } else {
+            if (ref != nullptr && !ref->IsLinked())
+                ref->Link(&fRenderTargetRefList);
+        }
+
+        return ref;
     }
-    
+
     // Keep it in a linked list for ready destruction.
     if (owner->GetDeviceRef() != ref) {
         owner->SetDeviceRef(ref);
@@ -603,9 +602,9 @@ bool plMetalPipeline::BeginRender()
     fCurrentPool = NS::AutoreleasePool::alloc()->init();
     // offset transform
     RefreshScreenMatrices();
-    
+
     fState.Reset();
-    
+
     // offset transform
     RefreshScreenMatrices();
 
@@ -619,18 +618,18 @@ bool plMetalPipeline::BeginRender()
         // Render any shadow maps that have been submitted for this frame.
         IPreprocessShadows();
         IPreprocessAvatarTextures();
-        
-        CA::MetalDrawable *drawable = currentDrawableCallback(fDevice.fMetalDevice);
-        if(!drawable) {
+
+        CA::MetalDrawable* drawable = currentDrawableCallback(fDevice.fMetalDevice);
+        if (!drawable) {
             fCurrentPool->release();
             return true;
         }
         fDevice.CreateNewCommandBuffer(drawable);
         drawable->release();
-        
+
         /// If we have a renderTarget active, use its viewport
-        //FIXME: New drawables should inherit existing viewport
-        //fDevice.SetViewport();
+        // FIXME: New drawables should inherit existing viewport
+        // fDevice.SetViewport();
     }
 
     fRenderCnt++;
@@ -645,13 +644,13 @@ bool plMetalPipeline::EndRender()
 {
     bool retVal = false;
     fState.Reset();
-    
+
     if (--fInSceneDepth == 0) {
         fDevice.SubmitCommandBuffer();
-        
+
         IClearShadowSlaves();
     }
-    
+
     // Do this last, after we've drawn everything
     // Just letting go of things we're done with for the frame.
     hsRefCnt_SafeUnRef(fCurrMaterial);
@@ -668,22 +667,20 @@ bool plMetalPipeline::EndRender()
     return retVal;
 }
 
-void plMetalPipeline::RenderScreenElements() {
+void plMetalPipeline::RenderScreenElements()
+{
     bool reset = false;
 
-    if (fView.HasCullProxy())
-    {
+    if (fView.HasCullProxy()) {
         Draw(fView.GetCullProxy());
     }
-
 
     hsGMatState tHack = PushMaterialOverride(hsGMatState::kMisc, hsGMatState::kMiscWireFrame, false);
     hsGMatState ambHack = PushMaterialOverride(hsGMatState::kShade, hsGMatState::kShadeWhite, true);
 
     plProfile_BeginTiming(PlateMgr);
     // Plates
-    if (fPlateMgr)
-    {
+    if (fPlateMgr) {
         fPlateMgr->DrawToDevice(this);
         reset = true;
     }
@@ -694,16 +691,14 @@ void plMetalPipeline::RenderScreenElements() {
 
     plProfile_BeginTiming(DebugText);
     /// Debug text
-    if (fDebugTextMgr && plDebugText::Instance().IsEnabled())
-    {
+    if (fDebugTextMgr && plDebugText::Instance().IsEnabled()) {
         fDebugTextMgr->DrawToDevice(this);
         reset = true;
     }
     plProfile_EndTiming(DebugText);
 
     plProfile_BeginTiming(Reset);
-    if (reset)
-    {
+    if (reset) {
         fView.fXformResetFlags = fView.kResetAll; // Text destroys view transforms
     }
     plProfile_EndTiming(Reset);
@@ -715,10 +710,10 @@ void plMetalPipeline::Resize(uint32_t width, uint32_t height)
 {
     /*
      Resize had a bunch of notes on the DX version about how it was an old function, replaced by ResetDisplayDevice. I'll implement it for now, but consider moving over to ResetDisplayDevice.
-     
+
      This function is cheaper than resetting the entire display device though.
      */
-    hsMatrix44  w2c, c2w, proj;
+    hsMatrix44 w2c, c2w, proj;
 
     // Store some states that we *want* to restore back...
     plViewTransform resetTransform = GetViewTransform();
@@ -726,30 +721,27 @@ void plMetalPipeline::Resize(uint32_t width, uint32_t height)
     // Destroy old
     IReleaseDeviceObjects();
     IReleaseDynDeviceObjects();
-    
+
     // Reset width and height
-    if( width != 0 && height != 0 )
-    {
+    if (width != 0 && height != 0) {
         // Width and height of zero mean just recreate
         fOrigWidth = width;
         fOrigHeight = height;
         IGetViewTransform().SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
         resetTransform.SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
-    }
-    else
-    {
+    } else {
         // Just for debug
-        hsStatusMessage( "Recreating the pipeline...\n" );
+        hsStatusMessage("Recreating the pipeline...\n");
     }
-    
+
     ICreateDeviceObjects();
 
     // Restore states
     SetViewTransform(resetTransform);
     IProjectionMatrixToDevice();
-    
+
     plVirtualCam1::Refresh();
-    
+
     ICreateDynDeviceObjects();
 
     /// Broadcast a message letting everyone know that we were recreated and that
@@ -758,27 +750,26 @@ void plMetalPipeline::Resize(uint32_t width, uint32_t height)
     plgDispatch::MsgSend(clean);
 }
 
-
 void plMetalPipeline::IReleaseDeviceObjects()
 {
     IReleaseDynDeviceObjects();
-    
+
     delete fPlateMgr;
     fPlateMgr = nullptr;
 }
 
 void plMetalPipeline::LoadResources()
 {
-    hsStatusMessageF("Begin Device Reload t=%f",hsTimer::GetSeconds());
+    hsStatusMessageF("Begin Device Reload t=%f", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("Begin Device Reload");
-    
-    if(fFragFunction == nil) {
+
+    if (fFragFunction == nil) {
         FindFragFunction();
     }
 
     if (plMetalPlateManager* pm = static_cast<plMetalPlateManager*>(fPlateMgr))
         pm->IReleaseGeometry();
-    
+
     IReleaseDynamicBuffers();
     IReleaseAvRTPool();
 
@@ -806,7 +797,7 @@ void plMetalPipeline::LoadResources()
 
     plProfile_IncCount(PipeReload, 1);
 
-    hsStatusMessageF("End Device Reload t=%f",hsTimer::GetSeconds());
+    hsStatusMessageF("End Device Reload t=%f", hsTimer::GetSeconds());
     plNetClientApp::StaticDebugMsg("End Device Reload");
 }
 
@@ -819,22 +810,21 @@ bool plMetalPipeline::SetGamma(float eR, float eG, float eB)
     tabR[0] = tabG[0] = tabB[0] = 0L;
 
     plConst(float) kMinE(0.1f);
-    if( eR > kMinE )
+    if (eR > kMinE)
         eR = 1.f / eR;
     else
         eR = 1.f / kMinE;
-    if( eG > kMinE )
+    if (eG > kMinE)
         eG = 1.f / eG;
     else
         eG = 1.f / kMinE;
-    if( eB > kMinE )
+    if (eB > kMinE)
         eB = 1.f / eB;
     else
         eB = 1.f / kMinE;
 
     int i;
-    for( i = 1; i < 256; i++ )
-    {
+    for (i = 1; i < 256; i++) {
         float orig = float(i) / 255.f;
 
         float gamm;
@@ -856,14 +846,14 @@ bool plMetalPipeline::SetGamma(float eR, float eG, float eB)
     return true;
 }
 
-bool plMetalPipeline::SetGamma(const uint16_t *const tabR, const uint16_t *const tabG, const uint16_t *const tabB)
+bool plMetalPipeline::SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB)
 {
-    //allocate a new buffer every time so we don't cause problems with a running render pass
-    if(fDevice.fGammaLUTTexture) {
+    // allocate a new buffer every time so we don't cause problems with a running render pass
+    if (fDevice.fGammaLUTTexture) {
         fDevice.fGammaLUTTexture->release();
         fDevice.fGammaLUTTexture = nullptr;
     }
-    
+
     /*
      Plasma has multiple types of gamma corrections it can do - and the engine reserves
      the right to create any color correct LUT. Ugh. Load the LUT into a texture as 8 bit
@@ -875,129 +865,126 @@ bool plMetalPipeline::SetGamma(const uint16_t *const tabR, const uint16_t *const
     texDescriptor->setWidth(256);
     texDescriptor->setPixelFormat(MTL::PixelFormatR16Uint);
     texDescriptor->setArrayLength(3);
-    
+
     fDevice.fGammaLUTTexture = fDevice.fMetalDevice->newTexture(texDescriptor);
-    
+
     fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 0, tabR, 256 * sizeof(uint16_t), 0);
     fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 1, tabG, 256 * sizeof(uint16_t), 0);
     fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 2, tabB, 256 * sizeof(uint16_t), 0);
-    
+
     return true;
 }
 
-bool plMetalPipeline::SetGamma10(const uint16_t *const tabR, const uint16_t *const tabG, const uint16_t *const tabB)
+bool plMetalPipeline::SetGamma10(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB)
 {
-    //allocate a new buffer every time so we don't cause problems with a running render pass
-    if(fDevice.fGammaLUTTexture) {
+    // allocate a new buffer every time so we don't cause problems with a running render pass
+    if (fDevice.fGammaLUTTexture) {
         fDevice.fGammaLUTTexture->release();
         fDevice.fGammaLUTTexture = nullptr;
     }
-    
+
     /*
      Loads in a real 10 bit color LUT for fancy displays. This LUT contains
      way more data - but the shader doesn't care. The shader does an x lookup
      by normalized co-ordinate - not value. So the width of the texture can
      vary.
      */
-    
+
     MTL::TextureDescriptor* texDescriptor = MTL::TextureDescriptor::alloc()->init()->autorelease();
     texDescriptor->setTextureType(MTL::TextureType1DArray);
     texDescriptor->setWidth(1024);
     texDescriptor->setPixelFormat(MTL::PixelFormatR16Uint);
     texDescriptor->setArrayLength(3);
-    
+
     fDevice.fGammaLUTTexture = fDevice.fMetalDevice->newTexture(texDescriptor);
-    
+
     fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 1024), 0, 0, tabR, 1024 * sizeof(uint16_t), 0);
     fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 1024), 0, 1, tabG, 1024 * sizeof(uint16_t), 0);
     fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 1024), 0, 2, tabB, 1024 * sizeof(uint16_t), 0);
-    
+
     return true;
 }
 
-bool plMetalPipeline::CaptureScreen(plMipmap *dest, bool flipVertical, uint16_t desiredWidth, uint16_t desiredHeight)
+bool plMetalPipeline::CaptureScreen(plMipmap* dest, bool flipVertical, uint16_t desiredWidth, uint16_t desiredHeight)
 {
-    //FIXME: Screen capture
-    //FIXME: Double fix me - wasn't this working?
+    // FIXME: Screen capture
+    // FIXME: Double fix me - wasn't this working?
     return false;
 }
 
-plMipmap *plMetalPipeline::ExtractMipMap(plRenderTarget *targ)
+plMipmap* plMetalPipeline::ExtractMipMap(plRenderTarget* targ)
 {
-    if( plCubicRenderTarget::ConvertNoRef(targ) )
+    if (plCubicRenderTarget::ConvertNoRef(targ))
         return nullptr;
 
-    if( targ->GetPixelSize() != 32 )
-    {
+    if (targ->GetPixelSize() != 32) {
         hsAssert(false, "Only RGBA8888 currently implemented");
         return nullptr;
     }
-    
+
     plMetalRenderTargetRef* ref = (plMetalRenderTargetRef*)targ->GetDeviceRef();
-    if( !ref )
+    if (!ref)
         return nullptr;
-    
+
     const int width = targ->GetWidth();
     const int height = targ->GetHeight();
 
     plMipmap* mipMap = new plMipmap(width, height, plMipmap::kARGB32Config, 1);
 
-    uint8_t* ptr = (uint8_t*)(ref->fTexture->buffer()->contents());
+    uint8_t*           ptr = (uint8_t*)(ref->fTexture->buffer()->contents());
     const NS::UInteger pitch = ref->fTexture->width() * 4;
-    
+
     ref->fTexture->getBytes(mipMap->GetAddr32(0, 0), pitch, MTL::Region(0, 0, width, height), 0);
 
     const uint32_t blackOpaque = 0xff000000;
-    int y;
-    for( y = 0; y < height; y++ )
-    {
+    int            y;
+    for (y = 0; y < height; y++) {
         uint32_t* destPtr = mipMap->GetAddr32(0, y);
         uint32_t* srcPtr = (uint32_t*)destPtr;
-        int x;
-        for( x = 0; x < width; x++ )
-        {
+        int       x;
+        for (x = 0; x < width; x++) {
             destPtr[x] = srcPtr[x] | blackOpaque;
         }
         ptr += pitch;
     }
-    
+
     return mipMap;
 }
 
-void plMetalPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth)
+void plMetalPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode>* res, int ColorDepth)
 {
     /*
      There are decisions to make here.
-     
+
      Modern macOS does not support "display modes." You panel runs at native resolution at all times, and you can over-render or under-render. But you never set the display mode of the panel, or get the display mode of the panel. Most games have a "scale slider."
-     
+
      Note: There are legacy APIs for display modes for compatibility with older software. In since we're here writing a new renderer, lets do things the right way. The display mode APIs also have trouble with density. I.E. a 4k display might be reported as a 2k display if the window manager is running in a higher DPI mode.
-     
+
      The basic approach should be to render at whatever the resolution of our output surface is. We're mostly doing that now (aspect ratio doesn't adjust.)
-     
+
      Ideally we should support some sort of scaling/semi dynamic renderbuffer resolution thing. But don't mess with the window servers framebuffer size. macOS has accelerated resolution scaling like consoles do. Use that.
      */
-    
+
     std::vector<plDisplayMode> supported;
-    plDisplayMode mode;
+    plDisplayMode              mode;
     mode.Width = 800;
     mode.Height = 600;
     mode.ColorDepth = 32;
     supported.push_back(mode);
-    
+
     *res = supported;
 }
 
 int plMetalPipeline::GetMaxAnisotropicSamples()
 {
-    //Metal always supports 16. There is no device check (as far as I know.)
+    // Metal always supports 16. There is no device check (as far as I know.)
     return 16;
 }
 
 int plMetalPipeline::GetMaxAntiAlias(int Width, int Height, int ColorDepth)
 {
-    //Metal devices may not support the full antialias range
-    //return the max and we'll work it out later
+    // Metal devices may not support the full antialias range
+    // return the max and we'll work it out later
     if (fDevice.fMetalDevice->supportsTextureSampleCount(8)) {
         return 8;
     }
@@ -1012,33 +999,32 @@ int plMetalPipeline::GetMaxAntiAlias(int Width, int Height, int ColorDepth)
 
 void plMetalPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync)
 {
-    //FIXME: Whats this?
-    //Seems like an entry point for passing in display settings.
-    
+    // FIXME: Whats this?
+    // Seems like an entry point for passing in display settings.
+
     fDevice.SetMaxAnsiotropy(MaxAnisotropicSamples);
 }
 
-void plMetalPipeline::RenderSpans(plDrawableSpans *ice, const std::vector<int16_t> &visList)
+void plMetalPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList)
 {
     plProfile_BeginTiming(RenderSpan);
 
-    hsMatrix44 lastL2W;
-    size_t i, j;
-    hsGMaterial* material;
+    hsMatrix44                  lastL2W;
+    size_t                      i, j;
+    hsGMaterial*                material;
     const std::vector<plSpan*>& spans = ice->GetSpanArray();
 
-    //plProfile_IncCount(EmptyList, !visList.GetCount());
+    // plProfile_IncCount(EmptyList, !visList.GetCount());
 
     /// Set this (*before* we do our TestVisibleWorld stuff...)
     lastL2W.Reset();
-    ISetLocalToWorld(lastL2W, lastL2W);     // This is necessary; otherwise, we have to test for
-                                            // the first transform set, since this'll be identity
-                                            // but the actual device transform won't be (unless
-                                            // we do this)
-
+    ISetLocalToWorld(lastL2W, lastL2W); // This is necessary; otherwise, we have to test for
+                                        // the first transform set, since this'll be identity
+                                        // but the actual device transform won't be (unless
+                                        // we do this)
 
     /// Loop through our spans, combining them when possible
-    for (i = 0; i < visList.size(); ) {
+    for (i = 0; i < visList.size();) {
         if (GetOverrideMaterial() != nullptr) {
             material = GetOverrideMaterial();
         } else {
@@ -1060,7 +1046,7 @@ void plMetalPipeline::RenderSpans(plDrawableSpans *ice, const std::vector<int16_
                 break;
             }
             plProfile_EndTiming(MergeCheck);
-            //plProfile_Inc(SpanMerge);
+            // plProfile_Inc(SpanMerge);
 
             plProfile_BeginTiming(MergeSpan);
             spans[visList[j]]->MergeInto(&tempIce);
@@ -1079,8 +1065,8 @@ void plMetalPipeline::RenderSpans(plDrawableSpans *ice, const std::vector<int16_
             if (!mRef->IsLinked()) {
                 mRef->Link(&fMatRefList);
             }
-            
-            hsGDeviceRef* vb = ice->GetVertexRef( tempIce.fGroupIdx, tempIce.fVBufferIdx );
+
+            hsGDeviceRef*           vb = ice->GetVertexRef(tempIce.fGroupIdx, tempIce.fVBufferIdx);
             plMetalVertexBufferRef* vRef = (plMetalVertexBufferRef*)vb;
 
             // What do we change?
@@ -1101,12 +1087,12 @@ void plMetalPipeline::RenderSpans(plDrawableSpans *ice, const std::vector<int16_
             plProfile_EndTiming(CheckStat);
 
             // Draw this span now
-            IRenderBufferSpan( tempIce,
-                                vb,
-                                ice->GetIndexRef( tempIce.fGroupIdx, tempIce.fIBufferIdx ),
-                                material,
-                                tempIce.fVStartIdx, tempIce.fVLength,   // These are used as our accumulated range
-                                tempIce.fIPackedIdx, tempIce.fILength );
+            IRenderBufferSpan(tempIce,
+                              vb,
+                              ice->GetIndexRef(tempIce.fGroupIdx, tempIce.fIBufferIdx),
+                              material,
+                              tempIce.fVStartIdx, tempIce.fVLength, // These are used as our accumulated range
+                              tempIce.fIPackedIdx, tempIce.fILength);
         }
 
         // Restart our search...
@@ -1121,24 +1107,23 @@ void plMetalPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& 
 {
     if (span.fNumMatrices) {
         if (span.fNumMatrices <= 2) {
-            ISetLocalToWorld( span.fLocalToWorld, span.fWorldToLocal );
+            ISetLocalToWorld(span.fLocalToWorld, span.fWorldToLocal);
             lastL2W = span.fLocalToWorld;
         } else {
             lastL2W.Reset();
-            ISetLocalToWorld( lastL2W, lastL2W );
+            ISetLocalToWorld(lastL2W, lastL2W);
             fView.fLocalToWorldLeftHanded = span.fLocalToWorld.GetParity();
         }
     } else if (lastL2W != span.fLocalToWorld) {
-        ISetLocalToWorld( span.fLocalToWorld, span.fWorldToLocal );
+        ISetLocalToWorld(span.fLocalToWorld, span.fWorldToLocal);
         lastL2W = span.fLocalToWorld;
     } else {
         fView.fLocalToWorldLeftHanded = lastL2W.GetParity();
     }
 
-    if( span.fNumMatrices == 2 )
-    {
+    if (span.fNumMatrices == 2) {
         matrix_float4x4 mat;
-        hsMatrix2SIMD(drawable->GetPaletteMatrix(span.fBaseMatrix+1), &mat);
+        hsMatrix2SIMD(drawable->GetPaletteMatrix(span.fBaseMatrix + 1), &mat);
         fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&mat, sizeof(matrix_float4x4), VertexShaderArgumentBlendMatrix1);
     }
 
@@ -1149,25 +1134,25 @@ void plMetalPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& 
 }
 
 void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
-                                     hsGDeviceRef* ib, hsGMaterial* material,
-                                     uint32_t vStart, uint32_t vLength,
-                                     uint32_t iStart, uint32_t iLength)
+                                        hsGDeviceRef* ib, hsGMaterial* material,
+                                        uint32_t vStart, uint32_t vLength,
+                                        uint32_t iStart, uint32_t iLength)
 {
-    if(iLength == 0) {
+    if (iLength == 0) {
         return;
     }
-    
+
     plProfile_BeginTiming(RenderBuff);
 
-    plMetalVertexBufferRef* vRef = (plMetalVertexBufferRef*)vb;
-    plMetalIndexBufferRef* iRef = (plMetalIndexBufferRef*)ib;
+    plMetalVertexBufferRef*   vRef = (plMetalVertexBufferRef*)vb;
+    plMetalIndexBufferRef*    iRef = (plMetalIndexBufferRef*)ib;
     plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
     mRef->CheckMateralRef();
 
     if (!vRef || !vRef->GetBuffer() || !iRef->GetBuffer()) {
         plProfile_EndTiming(RenderBuff);
 
-        hsAssert( false, ST::format("Trying to render a nil buffer pair! (Mat: {})", material->GetKeyName()).c_str() );
+        hsAssert(false, ST::format("Trying to render a nil buffer pair! (Mat: {})", material->GetKeyName()).c_str());
         return;
     }
 
@@ -1186,16 +1171,16 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
         }
     }
 #endif
-    
+
     // Turn on this spans lights and turn off the rest.
     ISelectLights(&span, mRef);
-    
+
 #ifdef HS_DEBUGGING
     fDevice.CurrentRenderCommandEncoder()->pushDebugGroup(NS::String::string(material->GetKeyName().c_str(), NS::UTF8StringEncoding));
 #endif
-    
+
     /* Vertex Buffer stuff */
-    if(!vRef->GetBuffer()) {
+    if (!vRef->GetBuffer()) {
         return;
     }
     if (fState.fCurrentVertexBuffer != vRef->GetBuffer()) {
@@ -1203,27 +1188,25 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
         fState.fCurrentVertexBuffer = vRef->GetBuffer();
     }
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
-    
+
     IPushPiggyBacks(material);
     hsRefCnt_SafeAssign(fCurrMaterial, material);
     uint32_t pass;
     for (pass = 0; pass < mRef->GetNumPasses(); pass++) {
-        
-        if ( IHandleMaterialPass(material, pass, &span, vRef) ) {
+        if (IHandleMaterialPass(material, pass, &span, vRef)) {
             render.RenderPrims();
         }
-        
-        //Projection wants to do it's own lighting, push the current lighting state
-        //so we can keep the same light calculations on the next pass
+
+        // Projection wants to do it's own lighting, push the current lighting state
+        // so we can keep the same light calculations on the next pass
         PushCurrentLightSources();
-        
+
         plProfile_BeginTiming(SelectProj);
-        ISelectLights( &span, mRef, true );
+        ISelectLights(&span, mRef, true);
         plProfile_EndTiming(SelectProj);
-        
+
         // Take care of projections that get applied to each pass.
-        if( fProjEach.size() && !(fView.fRenderState & kRenderNoProjection) )
-        {
+        if (fProjEach.size() && !(fView.fRenderState & kRenderNoProjection)) {
 #ifdef HS_DEBUGGING
             fDevice.CurrentRenderCommandEncoder()->pushDebugGroup(NS::String::string("Render projections", NS::UTF8StringEncoding));
 #endif
@@ -1232,51 +1215,48 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
             fDevice.CurrentRenderCommandEncoder()->popDebugGroup();
 #endif
         }
-        //Revert the light state back to what we had before projections
+        // Revert the light state back to what we had before projections
         PopCurrentLightSources();
-        
+
         if (IsDebugFlagSet(plPipeDbg::kFlagNoUpperLayers))
             pass = mRef->GetNumPasses();
     }
-    
+
     IPopPiggyBacks();
-    
+
     // Render any aux spans associated.
-    if( span.GetNumAuxSpans() ) {
+    if (span.GetNumAuxSpans()) {
         IRenderAuxSpans(span);
-        
-        //aux spans will change the current vertex buffer, put ours back
+
+        // aux spans will change the current vertex buffer, put ours back
         fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
         fState.fCurrentVertexBuffer = vRef->GetBuffer();
     }
-    
-    
 
     // Only render projections and shadows if we successfully rendered the span.
     // j == -1 means we aborted render.
-    if( pass >= 0 )
-    {
-        //if we had to render aux spans, we probably changed the vertex and index buffer
-        //reset those
+    if (pass >= 0) {
+        // if we had to render aux spans, we probably changed the vertex and index buffer
+        // reset those
         fState.fCurrentVertexBuffer = vRef->GetBuffer();
         fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
-        
+
         // Projections that get applied to the frame buffer (after all passes).
-        if( fProjAll.size() && !(fView.fRenderState & kRenderNoProjection) ) {
+        if (fProjAll.size() && !(fView.fRenderState & kRenderNoProjection)) {
             fDevice.CurrentRenderCommandEncoder()->pushDebugGroup(NS::MakeConstantString("Render All Projections"));
             IRenderProjections(render, vRef);
             fDevice.CurrentRenderCommandEncoder()->popDebugGroup();
         }
 
         // Handle render of shadows onto geometry.
-        if( fShadows.size() ) {
+        if (fShadows.size()) {
             IRenderShadowsOntoSpan(render, &span, material, vRef);
         }
     }
-    
-    if ( span.GetNumAuxSpans() || (pass >= 0 && fShadows.size()) ) {
+
+    if (span.GetNumAuxSpans() || (pass >= 0 && fShadows.size())) {
     }
-        
+
 #ifdef HS_DEBUGGING
     fDevice.CurrentRenderCommandEncoder()->popDebugGroup();
 #endif
@@ -1289,8 +1269,7 @@ void plMetalPipeline::IRenderProjections(const plRenderPrimFunc& render, const p
 {
     PushCurrentLightSources();
     IDisableLightsForShadow();
-    for (plLightInfo* li : fProjAll)
-    {
+    for (plLightInfo* li : fProjAll) {
         IRenderProjection(render, li, vRef);
     }
     PopCurrentLightSources();
@@ -1307,9 +1286,9 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
     plLayerInterface* proj = li->GetProjection();
     CheckTextureRef(proj);
     plMetalTextureRef* tex = (plMetalTextureRef*)proj->GetTexture()->GetDeviceRef();
-    
+
     IScaleLight(0, true);
-    
+
     fCurrentRenderPassUniforms->ambientSrc = 1.0;
     fCurrentRenderPassUniforms->diffuseSrc = 1.0;
     fCurrentRenderPassUniforms->emissiveSrc = 1.0;
@@ -1320,31 +1299,30 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
     fCurrentRenderPassUniforms->specularCol = {0.0, 0.0, 0.0};
     fCurrentRenderPassUniforms->fogColor = {0.0, 0.0, 0.0};
     fCurrentRenderPassUniforms->diffuseCol = {1.0, 1.0, 1.0, 1.0};
-    
-    
+
     matrix_float4x4 tXfm;
     hsMatrix2SIMD(proj->GetTransform(), &tXfm);
     fCurrentRenderPassUniforms->uvTransforms[0].transform = tXfm;
     fCurrentRenderPassUniforms->uvTransforms[0].UVWSrc = proj->GetUVWSrc();
-    
+
     fCurrNumLayers = 1;
     // We should have put ZNoZWrite on during export, but we didn't.
     IHandleZMode(hsGMatState::kZNoZWrite);
-    
-    //This is a bit weird - in since this isn't a material we need to build a query for the right Metal program ourselves
+
+    // This is a bit weird - in since this isn't a material we need to build a query for the right Metal program ourselves
     plMetalFragmentShaderDescription description;
     memset(&description, 0, sizeof(description));
     description.numLayers = fCurrNumLayers = 1;
-    
+
     description.Populate(proj, 0);
-    //DX sets the color invert when the final color should be inverted. Not sure why!
-    if( proj->GetBlendFlags() & hsGMatState::kBlendInvertFinalColor ) {
+    // DX sets the color invert when the final color should be inverted. Not sure why!
+    if (proj->GetBlendFlags() & hsGMatState::kBlendInvertFinalColor) {
         description.blendModes[0] |= hsGMatState::kBlendInvertColor;
     }
-    
-    plMetalMaterialPassPipelineState materialShaderState(&fDevice, vRef, description);
+
+    plMetalMaterialPassPipelineState      materialShaderState(&fDevice, vRef, description);
     plMetalDevice::plMetalLinkedPipeline* linkedPipeline = materialShaderState.GetRenderPipelineState();
-    
+
     fState.fCurrentPipelineState = linkedPipeline->pipelineState;
     fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
     fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(tex->fTexture, 0);
@@ -1362,7 +1340,7 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
 void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGMaterial* material, int iPass, const plSpan& span, const plMetalVertexBufferRef* vRef)
 {
     // If this is a bump map pass, forget it, we've already "done" per-pixel lighting.
-    //if( fLayerState[iPass].fMiscFlags & (hsGMatState::kMiscBumpLayer | hsGMatState::kMiscBumpChans) )
+    // if( fLayerState[iPass].fMiscFlags & (hsGMatState::kMiscBumpLayer | hsGMatState::kMiscBumpChans) )
     //    return;
 
     // Push the LayerShadowBase override. This sets the blend
@@ -1371,11 +1349,10 @@ void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGM
 
     // For each projector:
     int k;
-    for( k = 0; k < fProjEach.size(); k++ )
-    {
+    for (k = 0; k < fProjEach.size(); k++) {
         // Push it's projected texture as a piggyback.
-        plLightInfo* li = fProjEach[k];
-        plMetalMaterialShaderRef *mRef = (plMetalMaterialShaderRef *)material->GetDeviceRef();
+        plLightInfo*              li = fProjEach[k];
+        plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
 
         plLayerInterface* proj = li->GetProjection();
         hsAssert(proj, "A projector with no texture to project?");
@@ -1387,8 +1364,8 @@ void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGM
 
         AppendLayerInterface(&layLightBase, false);
 
-        IHandleMaterialPass( material, iPass, &span, vRef, false );
-        
+        IHandleMaterialPass(material, iPass, &span, vRef, false);
+
         IScaleLight(0, true);
 
         // Do the render with projection.
@@ -1398,11 +1375,8 @@ void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGM
 
         // Pop it's projected texture off piggyback
         IPopProjPiggyBacks();
-
     }
-
 }
-
 
 // ICheckAuxBuffers ///////////////////////////////////////////////////////////////////////
 // The AuxBuffers are associated with drawables for things to be drawn right after that
@@ -1415,17 +1389,16 @@ bool plMetalPipeline::ICheckAuxBuffers(const plAuxSpan* span)
     plGBufferGroup* group = span->fGroup;
 
     plMetalVertexBufferRef* vRef = (plMetalVertexBufferRef*)group->GetVertexBufferRef(span->fVBufferIdx);
-    if( !vRef )
+    if (!vRef)
         return true;
 
     plMetalIndexBufferRef* iRef = (plMetalIndexBufferRef*)group->GetIndexBufferRef(span->fIBufferIdx);
-    if( !iRef )
+    if (!iRef)
         return true;
 
     // If our vertex buffer ref is volatile and the timestamp is off
     // then it needs to be refilled
-    if( vRef->Expired(fVtxRefTime) )
-    {
+    if (vRef->Expired(fVtxRefTime)) {
         IRefreshDynVertices(group, vRef);
     }
 
@@ -1443,11 +1416,10 @@ void plMetalPipeline::IRenderAuxSpans(const plSpan& span)
     ISetLocalToWorld(hsMatrix44::IdentityMatrix(), hsMatrix44::IdentityMatrix());
 
     int i;
-    for( i = 0; i < span.GetNumAuxSpans(); i++ )
+    for (i = 0; i < span.GetNumAuxSpans(); i++)
         IRenderAuxSpan(span, span.GetAuxSpan(i));
 
     ISetLocalToWorld(span.fLocalToWorld, span.fWorldToLocal);
-
 }
 
 // IRenderAuxSpan //////////////////////////////////////////////////////////
@@ -1467,110 +1439,106 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     // Set to render from the aux spans buffers.
     plMetalVertexBufferRef* vRef = (plMetalVertexBufferRef*)aux->fGroup->GetVertexBufferRef(aux->fVBufferIdx);
 
-    if( !vRef )
+    if (!vRef)
         return;
 
     plMetalIndexBufferRef* iRef = (plMetalIndexBufferRef*)aux->fGroup->GetIndexBufferRef(aux->fIBufferIdx);
 
-    if( !iRef )
+    if (!iRef)
         return;
-    
 
     // Now just loop through the aux material, rendering in as many passes as it takes.
-    hsGMaterial* material = aux->fMaterial;
+    hsGMaterial*              material = aux->fMaterial;
     plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
-    
+
     if (mRef == nullptr) {
         mRef = new plMetalMaterialShaderRef(material, this);
         material->SetDeviceRef(mRef);
     }
-    
+
     /* Vertex Buffer stuff */
-    if(!vRef->GetBuffer()) {
+    if (!vRef->GetBuffer()) {
         return;
     }
     fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
     fState.fCurrentVertexBuffer = vRef->GetBuffer();
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
-    
+
     plRenderTriListFunc render(&fDevice, 0, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength);
-    
+
     for (int32_t pass = 0; pass < mRef->GetNumPasses(); pass++) {
         IHandleMaterialPass(material, pass, &span, vRef);
-        if( aux->fFlags & plAuxSpan::kOverrideLiteModel )
-        {
+        if (aux->fFlags & plAuxSpan::kOverrideLiteModel) {
             fCurrentRenderPassUniforms->ambientCol = {1.0f, 1.0f, 1.0f};
-            
+
             fCurrentRenderPassUniforms->diffuseSrc = 1.0;
             fCurrentRenderPassUniforms->ambientSrc = 1.0;
             fCurrentRenderPassUniforms->emissiveSrc = 0.0;
             fCurrentRenderPassUniforms->specularSrc = 1.0;
         }
-        
+
         render.RenderPrims();
     }
 }
 
-bool plMetalPipeline::IHandleMaterialPass(hsGMaterial *material, uint32_t pass, const plSpan *currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders)
+bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, const plSpan* currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders)
 {
     plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
-    
-    fCurrLayerIdx = mRef->GetPassIndex(pass);
-    plLayerInterface *lay = material->GetLayer(mRef->GetPassIndex(pass));
 
+    fCurrLayerIdx = mRef->GetPassIndex(pass);
+    plLayerInterface* lay = material->GetLayer(mRef->GetPassIndex(pass));
 
     hsGMatState s;
     s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
-    
-    if( s.fZFlags & hsGMatState::kZIncLayer )
+
+    if (s.fZFlags & hsGMatState::kZIncLayer)
         ISetLayer(1);
     else
         ISetLayer(0);
 
     IHandleZMode(s);
     IHandleBlendMode(s);
-    
+
     if (s.fMiscFlags & hsGMatState::kMiscTwoSided) {
-        if(fState.fCurrentCullMode != MTL::CullModeNone) {
+        if (fState.fCurrentCullMode != MTL::CullModeNone) {
             fDevice.CurrentRenderCommandEncoder()->setCullMode(MTL::CullModeNone);
-            fState.fCurrentCullMode =  MTL::CullModeNone;
+            fState.fCurrentCullMode = MTL::CullModeNone;
         }
     } else {
         ISetCullMode();
     }
-    
-    //Some build passes don't allow shaders. Render the geometry and the provided material, but don't allow the shader path if instructed to. In the DX source, this would be done by the render phase setting the shaders to null after calling this. That won't work here in since our pipeline state has to know the shaders.
-    if(lay->GetVertexShader() && allowShaders) {
-        
+
+    // Some build passes don't allow shaders. Render the geometry and the provided material, but don't allow the shader path if instructed to. In the DX source, this would be done by the render phase setting the shaders to null after calling this. That won't work here in since our pipeline state has to know the shaders.
+    if (lay->GetVertexShader() && allowShaders) {
         lay = IPushOverBaseLayer(lay);
         lay = IPushOverAllLayer(lay);
-        
-        //pure shader path
-        plShader *vertexShader = lay->GetVertexShader();
-        plShader *fragShader = lay->GetPixelShader();
-        
+
+        // pure shader path
+        plShader* vertexShader = lay->GetVertexShader();
+        plShader* fragShader = lay->GetPixelShader();
+
         fCurrLay = lay;
         fCurrNumLayers = mRef->fPassLengths[pass];
-        
+
         ISetShaders(vRef, s, vertexShader, fragShader);
-        
-        //FIXME: Programmable pipeline does not implement the full feature set
+
+        // FIXME: Programmable pipeline does not implement the full feature set
         /*
          The programmable pipeline doesn't do things like set the texture transform matrices,
          In practice, the transforms aren't set and used. Does it matter that the Metal
          implementation doesn't implemention the full inputs the DX version gets?
-         
+
          If it is implemented, the same checks the DX version does should be also implemented.
          DX will set texture transforms, but then turn them off in the pipeline and manually
          manipulate texture co-ords in the shader.
-         
+
          Texture setting should also _maybe_ be reconciled with the "fixed" pipeline. But
          the fixed pipeline uses indirect textures mapped to a buffer. That approach could
          work for the programmable pipeline too, but I'm planning changes to the fixed pipeline
          and the way it stores textures. So maybe things should be reconciled after that
          work is done.
          */
-        
+
         for (size_t i = 0; i < material->GetNumLayers(); i++) {
             plLayerInterface* layer = material->GetLayer(i);
             if (!layer) {
@@ -1578,33 +1546,32 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial *material, uint32_t pass, 
             }
 
             CheckTextureRef(layer);
-            
+
             plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
             if (!img) {
                 return false;
             }
-            
+
             plMetalTextureRef* texRef = (plMetalTextureRef*)img->GetDeviceRef();
 
             if (!texRef->fTexture) {
                 return false;
             }
-            
+
             size_t idOffset = 0;
-            //Metal doesn't like mixing 2D and cubic textures. If this is a cubic texture, make sure it lands in the right ID range.
-            if(plCubicRenderTarget::ConvertNoRef( img )) {
+            // Metal doesn't like mixing 2D and cubic textures. If this is a cubic texture, make sure it lands in the right ID range.
+            if (plCubicRenderTarget::ConvertNoRef(img)) {
                 idOffset = FragmentShaderArgumentAttributeCubicTextures;
             }
-            
+
             fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(texRef->fTexture, i + idOffset);
-            
         }
         lay = IPopOverAllLayer(lay);
         lay = IPopOverBaseLayer(lay);
     } else {
         //"Fixed" path
-        
+
         /*
          To compute correct lighting we need to add the pushover layers.
          The actual renderer will do it's own add and remove, so remove the
@@ -1613,85 +1580,80 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial *material, uint32_t pass, 
         lay = IPushOverBaseLayer(lay);
         lay = IPushOverAllLayer(lay);
         ICalcLighting(mRef, lay, currSpan);
-        
+
         s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
-        
+
         /*
          If the layer opacity is 0, don't draw it. This prevents it from contributing to the Z buffer.
          This can happen with some models like the fire marbles in the neighborhood that have some models
          for physics only, and then can block other rendering in the Z buffer.
          DX pipeline does this in ILoopOverLayers.
          */
-        if( (s.fBlendFlags & hsGMatState::kBlendAlpha)
-           &&lay->GetOpacity() <= 0
-           &&(fCurrLightingMethod != plSpan::kLiteVtxPreshaded) ) {
-            
-            //FIXME: All these popping of layers in the return sections is getting ugly
-            
+        if ((s.fBlendFlags & hsGMatState::kBlendAlpha) && lay->GetOpacity() <= 0 && (fCurrLightingMethod != plSpan::kLiteVtxPreshaded)) {
+            // FIXME: All these popping of layers in the return sections is getting ugly
+
             lay = IPopOverAllLayer(lay);
             lay = IPopOverBaseLayer(lay);
-            
+
             return false;
         }
-        
+
         if (s.fBlendFlags & hsGMatState::kBlendInvertVtxAlpha)
             fCurrentRenderPassUniforms->invVtxAlpha = true;
         else
             fCurrentRenderPassUniforms->invVtxAlpha = false;
-        
+
         std::vector<plLightInfo*>& spanLights = currSpan->GetLightList(false);
-        
+
         size_t numActivePiggyBacks = 0;
-        if( !(s.fMiscFlags & hsGMatState::kMiscBumpChans) && !(s.fShadeFlags & hsGMatState::kShadeEmissive) )
-        {
+        if (!(s.fMiscFlags & hsGMatState::kMiscBumpChans) && !(s.fShadeFlags & hsGMatState::kShadeEmissive)) {
             /// Tack lightmap onto last stage if we have one
             numActivePiggyBacks = fActivePiggyBacks;
-            
         }
-        
+
         struct plMetalFragmentShaderDescription fragmentShaderDescription;
-        
+
         lay = IPopOverAllLayer(lay);
         lay = IPopOverBaseLayer(lay);
-        
-        if(numActivePiggyBacks==0 && fOverBaseLayer == nullptr && fOverAllLayer == nullptr) {
+
+        if (numActivePiggyBacks == 0 && fOverBaseLayer == nullptr && fOverAllLayer == nullptr) {
             mRef->FastEncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass);
-            
+
             fragmentShaderDescription = mRef->GetFragmentShaderDescription(pass);
         } else {
-        
-            //Plasma pulls piggybacks from the rear first, pull the number of active piggybacks
-            auto firstPiggyback = fPiggyBackStack.end() - numActivePiggyBacks;
-            auto lastPiggyback = fPiggyBackStack.end();
+            // Plasma pulls piggybacks from the rear first, pull the number of active piggybacks
+            auto                           firstPiggyback = fPiggyBackStack.end() - numActivePiggyBacks;
+            auto                           lastPiggyback = fPiggyBackStack.end();
             std::vector<plLayerInterface*> subPiggybacks(firstPiggyback, lastPiggyback);
-            mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &fragmentShaderDescription, &subPiggybacks,
-                                  [&](plLayerInterface* layer, uint32_t index){
-                if(index==0) {
+            mRef->EncodeArguments(
+                fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &fragmentShaderDescription, &subPiggybacks,
+                [&](plLayerInterface* layer, uint32_t index) {
+                if (index == 0) {
                     layer = IPushOverBaseLayer(layer);
                 }
                 layer = IPushOverAllLayer(layer);
-                
+
                 return layer;
             },
-                                  [&](plLayerInterface* layer, uint32_t index){
+                [&](plLayerInterface* layer, uint32_t index) {
                 layer = IPopOverAllLayer(layer);
-                if(index==0)
+                if (index == 0)
                     layer = IPopOverBaseLayer(layer);
                 return layer;
             });
         }
-         
-         plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalMaterialPassPipelineState(&fDevice, vRef, fragmentShaderDescription).GetRenderPipelineState();
-         const MTL::RenderPipelineState *pipelineState = linkedPipeline->pipelineState;
-        
+
+        plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalMaterialPassPipelineState(&fDevice, vRef, fragmentShaderDescription).GetRenderPipelineState();
+        const MTL::RenderPipelineState*       pipelineState = linkedPipeline->pipelineState;
+
         /*plMetalDevice::plMetalLinkedPipeline *pipeline = fDevice.pipelineStateFor(vRef, s.fBlendFlags, numActivePiggyBacks + mRef->fPassLengths[pass], plShaderID::Unregistered, plShaderID::Unregistered, sources, blendModes, miscFlags);
         const MTL::RenderPipelineState *pipelineState = pipeline->pipelineState;*/
-        if(fState.fCurrentPipelineState != pipelineState) {
+        if (fState.fCurrentPipelineState != pipelineState) {
             fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pipelineState);
             fState.fCurrentPipelineState = pipelineState;
         }
     }
-    
+
     return true;
 }
 
@@ -1706,52 +1668,40 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial *material, uint32_t pass, 
 void plMetalPipeline::ISetPipeConsts(plShader* shader)
 {
     size_t n = shader->GetNumPipeConsts();
-    int i;
-    for( i = 0; i < n; i++ )
-    {
+    int    i;
+    for (i = 0; i < n; i++) {
         const plPipeConst& pc = shader->GetPipeConst(i);
-        switch( pc.fType )
-        {
-        case plPipeConst::kFogSet:
-            {
+        switch (pc.fType) {
+            case plPipeConst::kFogSet: {
                 float set[4];
-                //FIXME: Fog broken in dynamic pipeline
-                //IGetVSFogSet(set);
-                //shader->SetFloat4(pc.fReg, set);
-            }
-            break;
-        case plPipeConst::kLayAmbient:
-            {
+                // FIXME: Fog broken in dynamic pipeline
+                // IGetVSFogSet(set);
+                // shader->SetFloat4(pc.fReg, set);
+            } break;
+            case plPipeConst::kLayAmbient: {
                 hsColorRGBA col = fCurrLay->GetAmbientColor();
                 shader->SetColor(pc.fReg, col);
-            }
-            break;
-        case plPipeConst::kLayRuntime:
-            {
+            } break;
+            case plPipeConst::kLayRuntime: {
                 hsColorRGBA col = fCurrLay->GetRuntimeColor();
                 col.a = fCurrLay->GetOpacity();
                 shader->SetColor(pc.fReg, col);
-            }
-            break;
-        case plPipeConst::kLaySpecular:
-            {
+            } break;
+            case plPipeConst::kLaySpecular: {
                 hsColorRGBA col = fCurrLay->GetSpecularColor();
                 shader->SetColor(pc.fReg, col);
-            }
-            break;
-        case plPipeConst::kTex3x4_0:
-        case plPipeConst::kTex3x4_1:
-        case plPipeConst::kTex3x4_2:
-        case plPipeConst::kTex3x4_3:
-        case plPipeConst::kTex3x4_4:
-        case plPipeConst::kTex3x4_5:
-        case plPipeConst::kTex3x4_6:
-        case plPipeConst::kTex3x4_7:
-            {
+            } break;
+            case plPipeConst::kTex3x4_0:
+            case plPipeConst::kTex3x4_1:
+            case plPipeConst::kTex3x4_2:
+            case plPipeConst::kTex3x4_3:
+            case plPipeConst::kTex3x4_4:
+            case plPipeConst::kTex3x4_5:
+            case plPipeConst::kTex3x4_6:
+            case plPipeConst::kTex3x4_7: {
                 int stage = pc.fType - plPipeConst::kTex3x4_0;
 
-                if( stage > fCurrNumLayers )
-                {
+                if (stage > fCurrNumLayers) {
                     // Ooops. This is bad, means the shader is expecting more layers than
                     // we actually have (or is just bogus). Assert and quietly continue.
                     hsAssert(false, "Shader asking for higher stage transform than we have");
@@ -1760,21 +1710,18 @@ void plMetalPipeline::ISetPipeConsts(plShader* shader)
                 const hsMatrix44& xfm = fCurrMaterial->GetLayer(fCurrLayerIdx + stage)->GetTransform();
 
                 shader->SetMatrix34(pc.fReg, xfm);
-            }
-            break;
-        case plPipeConst::kTex2x4_0:
-        case plPipeConst::kTex2x4_1:
-        case plPipeConst::kTex2x4_2:
-        case plPipeConst::kTex2x4_3:
-        case plPipeConst::kTex2x4_4:
-        case plPipeConst::kTex2x4_5:
-        case plPipeConst::kTex2x4_6:
-        case plPipeConst::kTex2x4_7:
-            {
+            } break;
+            case plPipeConst::kTex2x4_0:
+            case plPipeConst::kTex2x4_1:
+            case plPipeConst::kTex2x4_2:
+            case plPipeConst::kTex2x4_3:
+            case plPipeConst::kTex2x4_4:
+            case plPipeConst::kTex2x4_5:
+            case plPipeConst::kTex2x4_6:
+            case plPipeConst::kTex2x4_7: {
                 int stage = pc.fType - plPipeConst::kTex2x4_0;
 
-                if( stage > fCurrNumLayers )
-                {
+                if (stage > fCurrNumLayers) {
                     // Ooops. This is bad, means the shader is expecting more layers than
                     // we actually have (or is just bogus). Assert and quietly continue.
                     hsAssert(false, "Shader asking for higher stage transform than we have");
@@ -1783,21 +1730,18 @@ void plMetalPipeline::ISetPipeConsts(plShader* shader)
                 const hsMatrix44& xfm = fCurrMaterial->GetLayer(fCurrLayerIdx + stage)->GetTransform();
 
                 shader->SetMatrix24(pc.fReg, xfm);
-            }
-            break;
-        case plPipeConst::kTex1x4_0:
-        case plPipeConst::kTex1x4_1:
-        case plPipeConst::kTex1x4_2:
-        case plPipeConst::kTex1x4_3:
-        case plPipeConst::kTex1x4_4:
-        case plPipeConst::kTex1x4_5:
-        case plPipeConst::kTex1x4_6:
-        case plPipeConst::kTex1x4_7:
-            {
+            } break;
+            case plPipeConst::kTex1x4_0:
+            case plPipeConst::kTex1x4_1:
+            case plPipeConst::kTex1x4_2:
+            case plPipeConst::kTex1x4_3:
+            case plPipeConst::kTex1x4_4:
+            case plPipeConst::kTex1x4_5:
+            case plPipeConst::kTex1x4_6:
+            case plPipeConst::kTex1x4_7: {
                 int stage = pc.fType - plPipeConst::kTex1x4_0;
 
-                if( stage > fCurrNumLayers )
-                {
+                if (stage > fCurrNumLayers) {
                     // Ooops. This is bad, means the shader is expecting more layers than
                     // we actually have (or is just bogus). Assert and quietly continue.
                     hsAssert(false, "Shader asking for higher stage transform than we have");
@@ -1806,114 +1750,93 @@ void plMetalPipeline::ISetPipeConsts(plShader* shader)
                 const hsMatrix44& xfm = fCurrMaterial->GetLayer(fCurrLayerIdx + stage)->GetTransform();
 
                 shader->SetFloat4(pc.fReg, xfm.fMap[0]);
-            }
-            break;
-        case plPipeConst::kLocalToNDC:
-            {
+            } break;
+            case plPipeConst::kLocalToNDC: {
                 hsMatrix44 cam2ndc = IGetCameraToNDC();
                 hsMatrix44 world2cam = GetViewTransform().GetWorldToCamera();
 
                 hsMatrix44 local2ndc = cam2ndc * world2cam * GetLocalToWorld();
 
                 shader->SetMatrix44(pc.fReg, local2ndc);
-            }
-            break;
+            } break;
 
-        case plPipeConst::kCameraToNDC:
-            {
+            case plPipeConst::kCameraToNDC: {
                 hsMatrix44 cam2ndc = IGetCameraToNDC();
 
                 shader->SetMatrix44(pc.fReg, cam2ndc);
-            }
-            break;
+            } break;
 
-        case plPipeConst::kWorldToNDC:
-            {
+            case plPipeConst::kWorldToNDC: {
                 hsMatrix44 cam2ndc = IGetCameraToNDC();
                 hsMatrix44 world2cam = GetViewTransform().GetWorldToCamera();
 
                 hsMatrix44 world2ndc = cam2ndc * world2cam;
 
                 shader->SetMatrix44(pc.fReg, world2ndc);
-            }
-            break;
+            } break;
 
-        case plPipeConst::kLocalToWorld:
-            shader->SetMatrix34(pc.fReg, GetLocalToWorld());
-            break;
+            case plPipeConst::kLocalToWorld:
+                shader->SetMatrix34(pc.fReg, GetLocalToWorld());
+                break;
 
-        case plPipeConst::kWorldToLocal:
-            shader->SetMatrix34(pc.fReg, GetWorldToLocal());
-            break;
+            case plPipeConst::kWorldToLocal:
+                shader->SetMatrix34(pc.fReg, GetWorldToLocal());
+                break;
 
-        case plPipeConst::kWorldToCamera:
-            {
+            case plPipeConst::kWorldToCamera: {
                 hsMatrix44 world2cam = GetViewTransform().GetWorldToCamera();
 
                 shader->SetMatrix34(pc.fReg, world2cam);
-            }
-            break;
+            } break;
 
-        case plPipeConst::kCameraToWorld:
-            {
+            case plPipeConst::kCameraToWorld: {
                 hsMatrix44 cam2world = GetViewTransform().GetCameraToWorld();
 
                 shader->SetMatrix34(pc.fReg, cam2world);
-            }
-            break;
+            } break;
 
-        case plPipeConst::kLocalToCamera:
-            {
+            case plPipeConst::kLocalToCamera: {
                 hsMatrix44 world2cam = GetViewTransform().GetWorldToCamera();
 
                 hsMatrix44 local2cam = world2cam * GetLocalToWorld();
 
                 shader->SetMatrix34(pc.fReg, local2cam);
-            }
-            break;
+            } break;
 
-        case plPipeConst::kCameraToLocal:
-            {
+            case plPipeConst::kCameraToLocal: {
                 hsMatrix44 cam2world = GetViewTransform().GetCameraToWorld();
 
                 hsMatrix44 cam2local = GetWorldToLocal() * cam2world;
 
                 shader->SetMatrix34(pc.fReg, cam2local);
-            }
-            break;
+            } break;
 
-        case plPipeConst::kCamPosWorld:
-            {
+            case plPipeConst::kCamPosWorld: {
                 shader->SetVectorW(pc.fReg, GetViewTransform().GetCameraToWorld().GetTranslate(), 1.f);
-            }
-            break;
+            } break;
 
-        case plPipeConst::kCamPosLocal:
-            {
+            case plPipeConst::kCamPosLocal: {
                 hsPoint3 localCam = GetWorldToLocal() * GetViewTransform().GetCameraToWorld().GetTranslate();
 
                 shader->SetVectorW(pc.fReg, localCam, 1.f);
-            }
-            break;
+            } break;
 
-        case plPipeConst::kObjPosWorld:
-            {
+            case plPipeConst::kObjPosWorld: {
                 shader->SetVectorW(pc.fReg, GetLocalToWorld().GetTranslate(), 1.f);
-            }
-            break;
+            } break;
 
-        // UNIMPLEMENTED
-        case plPipeConst::kDirLight1:
-        case plPipeConst::kDirLight2:
-        case plPipeConst::kDirLight3:
-        case plPipeConst::kDirLight4:
-        case plPipeConst::kPointLight1:
-        case plPipeConst::kPointLight2:
-        case plPipeConst::kPointLight3:
-        case plPipeConst::kPointLight4:
-        case plPipeConst::kColorFilter:
-        case plPipeConst::kMaxType:
-            break;
+            // UNIMPLEMENTED
+            case plPipeConst::kDirLight1:
+            case plPipeConst::kDirLight2:
+            case plPipeConst::kDirLight3:
+            case plPipeConst::kDirLight4:
+            case plPipeConst::kPointLight1:
+            case plPipeConst::kPointLight2:
+            case plPipeConst::kPointLight3:
+            case plPipeConst::kPointLight4:
+            case plPipeConst::kColorFilter:
+            case plPipeConst::kMaxType:
+                break;
         }
     }
 }
@@ -1923,51 +1846,47 @@ void plMetalPipeline::ISetPipeConsts(plShader* shader)
 // be nil, in which case the fixed function pipeline is indicated.
 // Any Pipe Constants the non-FFP shader wants will be set here.
 // Lastly, all constants will be set (as a block) for any non-FFP vertex or pixel shader.
-bool plMetalPipeline::ISetShaders(const plMetalVertexBufferRef * vRef, const hsGMatState blendMode, plShader* vShader, plShader* pShader)
+bool plMetalPipeline::ISetShaders(const plMetalVertexBufferRef* vRef, const hsGMatState blendMode, plShader* vShader, plShader* pShader)
 {
     hsAssert(vShader, "Can't handle programmable passes without vShader");
     hsAssert(pShader, "Can't handle programmable passes without pShader");
     plShaderID::ID vertexShaderID = vShader->GetDecl()->GetID();
     plShaderID::ID fragmentShaderID = pShader->GetDecl()->GetID();
-    
-    plMetalDevice::plMetalLinkedPipeline *pipeline = plMetalDynamicMaterialPipelineState(&fDevice, vRef, blendMode.fBlendFlags, vertexShaderID, fragmentShaderID).GetRenderPipelineState();
-    if(fState.fCurrentPipelineState != pipeline->pipelineState) {
+
+    plMetalDevice::plMetalLinkedPipeline* pipeline = plMetalDynamicMaterialPipelineState(&fDevice, vRef, blendMode.fBlendFlags, vertexShaderID, fragmentShaderID).GetRenderPipelineState();
+    if (fState.fCurrentPipelineState != pipeline->pipelineState) {
         fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pipeline->pipelineState);
         fState.fCurrentPipelineState = pipeline->pipelineState;
     }
-    
-    if( vShader )
-    {
+
+    if (vShader) {
         hsAssert(vShader->IsVertexShader(), "Wrong type shader as vertex shader");
         ISetPipeConsts(vShader);
-        
+
         plMetalVertexShader* vRef = (plMetalVertexShader*)vShader->GetDeviceRef();
-        if( !vRef )
-        {
+        if (!vRef) {
             vRef = new plMetalVertexShader(vShader);
             hsRefCnt_SafeUnRef(vRef);
         }
-        if( !vRef->IsLinked() )
+        if (!vRef->IsLinked())
             vRef->Link(&fVShaderRefList);
-        
+
         vRef->ISetConstants(this);
     }
 
-    if( pShader )
-    {
+    if (pShader) {
         hsAssert(pShader->IsPixelShader(), "Wrong type shader as pixel shader");
 
         ISetPipeConsts(pShader);
-        
+
         plMetalFragmentShader* pRef = (plMetalFragmentShader*)pShader->GetDeviceRef();
-        if( !pRef )
-        {
+        if (!pRef) {
             pRef = new plMetalFragmentShader(pShader);
             hsRefCnt_SafeUnRef(pRef);
         }
-        if( !pRef->IsLinked() )
+        if (!pRef->IsLinked())
             pRef->Link(&fPShaderRefList);
-        
+
         pRef->ISetConstants(this);
     }
 
@@ -2010,12 +1929,12 @@ bool plMetalPipeline::ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup
 
     // If our vertex buffer ref is volatile and the timestamp is off
     // then it needs to be refilled
-    //MTL::PurgeableState bufferState = vRef->fVertexBuffer->setPurgeableState(MTL::PurgeableStateNonVolatile);
+    // MTL::PurgeableState bufferState = vRef->fVertexBuffer->setPurgeableState(MTL::PurgeableStateNonVolatile);
     if (vRef->Expired(fVtxRefTime)) {
         IRefreshDynVertices(group, vRef);
-        //fDevice.GetCurrentCommandBuffer()->addCompletedHandler( ^(MTL::CommandBuffer *buffer) {
-            //vRef->fVertexBuffer->setPurgeableState(MTL::PurgeableStateVolatile);
-        //});
+        // fDevice.GetCurrentCommandBuffer()->addCompletedHandler( ^(MTL::CommandBuffer *buffer) {
+        // vRef->fVertexBuffer->setPurgeableState(MTL::PurgeableStateVolatile);
+        // });
     }
 
     if (iRef->IsDirty()) {
@@ -2034,8 +1953,7 @@ bool plMetalPipeline::IRefreshDynVertices(plGBufferGroup* group, plMetalVertexBu
 
     hsAssert(size > 0, "Bad start and end counts in a group");
 
-    if (!vRef->GetBuffer())
-    {
+    if (!vRef->GetBuffer()) {
         hsAssert(size > 0, "Being asked to fill a buffer that doesn't exist yet?");
     }
 
@@ -2044,16 +1962,16 @@ bool plMetalPipeline::IRefreshDynVertices(plGBufferGroup* group, plMetalVertexBu
         vData = vRef->fData;
     else
         vData = group->GetVertBufferData(vRef->fIndex) + group->GetVertBufferStart(vRef->fIndex) * vRef->fVertexSize;
-    
+
     vRef->PrepareForWrite();
 
     MTL::Buffer* vertexBuffer = vRef->GetBuffer();
-    if(!vertexBuffer || vertexBuffer->length() < size) {
-        //Plasma will present different length buffers at different times
+    if (!vertexBuffer || vertexBuffer->length() < size) {
+        // Plasma will present different length buffers at different times
         vertexBuffer = fDevice.fMetalDevice->newBuffer(vData, size, MTL::ResourceStorageModeManaged)->autorelease();
-        if(vRef->Volatile()) {
+        if (vRef->Volatile()) {
             fDevice.GetCurrentCommandBuffer()->addCompletedHandler(^(MTL::CommandBuffer* buffer){
-                //vRef->fVertexBuffer->setPurgeableState(MTL::PurgeableStateVolatile);
+                // vRef->fVertexBuffer->setPurgeableState(MTL::PurgeableStateVolatile);
             });
         }
         vRef->SetBuffer(vertexBuffer);
@@ -2072,15 +1990,14 @@ bool plMetalPipeline::IRefreshDynVertices(plGBufferGroup* group, plMetalVertexBu
 
 void plMetalPipeline::IHandleZMode(hsGMatState flags)
 {
-    //Metal is very particular that if there is no depth buffer we need to explictly disable z read and write
-    if(fDevice.fCurrentDepthFormat == MTL::PixelFormatInvalid) {
+    // Metal is very particular that if there is no depth buffer we need to explictly disable z read and write
+    if (fDevice.fCurrentDepthFormat == MTL::PixelFormatInvalid) {
         fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(fDevice.fNoZReadOrWriteStencilState);
         return;
     }
-    
-    MTL::DepthStencilState *newDepthState;
-    switch (flags.fZFlags & hsGMatState::kZMask)
-    {
+
+    MTL::DepthStencilState* newDepthState;
+    switch (flags.fZFlags & hsGMatState::kZMask) {
         case hsGMatState::kZClearZ:
             fDevice.Clear(false, {0.0f, 0.0f, 0.0f, 0.0f}, true, 0.0);
             break;
@@ -2104,8 +2021,8 @@ void plMetalPipeline::IHandleZMode(hsGMatState flags)
             hsAssert(false, "Illegal combination of Z Buffer modes (Clear but don't write)");
             break;
     }
-    
-    if(fState.fCurrentDepthStencilState != newDepthState) {
+
+    if (fState.fCurrentDepthStencilState != newDepthState) {
         fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(newDepthState);
         fState.fCurrentDepthStencilState = newDepthState;
     }
@@ -2114,12 +2031,10 @@ void plMetalPipeline::IHandleZMode(hsGMatState flags)
 //// ISetLayer ////////////////////////////////////////////////////////////////
 // Sets whether we're rendering a base layer or upper layer. Upper layer has
 // a Z bias to avoid Z fighting.
-void plMetalPipeline::ISetLayer( uint32_t lay )
+void plMetalPipeline::ISetLayer(uint32_t lay)
 {
-    if( lay )
-    {
-        if( fCurrRenderLayer != lay )
-        {
+    if (lay) {
+        if (fCurrRenderLayer != lay) {
             fCurrRenderLayer = lay;
 
             plCONST(int) kBiasMult = 8;
@@ -2128,9 +2043,7 @@ void plMetalPipeline::ISetLayer( uint32_t lay )
             static float max [[gnu::used]] = -0.00001;
             fDevice.CurrentRenderCommandEncoder()->setDepthBias(constBias, mult, max);
         }
-    }
-    else if( fCurrRenderLayer != 0 )
-    {
+    } else if (fCurrRenderLayer != 0) {
         fCurrRenderLayer = 0;
         fDevice.CurrentRenderCommandEncoder()->setDepthBias(0.0, 0.0, 0.0);
     }
@@ -2140,26 +2053,25 @@ void plMetalPipeline::IHandleBlendMode(hsGMatState flags)
 {
     // No color, just writing out Z values.
     if (flags.fBlendFlags & hsGMatState::kBlendNoColor) {
-        //printf("glBlendFunc(GL_ZERO, GL_ONE);\n");
+        // printf("glBlendFunc(GL_ZERO, GL_ONE);\n");
         flags.fBlendFlags |= 0x80000000;
     } else {
-        switch (flags.fBlendFlags & hsGMatState::kBlendMask)
-        {
+        switch (flags.fBlendFlags & hsGMatState::kBlendMask) {
             // Detail is just a special case of alpha, handled in construction of the texture
             // mip chain by making higher levels of the chain more transparent.
             case hsGMatState::kBlendDetail:
             case hsGMatState::kBlendAlpha:
                 if (flags.fBlendFlags & hsGMatState::kBlendInvertFinalAlpha) {
                     if (flags.fBlendFlags & hsGMatState::kBlendAlphaPremultiplied) {
-                        //printf("glBlendFunc(GL_ONE, GL_SRC_ALPHA);\n");
+                        // printf("glBlendFunc(GL_ONE, GL_SRC_ALPHA);\n");
                     } else {
-                        //printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);\n");
+                        // printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);\n");
                     }
                 } else {
                     if (flags.fBlendFlags & hsGMatState::kBlendAlphaPremultiplied) {
-                        //printf("glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);\n");
+                        // printf("glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);\n");
                     } else {
-                        //printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);\n");
+                        // printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);\n");
                     }
                 }
                 break;
@@ -2167,75 +2079,68 @@ void plMetalPipeline::IHandleBlendMode(hsGMatState flags)
             // Multiply the final color onto the frame buffer.
             case hsGMatState::kBlendMult:
                 if (flags.fBlendFlags & hsGMatState::kBlendInvertFinalColor) {
-                    //printf("glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);\n");
+                    // printf("glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);\n");
                 } else {
-                    //printf("glBlendFunc(GL_ZERO, GL_SRC_COLOR);\n");
+                    // printf("glBlendFunc(GL_ZERO, GL_SRC_COLOR);\n");
                 }
                 break;
 
             // Add final color to FB.
             case hsGMatState::kBlendAdd:
-                //printf("glBlendFunc(GL_ONE, GL_ONE);\n");
+                // printf("glBlendFunc(GL_ONE, GL_ONE);\n");
                 break;
 
             // Multiply final color by FB color and add it into the FB.
             case hsGMatState::kBlendMADD:
-                //printf("glBlendFunc(GL_DST_COLOR, GL_ONE);\n");
+                // printf("glBlendFunc(GL_DST_COLOR, GL_ONE);\n");
                 break;
 
             // Final color times final alpha, added into the FB.
             case hsGMatState::kBlendAddColorTimesAlpha:
                 if (flags.fBlendFlags & hsGMatState::kBlendInvertFinalAlpha) {
-                    //printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_ONE);\n");
+                    // printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_ONE);\n");
                 } else {
-                    //printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE);\n");
+                    // printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE);\n");
                 }
                 break;
 
             // Overwrite final color onto FB
             case 0:
-                //printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
+                // printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
                 break;
 
-            default:
-                {
-                    hsAssert(false, "Too many blend modes specified in material");
-                    plLayer* lay = plLayer::ConvertNoRef(fCurrMaterial->GetLayer(fCurrLayerIdx)->BottomOfStack());
-                    if( lay )
-                    {
-                        if( lay->GetBlendFlags() & hsGMatState::kBlendAlpha )
-                        {
-                            lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAlpha);
-                        }
-                        else
-                        {
-                            lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAdd);
-                        }
+            default: {
+                hsAssert(false, "Too many blend modes specified in material");
+                plLayer* lay = plLayer::ConvertNoRef(fCurrMaterial->GetLayer(fCurrLayerIdx)->BottomOfStack());
+                if (lay) {
+                    if (lay->GetBlendFlags() & hsGMatState::kBlendAlpha) {
+                        lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAlpha);
+                    } else {
+                        lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAdd);
                     }
-                    //layer state needs to be syncronized to the GPU
-                    static_cast<plMetalMaterialShaderRef *>(fCurrMaterial->GetDeviceRef())->SetDirty(true);
                 }
-                break;
+                // layer state needs to be syncronized to the GPU
+                static_cast<plMetalMaterialShaderRef*>(fCurrMaterial->GetDeviceRef())->SetDirty(true);
+            } break;
         }
     }
 }
 
 void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLayerInterface* currLayer, const plSpan* currSpan)
 {
-    //plProfile_Inc(MatLightState);
+    // plProfile_Inc(MatLightState);
 
-    if (IsDebugFlagSet(plPipeDbg::kFlagAllBright))
-    {
-        fCurrentRenderPassUniforms->globalAmb = { 1.0, 1.0, 1.0, 1.0 };
+    if (IsDebugFlagSet(plPipeDbg::kFlagAllBright)) {
+        fCurrentRenderPassUniforms->globalAmb = {1.0, 1.0, 1.0, 1.0};
 
-        fCurrentRenderPassUniforms->ambientCol = { 1.0, 1.0, 1.0 };
-        fCurrentRenderPassUniforms->diffuseCol = { 1.0, 1.0, 1.0, 1.0 };
-        fCurrentRenderPassUniforms->emissiveCol = { 1.0, 1.0, 1.0 };
-        fCurrentRenderPassUniforms->emissiveCol = { 1.0, 1.0, 1.0 };
-        fCurrentRenderPassUniforms->specularCol = { 1.0, 1.0, 1.0 };
+        fCurrentRenderPassUniforms->ambientCol = {1.0, 1.0, 1.0};
+        fCurrentRenderPassUniforms->diffuseCol = {1.0, 1.0, 1.0, 1.0};
+        fCurrentRenderPassUniforms->emissiveCol = {1.0, 1.0, 1.0};
+        fCurrentRenderPassUniforms->emissiveCol = {1.0, 1.0, 1.0};
+        fCurrentRenderPassUniforms->specularCol = {1.0, 1.0, 1.0};
 
-        fCurrentRenderPassUniforms->ambientSrc =  1.0;
-        fCurrentRenderPassUniforms->diffuseSrc =  1.0;
+        fCurrentRenderPassUniforms->ambientSrc = 1.0;
+        fCurrentRenderPassUniforms->diffuseSrc = 1.0;
         fCurrentRenderPassUniforms->emissiveSrc = 1.0;
         fCurrentRenderPassUniforms->specularSrc = 1.0;
 
@@ -2254,40 +2159,40 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 
     /// Select one of our three lighting methods
     switch (mode) {
-        case plSpan::kLiteMaterial:     // Material shading
+        case plSpan::kLiteMaterial: // Material shading
         {
             if (state.fShadeFlags & hsGMatState::kShadeWhite) {
-                fCurrentRenderPassUniforms->globalAmb = { 1.0, 1.0, 1.0, 1.0 };
-                fCurrentRenderPassUniforms->ambientCol = { 1.0, 1.0, 1.0 };
+                fCurrentRenderPassUniforms->globalAmb = {1.0, 1.0, 1.0, 1.0};
+                fCurrentRenderPassUniforms->ambientCol = {1.0, 1.0, 1.0};
             } else if (IsDebugFlagSet(plPipeDbg::kFlagNoPreShade)) {
-                fCurrentRenderPassUniforms->globalAmb = { 0.0, 0.0, 0.0, 1.0 };
-                fCurrentRenderPassUniforms->ambientCol = { 0.0, 0.0, 0.0 };
+                fCurrentRenderPassUniforms->globalAmb = {0.0, 0.0, 0.0, 1.0};
+                fCurrentRenderPassUniforms->ambientCol = {0.0, 0.0, 0.0};
             } else {
                 hsColorRGBA amb = currLayer->GetPreshadeColor();
-                fCurrentRenderPassUniforms->globalAmb = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), 1.0 };
-                fCurrentRenderPassUniforms->ambientCol = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b) };
+                fCurrentRenderPassUniforms->globalAmb = {static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), 1.0};
+                fCurrentRenderPassUniforms->ambientCol = {static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b)};
             }
 
             hsColorRGBA dif = currLayer->GetRuntimeColor();
-            fCurrentRenderPassUniforms->diffuseCol = { static_cast<half>(dif.r), static_cast<half>(dif.g), static_cast<half>(dif.b), static_cast<half>(currLayer->GetOpacity()) };
+            fCurrentRenderPassUniforms->diffuseCol = {static_cast<half>(dif.r), static_cast<half>(dif.g), static_cast<half>(dif.b), static_cast<half>(currLayer->GetOpacity())};
 
             hsColorRGBA em = currLayer->GetAmbientColor();
-            fCurrentRenderPassUniforms->emissiveCol = { static_cast<half>(em.r), static_cast<half>(em.g), static_cast<half>(em.b) };
+            fCurrentRenderPassUniforms->emissiveCol = {static_cast<half>(em.r), static_cast<half>(em.g), static_cast<half>(em.b)};
 
             // Set specular properties
             if (state.fShadeFlags & hsGMatState::kShadeSpecular) {
                 hsColorRGBA spec = currLayer->GetSpecularColor();
-                fCurrentRenderPassUniforms->specularCol = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b) };
+                fCurrentRenderPassUniforms->specularCol = {static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b)};
 #if 0
                 mat.Power = currLayer->GetSpecularPower();
 #endif
             } else {
-                fCurrentRenderPassUniforms->specularCol = { 0.0, 0.0, 0.0 };
+                fCurrentRenderPassUniforms->specularCol = {0.0, 0.0, 0.0};
             }
 
             fCurrentRenderPassUniforms->diffuseSrc = 1.0;
             fCurrentRenderPassUniforms->emissiveSrc = 1.0;
-            fCurrentRenderPassUniforms -> specularSrc = 1.0;
+            fCurrentRenderPassUniforms->specularSrc = 1.0;
 
             if (state.fShadeFlags & hsGMatState::kShadeNoShade) {
                 fCurrentRenderPassUniforms->ambientSrc = 1.0;
@@ -2299,13 +2204,13 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
             break;
         }
 
-        case plSpan::kLiteVtxPreshaded:  // Vtx preshaded
+        case plSpan::kLiteVtxPreshaded: // Vtx preshaded
         {
-            fCurrentRenderPassUniforms->globalAmb = { 0.0, 0.0, 0.0 };
-            fCurrentRenderPassUniforms->ambientCol = { 0.0, 0.0, 0.0 };
-            fCurrentRenderPassUniforms->diffuseCol = { 0.0, 0.0, 0.0, 0.0 };
-            fCurrentRenderPassUniforms->emissiveCol = { 0.0, 0.0, 0.0 };
-            fCurrentRenderPassUniforms->specularCol = { 0.0, 0.0, 0.0 };
+            fCurrentRenderPassUniforms->globalAmb = {0.0, 0.0, 0.0};
+            fCurrentRenderPassUniforms->ambientCol = {0.0, 0.0, 0.0};
+            fCurrentRenderPassUniforms->diffuseCol = {0.0, 0.0, 0.0, 0.0};
+            fCurrentRenderPassUniforms->emissiveCol = {0.0, 0.0, 0.0};
+            fCurrentRenderPassUniforms->specularCol = {0.0, 0.0, 0.0};
 
             fCurrentRenderPassUniforms->diffuseSrc = 0.0;
             fCurrentRenderPassUniforms->ambientSrc = 1.0;
@@ -2316,87 +2221,83 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
             } else {
                 fCurrentRenderPassUniforms->emissiveSrc = 1.0;
             }
-            
+
             fCurrLightingMethod = plSpan::kLiteVtxPreshaded;
             break;
         }
 
-        case plSpan::kLiteVtxNonPreshaded:      // Vtx non-preshaded
+        case plSpan::kLiteVtxNonPreshaded: // Vtx non-preshaded
         {
-            fCurrentRenderPassUniforms->ambientCol = { 0.0, 0.0, 0.0 };
-            fCurrentRenderPassUniforms->diffuseCol = { 0.0, 0.0, 0.0, 0.0 };
+            fCurrentRenderPassUniforms->ambientCol = {0.0, 0.0, 0.0};
+            fCurrentRenderPassUniforms->diffuseCol = {0.0, 0.0, 0.0, 0.0};
 
             hsColorRGBA em = currLayer->GetAmbientColor();
-            fCurrentRenderPassUniforms->emissiveCol = { static_cast<half>(em.r), static_cast<half>(em.g), static_cast<half>(em.b) };
+            fCurrentRenderPassUniforms->emissiveCol = {static_cast<half>(em.r), static_cast<half>(em.g), static_cast<half>(em.b)};
 
             // Set specular properties
             if (state.fShadeFlags & hsGMatState::kShadeSpecular) {
                 hsColorRGBA spec = currLayer->GetSpecularColor();
-                fCurrentRenderPassUniforms->specularCol = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b) };
+                fCurrentRenderPassUniforms->specularCol = {static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b)};
 #if 0
                 mat.Power = currLayer->GetSpecularPower();
 #endif
             } else {
-                fCurrentRenderPassUniforms->specularCol = { 0.0, 0.0, 0.0 };
+                fCurrentRenderPassUniforms->specularCol = {0.0, 0.0, 0.0};
             }
 
             hsColorRGBA amb = currLayer->GetPreshadeColor();
-            fCurrentRenderPassUniforms->globalAmb = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), static_cast<half>(amb.a) };
+            fCurrentRenderPassUniforms->globalAmb = {static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), static_cast<half>(amb.a)};
 
             fCurrentRenderPassUniforms->ambientSrc = 0.0;
             fCurrentRenderPassUniforms->diffuseSrc = 0.0;
             fCurrentRenderPassUniforms->emissiveSrc = 1.0;
             fCurrentRenderPassUniforms->specularSrc = 1.0;
-            
+
             fCurrLightingMethod = plSpan::kLiteVtxNonPreshaded;
             break;
         }
     }
     // Piggy-back some temporary fog stuff on the lighting...
     const plFogEnvironment* fog = (currSpan ? (currSpan->fFogEnvironment ? currSpan->fFogEnvironment : &fView.GetDefaultFog()) : nullptr);
-    
-    if (currLayer)
-    {
+
+    if (currLayer) {
         if ((currLayer->GetShadeFlags() & hsGMatState::kShadeReallyNoFog) && !(fMatOverOff.fShadeFlags & hsGMatState::kShadeReallyNoFog))
             fog = nil;
     }
-    
-    uint8_t type = fog ? fog->GetType() : plFogEnvironment::kNoFog;
+
+    uint8_t     type = fog ? fog->GetType() : plFogEnvironment::kNoFog;
     hsColorRGBA color;
 
     switch (type) {
-        case plFogEnvironment::kLinearFog:
-        {
+        case plFogEnvironment::kLinearFog: {
             float start, end;
             fog->GetPipelineParams(&start, &end, &color);
 
             fCurrentRenderPassUniforms->fogExponential = 0;
             fCurrentRenderPassUniforms->fogValues = {start, end};
-            fCurrentRenderPassUniforms->fogColor = { static_cast<half>(color.r), static_cast<half>(color.g), static_cast<half>(color.b) };
+            fCurrentRenderPassUniforms->fogColor = {static_cast<half>(color.r), static_cast<half>(color.g), static_cast<half>(color.b)};
             break;
         }
         case plFogEnvironment::kExpFog:
-        case plFogEnvironment::kExp2Fog:
-        {
+        case plFogEnvironment::kExp2Fog: {
             float density;
             float power = (type == plFogEnvironment::kExp2Fog) ? 2.0f : 1.0f;
             fog->GetPipelineParams(&density, &color);
 
             fCurrentRenderPassUniforms->fogExponential = 1;
-            fCurrentRenderPassUniforms->fogValues = { power, density};
-            fCurrentRenderPassUniforms->fogColor = { static_cast<half>(color.r), static_cast<half>(color.g), static_cast<half>(color.b) };
+            fCurrentRenderPassUniforms->fogValues = {power, density};
+            fCurrentRenderPassUniforms->fogColor = {static_cast<half>(color.r), static_cast<half>(color.g), static_cast<half>(color.b)};
             break;
         }
         default:
             fCurrentRenderPassUniforms->fogExponential = 0;
-            fCurrentRenderPassUniforms->fogValues = { 0.0, 0.0 };
-            fCurrentRenderPassUniforms->fogColor = { 0.0, 0.0, 0.0 };
+            fCurrentRenderPassUniforms->fogValues = {0.0, 0.0};
+            fCurrentRenderPassUniforms->fogColor = {0.0, 0.0, 0.0};
             break;
     }
-    
-    
-    if( currLayer->GetBlendFlags() & (hsGMatState::kBlendAdd | hsGMatState::kBlendMADD | hsGMatState::kBlendAddColorTimesAlpha) ) {
-        fCurrentRenderPassUniforms->fogColor = { 0.0, 0.0, 0.0 };
+
+    if (currLayer->GetBlendFlags() & (hsGMatState::kBlendAdd | hsGMatState::kBlendMADD | hsGMatState::kBlendAddColorTimesAlpha)) {
+        fCurrentRenderPassUniforms->fogColor = {0.0, 0.0, 0.0};
     }
 }
 
@@ -2406,26 +2307,24 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 // strongest N changes membership.
 void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef* mRef, bool proj)
 {
-    const size_t numLights = kMetalMaxLightCount;
-    int32_t i = 0;
-    int32_t startScale;
-    float threshhold;
-    float overHold = 0.3;
-    float scale;
-    static std::vector<plLightInfo*>   onLights;
+    const size_t                     numLights = kMetalMaxLightCount;
+    int32_t                          i = 0;
+    int32_t                          startScale;
+    float                            threshhold;
+    float                            overHold = 0.3;
+    float                            scale;
+    static std::vector<plLightInfo*> onLights;
     onLights.clear();
 
-    if  (!IsDebugFlagSet(plPipeDbg::kFlagNoRuntimeLights) &&
+    if (!IsDebugFlagSet(plPipeDbg::kFlagNoRuntimeLights) &&
         !(IsDebugFlagSet(plPipeDbg::kFlagNoApplyProjLights) && proj) &&
-        !(IsDebugFlagSet(plPipeDbg::kFlagOnlyApplyProjLights) && !proj))
-    {
+        !(IsDebugFlagSet(plPipeDbg::kFlagOnlyApplyProjLights) && !proj)) {
         std::vector<plLightInfo*>& spanLights = span->GetLightList(proj);
 
         fLights.count = 0;
         for (i = 0; i < spanLights.size() && i < numLights; i++) {
             // If these are non-projected lights, go ahead and enable them.
-            if( !proj )
-            {
+            if (!proj) {
                 IEnableLight(fLights.count, spanLights[i]);
                 fLights.count++;
             }
@@ -2459,15 +2358,13 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
             IScaleLight(i, span->GetLightScale(i, proj));
         }
     }
-    
+
     // For the projected lights, don't enable, just remember who they are.
-    if( proj )
-    {
+    if (proj) {
         fProjAll.clear();
         fProjEach.clear();
-        for( i = 0; i < onLights.size(); i++ )
-        {
-            if( onLights[i]->OverAll() )
+        for (i = 0; i < onLights.size(); i++) {
+            if (onLights[i]->OverAll())
                 fProjAll.emplace_back(onLights[i]);
             else
                 fProjEach.emplace_back(onLights[i]);
@@ -2479,67 +2376,63 @@ void plMetalPipeline::ISelectLights(const plSpan* span, plMetalMaterialShaderRef
 void plMetalPipeline::IEnableLight(size_t i, plLightInfo* light)
 {
     hsColorRGBA amb = light->GetAmbient();
-    fLights.lampSources[i].ambient = { static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), static_cast<half>(amb.a) };
+    fLights.lampSources[i].ambient = {static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), static_cast<half>(amb.a)};
 
     hsColorRGBA diff = light->GetDiffuse();
-    fLights.lampSources[i].diffuse = { static_cast<half>(diff.r), static_cast<half>(diff.g), static_cast<half>(diff.b), static_cast<half>(diff.a) };
+    fLights.lampSources[i].diffuse = {static_cast<half>(diff.r), static_cast<half>(diff.g), static_cast<half>(diff.b), static_cast<half>(diff.a)};
 
     hsColorRGBA spec = light->GetSpecular();
-    fLights.lampSources[i].specular = { static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b), static_cast<half>(spec.a) };
+    fLights.lampSources[i].specular = {static_cast<half>(spec.r), static_cast<half>(spec.g), static_cast<half>(spec.b), static_cast<half>(spec.a)};
 
     plDirectionalLightInfo* dirLight = nullptr;
-    plOmniLightInfo* omniLight = nullptr;
-    plSpotLightInfo* spotLight = nullptr;
+    plOmniLightInfo*        omniLight = nullptr;
+    plSpotLightInfo*        spotLight = nullptr;
 
-    if ((dirLight = plDirectionalLightInfo::ConvertNoRef(light)) != nullptr)
-    {
+    if ((dirLight = plDirectionalLightInfo::ConvertNoRef(light)) != nullptr) {
         hsVector3 lightDir = dirLight->GetWorldDirection();
-        fLights.lampSources[i].position = { lightDir.fX, lightDir.fY, lightDir.fZ, 0.0 };
-        fLights.lampSources[i].direction = { lightDir.fX, lightDir.fY, lightDir.fZ };
+        fLights.lampSources[i].position = {lightDir.fX, lightDir.fY, lightDir.fZ, 0.0};
+        fLights.lampSources[i].direction = {lightDir.fX, lightDir.fY, lightDir.fZ};
 
         fLights.lampSources[i].constAtten = 1.0f;
         fLights.lampSources[i].linAtten = 0.0f;
         fLights.lampSources[i].quadAtten = 0.0f;
-    }
-    else if ((omniLight = plOmniLightInfo::ConvertNoRef(light)) != nullptr)
-    {
+    } else if ((omniLight = plOmniLightInfo::ConvertNoRef(light)) != nullptr) {
         hsPoint3 pos = omniLight->GetWorldPosition();
-        fLights.lampSources[i].position = { pos.fX, pos.fY, pos.fZ, 1.0 };
+        fLights.lampSources[i].position = {pos.fX, pos.fY, pos.fZ, 1.0};
 
         // TODO: Maximum Range
-        
+
         fLights.lampSources[i].constAtten = omniLight->GetConstantAttenuation();
         fLights.lampSources[i].linAtten = omniLight->GetLinearAttenuation();
         fLights.lampSources[i].quadAtten = omniLight->GetQuadraticAttenuation();
 
         if (!omniLight->GetProjection() && (spotLight = plSpotLightInfo::ConvertNoRef(omniLight)) != nullptr) {
             hsVector3 lightDir = spotLight->GetWorldDirection();
-            fLights.lampSources[i].direction = { lightDir.fX, lightDir.fY, lightDir.fZ };
+            fLights.lampSources[i].direction = {lightDir.fX, lightDir.fY, lightDir.fZ};
 
             float falloff = spotLight->GetFalloff();
             float gamma = cosf(spotLight->GetSpotInner());
             float phi = cosf(spotLight->GetProjection() ? hsConstants::half_pi<float> : spotLight->GetSpotOuter());
 
-            fLights.lampSources[i].spotProps = { falloff, gamma, phi };
+            fLights.lampSources[i].spotProps = {falloff, gamma, phi};
         } else {
-            fLights.lampSources[i].spotProps = { 0.0, 0.0, 0.0 };
+            fLights.lampSources[i].spotProps = {0.0, 0.0, 0.0};
         }
-    }
-    else {
+    } else {
         IDisableLight(i);
     }
 }
 
 void plMetalPipeline::IDisableLight(size_t i)
 {
-    fLights.lampSources[i].position = { 0.0f, 0.0f, 0.0f, 0.0f };
-    fLights.lampSources[i].ambient = { 0.0f, 0.0f, 0.0f, 0.0f };
-    fLights.lampSources[i].diffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
-    fLights.lampSources[i].specular = { 0.0f, 0.0f, 0.0f, 0.0f };
-    fLights.lampSources[i].constAtten = { 1.0f };
-    fLights.lampSources[i].linAtten = { 0.0f };
-    fLights.lampSources[i].quadAtten = { 0.0f };
-    fLights.lampSources[i].scale = { 0.0f };
+    fLights.lampSources[i].position = {0.0f, 0.0f, 0.0f, 0.0f};
+    fLights.lampSources[i].ambient = {0.0f, 0.0f, 0.0f, 0.0f};
+    fLights.lampSources[i].diffuse = {0.0f, 0.0f, 0.0f, 0.0f};
+    fLights.lampSources[i].specular = {0.0f, 0.0f, 0.0f, 0.0f};
+    fLights.lampSources[i].constAtten = {1.0f};
+    fLights.lampSources[i].linAtten = {0.0f};
+    fLights.lampSources[i].quadAtten = {0.0f};
+    fLights.lampSources[i].scale = {0.0f};
 }
 
 void plMetalPipeline::IScaleLight(size_t i, float scale)
@@ -2550,20 +2443,20 @@ void plMetalPipeline::IScaleLight(size_t i, float scale)
 
 void plMetalPipeline::IDrawPlate(plPlate* plate)
 {
-    if(!plate->IsVisible()) {
+    if (!plate->IsVisible()) {
         return;
     }
     hsGMaterial* material = plate->GetMaterial();
-    
+
     plLayerInterface* lay = material->GetLayer(0);
-    hsGMatState s;
+    hsGMatState       s;
     s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
 
     IHandleZMode(s);
     IHandleBlendMode(s);
     fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(fDevice.fNoZReadOrWriteStencilState);
     fState.fCurrentDepthStencilState = fDevice.fNoZReadOrWriteStencilState;
-    
+
     simd_float4x4 projMat = matrix_identity_float4x4;
 
     /// Set up the transform directly
@@ -2582,15 +2475,15 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     if (!mRef->IsLinked()) {
         mRef->Link(&fMatRefList);
     }
-    
+
     fDevice.SetLocalToWorldMatrix(plate->GetTransform());
-    
-    plMetalPlateManager *pm = (plMetalPlateManager *)fPlateMgr;
-    
-    plMetalPlatePipelineState state(&fDevice);
+
+    plMetalPlateManager* pm = (plMetalPlateManager*)fPlateMgr;
+
+    plMetalPlatePipelineState             state(&fDevice);
     plMetalDevice::plMetalLinkedPipeline* linkedPipeline = state.GetRenderPipelineState();
-    
-    if(fState.fCurrentPipelineState != linkedPipeline->pipelineState) {
+
+    if (fState.fCurrentPipelineState != linkedPipeline->pipelineState) {
         fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
         fState.fCurrentPipelineState = linkedPipeline->pipelineState;
     }
@@ -2598,43 +2491,42 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&alpha, sizeof(float), 6);
     fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(pm->fDepthState);
     fDevice.CurrentRenderCommandEncoder()->setCullMode(MTL::CullModeNone);
-    
-    int uniformSize = sizeof(VertexUniforms);
+
+    int            uniformSize = sizeof(VertexUniforms);
     VertexUniforms uniforms;
     uniforms.projectionMatrix = projMat;
     matrix_float4x4 modelMatrix;
     uniforms.worldToCameraMatrix = modelMatrix;
     uniforms.uvTransforms[0].UVWSrc = 0;
-    //uniforms.worldToLocalMatrix = fDevice.fMatrixW2L;
-    
-    //flip world to camera, it's upside down
+    // uniforms.worldToLocalMatrix = fDevice.fMatrixW2L;
+
+    // flip world to camera, it's upside down
     matrix_float4x4 flip = matrix_identity_float4x4;
     flip.columns[1][1] = -1.0f;
-    
-    
-    //uniforms.worldToCameraMatrix =
-    //uniforms.cameraToWorldMatrix = fDevice.fMatrixC2W;
+
+    // uniforms.worldToCameraMatrix =
+    // uniforms.cameraToWorldMatrix = fDevice.fMatrixC2W;
     uniforms.localToWorldMatrix = matrix_multiply(flip, fDevice.fMatrixL2W);
-    
+
     mRef->FastEncodeArguments(fDevice.CurrentRenderCommandEncoder(), &uniforms, 0);
-    //FIXME: Hacking the old texture drawing into the plate path
+    // FIXME: Hacking the old texture drawing into the plate path
     mRef->prepareTextures(fDevice.CurrentRenderCommandEncoder(), 0);
-    
-    fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&uniforms, sizeof(VertexUniforms),     VertexShaderArgumentFixedFunctionUniforms);
-    
+
+    fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&uniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
+
     pm->EncodeDraw(fDevice.CurrentRenderCommandEncoder());
-    
+
     IPopPiggyBacks();
 }
 
-//Push and pop light sources
-//The DX version would just keep a giant pool of lights
-//that could be claimed by different parts of the pipeline.
-//In Metal, when a part of the pipeline wants to own lights
-//we'll just let them push/pop the current state.
+// Push and pop light sources
+// The DX version would just keep a giant pool of lights
+// that could be claimed by different parts of the pipeline.
+// In Metal, when a part of the pipeline wants to own lights
+// we'll just let them push/pop the current state.
 void plMetalPipeline::PushCurrentLightSources()
 {
-    plMetalLights *lightSources = new plMetalLights();
+    plMetalLights* lightSources = new plMetalLights();
     memcpy(lightSources, &fLights, sizeof(plMetalLights));
     fLightSourceStack.emplace_back(lightSources);
 }
@@ -2642,7 +2534,7 @@ void plMetalPipeline::PushCurrentLightSources()
 void plMetalPipeline::PopCurrentLightSources()
 {
     hsAssert(fLightSourceStack.size() > 0, "Asked to pop light sources but none on stack");
-    plMetalLights *lightSources = fLightSourceStack.back();
+    plMetalLights* lightSources = fLightSourceStack.back();
     fLightSourceStack.pop_back();
     memcpy(&fLights, lightSources, sizeof(plMetalLights));
     delete lightSources;
@@ -2659,12 +2551,12 @@ void plMetalPipeline::PopCurrentLightSources()
 // Must be matched with call to IPopOverBaseLayer.
 plLayerInterface* plMetalPipeline::IPushOverBaseLayer(plLayerInterface* li)
 {
-    if( !li )
+    if (!li)
         return nil;
 
     fOverLayerStack.emplace_back(li);
 
-    if( !fOverBaseLayer )
+    if (!fOverBaseLayer)
         return fOverBaseLayer = li;
 
     fForceMatHandle = true;
@@ -2678,7 +2570,7 @@ plLayerInterface* plMetalPipeline::IPushOverBaseLayer(plLayerInterface* li)
 // Should match calls to IPushOverBaseLayer.
 plLayerInterface* plMetalPipeline::IPopOverBaseLayer(plLayerInterface* li)
 {
-    if( !li )
+    if (!li)
         return nil;
 
     fForceMatHandle = true;
@@ -2696,13 +2588,12 @@ plLayerInterface* plMetalPipeline::IPopOverBaseLayer(plLayerInterface* li)
 // Must be matched by call to IPopOverAllLayer
 plLayerInterface* plMetalPipeline::IPushOverAllLayer(plLayerInterface* li)
 {
-    if( !li )
+    if (!li)
         return nil;
 
     fOverLayerStack.push_back(li);
 
-    if( !fOverAllLayer )
-    {
+    if (!fOverAllLayer) {
         fOverAllLayer = li;
         fOverAllLayer->Eval(fTime, fFrame, 0);
         return fOverAllLayer;
@@ -2720,7 +2611,7 @@ plLayerInterface* plMetalPipeline::IPushOverAllLayer(plLayerInterface* li)
 // Should match calls to IPushOverAllLayer.
 plLayerInterface* plMetalPipeline::IPopOverAllLayer(plLayerInterface* li)
 {
-    if( !li )
+    if (!li)
         return nil;
 
     fForceMatHandle = true;
@@ -2736,7 +2627,7 @@ plLayerInterface* plMetalPipeline::IPopOverAllLayer(plLayerInterface* li)
 // Push a projected texture on as a piggy back.
 void plMetalPipeline::IPushProjPiggyBack(plLayerInterface* li)
 {
-    if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
+    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
         return;
 
     fPiggyBackStack.push_back(li);
@@ -2748,7 +2639,7 @@ void plMetalPipeline::IPushProjPiggyBack(plLayerInterface* li)
 // Remove a projected texture from use as a piggy back.
 void plMetalPipeline::IPopProjPiggyBacks()
 {
-    if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
+    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
         return;
 
     fPiggyBackStack.resize(fMatPiggyBacks);
@@ -2764,17 +2655,15 @@ void plMetalPipeline::IPushPiggyBacks(hsGMaterial* mat)
 {
     hsAssert(!fMatPiggyBacks, "Push/Pop Piggy mismatch");
 
-    if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
+    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
         return;
 
     int i;
-    for( i = 0; i < mat->GetNumPiggyBacks(); i++ )
-    {
-        if( !mat->GetPiggyBack(i) )
+    for (i = 0; i < mat->GetNumPiggyBacks(); i++) {
+        if (!mat->GetPiggyBack(i))
             continue;
 
-        if ((mat->GetPiggyBack(i)->GetMiscFlags() & hsGMatState::kMiscLightMap)
-            && IsDebugFlagSet(plPipeDbg::kFlagNoLightmaps))
+        if ((mat->GetPiggyBack(i)->GetMiscFlags() & hsGMatState::kMiscLightMap) && IsDebugFlagSet(plPipeDbg::kFlagNoLightmaps))
             continue;
 
         fPiggyBackStack.push_back(mat->GetPiggyBack(i));
@@ -2789,7 +2678,7 @@ void plMetalPipeline::IPushPiggyBacks(hsGMaterial* mat)
 // Matches IPushPiggyBacks.
 void plMetalPipeline::IPopPiggyBacks()
 {
-    if( fView.fRenderState & plPipeline::kRenderNoPiggyBacks )
+    if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
         return;
 
     fPiggyBackStack.resize(fPiggyBackStack.size() - fMatPiggyBacks);
@@ -2816,7 +2705,8 @@ size_t plMetalPipeline::ISetNumActivePiggyBacks()
     return fActivePiggyBacks = std::min(fMaxPiggyBacks, uint32_t(fPiggyBackStack.size()));
 }
 
-struct plAVTexVert {
+struct plAVTexVert
+{
     float fPos[2];
     float fUv[2];
 };
@@ -2833,8 +2723,8 @@ void plMetalPipeline::IPreprocessAvatarTextures()
 
     if (fClothingOutfits.size() == 0)
         return;
-    
-    plMipmap *itemBufferTex = nullptr;
+
+    plMipmap* itemBufferTex = nullptr;
 
     for (size_t oIdx = 0; oIdx < fClothingOutfits.size(); oIdx++) {
         plClothingOutfit* co = fClothingOutfits[oIdx];
@@ -2848,8 +2738,8 @@ void plMetalPipeline::IPreprocessAvatarTextures()
 
         if (rt == nullptr) {
             rt = IGetNextAvRT();
-            //we're about to add a texture that wasn't there before
-            //mark the material as dirty
+            // we're about to add a texture that wasn't there before
+            // mark the material as dirty
             plMetalMaterialShaderRef* ref = static_cast<plMetalMaterialShaderRef*>(co->fMaterial->GetDeviceRef());
             if (ref) {
                 ref->SetDirty(true);
@@ -2859,23 +2749,23 @@ void plMetalPipeline::IPreprocessAvatarTextures()
 
         PushRenderTarget(rt);
         fDevice.CurrentRenderCommandEncoder()->setViewport({0, 0, static_cast<double>(rt->GetWidth()), static_cast<double>(rt->GetHeight()), 0.f, 1.f});
-        
+
         static MTL::RenderPipelineState* baseAvatarRenderState = nullptr;
         static MTL::RenderPipelineState* avatarRenderState = nullptr;
-        
+
         if (!baseAvatarRenderState) {
-            //This is a bit of a hack, this really should be part of the plMetalDevice's function map.
-            //But that hash map assumes that it follows the vertex arrangement of the models.
-            //After a refactor, this function creation should go there.
+            // This is a bit of a hack, this really should be part of the plMetalDevice's function map.
+            // But that hash map assumes that it follows the vertex arrangement of the models.
+            // After a refactor, this function creation should go there.
             MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init()->autorelease();
-            MTL::Library* library = fDevice.fMetalDevice->newDefaultLibrary()->autorelease();
-            
+            MTL::Library*                  library = fDevice.fMetalDevice->newDefaultLibrary()->autorelease();
+
             MTL::Function* vertFunction = library->newFunction(NS::MakeConstantString("PreprocessAvatarVertexShader"))->autorelease();
             MTL::Function* fragFunction = library->newFunction(NS::MakeConstantString("PreprocessAvatarFragmentShader"))->autorelease();
-            
+
             descriptor->setVertexFunction(vertFunction);
             descriptor->setFragmentFunction(fragFunction);
-            
+
             MTL::VertexDescriptor* vertexDescriptor = MTL::VertexDescriptor::vertexDescriptor();
             vertexDescriptor->attributes()->object(0)->setFormat(MTL::VertexFormatFloat2);
             vertexDescriptor->attributes()->object(0)->setBufferIndex(0);
@@ -2883,16 +2773,16 @@ void plMetalPipeline::IPreprocessAvatarTextures()
             vertexDescriptor->attributes()->object(1)->setFormat(MTL::VertexFormatFloat2);
             vertexDescriptor->attributes()->object(1)->setBufferIndex(0);
             vertexDescriptor->attributes()->object(1)->setOffset(sizeof(float) * 2);
-            
+
             vertexDescriptor->layouts()->object(0)->setStride(sizeof(float) * 4);
-            
+
             descriptor->setVertexDescriptor(vertexDescriptor);
-            
+
             descriptor->colorAttachments()->object(0)->setBlendingEnabled(false);
             descriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormatBGRA8Unorm);
             NS::Error* error = nullptr;
             baseAvatarRenderState = fDevice.fMetalDevice->newRenderPipelineState(descriptor, &error);
-            
+
             descriptor->colorAttachments()->object(0)->setBlendingEnabled(true);
             descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
             descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
@@ -2903,40 +2793,33 @@ void plMetalPipeline::IPreprocessAvatarTextures()
 
         float uOff = 0.5f / rt->GetWidth();
         float vOff = 0.5f / rt->GetHeight();
-        
-        plClothingLayout *layout = plClothingMgr::GetClothingMgr()->GetLayout(co->fBase->fLayoutName);
 
-        for (plClothingItem *item : co->fItems)
-        {
-            
-            for (size_t j = 0; j < item->fElements.size(); j++)
-            {
-                for (int k = 0; k < plClothingElement::kLayerMax; k++)
-                {
+        plClothingLayout* layout = plClothingMgr::GetClothingMgr()->GetLayout(co->fBase->fLayoutName);
+
+        for (plClothingItem* item : co->fItems) {
+            for (size_t j = 0; j < item->fElements.size(); j++) {
+                for (int k = 0; k < plClothingElement::kLayerMax; k++) {
                     if (item->fTextures[j][k] == nullptr)
                         continue;
-                    
+
                     itemBufferTex = item->fTextures[j][k];
                     hsColorRGBA tint = co->GetItemTint(item, k);
                     if (k >= plClothingElement::kLayerSkinBlend1 && k <= plClothingElement::kLayerSkinLast)
                         tint.a = co->fSkinBlends[k - plClothingElement::kLayerSkinBlend1];
-                    
-                    if (k == plClothingElement::kLayerBase)
-                    {
-                        if(fState.fCurrentPipelineState != baseAvatarRenderState) {
+
+                    if (k == plClothingElement::kLayerBase) {
+                        if (fState.fCurrentPipelineState != baseAvatarRenderState) {
                             fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(baseAvatarRenderState);
                             fState.fCurrentPipelineState = baseAvatarRenderState;
                         }
-                    }
-                    else
-                    {
-                        if(fState.fCurrentPipelineState != avatarRenderState) {
+                    } else {
+                        if (fState.fCurrentPipelineState != avatarRenderState) {
                             fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(avatarRenderState);
                             fState.fCurrentPipelineState = avatarRenderState;
                         }
                     }
                     fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&tint, sizeof(hsColorRGBA), 0);
-                    
+
                     float screenW = (float)item->fElements[j]->fWidth / layout->fOrigWidth * 2.f;
                     float screenH = (float)item->fElements[j]->fHeight / layout->fOrigWidth * 2.f;
                     float screenX = (float)item->fElements[j]->fXPos / layout->fOrigWidth * 2.f - 1.f;
@@ -2956,20 +2839,18 @@ void plMetalPipeline::IPreprocessAvatarTextures()
 }
 
 void plMetalPipeline::IDrawClothingQuad(float x, float y, float w, float h,
-                                     float uOff, float vOff, plMipmap *tex)
+                                        float uOff, float vOff, plMipmap* tex)
 {
-    const uint32_t kVSize = sizeof(plAVTexVert);
+    const uint32_t     kVSize = sizeof(plAVTexVert);
     plMetalTextureRef* ref = (plMetalTextureRef*)tex->GetDeviceRef();
-    if (!ref || ref->IsDirty())
-    {
+    if (!ref || ref->IsDirty()) {
         CheckTextureRef(tex);
         ref = (plMetalTextureRef*)tex->GetDeviceRef();
     }
-    if (!ref->fTexture)
-    {
+    if (!ref->fTexture) {
         IReloadTexture(tex, ref);
     }
-    hsRefCnt_SafeAssign( fLayerRef[0], ref );
+    hsRefCnt_SafeAssign(fLayerRef[0], ref);
     fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(ref->fTexture, 0);
 
     plAVTexVert ptr[4];
@@ -2998,28 +2879,28 @@ void plMetalPipeline::IDrawClothingQuad(float x, float y, float w, float h,
     ptr[3] = vert;
     ptr[3].fPos[1] += h;
     ptr[3].fUv[1] -= 1.f;
-    
+
     fDevice.CurrentRenderCommandEncoder()->setVertexBytes(ptr, sizeof(ptr), 0);
     fDevice.CurrentRenderCommandEncoder()->drawPrimitives(MTL::PrimitiveType::PrimitiveTypeTriangleStrip, NS::UInteger(0), NS::UInteger(4));
 }
 
-void plMetalPipeline::FindFragFunction() {
-    MTL::Library *library = fDevice.fMetalDevice->newDefaultLibrary();
-    
-    NS::Error *error = nullptr;
-    
-    MTL::FunctionConstantValues *functionContents = MTL::FunctionConstantValues::alloc()->init();
-    short numUVs=1;
+void plMetalPipeline::FindFragFunction()
+{
+    MTL::Library* library = fDevice.fMetalDevice->newDefaultLibrary();
+
+    NS::Error* error = nullptr;
+
+    MTL::FunctionConstantValues* functionContents = MTL::FunctionConstantValues::alloc()->init();
+    short                        numUVs = 1;
     functionContents->setConstantValue(&numUVs, MTL::DataTypeUShort, FunctionConstantNumUVs);
     functionContents->setConstantValue(&numUVs, MTL::DataTypeUShort, FunctionConstantNumLayers);
-    
-    MTL::Function *fragFunction = library->newFunction(
-                                                       NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
-                                                       functionContents,
-                                                       &error
-                                                    );
+
+    MTL::Function* fragFunction = library->newFunction(
+        NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
+        functionContents,
+        &error);
     fFragFunction = fragFunction;
-    
+
     functionContents->release();
     library->release();
 }
@@ -3035,8 +2916,7 @@ void plMetalPipeline::FindFragFunction() {
 void plMetalPipeline::IClearShadowSlaves()
 {
     int i;
-    for( i = 0; i < fShadows.size(); i++ )
-    {
+    for (i = 0; i < fShadows.size(); i++) {
         const plShadowCaster* caster = fShadows[i]->fCaster;
         caster->GetKey()->UnRefObject();
     }
@@ -3047,7 +2927,7 @@ void plMetalPipeline::IClearShadowSlaves()
 bool plMetalPipeline::ICreateDynDeviceObjects()
 {
     // Front/Back/Depth buffers
-    //if( ICreateNormalSurfaces() )
+    // if( ICreateNormalSurfaces() )
     //    return true;
 
     // RenderTarget pools are shared for our shadow generation algorithm.
@@ -3056,7 +2936,7 @@ bool plMetalPipeline::ICreateDynDeviceObjects()
 
     // Create device-specific stuff
     fDebugTextMgr = new plDebugTextManager();
-    if( fDebugTextMgr == nil )
+    if (fDebugTextMgr == nil)
         return true;
 
     // Vertex buffers, index buffers, textures, etc.
@@ -3075,12 +2955,11 @@ void plMetalPipeline::IReleaseDynDeviceObjects()
     // themselves from their parent objects yet
     delete fDebugTextMgr;
     fDebugTextMgr = nil;
-    
-    while( fTextFontRefList )
+
+    while (fTextFontRefList)
         delete fTextFontRefList;
 
-    while( fRenderTargetRefList )
-    {
+    while (fRenderTargetRefList) {
         plMetalRenderTargetRef* rtRef = fRenderTargetRefList;
         rtRef->Release();
         rtRef->Unlink();
@@ -3089,9 +2968,8 @@ void plMetalPipeline::IReleaseDynDeviceObjects()
     // The shared dynamic vertex buffers used by things like objects skinned on CPU, or
     // particle systems.
     IReleaseDynamicBuffers();
-    //IReleaseAvRTPool();
+    // IReleaseAvRTPool();
     IReleaseRenderTargetPools();
-
 }
 
 // IReleaseDynamicBuffers /////////////////////////////////////////////////
@@ -3111,46 +2989,40 @@ void plMetalPipeline::IReleaseRenderTargetPools()
 {
     int i;
 
-    for( i = 0; i < fRenderTargetPool512.size(); i++ )
-    {
+    for (i = 0; i < fRenderTargetPool512.size(); i++) {
         delete fRenderTargetPool512[i];
         fRenderTargetPool512[i] = nil;
     }
     fRenderTargetPool512.clear();
 
-    for( i = 0; i < fRenderTargetPool256.size(); i++ )
-    {
+    for (i = 0; i < fRenderTargetPool256.size(); i++) {
         delete fRenderTargetPool256[i];
         fRenderTargetPool256[i] = nil;
     }
     fRenderTargetPool256.clear();
 
-    for( i = 0; i < fRenderTargetPool128.size(); i++ )
-    {
+    for (i = 0; i < fRenderTargetPool128.size(); i++) {
         delete fRenderTargetPool128[i];
         fRenderTargetPool128[i] = nil;
     }
     fRenderTargetPool128.clear();
 
-    for( i = 0; i < fRenderTargetPool64.size(); i++ )
-    {
+    for (i = 0; i < fRenderTargetPool64.size(); i++) {
         delete fRenderTargetPool64[i];
         fRenderTargetPool64[i] = nil;
     }
     fRenderTargetPool64.clear();
 
-    for( i = 0; i < fRenderTargetPool32.size(); i++ )
-    {
+    for (i = 0; i < fRenderTargetPool32.size(); i++) {
         delete fRenderTargetPool32[i];
         fRenderTargetPool32[i] = nil;
     }
     fRenderTargetPool32.clear();
 
-    for( i = 0; i < kMaxRenderTargetNext; i++ )
-    {
+    for (i = 0; i < kMaxRenderTargetNext; i++) {
         fRenderTargetNext[i] = 0;
-        //fBlurScratchRTs[i] = nil;
-        //fBlurDestRTs[i] = nil;
+        // fBlurScratchRTs[i] = nil;
+        // fBlurDestRTs[i] = nil;
     }
 
 #ifdef MF_ENABLE_HACKOFF
@@ -3164,10 +3036,8 @@ void plMetalPipeline::IReleaseRenderTargetPools()
 ///////////////////////////////////////////////////////////////////////////////
 // See plGLight/plShadowMaster.cpp for more notes.
 
-
-
-float blurScale = -1.f;
-static  const int kL2NumSamples = 3; // Log2(4)
+float            blurScale = -1.f;
+static const int kL2NumSamples = 3; // Log2(4)
 
 // IPrepShadowCaster ////////////////////////////////////////////////////////////////////////
 // Make sure all the geometry in this shadow caster is ready to be rendered.
@@ -3189,10 +3059,8 @@ bool plMetalPipeline::IPrepShadowCaster(const plShadowCaster* caster)
     const std::vector<plShadowCastSpan>& castSpans = caster->Spans();
 
     int i;
-    for( i = 0; i < castSpans.size(); i++ )
-    {
-        if( !done.IsBitSet(i) )
-        {
+    for (i = 0; i < castSpans.size(); i++) {
+        if (!done.IsBitSet(i)) {
             // We haven't already done this castSpan
 
             plDrawableSpans* drawable = castSpans[i].fDraw;
@@ -3201,7 +3069,7 @@ bool plMetalPipeline::IPrepShadowCaster(const plShadowCaster* caster)
             static std::vector<int16_t> visList;
             visList.clear();
             visList.push_back((int16_t)(castSpans[i].fIndex));
-            
+
             // We're about to have done this castSpan.
             done.SetBit(i);
 
@@ -3209,10 +3077,8 @@ bool plMetalPipeline::IPrepShadowCaster(const plShadowCaster* caster)
             // with the same drawable, and add them to visList.
             // We'll handle all the spans from this drawable at once.
             int j;
-            for( j = i+1; j < castSpans.size(); j++ )
-            {
-                if( !done.IsBitSet(j) && (castSpans[j].fDraw == drawable) )
-                {
+            for (j = i + 1; j < castSpans.size(); j++) {
+                if (!done.IsBitSet(j) && (castSpans[j].fDraw == drawable)) {
                     // Add to list
                     visList.push_back((int16_t)(castSpans[j].fIndex));
 
@@ -3221,10 +3087,10 @@ bool plMetalPipeline::IPrepShadowCaster(const plShadowCaster* caster)
                 }
             }
             // That's all, prep the drawable.
-            drawable->PrepForRender( this );
+            drawable->PrepForRender(this);
 
             // Do any software skinning.
-            if( !ISoftwareVertexBlend(drawable, visList) )
+            if (!ISoftwareVertexBlend(drawable, visList))
                 return false;
         }
     }
@@ -3239,47 +3105,45 @@ bool plMetalPipeline::IRenderShadowCaster(plShadowSlave* slave)
     const plShadowCaster* caster = slave->fCaster;
 
     // Setup to render into the slave's render target.
-    if( !IPushShadowCastState(slave) )
+    if (!IPushShadowCastState(slave))
         return false;
 
     // Get the shadow caster ready to render.
-    if( !IPrepShadowCaster(slave->fCaster) )
+    if (!IPrepShadowCaster(slave->fCaster))
         return false;
 
     // for each shadowCaster.fSpans
     int iSpan;
-    for( iSpan = 0; iSpan < caster->Spans().size(); iSpan++ )
-    {
+    for (iSpan = 0; iSpan < caster->Spans().size(); iSpan++) {
         plDrawableSpans* dr = caster->Spans()[iSpan].fDraw;
-        const plSpan* sp = caster->Spans()[iSpan].fSpan;
-        uint32_t spIdx = caster->Spans()[iSpan].fIndex;
+        const plSpan*    sp = caster->Spans()[iSpan].fSpan;
+        uint32_t         spIdx = caster->Spans()[iSpan].fIndex;
 
         hsAssert(sp->fTypeMask & plSpan::kIcicleSpan, "Shadow casting from non-trimeshes not currently supported");
 
         // render shadowcaster.fSpans[i] to rendertarget
-        if( !(sp->fProps & plSpan::kPropNoShadowCast) )
+        if (!(sp->fProps & plSpan::kPropNoShadowCast))
             IRenderShadowCasterSpan(slave, dr, *(const plIcicle*)sp);
 
         // Keep track of which shadow slaves this span was rendered into.
         // If self-shadowing is off, we use that to determine not to
         // project the shadow map onto its source geometry.
-        sp->SetShadowBit(slave->fIndex); //index set in SubmitShadowSlave
+        sp->SetShadowBit(slave->fIndex); // index set in SubmitShadowSlave
     }
 
     // Debug only.
-    if( blurScale >= 0.f )
+    if (blurScale >= 0.f)
         slave->fBlurScale = blurScale;
 
     // If this shadow requests being blurred, do it.
-    if( slave->fBlurScale > 0.f )
+    if (slave->fBlurScale > 0.f)
         fDevice.EncodeBlur(fDevice.GetCurrentCommandBuffer(), fDevice.fCurrentFragmentOutputTexture, slave->fBlurScale);
-        
+
     // Finished up, restore previous state.
     IPopShadowCastState(slave);
 
 #if MCN_BOUNDS_SPANS
-    if (IsDebugFlagSet(plPipeDbg::kFlagShowShadowBounds))
-    {
+    if (IsDebugFlagSet(plPipeDbg::kFlagShowShadowBounds)) {
         /// Add a span to our boundsIce to show this
         IAddBoundsSpan(fBoundsSpans, &slave->fWorldBounds);
     }
@@ -3302,7 +3166,7 @@ void plMetalPipeline::IPreprocessShadows()
     // Some board (possibly the Parhelia) freaked if anistropic filtering
     // was enabled when rendering to a render target. We never need it for
     // shadow maps, and it is slower, so we just kill it here.
-    //ISetAnisotropy(false);
+    // ISetAnisotropy(false);
 
     // Generate a shadow map for each submitted shadow slave.
     // Shadow slave corresponds to one shadow caster paired
@@ -3313,22 +3177,19 @@ void plMetalPipeline::IPreprocessShadows()
     // permutation explosion, because a slave is only generated
     // for a caster being affected (in range etc.) by a light.
     int iSlave;
-    for( iSlave = 0; iSlave < fShadows.size(); iSlave++ )
-    {
+    for (iSlave = 0; iSlave < fShadows.size(); iSlave++) {
         plShadowSlave* slave = fShadows[iSlave];
-        
+
         // Any trouble, remove it from the list for this frame.
-        if( !IRenderShadowCaster(slave) )
-        {
+        if (!IRenderShadowCaster(slave)) {
             fShadows.erase(fShadows.begin() + iSlave);
             iSlave--;
             continue;
         }
-
     }
 
     // Restore
-    //ISetAnisotropy(true);
+    // ISetAnisotropy(true);
 
     plProfile_EndTiming(PrepShadows);
 }
@@ -3339,23 +3200,23 @@ void plMetalPipeline::IPreprocessShadows()
 bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
 {
     plRenderTarget* renderTarg = IFindRenderTarget(slave->fWidth, slave->fHeight, slave->fView.GetOrthogonal());
-    if( !renderTarg )
+    if (!renderTarg)
         return false;
 
     // Let the slave setup the transforms, viewport, etc. necessary to render it's shadow
     // map. This just goes into a plViewTransform, we translate that into D3D state ourselves below.
     if (!slave->SetupViewTransform(this))
         return false;
-    
+
     // Set texture to U_LUT
     fCurrentRenderPassUniforms->specularSrc = 0.0;
 
-    //if( !ref->fTexture )
+    // if( !ref->fTexture )
     //{
-    //    if( ref->fData )
-    //        IReloadTexture( ref );
-    //}
-    //fDevice.SetRenderTarget(ref->fTexture);
+    //     if( ref->fData )
+    //         IReloadTexture( ref );
+    // }
+    // fDevice.SetRenderTarget(ref->fTexture);
 
     // Push the shadow slave's view transform as our current render state.
     fViewStack.push(fView);
@@ -3369,13 +3230,12 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
     // We'll be rendering the light space distance to the span fragment into
     // alpha (color is white), so our camera space position, transformed into light space
     // and then converted to [0..255] via our ULut.
-    
-    //METAL NOTE: D3DTSS_TCI_CAMERASPACEPOSITION and D3DTTFF_COUNT3 are hardcoded into the shader
+
+    // METAL NOTE: D3DTSS_TCI_CAMERASPACEPOSITION and D3DTTFF_COUNT3 are hardcoded into the shader
 
     // Set texture transform to slave's lut transform. See plShadowMaster::IComputeLUT().
     hsMatrix44 castLUT = slave->fCastLUT;
-    if( slave->fFlags & plShadowSlave::kCastInCameraSpace )
-    {
+    if (slave->fFlags & plShadowSlave::kCastInCameraSpace) {
         hsMatrix44 c2w = GetCameraToWorld();
 
         castLUT = castLUT * c2w;
@@ -3431,39 +3291,36 @@ bool plMetalPipeline::IPushShadowCastState(plShadowSlave* slave)
     fD3DDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
     fLayerState[1].fBlendFlags = uint32_t(-1);*/
 
-    //fD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-    //fD3DDevice->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_ONE);
-    //fD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
+    // fD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+    // fD3DDevice->SetRenderState(D3DRS_SRCBLEND,  D3DBLEND_ONE);
+    // fD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
 
-    //fD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
+    // fD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
 
     slave->fPipeData = renderTarg;
 
     // Enable ZBuffering w/ write
-    //fD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-   // fLayerState[0].fZFlags &= ~hsGMatState::kZMask;
+    // fD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+    // fLayerState[0].fZFlags &= ~hsGMatState::kZMask;
 
     // Clear the render target:
     // alpha to white ensures no shadow where there's no caster
     // color to black in case we ever get blurring going
     // Z to 1
     // Stencil ignored
-    if( slave->ReverseZ() )
-    {
+    if (slave->ReverseZ()) {
         fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(fDevice.fReverseZStencilState);
-        //fD3DDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_GREATEREQUAL);
-        //fD3DDevice->Clear(0, nil, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clearColor, 0.0f, 0L);
-    }
-    else
-    {
+        // fD3DDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_GREATEREQUAL);
+        // fD3DDevice->Clear(0, nil, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clearColor, 0.0f, 0L);
+    } else {
         fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(fDevice.fDefaultStencilState);
     }
 
     // Bring the viewport in (AFTER THE CLEAR) to protect the alpha boundary.
-    fView.GetViewTransform().SetViewPort(1, 1, (float)(slave->fWidth-2), (float)(slave->fHeight-2), false);
+    fView.GetViewTransform().SetViewPort(1, 1, (float)(slave->fWidth - 2), (float)(slave->fHeight - 2), false);
     fDevice.SetViewport();
 
-    //inlEnsureLightingOff();
+    // inlEnsureLightingOff();
 
     return true;
 }
@@ -3484,26 +3341,22 @@ void plMetalPipeline::ISetupShadowState(plShadowSlave* slave, plShadowState& sha
 
     slave->fSelfShadowOn = false;
 
-    if( slave->Positional() )
-    {
+    if (slave->Positional()) {
         hsPoint3 position = slave->fLightPos;
         shadowState.lightPosition.x = position.fX;
         shadowState.lightPosition.y = position.fY;
         shadowState.lightPosition.z = position.fZ;
 
         shadowState.directional = false;
-    }
-    else
-    {
+    } else {
         hsVector3 dir = slave->fLightDir;
         shadowState.lightDirection.x = dir.fX;
         shadowState.lightDirection.y = dir.fY;
         shadowState.lightDirection.z = dir.fZ;
-        
+
         shadowState.directional = true;
     }
 }
-
 
 // IFindRenderTarget //////////////////////////////////////////////////////////////////
 // Find a matching render target from the pools. We prefer the requested size, but
@@ -3513,38 +3366,36 @@ void plMetalPipeline::ISetupShadowState(plShadowSlave* slave, plShadowState& sha
 plRenderTarget* plMetalPipeline::IFindRenderTarget(uint32_t& width, uint32_t& height, bool ortho)
 {
     std::vector<plRenderTarget*>* pool = nil;
-    uint32_t* iNext = nil;
+    uint32_t*                     iNext = nil;
     // NOT CURRENTLY SUPPORTING NON-SQUARE SHADOWS. IF WE DO, CHANGE THIS.
-    switch(height)
-    {
-    case 512:
-        pool = &fRenderTargetPool512;
-        iNext = &fRenderTargetNext[9];
-        break;
-    case 256:
-        pool = &fRenderTargetPool256;
-        iNext = &fRenderTargetNext[8];
-        break;
-    case 128:
-        pool = &fRenderTargetPool128;
-        iNext = &fRenderTargetNext[7];
-        break;
-    case 64:
-        pool = &fRenderTargetPool64;
-        iNext = &fRenderTargetNext[6];
-        break;
-    case 32:
-        pool = &fRenderTargetPool32;
-        iNext = &fRenderTargetNext[5];
-        break;
-    default:
-        return nil;
+    switch (height) {
+        case 512:
+            pool = &fRenderTargetPool512;
+            iNext = &fRenderTargetNext[9];
+            break;
+        case 256:
+            pool = &fRenderTargetPool256;
+            iNext = &fRenderTargetNext[8];
+            break;
+        case 128:
+            pool = &fRenderTargetPool128;
+            iNext = &fRenderTargetNext[7];
+            break;
+        case 64:
+            pool = &fRenderTargetPool64;
+            iNext = &fRenderTargetNext[6];
+            break;
+        case 32:
+            pool = &fRenderTargetPool32;
+            iNext = &fRenderTargetNext[5];
+            break;
+        default:
+            return nil;
     }
     plRenderTarget* rt = (*pool)[*iNext];
-    if( !rt )
-    {
+    if (!rt) {
         // We didn't find one, try again the next size down.
-        if( height > 32 )
+        if (height > 32)
             return IFindRenderTarget(width >>= 1, height >>= 1, ortho);
 
         // We must be totally out. Oh well.
@@ -3562,21 +3413,21 @@ plRenderTarget* plMetalPipeline::IFindRenderTarget(uint32_t& width, uint32_t& he
 // that wants the depth buffer dimensions to match the color buffer size.
 // It may be that NVidia hardware doesn't care any more. Contact Matthias
 // about that.
-hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRenderTarget *owner)
+hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRenderTarget* owner)
 {
-    plMetalRenderTargetRef*    ref = nil;
-    MTL::Texture*     depthSurface = nil;
-    MTL::Texture*       texture = nil;
-    MTL::Texture*   cTexture = nil;
+    plMetalRenderTargetRef* ref = nil;
+    MTL::Texture*           depthSurface = nil;
+    MTL::Texture*           texture = nil;
+    MTL::Texture*           cTexture = nil;
     int                     i;
     plCubicRenderTarget*    cubicRT;
-    uint16_t                  width, height;
+    uint16_t                width, height;
 
     // If we don't already have one to share from, start from scratch.
-    if( !share )
+    if (!share)
         return MakeRenderTargetRef(owner);
 
-    //hsAssert(!fManagedAlloced, "Allocating non-managed resource with managed resources alloc'd");
+        // hsAssert(!fManagedAlloced, "Allocating non-managed resource with managed resources alloc'd");
 
 #ifdef HS_DEBUGGING
     // Check out the validity of the match. Debug only.
@@ -3588,24 +3439,22 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
 #endif // HS_DEBUGGING
 
     /// Check--is this renderTarget really a child of a cubicRenderTarget?
-    if( owner->GetParent() != nil )
-    {
+    if (owner->GetParent() != nil) {
         /// This'll create the deviceRefs for all of its children as well
         SharedRenderTargetRef(share->GetParent(), owner->GetParent());
         return owner->GetDeviceRef();
     }
 
-    if( owner->GetDeviceRef() != nil )
-        ref = (plMetalRenderTargetRef *)owner->GetDeviceRef();
+    if (owner->GetDeviceRef() != nil)
+        ref = (plMetalRenderTargetRef*)owner->GetDeviceRef();
 
     // Look for a good format of matching color and depth size.
-    //FIXME: we're hardcoded for a certain tier and we aren't trying to create matching render buffers for efficiency
-    //if( !IFindRenderTargetInfo(owner, surfFormat, resType) )
+    // FIXME: we're hardcoded for a certain tier and we aren't trying to create matching render buffers for efficiency
+    // if( !IFindRenderTargetInfo(owner, surfFormat, resType) )
     //{
     //    hsAssert( false, "Error getting renderTarget info" );
     //    return nil;
     //}
-
 
     /// Create the render target now
     // Start with the depth. We're just going to share the depth surface on the
@@ -3614,119 +3463,102 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
     hsAssert(shareRef, "Trying to share from a render target with no ref");
     depthSurface = shareRef->fDepthBuffer;
 
-    //FIXME: Add the usage to these textures, they're only accessed by the GPU
-    // Check for Cubic. This is unlikely, since this function is currently only
-    // used for the shadow map pools.
-    cubicRT = plCubicRenderTarget::ConvertNoRef( owner );
-    if( cubicRT != nil )
-    {
+    // FIXME: Add the usage to these textures, they're only accessed by the GPU
+    //  Check for Cubic. This is unlikely, since this function is currently only
+    //  used for the shadow map pools.
+    cubicRT = plCubicRenderTarget::ConvertNoRef(owner);
+    if (cubicRT != nil) {
         /// And create the ref (it'll know how to set all the flags)
-        if( ref != nil )
+        if (ref != nil)
             ref->SetOwner(owner);
         else {
             ref = new plMetalRenderTargetRef();
             ref->SetOwner(owner);
         }
-        
+
         MTL::TextureDescriptor* textureDescriptor = MTL::TextureDescriptor::textureCubeDescriptor(MTL::PixelFormatRGBA8Uint, owner->GetWidth(), false);
-        MTL::Texture* cubeTexture = fDevice.fMetalDevice->newTexture(textureDescriptor);
+        MTL::Texture*           cubeTexture = fDevice.fMetalDevice->newTexture(textureDescriptor);
 
-       // hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
-        if( cubeTexture )
-        {
-
+        // hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
+        if (cubeTexture) {
             /// Create a CUBIC texture
-            for( i = 0; i < 6; i++ )
-            {
-                plRenderTarget          *face = cubicRT->GetFace( i );
-                plMetalRenderTargetRef *fRef;
+            for (i = 0; i < 6; i++) {
+                plRenderTarget*         face = cubicRT->GetFace(i);
+                plMetalRenderTargetRef* fRef;
 
-                if( face->GetDeviceRef() != nil )
-                {
-                    fRef = (plMetalRenderTargetRef *)face->GetDeviceRef();
+                if (face->GetDeviceRef() != nil) {
+                    fRef = (plMetalRenderTargetRef*)face->GetDeviceRef();
                     fRef->SetOwner(face);
-                    if( !fRef->IsLinked() )
-                        fRef->Link( &fRenderTargetRefList );
-                }
-                else
-                {
+                    if (!fRef->IsLinked())
+                        fRef->Link(&fRenderTargetRefList);
+                } else {
                     plMetalRenderTargetRef* targetRef = new plMetalRenderTargetRef();
                     targetRef->SetOwner(face);
-                    face->SetDeviceRef( targetRef );
-                    ( (plMetalRenderTargetRef *)face->GetDeviceRef())->Link( &fRenderTargetRefList );
+                    face->SetDeviceRef(targetRef);
+                    ((plMetalRenderTargetRef*)face->GetDeviceRef())->Link(&fRenderTargetRefList);
                     // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
-                    hsRefCnt_SafeUnRef( face->GetDeviceRef() );
+                    hsRefCnt_SafeUnRef(face->GetDeviceRef());
                 }
             }
 
             ref->fTexture = cubeTexture;
-        }
-        else
-        {
+        } else {
             hsRefCnt_SafeUnRef(ref);
             ref = nil;
         }
     }
     // Is it a texture render target? Probably, since shadow maps are all we use this for.
-    else if( owner->GetFlags() & plRenderTarget::kIsTexture || owner->GetFlags() & plRenderTarget::kIsOffscreen)
-    {
-        //DX seperated the onscreen and offscreen types. Metal doesn't care. All render targets are textures.
+    else if (owner->GetFlags() & plRenderTarget::kIsTexture || owner->GetFlags() & plRenderTarget::kIsOffscreen) {
+        // DX seperated the onscreen and offscreen types. Metal doesn't care. All render targets are textures.
         /// Create a normal texture
-        if( ref != nil )
+        if (ref != nil)
             ref->SetOwner(owner);
         else {
             ref = new plMetalRenderTargetRef();
             ref->SetOwner(owner);
         }
-        
+
         MTL::TextureDescriptor* textureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatBGRA8Unorm, owner->GetWidth(), owner->GetHeight(), false);
-        //Give compute shader write access
+        // Give compute shader write access
         textureDescriptor->setUsage(MTL::TextureUsageRenderTarget | MTL::TextureUsageShaderRead | MTL::TextureUsageShaderWrite);
         MTL::Texture* texture = fDevice.fMetalDevice->newTexture(textureDescriptor);
-        if( texture )
-        {
+        if (texture) {
             ref->fTexture = texture;
-        }
-        else
-        {
+        } else {
             hsRefCnt_SafeUnRef(ref);
             ref = nil;
         }
-        
+
         if (owner->GetZDepth() && (owner->GetFlags() & (plRenderTarget::kIsTexture | plRenderTarget::kIsOffscreen))) {
-            MTL::TextureDescriptor *depthTextureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatDepth32Float_Stencil8,
+            MTL::TextureDescriptor* depthTextureDescriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatDepth32Float_Stencil8,
                                                                                                          owner->GetWidth(),
                                                                                                          owner->GetHeight(),
                                                                                                          false);
-                                                                                                         
+
             if (fDevice.fMetalDevice->supportsFamily(MTL::GPUFamilyApple1)) {
                 depthTextureDescriptor->setStorageMode(MTL::StorageModeMemoryless);
-            }   else {
+            } else {
                 depthTextureDescriptor->setStorageMode(MTL::StorageModePrivate);
             }
             depthTextureDescriptor->setUsage(MTL::TextureUsageRenderTarget);
-            MTL::Texture *depthBuffer = fDevice.fMetalDevice->newTexture(depthTextureDescriptor);
+            MTL::Texture* depthBuffer = fDevice.fMetalDevice->newTexture(depthTextureDescriptor);
             ref->fDepthBuffer = depthBuffer;
         }
     }
 
-    if( owner->GetDeviceRef() != ref )
-    {
-        owner->SetDeviceRef( ref );
+    if (owner->GetDeviceRef() != ref) {
+        owner->SetDeviceRef(ref);
         // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
-        hsRefCnt_SafeUnRef( ref );
-        if( ref != nil && !ref->IsLinked() )
-            ref->Link( &fRenderTargetRefList );
-    }
-    else
-    {
-        if( ref != nil && !ref->IsLinked() )
-            ref->Link( &fRenderTargetRefList );
+        hsRefCnt_SafeUnRef(ref);
+        if (ref != nil && !ref->IsLinked())
+            ref->Link(&fRenderTargetRefList);
+    } else {
+        if (ref != nil && !ref->IsLinked())
+            ref->Link(&fRenderTargetRefList);
     }
 
-    if( ref != nil )
-    {
-        ref->SetDirty( false );
+    if (ref != nil) {
+        ref->SetDirty(false);
     }
 
     return ref;
@@ -3739,68 +3571,64 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
 // must be created before we start creating things in POOL_MANAGED.
 void plMetalPipeline::IMakeRenderTargetPools()
 {
-    //FIXME: We should probably have a release function for the render target pools
-    //IReleaseRenderTargetPools(); // Just to be sure.
+    // FIXME: We should probably have a release function for the render target pools
+    // IReleaseRenderTargetPools(); // Just to be sure.
 
     // Numbers of render targets to be created for each size.
     // These numbers were set with multi-player in mind, so should be reconsidered.
     // But do keep in mind that there are many things in production assets that cast
     // shadows besides the avatar.
-    plConst(float)   kCount[kMaxRenderTargetNext] = {
-        0, // 1x1
-        0, // 2x2
-        0, // 4x4
-        0, // 8x8
-        0, // 16x16
+    plConst(float) kCount[kMaxRenderTargetNext] = {
+        0,  // 1x1
+        0,  // 2x2
+        0,  // 4x4
+        0,  // 8x8
+        0,  // 16x16
         32, // 32x32
         16, // 64x64
-        8, // 128x128
-        4, // 256x256
-        0 // 512x512
+        8,  // 128x128
+        4,  // 256x256
+        0   // 512x512
     };
     int i;
-    for( i = 0; i < kMaxRenderTargetNext; i++ )
-    {
+    for (i = 0; i < kMaxRenderTargetNext; i++) {
         std::vector<plRenderTarget*>* pool = nil;
-        switch( i )
-        {
-        default:
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-            break;
+        switch (i) {
+            default:
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                break;
 
-        case 5:
-            pool = &fRenderTargetPool32;
-            break;
-        case 6:
-            pool = &fRenderTargetPool64;
-            break;
-        case 7:
-            pool = &fRenderTargetPool128;
-            break;
-        case 8:
-            pool = &fRenderTargetPool256;
-            break;
-        case 9:
-            pool = &fRenderTargetPool512;
-            break;
+            case 5:
+                pool = &fRenderTargetPool32;
+                break;
+            case 6:
+                pool = &fRenderTargetPool64;
+                break;
+            case 7:
+                pool = &fRenderTargetPool128;
+                break;
+            case 8:
+                pool = &fRenderTargetPool256;
+                break;
+            case 9:
+                pool = &fRenderTargetPool512;
+                break;
         }
-        if( pool )
-        {
+        if (pool) {
             pool->resize(kCount[i] + 1);
             (*pool)[0] = nil;
             (*pool)[(int)(kCount[i])] = nil;
             int j;
-            for( j = 0; j < kCount[i]; j++ )
-            {
+            for (j = 0; j < kCount[i]; j++) {
                 uint16_t flags = plRenderTarget::kIsTexture | plRenderTarget::kIsProjected;
-                uint8_t bitDepth = 32;
-                uint8_t zDepth = 24;
-                uint8_t stencilDepth = 0;
-                
+                uint8_t  bitDepth = 32;
+                uint8_t  zDepth = 24;
+                uint8_t  stencilDepth = 0;
+
                 // If we ever allow non-square shadows, change this.
                 int width = 1 << i;
                 int height = width;
@@ -3810,10 +3638,9 @@ void plMetalPipeline::IMakeRenderTargetPools()
                 // If we've failed to create our render target ref, we're probably out of
                 // video memory. We'll return nil, and this guy just doesn't get a shadow
                 // until more video memory turns up (not likely).
-                if( !SharedRenderTargetRef((*pool)[0], rt) )
-                {
+                if (!SharedRenderTargetRef((*pool)[0], rt)) {
                     delete rt;
-                    pool->resize(j+1);
+                    pool->resize(j + 1);
                     (*pool)[j] = nil;
                     break;
                 }
@@ -3833,7 +3660,7 @@ bool plMetalPipeline::IPopShadowCastState(plShadowSlave* slave)
 
     PopRenderTarget();
     fView.fXformResetFlags = fView.kResetProjection | fView.kResetCamera;
-    
+
     fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(nullptr, 16);
 
     return true;
@@ -3846,14 +3673,13 @@ bool plMetalPipeline::IPopShadowCastState(plShadowSlave* slave)
 void plMetalPipeline::IResetRenderTargetPools()
 {
     int i;
-    for( i = 0; i < kMaxRenderTargetNext; i++ )
-    {
+    for (i = 0; i < kMaxRenderTargetNext; i++) {
         fRenderTargetNext[i] = 0;
-        //fBlurScratchRTs[i] = nil;
-        //fBlurDestRTs[i] = nil;
+        // fBlurScratchRTs[i] = nil;
+        // fBlurDestRTs[i] = nil;
     }
 
-    //fLights.fNextShadowLight = 0;
+    // fLights.fNextShadowLight = 0;
 }
 
 // IRenderShadowCasterSpan //////////////////////////////////////////////////////////////////////
@@ -3866,41 +3692,40 @@ void plMetalPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSp
     ICheckDynBuffers(drawable, drawable->GetBufferGroup(span.fGroupIdx), &span);
     plProfile_EndTiming(CheckDyn);
 
-    plMetalVertexBufferRef*    vRef = (plMetalVertexBufferRef *)drawable->GetVertexRef(span.fGroupIdx, span.fVBufferIdx);
-    plMetalIndexBufferRef* iRef = (plMetalIndexBufferRef *)drawable->GetIndexRef(span.fGroupIdx, span.fIBufferIdx);
+    plMetalVertexBufferRef* vRef = (plMetalVertexBufferRef*)drawable->GetVertexRef(span.fGroupIdx, span.fVBufferIdx);
+    plMetalIndexBufferRef*  iRef = (plMetalIndexBufferRef*)drawable->GetIndexRef(span.fGroupIdx, span.fIBufferIdx);
 
-    if( vRef->GetBuffer() == nil || iRef->GetBuffer() == nil )
-    {
-        hsAssert( false, "Trying to render a nil buffer pair!" );
+    if (vRef->GetBuffer() == nil || iRef->GetBuffer() == nil) {
+        hsAssert(false, "Trying to render a nil buffer pair!");
         return;
     }
 
     /// Switch to the vertex buffer we want
     plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalRenderShadowCasterPipelineState(&fDevice, vRef).GetRenderPipelineState();
-    if(fState.fCurrentPipelineState != linkedPipeline->pipelineState) {
+    if (fState.fCurrentPipelineState != linkedPipeline->pipelineState) {
         fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
         fState.fCurrentPipelineState = linkedPipeline->pipelineState;
     }
-    
+
     if (fState.fCurrentVertexBuffer != vRef->GetBuffer()) {
         fDevice.CurrentRenderCommandEncoder()->setVertexBuffer(vRef->GetBuffer(), 0, 0);
         fState.fCurrentVertexBuffer = vRef->GetBuffer();
     }
-    
+
     fState.fCurrentVertexBuffer = vRef->GetBuffer();
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
     fState.fCurrentCullMode = MTL::CullModeNone;
     fDevice.CurrentRenderCommandEncoder()->setCullMode(MTL::CullModeNone);
 
-    uint32_t                  vStart = span.fVStartIdx;
-    uint32_t                  vLength = span.fVLength;
-    uint32_t                  iStart = span.fIPackedIdx;
-    uint32_t                  iLength= span.fILength;
+    uint32_t vStart = span.fVStartIdx;
+    uint32_t vLength = span.fVLength;
+    uint32_t iStart = span.fIPackedIdx;
+    uint32_t iLength = span.fILength;
 
     plRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength);
 
     static hsMatrix44 emptyMatrix;
-    hsMatrix44 m = emptyMatrix;
+    hsMatrix44        m = emptyMatrix;
 
     ISetupTransforms(drawable, span, m);
 
@@ -3910,76 +3735,70 @@ void plMetalPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSp
     render.RenderPrims();
 }
 
-
 // IRenderShadowsOntoSpan /////////////////////////////////////////////////////////////////////
 // After doing the usual render for a span (all passes), we call the following.
 // If the span accepts shadows, this will loop over all the shadows active this
 // frame, and apply the ones that intersect this spans bounds. See below for details.
-void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const plSpan* span, hsGMaterial* mat, plMetalVertexBufferRef *vRef)
+void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const plSpan* span, hsGMaterial* mat, plMetalVertexBufferRef* vRef)
 {
     // We've already computed which shadows affect this span. That's recorded in slaveBits.
     const hsBitVector& slaveBits = span->GetShadowSlaves();
 
     bool first = true;
 
-    for(size_t i = 0; i < fShadows.size(); i++ )
-    {
-        if( slaveBits.IsBitSet(fShadows[i]->fIndex) )
-        {
+    for (size_t i = 0; i < fShadows.size(); i++) {
+        if (slaveBits.IsBitSet(fShadows[i]->fIndex)) {
             // This slave affects this span.
-            if( first )
-            {
-                
+            if (first) {
                 // On the first, we do all the setup that is independent of
                 // the shadow slave, so state that needs to get set once before
                 // projecting any number of shadow maps.
                 ISetupShadowRcvTextureStages(mat);
 
                 first = false;
-
             }
 
             // Now setup any state specific to this shadow slave.
             ISetupShadowSlaveTextures(fShadows[i]);
-            
+
             // See ISetupShadowLight below for how the shadow light is used.
             // The shadow light isn't used in generating the shadow map, it's used
             // in projecting the shadow map onto the scene.
             plShadowState shadowState;
             ISetupShadowState(fShadows[i], shadowState);
-            
+
             struct plMetalFragmentShaderDescription passDescription;
             memset(&passDescription, 0, sizeof(passDescription));
-            
+
             passDescription.numLayers = fCurrNumLayers = 3;
-            
+
             /*
              Things get a wee bit complicated here.
-             
+
              The texture we want to alpha blend with is already bound to texture 0 or texture 1.
              However - the texture co-ords we want are in position 2 in the FVF vertex buffer. (stage 3)
-             
+
              Build the shader with texture descriptions set properly for textures 0 and 1,
              but put the instructions on how to treat the UVW for textures 0 or 1 into
              the third stage.
-             
+
              The shadow cast shader will automatically look in textures 0 and 1 when doing
              the third stage blend. This saves us a texture bind.
              */
-            
+
             passDescription.PopulateTextureInfo(mat->GetLayer(0), 0);
             passDescription.Populate(mat->GetLayer(0), 2);
-            
-            if (mat->GetNumLayers()>1) {
+
+            if (mat->GetNumLayers() > 1) {
                 passDescription.PopulateTextureInfo(mat->GetLayer(1), 1);
                 passDescription.Populate(mat->GetLayer(1), 2);
             }
-            //There's no texture for the third stage if we're reusing the textures
-            //for the first and second stages from the last render.
+            // There's no texture for the third stage if we're reusing the textures
+            // for the first and second stages from the last render.
             passDescription.passTypes[2] = PassTypeColor;
-            
-            plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalRenderShadowPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();
-            if(fState.fCurrentPipelineState != linkedPipeline->pipelineState) {
+
+            plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalRenderShadowPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();
+            if (fState.fCurrentPipelineState != linkedPipeline->pipelineState) {
                 fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
                 fState.fCurrentPipelineState = linkedPipeline->pipelineState;
             }
@@ -3990,23 +3809,18 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             // so we cache whether the shadow light is set for regular or
             // self shadowing intensity. If what we're doing now is different
             // than what we're currently set for, set it again.
-            if( selfShadowNow != fShadows[i]->fSelfShadowOn )
-            {
-
+            if (selfShadowNow != fShadows[i]->fSelfShadowOn) {
                 // We lower the power on self shadowing, because the artists like to
                 // crank up the shadow strength to huge values to get a darker shadow
                 // on the environment, which causes the shadow on the avatar to get
                 // way too dark. Another way to look at it is when self shadowing,
                 // the surface being projected onto is going to be very close to
                 // the surface casting the shadow (because they are the same object).
-                if( selfShadowNow )
-                {
+                if (selfShadowNow) {
                     plConst(float) kMaxSelfPower = 0.3f;
-                    float power = (float) fShadows[i]->fPower > kMaxSelfPower ? (float) kMaxSelfPower : ((float) fShadows[i]->fPower);
+                    float power = (float)fShadows[i]->fPower > kMaxSelfPower ? (float)kMaxSelfPower : ((float)fShadows[i]->fPower);
                     shadowState.power = power;
-                }
-                else
-                {
+                } else {
                     shadowState.power = fShadows[i]->fPower;
                 }
 
@@ -4020,23 +3834,20 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             if (!IsDebugFlagSet(plPipeDbg::kFlagNoShadowApply))
 #endif // PLASMA_EXTERNAL_RELEASE
                 render.RenderPrims();
-
         }
     }
-
 }
-
 
 // ISetupShadowRcvTextureStages ////////////////////////////////////////////
 // Set the generic stage states. We'll fill in the specific textures
 // for each slave later.
 void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
 {
-    //Do this first, this normally stomps all over our uniforms
-    //FIXME: Way to encode layers without stomping all over uniforms?
-    plMetalMaterialShaderRef* matShader = (plMetalMaterialShaderRef *)mat->GetDeviceRef();
-    //matShader->encodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, 0, 0, nullptr);
-    
+    // Do this first, this normally stomps all over our uniforms
+    // FIXME: Way to encode layers without stomping all over uniforms?
+    plMetalMaterialShaderRef* matShader = (plMetalMaterialShaderRef*)mat->GetDeviceRef();
+    // matShader->encodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, 0, 0, nullptr);
+
     // We're whacking about with renderstate independent of current material,
     // so make sure the next span processes it's material, even if it's the
     // same one.
@@ -4046,46 +3857,38 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
     ISetShadowLightState(mat);
 
     // Zbuffering on read-only
-    
-    
-    if(fState.fCurrentDepthStencilState != fDevice.fNoZWriteStencilState) {
+
+    if (fState.fCurrentDepthStencilState != fDevice.fNoZWriteStencilState) {
         fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(fDevice.fNoZWriteStencilState);
         fState.fCurrentDepthStencilState = fDevice.fNoZWriteStencilState;
     }
-    
+
     int layerIndex = -1;
     // If mat's base layer is alpha'd, and we have > 3 TMU's factor
     // in the base layer's alpha.
-    if( (fMaxLayersAtOnce > 3) && mat->GetLayer(0)->GetTexture() && (mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha) )
-    {
+    if ((fMaxLayersAtOnce > 3) && mat->GetLayer(0)->GetTexture() && (mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha)) {
         plLayerInterface* layer = mat->GetLayer(0);
         layerIndex = 0;
-        
-        
 
         // If the following conditions are met, it means that layer 1 is a better choice to
         // get the transparency from. The specific case we're looking for is vertex alpha
         // simulated by an invisible second layer alpha LUT (known as the alpha hack).
-        if( (layer->GetMiscFlags() & hsGMatState::kMiscBindNext)
-            && mat->GetLayer(1)
-            && !(mat->GetLayer(1)->GetMiscFlags() & hsGMatState::kMiscNoShadowAlpha)
-            && !(mat->GetLayer(1)->GetBlendFlags() & hsGMatState::kBlendNoTexAlpha)
-           && mat->GetLayer(1)->GetTexture() ) {
-                layer = mat->GetLayer(1);
+        if ((layer->GetMiscFlags() & hsGMatState::kMiscBindNext) && mat->GetLayer(1) && !(mat->GetLayer(1)->GetMiscFlags() & hsGMatState::kMiscNoShadowAlpha) && !(mat->GetLayer(1)->GetBlendFlags() & hsGMatState::kBlendNoTexAlpha) && mat->GetLayer(1)->GetTexture()) {
+            layer = mat->GetLayer(1);
             layerIndex = 1;
         }
-        
+
         // Normal UVW source.
         uint32_t uvwSrc = layer->GetUVWSrc();
-        
-            // Normal UVW source.
+
+        // Normal UVW source.
         fCurrentRenderPassUniforms->uvTransforms[2].UVWSrc = uvwSrc;
         // MiscFlags to layer's misc flags
         matrix_float4x4 tXfm;
         hsMatrix2SIMD(layer->GetTransform(), &tXfm);
         fCurrentRenderPassUniforms->uvTransforms[2].transform = tXfm;
     }
-    
+
     fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&layerIndex, sizeof(int), FragmentShaderArgumentShadowCastAlphaSrc);
 }
 
@@ -4095,12 +3898,12 @@ void plMetalPipeline::ISetShadowLightState(hsGMaterial* mat)
 {
     fCurrLightingMethod = plSpan::kLiteShadow;
 
-    if( mat && mat->GetNumLayers() && mat->GetLayer(0) )
+    if (mat && mat->GetNumLayers() && mat->GetLayer(0))
         fCurrentRenderPassUniforms->diffuseCol.r = fCurrentRenderPassUniforms->diffuseCol.g = fCurrentRenderPassUniforms->diffuseCol.b = mat->GetLayer(0)->GetOpacity();
     else
         fCurrentRenderPassUniforms->diffuseCol.r = fCurrentRenderPassUniforms->diffuseCol.g = fCurrentRenderPassUniforms->diffuseCol.b = 1.f;
     fCurrentRenderPassUniforms->diffuseCol.a = 1.f;
-    
+
     fCurrentRenderPassUniforms->diffuseSrc = 1.0;
     fCurrentRenderPassUniforms->emissiveSrc = 1.0;
     fCurrentRenderPassUniforms->emissiveCol = 0.0;
@@ -4114,10 +3917,9 @@ void plMetalPipeline::ISetShadowLightState(hsGMaterial* mat)
 // the surface.
 void plMetalPipeline::IDisableLightsForShadow()
 {
-    //FIXME: Planned for removal - but used by projections. New light code will obsolete.
+    // FIXME: Planned for removal - but used by projections. New light code will obsolete.
     int i;
-    for( i = 0; i < 8; i++ )
-    {
+    for (i = 0; i < 8; i++) {
         IDisableLight(i);
     }
     fLights.count = 0;
@@ -4128,7 +3930,7 @@ void plMetalPipeline::IDisableLightsForShadow()
 // shadow map onto the surface.
 void plMetalPipeline::ISetupShadowSlaveTextures(plShadowSlave* slave)
 {
-    //D3DMATRIX tXfm;
+    // D3DMATRIX tXfm;
 
     hsMatrix44 c2w = GetCameraToWorld();
 
@@ -4137,24 +3939,24 @@ void plMetalPipeline::ISetupShadowSlaveTextures(plShadowSlave* slave)
     // Set texture transform to slave's camera to texture transform
     plRenderTarget* renderTarg = (plRenderTarget*)slave->fPipeData;
     hsAssert(renderTarg, "Processing a slave that hasn't been rendered");
-    if( !renderTarg )
+    if (!renderTarg)
         return;
     plMetalTextureRef* ref = (plMetalTextureRef*)renderTarg->GetDeviceRef();
     hsAssert(ref, "Shadow map ref should have been made when it was rendered");
-    if( !ref )
+    if (!ref)
         return;
 
-    hsRefCnt_SafeAssign( fLayerRef[0], ref );
+    hsRefCnt_SafeAssign(fLayerRef[0], ref);
     fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(ref->fTexture, 16);
 
     plMetalShadowCastFragmentShaderArgumentBuffer uniforms;
     uniforms.pointLightCast = slave->fView.GetOrthogonal() ? false : true;
     fDevice.CurrentRenderCommandEncoder()->setFragmentBytes(&uniforms, sizeof(plMetalShadowCastFragmentShaderArgumentBuffer), FragmentShaderArgumentShadowCastUniforms);
-    
-    hsMatrix44 cameraToTexture = slave->fWorldToTexture * c2w;
+
+    hsMatrix44    cameraToTexture = slave->fWorldToTexture * c2w;
     simd_float4x4 tXfm;
     hsMatrix2SIMD(cameraToTexture, &tXfm);
-    
+
     fCurrentRenderPassUniforms->uvTransforms[0].UVWSrc = plLayerInterface::kUVWPosition;
     fCurrentRenderPassUniforms->uvTransforms[0].transform = tXfm;
 
@@ -4162,10 +3964,9 @@ void plMetalPipeline::ISetupShadowSlaveTextures(plShadowSlave* slave)
     // Set the texture transform to slave's fRcvLUT
     hsMatrix44 cameraToLut = slave->fRcvLUT * c2w;
     hsMatrix2SIMD(cameraToLut, &tXfm);
-    
+
     fCurrentRenderPassUniforms->uvTransforms[1].UVWSrc = plLayerInterface::kUVWPosition;
     fCurrentRenderPassUniforms->uvTransforms[1].transform = tXfm;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -4178,7 +3979,7 @@ void plMetalPipeline::ISetupShadowSlaveTextures(plShadowSlave* slave)
 
 bool plMetalPipeline::IIsViewLeftHanded()
 {
-    return fView.GetViewTransform().GetOrthogonal() ^ ( fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded ) ? true : false;
+    return fView.GetViewTransform().GetOrthogonal() ^ (fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded) ? true : false;
 }
 
 //// ISetCullMode /////////////////////////////////////////////////////////////
@@ -4201,9 +4002,9 @@ plMetalDevice* plMetalPipeline::GetMetalDevice()
 
 //// Local Static Stuff ///////////////////////////////////////////////////////
 
-//FIXME: CPU avatar stuff that should be evaluated once this moves onto the GPU.
+// FIXME: CPU avatar stuff that should be evaluated once this moves onto the GPU.
 
-template<typename T>
+template <typename T>
 static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
 {
     T* src_ptr = reinterpret_cast<T*>(src);
@@ -4213,7 +4014,7 @@ static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
     dst += sizeof(T);
 }
 
-template<typename T>
+template <typename T>
 static inline const uint8_t* inlExtract(const uint8_t* src, T* val)
 {
     const T* ptr = reinterpret_cast<const T*>(src);
@@ -4221,11 +4022,11 @@ static inline const uint8_t* inlExtract(const uint8_t* src, T* val)
     return reinterpret_cast<const uint8_t*>(ptr);
 }
 
-template<>
+template <>
 inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
 {
     const float* src_ptr = reinterpret_cast<const float*>(src);
-    float* dst_ptr = reinterpret_cast<float*>(val);
+    float*       dst_ptr = reinterpret_cast<float*>(val);
     *dst_ptr++ = *src_ptr++;
     *dst_ptr++ = *src_ptr++;
     *dst_ptr++ = *src_ptr++;
@@ -4233,11 +4034,11 @@ inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
     return reinterpret_cast<const uint8_t*>(src_ptr);
 }
 
-template<>
+template <>
 inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
 {
     const float* src_ptr = reinterpret_cast<const float*>(src);
-    float* dst_ptr = reinterpret_cast<float*>(val);
+    float*       dst_ptr = reinterpret_cast<float*>(val);
     *dst_ptr++ = *src_ptr++;
     *dst_ptr++ = *src_ptr++;
     *dst_ptr++ = *src_ptr++;
@@ -4245,13 +4046,13 @@ inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
     return reinterpret_cast<const uint8_t*>(src_ptr);
 }
 
-template<typename T, size_t N>
+template <typename T, size_t N>
 static inline void inlSkip(uint8_t*& src)
 {
     src += sizeof(T) * N;
 }
 
-template<typename T>
+template <typename T>
 static inline uint8_t* inlStuff(uint8_t* dst, const T* val)
 {
     T* ptr = reinterpret_cast<T*>(dst);
@@ -4287,18 +4088,18 @@ bool plMetalPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const std:
     // lock the data buffer
 
     // First, figure out which buffers we need to blend.
-    const int kMaxBufferGroups = 20;
-    const int kMaxVertexBuffers = 20;
+    const int   kMaxBufferGroups = 20;
+    const int   kMaxVertexBuffers = 20;
     static char blendBuffers[kMaxBufferGroups][kMaxVertexBuffers];
     memset(blendBuffers, 0, kMaxBufferGroups * kMaxVertexBuffers * sizeof(**blendBuffers));
 
     hsAssert(kMaxBufferGroups >= drawable->GetNumBufferGroups(), "Bigger than we counted on num groups skin.");
 
     const std::vector<plSpan*>& spans = drawable->GetSpanArray();
-    int i;
+    int                         i;
     for (i = 0; i < visList.size(); i++) {
         if (blendBits.IsBitSet(visList[i])) {
-            const plVertexSpan &vSpan = *(plVertexSpan *)spans[visList[i]];
+            const plVertexSpan& vSpan = *(plVertexSpan*)spans[visList[i]];
             hsAssert(kMaxVertexBuffers > vSpan.fVBufferIdx, "Bigger than we counted on num buffers skin.");
 
             blendBuffers[vSpan.fGroupIdx][vSpan.fVBufferIdx] = 1;
@@ -4311,12 +4112,9 @@ bool plMetalPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const std:
     // uses it, set the matrix palette and and then do the blend for that span.
     // When we've done all the spans for a group/buffer, we unlock it and move on.
     int j;
-    for( i = 0; i < kMaxBufferGroups; i++ )
-    {
-        for( j = 0; j < kMaxVertexBuffers; j++ )
-        {
-            if( blendBuffers[i][j] )
-            {
+    for (i = 0; i < kMaxBufferGroups; i++) {
+        for (j = 0; j < kMaxVertexBuffers; j++) {
+            if (blendBuffers[i][j]) {
                 // Found one. Do the lock.
                 plMetalVertexBufferRef* vRef = (plMetalVertexBufferRef*)drawable->GetVertexRef(i, j);
 
@@ -4335,15 +4133,15 @@ bool plMetalPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const std:
 
                         uint8_t* ptr = vRef->fOwner->GetVertBufferData(vRef->fIndex);
                         ptr += span.fVStartIdx * vRef->fOwner->GetVertexSize();
-                        IBlendVertBuffer( (plSpan*)&span,
-                                                matrixPalette, span.fNumMatrices,
-                                                ptr,
-                                                vRef->fOwner->GetVertexFormat(),
-                                                vRef->fOwner->GetVertexSize(),
-                                                destPtr + span.fVStartIdx * vRef->fVertexSize,
-                                                vRef->fVertexSize,
-                                                span.fVLength,
-                                                span.fLocalUVWChans );
+                        IBlendVertBuffer((plSpan*)&span,
+                                         matrixPalette, span.fNumMatrices,
+                                         ptr,
+                                         vRef->fOwner->GetVertexFormat(),
+                                         vRef->fOwner->GetVertexSize(),
+                                         destPtr + span.fVStartIdx * vRef->fVertexSize,
+                                         vRef->fVertexSize,
+                                         span.fVLength,
+                                         span.fLocalUVWChans);
                         vRef->SetDirty(true);
                     }
                 }
@@ -4363,29 +4161,28 @@ bool plMetalPipeline::ISoftwareVertexBlend(plDrawableSpans* drawable, const std:
     return true;
 }
 
-
 //// IBlendVertsIntoBuffer ////////////////////////////////////////////////////
 //  Given a pointer into a buffer of verts that have blending data in the D3D
 //  format, blends them into the destination buffer given without the blending
 //  info.
 
 void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMatrices,
-                             const uint8_t* src, uint8_t format, uint32_t srcStride,
-                             uint8_t* dest, uint32_t destStride, uint32_t count,
-                             uint16_t localUVWChans)
+                                       const uint8_t* src, uint8_t format, uint32_t srcStride,
+                                       uint8_t* dest, uint32_t destStride, uint32_t count,
+                                       uint16_t localUVWChans)
 {
-    float pt_buf[] = { 0.f, 0.f, 0.f, 1.f };
-     float vec_buf[] = { 0.f, 0.f, 0.f, 0.f };
-    hsPoint3*       pt = reinterpret_cast<hsPoint3*>(pt_buf);
-    hsVector3*      vec = reinterpret_cast<hsVector3*>(vec_buf);
+    float      pt_buf[] = {0.f, 0.f, 0.f, 1.f};
+    float      vec_buf[] = {0.f, 0.f, 0.f, 0.f};
+    hsPoint3*  pt = reinterpret_cast<hsPoint3*>(pt_buf);
+    hsVector3* vec = reinterpret_cast<hsVector3*>(vec_buf);
 
-    uint32_t        indices;
-    float           weights[4];
+    uint32_t indices;
+    float    weights[4];
 
     // Dropped support for localUVWChans at templatization of code
     hsAssert(localUVWChans == 0, "support for skinned UVWs dropped. reimplement me?");
     const size_t uvChanSize = plGBufferGroup::CalcNumUVs(format) * sizeof(float) * 3;
-    uint8_t numWeights = (format & plGBufferGroup::kSkinWeightMask) >> 4;
+    uint8_t      numWeights = (format & plGBufferGroup::kSkinWeightMask) >> 4;
 
     for (uint32_t i = 0; i < count; ++i) {
         // Extract data
@@ -4405,20 +4202,20 @@ void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, 
         src = inlExtract<hsVector3>(src, vec);
 
         // Destination buffers (float4 for SSE alignment)
-        simd_float4 destNorm_buf = (simd_float4){ 0.f, 0.f, 0.f, 0.f };
-        simd_float4 destPt_buf = (simd_float4){ 0.f, 0.f, 0.f, 1.f };
+        simd_float4 destNorm_buf = (simd_float4){0.f, 0.f, 0.f, 0.f};
+        simd_float4 destPt_buf = (simd_float4){0.f, 0.f, 0.f, 1.f};
 
         simd_float4x4 simdMatrix;
-        
+
         // Blend
         for (uint32_t j = 0; j < numWeights + 1; ++j) {
             hsMatrix2SIMD(matrixPalette[indices & 0xFF], &simdMatrix);
             if (weights[j]) {
-                //Note: This bit is different than GL/DirectX. It's using acclerate so this is also accelerated on ARM through NEON or maybe even the Neural Engine.
-                destPt_buf +=  simd_mul(*(simd_float4 *)pt_buf, simdMatrix) * weights[j];
-                destNorm_buf += simd_mul(*(simd_float4 *)vec_buf, simdMatrix) * weights[j];
+                // Note: This bit is different than GL/DirectX. It's using acclerate so this is also accelerated on ARM through NEON or maybe even the Neural Engine.
+                destPt_buf += simd_mul(*(simd_float4*)pt_buf, simdMatrix) * weights[j];
+                destNorm_buf += simd_mul(*(simd_float4*)vec_buf, simdMatrix) * weights[j];
             }
-                //ISkinVertexSSE41(matrixPalette[indices & 0xFF], weights[j], pt_buf, destPt_buf, vec_buf, destNorm_buf);
+            // ISkinVertexSSE41(matrixPalette[indices & 0xFF], weights[j], pt_buf, destPt_buf, vec_buf, destNorm_buf);
             indices >>= 8;
         }
         // Probably don't really need to renormalize this. There errors are
@@ -4431,11 +4228,11 @@ void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, 
 
         // Jump past colors and UVws
         dest += sizeof(uint32_t) * 2 + uvChanSize;
-        src  += sizeof(uint32_t) * 2 + uvChanSize;
+        src += sizeof(uint32_t) * 2 + uvChanSize;
     }
 }
 
-//Resource checking
+// Resource checking
 
 // CheckTextureRef //////////////////////////////////////////////////////
 // Make sure the given layer's texture has background D3D resources allocated.
@@ -4451,18 +4248,18 @@ void plMetalPipeline::CheckTextureRef(plLayerInterface* layer)
 void plMetalPipeline::CheckTextureRef(plBitmap* bitmap)
 {
     plMetalTextureRef* tRef = static_cast<plMetalTextureRef*>(bitmap->GetDeviceRef());
-    
+
     if (!tRef) {
         tRef = static_cast<plMetalTextureRef*>(MakeTextureRef(bitmap));
     }
-    
+
     // If it's dirty, refill it.
     if (tRef->IsDirty()) {
         IReloadTexture(bitmap, tRef);
     }
 }
 
-hsGDeviceRef    *plMetalPipeline::MakeTextureRef(plBitmap* bitmap)
+hsGDeviceRef* plMetalPipeline::MakeTextureRef(plBitmap* bitmap)
 {
     plMetalTextureRef* tRef = static_cast<plMetalTextureRef*>(bitmap->GetDeviceRef());
 
@@ -4481,12 +4278,12 @@ hsGDeviceRef    *plMetalPipeline::MakeTextureRef(plBitmap* bitmap)
 
     // If it's dirty, refill it.
     if (tRef->IsDirty()) {
-        IReloadTexture( bitmap, tRef );
+        IReloadTexture(bitmap, tRef);
     }
     return tRef;
 }
 
-void    plMetalPipeline::IReloadTexture( plBitmap* bitmap, plMetalTextureRef *ref )
+void plMetalPipeline::IReloadTexture(plBitmap* bitmap, plMetalTextureRef* ref)
 {
     plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
     if (mip) {
@@ -4532,12 +4329,9 @@ void plMetalPipeline::CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx)
         // Might want to remove this assert, and replace it with a dirty check
         // if we have static buffers that change very seldom rather than never.
         hsAssert(!vRef->IsDirty(), "Non-volatile vertex buffers should never get dirty");
-    }
-    else
-    {
+    } else {
         // Make sure we're going to be ready to fill it.
-        if (!vRef->fData && (vRef->fFormat != owner->GetVertexFormat()))
-        {
+        if (!vRef->fData && (vRef->fFormat != owner->GetVertexFormat())) {
             vRef->fData = new uint8_t[vRef->fCount * vRef->fVertexSize];
             fDevice.FillVolatileVertexBufferRef(vRef, owner, idx);
         }
@@ -4572,23 +4366,21 @@ void plMetalPipeline::CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx)
 
 //// IGetBufferFormatSize /////////////////////////////////////////////////////
 // Calculate the vertex stride from the given format.
-uint32_t  plMetalPipeline::IGetBufferFormatSize( uint8_t format ) const
+uint32_t plMetalPipeline::IGetBufferFormatSize(uint8_t format) const
 {
-    uint32_t  size = sizeof( float ) * 6 + sizeof( uint32_t ) * 2; // Position and normal, and two packed colors
+    uint32_t size = sizeof(float) * 6 + sizeof(uint32_t) * 2; // Position and normal, and two packed colors
 
-    
-    switch( format & plGBufferGroup::kSkinWeightMask )
-    {
+    switch (format & plGBufferGroup::kSkinWeightMask) {
         case plGBufferGroup::kSkinNoWeights:
             break;
         case plGBufferGroup::kSkin1Weight:
             size += sizeof(float);
             break;
         default:
-            hsAssert( false, "Invalid skin weight value in IGetBufferFormatSize()" );
+            hsAssert(false, "Invalid skin weight value in IGetBufferFormatSize()");
     }
 
-    size += sizeof( float ) * 3 * plGBufferGroup::CalcNumUVs( format );
+    size += sizeof(float) * 3 * plGBufferGroup::CalcNumUVs(format);
 
     return size;
 }
@@ -4599,9 +4391,8 @@ void plMetalPipeline::plMetalPipelineCurrentState::Reset()
     fCurrentDepthStencilState = nullptr;
     fCurrentVertexBuffer = nullptr;
     fCurrentCullMode.reset();
-    
-    for(auto& layer: layerStates)
-    {
+
+    for (auto& layer : layerStates) {
         layer.clampFlag = hsGMatState::hsGMatClampFlags(-1);
     }
 }

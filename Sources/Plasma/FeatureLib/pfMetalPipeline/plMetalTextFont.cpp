@@ -54,23 +54,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
-
 #include "plMetalPipeline.h"
 #include "plPipeline/hsWinRef.h"
-
 
 // Following number needs to be at least: 64 chars max in plTextFont drawn at any one time
 //                                      * 4 primitives per char max (for bold text)
 //                                      * 3 verts per primitive
 
-//const uint32_t  kNumVertsInBuffer(32768);
-const uint32_t    kNumVertsInBuffer(4608);
+// const uint32_t  kNumVertsInBuffer(32768);
+const uint32_t kNumVertsInBuffer(4608);
 
-uint32_t                  plMetalTextFont::fBufferCursor = 0;
+uint32_t plMetalTextFont::fBufferCursor = 0;
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
-plMetalTextFont::plMetalTextFont( plPipeline *pipe, plMetalDevice* device ) : plTextFont( pipe ), fTexture()
+plMetalTextFont::plMetalTextFont(plPipeline *pipe, plMetalDevice *device) : plTextFont(pipe),
+                                                                            fTexture()
 {
     fDevice = device;
     fPipeline = (plMetalPipeline *)pipe;
@@ -84,41 +83,43 @@ plMetalTextFont::~plMetalTextFont()
 
 //// ICreateTexture ///////////////////////////////////////////////////////////
 
-void    plMetalTextFont::ICreateTexture( uint16_t *data )
+void plMetalTextFont::ICreateTexture(uint16_t *data)
 {
     printf("Create texture\n");
-    
+
     MTL::TextureDescriptor *descriptor = MTL::TextureDescriptor::texture2DDescriptor(MTL::PixelFormatRGBA8Unorm, fTextureWidth, fTextureHeight, false);
-    
+
     fTexture->release();
     fTexture = fDevice->fMetalDevice->newTexture(descriptor);
     fTexture->setLabel(NS::MakeConstantString("Font texture"));
-    
-    struct InDataValues {
-        uint8_t a: 4;
-        uint8_t r: 4;
-        uint8_t g: 4;
-        uint8_t b: 4;
+
+    struct InDataValues
+    {
+        uint8_t a : 4;
+        uint8_t r : 4;
+        uint8_t g : 4;
+        uint8_t b : 4;
     };
-    
-    struct OutDataValues {
+
+    struct OutDataValues
+    {
         uint8_t r;
         uint8_t g;
         uint8_t b;
         uint8_t a;
     };
-    
+
     uint32_t *outData = new uint32_t[fTextureWidth * fTextureHeight];
-    for(int i = 0; i < fTextureWidth * fTextureHeight; i++) {
-        InDataValues *in = (InDataValues *)(data + i);
+    for (int i = 0; i < fTextureWidth * fTextureHeight; i++) {
+        InDataValues  *in = (InDataValues *)(data + i);
         OutDataValues *out = (OutDataValues *)(outData + i);
-        
+
         out->r = in->r * 255;
         out->b = in->b * 255;
         out->g = in->g * 255;
         out->a = in->a * 255;
     }
-    
+
     fTexture->replaceRegion(MTL::Region(0, 0, fTextureWidth, fTextureHeight), 0, outData, 4 * fTextureWidth);
     delete[] outData;
     /*
@@ -126,7 +127,7 @@ void    plMetalTextFont::ICreateTexture( uint16_t *data )
     D3DLOCKED_RECT  lockInfo;
     D3DCAPS9        d3dCaps;
 
-    
+
     // Check to make sure we can support it
     fDevice->GetDeviceCaps( &d3dCaps );
     hsAssert( fTextureWidth <= d3dCaps.MaxTextureWidth, "Cannot initialize DX font--texture size too big" );
@@ -142,19 +143,19 @@ void    plMetalTextFont::ICreateTexture( uint16_t *data )
      */
 }
 
-void plMetalTextFont::CreateShared(plMetalDevice* device)
+void plMetalTextFont::CreateShared(plMetalDevice *device)
 {
 }
 
-void plMetalTextFont::ReleaseShared(MTL::Device* device)
+void plMetalTextFont::ReleaseShared(MTL::Device *device)
 {
 }
 
 //// IInitStateBlocks /////////////////////////////////////////////////////////
 
-void    plMetalTextFont::IInitStateBlocks()
+void plMetalTextFont::IInitStateBlocks()
 {
-/*
+    /*
     for( int i = 0; i < 2; i++ )
     {
         fDevice->BeginStateBlock();
@@ -203,34 +204,34 @@ void    plMetalTextFont::IInitStateBlocks()
 
 //// DestroyObjects ///////////////////////////////////////////////////////////
 
-void    plMetalTextFont::DestroyObjects()
+void plMetalTextFont::DestroyObjects()
 {
     fInitialized = false;
 }
 
 //// IDrawPrimitive ///////////////////////////////////////////////////////////
 
-void    plMetalTextFont::IDrawPrimitive( uint32_t count, plFontVertex *array )
+void plMetalTextFont::IDrawPrimitive(uint32_t count, plFontVertex *array)
 {
-    plFontVertex        *v;
-    
-    plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalTextFontPipelineState(fDevice).GetRenderPipelineState();
-    
+    plFontVertex *v;
+
+    plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalTextFontPipelineState(fDevice).GetRenderPipelineState();
+
     fPipeline->fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
-    const uint maxCount = 4096/(sizeof(plFontVertex) * 3);
-    uint drawm = 0;
-    while(count > 0) {
+    const uint maxCount = 4096 / (sizeof(plFontVertex) * 3);
+    uint       drawm = 0;
+    while (count > 0) {
         uint drawCount = MIN(maxCount, count);
-        fPipeline->fDevice.CurrentRenderCommandEncoder()->setVertexBytes(array + (drawm * 3), drawCount * 3 * sizeof( plFontVertex ), 0);
-    
+        fPipeline->fDevice.CurrentRenderCommandEncoder()->setVertexBytes(array + (drawm * 3), drawCount * 3 * sizeof(plFontVertex), 0);
+
         fPipeline->fDevice.CurrentRenderCommandEncoder()->drawPrimitives(MTL::PrimitiveTypeTriangle, NS::UInteger(0), drawCount * 3);
-        
+
         count -= drawCount;
         drawm += drawCount;
     }
 
-    //if( !fBuffer )
-     //   return;
+    // if( !fBuffer )
+    //    return;
 
     /// Lock the buffer and write to it
     /*if( fBufferCursor && (fBufferCursor + count * 3 < kNumVertsInBuffer) )
@@ -270,21 +271,21 @@ void    plMetalTextFont::IDrawPrimitive( uint32_t count, plFontVertex *array )
 
 //// IDrawLines ///////////////////////////////////////////////////////////////
 
-void    plMetalTextFont::IDrawLines( uint32_t count, plFontVertex *array )
+void plMetalTextFont::IDrawLines(uint32_t count, plFontVertex *array)
 {
-    plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalTextFontPipelineState(fDevice).GetRenderPipelineState();
-    
+    plMetalDevice::plMetalLinkedPipeline *linkedPipeline = plMetalTextFontPipelineState(fDevice).GetRenderPipelineState();
+
     fPipeline->fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(linkedPipeline->pipelineState);
-    fPipeline->fDevice.CurrentRenderCommandEncoder()->setVertexBytes(array, count * 2 * sizeof( plFontVertex ), 0);
-    
+    fPipeline->fDevice.CurrentRenderCommandEncoder()->setVertexBytes(array, count * 2 * sizeof(plFontVertex), 0);
+
     matrix_float4x4 mat = matrix_identity_float4x4;
     mat.columns[0][0] = 2.0f / (float)fPipe->Width();
     mat.columns[1][1] = -2.0f / (float)fPipe->Height();
     mat.columns[3][0] = -1.0;
     mat.columns[3][1] = 1.0;
-    fPipeline->fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&mat, sizeof( matrix_float4x4 ), 1);
+    fPipeline->fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&mat, sizeof(matrix_float4x4), 1);
     fPipeline->fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(fTexture, 0);
-    
+
     fPipeline->fDevice.CurrentRenderCommandEncoder()->drawPrimitives(MTL::PrimitiveTypeLine, NS::UInteger(0), count * 2);
     /*if( !fBuffer )
         return;
@@ -301,7 +302,7 @@ void    plMetalTextFont::IDrawLines( uint32_t count, plFontVertex *array )
 //// FlushDraws ///////////////////////////////////////////////////////////////
 //  Flushes out and finishes any drawing left to be done.
 
-void    plMetalTextFont::FlushDraws()
+void plMetalTextFont::FlushDraws()
 {
     /*if( !fBuffer )
         return;
@@ -318,15 +319,14 @@ void    plMetalTextFont::FlushDraws()
 
 //// SaveStates ///////////////////////////////////////////////////////////////
 
-void    plMetalTextFont::SaveStates()
+void plMetalTextFont::SaveStates()
 {
-    
     matrix_float4x4 mat = matrix_identity_float4x4;
     mat.columns[0][0] = 2.0f / (float)fPipe->Width();
     mat.columns[1][1] = -2.0f / (float)fPipe->Height();
     mat.columns[3][0] = -1.0;
     mat.columns[3][1] = 1.0;
-    fPipeline->fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&mat, sizeof( matrix_float4x4 ), 1);
+    fPipeline->fDevice.CurrentRenderCommandEncoder()->setVertexBytes(&mat, sizeof(matrix_float4x4), 1);
     fPipeline->fDevice.CurrentRenderCommandEncoder()->setFragmentTexture(fTexture, 0);
     /*if( !fInitialized )
         IInitObjects();
@@ -353,47 +353,52 @@ void    plMetalTextFont::SaveStates()
 
 //// RestoreStates ////////////////////////////////////////////////////////////
 
-void    plMetalTextFont::RestoreStates()
+void plMetalTextFont::RestoreStates()
 {
     /*if (fOldStateBlock)
         fOldStateBlock->Apply();
-    
+
     fDevice->SetTexture(0, nullptr);
     fDevice->SetTransform( D3DTS_TEXTURE0, &d3dIdentityMatrix );*/
 }
 
-
-
-bool plMetalTextFontPipelineState::IsEqual(const plMetalPipelineState &p) const {
+bool plMetalTextFontPipelineState::IsEqual(const plMetalPipelineState &p) const
+{
     return true;
 }
 
-plMetalPipelineState *plMetalTextFontPipelineState::Clone() {
+plMetalPipelineState *plMetalTextFontPipelineState::Clone()
+{
     return new plMetalTextFontPipelineState(fDevice);
 }
 
-const MTL::Function *plMetalTextFontPipelineState::GetVertexFunction(MTL::Library *library) {
+const MTL::Function *plMetalTextFontPipelineState::GetVertexFunction(MTL::Library *library)
+{
     return library->newFunction(NS::MakeConstantString("textFontVertexShader"));
 }
 
-const MTL::Function *plMetalTextFontPipelineState::GetFragmentFunction(MTL::Library *library) {
+const MTL::Function *plMetalTextFontPipelineState::GetFragmentFunction(MTL::Library *library)
+{
     return library->newFunction(NS::MakeConstantString("textFontFragmentShader"));
 }
 
-const NS::String *plMetalTextFontPipelineState::GetDescription() {
+const NS::String *plMetalTextFontPipelineState::GetDescription()
+{
     return NS::MakeConstantString("Font Rendering");
 }
 
-void plMetalTextFontPipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) {
-    
+void plMetalTextFontPipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor)
+{
     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
     descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
 }
 
-void plMetalTextFontPipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor *vertexDescriptor) {
+void plMetalTextFontPipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor *vertexDescriptor)
+{
     return;
 }
 
-void plMetalTextFontPipelineState::GetFunctionConstants(MTL::FunctionConstantValues *) const {
+void plMetalTextFontPipelineState::GetFunctionConstants(MTL::FunctionConstantValues *) const
+{
     return;
 }

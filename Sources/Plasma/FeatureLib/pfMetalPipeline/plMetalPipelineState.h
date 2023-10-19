@@ -44,119 +44,132 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plMetalPipelineState_hpp
 
 #include <stdio.h>
+
 #include <Metal/Metal.hpp>
 
 #include "plMetalDevice.h"
 #include "plSurface/plShaderTable.h"
 
-class plMetalPipelineState {
+class plMetalPipelineState
+{
 public:
     plMetalPipelineState(plMetalDevice* device);
     plMetalDevice::plMetalLinkedPipeline* GetRenderPipelineState();
-    void PrewarmRenderPipelineState();
-    bool operator==(const plMetalPipelineState& p) const {
+    void                                  PrewarmRenderPipelineState();
+    bool                                  operator==(const plMetalPipelineState& p) const
+    {
         if ((&p)->GetID() != this->GetID()) {
             return false;
         } else {
             return IsEqual(p);
         }
     }
-    virtual size_t GetHash() const;
-    virtual bool IsEqual(const plMetalPipelineState &p) const = 0;
-    virtual uint16_t GetID() const { return 0; };
+    virtual size_t                GetHash() const;
+    virtual bool                  IsEqual(const plMetalPipelineState& p) const = 0;
+    virtual uint16_t              GetID() const { return 0; };
     virtual plMetalPipelineState* Clone() = 0;
-    
+
     //
-    virtual const MTL::Function*  GetVertexFunction(MTL::Library* library) = 0;
-    virtual const MTL::Function*  GetFragmentFunction(MTL::Library* library) = 0;
-    virtual const NS::String*     GetDescription() = 0;
-    
+    virtual const MTL::Function* GetVertexFunction(MTL::Library* library) = 0;
+    virtual const MTL::Function* GetFragmentFunction(MTL::Library* library) = 0;
+    virtual const NS::String*    GetDescription() = 0;
+
     virtual void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) = 0;
     virtual void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) = 0;
     virtual ~plMetalPipelineState() = default;
+
 protected:
-    plMetalDevice* fDevice;
-    virtual void GetFunctionConstants(MTL::FunctionConstantValues*) const = 0;
-    MTL::FunctionConstantValues* MakeFunctionConstants() {
+    plMetalDevice*               fDevice;
+    virtual void                 GetFunctionConstants(MTL::FunctionConstantValues*) const = 0;
+    MTL::FunctionConstantValues* MakeFunctionConstants()
+    {
         MTL::FunctionConstantValues* constants = MTL::FunctionConstantValues::alloc()->init()->autorelease();
         this->GetFunctionConstants(constants);
         return constants;
     }
 };
 
-class plMetalRenderSpanPipelineState: public plMetalPipelineState {
+class plMetalRenderSpanPipelineState : public plMetalPipelineState
+{
 public:
     plMetalRenderSpanPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef);
-    virtual bool IsEqual(const plMetalPipelineState &p) const {
-        const plMetalRenderSpanPipelineState *renderSpanPipelineSate = static_cast<const plMetalRenderSpanPipelineState*>(&p);
-        if( !renderSpanPipelineSate ) {
+    virtual bool IsEqual(const plMetalPipelineState& p) const
+    {
+        const plMetalRenderSpanPipelineState* renderSpanPipelineSate = static_cast<const plMetalRenderSpanPipelineState*>(&p);
+        if (!renderSpanPipelineSate) {
             return false;
         }
         return renderSpanPipelineSate->fNumUVs == fNumUVs && renderSpanPipelineSate->fNumWeights == fNumWeights && renderSpanPipelineSate->fHasSkinIndices == fHasSkinIndices;
     };
     virtual size_t GetHash() const;
-    
-    virtual void            ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) = 0;
+
+    virtual void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) = 0;
     virtual void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor);
-    
-    void ConfigureBlendMode(const uint32_t blendMode, MTL::RenderPipelineColorAttachmentDescriptor *descriptor);
+
+    void ConfigureBlendMode(const uint32_t blendMode, MTL::RenderPipelineColorAttachmentDescriptor* descriptor);
+
 protected:
-    uint8_t fNumUVs;
-    uint8_t fNumWeights;
-    bool    fHasSkinIndices;
-    virtual void GetFunctionConstants(MTL::FunctionConstantValues*) const;
-    MTL::FunctionConstantValues* MakeFunctionConstants() {
+    uint8_t                      fNumUVs;
+    uint8_t                      fNumWeights;
+    bool                         fHasSkinIndices;
+    virtual void                 GetFunctionConstants(MTL::FunctionConstantValues*) const;
+    MTL::FunctionConstantValues* MakeFunctionConstants()
+    {
         MTL::FunctionConstantValues* constants = MTL::FunctionConstantValues::alloc()->init()->autorelease();
         this->GetFunctionConstants(constants);
         return constants;
     }
 };
 
-struct plMetalFragmentShaderDescription {
-    uint8_t     passTypes[8];
-    uint32_t    blendModes[8];
-    uint32_t    miscFlags[8];
-    uint8_t     numLayers;
-    
-    size_t      hash;
-    
-    bool operator==(const plMetalFragmentShaderDescription &p) const {
+struct plMetalFragmentShaderDescription
+{
+    uint8_t  passTypes[8];
+    uint32_t blendModes[8];
+    uint32_t miscFlags[8];
+    uint8_t  numLayers;
+
+    size_t hash;
+
+    bool operator==(const plMetalFragmentShaderDescription& p) const
+    {
         bool match = numLayers == p.numLayers && memcmp(passTypes, p.passTypes, sizeof(passTypes)) == 0 && memcmp(blendModes, p.blendModes, sizeof(blendModes)) == 0 && memcmp(miscFlags, p.miscFlags, sizeof(miscFlags)) == 0;
         return match;
     }
-    
-    void CacheHash() {
-        if(!hash)
+
+    void CacheHash()
+    {
+        if (!hash)
             hash = GetHash();
     }
-    
-    size_t GetHash() const {
-        if(hash)
+
+    size_t GetHash() const
+    {
+        if (hash)
             return hash;
-        
+
         std::size_t value = std::hash<uint8_t>()(numLayers);
         value ^= std::hash<uint8_t>()(numLayers);
-        
-        for(int i=0;i<8;i++){
-            value ^= std::hash<uint32_t>()( blendModes[i] );
+
+        for (int i = 0; i < 8; i++) {
+            value ^= std::hash<uint32_t>()(blendModes[i]);
         }
-        
-        for(int i=0;i<8;i++){
-            value ^= std::hash<uint32_t>()( miscFlags[i] );
+
+        for (int i = 0; i < 8; i++) {
+            value ^= std::hash<uint32_t>()(miscFlags[i]);
         }
-        
-        for(int i=0;i<8;i++){
-            value ^= std::hash<uint8_t>()( passTypes[i] );
+
+        for (int i = 0; i < 8; i++) {
+            value ^= std::hash<uint8_t>()(passTypes[i]);
         }
-        
+
         return value;
     }
-    
+
     void Populate(const plLayerInterface* layPtr, const uint8_t index);
     void PopulateTextureInfo(const plLayerInterface* layPtr, const uint8_t index);
 };
 
-template<>
+template <>
 struct std::hash<plMetalFragmentShaderDescription>
 {
     std::size_t operator()(plMetalFragmentShaderDescription const& s) const noexcept
@@ -165,123 +178,139 @@ struct std::hash<plMetalFragmentShaderDescription>
     }
 };
 
-class plMetalMaterialPassPipelineState: public plMetalRenderSpanPipelineState {
+class plMetalMaterialPassPipelineState : public plMetalRenderSpanPipelineState
+{
 public:
-    plMetalMaterialPassPipelineState(plMetalDevice* device, const plMetalVertexBufferRef *vRef, const plMetalFragmentShaderDescription &description);
+    plMetalMaterialPassPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef, const plMetalFragmentShaderDescription& description);
     virtual size_t GetHash() const override;
-    MTL::Function*  GetVertexFunction(MTL::Library* library) override;
-    MTL::Function*  GetFragmentFunction(MTL::Library* library) override;
-    
-    virtual const NS::String*     GetDescription() override;
-    
-    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) override;
-    
-    virtual bool IsEqual(const plMetalPipelineState &p) const override;
-    
+    MTL::Function* GetVertexFunction(MTL::Library* library) override;
+    MTL::Function* GetFragmentFunction(MTL::Library* library) override;
+
+    virtual const NS::String* GetDescription() override;
+
+    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override;
+
+    virtual bool IsEqual(const plMetalPipelineState& p) const override;
+
     virtual uint16_t GetID() const override { return 1; };
-    
-    virtual plMetalPipelineState* Clone() override {
+
+    virtual plMetalPipelineState* Clone() override
+    {
         return new plMetalMaterialPassPipelineState(*this);
     }
     ~plMetalMaterialPassPipelineState();
     virtual void GetFunctionConstants(MTL::FunctionConstantValues*) const override;
+
 protected:
     plMetalFragmentShaderDescription fFragmentShaderDescription;
 };
 
-class plMetalRenderShadowCasterPipelineState: public plMetalRenderSpanPipelineState {
+class plMetalRenderShadowCasterPipelineState : public plMetalRenderSpanPipelineState
+{
 public:
     plMetalRenderShadowCasterPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef)
-    : plMetalRenderSpanPipelineState(device, vRef) {
-        
+        : plMetalRenderSpanPipelineState(device, vRef)
+    {
     }
-    const MTL::Function*  GetVertexFunction(MTL::Library* library) override;
-    const MTL::Function*  GetFragmentFunction(MTL::Library* library) override;
-    
-    const NS::String* GetDescription() override {
+    const MTL::Function* GetVertexFunction(MTL::Library* library) override;
+    const MTL::Function* GetFragmentFunction(MTL::Library* library) override;
+
+    const NS::String* GetDescription() override
+    {
         return NS::MakeConstantString("Shadow Caster Pipeline");
     };
-    
-    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) override  {
+
+    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override
+    {
         descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
         descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorSourceAlpha);
     };
     virtual uint16_t GetID() const override { return 2; };
-    
-    
-    virtual plMetalPipelineState* Clone() override {
+
+    virtual plMetalPipelineState* Clone() override
+    {
         return new plMetalRenderShadowCasterPipelineState(*this);
     }
-    
 };
 
-class plMetalRenderShadowPipelineState: public plMetalMaterialPassPipelineState {
+class plMetalRenderShadowPipelineState : public plMetalMaterialPassPipelineState
+{
 public:
-    plMetalRenderShadowPipelineState(plMetalDevice* device, plMetalVertexBufferRef *vRef, const plMetalFragmentShaderDescription &description)
-    : plMetalMaterialPassPipelineState(device, vRef, description) {
+    plMetalRenderShadowPipelineState(plMetalDevice* device, plMetalVertexBufferRef* vRef, const plMetalFragmentShaderDescription& description)
+        : plMetalMaterialPassPipelineState(device, vRef, description)
+    {
     }
-    
-    const NS::String* GetDescription() override {
+
+    const NS::String* GetDescription() override
+    {
         return NS::MakeConstantString("Shadow Span Render Pipeline");
     };
-    MTL::Function*  GetVertexFunction(MTL::Library* library) override;
-    MTL::Function*  GetFragmentFunction(MTL::Library* library) override;
-    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) override;
-    virtual uint16_t GetID() const override { return 3; } ;
-    
-    virtual plMetalPipelineState* Clone() override {
+    MTL::Function*   GetVertexFunction(MTL::Library* library) override;
+    MTL::Function*   GetFragmentFunction(MTL::Library* library) override;
+    void             ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override;
+    virtual uint16_t GetID() const override { return 3; };
+
+    virtual plMetalPipelineState* Clone() override
+    {
         return new plMetalRenderShadowPipelineState(*this);
     }
 };
 
-class plMetalDynamicMaterialPipelineState: public plMetalRenderSpanPipelineState {
+class plMetalDynamicMaterialPipelineState : public plMetalRenderSpanPipelineState
+{
 public:
-    plMetalDynamicMaterialPipelineState(plMetalDevice* device, const plMetalVertexBufferRef *vRef, uint32_t blendMode, plShaderID::ID vertexShaderID, plShaderID::ID fragmentShaderID)
-    :   plMetalRenderSpanPipelineState(device, vRef),
-        fVertexShaderID(vertexShaderID),
-        fFragmentShaderID(fragmentShaderID),
-        fBlendMode(blendMode) {
-        
-    };
-    
-    virtual plMetalPipelineState* Clone() override {
+    plMetalDynamicMaterialPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef, uint32_t blendMode, plShaderID::ID vertexShaderID, plShaderID::ID fragmentShaderID)
+        : plMetalRenderSpanPipelineState(device, vRef),
+          fVertexShaderID(vertexShaderID),
+          fFragmentShaderID(fragmentShaderID),
+          fBlendMode(blendMode){
+
+          };
+
+    virtual plMetalPipelineState* Clone() override
+    {
         return new plMetalDynamicMaterialPipelineState(*this);
     }
-    
-    bool IsEqual(const plMetalPipelineState &p) const override {
+
+    bool IsEqual(const plMetalPipelineState& p) const override
+    {
         const plMetalDynamicMaterialPipelineState* dynamicState = static_cast<const plMetalDynamicMaterialPipelineState*>(&p);
         if (!dynamicState) {
             return false;
         }
-        return plMetalRenderSpanPipelineState::IsEqual(p) && dynamicState->fFragmentShaderID == fFragmentShaderID && dynamicState->fVertexShaderID == fVertexShaderID  && dynamicState->fBlendMode == fBlendMode;
+        return plMetalRenderSpanPipelineState::IsEqual(p) && dynamicState->fFragmentShaderID == fFragmentShaderID && dynamicState->fVertexShaderID == fVertexShaderID && dynamicState->fBlendMode == fBlendMode;
     }
-    
-    size_t GetHash() const override {
+
+    size_t GetHash() const override
+    {
         std::size_t value = std::hash<plShaderID::ID>()(fFragmentShaderID);
         value ^= std::hash<plShaderID::ID>()(fVertexShaderID);
         value ^= std::hash<plShaderID::ID>()(fVertexShaderID);
         value ^= std::hash<uint32_t>()(fBlendMode);
-        
+
         return value ^ plMetalRenderSpanPipelineState::GetHash();
     }
-    
-    const MTL::Function* GetVertexFunction(MTL::Library *library) override;
-    const MTL::Function* GetFragmentFunction(MTL::Library *library) override;
-    
-    const NS::String *GetDescription() override {
+
+    const MTL::Function* GetVertexFunction(MTL::Library* library) override;
+    const MTL::Function* GetFragmentFunction(MTL::Library* library) override;
+
+    const NS::String* GetDescription() override
+    {
         return NS::MakeConstantString("Dynamic Shader");
     }
-    
-    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) override {
+
+    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override
+    {
         ConfigureBlendMode(fBlendMode, descriptor);
     }
+
 protected:
-    plShaderID::ID  fVertexShaderID;
-    plShaderID::ID  fFragmentShaderID;
-    uint32_t        fBlendMode;
+    plShaderID::ID fVertexShaderID;
+    plShaderID::ID fFragmentShaderID;
+    uint32_t       fBlendMode;
 };
 
-template<>
+template <>
 struct std::hash<plMetalPipelineState>
 {
     std::size_t operator()(plMetalPipelineState const& s) const noexcept
@@ -290,53 +319,60 @@ struct std::hash<plMetalPipelineState>
     }
 };
 
-class plMetalClearPipelineState: public plMetalPipelineState {
+class plMetalClearPipelineState : public plMetalPipelineState
+{
 public:
-    plMetalClearPipelineState(plMetalDevice *device, bool shouldClearColor, bool shouldClearDepth):
-    plMetalPipelineState(device)
+    plMetalClearPipelineState(plMetalDevice* device, bool shouldClearColor, bool shouldClearDepth) : plMetalPipelineState(device)
     {
         fShouldClearDepth = shouldClearDepth;
         fShouldClearColor = shouldClearColor;
     }
-    
-    virtual bool IsEqual(const plMetalPipelineState &p) const override {
+
+    virtual bool IsEqual(const plMetalPipelineState& p) const override
+    {
         const plMetalClearPipelineState* clearState = static_cast<const plMetalClearPipelineState*>(&p);
         if (!clearState) {
             return false;
         }
         return clearState->fShouldClearDepth == fShouldClearDepth && fShouldClearColor == clearState->fShouldClearColor;
     };
-    
-    virtual uint16_t GetID() const override { return 4; };
-    virtual plMetalPipelineState* Clone() override {
+
+    virtual uint16_t              GetID() const override { return 4; };
+    virtual plMetalPipelineState* Clone() override
+    {
         return new plMetalClearPipelineState(*this);
     };
-    
+
     //
-    virtual const MTL::Function*  GetVertexFunction(MTL::Library* library) override {
+    virtual const MTL::Function* GetVertexFunction(MTL::Library* library) override
+    {
         return library->newFunction(NS::MakeConstantString("clearVertex"));
     };
-    virtual const MTL::Function*  GetFragmentFunction(MTL::Library* library) override {
+    virtual const MTL::Function* GetFragmentFunction(MTL::Library* library) override
+    {
         return library->newFunction(NS::MakeConstantString("clearFragment"),
                                     MakeFunctionConstants(),
-                                    (NS::Error **)NULL
-                                 )->autorelease();
+                                    (NS::Error**)NULL)
+            ->autorelease();
     };
-    virtual const NS::String*     GetDescription() override {
+    virtual const NS::String* GetDescription() override
+    {
         return NS::MakeConstantString("Clear");
     };
-    
-    virtual void            ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override {
-        //if (fShouldClearColor) {
-            descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
-            descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
+
+    virtual void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override
+    {
+        // if (fShouldClearColor) {
+        descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
+        descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
         //} else {
         //    descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
         //    descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
         //}
     };
-    
-    virtual void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) override {
+
+    virtual void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) override
+    {
         vertexDescriptor->attributes()->object(0)->setFormat(MTL::VertexFormatFloat2);
         vertexDescriptor->attributes()->object(0)->setOffset(0);
         vertexDescriptor->attributes()->object(0)->setBufferIndex(0);
@@ -344,25 +380,25 @@ public:
         vertexDescriptor->layouts()->object(0)->setStepFunction(MTL::VertexStepFunctionPerVertex);
         vertexDescriptor->layouts()->object(0)->setStepRate(1);
     };
-    
-    virtual void GetFunctionConstants(MTL::FunctionConstantValues* values) const override {
+
+    virtual void GetFunctionConstants(MTL::FunctionConstantValues* values) const override
+    {
         values->setConstantValue(&fShouldClearDepth, MTL::DataTypeBool, NS::UInteger(0));
         values->setConstantValue(&fShouldClearColor, MTL::DataTypeBool, NS::UInteger(1));
     }
-    
-    virtual size_t GetHash() const override {
+
+    virtual size_t GetHash() const override
+    {
         std::size_t value = plMetalPipelineState::GetHash();
         value ^= std::hash<bool>()(fShouldClearColor);
         value ^= std::hash<bool>()(fShouldClearDepth);
-        
+
         return value;
     }
-    
+
 private:
-    
     bool fShouldClearColor;
     bool fShouldClearDepth;
-    
 };
 
 #endif /* plMetalPipelineState_hpp */

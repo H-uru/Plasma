@@ -42,31 +42,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plMetalDeviceRef_inc_
 #define _plMetalDeviceRef_inc_
 
-#include "HeadSpin.h"
-#include "hsGDeviceRef.h"
 #include <Metal/Metal.hpp>
 #include <vector>
+
+#include "HeadSpin.h"
+#include "hsGDeviceRef.h"
 
 class plGBufferGroup;
 class plBitmap;
 class plRenderTarget;
-
 
 class plMetalDeviceRef : public hsGDeviceRef
 {
 protected:
     plMetalDeviceRef*  fNext;
     plMetalDeviceRef** fBack;
-    
+
 public:
-    void            Unlink();
-    void            Link(plMetalDeviceRef **back);
-    plMetalDeviceRef*  GetNext() { return fNext; }
-    bool            IsLinked() { return fBack != nullptr; }
-    
+    void              Unlink();
+    void              Link(plMetalDeviceRef** back);
+    plMetalDeviceRef* GetNext() { return fNext; }
+    bool              IsLinked() { return fBack != nullptr; }
+
     bool HasFlag(uint32_t f) const { return 0 != (fFlags & f); }
-    void SetFlag(uint32_t f, bool on) { if(on) fFlags |= f; else fFlags &= ~f; }
-    
+    void SetFlag(uint32_t f, bool on)
+    {
+        if (on)
+            fFlags |= f;
+        else
+            fFlags &= ~f;
+    }
+
     virtual void Release() = 0;
 
     plMetalDeviceRef();
@@ -75,78 +81,80 @@ public:
 
 /*
  The buffer pool stores and recycles buffers so that Plasma can encode GPU commands and render in parallel. That means we can't touch buffers the GPU is using, and if a pass or frame rewrites a buffer we have to make sure it's not stomping on something that is already attached to a frame. Because Metal can triple buffer, the first dimension of caching is hard coded to 3. Some ages will also rewrite buffers an unspecified number of times between render passes. For example: A reflection render and a main render might have different index buffers. So the second dimension of caching uses an unbounded vector that will hold enough buffers to render in any one age.
- 
+
  Buffer pools do not allocate buffers, they only store them. The outside caller is responsible for allocating a buffer and then setting it. The buffer pool will retain any buffers within the pool, and automatically release them when they are overwritten or the pool is deallocated.
- 
+
  Because buffers are only stored on write, and no allocations happen within the pool, overhead is kept low for static buffers. Completely static buffers will never expand the pool if they only write once.
  */
-class plMetalBufferPoolRef : public plMetalDeviceRef {
+class plMetalBufferPoolRef : public plMetalDeviceRef
+{
 public:
-    uint32_t        fCurrentFrame;
-    uint32_t        fCurrentPass;
-    uint32_t        fLastWriteFrameTime;
-    
-    plMetalBufferPoolRef() :
-    plMetalDeviceRef(),
-        fLastWriteFrameTime(0),
-        fCurrentPass(0),
-        fCurrentFrame(0),
-        fBuffer(nullptr)
+    uint32_t fCurrentFrame;
+    uint32_t fCurrentPass;
+    uint32_t fLastWriteFrameTime;
+
+    plMetalBufferPoolRef() : plMetalDeviceRef(),
+                             fLastWriteFrameTime(0),
+                             fCurrentPass(0),
+                             fCurrentFrame(0),
+                             fBuffer(nullptr)
     {
     }
-    
-    //Prepare for write must be called anytime a new pass is going to write a buffer. It moves internal record keeping to reflect that either a new frame or new pass is about to write to the pool.
-    void PrepareForWrite() {
-        //if we've moved frames since the last time a write happened, reset our current pass index to 0, otherwise increment the current pass
-        if(fLastWriteFrameTime != fFrameTime) {
+
+    // Prepare for write must be called anytime a new pass is going to write a buffer. It moves internal record keeping to reflect that either a new frame or new pass is about to write to the pool.
+    void PrepareForWrite()
+    {
+        // if we've moved frames since the last time a write happened, reset our current pass index to 0, otherwise increment the current pass
+        if (fLastWriteFrameTime != fFrameTime) {
             fCurrentPass = 0;
             fLastWriteFrameTime = fFrameTime;
             fCurrentFrame = (++fCurrentFrame % 3);
         } else {
             fCurrentPass++;
         }
-        
-        //update the current buffer focused, if the is no buffer to focus set it to null
+
+        // update the current buffer focused, if the is no buffer to focus set it to null
         uint32_t currentSize = uint32_t(fBuffers[fCurrentFrame].size());
-        if(fCurrentPass < currentSize) {
+        if (fCurrentPass < currentSize) {
             fBuffer = fBuffers[fCurrentFrame][fCurrentPass];
         } else {
             fBuffer = nullptr;
         }
     }
-    
+
     static void SetFrameTime(uint32_t frameTime) { fFrameTime = frameTime; };
-    
+
     MTL::Buffer* GetBuffer() { return fBuffer; };
-    
-    void SetBuffer(MTL::Buffer* buffer) {
+
+    void SetBuffer(MTL::Buffer* buffer)
+    {
         fBuffer = buffer->retain();
         uint32_t currentSize = uint32_t(fBuffers[fCurrentFrame].size());
-        //if the current vector doesn't have enough room for the entry, resize it
-        if(fCurrentPass >= currentSize) {
+        // if the current vector doesn't have enough room for the entry, resize it
+        if (fCurrentPass >= currentSize) {
             fBuffers[fCurrentFrame].resize(++currentSize);
-        } else if(fBuffers[fCurrentFrame][fCurrentPass]) {
-            //if we're replacing an existing entry, release the old one
+        } else if (fBuffers[fCurrentFrame][fCurrentPass]) {
+            // if we're replacing an existing entry, release the old one
             fBuffers[fCurrentFrame][fCurrentPass]->release();
         }
         fBuffers[fCurrentFrame][fCurrentPass] = fBuffer;
     }
-    
-    void Release() {
-        for(int i=0; i<3; i++) {
+
+    void Release()
+    {
+        for (int i = 0; i < 3; i++) {
             for (auto buffer : fBuffers[i]) {
                 buffer->release();
             }
         }
         fBuffer = nullptr;
     }
-    
+
 private:
-    static uint32_t fFrameTime;
-    MTL::Buffer*    fBuffer;
+    static uint32_t           fFrameTime;
+    MTL::Buffer*              fBuffer;
     std::vector<MTL::Buffer*> fBuffers[3];
 };
-
 
 class plMetalVertexBufferRef : public plMetalBufferPoolRef
 {
@@ -158,13 +166,14 @@ public:
     int32_t         fOffset;
     uint8_t         fFormat;
     uint8_t*        fData;
-    
-    uint32_t        fRefTime;
-    
-    enum {
-        kRebuiltSinceUsed   = 0x10, // kDirty = 0x1 is in hsGDeviceRef
-        kVolatile           = 0x20,
-        kSkinned            = 0x40
+
+    uint32_t fRefTime;
+
+    enum
+    {
+        kRebuiltSinceUsed = 0x10, // kDirty = 0x1 is in hsGDeviceRef
+        kVolatile = 0x20,
+        kSkinned = 0x40
     };
 
     bool RebuiltSinceUsed() const { return HasFlag(kRebuiltSinceUsed); }
@@ -178,29 +187,26 @@ public:
 
     bool Expired(uint32_t t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
     void SetRefTime(uint32_t t) { fRefTime = t; }
-    
-    plMetalVertexBufferRef() :
-    plMetalBufferPoolRef(),
-        fCount(0),
-        fIndex(0),
-        fVertexSize(0),
-        fOffset(0),
-        fOwner(nullptr),
-        fData(nullptr),
-        fFormat(0),
-        fRefTime(0)
+
+    plMetalVertexBufferRef() : plMetalBufferPoolRef(),
+                               fCount(0),
+                               fIndex(0),
+                               fVertexSize(0),
+                               fOffset(0),
+                               fOwner(nullptr),
+                               fData(nullptr),
+                               fFormat(0),
+                               fRefTime(0)
     {
     }
-    
+
     virtual ~plMetalVertexBufferRef();
-    
-    
-    void                    Link(plMetalVertexBufferRef** back ) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalVertexBufferRef*    GetNext() { return (plMetalVertexBufferRef*)fNext; }
-    
+
+    void                    Link(plMetalVertexBufferRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
+    plMetalVertexBufferRef* GetNext() { return (plMetalVertexBufferRef*)fNext; }
+
     void Release();
 };
-
 
 class plMetalIndexBufferRef : public plMetalBufferPoolRef
 {
@@ -210,12 +216,13 @@ public:
     plGBufferGroup* fOwner;
     uint32_t        fRefTime;
     uint32_t        fLastWriteFrameTime;
-    
-    enum {
-        kRebuiltSinceUsed   = 0x10, // kDirty = 0x1 is in hsGDeviceRef
-        kVolatile           = 0x20
+
+    enum
+    {
+        kRebuiltSinceUsed = 0x10, // kDirty = 0x1 is in hsGDeviceRef
+        kVolatile = 0x20
     };
-    
+
     bool RebuiltSinceUsed() const { return HasFlag(kRebuiltSinceUsed); }
     void SetRebuiltSinceUsed(bool b) { SetFlag(kRebuiltSinceUsed, b); }
 
@@ -224,59 +231,55 @@ public:
 
     bool Expired(uint32_t t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
     void SetRefTime(uint32_t t) { fRefTime = t; }
-    
+
     void Release();
-    
-    void                Link(plMetalIndexBufferRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
+
+    void                   Link(plMetalIndexBufferRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
     plMetalIndexBufferRef* GetNext() { return (plMetalIndexBufferRef*)fNext; }
     virtual ~plMetalIndexBufferRef();
-    
-    plMetalIndexBufferRef():
-    plMetalBufferPoolRef(),
-    fCount(0),
-    fIndex(0),
-    fRefTime(0),
-    fLastWriteFrameTime(0),
-    fOwner(nullptr) {
+
+    plMetalIndexBufferRef() : plMetalBufferPoolRef(),
+                              fCount(0),
+                              fIndex(0),
+                              fRefTime(0),
+                              fLastWriteFrameTime(0),
+                              fOwner(nullptr)
+    {
     }
 };
-
 
 class plMetalTextureRef : public plMetalDeviceRef
 {
 public:
-    plBitmap*       fOwner;
-    
-    int32_t        fLevels;
-    MTL::Texture*   fTexture;
+    plBitmap* fOwner;
+
+    int32_t          fLevels;
+    MTL::Texture*    fTexture;
     MTL::PixelFormat fFormat;
-    
-    void                Link(plMetalTextureRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalTextureRef*  GetNext() { return (plMetalTextureRef*)fNext; }
-    
-    plMetalTextureRef() :
-        plMetalDeviceRef(),
-        fOwner(nullptr),
-        fTexture(nullptr),
-        fLevels(1)
+
+    void               Link(plMetalTextureRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
+    plMetalTextureRef* GetNext() { return (plMetalTextureRef*)fNext; }
+
+    plMetalTextureRef() : plMetalDeviceRef(),
+                          fOwner(nullptr),
+                          fTexture(nullptr),
+                          fLevels(1)
     {
     }
-    
+
     virtual ~plMetalTextureRef();
-    
+
     void Release();
 };
 
-
-
-class plMetalRenderTargetRef: public plMetalTextureRef
+class plMetalRenderTargetRef : public plMetalTextureRef
 {
 public:
-    MTL::Texture*   fDepthBuffer;
+    MTL::Texture* fDepthBuffer;
 
-    void Link(plMetalRenderTargetRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalRenderTargetRef*    GetNext() { return (plMetalRenderTargetRef*)fNext; }
-    
+    void                    Link(plMetalRenderTargetRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
+    plMetalRenderTargetRef* GetNext() { return (plMetalRenderTargetRef*)fNext; }
+
     plMetalRenderTargetRef() : fDepthBuffer(nullptr)
     {
     }
@@ -288,6 +291,4 @@ public:
     virtual void SetOwner(plRenderTarget* targ) { fOwner = (plBitmap*)targ; }
 };
 
-
 #endif // _plGLDeviceRef_inc_
-

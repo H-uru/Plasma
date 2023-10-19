@@ -41,28 +41,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plMetalPipelineState.h"
+
 #include "plDrawable/plGBufferGroup.h"
-#include "plSurface/plLayerInterface.h"
-#include "plSurface/hsGMaterial.h"
-#include "plMetalDevice.h"
-#include "plGImage/plMipmap.h"
 #include "plGImage/plCubicEnvironmap.h"
-#include "plPipeline/plCubicRenderTarget.h"
-#include "plPipeline/plRenderTarget.h"
+#include "plGImage/plMipmap.h"
 #include "plMetalDevice.h"
 #include "plMetalMaterialShaderRef.h"
+#include "plPipeline/plCubicRenderTarget.h"
+#include "plPipeline/plRenderTarget.h"
+#include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
-size_t plMetalPipelineState::GetHash() const {
+size_t plMetalPipelineState::GetHash() const
+{
     return std::hash<uint8_t>()(GetID());
 }
 
 plMetalPipelineState::plMetalPipelineState(plMetalDevice* device)
-:   fDevice(device)
+    : fDevice(device)
 {
 }
 
 plMetalRenderSpanPipelineState::plMetalRenderSpanPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef)
-:   plMetalPipelineState(device)
+    : plMetalPipelineState(device)
 {
     fNumUVs = plGBufferGroup::CalcNumUVs(vRef->fFormat);
     fNumWeights = (vRef->fFormat & plGBufferGroup::kSkinWeightMask) >> 4;
@@ -76,7 +77,8 @@ void plMetalRenderSpanPipelineState::GetFunctionConstants(MTL::FunctionConstantV
     constants->setConstantValue(&fNumWeights, MTL::DataTypeUChar, FunctionConstantNumWeights);
 }
 
-size_t plMetalRenderSpanPipelineState::GetHash() const {
+size_t plMetalRenderSpanPipelineState::GetHash() const
+{
     std::size_t h1 = std::hash<uint8_t>()(fNumUVs);
     std::size_t h2 = std::hash<uint8_t>()(fNumWeights);
     std::size_t h3 = std::hash<bool>()(fHasSkinIndices);
@@ -84,17 +86,19 @@ size_t plMetalRenderSpanPipelineState::GetHash() const {
     return h1 ^ h2 ^ h3 ^ plMetalPipelineState::GetHash();
 }
 
-plMetalDevice::plMetalLinkedPipeline* plMetalPipelineState::GetRenderPipelineState() {
+plMetalDevice::plMetalLinkedPipeline* plMetalPipelineState::GetRenderPipelineState()
+{
     return fDevice->PipelineState(this);
 }
 
-void plMetalPipelineState::PrewarmRenderPipelineState() {
+void plMetalPipelineState::PrewarmRenderPipelineState()
+{
     fDevice->PrewarmPipelineStateFor(this);
 }
 
-
-plMetalMaterialPassPipelineState::plMetalMaterialPassPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef, const plMetalFragmentShaderDescription &description)
-:   plMetalRenderSpanPipelineState(device, vRef) {
+plMetalMaterialPassPipelineState::plMetalMaterialPassPipelineState(plMetalDevice* device, const plMetalVertexBufferRef* vRef, const plMetalFragmentShaderDescription& description)
+    : plMetalRenderSpanPipelineState(device, vRef)
+{
     fFragmentShaderDescription = description;
     fFragmentShaderDescription.CacheHash();
 }
@@ -108,84 +112,86 @@ void plMetalMaterialPassPipelineState::GetFunctionConstants(MTL::FunctionConstan
     constants->setConstantValues(&fFragmentShaderDescription.miscFlags, MTL::DataTypeUInt, NS::Range(FunctionConstantLayerFlags, 8));
 }
 
-size_t plMetalMaterialPassPipelineState::GetHash() const {
+size_t plMetalMaterialPassPipelineState::GetHash() const
+{
     std::size_t value = plMetalRenderSpanPipelineState::GetHash();
     value ^= fFragmentShaderDescription.GetHash();
 
     return value;
 }
 
-void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) {
+void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor)
+{
     int vertOffset = 0;
     int skinWeightOffset = vertOffset + (sizeof(float) * 3);
-    if(this->fHasSkinIndices) {
+    if (this->fHasSkinIndices) {
         skinWeightOffset += sizeof(uint32_t);
     }
     int normOffset = skinWeightOffset + (sizeof(float) * this->fNumWeights);
     int colorOffset = normOffset + (sizeof(float) * 3);
     int baseUvOffset = colorOffset + (sizeof(uint32_t) * 2);
     int stride = baseUvOffset + (sizeof(float) * 3 * this->fNumUVs);
-    
+
     vertexDescriptor->attributes()->object(VertexAttributePosition)->setFormat(MTL::VertexFormatFloat3);
     vertexDescriptor->attributes()->object(VertexAttributePosition)->setBufferIndex(0);
     vertexDescriptor->attributes()->object(VertexAttributePosition)->setOffset(vertOffset);
-    
+
     vertexDescriptor->attributes()->object(VertexAttributeNormal)->setFormat(MTL::VertexFormatFloat3);
     vertexDescriptor->attributes()->object(VertexAttributeNormal)->setBufferIndex(0);
     vertexDescriptor->attributes()->object(VertexAttributeNormal)->setOffset(normOffset);
-    
-    if(this->fNumWeights > 0) {
+
+    if (this->fNumWeights > 0) {
         int weightOneOffset = skinWeightOffset;
-        
+
         vertexDescriptor->attributes()->object(VertexAttributeWeights)->setFormat(MTL::VertexFormatFloat);
         vertexDescriptor->attributes()->object(VertexAttributeWeights)->setBufferIndex(0);
         vertexDescriptor->attributes()->object(VertexAttributeWeights)->setOffset(weightOneOffset);
     }
-    
-    for(int i=0; i<this->fNumUVs; i++) {
-        vertexDescriptor->attributes()->object(VertexAttributeTexcoord+i)->setFormat(MTL::VertexFormatFloat3);
-        vertexDescriptor->attributes()->object(VertexAttributeTexcoord+i)->setBufferIndex(0);
-        vertexDescriptor->attributes()->object(VertexAttributeTexcoord+i)->setOffset(baseUvOffset + (i * sizeof(float) * 3));
+
+    for (int i = 0; i < this->fNumUVs; i++) {
+        vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setFormat(MTL::VertexFormatFloat3);
+        vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setBufferIndex(0);
+        vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setOffset(baseUvOffset + (i * sizeof(float) * 3));
     }
-    
+
     vertexDescriptor->attributes()->object(VertexAttributeColor)->setFormat(MTL::VertexFormatUChar4);
     vertexDescriptor->attributes()->object(VertexAttributeColor)->setBufferIndex(0);
     vertexDescriptor->attributes()->object(VertexAttributeColor)->setOffset(colorOffset);
-    
+
     vertexDescriptor->layouts()->object(VertexAttributePosition)->setStride(stride);
 }
 
-void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode, MTL::RenderPipelineColorAttachmentDescriptor *descriptor)
+void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode, MTL::RenderPipelineColorAttachmentDescriptor* descriptor)
 {
     if (blendMode & hsGMatState::kBlendNoColor) {
-        //printf("glBlendFunc(GL_ZERO, GL_ONE);\n");
+        // printf("glBlendFunc(GL_ZERO, GL_ONE);\n");
         descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
         descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
         descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
         descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
         return;
     }
-    switch (blendMode & hsGMatState::kBlendMask)
-    {
+    switch (blendMode & hsGMatState::kBlendMask) {
         // Detail is just a special case of alpha, handled in construction of the texture
         // mip chain by making higher levels of the chain more transparent.
         case hsGMatState::kBlendDetail:
         case hsGMatState::kBlendAlpha:
             if (blendMode & hsGMatState::kBlendInvertFinalAlpha) {
                 if (blendMode & hsGMatState::kBlendAlphaPremultiplied) {
-                    //printf("glBlendFunc(GL_ONE, GL_SRC_ALPHA);\n");
+                    // printf("glBlendFunc(GL_ONE, GL_SRC_ALPHA);\n");
                     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
                 } else {
-                    //printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);\n");
-                    descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);;
+                    // printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);\n");
+                    descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
+                    ;
                 }
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorSourceAlpha);
             } else {
                 if (blendMode & hsGMatState::kBlendAlphaPremultiplied) {
-                    //printf("glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);\n");
+                    // printf("glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);\n");
                     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
                 } else {
-                    //printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);\n");
+                    // printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);\n");
                     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
                 }
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
@@ -195,13 +201,13 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
         // Multiply the final color onto the frame buffer.
         case hsGMatState::kBlendMult:
             if (blendMode & hsGMatState::kBlendInvertFinalColor) {
-                //printf("glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);\n");
+                // printf("glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);\n");
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
                 descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceColor);
                 descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOneMinusSourceColor);
             } else {
-                //printf("glBlendFunc(GL_ZERO, GL_SRC_COLOR);\n");
+                // printf("glBlendFunc(GL_ZERO, GL_SRC_COLOR);\n");
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
                 descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorSourceColor);
@@ -211,7 +217,7 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
 
         // Add final color to FB.
         case hsGMatState::kBlendAdd:
-            //printf("glBlendFunc(GL_ONE, GL_ONE);\n");
+            // printf("glBlendFunc(GL_ONE, GL_ONE);\n");
             descriptor->setRgbBlendOperation(MTL::BlendOperationAdd);
             descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
             descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
@@ -219,7 +225,7 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
 
         // Multiply final color by FB color and add it into the FB.
         case hsGMatState::kBlendMADD:
-            //printf("glBlendFunc(GL_DST_COLOR, GL_ONE);\n");
+            // printf("glBlendFunc(GL_DST_COLOR, GL_ONE);\n");
             descriptor->setSourceRGBBlendFactor(MTL::BlendFactorDestinationColor);
             descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
             break;
@@ -227,13 +233,13 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
         // Final color times final alpha, added into the FB.
         case hsGMatState::kBlendAddColorTimesAlpha:
             if (blendMode & hsGMatState::kBlendInvertFinalAlpha) {
-                //printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_ONE);\n");
+                // printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_ONE);\n");
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
                 descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
                 descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
             } else {
-                //printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE);\n");
+                // printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE);\n");
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
                 descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorSourceAlpha);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
@@ -243,24 +249,23 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
 
         // Overwrite final color onto FB
         case 0:
-            //printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
+            // printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
             descriptor->setRgbBlendOperation(MTL::BlendOperationAdd);
             descriptor->setAlphaBlendOperation(MTL::BlendOperationAdd);
-            //printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
+            // printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
             descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
             descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
             descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
             descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);
-            
+
             /*descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOne);
             descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
             descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
             descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);*/
             break;
 
-        default:
-            {
-                /*hsAssert(false, "Too many blend modes specified in material");
+        default: {
+            /*hsAssert(false, "Too many blend modes specified in material");
                 plLayer* lay = plLayer::ConvertNoRef(fCurrMaterial->GetLayer(fCurrLayerIdx)->BottomOfStack());
                 if( lay )
                 {
@@ -273,50 +278,56 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
                         lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAdd);
                     }
                 }*/
-            }
-            break;
+        } break;
     }
 }
 
-MTL::Function* plMetalMaterialPassPipelineState::GetVertexFunction(MTL::Library* library) {
-    NS::Error* error = nullptr;
+MTL::Function* plMetalMaterialPassPipelineState::GetVertexFunction(MTL::Library* library)
+{
+    NS::Error*                   error = nullptr;
     MTL::FunctionConstantValues* constants = MTL::FunctionConstantValues::alloc()->init()->autorelease();
     this->GetFunctionConstants(constants);
     MTL::Function* function = library->newFunction(
-                                NS::String::string("pipelineVertexShader", NS::ASCIIStringEncoding),
-                                    MakeFunctionConstants(),
-                                &error
-                                )->autorelease();
+                                         NS::String::string("pipelineVertexShader", NS::ASCIIStringEncoding),
+                                         MakeFunctionConstants(),
+                                         &error)
+                                  ->autorelease();
     return function;
 }
 
-MTL::Function* plMetalMaterialPassPipelineState::GetFragmentFunction(MTL::Library* library) {
+MTL::Function* plMetalMaterialPassPipelineState::GetFragmentFunction(MTL::Library* library)
+{
     return library->newFunction(
-                                NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
-                                    MakeFunctionConstants(),
-                                (NS::Error **)NULL
-                             )->autorelease();
+                      NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
+                      MakeFunctionConstants(),
+                      (NS::Error**)NULL)
+        ->autorelease();
 }
 
-plMetalMaterialPassPipelineState::~plMetalMaterialPassPipelineState() {
+plMetalMaterialPassPipelineState::~plMetalMaterialPassPipelineState()
+{
 }
 
-const NS::String* plMetalMaterialPassPipelineState::GetDescription() {
+const NS::String* plMetalMaterialPassPipelineState::GetDescription()
+{
     return NS::MakeConstantString("Material Pipeline");
 }
 
-void plMetalMaterialPassPipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) {
+void plMetalMaterialPassPipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor)
+{
     uint32_t blendMode = fFragmentShaderDescription.blendModes[0];
     ConfigureBlendMode(blendMode, descriptor);
 }
 
-void plMetalFragmentShaderDescription::Populate(const plLayerInterface* layPtr, const uint8_t index) {
+void plMetalFragmentShaderDescription::Populate(const plLayerInterface* layPtr, const uint8_t index)
+{
     blendModes[index] = layPtr->GetBlendFlags();
     miscFlags[index] = layPtr->GetMiscFlags();
     PopulateTextureInfo(layPtr, index);
 }
 
-void plMetalFragmentShaderDescription::PopulateTextureInfo(const plLayerInterface* layPtr, const uint8_t index) {
+void plMetalFragmentShaderDescription::PopulateTextureInfo(const plLayerInterface* layPtr, const uint8_t index)
+{
     plBitmap* texture = layPtr->GetTexture();
     if (texture != nullptr) {
         if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
@@ -326,34 +337,37 @@ void plMetalFragmentShaderDescription::PopulateTextureInfo(const plLayerInterfac
         } else {
             passTypes[index] = PassTypeColor;
         }
-        
+
     } else {
         passTypes[index] = PassTypeColor;
     }
-    
 }
 
-bool plMetalMaterialPassPipelineState::IsEqual(const plMetalPipelineState &p) const {
+bool plMetalMaterialPassPipelineState::IsEqual(const plMetalPipelineState& p) const
+{
     return plMetalRenderSpanPipelineState::IsEqual(p) && static_cast<const plMetalMaterialPassPipelineState*>(&p)->fFragmentShaderDescription == this->fFragmentShaderDescription;
 }
 
-MTL::Function* plMetalRenderShadowPipelineState::GetVertexFunction(MTL::Library* library) {
+MTL::Function* plMetalRenderShadowPipelineState::GetVertexFunction(MTL::Library* library)
+{
     return library->newFunction(
-                                NS::String::string("shadowCastVertexShader", NS::ASCIIStringEncoding),
-                                MakeFunctionConstants(),
-                                (NS::Error **)NULL
-                             )->autorelease();
+                      NS::String::string("shadowCastVertexShader", NS::ASCIIStringEncoding),
+                      MakeFunctionConstants(),
+                      (NS::Error**)NULL)
+        ->autorelease();
 }
 
-MTL::Function* plMetalRenderShadowPipelineState::GetFragmentFunction(MTL::Library* library) {
+MTL::Function* plMetalRenderShadowPipelineState::GetFragmentFunction(MTL::Library* library)
+{
     return library->newFunction(
-                                NS::String::string("shadowCastFragmentShader", NS::ASCIIStringEncoding),
-                                MakeFunctionConstants(),
-                                (NS::Error **)NULL
-                             )->autorelease();
+                      NS::String::string("shadowCastFragmentShader", NS::ASCIIStringEncoding),
+                      MakeFunctionConstants(),
+                      (NS::Error**)NULL)
+        ->autorelease();
 }
 
-void plMetalRenderShadowPipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) {
+void plMetalRenderShadowPipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor)
+{
     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
     descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
     descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceColor);
@@ -362,78 +376,72 @@ void plMetalRenderShadowPipelineState::ConfigureBlend(MTL::RenderPipelineColorAt
 
 const MTL::Function* plMetalRenderShadowCasterPipelineState::GetVertexFunction(MTL::Library* library)
 {
-    NS::Error* error = nullptr;
+    NS::Error*     error = nullptr;
     MTL::Function* function = library->newFunction(
-                                NS::MakeConstantString("shadowVertexShader"),
-                                    MakeFunctionConstants(),
-                                &error
-                                )->autorelease();
+                                         NS::MakeConstantString("shadowVertexShader"),
+                                         MakeFunctionConstants(),
+                                         &error)
+                                  ->autorelease();
     return function;
 }
 
 const MTL::Function* plMetalRenderShadowCasterPipelineState::GetFragmentFunction(MTL::Library* library)
 {
-    NS::Error* error = nullptr;
+    NS::Error*     error = nullptr;
     MTL::Function* function = library->newFunction(
-                                NS::MakeConstantString("shadowFragmentShader"),
-                                    MakeFunctionConstants(),
-                                &error
-                                )->autorelease();
+                                         NS::MakeConstantString("shadowFragmentShader"),
+                                         MakeFunctionConstants(),
+                                         &error)
+                                  ->autorelease();
     return function;
 }
 
-const MTL::Function* plMetalDynamicMaterialPipelineState::GetVertexFunction(MTL::Library *library) {
+const MTL::Function* plMetalDynamicMaterialPipelineState::GetVertexFunction(MTL::Library* library)
+{
     MTL::FunctionConstantValues* functionConstants = MakeFunctionConstants();
-    MTL::Function* vertFunction;
-    switch(fVertexShaderID) {
+    MTL::Function*               vertFunction;
+    switch (fVertexShaderID) {
         case plShaderID::vs_WaveFixedFin7:
             vertFunction = library->newFunction(
-                                                               NS::String::string("vs_WaveFixedFin7", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("vs_WaveFixedFin7", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::vs_CompCosines:
             vertFunction = library->newFunction(
-                                                               NS::String::string("vs_CompCosines", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("vs_CompCosines", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::vs_BiasNormals:
             vertFunction = library->newFunction(
-                                                               NS::String::string("vs_BiasNormals", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("vs_BiasNormals", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::vs_GrassShader:
             vertFunction = library->newFunction(
-                                                               NS::String::string("vs_GrassShader", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("vs_GrassShader", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::vs_WaveDecEnv_7:
             vertFunction = library->newFunction(
-                                                               NS::String::string("vs_WaveDecEnv_7", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("vs_WaveDecEnv_7", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::vs_WaveDec1Lay_7:
             vertFunction = library->newFunction(
-                                                               NS::String::string("vs_WaveDec1Lay_7", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("vs_WaveDec1Lay_7", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::vs_WaveRip7:
             vertFunction = library->newFunction(
-                                                               NS::String::string("vs_WaveRip7", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("vs_WaveRip7", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         default:
             hsAssert(0, "unknown shader requested");
@@ -441,58 +449,52 @@ const MTL::Function* plMetalDynamicMaterialPipelineState::GetVertexFunction(MTL:
     return vertFunction;
 }
 
-const MTL::Function* plMetalDynamicMaterialPipelineState::GetFragmentFunction(MTL::Library *library) {
+const MTL::Function* plMetalDynamicMaterialPipelineState::GetFragmentFunction(MTL::Library* library)
+{
     MTL::FunctionConstantValues* functionConstants = MakeFunctionConstants();
-    MTL::Function* fragFunction;
-    switch(fFragmentShaderID) {
+    MTL::Function*               fragFunction;
+    switch (fFragmentShaderID) {
         case plShaderID::ps_WaveFixed:
             fragFunction = library->newFunction(
-                                                               NS::String::string("ps_WaveFixed", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("ps_WaveFixed", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::ps_MoreCosines:
             fragFunction = library->newFunction(
-                                                               NS::String::string("ps_CompCosines", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("ps_CompCosines", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::ps_BiasNormals:
             fragFunction = library->newFunction(
-                                                               NS::String::string("ps_BiasNormals", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("ps_BiasNormals", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::ps_GrassShader:
             fragFunction = library->newFunction(
-                                                               NS::String::string("ps_GrassShader", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("ps_GrassShader", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::ps_WaveDecEnv:
             fragFunction = library->newFunction(
-                                                               NS::String::string("ps_WaveDecEnv", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("ps_WaveDecEnv", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::ps_CbaseAbase:
             fragFunction = library->newFunction(
-                                                               NS::String::string("ps_CbaseAbase", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("ps_CbaseAbase", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         case plShaderID::ps_WaveRip:
             fragFunction = library->newFunction(
-                                                               NS::String::string("ps_WaveRip", NS::ASCIIStringEncoding),
-                                                functionConstants,
-                                                               (NS::Error **)nullptr
-                                                            );
+                NS::String::string("ps_WaveRip", NS::ASCIIStringEncoding),
+                functionConstants,
+                (NS::Error**)nullptr);
             break;
         default:
             hsAssert(0, "unknown shader requested");

@@ -40,32 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <string_theory/format>
 #include "plMetalMaterialShaderRef.h"
+
+#include <string_theory/format>
 
 #include "HeadSpin.h"
 #include "hsBitVector.h"
-
+#include "hsGMatState.inl"
 #include "plDrawable/plGBufferGroup.h"
-#include "plGImage/plMipmap.h"
 #include "plGImage/plCubicEnvironmap.h"
-#include "plPipeline.h"
+#include "plGImage/plMipmap.h"
+#include "plMetalDevice.h"
+#include "plMetalPipeline.h"
 #include "plPipeDebugFlags.h"
+#include "plPipeline.h"
 #include "plPipeline/plCubicRenderTarget.h"
 #include "plPipeline/plRenderTarget.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
 
-#include "hsGMatState.inl"
-
-#include "plMetalDevice.h"
-#include "plMetalPipeline.h"
-
-plMetalMaterialShaderRef::plMetalMaterialShaderRef(hsGMaterial* mat, plMetalPipeline *pipe) :
-fPipeline { pipe },
-fMaterial { mat },
-fFragFunction(),
-fNumPasses(0)
+plMetalMaterialShaderRef::plMetalMaterialShaderRef(hsGMaterial* mat, plMetalPipeline* pipe) : fPipeline{pipe},
+                                                                                              fMaterial{mat},
+                                                                                              fFragFunction(),
+                                                                                              fNumPasses(0)
 {
     fDevice = pipe->fDevice.fMetalDevice;
     fFragFunction = pipe->fFragFunction;
@@ -79,18 +76,18 @@ plMetalMaterialShaderRef::~plMetalMaterialShaderRef()
 
 void plMetalMaterialShaderRef::Release()
 {
-    for(auto & buffer : fPassArgumentBuffers) {
+    for (auto& buffer : fPassArgumentBuffers) {
         buffer->release();
         buffer = nil;
     }
     fPassArgumentBuffers.clear();
-    
+
     fNumPasses = 0;
 }
 
 void plMetalMaterialShaderRef::CheckMateralRef()
 {
-    if(IsDirty()) {
+    if (IsDirty()) {
         /*
          Something (like avatars) might have modified our textures.
          If we're dirty - clear all cached state.
@@ -99,15 +96,15 @@ void plMetalMaterialShaderRef::CheckMateralRef()
         fPassIndices.clear();
         fPassLengths.clear();
         fFragmentShaderDescriptions.clear();
-        
-        for(MTL::Buffer* buffer: fPassArgumentBuffers) {
+
+        for (MTL::Buffer* buffer : fPassArgumentBuffers) {
             buffer->release();
         }
         fPassArgumentBuffers.clear();
     }
-    if(fNumPasses == 0) {
+    if (fNumPasses == 0) {
         ILoopOverLayers();
-        
+
         for (size_t i = 0; i < fMaterial->GetNumLayers(); i++) {
             plLayerInterface* layer = fMaterial->GetLayer(i);
             if (!layer) {
@@ -120,80 +117,81 @@ void plMetalMaterialShaderRef::CheckMateralRef()
     SetDirty(false);
 }
 
-//fast encode doesn't support piggybacks or push over layers, but it does use preloaded data on the GPU so it's much faster. Use this encoder if there are no piggybacks or pushover layers
-void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder *encoder, VertexUniforms *vertexUniforms, uint pass)
+// fast encode doesn't support piggybacks or push over layers, but it does use preloaded data on the GPU so it's much faster. Use this encoder if there are no piggybacks or pushover layers
+void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder* encoder, VertexUniforms* vertexUniforms, uint pass)
 {
     for (uint32_t i = GetPassIndex(pass); i < GetPassIndex(pass) + fPassLengths[pass]; i++) {
         plLayerInterface* layer = fMaterial->GetLayer(i);
-        
+
         if (!layer) {
             continue;
         }
 
         fPipeline->CheckTextureRef(layer);
-        
+
         plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
         if (!img) {
             continue;
         }
-        
+
         plMetalTextureRef* texRef = (plMetalTextureRef*)img->GetDeviceRef();
 
-        //if (!texRef->fTexture) {
-          //  continue;
-        //}
-        
+        // if (!texRef->fTexture) {
+        //   continue;
+        // }
+
         assert(i - GetPassIndex(pass) >= 0);
         EncodeTransform(layer, &vertexUniforms->uvTransforms[i - GetPassIndex(pass)]);
         IBuildLayerTexture(encoder, i - GetPassIndex(pass), layer);
     }
-    
+
     encoder->setFragmentBuffer(fPassArgumentBuffers[pass], 0, FragmentShaderArgumentUniforms);
 }
 
-void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder *encoder, VertexUniforms *vertexUniforms, uint pass, plMetalFragmentShaderDescription* passDescription, std::vector<plLayerInterface*> *piggyBacks, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform)
+void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encoder, VertexUniforms* vertexUniforms, uint pass, plMetalFragmentShaderDescription* passDescription, std::vector<plLayerInterface*>* piggyBacks, std::function<plLayerInterface*(plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface*(plLayerInterface*, uint32_t)> postEncodeTransform)
 {
-    
     std::vector<plLayerInterface*> layers = GetLayersForPass(pass);
-    
-    if(piggyBacks) {
+
+    if (piggyBacks) {
         layers.insert(layers.end(), piggyBacks->begin(), piggyBacks->end());
     }
-    
+
     plMetalFragmentShaderArgumentBuffer uniforms;
-    
-    IHandleMaterial(GetPassIndex(pass), passDescription, &uniforms, piggyBacks,
-    [&](plLayerInterface* layer, uint32_t index) {
+
+    IHandleMaterial(
+        GetPassIndex(pass), passDescription, &uniforms, piggyBacks,
+        [&](plLayerInterface* layer, uint32_t index) {
         layer = preEncodeTransform(layer, index);
         IBuildLayerTexture(encoder, index, layer);
-        
+
         plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
-        
+
         assert(index - GetPassIndex(pass) >= 0);
         EncodeTransform(layer, &vertexUniforms->uvTransforms[index]);
-        
+
         return layer;
-    }, [&](plLayerInterface* layer, uint32_t index) {
+    },
+        [&](plLayerInterface* layer, uint32_t index) {
         layer = postEncodeTransform(layer, index);
         return layer;
     });
-    
+
     encoder->setFragmentBytes(&uniforms, sizeof(plMetalFragmentShaderArgumentBuffer), FragmentShaderArgumentUniforms);
 }
 
-void plMetalMaterialShaderRef::EncodeTransform(plLayerInterface* layer, UVOutDescriptor *transform) {
+void plMetalMaterialShaderRef::EncodeTransform(plLayerInterface* layer, UVOutDescriptor* transform)
+{
     matrix_float4x4 tXfm;
     hsMatrix2SIMD(layer->GetTransform(), &tXfm);
     transform->transform = tXfm;
     transform->UVWSrc = layer->GetUVWSrc();
 }
 
-//This is old - supporting the plate code.
-//FIXME: Replace the plate codes path to texturing
-void plMetalMaterialShaderRef::prepareTextures(MTL::RenderCommandEncoder *encoder, uint pass)
+// This is old - supporting the plate code.
+// FIXME: Replace the plate codes path to texturing
+void plMetalMaterialShaderRef::prepareTextures(MTL::RenderCommandEncoder* encoder, uint pass)
 {
-
     plLayerInterface* layer = fMaterial->GetLayer(pass);
     if (!layer) {
         return;
@@ -212,10 +210,10 @@ void plMetalMaterialShaderRef::prepareTextures(MTL::RenderCommandEncoder *encode
     if (!texRef->fTexture) {
         return;
     }
-    
+
     if (plCubicEnvironmap::ConvertNoRef(layer->GetTexture()) != nullptr) {
     } else if (plMipmap::ConvertNoRef(layer->GetTexture()) != nullptr || plRenderTarget::ConvertNoRef(layer->GetTexture()) != nullptr) {
-            encoder->setFragmentTexture(texRef->fTexture,     FragmentShaderArgumentTexture);
+        encoder->setFragmentTexture(texRef->fTexture, FragmentShaderArgumentTexture);
     }
 }
 
@@ -223,53 +221,53 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
 {
     uint32_t pass = 0;
 
-    for (uint32_t j = 0; j < fMaterial->GetNumLayers(); )
-    {
+    for (uint32_t j = 0; j < fMaterial->GetNumLayers();) {
         uint32_t currLayer = j;
-        
-        //Create "fast encode" buffers
-        //Fast encode can be used when there are no piggybacks or pushover layers. We'll load as much of the
-        //base state of this layer as we can onto the GPU. Using fast encode, the renderer can avoid encoding
-        //a lot of the render state, it will be on the GPU already.
-        //I'd like to encode more data here, and use a heap. The heap hasn't happened yet because heaps are
-        //private memory, and we don't have a window yet for a blit phase into private memory.
-        MTL::Buffer *argumentBuffer = fDevice->newBuffer(sizeof(plMetalFragmentShaderArgumentBuffer), MTL::ResourceStorageModeManaged);
-        
-        plMetalFragmentShaderArgumentBuffer *layerBuffer = (plMetalFragmentShaderArgumentBuffer *)argumentBuffer->contents();
-        
+
+        // Create "fast encode" buffers
+        // Fast encode can be used when there are no piggybacks or pushover layers. We'll load as much of the
+        // base state of this layer as we can onto the GPU. Using fast encode, the renderer can avoid encoding
+        // a lot of the render state, it will be on the GPU already.
+        // I'd like to encode more data here, and use a heap. The heap hasn't happened yet because heaps are
+        // private memory, and we don't have a window yet for a blit phase into private memory.
+        MTL::Buffer* argumentBuffer = fDevice->newBuffer(sizeof(plMetalFragmentShaderArgumentBuffer), MTL::ResourceStorageModeManaged);
+
+        plMetalFragmentShaderArgumentBuffer* layerBuffer = (plMetalFragmentShaderArgumentBuffer*)argumentBuffer->contents();
+
         plMetalFragmentShaderDescription passDescription;
-        
-        j = IHandleMaterial(currLayer, &passDescription, layerBuffer, nullptr,
-                            [](plLayerInterface* layer, uint32_t index) {
-                                return layer;
-                            },
-                            [](plLayerInterface* layer, uint32_t index) {
-                                return layer;
-                            });
+
+        j = IHandleMaterial(
+            currLayer, &passDescription, layerBuffer, nullptr,
+            [](plLayerInterface* layer, uint32_t index) {
+            return layer;
+        },
+            [](plLayerInterface* layer, uint32_t index) {
+            return layer;
+        });
 
         if (j == -1)
             break;
-        
+
         passDescription.CacheHash();
         fFragmentShaderDescriptions.push_back(passDescription);
-        
+
         std::vector<plLayerInterface*> layers(j);
-        
+
         pass++;
-        
-        //encode the colors for this pass into our buffer for fast rendering
-        for(int layerOffset = 0; layerOffset < j - currLayer; layerOffset ++) {
+
+        // encode the colors for this pass into our buffer for fast rendering
+        for (int layerOffset = 0; layerOffset < j - currLayer; layerOffset++) {
             plLayerInterface* layer = fMaterial->GetLayer(currLayer + layerOffset);
             layers[layerOffset] = layer;
             IBuildLayerTexture(NULL, layerOffset, layer);
         }
-        
+
         fPasses.push_back(layers);
-        
+
         argumentBuffer->didModifyRange(NS::Range(0, argumentBuffer->length()));
-        
+
         fPassArgumentBuffers.push_back(argumentBuffer);
-        
+
         fPassIndices.push_back(currLayer);
         fPassLengths.push_back(j - currLayer);
         fNumPasses++;
@@ -287,19 +285,19 @@ const hsGMatState plMetalMaterialShaderRef::ICompositeLayerState(const plLayerIn
     return state;
 }
 
-void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer)
+void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer)
 {
     // Reminder: Encoder is allowed to be null when Plasma is precompiling pipeline states
     // Metal needs to know if a shader is 2D or Cubic to compile shaders
     // A null encoder signifies we should build the texture but not bind state
-    
+
     fPipeline->CheckTextureRef(layer);
     plBitmap* texture = layer->GetTexture();
-    
+
     if (texture != nullptr && encoder) {
-        plMetalTextureRef *deviceTexture = (plMetalTextureRef *)texture->GetDeviceRef();
-        if(!deviceTexture) {
-            //FIXME: Better way to address missing textures than null pointers
+        plMetalTextureRef* deviceTexture = (plMetalTextureRef*)texture->GetDeviceRef();
+        if (!deviceTexture) {
+            // FIXME: Better way to address missing textures than null pointers
             encoder->setFragmentTexture(nullptr, FragmentShaderArgumentAttributeCubicTextures + offsetFromRootLayer);
             encoder->setFragmentTexture(nullptr, FragmentShaderArgumentAttributeTextures + offsetFromRootLayer);
             return;
@@ -310,12 +308,11 @@ void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder *enc
         } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
             encoder->setFragmentTexture(deviceTexture->fTexture, FragmentShaderArgumentAttributeTextures + offsetFromRootLayer);
         }
-        
-        if (fPipeline->fState.layerStates[offsetFromRootLayer].clampFlag != layer->GetClampFlags())
-        {
+
+        if (fPipeline->fState.layerStates[offsetFromRootLayer].clampFlag != layer->GetClampFlags()) {
             MTL::SamplerState* samplerState = fPipeline->fDevice.SampleStateForClampFlags(hsGMatState::hsGMatClampFlags(layer->GetClampFlags()));
             encoder->setFragmentSamplerState(samplerState, offsetFromRootLayer);
-            
+
             fPipeline->fState.layerStates[offsetFromRootLayer].clampFlag = hsGMatState::hsGMatClampFlags(layer->GetClampFlags());
         }
     }
@@ -351,7 +348,7 @@ uint32_t plMetalMaterialShaderRef::ILayersAtOnce(uint32_t which)
 
         // Ignoring max UVW limit
 
-        if ((lay->GetMiscFlags() & hsGMatState::kMiscBindNext) && (i+1 >= maxLayers)) {
+        if ((lay->GetMiscFlags() & hsGMatState::kMiscBindNext) && (i + 1 >= maxLayers)) {
             break;
         }
 
@@ -392,7 +389,7 @@ bool plMetalMaterialShaderRef::ICanEatLayer(plLayerInterface* lay)
     return true;
 }
 
-uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragmentShaderDescription *passDescription, plMetalFragmentShaderArgumentBuffer *uniforms, std::vector<plLayerInterface*> *piggybacks, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform)
+uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragmentShaderDescription* passDescription, plMetalFragmentShaderArgumentBuffer* uniforms, std::vector<plLayerInterface*>* piggybacks, std::function<plLayerInterface*(plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface*(plLayerInterface*, uint32_t)> postEncodeTransform)
 {
     if (!fMaterial || layer >= fMaterial->GetNumLayers() || !fMaterial->GetLayer(layer)) {
         return -1;
@@ -401,7 +398,7 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragme
     if (false /*ISkipBumpMap(fMaterial, layer)*/) {
         return -1;
     }
-    
+
     memset(passDescription, 0, sizeof(plMetalFragmentShaderDescription));
 
     // Ignoring the bit about ATI Radeon and UVW limits
@@ -419,7 +416,7 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragme
         currLay = fMaterial->GetLayer(++layer);
     }
 
-    //currLay = IPushOverAllLayer(currLay);
+    // currLay = IPushOverAllLayer(currLay);
 
     hsGMatState state = ICompositeLayerState(currLay);
 
@@ -433,21 +430,18 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragme
         state.fBlendFlags &= ~hsGMatState::kBlendMask;
     }
 
-    if ((fPipeline->IsDebugFlagSet(plPipeDbg::kFlagBumpUV) || fPipeline->IsDebugFlagSet(plPipeDbg::kFlagBumpW)) && (state.fMiscFlags & hsGMatState::kMiscBumpChans) ) {
-        switch (state.fMiscFlags & hsGMatState::kMiscBumpChans)
-        {
+    if ((fPipeline->IsDebugFlagSet(plPipeDbg::kFlagBumpUV) || fPipeline->IsDebugFlagSet(plPipeDbg::kFlagBumpW)) && (state.fMiscFlags & hsGMatState::kMiscBumpChans)) {
+        switch (state.fMiscFlags & hsGMatState::kMiscBumpChans) {
             case hsGMatState::kMiscBumpDu:
                 break;
             case hsGMatState::kMiscBumpDv:
-                if (!(fMaterial->GetLayer(layer-2)->GetBlendFlags() & hsGMatState::kBlendAdd))
-                {
+                if (!(fMaterial->GetLayer(layer - 2)->GetBlendFlags() & hsGMatState::kBlendAdd)) {
                     state.fBlendFlags &= ~hsGMatState::kBlendMask;
                     state.fBlendFlags |= hsGMatState::kBlendMADD;
                 }
                 break;
             case hsGMatState::kMiscBumpDw:
-                if (!(fMaterial->GetLayer(layer-1)->GetBlendFlags() & hsGMatState::kBlendAdd))
-                {
+                if (!(fMaterial->GetLayer(layer - 1)->GetBlendFlags() & hsGMatState::kBlendAdd)) {
                     state.fBlendFlags &= ~hsGMatState::kBlendMask;
                     state.fBlendFlags |= hsGMatState::kBlendMADD;
                 }
@@ -460,61 +454,57 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragme
     uint32_t currNumLayers = ILayersAtOnce(layer);
 
     if (state.fMiscFlags & (hsGMatState::kMiscBumpDu | hsGMatState::kMiscBumpDw)) {
-        //ISetBumpMatrices(currLay);
+        // ISetBumpMatrices(currLay);
     }
-    
+
     passDescription->Populate(currLay, 0);
-    
+
     postEncodeTransform(currLay, 0);
-    
+
     int32_t i = 1;
-    for (i = 1; i < currNumLayers; i++)
-    {
+    for (i = 1; i < currNumLayers; i++) {
         plLayerInterface* layPtr = fMaterial->GetLayer(layer + i);
         if (!layPtr) {
             return -1;
         }
         layPtr = preEncodeTransform(layPtr, i);
-        
-        passDescription->Populate(layPtr,  i);
-        
+
+        passDescription->Populate(layPtr, i);
+
         layPtr = postEncodeTransform(layPtr, i);
     }
-    
-    if(piggybacks) {
-        for (int32_t currPiggyback = 0; currPiggyback < piggybacks->size(); currPiggyback++)
-        {
 
+    if (piggybacks) {
+        for (int32_t currPiggyback = 0; currPiggyback < piggybacks->size(); currPiggyback++) {
             plLayerInterface* layPtr = piggybacks->at(currPiggyback);
             if (!layPtr) {
                 return -1;
             }
             layPtr = preEncodeTransform(layPtr, i + currPiggyback);
-            
+
             passDescription->Populate(layPtr, i + currPiggyback);
-            
+
             layPtr = postEncodeTransform(layPtr, i + currPiggyback);
         }
     }
-    
-    passDescription->numLayers = ( piggybacks ? piggybacks->size() : 0 ) + currNumLayers;
-    
+
+    passDescription->numLayers = (piggybacks ? piggybacks->size() : 0) + currNumLayers;
+
     if (state.fBlendFlags & (hsGMatState::kBlendTest | hsGMatState::kBlendAlpha | hsGMatState::kBlendAddColorTimesAlpha) &&
-        !(state.fBlendFlags & hsGMatState::kBlendAlphaAlways))
-    {
+        !(state.fBlendFlags & hsGMatState::kBlendAlphaAlways)) {
         // AlphaTestHigh is used for reducing sort artifacts on textures that
         // are mostly opaque or transparent, but have regions of translucency
         // in transition. Like a texture for a bush billboard. It lets there be
         // some transparency falloff, but quit drawing before it gets so
         // transparent that draw order problems (halos) become apparent.
         if (state.fBlendFlags & hsGMatState::kBlendAlphaTestHigh) {
-            uniforms->alphaThreshold = 64.f/255.f;
+            uniforms->alphaThreshold = 64.f / 255.f;
         } else {
-            uniforms->alphaThreshold = 1.f/255.f;
+            uniforms->alphaThreshold = 1.f / 255.f;
         }
     } else {
         uniforms->alphaThreshold = 0.f;
     }
-    
+
     return layer + currNumLayers;
 }

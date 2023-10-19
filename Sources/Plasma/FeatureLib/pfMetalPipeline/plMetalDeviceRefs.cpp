@@ -39,11 +39,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plPipeline/hsWinRef.h"
-
-#include "plMetalPipeline.h"
 #include "plMetalDeviceRef.h"
-
+#include "plMetalPipeline.h"
+#include "plPipeline/hsWinRef.h"
 #include "plProfile.h"
 #include "plStatusLog/plStatusLog.h"
 
@@ -51,13 +49,12 @@ plProfile_CreateMemCounter("Vertices", "Memory", MemVertex);
 plProfile_CreateMemCounter("Indices", "Memory", MemIndex);
 plProfile_CreateMemCounter("Textures", "Memory", MemTexture);
 
-
 /*****************************************************************************
  ** Generic plGLDeviceRef Functions                                         **
  *****************************************************************************/
 plMetalDeviceRef::plMetalDeviceRef()
-:   fNext(nullptr),
-    fBack(nullptr)
+    : fNext(nullptr),
+      fBack(nullptr)
 {
 }
 
@@ -67,7 +64,8 @@ plMetalDeviceRef::~plMetalDeviceRef()
         Unlink();
 }
 
-void plMetalDeviceRef::Unlink() {
+void plMetalDeviceRef::Unlink()
+{
     hsAssert(fBack, "plGLDeviceRef not in list");
 
     if (fNext)
@@ -76,12 +74,12 @@ void plMetalDeviceRef::Unlink() {
 
     fBack = nullptr;
     fNext = nullptr;
-    
 }
 
 uint32_t plMetalBufferPoolRef::fFrameTime(0);
 
-void plMetalDeviceRef::Link(plMetalDeviceRef **back) {
+void plMetalDeviceRef::Link(plMetalDeviceRef **back)
+{
     hsAssert(fNext == nullptr && fBack == nullptr, "Trying to link a plMetalDeviceRef that's already linked");
 
     fNext = *back;
@@ -90,7 +88,6 @@ void plMetalDeviceRef::Link(plMetalDeviceRef **back) {
     fBack = back;
     *back = this;
 }
-
 
 /*****************************************************************************
  ** Vertex buffer cleanup Functions                                         **
@@ -103,12 +100,10 @@ plMetalVertexBufferRef::~plMetalVertexBufferRef()
     Release();
 }
 
-
 void plMetalVertexBufferRef::Release()
 {
     SetDirty(true);
 }
-
 
 /*****************************************************************************
  ** Index buffer cleanup Functions                                          **
@@ -123,7 +118,6 @@ void plMetalIndexBufferRef::Release()
 {
     SetDirty(true);
 }
-
 
 /*****************************************************************************
  ** Texture cleanup Functions                                               **
@@ -141,23 +135,23 @@ void plMetalTextureRef::Release()
 plMetalTextureRef::~plMetalTextureRef()
 {
     Release();
-    
+
     if (fNext != nullptr || fBack != nullptr)
         Unlink();
 }
-
 
 /*****************************************************************************
  ** FrameBuffer cleanup Functions                                           **
  *****************************************************************************/
 
-plMetalRenderTargetRef::~plMetalRenderTargetRef() {
+plMetalRenderTargetRef::~plMetalRenderTargetRef()
+{
     Release();
 }
 
 void plMetalRenderTargetRef::Release()
 {
-    if(fDepthBuffer) {
+    if (fDepthBuffer) {
         fDepthBuffer->release();
         fDepthBuffer = nullptr;
     }

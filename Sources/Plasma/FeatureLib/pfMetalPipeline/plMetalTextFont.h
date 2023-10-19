@@ -42,11 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDXTextFont_h
 #define _plDXTextFont_h
 
-#include "plPipeline/plTextFont.h"
-#include "plMetalPipeline.h"
-#include "plMetalPipelineState.h"
 #include <Metal/Metal.hpp>
 
+#include "plMetalPipeline.h"
+#include "plMetalPipelineState.h"
+#include "plPipeline/plTextFont.h"
 
 //// plDXTextFont Class Definition ///////////////////////////////////////////
 
@@ -56,50 +56,47 @@ class plMetalDevice;
 class plMetalTextFontPipelineState : public plMetalPipelineState
 {
 public:
-    plMetalTextFontPipelineState(plMetalDevice* device): plMetalPipelineState(device) { };
-    virtual bool IsEqual(const plMetalPipelineState &p) const override;
-    virtual uint16_t GetID() const override { return 6; };
+    plMetalTextFontPipelineState(plMetalDevice* device) : plMetalPipelineState(device){};
+    virtual bool                  IsEqual(const plMetalPipelineState& p) const override;
+    virtual uint16_t              GetID() const override { return 6; };
     virtual plMetalPipelineState* Clone() override;
     virtual const MTL::Function*  GetVertexFunction(MTL::Library* library) override;
     virtual const MTL::Function*  GetFragmentFunction(MTL::Library* library) override;
     virtual const NS::String*     GetDescription() override;
-    
-    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) override;
-    
-    void ConfigureVertexDescriptor(MTL::VertexDescriptor *vertexDescriptor) override;
-    
-    void GetFunctionConstants(MTL::FunctionConstantValues *) const override;
-    
+
+    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override;
+
+    void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) override;
+
+    void GetFunctionConstants(MTL::FunctionConstantValues*) const override;
 };
 
 class plMetalTextFont : public plTextFont
 {
 protected:
-    static uint32_t                       fBufferCursor;
+    static uint32_t fBufferCursor;
 
-    void    ICreateTexture(uint16_t *data) override;
-    void    IInitStateBlocks() override;
-    void    IDrawPrimitive(uint32_t count, plFontVertex *array) override;
-    void    IDrawLines(uint32_t count, plFontVertex *array) override;
-    
-    MTL::Texture*   fTexture;
-    plMetalDevice*    fDevice;
-    
+    void ICreateTexture(uint16_t* data) override;
+    void IInitStateBlocks() override;
+    void IDrawPrimitive(uint32_t count, plFontVertex* array) override;
+    void IDrawLines(uint32_t count, plFontVertex* array) override;
+
+    MTL::Texture*  fTexture;
+    plMetalDevice* fDevice;
+
     plMetalPipeline* fPipeline;
 
 public:
-    plMetalTextFont( plPipeline *pipe, plMetalDevice *device );
+    plMetalTextFont(plPipeline* pipe, plMetalDevice* device);
     ~plMetalTextFont();
 
-    static  void CreateShared(plMetalDevice* device);
-    static  void ReleaseShared(MTL::Device* device);
+    static void CreateShared(plMetalDevice* device);
+    static void ReleaseShared(MTL::Device* device);
 
-    void    FlushDraws() override;
-    void    SaveStates() override;
-    void    RestoreStates() override;
-    void    DestroyObjects() override;
+    void FlushDraws() override;
+    void SaveStates() override;
+    void RestoreStates() override;
+    void DestroyObjects() override;
 };
 
-
 #endif // _plDXTextFont_h
-

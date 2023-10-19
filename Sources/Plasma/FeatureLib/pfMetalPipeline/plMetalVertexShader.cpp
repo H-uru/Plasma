@@ -39,20 +39,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-#include "hsWindows.h"
+#include "plMetalVertexShader.h"
 
 #include <Metal/Metal.hpp>
 
-#include "plMetalVertexShader.h"
-
-#include "plSurface/plShader.h"
-
+#include "HeadSpin.h"
+#include "hsWindows.h"
 #include "plDrawable/plGBufferGroup.h"
 #include "plMetalPipeline.h"
+#include "plSurface/plShader.h"
 
 plMetalVertexShader::plMetalVertexShader(plShader* owner)
-:   plMetalShader(owner)
+    : plMetalShader(owner)
 {
 }
 
@@ -65,17 +63,15 @@ void plMetalVertexShader::Release()
 {
     fPipe = nil;
 
-    //ISetError(nil);
+    // ISetError(nil);
 }
 
 bool plMetalVertexShader::ISetConstants(plMetalPipeline* pipe)
 {
-    if( fOwner->GetNumConsts() )
-    {
-        float *ptr = (float *)fOwner->GetConstBasePtr();
-        pipe->GetMetalDevice()->CurrentRenderCommandEncoder()->setVertexBytes(ptr, fOwner->GetNumConsts()  * sizeof(float) * 4, VertexShaderArgumentMaterialShaderUniforms);
+    if (fOwner->GetNumConsts()) {
+        float* ptr = (float*)fOwner->GetConstBasePtr();
+        pipe->GetMetalDevice()->CurrentRenderCommandEncoder()->setVertexBytes(ptr, fOwner->GetNumConsts() * sizeof(float) * 4, VertexShaderArgumentMaterialShaderUniforms);
     }
 
     return true;
 }
-

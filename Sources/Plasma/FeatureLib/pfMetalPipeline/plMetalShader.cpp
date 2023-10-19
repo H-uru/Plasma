@@ -39,17 +39,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "HeadSpin.h"
-
 #include "plMetalShader.h"
 
+#include "HeadSpin.h"
+#include "plMetalPipeline.h"
 #include "plSurface/plShader.h"
 
-#include "plMetalPipeline.h"
-
 plMetalShader::plMetalShader(plShader* owner)
-:   fOwner(owner),
-    fPipe(nil)
+    : fOwner(owner),
+      fPipe(nil)
 {
     owner->SetDeviceRef(this);
 }
@@ -58,13 +56,12 @@ plMetalShader::~plMetalShader()
 {
     fPipe = nil;
 
-    //ISetError(nil);
+    // ISetError(nil);
 }
 
 void plMetalShader::SetOwner(plShader* owner)
 {
-    if( owner != fOwner )
-    {
+    if (owner != fOwner) {
         Release();
         fOwner = owner;
         owner->SetDeviceRef(this);
@@ -81,4 +78,3 @@ void plMetalShader::SetOwner(plShader* owner)
 
     return hr;
 }*/
-

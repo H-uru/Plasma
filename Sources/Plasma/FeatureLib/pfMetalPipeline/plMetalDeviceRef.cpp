@@ -7,9 +7,8 @@
 
 #include "plMetalDeviceRef.h"
 
-
-
-void plMetalDeviceRef::Unlink() {
+void plMetalDeviceRef::Unlink()
+{
     hsAssert(fBack, "plGLDeviceRef not in list");
 
     if (fNext)
@@ -18,10 +17,10 @@ void plMetalDeviceRef::Unlink() {
 
     fBack = nullptr;
     fNext = nullptr;
-    
 }
 
-void plMetalDeviceRef::Link(plMetalDeviceRef **back) {
+void plMetalDeviceRef::Link(plMetalDeviceRef **back)
+{
     hsAssert(fNext == nullptr && fBack == nullptr, "Trying to link a plMetalDeviceRef that's already linked");
 
     fNext = *back;
@@ -42,7 +41,6 @@ plMetalVertexBufferRef::~plMetalVertexBufferRef()
     Release();
 }
 
-
 void plMetalVertexBufferRef::Release()
 {
     SetDirty(true);
@@ -50,30 +48,27 @@ void plMetalVertexBufferRef::Release()
 
 plMetalTextureRef::~plMetalTextureRef()
 {
-    //fTexture->release();
+    // fTexture->release();
     Release();
 }
-
 
 void plMetalTextureRef::Release()
 {
     SetDirty(true);
 }
 
-
 plMetalIndexBufferRef::~plMetalIndexBufferRef()
 {
     Release();
 }
-
 
 void plMetalIndexBufferRef::Release()
 {
     SetDirty(true);
 }
 
-
-plMetalRenderTargetRef::~plMetalRenderTargetRef() {
+plMetalRenderTargetRef::~plMetalRenderTargetRef()
+{
     Release();
 }
 

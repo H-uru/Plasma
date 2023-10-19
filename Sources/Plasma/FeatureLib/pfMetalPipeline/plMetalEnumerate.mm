@@ -47,46 +47,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Foundation/Foundation.h>
 
-#include "plMetalPipeline.h"
 #include <sys/utsname.h>
+#include "plMetalPipeline.h"
 
-void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
-{
-    //For now - just use the default device. If there is a high power discrete device - this will spin it up.
-    //This will also automatically pin us to an eGPU if present and the user has configured us to use it.
-    MTL::Device* device = MTL::CreateSystemDefaultDevice();
-    
-    if (device) {
-        hsG3DDeviceRecord devRec;
-        devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeMetal);
-        devRec.SetDriverName("Metal");
-        devRec.SetDeviceDesc(device->name()->utf8String());
-        //Metal has ways to query capabilities, but doesn't expose a flat version
-        //Populate with the OS version
-        @autoreleasepool {
-            NSProcessInfo *processInfo = [NSProcessInfo processInfo];
-            NSOperatingSystemVersion version  = processInfo.operatingSystemVersion;
-            NSString *versionString = [NSString stringWithFormat:@"%li.%li.%li", (long)version.majorVersion, (long)version.minorVersion, version.patchVersion];
-            devRec.SetDriverVersion([versionString cStringUsingEncoding:NSUTF8StringEncoding]);
-        }
-        devRec.SetDriverDesc(device->name()->utf8String());
-        
-        devRec.SetCap(hsG3DDeviceSelector::kCapsMipmap);
-        devRec.SetCap(hsG3DDeviceSelector::kCapsPerspective);
-        devRec.SetCap(hsG3DDeviceSelector::kCapsCompressTextures);
-        devRec.SetCap(hsG3DDeviceSelector::kCapsDoesSmallTextures);
-        devRec.SetCap(hsG3DDeviceSelector::kCapsPixelShader);
-        devRec.SetCap(hsG3DDeviceSelector::kCapsHardware);
+void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records) {
+  // For now - just use the default device. If there is a high power discrete device - this will
+  // spin it up. This will also automatically pin us to an eGPU if present and the user has
+  // configured us to use it.
+  MTL::Device* device = MTL::CreateSystemDefaultDevice();
 
-        devRec.SetLayersAtOnce(8);
-        
-        // Just make a fake mode so the device selector will let it through
-        hsG3DDeviceMode devMode;
-        devMode.SetWidth(hsG3DDeviceSelector::kDefaultWidth);
-        devMode.SetHeight(hsG3DDeviceSelector::kDefaultHeight);
-        devMode.SetColorDepth(hsG3DDeviceSelector::kDefaultDepth);
-        devRec.GetModes().emplace_back(devMode);
-        
-        records.emplace_back(devRec);
+  if (device) {
+    hsG3DDeviceRecord devRec;
+    devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeMetal);
+    devRec.SetDriverName("Metal");
+    devRec.SetDeviceDesc(device->name()->utf8String());
+    // Metal has ways to query capabilities, but doesn't expose a flat version
+    // Populate with the OS version
+    @autoreleasepool {
+      NSProcessInfo* processInfo = [NSProcessInfo processInfo];
+      NSOperatingSystemVersion version = processInfo.operatingSystemVersion;
+      NSString* versionString =
+          [NSString stringWithFormat:@"%li.%li.%li", (long)version.majorVersion,
+                                     (long)version.minorVersion, version.patchVersion];
+      devRec.SetDriverVersion([versionString cStringUsingEncoding:NSUTF8StringEncoding]);
     }
+    devRec.SetDriverDesc(device->name()->utf8String());
+
+    devRec.SetCap(hsG3DDeviceSelector::kCapsMipmap);
+    devRec.SetCap(hsG3DDeviceSelector::kCapsPerspective);
+    devRec.SetCap(hsG3DDeviceSelector::kCapsCompressTextures);
+    devRec.SetCap(hsG3DDeviceSelector::kCapsDoesSmallTextures);
+    devRec.SetCap(hsG3DDeviceSelector::kCapsPixelShader);
+    devRec.SetCap(hsG3DDeviceSelector::kCapsHardware);
+
+    devRec.SetLayersAtOnce(8);
+
+    // Just make a fake mode so the device selector will let it through
+    hsG3DDeviceMode devMode;
+    devMode.SetWidth(hsG3DDeviceSelector::kDefaultWidth);
+    devMode.SetHeight(hsG3DDeviceSelector::kDefaultHeight);
+    devMode.SetColorDepth(hsG3DDeviceSelector::kDefaultDepth);
+    devRec.GetModes().emplace_back(devMode);
+
+    records.emplace_back(devRec);
+  }
 }

@@ -43,9 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plDXShader_inc
 #define plDXShader_inc
 
-#include "plMetalDeviceRef.h"
-#include <string_theory/string>
 #include <Metal/Metal.hpp>
+#include <string_theory/string>
+
+#include "plMetalDeviceRef.h"
 
 class plShader;
 class plMetalPipeline;
@@ -53,24 +54,24 @@ class plMetalPipeline;
 class plMetalShader : public plMetalDeviceRef
 {
 protected:
-    plShader*           fOwner;
-    //ST::string          fErrorString;
-    plMetalPipeline*       fPipe;
-    MTL::Function*       fFunction;
+    plShader*        fOwner;
+    // ST::string          fErrorString;
+    plMetalPipeline* fPipe;
+    MTL::Function*   fFunction;
 
-    //HRESULT             IOnError(HRESULT hr, const char* errStr);
-    //void                ISetError(const char* errStr) { fErrorString = errStr; }
+    // HRESULT             IOnError(HRESULT hr, const char* errStr);
+    // void                ISetError(const char* errStr) { fErrorString = errStr; }
 
-    //virtual HRESULT     ICreate(plDXPipeline* pipe) = 0;
-    virtual bool     ISetConstants(plMetalPipeline* pipe) = 0; // On error, sets error string.
+    // virtual HRESULT     ICreate(plDXPipeline* pipe) = 0;
+    virtual bool ISetConstants(plMetalPipeline* pipe) = 0; // On error, sets error string.
 
 public:
     plMetalShader(plShader* owner);
     virtual ~plMetalShader();
 
-    //ST::string      GetErrorString() const { return fErrorString; }
-    void            SetOwner(plShader* owner);
-    MTL::Function*  GetShader(plMetalPipeline* pipe) { return fFunction; };
+    // ST::string      GetErrorString() const { return fErrorString; }
+    void           SetOwner(plShader* owner);
+    MTL::Function* GetShader(plMetalPipeline* pipe) { return fFunction; };
 };
 
 #endif // plDXShader_inc

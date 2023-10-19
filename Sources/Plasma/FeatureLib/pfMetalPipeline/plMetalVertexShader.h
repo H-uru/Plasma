@@ -51,16 +51,14 @@ class plMetalPipeline;
 class plMetalVertexShader : public plMetalShader
 {
 protected:
-
-
 public:
-    virtual bool     ISetConstants(plMetalPipeline* pipe); // On error, sets error string.
+    virtual bool ISetConstants(plMetalPipeline* pipe); // On error, sets error string.
     plMetalVertexShader(plShader* owner);
     virtual ~plMetalVertexShader();
 
-    virtual void    Release();
-    void            Link(plMetalVertexShader** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalVertexShader*    GetNext() { return (plMetalVertexShader*)fNext; }
+    virtual void         Release();
+    void                 Link(plMetalVertexShader** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
+    plMetalVertexShader* GetNext() { return (plMetalVertexShader*)fNext; }
 };
 
 #endif // plMetalVertexShader_inc
