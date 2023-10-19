@@ -120,6 +120,19 @@ void plMetalMaterialShaderRef::CheckMateralRef()
 // fast encode doesn't support piggybacks or push over layers, but it does use preloaded data on the GPU so it's much faster. Use this encoder if there are no piggybacks or pushover layers
 void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder* encoder, VertexUniforms* vertexUniforms, uint pass)
 {
+    /*
+     NOTE:
+     This code is all that remains of the UBO path - which has slowly been cut down
+     by piggybacks interfering with UBOs, and a lot of uniforms moving into precompiled
+     sections of the shaders.
+     
+     plMetalFragmentShaderArgumentBuffer literally just has one float left - which could
+     be factored out. The only reason this code hasn't been deleted is because plates
+     still relies on it - but plates also needs to be updated anyway.
+     
+     UBOs in theory are more efficient. So we either need to figure out how to do UBOs
+     or finally delete this code for good.
+     */
     for (uint32_t i = GetPassIndex(pass); i < GetPassIndex(pass) + fPassLengths[pass]; i++) {
         plLayerInterface* layer = fMaterial->GetLayer(i);
 
