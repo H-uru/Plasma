@@ -11900,8 +11900,7 @@ void plDXPipeline::ISetShadowLightState(hsGMaterial* mat)
 // the surface.
 void plDXPipeline::IDisableLightsForShadow()
 {
-    int i;
-    for( i = 0; i < fLights.fLastIndex + 1; i++ )
+    for(int i = 0; i < fLights.fLastIndex + 1; i++ )
     {
         if( fLights.fEnabledFlags.IsBitSet(i) )
         {
