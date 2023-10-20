@@ -9162,8 +9162,7 @@ HRESULT plDXPipeline::ISetShaders(plShader* vShader, plShader* pShader)
         // This is truly obnoxious, but D3D insists that, while using the progammable pipeline,
         // all stages be set up like this, not just the ones we're going to use. We have to
         // do this if we have either a vertex or a pixel shader. See below. Whatever. mf
-        int i;
-        for( i = 0; i < 8; i++ )
+        for(int i = 0; i < 8; i++ )
         {
             fD3DDevice->SetTextureStageState(i, D3DTSS_TEXCOORDINDEX, fLayerUVWSrcs[i] = i);
             fD3DDevice->SetTextureStageState(i, D3DTSS_TEXTURETRANSFORMFLAGS, fLayerXformFlags[i] = 0);
@@ -9189,8 +9188,7 @@ HRESULT plDXPipeline::ISetShaders(plShader* vShader, plShader* pShader)
 
         if( !vShader )
         {
-            int i;
-            for( i = 0; i < 8; i++ )
+            for(int i = 0; i < 8; i++ )
             {
                 fD3DDevice->SetTextureStageState(i, D3DTSS_TEXCOORDINDEX, fLayerUVWSrcs[i] = i);
                 fD3DDevice->SetTextureStageState(i, D3DTSS_TEXTURETRANSFORMFLAGS, fLayerXformFlags[i] = 0);
