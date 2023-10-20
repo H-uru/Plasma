@@ -415,11 +415,8 @@ plDXRenderTargetRef& plDXRenderTargetRef::Set( D3DFORMAT tp, uint32_t ml, plRend
 
 void    plDXRenderTargetRef::SetTexture( IDirect3DCubeTexture9 *surface, IDirect3DSurface9 *depth )
 {
-    int                     i;
-    IDirect3DSurface9       *surf;
-    plDXRenderTargetRef *ref;
-    plCubicRenderTarget     *cubic;
-    D3DCUBEMAP_FACES        faces[ 6 ] = {  D3DCUBEMAP_FACE_NEGATIVE_X,     // Left
+	IDirect3DSurface9       *surf;
+	constexpr D3DCUBEMAP_FACES        faces[ 6 ] = {  D3DCUBEMAP_FACE_NEGATIVE_X,     // Left
                                             D3DCUBEMAP_FACE_POSITIVE_X,     // Right
                                             D3DCUBEMAP_FACE_POSITIVE_Z,     // Front
                                             D3DCUBEMAP_FACE_NEGATIVE_Z,     // Back
@@ -432,15 +429,15 @@ void    plDXRenderTargetRef::SetTexture( IDirect3DCubeTexture9 *surface, IDirect
     fD3DColorSurface = nullptr;
 
     /// Get the faces and assign to each of the child targets
-    cubic = plCubicRenderTarget::ConvertNoRef( fOwner );
-    for( i = 0; i < 6; i++ )
+	const plCubicRenderTarget* cubic = plCubicRenderTarget::ConvertNoRef(fOwner);
+    for( int i = 0; i < 6; i++ )
     {
         if( surface->GetCubeMapSurface( faces[ i ], 0, &surf ) != D3D_OK )
         {
             hsAssert( false, "Unable to get cube map surface" );
             continue;
         }
-        ref = (plDXRenderTargetRef *)cubic->GetFace( i )->GetDeviceRef();
+        plDXRenderTargetRef* ref = (plDXRenderTargetRef*)cubic->GetFace(i)->GetDeviceRef();
 
         ref->SetTexture( surf, depth );
     }
@@ -457,18 +454,13 @@ plDXRenderTargetRef::~plDXRenderTargetRef()
 
 void    plDXRenderTargetRef::Release()
 {
-    int                     i;
-    plCubicRenderTarget     *cubic;
-    plDXRenderTargetRef *ref;
-
-
-    /// Get rid of the children's deviceRefs
+	/// Get rid of the children's deviceRefs
     if( fFlags & kCubicMap )
     {
-        cubic = plCubicRenderTarget::ConvertNoRef( fOwner );
-        for( i = 0; i < 6; i++ )
+	    plCubicRenderTarget* cubic = plCubicRenderTarget::ConvertNoRef(fOwner);
+        for( int i = 0; i < 6; i++ )
         {
-            ref = (plDXRenderTargetRef *)cubic->GetFace( i )->GetDeviceRef();
+            plDXRenderTargetRef* ref = (plDXRenderTargetRef*)cubic->GetFace(i)->GetDeviceRef();
             ref->Release();
             ref->SetDirty( true );
         }
