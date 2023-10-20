@@ -753,7 +753,7 @@ void    plDXPipeline::IInitDeviceState()
     fD3DDevice->SetRenderState( D3DRS_MULTISAMPLEANTIALIAS, ( fSettings.fD3DCaps & kCapsFSAntiAlias ) ? TRUE : FALSE );
     fD3DDevice->SetRenderState( D3DRS_ANTIALIASEDLINEENABLE,        FALSE );
 
-    fD3DDevice->SetRenderState( D3DRS_DITHERENABLE,     FALSE );
+    fD3DDevice->SetRenderState( D3DRS_DITHERENABLE,     TRUE );
     fD3DDevice->SetRenderState( D3DRS_SPECULARENABLE,   FALSE );
     fD3DDevice->SetRenderState( D3DRS_LIGHTING,         FALSE );    
     fCurrD3DLiteState = false;
@@ -4914,26 +4914,26 @@ void plDXPipeline::IRestoreSpanLights()
 void    plDXPipeline::IScaleD3DLight( plDXLightRef *ref, float scale )
 {
     scale = int(scale * 1.e1f) * 1.e-1f;
-    if( ref->fScale != scale )
-    {
-        D3DLIGHT9       light = ref->fD3DInfo;
+    if (ref->fScale == scale)
+        return;
+
+    D3DLIGHT9       light = ref->fD3DInfo;
 
 
-        light.Diffuse.r *= scale;
-        light.Diffuse.g *= scale;
-        light.Diffuse.b *= scale;
+    light.Diffuse.r *= scale;
+    light.Diffuse.g *= scale;
+    light.Diffuse.b *= scale;
 
-        light.Ambient.r *= scale;
-        light.Ambient.g *= scale;
-        light.Ambient.b *= scale;
+    light.Ambient.r *= scale;
+    light.Ambient.g *= scale;
+    light.Ambient.b *= scale;
 
-        light.Specular.r *= scale;
-        light.Specular.g *= scale;
-        light.Specular.b *= scale;
+    light.Specular.r *= scale;
+    light.Specular.g *= scale;
+    light.Specular.b *= scale;
 
-        fD3DDevice->SetLight( ref->fD3DIndex, &light );
-        ref->fScale = scale;
-    }
+    fD3DDevice->SetLight( ref->fD3DIndex, &light );
+    ref->fScale = scale;
 }
 
 // inlPlToDWORDColor /////////////////////////////////////////////////
@@ -4962,22 +4962,22 @@ inline D3DCOLORVALUE plDXPipeline::inlPlToD3DColor(const hsColorRGBA& c, float a
 // Turn D3D lighting on if it isn't already.
 inline void plDXPipeline::inlEnsureLightingOn()
 {
-    if( !fCurrD3DLiteState )
-    {
-        fD3DDevice->SetRenderState( D3DRS_LIGHTING, TRUE );
-        fCurrD3DLiteState = true;
-    }
+    if (fCurrD3DLiteState)
+        return;
+
+    fD3DDevice->SetRenderState( D3DRS_LIGHTING, TRUE );
+    fCurrD3DLiteState = true;
 }
 
 // inlEnsureLightingOff ///////////////////////////////////////////////
 // Turn D3D lighting off if it isn't already.
 inline void plDXPipeline::inlEnsureLightingOff()
 {
-    if( fCurrD3DLiteState )
-    { 
-        fD3DDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
-        fCurrD3DLiteState = false;
-    }
+    if (!fCurrD3DLiteState)
+        return;
+
+    fD3DDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
+    fCurrD3DLiteState = false;
 }
 
 // ColorMul ///////////////////////////////////////////////////////////
@@ -5315,14 +5315,14 @@ void    plDXPipeline::ISetLayer( uint32_t lay )
 // Turn off any Z bias.
 void    plDXPipeline::IBottomLayer()
 {
-    if( fCurrRenderLayer != 0 )
-    {
-        fCurrRenderLayer = 0;
-        if( !( fSettings.fD3DCaps & kCapsZBias ) )
-            IProjectionMatrixToDevice();
-        else
-            fD3DDevice->SetRenderState( D3DRS_DEPTHBIAS, 0 );
-    }
+    if (fCurrRenderLayer == 0)
+        return;
+
+    fCurrRenderLayer = 0;
+    if( !( fSettings.fD3DCaps & kCapsZBias ) )
+        IProjectionMatrixToDevice();
+    else
+        fD3DDevice->SetRenderState( D3DRS_DEPTHBIAS, 0 );
 }
 
 // Special effects /////////////////////////////////////////////////////////////
