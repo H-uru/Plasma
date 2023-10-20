@@ -753,7 +753,7 @@ void    plDXPipeline::IInitDeviceState()
     fD3DDevice->SetRenderState( D3DRS_MULTISAMPLEANTIALIAS, ( fSettings.fD3DCaps & kCapsFSAntiAlias ) ? TRUE : FALSE );
     fD3DDevice->SetRenderState( D3DRS_ANTIALIASEDLINEENABLE,        FALSE );
 
-    fD3DDevice->SetRenderState( D3DRS_DITHERENABLE,     TRUE );
+    fD3DDevice->SetRenderState( D3DRS_DITHERENABLE,     FALSE );
     fD3DDevice->SetRenderState( D3DRS_SPECULARENABLE,   FALSE );
     fD3DDevice->SetRenderState( D3DRS_LIGHTING,         FALSE );    
     fCurrD3DLiteState = false;
