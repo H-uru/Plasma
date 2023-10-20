@@ -10591,8 +10591,8 @@ struct plShadowVertStruct
 void plDXPipeline::IReleaseBlurVBuffers()
 {
     const uint32_t kVSize = sizeof(plShadowVertStruct);
-    int i;
-    for( i = 0; i < kMaxRenderTargetNext; i++ )
+
+    for(int i = 0; i < kMaxRenderTargetNext; i++ )
     {
         if (fBlurVBuffers[i])
         {
