@@ -78,8 +78,8 @@ class plDXRenderTargetRef: public plDXTextureRef
 
         virtual void    SetOwner( plRenderTarget *targ ) { fOwner = (plBitmap *)targ; }
 
-        template <typename ColorType, typename DepthType>
-        void SetTexture(ColorType color, DepthType depth)
+        template <typename ColorType>
+        void SetTexture(ColorType color, IDirect3DSurface9* depth)
         {
             if constexpr (std::is_same<ColorType, IDirect3DSurface9*>::value) {
                 fD3DColorSurface = color;
