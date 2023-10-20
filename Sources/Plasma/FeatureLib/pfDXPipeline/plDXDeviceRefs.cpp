@@ -413,20 +413,6 @@ plDXRenderTargetRef& plDXRenderTargetRef::Set( D3DFORMAT tp, uint32_t ml, plRend
 
 //// SetTexture ///////////////////////////////////////////////////////////////
 
-void    plDXRenderTargetRef::SetTexture( IDirect3DSurface9 *surface, IDirect3DSurface9 *depth )
-{
-    fD3DColorSurface = surface;
-    fD3DTexture = nullptr;
-    fD3DDepthSurface = depth;
-}
-
-void    plDXRenderTargetRef::SetTexture( IDirect3DTexture9 *surface, IDirect3DSurface9 *depth )
-{
-    fD3DTexture = surface;
-    fD3DColorSurface = nullptr;
-    fD3DDepthSurface = depth;
-}
-
 void    plDXRenderTargetRef::SetTexture( IDirect3DCubeTexture9 *surface, IDirect3DSurface9 *depth )
 {
     int                     i;
