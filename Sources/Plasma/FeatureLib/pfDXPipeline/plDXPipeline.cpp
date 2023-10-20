@@ -8023,7 +8023,7 @@ void    plDXPipeline::IFormatTextureData( uint32_t formatType, uint32_t numPix, 
 
 bool  plDXPipeline::IIsViewLeftHanded()
 {
-    return fView.GetViewTransform().GetOrthogonal() ^ ( fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded ) ? true : false;
+    return (fView.GetViewTransform().GetOrthogonal() ^ (fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded)) != false;
 }
 
 
