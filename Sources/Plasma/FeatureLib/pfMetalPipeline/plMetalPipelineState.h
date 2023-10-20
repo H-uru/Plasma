@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMetalDevice.h"
 #include "plSurface/plShaderTable.h"
 
+//MARK: Base pipeline state
+
 class plMetalPipelineState
 {
 public:
@@ -89,6 +91,8 @@ protected:
     }
 };
 
+//MARK: Abstract FVF vertex shader program parent type
+
 class plMetalRenderSpanPipelineState : public plMetalPipelineState
 {
 public:
@@ -120,6 +124,8 @@ protected:
         return constants;
     }
 };
+
+//MARK: Fixed function emulating material program
 
 struct plMetalFragmentShaderDescription
 {
@@ -205,6 +211,8 @@ protected:
     plMetalFragmentShaderDescription fFragmentShaderDescription;
 };
 
+//MARK: Shadow casting program
+
 class plMetalRenderShadowCasterPipelineState : public plMetalRenderSpanPipelineState
 {
 public:
@@ -233,6 +241,8 @@ public:
     }
 };
 
+//MARK: Shadow rendering program
+
 class plMetalRenderShadowPipelineState : public plMetalMaterialPassPipelineState
 {
 public:
@@ -255,6 +265,8 @@ public:
         return new plMetalRenderShadowPipelineState(*this);
     }
 };
+
+//MARK: Shader based render programs
 
 class plMetalDynamicMaterialPipelineState : public plMetalRenderSpanPipelineState
 {
@@ -319,6 +331,8 @@ struct std::hash<plMetalPipelineState>
     }
 };
 
+//MARK: Clear buffer program
+
 class plMetalClearPipelineState : public plMetalPipelineState
 {
 public:
@@ -343,11 +357,11 @@ public:
         return new plMetalClearPipelineState(*this);
     };
 
-    //
     virtual const MTL::Function* GetVertexFunction(MTL::Library* library) override
     {
         return library->newFunction(NS::MakeConstantString("clearVertex"));
     };
+    
     virtual const MTL::Function* GetFragmentFunction(MTL::Library* library) override
     {
         return library->newFunction(NS::MakeConstantString("clearFragment"),
@@ -362,13 +376,8 @@ public:
 
     virtual void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override
     {
-        // if (fShouldClearColor) {
         descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
         descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
-        //} else {
-        //    descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
-        //    descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
-        //}
     };
 
     virtual void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) override

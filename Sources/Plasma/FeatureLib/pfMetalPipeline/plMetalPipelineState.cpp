@@ -178,20 +178,16 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
         case hsGMatState::kBlendAlpha:
             if (blendMode & hsGMatState::kBlendInvertFinalAlpha) {
                 if (blendMode & hsGMatState::kBlendAlphaPremultiplied) {
-                    // printf("glBlendFunc(GL_ONE, GL_SRC_ALPHA);\n");
                     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
                 } else {
-                    // printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);\n");
                     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
                     ;
                 }
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorSourceAlpha);
             } else {
                 if (blendMode & hsGMatState::kBlendAlphaPremultiplied) {
-                    // printf("glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);\n");
                     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
                 } else {
-                    // printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);\n");
                     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
                 }
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
@@ -201,13 +197,11 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
         // Multiply the final color onto the frame buffer.
         case hsGMatState::kBlendMult:
             if (blendMode & hsGMatState::kBlendInvertFinalColor) {
-                // printf("glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);\n");
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
                 descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceColor);
                 descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOneMinusSourceColor);
             } else {
-                // printf("glBlendFunc(GL_ZERO, GL_SRC_COLOR);\n");
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorZero);
                 descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorZero);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorSourceColor);
@@ -217,7 +211,6 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
 
         // Add final color to FB.
         case hsGMatState::kBlendAdd:
-            // printf("glBlendFunc(GL_ONE, GL_ONE);\n");
             descriptor->setRgbBlendOperation(MTL::BlendOperationAdd);
             descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
             descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
@@ -225,7 +218,6 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
 
         // Multiply final color by FB color and add it into the FB.
         case hsGMatState::kBlendMADD:
-            // printf("glBlendFunc(GL_DST_COLOR, GL_ONE);\n");
             descriptor->setSourceRGBBlendFactor(MTL::BlendFactorDestinationColor);
             descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
             break;
@@ -233,13 +225,11 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
         // Final color times final alpha, added into the FB.
         case hsGMatState::kBlendAddColorTimesAlpha:
             if (blendMode & hsGMatState::kBlendInvertFinalAlpha) {
-                // printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_ONE);\n");
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
                 descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
                 descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorOne);
             } else {
-                // printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE);\n");
                 descriptor->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
                 descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorSourceAlpha);
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOne);
@@ -249,19 +239,12 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
 
         // Overwrite final color onto FB
         case 0:
-            // printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
             descriptor->setRgbBlendOperation(MTL::BlendOperationAdd);
             descriptor->setAlphaBlendOperation(MTL::BlendOperationAdd);
-            // printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
             descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
             descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
             descriptor->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
             descriptor->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);
-
-            /*descriptor->colorAttachments()->object(0)->setSourceRGBBlendFactor(MTL::BlendFactorOne);
-            descriptor->colorAttachments()->object(0)->setSourceAlphaBlendFactor(MTL::BlendFactorOne);
-            descriptor->colorAttachments()->object(0)->setDestinationRGBBlendFactor(MTL::BlendFactorZero);
-            descriptor->colorAttachments()->object(0)->setDestinationAlphaBlendFactor(MTL::BlendFactorZero);*/
             break;
 
         default: {
@@ -400,6 +383,7 @@ const MTL::Function* plMetalDynamicMaterialPipelineState::GetVertexFunction(MTL:
 {
     MTL::FunctionConstantValues* functionConstants = MakeFunctionConstants();
     MTL::Function*               vertFunction;
+    // map the original engine vertex shader id to the pixel shader function
     switch (fVertexShaderID) {
         case plShaderID::vs_WaveFixedFin7:
             vertFunction = library->newFunction(
@@ -453,6 +437,7 @@ const MTL::Function* plMetalDynamicMaterialPipelineState::GetFragmentFunction(MT
 {
     MTL::FunctionConstantValues* functionConstants = MakeFunctionConstants();
     MTL::Function*               fragFunction;
+    // map the original engine pixel shader id to the pixel shader function
     switch (fFragmentShaderID) {
         case plShaderID::ps_WaveFixed:
             fragFunction = library->newFunction(
