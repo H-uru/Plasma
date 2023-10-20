@@ -6410,20 +6410,25 @@ void    plDXPipeline::IHandleTextureMode(plLayerInterface* layer)
             // If we want to ignore vertex alpha, select arg1
             // If we want to ignore texture alpha, select arg2
             // Otherwise (and normally) multiply the two.
-            fD3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,
-                fLayerState[0].fBlendFlags & hsGMatState::kBlendNoVtxAlpha
-                    ? D3DTOP_SELECTARG1
-                    :   fLayerState[0].fBlendFlags & hsGMatState::kBlendNoTexAlpha
-                        ? D3DTOP_SELECTARG2
-                        : D3DTOP_MODULATE );
-            fD3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, 
-                fLayerState[0].fBlendFlags & hsGMatState::kBlendInvertAlpha 
-                    ? D3DTA_TEXTURE | D3DTA_COMPLEMENT 
-                    : D3DTA_TEXTURE);
-            fD3DDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE | 
-                        ( fLayerState[0].fBlendFlags & hsGMatState::kBlendInvertVtxAlpha 
-                            ? D3DTA_COMPLEMENT 
-                            : 0 ) ); 
+            if (fLayerState[0].fBlendFlags & hsGMatState::kBlendNoVtxAlpha) {
+                fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+            } else {
+                if (fLayerState[0].fBlendFlags & hsGMatState::kBlendNoTexAlpha) {
+                    fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG2);
+                } else {
+                    fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+                }
+            }
+            if (fLayerState[0].fBlendFlags & hsGMatState::kBlendInvertAlpha) {
+                fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE | D3DTA_COMPLEMENT);
+            } else {
+                fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+            }
+            if (fLayerState[0].fBlendFlags & hsGMatState::kBlendInvertVtxAlpha) {
+                fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE | D3DTA_COMPLEMENT);
+            } else {
+                fD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE | 0);
+            }
 
             fTexturing = true;
         }
