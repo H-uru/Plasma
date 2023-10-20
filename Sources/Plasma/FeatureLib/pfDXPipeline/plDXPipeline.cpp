@@ -6380,11 +6380,13 @@ void    plDXPipeline::IHandleTextureMode(plLayerInterface* layer)
                 if( fLayerState[0].fBlendFlags & hsGMatState::kBlendNoTexColor )
                     fD3DDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_SELECTARG2 );
                 else
-                    fD3DDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_MODULATE );   
-                fD3DDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, 
-                    fLayerState[0].fBlendFlags & hsGMatState::kBlendInvertColor 
-                        ? D3DTA_TEXTURE | D3DTA_COMPLEMENT 
-                        : D3DTA_TEXTURE);
+                    fD3DDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_MODULATE );
+
+                if (fLayerState[0].fBlendFlags & hsGMatState::kBlendInvertColor) {
+                    fD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE | D3DTA_COMPLEMENT);
+                } else {
+                    fD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+                }
                 fD3DDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
 
             }
@@ -6395,10 +6397,12 @@ void    plDXPipeline::IHandleTextureMode(plLayerInterface* layer)
 
                 // Multitexturing, select texture color to make its way upstream on stages.
                 fD3DDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG1 );
-                fD3DDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, 
-                    fLayerState[0].fBlendFlags & hsGMatState::kBlendInvertColor 
-                        ? D3DTA_TEXTURE | D3DTA_COMPLEMENT 
-                        : D3DTA_TEXTURE);
+
+                if (fLayerState[0].fBlendFlags & hsGMatState::kBlendInvertColor) {
+                    fD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE | D3DTA_COMPLEMENT);
+                } else {
+                    fD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+                }
 
                 // If our NoTexColor setting has changed, for a refresh of blend state on the next stage
                 // since it's affected by our NoTexColor state.
