@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNbConst.h"
 #include "pnNetCli/pnNetCli.h"
 #include "pnNetCommon/plNetApp.h"
+#include "pnUtils/pnUtStr.h"
 
 #include "plFile/plStreamSource.h"
 #include "plMessage/plAccountUpdateMsg.h"

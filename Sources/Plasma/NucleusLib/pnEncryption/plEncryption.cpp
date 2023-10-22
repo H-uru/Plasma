@@ -39,17 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Private/pnUtCrypt.cpp
-*   
-***/
 
-#include "Pch.h"
-
-#include "pnUtCrypt.h"
-#include "pnUtStr.h"
-#include "pnUtTime.h"
+#include "plEncryption.h"
 
 #include <openssl/rc4.h>
 

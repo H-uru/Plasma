@@ -274,7 +274,7 @@ static bool SocketInitConnect(ConnectOperation& op)
     // This steals ownership of op->fSock
     auto sock = std::make_unique<AsyncSocketStruct>(op);
 
-    sock->initTimeMs = TimeGetMs();
+    sock->initTimeMs = hsTimer::GetMilliSeconds<unsigned>();
 
     asio::error_code err;
     sock->fSock.non_blocking(true, err);
@@ -422,7 +422,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
     // check for data backlog
     if (!conn->fWriteOps.empty()) {
         WriteOperation* firstQueuedWrite = conn->fWriteOps.front();
-        unsigned currTimeMs = TimeGetMs();
+        unsigned currTimeMs = hsTimer::GetMilliSeconds<unsigned>();
         if (((long)(currTimeMs - firstQueuedWrite->queueTimeMs) >= (long)kBacklogFailMs) && ((long)(currTimeMs - conn->initTimeMs) >= (long)kBacklogInitMs)) {
             PerfAddCounter(kAsyncPerfSocketDisconnectBacklog, 1);
 
@@ -464,7 +464,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
         op->fNotify.buffer = membuf + sizeof(WriteOperation);
         op->fNotify.bytes = bytes;
         op->fNotify.bytesProcessed = 0;
-        op->queueTimeMs = TimeGetMs();
+        op->queueTimeMs = hsTimer::GetMilliSeconds<unsigned>();
         memcpy(op->fNotify.buffer, data, bytes);
 
         PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytes);

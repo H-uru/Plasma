@@ -53,6 +53,7 @@ target_link_libraries(plNetClient
         pnModifier
         pnNucleusInc
         pnSceneObject
+        pnUtils
         plAgeDescription
         plAgeLoader
         plAnimation

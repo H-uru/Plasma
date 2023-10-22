@@ -73,9 +73,10 @@ static void CreateThreadProc(AsyncThreadRef thread)
 //============================================================================
 void ThreadDestroy(unsigned exitThreadWaitMs)
 {
-    unsigned bailAt = TimeGetMs() + exitThreadWaitMs;
-    while (AsyncPerfGetCounter(kAsyncPerfThreadsCurr) && signed(bailAt - TimeGetMs()) > 0)
+    unsigned bailAt = hsTimer::GetMilliSeconds<unsigned>() + exitThreadWaitMs;
+    while (AsyncPerfGetCounter(kAsyncPerfThreadsCurr) && hsTimer::GetMilliSeconds<unsigned>() < bailAt) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 }
 
 //============================================================================

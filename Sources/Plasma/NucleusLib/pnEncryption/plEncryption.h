@@ -39,16 +39,58 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef PL_ENCRYPTION_H
+#define PL_ENCRYPTION_H
+
+#include "plChecksum.h"
+
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnUtils/Pch.h
-*   
+*   Types and constants
+*
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNUTILS_PCH_H
+struct CryptKey;
 
-#include "pnUtCoreLib.h"    // must be first in list
-#include "hsWindows.h"
+enum ECryptAlgorithm {
+    kCryptRc4,
+    kCryptRsa,
+    kNumCryptAlgorithms
+};
 
+
+/*****************************************************************************
+*
+*   Key generation
+*
+***/
+
+CryptKey * CryptKeyCreate (
+    ECryptAlgorithm algorithm,
+    unsigned        bytes,
+    const void *    data
+);
+
+void CryptKeyClose (
+    CryptKey *      key
+);
+
+/*****************************************************************************
+*
+*   Encryption and Decryption
+*
+***/
+
+void CryptEncrypt (
+    CryptKey *      key,
+    unsigned        bytes,
+    void *          data
+);
+
+void CryptDecrypt (
+    CryptKey *      key,
+    unsigned        bytes,
+    void *          data
+);
 #endif

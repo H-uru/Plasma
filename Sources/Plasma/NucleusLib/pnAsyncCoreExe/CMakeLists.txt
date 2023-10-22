@@ -26,7 +26,7 @@ target_link_libraries(
         CoreLib
         pnAsyncCore
         pnNetBase
-        pnUtils
+        pnNucleusInc
         ASIO::ASIO
         $<$<BOOL:${USE_VLD}>:${VLD_LIBRARY}>
 )

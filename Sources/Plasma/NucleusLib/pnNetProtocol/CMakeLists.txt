@@ -39,6 +39,7 @@ target_link_libraries(
     pnNetProtocol
     PUBLIC
         CoreLib
+        pnEncryption
         pnNetBase
         pnUUID
     PRIVATE

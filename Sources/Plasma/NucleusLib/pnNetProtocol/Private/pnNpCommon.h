@@ -64,6 +64,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef USES_NETCLI
 
+#include "pnEncryption/plChecksum.h"
+
 const NetMsgField kNetMsgFieldAccountName   = NET_MSG_FIELD_STRING(kMaxAccountNameLength);
 const NetMsgField kNetMsgFieldPlayerName    = NET_MSG_FIELD_STRING(kMaxPlayerNameLength);
 const NetMsgField kNetMsgFieldShaDigest     = NET_MSG_FIELD_RAW_DATA(sizeof(ShaDigest));

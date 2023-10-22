@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <regex>
 #include "pnEncryption/plChallengeHash.h"
+#include "pnUtils/pnUtStr.h"
+
 #include "plVault/plVaultConstants.h"
 
 namespace Ngl { namespace Auth {
@@ -1655,7 +1657,7 @@ void CliAuConn::TimerReconnect () {
         Ref("Connecting");
 
         // Remember the time we started the reconnect attempt, guarding against
-        // TimeGetMs() returning zero (unlikely), as a value of zero indicates
+        // hsTimer::GetMilliSeconds() returning zero (unlikely), as a value of zero indicates
         // a first-time connect condition to StartAutoReconnect()
         reconnectStartMs = GetNonZeroTimeMs();
 
