@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Local Stuff //////////////////////////////////////////////////////////////
 
-static const long PLD3D_FONTFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE 
+static constexpr long PLD3D_FONTFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE 
                                 | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE3(0);
 
 static constexpr D3DMATRIX d3dIdentityMatrix{ 1.0f, 0.0f, 0.0f, 0.0f,
@@ -77,9 +77,6 @@ static constexpr D3DMATRIX d3dIdentityMatrix{ 1.0f, 0.0f, 0.0f, 0.0f,
 
 //const uint32_t  kNumVertsInBuffer(32768);
 const uint32_t    kNumVertsInBuffer(4608);
-
-// See the declaration for plFontVertex in plTextFont.h for info
-const DWORD plDXTextFont::kFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE3(0);
 
 IDirect3DVertexBuffer9*     plDXTextFont::fBuffer = nullptr;
 uint32_t                      plDXTextFont::fBufferCursor = 0;
