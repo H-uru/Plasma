@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define WEAK_ERROR_CHECK( cond )    cond
 #endif
 
-static D3DMATRIX d3dIdentityMatrix{
+constexpr  D3DMATRIX d3dIdentityMatrix{
     1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
     0.0f, 0.0f, 1.0f, 0.0f,
