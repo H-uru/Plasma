@@ -150,7 +150,7 @@ void plClient::InitDLLs()
 {
     hsStatusMessage("Init dlls client\n");
     std::vector<plFileName> dlls = plFileSystem::ListDir("ModDLL", "*.dll");
-    for (auto& dll : dlls)
+    for (const auto& dll : dlls)
     {
         HMODULE hMod = LoadLibraryW(dll.WideString().data());
         if (hMod)
