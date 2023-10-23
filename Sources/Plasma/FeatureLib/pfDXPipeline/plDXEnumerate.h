@@ -151,9 +151,17 @@ protected:
     bool    ICheckCubicRenderTargets( IDirect3D9 *pD3D, UINT iAdapter, D3DDEVTYPE deviceType, D3DEnum_ModeInfo *modeInfo );
     HRESULT IConfirmDevice( D3DCAPS9* pCaps, DWORD dwBehavior, D3DFORMAT format );
 
-    static const uint8_t kNumDisplayFormats;
-    static const D3DFORMAT kDisplayFormats[];
-
+    static constexpr D3DFORMAT kDisplayFormats[] =
+    {
+            D3DFMT_A1R5G5B5,
+            D3DFMT_A2B10G10R10,
+            D3DFMT_A8R8G8B8,
+            D3DFMT_R5G6B5,
+            D3DFMT_X1R5G5B5,
+            D3DFMT_X8R8G8B8,
+    };
+    static constexpr uint8_t kNumDisplayFormats = std::end(kDisplayFormats) - std::begin(kDisplayFormats);
+    static_assert(kNumDisplayFormats == 6);
 public:
     hsGDirect3DTnLEnumerate();
     virtual ~hsGDirect3DTnLEnumerate();
