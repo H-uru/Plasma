@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static const long PLD3D_FONTFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE 
                                 | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE3(0);
 
-constexpr D3DMATRIX d3dIdentityMatrix{ 1.0f, 0.0f, 0.0f, 0.0f,
+static constexpr D3DMATRIX d3dIdentityMatrix{ 1.0f, 0.0f, 0.0f, 0.0f,
                                     0.0f, 1.0f, 0.0f, 0.0f,
                                     0.0f, 0.0f, 1.0f, 0.0f,
                                     0.0f, 0.0f, 0.0f, 1.0f };

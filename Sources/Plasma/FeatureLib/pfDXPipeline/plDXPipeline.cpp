@@ -242,7 +242,7 @@ inline DWORD F2DW( FLOAT f )
 #define WEAK_ERROR_CHECK( cond )    cond
 #endif
 
-constexpr D3DMATRIX d3dIdentityMatrix{ 1.0f, 0.0f, 0.0f, 0.0f,
+static constexpr D3DMATRIX d3dIdentityMatrix{ 1.0f, 0.0f, 0.0f, 0.0f,
                                     0.0f, 1.0f, 0.0f, 0.0f,
                                     0.0f, 0.0f, 1.0f, 0.0f,
                                     0.0f, 0.0f, 0.0f, 1.0f };
