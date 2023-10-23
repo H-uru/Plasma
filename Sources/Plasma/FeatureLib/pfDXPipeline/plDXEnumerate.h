@@ -160,8 +160,7 @@ protected:
             D3DFMT_X1R5G5B5,
             D3DFMT_X8R8G8B8,
     };
-    static constexpr uint8_t kNumDisplayFormats = std::end(kDisplayFormats) - std::begin(kDisplayFormats);
-    static_assert(kNumDisplayFormats == 6);
+    static constexpr uint8_t kNumDisplayFormats = std::size(kDisplayFormats);
 public:
     hsGDirect3DTnLEnumerate();
     virtual ~hsGDirect3DTnLEnumerate();
