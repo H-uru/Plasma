@@ -213,9 +213,9 @@ void FindFiles(std::vector<plFileName> &filenames, std::vector<plFileName> &path
     // Get the names of all the python files
     std::vector<plFileName> pys = plFileSystem::ListDir(path, "*.py");
 
-    for (auto iter = pys.begin(); iter != pys.end(); ++iter)
+    for (const auto& py : pys)
     {
-        filenames.push_back(iter->GetFileName());
+        filenames.push_back(py.GetFileName());
         pathnames.push_back(path);
     }
 }
@@ -223,8 +223,9 @@ void FindFiles(std::vector<plFileName> &filenames, std::vector<plFileName> &path
 void FindSubDirs(std::vector<plFileName> &dirnames, const plFileName &path)
 {
     std::vector<plFileName> subdirs = plFileSystem::ListSubdirs(path);
-    for (auto iter = subdirs.begin(); iter != subdirs.end(); ++iter) {
-        ST::string name = iter->GetFileName();
+    for (const auto& subdir : subdirs)
+    {
+        ST::string name = subdir.GetFileName();
         if (s_ignoreSubdirs.find(name) == s_ignoreSubdirs.end())
             dirnames.push_back(name);
     }
@@ -234,15 +235,15 @@ void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& p
 {
     std::vector<plFileName> packages;
     FindSubDirs(packages, path);
-    for (int i = 0; i < packages.size(); i++)
+    for (const auto& package : packages)
     {
         ST::string packageName;
         if (!parent_package.empty())
             packageName = parent_package + ".";
-        packageName += packages[i].AsString();
+        packageName += package.AsString();
         std::vector<plFileName> packageFileNames;
         std::vector<plFileName> packagePathNames;
-        plFileName packagePath = plFileName::Join(path, packages[i]);
+        plFileName packagePath = plFileName::Join(path, package);
         FindFiles(packageFileNames, packagePathNames, packagePath);
 
         // Check for the magic file to make sure this is really a package...
