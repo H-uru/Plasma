@@ -45,17 +45,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cmath>
 #include "plTriUtils.h"
 
-static const float kAlmostZero = 1.e-5f;
-static const float kPastZero = -kAlmostZero;
-static const float kPastOne = 1.f + kAlmostZero;
-static const float kAlmostOne = 1.f - kAlmostZero;
-static const float kAlmostZeroSquared = kAlmostZero*kAlmostZero;
+static constexpr float kAlmostZero = 1.e-5f;
+static constexpr float kPastZero = -kAlmostZero;
+static constexpr float kPastOne = 1.f + kAlmostZero;
+static constexpr float kAlmostOne = 1.f - kAlmostZero;
+static constexpr float kAlmostZeroSquared = kAlmostZero*kAlmostZero;
 
 static inline hsVector3 Cross(const hsScalarTriple& p0, const hsScalarTriple& p1)
 {
-    return hsVector3(p0.fY * p1.fZ - p0.fZ * p1.fY, 
-                    p0.fZ * p1.fX - p0.fX * p1.fZ, 
-                    p0.fX * p1.fY - p0.fY * p1.fX);
+    return {p0.fY * p1.fZ - p0.fZ * p1.fY, 
+    	       p0.fZ * p1.fX - p0.fX * p1.fZ, 
+    	       p0.fX * p1.fY - p0.fY * p1.fX
+    };
 }
 
 
