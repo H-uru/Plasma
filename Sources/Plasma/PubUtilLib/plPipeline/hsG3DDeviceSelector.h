@@ -73,10 +73,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 class hsStream;
-struct D3DEnum_DeviceInfo;
-struct D3DEnum_DriverInfo;
-struct D3DEnum_DeviceInfo;
-struct D3DEnum_DriverInfo;
+struct D3DEnum_RendererInfo;
+struct D3DEnum_DisplayInfo;
+struct D3DEnum_RendererInfo;
+struct D3DEnum_DisplayInfo;
 
 class hsG3DDeviceMode
 {
@@ -330,12 +330,12 @@ protected:
     void IClear();
     void IRemoveDiscarded();
 
-    void ITryDirect3DTnLDevice(D3DEnum_DeviceInfo* devInfo, hsG3DDeviceRecord& srcDevRec);
-    void ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo);
+    void ITryDirect3DTnLDevice(D3DEnum_RendererInfo* devInfo, hsG3DDeviceRecord& srcDevRec);
+    void ITryDirect3DTnLDriver(D3DEnum_DisplayInfo* drivInfo);
     void ITryDirect3DTnL(hsWinRef winRef);
 
     void IFudgeDirectXDevice( hsG3DDeviceRecord &record,
-                                D3DEnum_DriverInfo *driverInfo, D3DEnum_DeviceInfo *deviceInfo );
+                                D3DEnum_DisplayInfo *driverInfo, D3DEnum_RendererInfo *deviceInfo );
     uint32_t  IAdjustDirectXMemory( uint32_t cardMem );
 
     bool      IGetD3DCardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,

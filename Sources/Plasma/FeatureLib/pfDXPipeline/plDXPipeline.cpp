@@ -563,8 +563,8 @@ plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeR
     }
 
     // Record the requested mode/setup.
-    ISetCurrentDriver( d3dEnum.GetCurrentDriver() );
-    ISetCurrentDevice( d3dEnum.GetCurrentDevice() );
+    ISetCurrentDisplay( d3dEnum.GetCurrentDisplay() );
+    ISetCurrentRenderer( d3dEnum.GetCurrentRenderer() );
     D3DEnum_ModeInfo *pModeInfo = d3dEnum.GetCurrentMode();
     pModeInfo->fWindowed = fInitialPipeParams.Windowed;     // set windowed mode from ini file
     ISetCurrentMode( d3dEnum.GetCurrentMode() );
@@ -580,8 +580,8 @@ plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeR
     IRestrictCaps( *devRec );
 
     fSettings.fMaxAnisotropicSamples = fInitialPipeParams.AnisotropicLevel;
-    if(fSettings.fMaxAnisotropicSamples > fCurrentDevice->fDDCaps.MaxAnisotropy)
-        fSettings.fMaxAnisotropicSamples = (uint8_t)fCurrentDevice->fDDCaps.MaxAnisotropy;
+    if(fSettings.fMaxAnisotropicSamples > fCurrentRenderer->fDDCaps.MaxAnisotropy)
+        fSettings.fMaxAnisotropicSamples = (uint8_t)fCurrentRenderer->fDDCaps.MaxAnisotropy;
 
     plConst(uint32_t) kDefaultDynVtxSize(32000 * 44);
     plConst(uint32_t) kDefaultDynIdxSize(0 * plGBufferGroup::kMaxNumIndicesPerBuffer * 2);
@@ -609,8 +609,8 @@ plDXPipeline::~plDXPipeline()
     // plScene/plOccluder.cpp and plScene/plOccluderProxy.cpp for more info
     if( fView.HasCullProxy() )
         fView.GetCullProxy()->GetKey()->UnRefObject();
-    delete fCurrentDriver;
-    delete fCurrentDevice;
+    delete fCurrentDisplay;
+    delete fCurrentRenderer;
     delete fCurrentMode;
 
     IReleaseDeviceObjects();
@@ -671,8 +671,8 @@ void    plDXPipeline::IClearMembers()
     fSharedDepthFormat[1] = D3DFMT_UNKNOWN;
 
     fCurrentMode = nullptr;
-    fCurrentDriver = nullptr;
-    fCurrentDevice = nullptr;
+    fCurrentDisplay = nullptr;
+    fCurrentRenderer = nullptr;
 
     for( i = 0; i < 8; i++ )
     {
@@ -842,33 +842,33 @@ void    plDXPipeline::ISetCaps()
     fSettings.fD3DCaps = kCapsNone;
 
     // Set relevant caps (ones we can do something about).
-    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_DEPTHBIAS)
+    if (fCurrentRenderer->fDDCaps.RasterCaps & D3DPRASTERCAPS_DEPTHBIAS)
         fSettings.fD3DCaps |= kCapsZBias;
-    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGRANGE)
+    if (fCurrentRenderer->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGRANGE)
         fSettings.fD3DCaps |= kCapsRangeFog;
-    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGTABLE)
+    if (fCurrentRenderer->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGTABLE)
         fSettings.fD3DCaps |= kCapsLinearFog | kCapsExpFog | kCapsExp2Fog | kCapsPixelFog;
     else
         fSettings.fD3DCaps |= kCapsLinearFog;
-    if (fCurrentDevice->fDDCaps.TextureFilterCaps & D3DPTFILTERCAPS_MIPFLINEAR)
+    if (fCurrentRenderer->fDDCaps.TextureFilterCaps & D3DPTFILTERCAPS_MIPFLINEAR)
         fSettings.fD3DCaps |= kCapsMipmap;
-    if (fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_MIPCUBEMAP)
+    if (fCurrentRenderer->fDDCaps.TextureCaps & D3DPTEXTURECAPS_MIPCUBEMAP)
         fSettings.fD3DCaps |= kCapsCubicMipmap;
     if (fSettings.fNumAASamples > 0)
         fSettings.fD3DCaps |= kCapsFSAntiAlias;
-    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_WFOG)
+    if (fCurrentRenderer->fDDCaps.RasterCaps & D3DPRASTERCAPS_WFOG)
         fSettings.fD3DCaps |= kCapsDoesWFog;
-    if (fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP)
+    if (fCurrentRenderer->fDDCaps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP)
         fSettings.fD3DCaps |= kCapsCubicTextures;
 
     // Unconditional Non-Power of Two Textures
     // To make life easy for us, we can have non POT textures or we can't
-    if (!(fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_POW2 &&
-          fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_NONPOW2CONDITIONAL))
+    if (!(fCurrentRenderer->fDDCaps.TextureCaps & D3DPTEXTURECAPS_POW2 &&
+          fCurrentRenderer->fDDCaps.TextureCaps & D3DPTEXTURECAPS_NONPOW2CONDITIONAL))
           fSettings.fD3DCaps |= kCapsNpotTextures;
 
     /// New 1.5.2000 - cull out mixed vertex processing
-    if (fCurrentDevice->fDDCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT &&
+    if (fCurrentRenderer->fDDCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT &&
         fCurrentMode->fDDBehavior == D3DCREATE_HARDWARE_VERTEXPROCESSING)
         fSettings.fD3DCaps |= kCapsHWTransform;
 
@@ -887,7 +887,7 @@ void    plDXPipeline::ISetCaps()
         fSettings.fD3DCaps |= kCapsLuminanceTextures;
 
     /// Max # of hardware lights
-    fMaxNumLights = fCurrentDevice->fDDCaps.MaxActiveLights;
+    fMaxNumLights = fCurrentRenderer->fDDCaps.MaxActiveLights;
     if ( fMaxNumLights > kD3DMaxTotalLights )
         fMaxNumLights = kD3DMaxTotalLights;
 
@@ -905,8 +905,8 @@ void    plDXPipeline::ISetCaps()
     }
 
     /// Max # of textures at once
-    fMaxLayersAtOnce = fCurrentDevice->fDDCaps.MaxSimultaneousTextures;
-    if ( fCurrentDevice->fDDCaps.DevCaps & D3DDEVCAPS_SEPARATETEXTUREMEMORIES )
+    fMaxLayersAtOnce = fCurrentRenderer->fDDCaps.MaxSimultaneousTextures;
+    if ( fCurrentRenderer->fDDCaps.DevCaps & D3DDEVCAPS_SEPARATETEXTUREMEMORIES )
         fMaxLayersAtOnce = 1;
     // Alloc half our simultaneous textures to piggybacks.
     // Won't hurt us unless we try to many things at once.
@@ -916,14 +916,14 @@ void    plDXPipeline::ISetCaps()
     if (fMaxLayersAtOnce < 4)
         SetDebugFlag(plPipeDbg::kFlagBumpUV, true);
 
-    fSettings.fMaxAnisotropicSamples = (uint8_t)(fCurrentDevice->fDDCaps.MaxAnisotropy);
+    fSettings.fMaxAnisotropicSamples = (uint8_t)(fCurrentRenderer->fDDCaps.MaxAnisotropy);
 
-    fSettings.fNoGammaCorrect = !(fCurrentDevice->fDDCaps.Caps2 & D3DCAPS2_FULLSCREENGAMMA);
+    fSettings.fNoGammaCorrect = !(fCurrentRenderer->fDDCaps.Caps2 & D3DCAPS2_FULLSCREENGAMMA);
 
-    if (!(fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_PROJECTED))
+    if (!(fCurrentRenderer->fDDCaps.TextureCaps & D3DPTEXTURECAPS_PROJECTED))
         plDynamicCamMap::SetCapable(false);
 
-    ISetGraphicsCapability(fCurrentDevice->fDDCaps.PixelShaderVersion);
+    ISetGraphicsCapability(fCurrentRenderer->fDDCaps.PixelShaderVersion);
 }
 
 // ISetGraphicsCapability ///////////////////////////////////////////////////////
@@ -1141,24 +1141,24 @@ bool  plDXPipeline::ICreateDeviceObjects()
     return false;
 }
 
-//// ISetCurrentDriver ////////////////////////////////////////////////////////
+//// ISetCurrentDisplay ////////////////////////////////////////////////////////
 // Copy over the driver info.
-void    plDXPipeline::ISetCurrentDriver( D3DEnum_DriverInfo *driv )
+void    plDXPipeline::ISetCurrentDisplay( D3DEnum_DisplayInfo *driv )
 {
-    if (fCurrentDriver != nullptr)
-        delete fCurrentDriver;
+    if (fCurrentDisplay != nullptr)
+        delete fCurrentDisplay;
 
-    fCurrentDriver = new D3DEnum_DriverInfo;
+    fCurrentDisplay = new D3DEnum_DisplayInfo;
 
-    fCurrentDriver->fGuid = driv->fGuid;
-    hsStrncpy( fCurrentDriver->fStrDesc, driv->fStrDesc, 40 );
-    hsStrncpy( fCurrentDriver->fStrName, driv->fStrName, 40 );
+    fCurrentDisplay->fGuid = driv->fGuid;
+    hsStrncpy( fCurrentDisplay->fStrDesc, driv->fStrDesc, 40 );
+    hsStrncpy( fCurrentDisplay->fStrName, driv->fStrName, 40 );
 
-    fCurrentDriver->fDesktopMode = driv->fDesktopMode;
-    fCurrentDriver->fAdapterInfo = driv->fAdapterInfo;
+    fCurrentDisplay->fDesktopMode = driv->fDesktopMode;
+    fCurrentDisplay->fAdapterInfo = driv->fAdapterInfo;
 
-    fCurrentDriver->fCurrentMode = nullptr;
-    fCurrentDriver->fCurrentDevice = nullptr;
+    fCurrentDisplay->fCurrentMode = nullptr;
+    fCurrentDisplay->fCurrentRenderer = nullptr;
 
     /// Go looking for an adapter to match this one
     IDirect3D9* d3d = hsGDirect3D::GetDirect3D();
@@ -1169,7 +1169,7 @@ void    plDXPipeline::ISetCurrentDriver( D3DEnum_DriverInfo *driv )
         D3DADAPTER_IDENTIFIER9      adapterInfo;
         d3d->GetAdapterIdentifier( iAdapter, 0, &adapterInfo );
 
-        if( adapterInfo.DeviceIdentifier == fCurrentDriver->fAdapterInfo.DeviceIdentifier )
+        if( adapterInfo.DeviceIdentifier == fCurrentDisplay->fAdapterInfo.DeviceIdentifier )
         {
             fCurrentAdapter = iAdapter;
             break;
@@ -1177,22 +1177,22 @@ void    plDXPipeline::ISetCurrentDriver( D3DEnum_DriverInfo *driv )
     }
 }
 
-//// ISetCurrentDevice ////////////////////////////////////////////////////////
-// Copy over the device info.
-void    plDXPipeline::ISetCurrentDevice( D3DEnum_DeviceInfo *dev )
+//// ISetCurrentRenderer ////////////////////////////////////////////////////////
+// Copy over the renderer info.
+void    plDXPipeline::ISetCurrentRenderer( D3DEnum_RendererInfo *dev )
 {
-    if (fCurrentDevice != nullptr)
-        delete fCurrentDevice;
-    fCurrentDevice = new D3DEnum_DeviceInfo;
+    if (fCurrentRenderer != nullptr)
+        delete fCurrentRenderer;
+    fCurrentRenderer = new D3DEnum_RendererInfo;
 
-    hsStrncpy( fCurrentDevice->fStrName, dev->fStrName, 40 );
+    hsStrncpy( fCurrentRenderer->fStrName, dev->fStrName, 40 );
 
-    fCurrentDevice->fDDCaps = dev->fDDCaps;
-    fCurrentDevice->fDDType = dev->fDDType;
-    fCurrentDevice->fIsHardware = dev->fIsHardware;
-    fCurrentDevice->fCanWindow = dev->fCanWindow;
+    fCurrentRenderer->fDDCaps = dev->fDDCaps;
+    fCurrentRenderer->fDDType = dev->fDDType;
+    fCurrentRenderer->fIsHardware = dev->fIsHardware;
+    fCurrentRenderer->fCanWindow = dev->fCanWindow;
 //  fCurrentDevice->fCanAntialias = dev->fCanAntialias;
-    fCurrentDevice->fCompatibleWithDesktop = dev->fCompatibleWithDesktop;
+    fCurrentRenderer->fCompatibleWithDesktop = dev->fCompatibleWithDesktop;
 
     // copy over supported device modes
     D3DEnum_ModeInfo currMode;
@@ -1212,7 +1212,7 @@ void    plDXPipeline::ISetCurrentDevice( D3DEnum_DeviceInfo *dev )
         strcpy(currMode.fStrDesc, mode.fStrDesc);
         currMode.fWindowed = mode.fWindowed;
 
-        fCurrentDevice->fModes.emplace_back(currMode);
+        fCurrentRenderer->fModes.emplace_back(currMode);
     }
 }
 
@@ -1244,7 +1244,7 @@ bool  plDXPipeline::IFindCompressedFormats()
 
     for( i = 0; toCheckFor[ i ] != D3DFMT_UNKNOWN; i++ )
     {
-        if( FAILED( hsGDirect3D::GetDirect3D()->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType,
+        if( FAILED( hsGDirect3D::GetDirect3D()->CheckDeviceFormat( fCurrentAdapter, fCurrentRenderer->fDDType,
                                                                    fCurrentMode->fDDmode.Format,
                                                                    0, D3DRTYPE_TEXTURE, toCheckFor[ i ] ) ) )
             return false;
@@ -1266,7 +1266,7 @@ bool  plDXPipeline::IFindLuminanceFormats()
 
     for( i = 0; toCheckFor[ i ] != D3DFMT_UNKNOWN; i++ )
     {
-        if (FAILED(hsGDirect3D::GetDirect3D()->CheckDeviceFormat(fCurrentAdapter, fCurrentDevice->fDDType,
+        if (FAILED(hsGDirect3D::GetDirect3D()->CheckDeviceFormat(fCurrentAdapter, fCurrentRenderer->fDDType,
                                                                  fCurrentMode->fDDmode.Format,
                                                                  0, D3DRTYPE_TEXTURE, toCheckFor[ i ] ) ) )
             return false;
@@ -1283,7 +1283,7 @@ bool  plDXPipeline::IFindLuminanceFormats()
 
 bool      plDXPipeline::ITextureFormatAllowed( D3DFORMAT format )
 {
-    if (FAILED( hsGDirect3D::GetDirect3D()->CheckDeviceFormat(fCurrentAdapter, fCurrentDevice->fDDType,
+    if (FAILED( hsGDirect3D::GetDirect3D()->CheckDeviceFormat(fCurrentAdapter, fCurrentRenderer->fDDType,
                                                               fCurrentMode->fDDmode.Format,
                                                               0, D3DRTYPE_TEXTURE, format ) ) )
         return false;
@@ -1419,14 +1419,14 @@ bool plDXPipeline::ICreateDevice(bool windowed)
             // it as part of the handshake to let NVPerfHUD know we give
             // it permission to analyze us.
             fCurrentAdapter = adapter;
-            fCurrentDevice->fDDType= D3DDEVTYPE_REF;
+            fCurrentRenderer->fDDType= D3DDEVTYPE_REF;
             SetDebugFlag(plPipeDbg::kFlagNVPerfHUD, true);
             break;
         }
     }
 #endif // PLASMA_EXTERNAL_RELEASE
 
-    INIT_ERROR_CHECK( d3d->CreateDevice( fCurrentAdapter, fCurrentDevice->fDDType,
+    INIT_ERROR_CHECK( d3d->CreateDevice( fCurrentAdapter, fCurrentRenderer->fDDType,
                                          fDevice.fHWnd, fCurrentMode->fDDBehavior,
                                          &params, &fD3DDevice ),
                         "Cannot create primary display surface via CreateDevice()" );
@@ -1456,7 +1456,7 @@ bool plDXPipeline::IFindDepthFormat(D3DPRESENT_PARAMETERS& params)
             ||(fmt == D3DFMT_D16) )
         {
             HRESULT hr = d3d->CheckDeviceMultiSampleType(fCurrentAdapter,
-                                                         fCurrentDevice->fDDType,
+                                                         fCurrentRenderer->fDDType,
                                                          fmt,
                                                          fCurrentMode->fWindowed ? TRUE : FALSE,
                                                          params.MultiSampleType, nullptr);
@@ -1476,7 +1476,7 @@ bool plDXPipeline::IFindDepthFormat(D3DPRESENT_PARAMETERS& params)
             if( fmt == D3DFMT_D15S1 || fmt == D3DFMT_D24X4S4 || fmt == D3DFMT_D24S8 )
             {
                 HRESULT hr = d3d->CheckDeviceMultiSampleType(fCurrentAdapter,
-                                                             fCurrentDevice->fDDType,
+                                                             fCurrentRenderer->fDDType,
                                                              fmt,
                                                              fCurrentMode->fWindowed ? TRUE : FALSE,
                                                              params.MultiSampleType, nullptr);
@@ -1896,7 +1896,7 @@ void plDXPipeline::IResetToDefaults(D3DPRESENT_PARAMETERS *params)
     params->BackBufferFormat = D3DFMT_X8R8G8B8;
     fColorDepth = fDefaultPipeParams.ColorDepth;
 
-    for (D3DEnum_ModeInfo& mode : fCurrentDevice->fModes)
+    for (D3DEnum_ModeInfo& mode : fCurrentRenderer->fModes)
     {
         if (mode.fDDmode.Width == params->BackBufferWidth &&
             mode.fDDmode.Height == params->BackBufferHeight &&
@@ -2033,7 +2033,7 @@ void plDXPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
 
     fVSync = VSync;
     size_t iMode = 0;
-    std::vector<D3DEnum_ModeInfo>& modes = fCurrentDevice->fModes;
+    std::vector<D3DEnum_ModeInfo>& modes = fCurrentRenderer->fModes;
     // check for supported resolution if we're not going to windowed mode
     if(!Windowed)
     {
@@ -2112,7 +2112,7 @@ void plDXPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
 void plDXPipeline::GetSupportedColorDepths(std::vector<int> &ColorDepths)
 {
     // iterate through display modes
-    for (const D3DEnum_ModeInfo& modeInfo : fCurrentDevice->fModes)
+    for (const D3DEnum_ModeInfo& modeInfo : fCurrentRenderer->fModes)
     {
         // Check to see if color depth has been added already
         auto iter = std::find_if(ColorDepths.cbegin(), ColorDepths.cend(),
@@ -2131,7 +2131,7 @@ void plDXPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int
 {
     std::vector<plDisplayMode> supported;
     // loop through display modes
-    for (const D3DEnum_ModeInfo& modeInfo : fCurrentDevice->fModes)
+    for (const D3DEnum_ModeInfo& modeInfo : fCurrentRenderer->fModes)
     {
         if (modeInfo.fBitDepth == ColorDepth)
         {
@@ -2162,7 +2162,7 @@ int plDXPipeline::GetMaxAntiAlias(int Width, int Height, int ColorDepth)
 {
     int max = 0;
     D3DEnum_ModeInfo *pCurrMode = nullptr;
-    for (D3DEnum_ModeInfo& mode : fCurrentDevice->fModes)
+    for (D3DEnum_ModeInfo& mode : fCurrentRenderer->fModes)
     {
         if (mode.fDDmode.Width == Width &&
             mode.fDDmode.Height == Height &&
@@ -2184,7 +2184,7 @@ int plDXPipeline::GetMaxAntiAlias(int Width, int Height, int ColorDepth)
 
 int plDXPipeline::GetMaxAnisotropicSamples()
 {
-    return fCurrentDevice ? fCurrentDevice->fDDCaps.MaxAnisotropy : 0;
+    return fCurrentRenderer ? fCurrentRenderer->fDDCaps.MaxAnisotropy : 0;
 }
 
 //// Resize ///////////////////////////////////////////////////////////////////
@@ -3964,7 +3964,7 @@ bool  plDXPipeline::IPrepRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
         }
 
         /// Check the device format
-        if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+        if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentRenderer->fDDType, fCurrentMode->fDDmode.Format,
                                                                  D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
         {
             if( bitDepth == 16 )
@@ -3977,7 +3977,7 @@ bool  plDXPipeline::IPrepRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
                 bitDepth = 16;
                 surfFormat = D3DFMT_A4R4G4B4;
             }
-            if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+            if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentRenderer->fDDType, fCurrentMode->fDDmode.Format,
                                                                      D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
             {
                 IGetD3DError();
@@ -3987,7 +3987,7 @@ bool  plDXPipeline::IPrepRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
 
         if( zDepth )
         {
-            while( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+            while( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentRenderer->fDDType, fCurrentMode->fDDmode.Format,
                                                                         D3DUSAGE_DEPTHSTENCIL, D3DRTYPE_SURFACE, depthFormat ) ) )
             {
                 if( stencilIndex < sizeof( depthFormats ) / sizeof( depthFormats[ 0 ] ) - 1 )
@@ -4002,7 +4002,7 @@ bool  plDXPipeline::IPrepRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
                 }
             }
 
-            if( FAILED( fSettings.fDXError = d3d->CheckDepthStencilMatch( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+            if( FAILED( fSettings.fDXError = d3d->CheckDepthStencilMatch( fCurrentAdapter, fCurrentRenderer->fDDType, fCurrentMode->fDDmode.Format,
                                                                           surfFormat, depthFormat ) ) )
             {
                 IGetD3DError();
@@ -4051,7 +4051,7 @@ bool  plDXPipeline::IFindRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
         }
 
         /// Check the device format
-        if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+        if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentRenderer->fDDType, fCurrentMode->fDDmode.Format,
                                                                  D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
         {
             if( bitDepth == 16 )
@@ -4064,7 +4064,7 @@ bool  plDXPipeline::IFindRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
                 bitDepth = 16;
                 surfFormat = D3DFMT_A4R4G4B4;
             }
-            if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+            if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentRenderer->fDDType, fCurrentMode->fDDmode.Format,
                                                                      D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
             {
                 IGetD3DError();
@@ -4664,22 +4664,22 @@ bool  plDXPipeline::StencilGetCaps( plStencilCaps *caps )
     /// Get supported ops
     caps->fSupportedOps = 0;
 
-    if( fCurrentDevice->fDDCaps.StencilCaps & D3DSTENCILCAPS_DECR )
+    if( fCurrentRenderer->fDDCaps.StencilCaps & D3DSTENCILCAPS_DECR )
         caps->fSupportedOps |= plStencilCaps::kOpDecWrap;
-    if( fCurrentDevice->fDDCaps.StencilCaps & D3DSTENCILCAPS_DECRSAT )
+    if( fCurrentRenderer->fDDCaps.StencilCaps & D3DSTENCILCAPS_DECRSAT )
         caps->fSupportedOps |= plStencilCaps::kOpDecClamp;
-    if( fCurrentDevice->fDDCaps.StencilCaps & D3DSTENCILCAPS_INCR )
+    if( fCurrentRenderer->fDDCaps.StencilCaps & D3DSTENCILCAPS_INCR )
         caps->fSupportedOps |= plStencilCaps::kOpIncWrap;
-    if( fCurrentDevice->fDDCaps.StencilCaps & D3DSTENCILCAPS_INCRSAT )
+    if( fCurrentRenderer->fDDCaps.StencilCaps & D3DSTENCILCAPS_INCRSAT )
         caps->fSupportedOps |= plStencilCaps::kOpIncClamp;
 
-    if( fCurrentDevice->fDDCaps.StencilCaps & D3DSTENCILCAPS_INVERT )
+    if( fCurrentRenderer->fDDCaps.StencilCaps & D3DSTENCILCAPS_INVERT )
         caps->fSupportedOps |= plStencilCaps::kOpInvert;
-    if( fCurrentDevice->fDDCaps.StencilCaps & D3DSTENCILCAPS_KEEP )
+    if( fCurrentRenderer->fDDCaps.StencilCaps & D3DSTENCILCAPS_KEEP )
         caps->fSupportedOps |= plStencilCaps::kOpKeep;
-    if( fCurrentDevice->fDDCaps.StencilCaps & D3DSTENCILCAPS_REPLACE )
+    if( fCurrentRenderer->fDDCaps.StencilCaps & D3DSTENCILCAPS_REPLACE )
         caps->fSupportedOps |= plStencilCaps::kOpReplace;
-    if( fCurrentDevice->fDDCaps.StencilCaps & D3DSTENCILCAPS_ZERO )
+    if( fCurrentRenderer->fDDCaps.StencilCaps & D3DSTENCILCAPS_ZERO )
         caps->fSupportedOps |= plStencilCaps::kOpSetToZero;
 
     return true;

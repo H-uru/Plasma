@@ -161,8 +161,8 @@ class plDXPlateManager : public plPlateManager
 //// Class Definition /////////////////////////////////////////////////////////
 
 class plDebugTextManager;
-struct D3DEnum_DriverInfo;
-struct D3DEnum_DeviceInfo;
+struct D3DEnum_DisplayInfo;
+struct D3DEnum_RendererInfo;
 struct D3DEnum_ModeInfo;
 class plGeometrySpan;
 class plDrawableSpans;
@@ -236,8 +236,8 @@ protected:
     bool                        fCurrD3DLiteState;
 
     UINT                    fCurrentAdapter;
-    D3DEnum_DriverInfo*     fCurrentDriver;
-    D3DEnum_DeviceInfo*     fCurrentDevice;
+    D3DEnum_DisplayInfo*     fCurrentDisplay;
+    D3DEnum_RendererInfo*     fCurrentRenderer;
     D3DEnum_ModeInfo*       fCurrentMode;
 
     hsGMatState     fLayerState[ 8 ]; // base stage (0) state is held in base class
@@ -436,8 +436,8 @@ protected:
     bool    IFindLuminanceFormats();
     bool    ITextureFormatAllowed( D3DFORMAT format );
 
-    void    ISetCurrentDriver( D3DEnum_DriverInfo *driv );
-    void    ISetCurrentDevice( D3DEnum_DeviceInfo *dev );
+    void    ISetCurrentDisplay( D3DEnum_DisplayInfo *driv );
+    void    ISetCurrentRenderer( D3DEnum_RendererInfo *dev );
     void    ISetCurrentMode( D3DEnum_ModeInfo *mode );
 
     bool        ICreateDevice(bool windowed);
