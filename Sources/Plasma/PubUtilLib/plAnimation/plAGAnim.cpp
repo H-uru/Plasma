@@ -438,17 +438,17 @@ void plATCAnim::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLEFloat(fEaseOutLength);
 
     stream->WriteLE32((uint32_t)fMarkers.size());
-    for (MarkerMap::iterator it = fMarkers.begin(); it != fMarkers.end(); it++)
+    for (auto& fMarker : fMarkers)
     {
-        stream->WriteSafeString(it->first);
-        stream->WriteLEFloat(it->second);
+        stream->WriteSafeString(fMarker.first);
+        stream->WriteLEFloat(fMarker.second);
     }
 
     stream->WriteLE32((uint32_t)fLoops.size());
-    for (LoopMap::iterator loopIt = fLoops.begin(); loopIt != fLoops.end(); loopIt++)
+    for (auto& fLoop : fLoops)
     {
-        stream->WriteSafeString(loopIt->first);
-        std::pair<float,float>& loop = loopIt->second;
+        stream->WriteSafeString(fLoop.first);
+        std::pair<float,float>& loop = fLoop.second;
         stream->WriteLEFloat(loop.first);
         stream->WriteLEFloat(loop.second);
     }
