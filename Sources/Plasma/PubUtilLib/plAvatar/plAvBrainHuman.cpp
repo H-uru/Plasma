@@ -299,11 +299,11 @@ void plAvBrainHuman::IInitBoneMap()
         { RThumb3,          "Bone_RThumb3" },
     };
 
-    for (const auto& [BoneId, BoneName] : BoneMap)
+    for (const auto& [BoneID, BoneName] : BoneMap)
     {
 	    if( const plSceneObject * bone = this->fAvMod->FindBone(BoneName) )
         {
-            fAvMod->AddBoneMapping(BoneId, bone);
+            fAvMod->AddBoneMapping(BoneID, bone);
         }
         else
             hsStatusMessageF("Couldn't find standard bone %s.", BoneName.data());
