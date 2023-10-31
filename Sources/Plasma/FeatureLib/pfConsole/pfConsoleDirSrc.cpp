@@ -61,13 +61,13 @@ bool pfConsoleDirSrc::ParseDirectory(const plFileName& path, const char* mask /*
     hsAssert(fEngine != nullptr, "Cannot do a dir execute without an engine!");
 
     std::vector<plFileName> files = plFileSystem::ListDir(path, mask);
-    for (auto iter = files.begin(); iter != files.end(); ++iter)
+    for (auto& file : files)
     {
-        plFileName name = iter->GetFileName();
+        plFileName name = file.GetFileName();
         if (AlreadyProcessedFile(path, name))
             continue;
         AddProcessedFile(path, name);
-        if (!fEngine->ExecuteFile(*iter))
+        if (!fEngine->ExecuteFile(file))
         {
             // Change the following line once we have a better way of reporting
             // errors in the parsing
@@ -90,9 +90,8 @@ bool pfConsoleDirSrc::ParseDirectory(const plFileName& path, const char* mask /*
 
 void pfConsoleDirSrc::ResetProcessedFiles()
 {
-    int i;
-    for(i=0;i<fProcessedFiles.size(); i++)
-        delete fProcessedFiles[i];
+	for (const auto& fProcessedFile : fProcessedFiles)
+		delete fProcessedFile;
     fProcessedFiles.clear();
 }
 
@@ -104,10 +103,9 @@ bool pfConsoleDirSrc::AlreadyProcessedFile(const plFileName& path, const plFileN
 {
     if (fCheckProcessedFiles)
     {
-        int i;
-        for (i=0; i<fProcessedFiles.size(); i++)
-        {
-            if (file == fProcessedFiles[i]->fFile && path == fProcessedFiles[i]->fPath)
+	    for (const auto& fProcessedFile : fProcessedFiles)
+	    {
+            if (file == fProcessedFile->fFile && path == fProcessedFile->fPath)
                 return true;
         }
     }
