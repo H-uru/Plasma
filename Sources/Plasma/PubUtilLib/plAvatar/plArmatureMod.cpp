@@ -133,7 +133,7 @@ plArmatureModBase::~plArmatureModBase()
 {
     delete fController;
 
-    while (fUnusedBones.size() > 0)
+    while (!fUnusedBones.empty())
     {
         delete fUnusedBones.back();
         fUnusedBones.pop_back();
@@ -143,7 +143,7 @@ plArmatureModBase::~plArmatureModBase()
 bool plArmatureModBase::MsgReceive(plMessage* msg)
 {
     plArmatureBrain *curBrain = nullptr;
-    if (fBrains.size() > 0)
+    if (!fBrains.empty())
     {
         curBrain = fBrains.back();
         if(curBrain->MsgReceive(msg))
@@ -179,7 +179,7 @@ bool plArmatureModBase::IEval(double time, float elapsed, uint32_t dirty)
 {
     if (IsFinal())
     {
-        if (fBrains.size())
+        if (!fBrains.empty())
         {
             plArmatureBrain *curBrain = fBrains.back();
             if (curBrain)
@@ -345,7 +345,7 @@ void plArmatureModBase::PushBrain(plArmatureBrain *brain)
 void plArmatureModBase::PopBrain()
 {
     plArmatureBrain *oldBrain = nullptr;
-    if (fBrains.size() > 0)
+    if (!fBrains.empty())
     {
         oldBrain = fBrains.back();
         oldBrain->Deactivate();
@@ -362,7 +362,7 @@ void plArmatureModBase::PopBrain()
 plArmatureBrain *plArmatureModBase::GetCurrentBrain() const
 {
     plArmatureBrain *result = nullptr;
-    if (fBrains.size() > 0)
+    if (!fBrains.empty())
         result = fBrains.back();
     
     return result;
