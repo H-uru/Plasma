@@ -206,12 +206,7 @@ void plAvBrainHuman::Activate(plArmatureModBase *avMod)
 
 void plAvBrainHuman::IInitBoneMap()
 {
-    struct tuple {
-        HumanBoneID fID;
-        const char * fName;
-    };
-
-    tuple tupleMap[] = 
+    static constexpr std::tuple<HumanBoneID, std::string_view> BoneMap[] =
     {
         { Pelvis,           "Bone_Root" },
         // left leg
@@ -304,20 +299,14 @@ void plAvBrainHuman::IInitBoneMap()
         { RThumb3,          "Bone_RThumb3" },
     };
 
-    int numTuples = sizeof(tupleMap) / sizeof(tuple);
-
-    for(int i = 0; i < numTuples; i++)
+    for (const auto& [BoneId, BoneName] : BoneMap)
     {
-        HumanBoneID id = tupleMap[i].fID;
-        ST::string name = tupleMap[i].fName;
-        
-        const plSceneObject * bone = this->fAvMod->FindBone(name);
-        if( bone )
+	    if( const plSceneObject * bone = this->fAvMod->FindBone(BoneName) )
         {
-            fAvMod->AddBoneMapping(id, bone);
+            fAvMod->AddBoneMapping(BoneId, bone);
         }
         else
-            hsStatusMessageF("Couldn't find standard bone %s.", name.c_str());
+            hsStatusMessageF("Couldn't find standard bone %s.", BoneName.data());
     }
 }
 
