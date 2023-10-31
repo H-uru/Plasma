@@ -491,11 +491,8 @@ void    plAgeDescription::CopyFrom(const plAgeDescription& other)
 
 bool plAgeDescription::FindLocation(const plLocation& loc) const
 {
-    for (const plAgePage& page : fPages)
+    return std::any_of(fPages.begin(), fPages.end(), [this, loc](const plAgePage& page)
     {
-        plLocation pageLoc = CalcPageLocation(page.GetName());
-        if (pageLoc == loc)
-            return true;
-    }
-    return false;
+	    return loc == CalcPageLocation(page.GetName());
+    });
 }
