@@ -46,8 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfConsoleCmd.h"
 
-static const char kTokenSeparators[] = " =\r\n\t,";
-static const char kTokenGrpSeps[] = " =\r\n._\t,";
+static constexpr char kTokenSeparators[] = " =\r\n\t,";
+static constexpr char kTokenGrpSeps[] = " =\r\n._\t,";
 
 std::optional<ST::string> pfConsoleTokenizer::NextNamePart()
 {
