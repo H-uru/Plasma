@@ -96,7 +96,7 @@ std::shared_ptr<ID3DBlob> plDXShaderAssembler::AssShader(const char* shader, uns
 
 void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* fp, ID3DBlob* shader)
 {
-    fputs("\n\n\n", fp);
+    ST::printf(fp, "\n\n\n");
 
     hsSsize_t byteLen = shader->GetBufferSize();
     hsSsize_t quadLen = byteLen >> 2;
@@ -117,8 +117,8 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     ST::printf(fp, "\t0x{x},", *codes++);
     ST::printf(fp, "\t0x{x},", *codes++);
     ST::printf(fp, "\t0x{x}\n", *codes++);
-    fputs("\t};", fp);
-    fputs("\n\n", fp);
+    ST::printf(fp, "\t];");
+    ST::printf(fp, "\n\n");
 
     ST::printf(fp, "static const plShaderDecl {}Decl(\"{}\", {}, {}byteLen, {}Codes);\n\n",
                varName, fileName, varName, varName, varName);
