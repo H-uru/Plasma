@@ -99,14 +99,12 @@ void plClient::IChangeResolution(int width, int height)
     HMONITOR monitor = MonitorFromWindow(fWindowHndl, MONITOR_DEFAULTTONULL);
     if (!monitor)
         return;
-    MONITORINFOEXW moninfo;
-    memset(&moninfo, 0, sizeof(moninfo));
+    MONITORINFOEXW moninfo = {};
     moninfo.cbSize = sizeof(moninfo);
     GetMonitorInfoW(monitor, &moninfo);
 
     // Fetch a base display settings
-    DEVMODEW devmode;
-    memset(&devmode, 0, sizeof(devmode));
+    DEVMODEW devmode = {};
     devmode.dmSize = sizeof(devmode);
     EnumDisplaySettingsW(moninfo.szDevice, ENUM_REGISTRY_SETTINGS, &devmode);
 
