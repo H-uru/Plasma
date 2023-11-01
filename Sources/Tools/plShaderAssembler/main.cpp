@@ -207,20 +207,38 @@ static constexpr std::string_view kEnumNames[] = {
     "vs_GrassShader",
     "ps_GrassShader"
 };
+int main(int argc, char* argv[])
+{
+    std::vector<std::string_view> allArgs(argv, argv + argc);
+    //remove command
+    allArgs.erase(allArgs.begin());
 
+    if( allArgs.empty() )
+    {
+        ST::printf("{} <file0> <file1> ...\n", argv[0]);
+        return 0;
+    }
+
+
+    const std::string_view* nameList = nullptr;
+    int numNames = 0;
+    if (allArgs.at(0).compare("all") == 0)
+    {
         nameList = kEnumNames;
         numNames = std::size(kEnumNames);
     }
     else
     {
-        nameList = argv+1;
-        numNames = argc-1;
+
+        nameList = allArgs.data();
+        numNames = allArgs.size();
     }
 
     try {
-        plDXShaderAssembler ass;
-        for (int i = 0; i < numNames; i++ ) {
-            IAssShader(ass, nameList[i]);
+	    for (int i = 0; i < numNames; i++ )
+	    {
+		    plDXShaderAssembler ass;
+		    IAssShader(ass, nameList[i].data());
         }
     } catch (const plDXShaderError& error) {
         fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
