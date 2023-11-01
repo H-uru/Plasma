@@ -14,7 +14,7 @@
 #include <string_theory/format>
 #include <string_theory/stdio>
 
-class plDXShaderError
+class plDXShaderError : std::exception
 {
     ST::string fError;
 
