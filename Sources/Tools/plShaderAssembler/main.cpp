@@ -58,7 +58,7 @@ plDXShaderAssembler::plDXShaderAssembler()
     fLibrary = LoadLibraryW(D3DCOMPILER_DLL_W);
     if (!fLibrary)
         throw plDXShaderError("Unable to load library '{}'", D3DCOMPILER_DLL_W);
-    fFuncPtr = (D3DAssemble)GetProcAddress(fLibrary, "D3DAssemble");
+    fFuncPtr = reinterpret_cast<D3DAssemble>(GetProcAddress(fLibrary, "D3DAssemble"));
     if (!fFuncPtr) {
         FreeLibrary(fLibrary);
         throw plDXShaderError("Unable to get D3DAssemble proc in library '{}'", D3DCOMPILER_DLL_W);
