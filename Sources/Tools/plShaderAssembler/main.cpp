@@ -85,7 +85,7 @@ std::shared_ptr<ID3DBlob> plDXShaderAssembler::AssShader(const char* shader, uns
     if (SUCCEEDED(hr))
         return std::shared_ptr<ID3DBlob>(compiled, IRelease);
 
-    ST::string strErrors(errors ? reinterpret_cast<const char*>(errors->GetBufferPointer()) : "Unspecified");
+    ST::string strErrors(errors ? static_cast<const char*>(errors->GetBufferPointer()) : "Unspecified");
     IRelease(compiled);
     IRelease(errors);
 
