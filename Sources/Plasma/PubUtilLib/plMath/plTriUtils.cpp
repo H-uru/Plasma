@@ -54,8 +54,8 @@ static constexpr float kAlmostZeroSquared = kAlmostZero*kAlmostZero;
 static inline hsVector3 Cross(const hsScalarTriple& p0, const hsScalarTriple& p1)
 {
     return {p0.fY * p1.fZ - p0.fZ * p1.fY, 
-    	       p0.fZ * p1.fX - p0.fX * p1.fZ, 
-    	       p0.fX * p1.fY - p0.fY * p1.fX
+    	    p0.fZ * p1.fX - p0.fX * p1.fZ, 
+    	    p0.fX * p1.fY - p0.fY * p1.fX
     };
 }
 
