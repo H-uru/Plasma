@@ -63,17 +63,16 @@ bool pfConsoleDirSrc::ParseDirectory(const plFileName& path, const char* mask /*
     std::vector<plFileName> files = plFileSystem::ListDir(path, mask);
     for (const auto& file : files)
     {
-        plFileName name = file.GetFileName();
-        if (AlreadyProcessedFile(path, name))
+        if (AlreadyProcessedFile(path, file))
             continue;
-        AddProcessedFile(path, name);
+        AddProcessedFile(path, file);
         if (!fEngine->ExecuteFile(file))
         {
             // Change the following line once we have a better way of reporting
             // errors in the parsing
             ST::string_stream error, caption;
 
-            caption << "Error parsing " << name.AsString();
+            caption << "Error parsing " << file.AsString();
             error << fEngine->GetErrorMsg() << ":\n\nCommand: '" << fEngine->GetLastErrorLine()
                   << "'\n\nPress OK to continue parsing files.";
 
