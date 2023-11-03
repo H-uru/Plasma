@@ -214,29 +214,26 @@ static constexpr std::string_view kEnumNames[] {
 };
 int main(int argc, char* argv[])
 {
-    std::vector<std::string_view> allArgs(argv, argv + argc);
-    //remove command
-    allArgs.erase(allArgs.begin());
+	const std::vector<std::string_view> CommandLineArgArray(argv+1, argv + argc);
 
-    if( allArgs.empty() )
+    if( CommandLineArgArray.empty() )
     {
         ST::printf("{} <file0> <file1> ...\n", argv[0]);
         return 0;
     }
 
 
-    const std::string_view* nameList = nullptr;
-    int numNames = 0;
-    if (allArgs.at(0).compare("all") == 0)
+    const std::string_view* nameList;
+    int numNames;
+    if (CommandLineArgArray.at(0).compare("all") == 0)
     {
         nameList = kEnumNames;
         numNames = std::size(kEnumNames);
     }
     else
     {
-
-        nameList = allArgs.data();
-        numNames = allArgs.size();
+        nameList = CommandLineArgArray.data();
+        numNames = CommandLineArgArray.size();
     }
 
     try {
