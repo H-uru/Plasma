@@ -99,7 +99,7 @@ void plClient::IChangeResolution(int width, int height)
     HMONITOR monitor = MonitorFromWindow(fWindowHndl, MONITOR_DEFAULTTONULL);
     if (!monitor)
         return;
-    MONITORINFOEXW moninfo = {};
+    MONITORINFOEXW moninfo{};
     moninfo.cbSize = sizeof(moninfo);
     GetMonitorInfoW(monitor, &moninfo);
 
