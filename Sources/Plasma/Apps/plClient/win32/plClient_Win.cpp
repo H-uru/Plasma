@@ -104,7 +104,7 @@ void plClient::IChangeResolution(int width, int height)
     GetMonitorInfoW(monitor, &moninfo);
 
     // Fetch a base display settings
-    DEVMODEW devmode = {};
+    DEVMODEW devmode{};
     devmode.dmSize = sizeof(devmode);
     EnumDisplaySettingsW(moninfo.szDevice, ENUM_REGISTRY_SETTINGS, &devmode);
 
