@@ -248,7 +248,7 @@ jobs:
     strategy:
       matrix:
         platform:
-          #- { str: macos-arm64, arch: arm64 }
+          - { str: macos-arm64, arch: arm64 }
           - { str: macos-x64, arch: x86_64 }
         cfg:
           - { external: OFF, type: RelWithDebInfo, str: internal-release }
@@ -262,11 +262,11 @@ jobs:
       - name: Install dependencies
         run: |
           brew install \
+              ${{ (matrix.platform.arch == 'x86_64' && 'qt@5') || '' }} \
               autoconf \
               automake \
               libtool \
-              nasm \
-              qt@5
+              nasm
 
       - name: Setup NuGet
         run: |
@@ -303,6 +303,7 @@ jobs:
           cmake --build build --config "${{ matrix.cfg.type }}" -j 2
 
       - name: Test
+        if: matrix.platform.arch == 'x86_64'
         run: |
           cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 2
 
