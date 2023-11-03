@@ -184,6 +184,7 @@ static void SocketStartAsyncRead(AsyncSocket sock)
     hsLockGuard(sock->fCritsect);
     uint8_t* start = sock->fBuffer + sock->fBytesLeft;
     size_t   count = sizeof(sock->fBuffer) - sock->fBytesLeft;
+    hsAssert(sock->fSock.is_open(), "Read from a closed socket");
     sock->fSock.async_read_some(asio::buffer(start, count),
         [sock](const asio::error_code& err, size_t bytes) {
         if (err) {
@@ -276,6 +277,7 @@ static bool SocketInitConnect(ConnectOperation& op)
 
     sock->initTimeMs = hsTimer::GetMilliSeconds<unsigned>();
 
+    hsAssert(sock->fSock.is_open(), "Socket closed during connect?");
     asio::error_code err;
     sock->fSock.non_blocking(true, err);
     if (err)
@@ -478,6 +480,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
             op->fNotify.bytesCommitted = op->fNotify.bytes;
         }
     }
+    hsAssert(conn->fSock.is_open(), "Write to a closed socket");
     async_write(conn->fSock, allWrites, [conn](const asio::error_code& err, size_t bytes) {
         hsLockGuard(s_connectCrit);
         while (bytes != 0) {
@@ -508,6 +511,7 @@ bool AsyncSocketSend(AsyncSocket conn, const void* data, size_t bytes)
     // data right away, we do so in order to save extra allocations for the
     // write buffer.  Otherwise, we must queue it for an async write below.
     if (conn->fWriteOps.empty()) {
+        hsAssert(conn->fSock.is_open(), "Write to a closed socket");
         asio::error_code err;
         size_t           bytesSent = conn->fSock.write_some(asio::buffer(data, bytes), err);
         if (!err) {
