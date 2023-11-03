@@ -225,7 +225,7 @@ void FindSubDirs(std::vector<plFileName> &dirnames, const plFileName &path)
     std::vector<plFileName> subdirs = plFileSystem::ListSubdirs(path);
     for (const auto& subdir : subdirs)
     {
-        ST::string name = subdir.GetFileName();
+        const ST::string& name = subdir.GetFileName();
         if (s_ignoreSubdirs.find(name) == s_ignoreSubdirs.end())
             dirnames.push_back(name);
     }
