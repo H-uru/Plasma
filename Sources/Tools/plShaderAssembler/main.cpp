@@ -250,8 +250,7 @@ int main(int argc, char* argv[])
     }
 
     try {
-	    for (int i = 0; i < numNames; i++ )
-	    {
+	    for (int i = 0; i < numNames; i++) {
 		    plDXShaderAssembler ass;
 		    IAssShader(ass, nameList[i].data());
         }
