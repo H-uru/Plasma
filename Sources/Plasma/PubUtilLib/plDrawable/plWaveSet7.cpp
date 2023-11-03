@@ -4035,13 +4035,11 @@ void plWaveSet7::ICreateGraphEdgeLayer(hsGMaterial* mat, int iPass)
 
 void plWaveSet7::ICreateGraphShoreMaterials()
 {
-    int i;
-    for( i = 0; i < kGraphShorePasses; i++ )
-    {
+    for (size_t i = 0; i < kGraphShorePasses; i++) {
         // Create our material
         // and send ourselves a ref.
         hsGMaterial* mat = ICreateEmptyMaterial("GraphShoreMat", kRefGraphShoreMat, i);
-        
+
         // GraphShoreMat's are the materials used to generate the shore texture layers
         // which are then used on rendering the shore to the screen.
 
@@ -4065,17 +4063,16 @@ void plWaveSet7::ICreateGraphShoreMaterials()
 
 }
 
-void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, int iPass)
+void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, size_t iPass)
 {
-    if( !fGraphVShader[iPass] )
-    {
+    if (!fGraphVShader[iPass]) {
         plShader* vShader = new plShader;
         ST::string buff = ST::format("{}_GraphVS_{}", GetKey()->GetName(), iPass);
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
 
         vShader->SetNumConsts(plGraphVS::kNumConsts);
-        
+
         vShader->SetVector(plGraphVS::kNumericConsts, 0, 0.5f, 1.f, 2.f);
         vShader->SetVector(plGraphVS::kPiConsts, 1.f / hsConstants::two_pi<float>,
                                                  hsConstants::half_pi<float>,
@@ -4102,10 +4099,9 @@ void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, int iPass)
     IAddShaderToLayers(mat, 0, 2, plLayRefMsg::kVertexShader, fGraphVShader[iPass]);
 }
 
-void plWaveSet7::IAddGraphPShader(hsGMaterial* mat, int iPass)
+void plWaveSet7::IAddGraphPShader(hsGMaterial* mat, size_t iPass)
 {
-    if( !fGraphPShader[iPass] )
-    {
+    if (!fGraphPShader[iPass]) {
         plShader* pShader = new plShader;
         ST::string buff = ST::format("{}_GraphPS_{}", GetKey()->GetName(), iPass);
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
@@ -4245,7 +4241,7 @@ void plWaveSet7::ISetupShoreLayers(hsGMaterial* mat)
     IAddShorePixelShader(mat);
 }
 
-void plWaveSet7::IInitGraph(int iPass)
+void plWaveSet7::IInitGraph(size_t iPass)
 {
     GraphState& gs = fGraphState[iPass];
     plShader* shader = fGraphVShader[iPass];
@@ -4323,33 +4319,27 @@ void plWaveSet7::IInitGraph(int iPass)
     IUpdateGraphShader(0, iPass);
 }
 
-void plWaveSet7::IShuffleDownGraphs(int iPass)
+void plWaveSet7::IShuffleDownGraphs(size_t iPass)
 {
-    int i;
-    for( i = iPass+1; i < kGraphShorePasses; i++ )
-    {
+    for (size_t i = iPass+1; i < kGraphShorePasses; i++) {
         fGraphState[i-1] = fGraphState[i];
         fGraphVShader[i-1]->CopyConsts(fGraphVShader[i]);
     }
     IInitGraph(kGraphShorePasses-1);
 }
 
-void plWaveSet7::IUpdateGraphShader(float dt, int iPass)
+void plWaveSet7::IUpdateGraphShader(float dt, size_t iPass)
 {
-    if( fGraphShoreDraw[iPass] )
-    {
+    if (fGraphShoreDraw[iPass]) {
         GraphState& gs = fGraphState[iPass];
         plShader* shader = fGraphVShader[iPass];
 
         gs.fAge += dt;
         float rads = gs.fAge * gs.fInvLife;
-        if (rads >= hsConstants::pi<float>)
-        {
+        if (rads >= hsConstants::pi<float>) {
             // Recycle this one and restart the upper.
             IShuffleDownGraphs(iPass);
-        }
-        else
-        {
+        } else {
             float sinAge = hsFastMath::SinInRange(rads);
 
             shader->SetVector(plGraphVS::kAmplitude, 
@@ -4380,12 +4370,8 @@ void plWaveSet7::IUpdateGraphShader(float dt, int iPass)
 
 void plWaveSet7::IUpdateGraphShaders(plPipeline* pipe, float dt)
 {
-    if( fGraphShoreDraw[0] )
-    {
-        int i;
-        for( i = kGraphShorePasses-1; i >= 0; i-- )
-        {
-            IUpdateGraphShader(dt, i);
-        }
+    if (fGraphShoreDraw[0]) {
+        for (size_t i = kGraphShorePasses; i > 0; i--)
+            IUpdateGraphShader(dt, i-1);
     }
 }

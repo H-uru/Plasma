@@ -63,9 +63,9 @@ plProfile_CreateTimer("AviCapture", "RenderSetup", AviCapture);
 
 bool plAVIWriter::fInitialized = false;
 
-#if HS_BUILD_FOR_WIN32
 class plAVIWriterImp : public plAVIWriter
 {
+#if HS_BUILD_FOR_WIN32
 protected:
     PAVIFILE fFileHandle;
     PAVISTREAM fStreamHandle;
@@ -81,33 +81,19 @@ protected:
     void IFillBitmapInfo(BITMAPINFOHEADER* inf, plPipeline* pipeline);
 
     bool ICaptureFrame(plPipeline* pipeline);
-
-public:
-    plAVIWriterImp();
-    virtual ~plAVIWriterImp();
-
-    bool MsgReceive(plMessage* msg) override;
-
-    void Shutdown() override;
-
-    bool Open(const char* fileName, plPipeline* pipeline) override;
-    void Close() override;
-};
-#else
-class plAVIWriterImp : public plAVIWriter
-{
-public:
-    plAVIWriterImp();
-    virtual ~plAVIWriterImp();
-
-    bool MsgReceive(plMessage* msg) override;
-
-    void Shutdown() override;
-
-    bool Open(const char* fileName, plPipeline* pipeline) override;
-    void Close() override;
-};
 #endif
+
+public:
+    plAVIWriterImp();
+    virtual ~plAVIWriterImp();
+
+    bool MsgReceive(plMessage* msg) override;
+
+    void Shutdown() override;
+
+    bool Open(const char* fileName, plPipeline* pipeline) override;
+    void Close() override;
+};
 
 plAVIWriter::~plAVIWriter()
 {

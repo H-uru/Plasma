@@ -268,8 +268,10 @@ ST::string plConfigInfo::GetValueIn(const ST::string & key, const ST::string & d
         if (HasSection(section))
         {
             plKeysAndValues & kv = fSections[section];
-            if (kv.HasKey(key))
+            if (kv.HasKey(key)) {
+                va_end(sections);
                 return kv.GetValue(key,defval,outFound);
+            }
         }
         section = va_arg(sections,const char *);
     }
@@ -303,8 +305,10 @@ int plConfigInfo::GetValueIn(const ST::string & key, int defval, bool * outFound
         if (HasSection(section))
         {
             plKeysAndValues & kv = fSections[section];
-            if (kv.HasKey(key))
+            if (kv.HasKey(key)) {
+                va_end(sections);
                 return kv.GetValue(key,defval,outFound);
+            }
         }
         section = va_arg(sections,const char *);
     }
@@ -338,8 +342,10 @@ double plConfigInfo::GetValueIn(const ST::string & key, double defval, bool * ou
         if (HasSection(section))
         {
             plKeysAndValues & kv = fSections[section];
-            if (kv.HasKey(key))
+            if (kv.HasKey(key)) {
+                va_end(sections);
                 return kv.GetValue(key,defval,outFound);
+            }
         }
         section = va_arg(sections,const char *);
     }

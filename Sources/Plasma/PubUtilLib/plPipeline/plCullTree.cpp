@@ -855,8 +855,9 @@ int16_t plCullTree::IMakePolySubTree(const plCullPoly& poly) const
 ///////////////////////////////////////////////////////////////////
 void plCullTree::IVisPolyShape(const plCullPoly& poly, bool dark) const
 {
-    uint16_t vertStart = (uint16_t)fVisVerts.size();
-    
+    hsAssert(poly.fVerts.size() < std::numeric_limits<uint16_t>::max(), "Too many verts");
+    uint16_t vertStart = uint16_t(fVisVerts.size());
+
     hsColorRGBA color;
     if( dark )
         color.Set(0.2f, 0.2f, 0.2f, 1.f);
@@ -871,7 +872,7 @@ void plCullTree::IVisPolyShape(const plCullPoly& poly, bool dark) const
     }
     if( !dark )
     {
-        for (uint16_t i = 2; i < poly.fVerts.size(); i++)
+        for (uint16_t i = 2; i < uint16_t(poly.fVerts.size()); i++)
         {
             fVisTris.emplace_back(vertStart);
             fVisTris.emplace_back(vertStart + i-1);
@@ -880,7 +881,7 @@ void plCullTree::IVisPolyShape(const plCullPoly& poly, bool dark) const
     }
     else
     {
-        for (uint16_t i = 2; i < poly.fVerts.size(); i++)
+        for (uint16_t i = 2; i < uint16_t(poly.fVerts.size()); i++)
         {
             fVisTris.emplace_back(vertStart);
             fVisTris.emplace_back(vertStart + i);

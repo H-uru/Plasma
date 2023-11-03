@@ -1715,7 +1715,7 @@ class plBDFCharsParser : public plBDFSectParser
             {
                 // If we're doing data, all lines are hex values until we hit "ENDCHAR"
                 if( fRowsLeft == 0 )
-                    throw;
+                    throw false;
 
                 int hDigit;
                 for( hDigit = 0; *keyword != 0 && hDigit < fBytesWide; hDigit++, keyword += 2 )
