@@ -1,0 +1,11 @@
+include_directories("${PLASMA_MAX_PLUGIN_ROOT}")
+include_directories("${PLASMA_SOURCE_ROOT}/FeatureLib")
+include_directories("${PLASMA_SOURCE_ROOT}/NucleusLib")
+include_directories("${PLASMA_SOURCE_ROOT}/PubUtilLib")
+
+add_subdirectory(MaxComponent)
+add_subdirectory(MaxConvert)
+add_subdirectory(MaxExport)
+add_subdirectory(MaxMain)
+add_subdirectory(MaxPlasmaLights)
+add_subdirectory(MaxPlasmaMtls)
