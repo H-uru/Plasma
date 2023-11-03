@@ -61,7 +61,7 @@ bool pfConsoleDirSrc::ParseDirectory(const plFileName& path, const char* mask /*
     hsAssert(fEngine != nullptr, "Cannot do a dir execute without an engine!");
 
     std::vector<plFileName> files = plFileSystem::ListDir(path, mask);
-    for (auto& file : files)
+    for (const auto& file : files)
     {
         plFileName name = file.GetFileName();
         if (AlreadyProcessedFile(path, name))
