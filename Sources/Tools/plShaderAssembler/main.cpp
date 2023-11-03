@@ -161,7 +161,8 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
         return;
 
     hsUNIXStream inFp;
-    if (AttemptToOpenInputFile(inFile, inFp)) return;
+    if (AttemptToOpenInputFile(inFile, inFp))
+        return;
 
     uint32_t shaderCodeLen = inFp.GetEOF();
     auto shaderCode = std::make_unique<char[]>(shaderCodeLen);
