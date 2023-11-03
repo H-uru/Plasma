@@ -447,8 +447,8 @@ void plATCAnim::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLE32((uint32_t)fLoops.size());
     for (const auto& loop : fLoops)
     {
-        stream->WriteSafeString(fLoop.first);
-        std::pair<float,float>& loop = fLoop.second;
+        stream->WriteSafeString(loop.first);
+        std::pair<float,float>& loop = loop.second;
         stream->WriteLEFloat(loop.first);
         stream->WriteLEFloat(loop.second);
     }
