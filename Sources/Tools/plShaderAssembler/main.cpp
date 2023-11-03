@@ -181,7 +181,7 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
 // vs_ => "vs_
 // ps_ => "ps_
 // , => ",
-static constexpr std::string_view kEnumNames[] = {
+static constexpr std::string_view kEnumNames[] {
     "vs_WaveFixedFin6",
     "ps_WaveFixed",
     "vs_CompCosines",
