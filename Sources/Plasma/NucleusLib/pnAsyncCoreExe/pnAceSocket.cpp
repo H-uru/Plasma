@@ -191,13 +191,17 @@ static void SocketStartAsyncRead(AsyncSocket sock)
             bool isEOFError     = (err.category() == asio::error::get_misc_category() && err.value() == asio::error::eof);
             bool isAbortedError = (err.category() == asio::error::get_system_category() && err.value() == asio::error::operation_aborted);
             if (isEOFError || isAbortedError) {
-                if (sock->fNotifyProc) {
+                FAsyncNotifySocketProc notifyProc = nullptr;
+                {
+                    hsLockGuard(sock->fCritsect);
+                    notifyProc = sock->fNotifyProc;
+                    sock->fNotifyProc = nullptr;
+                }
+                if (notifyProc) {
                     // We have to be extremely careful from this point because
                     // sockets can be deleted during the notification callback.
                     // After this call, the application becomes responsible for
                     // calling AsyncSocketDelete at some later point in time.
-                    FAsyncNotifySocketProc notifyProc = sock->fNotifyProc;
-                    sock->fNotifyProc = nullptr;
                     notifyProc((AsyncSocket)sock, kNotifySocketDisconnect, nullptr, &sock->fUserState);
                 }
             } else {
@@ -209,6 +213,7 @@ static void SocketStartAsyncRead(AsyncSocket sock)
         if (!bytes)
             return;
 
+        hsLockGuard(sock->fCritsect);
         sock->fBytesLeft += bytes;
 
         AsyncNotifySocketRead notifyRead;
@@ -274,6 +279,7 @@ static bool SocketInitConnect(ConnectOperation& op)
 {
     // This steals ownership of op->fSock
     auto sock = std::make_unique<AsyncSocketStruct>(op);
+    hsLockGuard(sock->fCritsect);
 
     sock->initTimeMs = hsTimer::GetMilliSeconds<unsigned>();
 
@@ -343,6 +349,7 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
     tcp::endpoint remoteAddr(asio::ip::address_v4(netAddr.GetHostBytes()),
                              netAddr.GetPort());
     op->fSock.async_connect(remoteAddr, [op](const asio::error_code& connError) {
+        hsLockGuard(s_connectCrit);
         // This operation is no longer a candidate for cleanup or cancellation
         // by the time we get a callback from async_connect
         bool success;
@@ -362,10 +369,7 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
             op->fNotifyProc(nullptr, kNotifySocketConnectFailed, &failed, nullptr);
         }
 
-        {
-            hsLockGuard(s_connectCrit);
-            s_connectList.erase(op);
-        }
+        s_connectList.erase(op);
 
         PerfSubCounter(kAsyncPerfSocketConnAttemptsOutCurr, 1);
     });
@@ -404,6 +408,7 @@ static void HardCloseSocket(AsyncSocket conn)
 
 void AsyncSocketDisconnect(AsyncSocket conn, bool hardClose)
 {
+    hsLockGuard(conn->fCritsect);
     if (!conn->fSock.is_open())
         return;
 
@@ -419,7 +424,7 @@ void AsyncSocketDisconnect(AsyncSocket conn, bool hardClose)
 
 static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t bytes)
 {
-    hsLockGuard(s_connectCrit);
+    hsLockGuard(conn->fCritsect);
 
     // check for data backlog
     if (!conn->fWriteOps.empty()) {
@@ -482,7 +487,7 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
     }
     hsAssert(conn->fSock.is_open(), "Write to a closed socket");
     async_write(conn->fSock, allWrites, [conn](const asio::error_code& err, size_t bytes) {
-        hsLockGuard(s_connectCrit);
+        hsLockGuard(conn->fCritsect);
         while (bytes != 0) {
             hsAssert(conn->fWriteOps.size() > 0, "buffer mismatch");
             WriteOperation* op = conn->fWriteOps.front();
