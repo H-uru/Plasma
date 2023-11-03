@@ -493,6 +493,6 @@ bool plAgeDescription::FindLocation(const plLocation& loc) const
 {
     return std::any_of(fPages.begin(), fPages.end(), [this, loc](const plAgePage& page)
     {
-	    return loc == CalcPageLocation(page.GetName());
+	    return CalcPageLocation(page.GetName()) == loc;
     });
 }
