@@ -438,7 +438,7 @@ void plATCAnim::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLEFloat(fEaseOutLength);
 
     stream->WriteLE32((uint32_t)fMarkers.size());
-    for (auto& fMarker : fMarkers)
+    for (const auto& fMarker : fMarkers)
     {
         stream->WriteSafeString(fMarker.first);
         stream->WriteLEFloat(fMarker.second);
