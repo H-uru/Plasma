@@ -157,7 +157,8 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
     ST::printf("Processing {} into {}\n", name, outFile);
 
     hsUNIXStream outFp;
-    if (AttemptToOpenOutFile(outFile, outFp)) return;
+    if (AttemptToOpenOutFile(outFile, outFp))
+        return;
 
     hsUNIXStream inFp;
     if (AttemptToOpenInputFile(inFile, inFp)) return;
