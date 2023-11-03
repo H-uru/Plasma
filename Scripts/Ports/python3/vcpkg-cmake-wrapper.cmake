@@ -59,7 +59,7 @@ if(_PythonFinder_WantLibs)
         find_program(
             @PythonFinder_PREFIX@_EXECUTABLE
             NAMES "python" "python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@"
-            PATHS "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/tools/python3"
+            PATHS "${_VCPKG_INSTALLED_DIR}/${VCPKG_HOST_TRIPLET}/tools/python3"
             NO_DEFAULT_PATH
         )
     endif()
