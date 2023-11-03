@@ -125,27 +125,17 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     ST::printf(fp, "static const plShaderRegister {}Register(&{}Decl);\n\n", varName, varName);
 }
 
-static bool AttemptToOpenOutFile(plFileName outFile, hsUNIXStream& outFp)
-{
-	if (!outFp.Open(outFile, "w")) {
-		fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
-		ST::printf(stderr, "Error opening file {} for output\n", outFile);
-		fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
-		return true;
-	}
-	return false;
+
+static bool AttemptToOpenFile(const plFileName& file, hsUNIXStream& inFp) {
+    if (!inFp.Open(file, "rw")) {
+        fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
+        ST::printf(stderr, "Error opening file {}\n", file);
+        fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
+        return true;
+    }
+    return false;
 }
 
-static bool AttemptToOpenInputFile(plFileName inFile, hsUNIXStream& inFp)
-{
-	if (!inFp.Open(inFile, "r")) {
-		fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
-		ST::printf(stderr, "Error opening file {} for input\n", inFile);
-		fputs("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n", stderr);
-		return true;
-	}
-	return false;
-}
 
 static void IAssShader(const plDXShaderAssembler& ass, const char* name)
 {
@@ -157,11 +147,11 @@ static void IAssShader(const plDXShaderAssembler& ass, const char* name)
     ST::printf("Processing {} into {}\n", name, outFile);
 
     hsUNIXStream outFp;
-    if (AttemptToOpenOutFile(outFile, outFp))
+    if (AttemptToOpenFile(outFile, outFp))
         return;
 
     hsUNIXStream inFp;
-    if (AttemptToOpenInputFile(inFile, inFp))
+    if (AttemptToOpenFile(inFile, inFp))
         return;
 
     uint32_t shaderCodeLen = inFp.GetEOF();
