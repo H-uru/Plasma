@@ -301,7 +301,7 @@ void plAvBrainHuman::IInitBoneMap()
 
     for (const auto& [BoneID, BoneName] : BoneMap)
     {
-	    if( const plSceneObject * bone = this->fAvMod->FindBone(BoneName) )
+	    if (const plSceneObject * bone = fAvMod->FindBone(BoneName))
         {
             fAvMod->AddBoneMapping(BoneID, bone);
         }
