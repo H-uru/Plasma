@@ -215,7 +215,7 @@ void FindFiles(std::vector<plFileName> &filenames, std::vector<plFileName> &path
 
     for (const auto& py : pys)
     {
-        filenames.push_back(py.GetFileName());
+        filenames.emplace_back(py.GetFileName());
         pathnames.push_back(path);
     }
 }
