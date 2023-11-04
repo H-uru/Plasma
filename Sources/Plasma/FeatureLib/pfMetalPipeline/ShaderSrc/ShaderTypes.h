@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <simd/simd.h>
 
 #ifndef __METAL_VERSION__
+#include <type_traits>
+
 typedef _Float16 half;
 typedef __attribute__((__ext_vector_type__(2))) half half2;
 typedef __attribute__((__ext_vector_type__(3))) half half3;
@@ -120,10 +122,16 @@ enum plMetalLayerPassType: uint8_t
 struct plMetalFragmentShaderArgumentBuffer {
     __fp16 alphaThreshold;
 };
+#ifndef __METAL_VERSION__
+static_assert(std::is_trivial_v<plMetalFragmentShaderArgumentBuffer>, "plMetalFragmentShaderArgumentBuffer must be a trivial type!");
+#endif
 
 struct plMetalShadowCastFragmentShaderArgumentBuffer {
     bool pointLightCast;
 };
+#ifndef __METAL_VERSION__
+static_assert(std::is_trivial_v<plMetalShadowCastFragmentShaderArgumentBuffer>, "plMetalShadowCastFragmentShaderArgumentBuffer must be a trivial type!");
+#endif
 
 enum plMetalFragmentShaderTextures {
     FragmentShaderArgumentAttributeTextures = 0,
@@ -143,12 +151,18 @@ struct plMetalShaderLightSource {
     __fp16 quadAtten;
     __fp16 scale;
 };
+#ifndef __METAL_VERSION__
+static_assert(std::is_trivial_v<plMetalShaderLightSource>, "plMetalShaderLightSource must be a trivial type!");
+#endif
 
 typedef struct
 {
     uint32_t UVWSrc;
     matrix_float4x4 transform;
 } UVOutDescriptor;
+#ifndef __METAL_VERSION__
+static_assert(std::is_trivial_v<UVOutDescriptor>, "UVOutDescriptor must be a trivial type!");
+#endif
 
 typedef struct
 {
@@ -180,6 +194,9 @@ typedef struct
     half4 calcFog(float4 camPosition) constant;
 #endif
 } VertexUniforms;
+#ifndef __METAL_VERSION__
+static_assert(std::is_trivial_v<VertexUniforms>, "VertexUniforms must be a trivial type!");
+#endif
 
 #define kMetalMaxLightCount 32
 
@@ -187,6 +204,9 @@ typedef struct {
     uint8_t count;
     plMetalShaderLightSource lampSources[kMetalMaxLightCount];
 } plMetalLights;
+#ifndef __METAL_VERSION__
+static_assert(std::is_trivial_v<plMetalLights>, "plMetalLights must be a trivial type!");
+#endif
 
 typedef struct {
     simd::float3 lightPosition;
@@ -195,6 +215,9 @@ typedef struct {
     float power;
     half opacity;
 } plShadowState;
+#ifndef __METAL_VERSION__
+static_assert(std::is_trivial_v<plShadowState>, "plShadowState must be a trivial type!");
+#endif
 
 #endif /* ShaderTypes_h */
 

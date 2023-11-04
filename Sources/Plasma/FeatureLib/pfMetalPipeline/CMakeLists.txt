@@ -2,7 +2,6 @@ include(FetchContent)
 
 FetchContent_Declare(
   metalcpp
-  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
   URL_HASH_SHA256 0afd87ca851465191ae4e3980aa036c7e9e02fe32e7c760ac1a74244aae6023b
   URL "https://developer.apple.com/metal/cpp/files/metal-cpp_macOS13.3_iOS16.4.zip"
 )

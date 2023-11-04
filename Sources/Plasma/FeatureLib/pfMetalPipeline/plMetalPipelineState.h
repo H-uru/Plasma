@@ -59,7 +59,8 @@ enum plMetalPipelineType
     ShadowRender,
     Clear,
     Dynamic,
-    Text
+    Text,
+    Plate
 };
 
 //MARK: Base pipeline state
@@ -68,6 +69,8 @@ class plMetalPipelineState
 {
 public:
     plMetalPipelineState(plMetalDevice* device);
+    virtual ~plMetalPipelineState() = default;
+    
     plMetalDevice::plMetalLinkedPipeline* GetRenderPipelineState();
     void                                  PrewarmRenderPipelineState();
     bool                                  operator==(const plMetalPipelineState& p) const
@@ -90,7 +93,6 @@ public:
 
     virtual void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) = 0;
     virtual void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) = 0;
-    virtual ~plMetalPipelineState() = default;
 
 protected:
     plMetalDevice*               fDevice;
@@ -132,7 +134,7 @@ protected:
     MTL::FunctionConstantValues* MakeFunctionConstants()
     {
         MTL::FunctionConstantValues* constants = MTL::FunctionConstantValues::alloc()->init()->autorelease();
-        this->GetFunctionConstants(constants);
+        GetFunctionConstants(constants);
         return constants;
     }
 };

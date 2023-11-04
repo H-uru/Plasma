@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsGMaterial.h"
 #include <cmath>
+#include "hsGMaterial.h"
 
 #include "HeadSpin.h"
 #include "plProfile.h"
@@ -51,8 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLayerInterface.h"
 
 #include "plMessage/plMatRefMsg.h"
-
-#include "hsGDeviceRef.h"
 
 plProfile_CreateTimer("MaterialAnims", "Animation", MaterialAnims);
 
@@ -205,11 +203,6 @@ void hsGMaterial::SetLayer(plLayerInterface* layer, int32_t which, bool insert, 
         else
             layers.emplace_back(layer);
     }
-}
-
-void hsGMaterial::SetDeviceRef(hsGDeviceRef* ref)
-{
-    hsRefCnt_SafeAssign(fDeviceRef, ref);
 }
 
 void hsGMaterial::Write(hsStream* s)

@@ -45,13 +45,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 #include "hsColorRGBA.h"
+#include "hsGDeviceRef.h"
 #include "hsGMatState.h"
 
 #include "pnNetCommon/plSynchedObject.h"
 
 class hsScene;
 class hsResMgr;
-class hsGDeviceRef;
 class hsG3DDevice;
 class plLayerInterface;
 class plLayer;
@@ -132,7 +132,8 @@ public:
     bool                    IsDecal() const             { return (fCompFlags & kCompDecal); }
     bool                    NeedsBlendChannel()         { return (fCompFlags & kCompNeedsBlendChannel); }
     
-    void SetDeviceRef(hsGDeviceRef* ref);
+    
+    void SetDeviceRef(hsGDeviceRef* ref) { hsRefCnt_SafeAssign(fDeviceRef, ref); }
     hsGDeviceRef* GetDeviceRef() const { return fDeviceRef; }
 
     virtual void        Read(hsStream* s);

@@ -269,7 +269,7 @@ MTL::Function* plMetalMaterialPassPipelineState::GetVertexFunction(MTL::Library*
 {
     NS::Error*                   error = nullptr;
     MTL::FunctionConstantValues* constants = MTL::FunctionConstantValues::alloc()->init()->autorelease();
-    this->GetFunctionConstants(constants);
+    GetFunctionConstants(constants);
     MTL::Function* function = library->newFunction(
                                          NS::String::string("pipelineVertexShader", NS::ASCIIStringEncoding),
                                          MakeFunctionConstants(),

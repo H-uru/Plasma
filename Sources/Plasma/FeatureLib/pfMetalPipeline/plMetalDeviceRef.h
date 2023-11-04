@@ -61,8 +61,8 @@ protected:
 public:
     void              Unlink();
     void              Link(plMetalDeviceRef** back);
-    plMetalDeviceRef* GetNext() { return fNext; }
-    bool              IsLinked() { return fBack != nullptr; }
+    plMetalDeviceRef* GetNext() const { return fNext; }
+    bool              IsLinked() { return fBack != nullptr; } const
 
     bool HasFlag(uint32_t f) const { return 0 != (fFlags & f); }
     void SetFlag(uint32_t f, bool on)
@@ -212,7 +212,7 @@ public:
     virtual ~plMetalVertexBufferRef();
 
     void                    Link(plMetalVertexBufferRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalVertexBufferRef* GetNext() const { return (plMetalVertexBufferRef*)fNext; }
+    plMetalVertexBufferRef* const GetNext() const { return (plMetalVertexBufferRef*)fNext; }
 
     void Release() override;
 };
@@ -244,7 +244,7 @@ public:
     void Release() override;
 
     void                   Link(plMetalIndexBufferRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalIndexBufferRef* GetNext() { return (plMetalIndexBufferRef*)fNext; }
+    plMetalIndexBufferRef* const GetNext() { return (plMetalIndexBufferRef*)fNext; }
     virtual ~plMetalIndexBufferRef();
 
     plMetalIndexBufferRef() : plMetalBufferPoolRef(),
@@ -287,7 +287,7 @@ public:
     MTL::Texture* fDepthBuffer;
 
     void                    Link(plMetalRenderTargetRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalRenderTargetRef* GetNext() { return (plMetalRenderTargetRef*)fNext; }
+    plMetalRenderTargetRef* GetNext() const { return (plMetalRenderTargetRef*)fNext; }
 
     plMetalRenderTargetRef() : fDepthBuffer(nullptr)
     {

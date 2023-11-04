@@ -151,7 +151,7 @@ public:
     void           IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux);
     void           IRenderAuxSpans(const plSpan& span);
     bool           IHandleMaterialPass(hsGMaterial* material, uint32_t pass, const plSpan* currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders = true);
-    plMetalDevice* GetMetalDevice();
+    plMetalDevice* GetMetalDevice() const;
 
     // Create and/or Refresh geometry buffers
     void          CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;

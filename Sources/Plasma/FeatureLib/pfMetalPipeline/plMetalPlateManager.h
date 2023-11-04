@@ -58,17 +58,17 @@ class plMetalDevice;
 class plMetalPlatePipelineState : public plMetalPipelineState
 {
 public:
-    plMetalPlatePipelineState(plMetalDevice *device) : plMetalPipelineState(device){};
-    bool                  IsEqual(const plMetalPipelineState &p) const override;
-    uint16_t              GetID() const override { return 5; };
+    plMetalPlatePipelineState(plMetalDevice* device) : plMetalPipelineState(device){};
+    bool                  IsEqual(const plMetalPipelineState& p) const override;
+    uint16_t              GetID() const override { return plMetalPipelineType::Plate; }
     plMetalPipelineState* Clone() override;
-    const MTL::Function * GetVertexFunction(MTL::Library *library) override;
-    const MTL::Function * GetFragmentFunction(MTL::Library *library) override;
+    const MTL::Function * GetVertexFunction(MTL::Library* library) override;
+    const MTL::Function * GetFragmentFunction(MTL::Library* library) override;
     const NS::String*     GetDescription() override;
 
-    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) override;
+    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override;
 
-    void ConfigureVertexDescriptor(MTL::VertexDescriptor *vertexDescriptor) override;
+    void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) override;
 
     void GetFunctionConstants(MTL::FunctionConstantValues*) const override;
 };

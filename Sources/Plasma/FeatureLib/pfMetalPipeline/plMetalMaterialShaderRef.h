@@ -57,22 +57,22 @@ class plLayerInterface;
 class plMetalMaterialShaderRef : public plMetalDeviceRef
 {
 protected:
-    plMetalPipeline *fPipeline;
-    hsGMaterial     *fMaterial;
+    plMetalPipeline*    fPipeline;
+    hsGMaterial*        fMaterial;
     // temporary holder for the fragment shader to use, we don't own this reference
-    MTL::Function   *fFragFunction;
+    MTL::Function*      fFragFunction;
 
 private:
     std::vector<uint32_t>      fPassIndices;
     // FIXME: This should be retained/released
-    MTL::Device               *fDevice;
-    std::vector<MTL::Buffer *> fPassArgumentBuffers;
+    MTL::Device*               fDevice;
+    std::vector<MTL::Buffer*>  fPassArgumentBuffers;
 
 public:
     void                      Link(plMetalMaterialShaderRef **back) { plMetalDeviceRef::Link((plMetalDeviceRef **)back); }
-    plMetalMaterialShaderRef* GetNext() const { return (plMetalMaterialShaderRef *)fNext; }
+    plMetalMaterialShaderRef* GetNext() const { return (plMetalMaterialShaderRef*)fNext; }
 
-    plMetalMaterialShaderRef(hsGMaterial *mat, plMetalPipeline *pipe);
+    plMetalMaterialShaderRef(hsGMaterial* mat, plMetalPipeline* pipe);
     ~plMetalMaterialShaderRef();
 
     void Release() override;
@@ -116,7 +116,7 @@ private:
                              std::vector<plLayerInterface*>* piggybacks,
                              const std::function<plLayerInterface* (plLayerInterface*, uint32_t)>& preEncodeTransform,
                              const std::function<plLayerInterface* (plLayerInterface*, uint32_t)>& postEncodeTransform);
-    bool     ICanEatLayer(plLayerInterface *lay);
+    bool     ICanEatLayer(plLayerInterface* lay);
     uint32_t ILayersAtOnce(uint32_t which);
 
     void                                                 IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer);

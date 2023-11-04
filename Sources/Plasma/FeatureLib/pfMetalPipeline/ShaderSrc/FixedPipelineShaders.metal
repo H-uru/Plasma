@@ -403,9 +403,9 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 verte
         }
         
         // do the actual sample
-        if(passType == PassTypeTexture) {
+        if (passType == PassTypeTexture) {
             return (&textures)[index].sample((&samplers)[index], sampleCoord.xy);
-        } else if(passType == PassTypeCubicTexture) {
+        } else if (passType == PassTypeCubicTexture) {
             return (&cubicTextures)[index].sample((&samplers)[index], sampleCoord.xyz);
         } else {
             return half4(0);

@@ -507,7 +507,7 @@ void plMetalDevice::FillVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* gr
     const uint32_t size = group->GetVertBufferEnd(idx) * vertSize - vertStart;
 
     if (ref->GetBuffer()) {
-        assert(size <= ref->GetBuffer()->length());
+        hsAssert(size <= ref->GetBuffer()->length(), "Allocated buffer does not fit fill data");
     }
 
     if (!size) {
@@ -1169,7 +1169,7 @@ void plMetalDevice::SubmitCommandBuffer()
     fClearDrawableDepth = 1.0;
 }
 
-MTL::SamplerState* plMetalDevice::SampleStateForClampFlags(hsGMatState::hsGMatClampFlags sampleState)
+MTL::SamplerState* plMetalDevice::SampleStateForClampFlags(hsGMatState::hsGMatClampFlags sampleState) const
 {
     return fSamplerStates[sampleState];
 }
@@ -1256,7 +1256,7 @@ MTL::RenderCommandEncoder* plMetalDevice::CurrentRenderCommandEncoder()
     return fCurrentRenderTargetCommandEncoder;
 }
 
-CA::MetalDrawable* plMetalDevice::GetCurrentDrawable()
+CA::MetalDrawable* plMetalDevice::GetCurrentDrawable() const
 {
     return fCurrentDrawable;
 }

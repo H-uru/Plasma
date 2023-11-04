@@ -162,7 +162,7 @@ public:
     // Currently requires a CA drawable and not a Metal drawable. In since CA drawable is only abstract implementation I know about, not sure where we would find others?
     void                CreateNewCommandBuffer(CA::MetalDrawable* drawable);
     MTL::CommandBuffer* GetCurrentCommandBuffer();
-    CA::MetalDrawable*  GetCurrentDrawable();
+    CA::MetalDrawable*  GetCurrentDrawable() const;
     /// Submit the command buffer to the GPU and draws all the render passes. Clears the current command buffer.
     void                SubmitCommandBuffer();
     void                Clear(bool shouldClearColor, simd_float4 clearColor, bool shouldClearDepth, float clearDepth);
@@ -170,7 +170,7 @@ public:
     void SetMaxAnsiotropy(uint8_t maxAnsiotropy);
     void SetMSAASampleCount(uint8_t sampleCount);
 
-    MTL::SamplerState* SampleStateForClampFlags(hsGMatState::hsGMatClampFlags sampleState);
+    MTL::SamplerState* SampleStateForClampFlags(hsGMatState::hsGMatClampFlags sampleState) const;
 
     NS::UInteger CurrentTargetSampleCount()
     {

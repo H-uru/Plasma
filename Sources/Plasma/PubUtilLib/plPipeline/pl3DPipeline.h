@@ -110,7 +110,7 @@ template <class DeviceType>
 class pl3DPipeline : public plPipeline
 {
 protected:
-    DeviceType                              fDevice;
+    mutable DeviceType                      fDevice;
 
     plPipelineViewSettings                  fView;
     std::stack<plPipelineViewSettings>      fViewStack;

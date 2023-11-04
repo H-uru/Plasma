@@ -367,7 +367,7 @@ void plMetalPipeline::ClearRenderTarget(const hsColorRGBA* col, const float* dep
     if (fView.fRenderState & (kRenderClearColor | kRenderClearDepth)) {
         hsColorRGBA clearColor = col ? *col : GetClearColor();
         float       clearDepth = depth ? *depth : fView.GetClearDepth();
-        fDevice.Clear(fView.fRenderState & kRenderClearColor, {clearColor.r, clearColor.g, clearColor.b, clearColor.a}, fView.fRenderState & kRenderClearDepth, 1.0);
+        fDevice.Clear(fView.fRenderState & kRenderClearColor, { clearColor.r, clearColor.g, clearColor.b, clearColor.a }, fView.fRenderState & kRenderClearDepth, 1.0);
         fState.Reset();
     }
 }
@@ -978,11 +978,10 @@ void plMetalPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode>* res, 
      */
 
     std::vector<plDisplayMode> supported;
-    plDisplayMode              mode;
-    mode.Width = 800;
-    mode.Height = 600;
-    mode.ColorDepth = 32;
-    supported.push_back(mode);
+    supported.emplace_back();
+    supported[0].Width = 800;
+    supported[0].Height = 600;
+    supported[0].ColorDepth = 32;
 
     *res = supported;
 }
@@ -1361,7 +1360,7 @@ void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGM
     // For each projector:
     int k;
     for (k = 0; k < fProjEach.size(); k++) {
-        // Push it's projected texture as a piggyback.
+        // Push its projected texture as a piggyback.
         plLightInfo*              li = fProjEach[k];
         plMetalMaterialShaderRef* mRef = static_cast<plMetalMaterialShaderRef*>(material->GetDeviceRef());
 
@@ -1384,7 +1383,7 @@ void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGM
 
         RemoveLayerInterface(&layLightBase, false);
 
-        // Pop it's projected texture off piggyback
+        // Pop its projected texture off piggyback
         IPopProjPiggyBacks();
     }
 }
@@ -1539,11 +1538,11 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
         /*
          The programmable pipeline doesn't do things like set the texture transform matrices,
          In practice, the transforms aren't set and used. Does it matter that the Metal
-         implementation doesn't implemention the full inputs the DX version gets?
+         implementation doesn't implement the full inputs the DX version gets?
 
          If it is implemented, the same checks the DX version does should be also implemented.
          DX will set texture transforms, but then turn them off in the pipeline and manually
-         manipulate texture co-ords in the shader.
+         manipulate texture coords in the shader.
 
          Texture setting should also _maybe_ be reconciled with the "fixed" pipeline. But
          the fixed pipeline uses indirect textures mapped to a buffer. That approach could
@@ -1855,8 +1854,9 @@ void plMetalPipeline::ISetPipeConsts(plShader* shader)
             case plPipeConst::kPointLight3:
             case plPipeConst::kPointLight4:
             case plPipeConst::kColorFilter:
-            case plPipeConst::kMaxType:
-                break;
+            case plPipeConst::kMaxType: {
+                hsAssert(0, "Unimplemented uniform passed to shader");
+            } break;
         }
     }
 }
@@ -2532,7 +2532,7 @@ void plMetalPipeline::PopCurrentLightSources()
 plLayerInterface* plMetalPipeline::IPushOverBaseLayer(plLayerInterface* li)
 {
     if (!li)
-        return nil;
+        return nullptr;
 
     fOverLayerStack.emplace_back(li);
 
@@ -2551,7 +2551,7 @@ plLayerInterface* plMetalPipeline::IPushOverBaseLayer(plLayerInterface* li)
 plLayerInterface* plMetalPipeline::IPopOverBaseLayer(plLayerInterface* li)
 {
     if (!li)
-        return nil;
+        return nullptr;
 
     fForceMatHandle = true;
 
@@ -2569,7 +2569,7 @@ plLayerInterface* plMetalPipeline::IPopOverBaseLayer(plLayerInterface* li)
 plLayerInterface* plMetalPipeline::IPushOverAllLayer(plLayerInterface* li)
 {
     if (!li)
-        return nil;
+        return nullptr;
 
     fOverLayerStack.push_back(li);
 
@@ -2592,7 +2592,7 @@ plLayerInterface* plMetalPipeline::IPushOverAllLayer(plLayerInterface* li)
 plLayerInterface* plMetalPipeline::IPopOverAllLayer(plLayerInterface* li)
 {
     if (!li)
-        return nil;
+        return nullptr;
 
     fForceMatHandle = true;
 
@@ -2638,8 +2638,7 @@ void plMetalPipeline::IPushPiggyBacks(hsGMaterial* mat)
     if (fView.fRenderState & plPipeline::kRenderNoPiggyBacks)
         return;
 
-    int i;
-    for (i = 0; i < mat->GetNumPiggyBacks(); i++) {
+    for (int i = 0; i < mat->GetNumPiggyBacks(); i++) {
         if (!mat->GetPiggyBack(i))
             continue;
 
@@ -2916,7 +2915,7 @@ bool plMetalPipeline::ICreateDynDeviceObjects()
 
     // Create device-specific stuff
     fDebugTextMgr = new plDebugTextManager();
-    if (fDebugTextMgr == nil)
+    if (fDebugTextMgr == nullptr)
         return true;
 
     // Vertex buffers, index buffers, textures, etc.
@@ -2934,7 +2933,7 @@ void plMetalPipeline::IReleaseDynDeviceObjects()
     // We should do this earlier, but the textFont objects don't remove
     // themselves from their parent objects yet
     delete fDebugTextMgr;
-    fDebugTextMgr = nil;
+    fDebugTextMgr = nullptr;
 
     while (fTextFontRefList)
         delete fTextFontRefList;
@@ -3397,10 +3396,10 @@ plRenderTarget* plMetalPipeline::IFindRenderTarget(uint32_t& width, uint32_t& he
 // about that.
 hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRenderTarget* owner)
 {
-    plMetalRenderTargetRef* ref = nil;
-    MTL::Texture*           depthSurface = nil;
-    MTL::Texture*           texture = nil;
-    MTL::Texture*           cTexture = nil;
+    plMetalRenderTargetRef* ref = nullptr;
+    MTL::Texture*           depthSurface = nullptr;
+    MTL::Texture*           texture = nullptr;
+    MTL::Texture*           cTexture = nullptr;
     int                     i;
     plCubicRenderTarget*    cubicRT;
     uint16_t                width, height;
@@ -3435,7 +3434,7 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
     // if( !IFindRenderTargetInfo(owner, surfFormat, resType) )
     //{
     //    hsAssert( false, "Error getting renderTarget info" );
-    //    return nil;
+    //    return nullptr;
     //}
 
     /// Create the render target now
@@ -3623,7 +3622,7 @@ void plMetalPipeline::IMakeRenderTargetPools()
                 if (!SharedRenderTargetRef((*pool)[0], rt)) {
                     delete rt;
                     pool->resize(j + 1);
-                    (*pool)[j] = nil;
+                    (*pool)[j] = nullptr;
                     break;
                 }
                 (*pool)[j] = rt;
@@ -3964,7 +3963,7 @@ bool plMetalPipeline::IIsViewLeftHanded()
 }
 
 //// ISetCullMode /////////////////////////////////////////////////////////////
-//  Tests and sets the current winding order cull mode (CW, CCW, or none).
+// Tests and sets the current winding order cull mode (CW, CCW, or none).
 // Will reverse the cull mode as necessary for left handed camera or local to world
 // transforms.
 void plMetalPipeline::ISetCullMode(bool flip)
@@ -3976,7 +3975,7 @@ void plMetalPipeline::ISetCullMode(bool flip)
     }
 }
 
-plMetalDevice* plMetalPipeline::GetMetalDevice()
+plMetalDevice* plMetalPipeline::GetMetalDevice()  const
 {
     return &fDevice;
 }
