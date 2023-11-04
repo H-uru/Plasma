@@ -53,8 +53,8 @@ plProfile_CreateMemCounter("Textures", "Memory", MemTexture);
  ** Generic plGLDeviceRef Functions                                         **
  *****************************************************************************/
 plMetalDeviceRef::plMetalDeviceRef()
-    : fNext(nullptr),
-      fBack(nullptr)
+    : fNext(),
+      fBack()
 {
 }
 
@@ -95,8 +95,7 @@ void plMetalDeviceRef::Link(plMetalDeviceRef **back)
 
 plMetalVertexBufferRef::~plMetalVertexBufferRef()
 {
-    if (fData)
-        delete fData;
+    delete fData;
     Release();
 }
 

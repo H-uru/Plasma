@@ -42,10 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // System Frameworks
 #import <Cocoa/Cocoa.h>
-#if PLASMA_PIPELINE_GL
+#ifdef PLASMA_PIPELINE_GL
 #import <OpenGL/gl.h>
 #endif
-#if PLASMA_PIPELINE_METAL
+#ifdef PLASMA_PIPELINE_METAL
 #import <Metal/Metal.h>
 #endif
 #import <QuartzCore/QuartzCore.h>
@@ -69,11 +69,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCmdParser.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
-#if PLASMA_PIPELINE_GL
+#ifdef PLASMA_PIPELINE_GL
 #include "pfGLPipeline/plGLPipeline.h"
 #endif
 #include "plInputCore/plInputDevice.h"
-#if PLASMA_PIPELINE_METAL
+#ifdef PLASMA_PIPELINE_METAL
 #include "pfMetalPipeline/plMetalPipeline.h"
 #endif
 #include "plMessage/plDisplayScaleChangedMsg.h"
@@ -468,12 +468,12 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     gClient.SetClientWindow((hsWindowHndl)(__bridge void*)self.window);
     gClient.SetClientDisplay((hsWindowHndl)NULL);
 
-#if PLASMA_PIPELINE_METAL
+#ifdef PLASMA_PIPELINE_METAL
     plMetalPipeline *pipeline = (plMetalPipeline *)gClient->GetPipeline();
     pipeline->currentDrawableCallback = [self] (MTL::Device* device) {
         id< CAMetalDrawable > drawable;
         id<MTLDevice> metalDevice = (__bridge id<MTLDevice>)device;
-        if(((CAMetalLayer *) _renderLayer).device != metalDevice) {
+        if (((CAMetalLayer *) _renderLayer).device != metalDevice) {
             ((CAMetalLayer *) _renderLayer).device = metalDevice;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self updateWindowTitle];
@@ -488,12 +488,12 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     if (!gClient) {
         exit(0);
     }
-    
+
     self.eventMonitor = [[PLSKeyboardEventMonitor alloc] initWithView:self.window.contentView
                                                          inputManager:&gClient];
     ((PLSView*)self.window.contentView).inputManager = gClient->GetInputManager();
     [self.window makeFirstResponder:self.window.contentView];
-    
+
     // Main loop
     if (gClient && !gClient->GetDone()) {
         [self startRunLoop];

@@ -55,23 +55,17 @@ class plMetalShader : public plMetalDeviceRef
 {
 protected:
     plShader*        fOwner;
-    // ST::string          fErrorString;
     plMetalPipeline* fPipe;
     MTL::Function*   fFunction;
-
-    // HRESULT             IOnError(HRESULT hr, const char* errStr);
-    // void                ISetError(const char* errStr) { fErrorString = errStr; }
-
-    // virtual HRESULT     ICreate(plDXPipeline* pipe) = 0;
+    
     virtual bool ISetConstants(plMetalPipeline* pipe) = 0; // On error, sets error string.
 
 public:
     plMetalShader(plShader* owner);
     virtual ~plMetalShader();
 
-    // ST::string      GetErrorString() const { return fErrorString; }
     void           SetOwner(plShader* owner);
-    MTL::Function* GetShader(plMetalPipeline* pipe) { return fFunction; };
+    MTL::Function* GetShader(plMetalPipeline* pipe) const { return fFunction; };
 };
 
 #endif // plDXShader_inc

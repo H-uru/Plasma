@@ -47,16 +47,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plMetalShader::plMetalShader(plShader* owner)
     : fOwner(owner),
-      fPipe(nil)
+      fPipe()
 {
     owner->SetDeviceRef(this);
 }
 
 plMetalShader::~plMetalShader()
 {
-    fPipe = nil;
-
-    // ISetError(nil);
+    fPipe = nullptr;
 }
 
 void plMetalShader::SetOwner(plShader* owner)
@@ -67,14 +65,3 @@ void plMetalShader::SetOwner(plShader* owner)
         owner->SetDeviceRef(this);
     }
 }
-
-/*HRESULT plMetalShader::IOnError(HRESULT hr, const char* errStr)
-{
-    ISetError(errStr);
-
-    fOwner->Invalidate();
-
-    hsStatusMessage(errStr);
-
-    return hr;
-}*/

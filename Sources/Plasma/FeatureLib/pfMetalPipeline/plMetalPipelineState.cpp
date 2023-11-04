@@ -79,9 +79,9 @@ void plMetalRenderSpanPipelineState::GetFunctionConstants(MTL::FunctionConstantV
 
 size_t plMetalRenderSpanPipelineState::GetHash() const
 {
-    std::size_t h1 = std::hash<uint8_t>()(fNumUVs);
-    std::size_t h2 = std::hash<uint8_t>()(fNumWeights);
-    std::size_t h3 = std::hash<bool>()(fHasSkinIndices);
+    size_t h1 = std::hash<uint8_t>()(fNumUVs);
+    size_t h2 = std::hash<uint8_t>()(fNumWeights);
+    size_t h3 = std::hash<bool>()(fHasSkinIndices);
 
     return h1 ^ h2 ^ h3 ^ plMetalPipelineState::GetHash();
 }
@@ -106,15 +106,15 @@ plMetalMaterialPassPipelineState::plMetalMaterialPassPipelineState(plMetalDevice
 void plMetalMaterialPassPipelineState::GetFunctionConstants(MTL::FunctionConstantValues* constants) const
 {
     plMetalRenderSpanPipelineState::GetFunctionConstants(constants);
-    constants->setConstantValue(&fFragmentShaderDescription.numLayers, MTL::DataTypeUChar, FunctionConstantNumLayers);
-    constants->setConstantValues(&fFragmentShaderDescription.passTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSources, 8));
-    constants->setConstantValues(&fFragmentShaderDescription.blendModes, MTL::DataTypeUInt, NS::Range(FunctionConstantBlendModes, 8));
-    constants->setConstantValues(&fFragmentShaderDescription.miscFlags, MTL::DataTypeUInt, NS::Range(FunctionConstantLayerFlags, 8));
+    constants->setConstantValue(&fFragmentShaderDescription.fNumLayers, MTL::DataTypeUChar, FunctionConstantNumLayers);
+    constants->setConstantValues(&fFragmentShaderDescription.fPassTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSources, 8));
+    constants->setConstantValues(&fFragmentShaderDescription.fBlendModes, MTL::DataTypeUInt, NS::Range(FunctionConstantBlendModes, 8));
+    constants->setConstantValues(&fFragmentShaderDescription.fMiscFlags, MTL::DataTypeUInt, NS::Range(FunctionConstantLayerFlags, 8));
 }
 
 size_t plMetalMaterialPassPipelineState::GetHash() const
 {
-    std::size_t value = plMetalRenderSpanPipelineState::GetHash();
+    size_t value = plMetalRenderSpanPipelineState::GetHash();
     value ^= fFragmentShaderDescription.GetHash();
 
     return value;
@@ -124,7 +124,7 @@ void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescri
 {
     int vertOffset = 0;
     int skinWeightOffset = vertOffset + (sizeof(float) * 3);
-    if (this->fHasSkinIndices) {
+    if (fHasSkinIndices) {
         skinWeightOffset += sizeof(uint32_t);
     }
     int normOffset = skinWeightOffset + (sizeof(float) * this->fNumWeights);
@@ -140,7 +140,7 @@ void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescri
     vertexDescriptor->attributes()->object(VertexAttributeNormal)->setBufferIndex(0);
     vertexDescriptor->attributes()->object(VertexAttributeNormal)->setOffset(normOffset);
 
-    if (this->fNumWeights > 0) {
+    if (fNumWeights > 0) {
         int weightOneOffset = skinWeightOffset;
 
         vertexDescriptor->attributes()->object(VertexAttributeWeights)->setFormat(MTL::VertexFormatFloat);
@@ -298,14 +298,14 @@ const NS::String* plMetalMaterialPassPipelineState::GetDescription()
 
 void plMetalMaterialPassPipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor)
 {
-    uint32_t blendMode = fFragmentShaderDescription.blendModes[0];
+    uint32_t blendMode = fFragmentShaderDescription.fBlendModes[0];
     ConfigureBlendMode(blendMode, descriptor);
 }
 
 void plMetalFragmentShaderDescription::Populate(const plLayerInterface* layPtr, const uint8_t index)
 {
-    blendModes[index] = layPtr->GetBlendFlags();
-    miscFlags[index] = layPtr->GetMiscFlags();
+    fBlendModes[index] = layPtr->GetBlendFlags();
+    fMiscFlags[index] = layPtr->GetMiscFlags();
     PopulateTextureInfo(layPtr, index);
 }
 
@@ -314,15 +314,15 @@ void plMetalFragmentShaderDescription::PopulateTextureInfo(const plLayerInterfac
     plBitmap* texture = layPtr->GetTexture();
     if (texture != nullptr) {
         if (plCubicEnvironmap::ConvertNoRef(texture) != nullptr || plCubicRenderTarget::ConvertNoRef(texture) != nullptr) {
-            passTypes[index] = PassTypeCubicTexture;
+            fPassTypes[index] = PassTypeCubicTexture;
         } else if (plMipmap::ConvertNoRef(texture) != nullptr || plRenderTarget::ConvertNoRef(texture) != nullptr) {
-            passTypes[index] = PassTypeTexture;
+            fPassTypes[index] = PassTypeTexture;
         } else {
-            passTypes[index] = PassTypeColor;
+            fPassTypes[index] = PassTypeColor;
         }
 
     } else {
-        passTypes[index] = PassTypeColor;
+        fPassTypes[index] = PassTypeColor;
     }
 }
 

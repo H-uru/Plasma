@@ -152,13 +152,13 @@ typedef struct
 
 typedef struct
 {
-    //transformation
+    // transformation
     matrix_float4x4 projectionMatrix;
     matrix_float4x4 localToWorldMatrix;
     matrix_float4x4 cameraToWorldMatrix;
     matrix_float4x4 worldToCameraMatrix;
     
-    //lighting
+    // lighting
     half4 globalAmb;
     half3 ambientCol;
     uint8_t ambientSrc;

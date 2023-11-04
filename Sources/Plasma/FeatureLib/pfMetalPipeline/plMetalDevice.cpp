@@ -40,26 +40,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plMetalDevice_hpp
-#define plMetalDevice_hpp
-
-// We need to define these once for Metal somewhere in a cpp file
+// We need to define these once and only one for Metal somewhere
+// in a cpp file before the Metal-cpp include (via plMetalDevice)
 #define NS_PRIVATE_IMPLEMENTATION
 #define CA_PRIVATE_IMPLEMENTATION
 #define MTL_PRIVATE_IMPLEMENTATION
 
 #include "plMetalDevice.h"
 
-#include <string_theory/format>
-
-#include "ShaderTypes.h"
+#include "hsDarwin.h"
 #include "hsThread.h"
+
 #include "plDrawable/plGBufferGroup.h"
 #include "plGImage/plCubicEnvironmap.h"
 #include "plGImage/plMipmap.h"
-#include "plMetalPipeline.h"
-#include "plMetalPipelineState.h"
 #include "plPipeline/plRenderTarget.h"
+
+#include "pfMetalPipeline/plMetalPipeline.h"
+#include "pfMetalPipeline/plMetalPipelineState.h"
+#include "pfMetalPipeline/ShaderSrc/ShaderTypes.h"
 
 matrix_float4x4* hsMatrix2SIMD(const hsMatrix44& src, matrix_float4x4* dst)
 {
@@ -215,9 +214,7 @@ void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool sh
 
 void plMetalDevice::BeginNewRenderPass()
 {
-    // printf("Beginning new render pass\n");
-
-    // lazilly create the screen render encoder if it does not yet exist
+    // lazily create the screen render encoder if it does not yet exist
     if (!fCurrentOffscreenCommandBuffer && !fCurrentRenderTargetCommandEncoder) {
         SetRenderTarget(nullptr);
     }
@@ -228,7 +225,7 @@ void plMetalDevice::BeginNewRenderPass()
         // pass descriptor and submit more commands
         fCurrentRenderTargetCommandEncoder->endEncoding();
         fCurrentRenderTargetCommandEncoder->release();
-        fCurrentRenderTargetCommandEncoder = nil;
+        fCurrentRenderTargetCommandEncoder = nullptr;
     }
 
     MTL::RenderPassDescriptor* renderPassDescriptor = MTL::RenderPassDescriptor::renderPassDescriptor();
@@ -309,7 +306,7 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
         // pass descriptor and submit more commands
         fCurrentRenderTargetCommandEncoder->endEncoding();
         fCurrentRenderTargetCommandEncoder->release();
-        fCurrentRenderTargetCommandEncoder = nil;
+        fCurrentRenderTargetCommandEncoder = nullptr;
     }
 
     if (fCurrentOffscreenCommandBuffer) {
@@ -326,7 +323,7 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
             fCurrentOffscreenCommandBuffer->waitUntilCompleted();
         }
         fCurrentOffscreenCommandBuffer->release();
-        fCurrentOffscreenCommandBuffer = nil;
+        fCurrentOffscreenCommandBuffer = nullptr;
     }
 
     fCurrentRenderTarget = target;
@@ -359,23 +356,23 @@ void plMetalDevice::SetRenderTarget(plRenderTarget* target)
 }
 
 plMetalDevice::plMetalDevice()
-    : fErrorMsg(nullptr),
+    : fErrorMsg(),
       fActiveThread(hsThread::ThisThreadHash()),
-      fCurrentDrawable(nullptr),
-      fCommandQueue(nullptr),
-      fCurrentRenderTargetCommandEncoder(nullptr),
-      fCurrentDrawableDepthTexture(nullptr),
-      fCurrentFragmentOutputTexture(nullptr),
-      fCurrentCommandBuffer(nullptr),
-      fCurrentOffscreenCommandBuffer(nullptr),
-      fCurrentRenderTarget(nullptr),
+      fCurrentDrawable(),
+      fCommandQueue(),
+      fCurrentRenderTargetCommandEncoder(),
+      fCurrentDrawableDepthTexture(),
+      fCurrentFragmentOutputTexture(),
+      fCurrentCommandBuffer(),
+      fCurrentOffscreenCommandBuffer(),
+      fCurrentRenderTarget(),
       fNewPipelineStateMap(),
-      fCurrentFragmentMSAAOutputTexture(nullptr),
-      fCurrentUnprocessedOutputTexture(nullptr),
-      fGammaLUTTexture(nullptr),
-      fGammaAdjustState(nullptr),
-      fBlitCommandBuffer(nullptr),
-      fBlitCommandEncoder(nullptr)
+      fCurrentFragmentMSAAOutputTexture(),
+      fCurrentUnprocessedOutputTexture(),
+      fGammaLUTTexture(),
+      fGammaAdjustState(),
+      fBlitCommandBuffer(),
+      fBlitCommandEncoder()
 {
     fClearRenderTargetColor = {0.0, 0.0, 0.0, 1.0};
     fClearDrawableColor = {0.0, 0.0, 0.0, 1.0};
@@ -541,7 +538,7 @@ void plMetalDevice::FillVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* gr
                 /// Interleaved, do straight copy
                 memcpy(ptr, srcVPtr + cell->fVtxStart, cell->fLength * vertSize);
                 ptr += cell->fLength * vertSize;
-                assert(size <= cell->fLength * vertSize);
+                hsAssert(size <= cell->fLength * vertSize, "Interleaved copy size mismatch");
             } else {
                 hsStatusMessage("Non interleaved data");
 
@@ -714,11 +711,11 @@ void plMetalDevice::ReleaseFramebufferObjects()
 {
     if (fCurrentUnprocessedOutputTexture)
         fCurrentUnprocessedOutputTexture->release();
-    fCurrentFragmentOutputTexture = nil;
+    fCurrentFragmentOutputTexture = nullptr;
 
     if (fGammaAdjustState)
         fGammaAdjustState->release();
-    fGammaAdjustState = nil;
+    fGammaAdjustState = nullptr;
 }
 
 void plMetalDevice::SetFramebufferFormat(MTL::PixelFormat format)
@@ -811,7 +808,7 @@ void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef* tRef, plMipmap* i
                     };
 
                     RGBA4444Component* in = (RGBA4444Component*)img->GetCurrLevelPtr();
-                    simd_uint4*        out = (simd_uint4*)malloc(img->GetCurrHeight() * img->GetCurrWidth() * 4);
+                    auto out = std::make_unique<simd_uint4[]>(img->GetCurrHeight() * img->GetCurrWidth());
 
                     for (int i = 0; i < (img->GetCurrWidth() * img->GetCurrHeight()); i++) {
                         out[i].r = in[i].r;
@@ -820,18 +817,19 @@ void plMetalDevice::PopulateTexture(plMetalDevice::TextureRef* tRef, plMipmap* i
                         out[i].a = in[i].a;
                     }
 
-                    tRef->fTexture->replaceRegion(MTL::Region::Make2D(0, 0, img->GetCurrWidth(), img->GetCurrHeight()), img->GetCurrLevel(), slice, out, img->GetCurrWidth() * 4, 0);
-
-                    free(out);
+                    tRef->fTexture->replaceRegion(MTL::Region::Make2D(0, 0, img->GetCurrWidth(), img->GetCurrHeight()), img->GetCurrLevel(), slice, out.get(), img->GetCurrWidth() * 4, 0);
                 } else {
                     tRef->fTexture->replaceRegion(MTL::Region::Make2D(0, 0, img->GetCurrWidth(), img->GetCurrHeight()), img->GetCurrLevel(), slice, img->GetCurrLevelPtr(), img->GetCurrWidth() * 4, 0);
                 }
             } else {
-                printf("Texture with no image data?\n");
+                hsAssert(0, "Texture with no image data?\n");
             }
         }
     }
-    tRef->fTexture->setLabel(NS::String::string(img->GetKeyName().c_str(), NS::UTF8StringEncoding));
+    
+    CFStringRef name = CFStringCreateWithSTString(img->GetKeyName());
+    tRef->fTexture->setLabel(reinterpret_cast<const NS::String *>(name));
+    CFRelease(name);
     tRef->SetDirty(false);
 }
 
@@ -882,7 +880,7 @@ void plMetalDevice::MakeCubicTextureRef(plMetalDevice::TextureRef* tRef, plCubic
 
     tRef->fTexture = fMetalDevice->newTexture(descriptor);
 
-    static const uint kFaceMapping[] = {
+    static constexpr uint kFaceMapping[] = {
         1, // kLeftFace
         0, // kRightFace
         4, // kFrontFace
@@ -993,13 +991,12 @@ void plMetalDevice::CreateNewCommandBuffer(CA::MetalDrawable* drawable)
 
 void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condition_variable** condOut)
 {
-    __block std::condition_variable* newCondition = new std::condition_variable();
-    fConditionMap[record] = newCondition;
+    fConditionMap[record] = new std::condition_variable();
     if (condOut) {
-        *condOut = newCondition;
+        *condOut = fConditionMap[record];
     }
 
-    if (fNewPipelineStateMap[record] != NULL) {
+    if (fNewPipelineStateMap[record] != nullptr) {
         // The shader is already compiled.
         return;
     }
@@ -1042,7 +1039,7 @@ void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condi
 
             fNewPipelineStateMap[record] = linkedPipeline;
             // signal that we're done
-            newCondition->notify_all();
+            fConditionMap[record]->notify_all();
         }
     });
 
@@ -1156,10 +1153,10 @@ void plMetalDevice::SubmitCommandBuffer()
     fCurrentCommandBuffer->presentDrawable(fCurrentDrawable);
     fCurrentCommandBuffer->commit();
     fCurrentCommandBuffer->release();
-    fCurrentCommandBuffer = nil;
+    fCurrentCommandBuffer = nullptr;
 
     fCurrentDrawable->release();
-    fCurrentDrawable = nil;
+    fCurrentDrawable = nullptr;
 
     // Reset the clear colors for the next pass
     // Metal clears on framebuffer load - so don't cause a clear
@@ -1225,9 +1222,9 @@ void plMetalDevice::PostprocessIntoDrawable()
     gammaAdjustEncoder->endEncoding();
 }
 
-std::size_t plMetalDevice::plMetalPipelineRecordHashFunction ::operator()(plMetalPipelineRecord const& s) const noexcept
+size_t plMetalDevice::plMetalPipelineRecordHashFunction ::operator()(plMetalPipelineRecord const& s) const noexcept
 {
-    std::size_t value = std::hash<MTL::PixelFormat>()(s.depthFormat);
+    size_t value = std::hash<MTL::PixelFormat>()(s.depthFormat);
     value ^= std::hash<MTL::PixelFormat>()(s.colorFormat);
     value ^= std::hash<plMetalPipelineState>()(*s.state);
     value ^= std::hash<NS::UInteger>()(s.sampleCount);
@@ -1276,5 +1273,3 @@ void plMetalDevice::BlitTexture(MTL::Texture* src, MTL::Texture* dst)
 
     fBlitCommandEncoder->copyFromTexture(src, 0, 0, MTL::Origin(0, 0, 0), MTL::Size(src->width(), src->height(), 0), dst, 0, 0, MTL::Origin(0, 0, 0));
 }
-
-#endif

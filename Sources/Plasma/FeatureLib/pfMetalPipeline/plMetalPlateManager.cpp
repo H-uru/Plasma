@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "ShaderTypes.h"
 #include "plMetalPipeline.h"
 
-plMetalPlateManager::plMetalPlateManager(plMetalPipeline *pipe)
+plMetalPlateManager::plMetalPlateManager(plMetalPipeline* pipe)
     : plPlateManager(pipe),
       fVtxBuffer(nullptr)
 {
@@ -62,7 +62,7 @@ void plMetalPlateManager::ICreateGeometry()
 {
     plMetalPipeline *pipeline = (plMetalPipeline *)fOwner;
     if (!fVtxBuffer) {
-        struct plateVertexBuffer vertexBuffer;
+        plateVertexBuffer vertexBuffer;
         vertexBuffer.vertices[0].Set(-0.5f, -0.5f);
         vertexBuffer.uv[0].Set(0.0f, 0.0f);
 
@@ -83,7 +83,7 @@ void plMetalPlateManager::ICreateGeometry()
     }
 }
 
-void plMetalPlateManager::EncodeDraw(MTL::RenderCommandEncoder *encoder)
+void plMetalPlateManager::EncodeDraw(MTL::RenderCommandEncoder* encoder)
 {
     encoder->setVertexBuffer(fVtxBuffer, 0, VertexAttributePosition);
     encoder->setVertexBuffer(fVtxBuffer, offsetof(plateVertexBuffer, uv), VertexAttributeTexcoord);
@@ -99,7 +99,7 @@ void plMetalPlateManager::IReleaseGeometry()
     }
 }
 
-void plMetalPlateManager::IDrawToDevice(plPipeline *pipe)
+void plMetalPlateManager::IDrawToDevice(plPipeline* pipe)
 {
     plMetalPipeline *pipeline = (plMetalPipeline *)pipe;
     plPlate         *plate = nullptr;
@@ -116,39 +116,39 @@ plMetalPlateManager::~plMetalPlateManager()
     IReleaseGeometry();
 }
 
-bool plMetalPlatePipelineState::IsEqual(const plMetalPipelineState &p) const
+bool plMetalPlatePipelineState::IsEqual(const plMetalPipelineState& p) const
 {
     return true;
 }
 
-plMetalPipelineState *plMetalPlatePipelineState::Clone()
+plMetalPipelineState* plMetalPlatePipelineState::Clone()
 {
     return new plMetalPlatePipelineState(fDevice);
 }
 
-const MTL::Function *plMetalPlatePipelineState::GetVertexFunction(MTL::Library *library)
+const MTL::Function* plMetalPlatePipelineState::GetVertexFunction(MTL::Library* library)
 {
     return library->newFunction(MTLSTR("plateVertexShader"));
 }
 
-const MTL::Function *plMetalPlatePipelineState::GetFragmentFunction(MTL::Library *library)
+const MTL::Function* plMetalPlatePipelineState::GetFragmentFunction(MTL::Library* library)
 {
     return library->newFunction(MTLSTR("fragmentShader"));
 }
 
-const NS::String *plMetalPlatePipelineState::GetDescription()
+const NS::String* plMetalPlatePipelineState::GetDescription()
 {
     return MTLSTR("Plate Pipeline State");
 }
 
-void plMetalPlatePipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor)
+void plMetalPlatePipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor)
 {
     descriptor->setBlendingEnabled(true);
     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
     descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
 }
 
-void plMetalPlatePipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor *vertexDescriptor)
+void plMetalPlatePipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor)
 {
     vertexDescriptor->attributes()->object(0)->setFormat(MTL::VertexFormatFloat2);
     vertexDescriptor->attributes()->object(0)->setBufferIndex(VertexAttributePosition);
@@ -161,6 +161,6 @@ void plMetalPlatePipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor 
     vertexDescriptor->layouts()->object(1)->setStride(sizeof(float) * 2);
 }
 
-void plMetalPlatePipelineState::GetFunctionConstants(MTL::FunctionConstantValues *) const
+void plMetalPlatePipelineState::GetFunctionConstants(MTL::FunctionConstantValues*) const
 {
 }

@@ -69,11 +69,9 @@ const constant sampler lutSampler = sampler(
                                             filter::nearest
                                             );
 
-fragment half4 gammaCorrectFragment(
-                                               GammaVertexOut in [[stage_in]],
-                                               texture2d<float> inputTexture [[texture(0)]],
-                                               texture1d_array<ushort> LUT [[texture(1)]]
-                                        )
+fragment half4 gammaCorrectFragment(GammaVertexOut in [[stage_in]],
+                                    texture2d<float> inputTexture [[texture(0)]],
+                                    texture1d_array<ushort> LUT [[texture(1)]])
 {
     float4 color = inputTexture.read(ushort2(in.position.xy));
     return {

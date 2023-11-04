@@ -42,11 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMetalMaterialShaderRef.h"
 
-#include <string_theory/format>
-
 #include "HeadSpin.h"
 #include "hsBitVector.h"
 #include "hsGMatState.inl"
+
 #include "plDrawable/plGBufferGroup.h"
 #include "plGImage/plCubicEnvironmap.h"
 #include "plGImage/plMipmap.h"
@@ -59,10 +58,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
 
-plMetalMaterialShaderRef::plMetalMaterialShaderRef(hsGMaterial* mat, plMetalPipeline* pipe) : fPipeline{pipe},
-                                                                                              fMaterial{mat},
+#include <string_theory/format>
+
+plMetalMaterialShaderRef::plMetalMaterialShaderRef(hsGMaterial* mat, plMetalPipeline* pipe) : fPipeline(pipe),
+                                                                                              fMaterial(mat),
                                                                                               fFragFunction(),
-                                                                                              fNumPasses(0)
+                                                                                              fNumPasses()
 {
     fDevice = pipe->fDevice.fMetalDevice;
     fFragFunction = pipe->fFragFunction;
@@ -78,7 +79,7 @@ void plMetalMaterialShaderRef::Release()
 {
     for (auto& buffer : fPassArgumentBuffers) {
         buffer->release();
-        buffer = nil;
+        buffer = nullptr;
     }
     fPassArgumentBuffers.clear();
 
@@ -154,7 +155,7 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder* en
         //   continue;
         // }
 
-        assert(i - GetPassIndex(pass) >= 0);
+        hsAssert(i - GetPassIndex(pass) >= 0, "Bad pass index during encode");
         EncodeTransform(layer, &vertexUniforms->uvTransforms[i - GetPassIndex(pass)]);
         IBuildLayerTexture(encoder, i - GetPassIndex(pass), layer);
     }
@@ -162,7 +163,12 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder* en
     encoder->setFragmentBuffer(fPassArgumentBuffers[pass], 0, FragmentShaderArgumentUniforms);
 }
 
-void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encoder, VertexUniforms* vertexUniforms, uint pass, plMetalFragmentShaderDescription* passDescription, std::vector<plLayerInterface*>* piggyBacks, std::function<plLayerInterface*(plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface*(plLayerInterface*, uint32_t)> postEncodeTransform)
+void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encoder, 
+                                               VertexUniforms* vertexUniforms, uint pass,
+                                               plMetalFragmentShaderDescription* passDescription,
+                                               std::vector<plLayerInterface*>* piggyBacks,
+                                               std::function<plLayerInterface*(plLayerInterface*, uint32_t)> preEncodeTransform,
+                                               std::function<plLayerInterface*(plLayerInterface*, uint32_t)> postEncodeTransform)
 {
     std::vector<plLayerInterface*> layers = GetLayersForPass(pass);
 
@@ -174,7 +180,7 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
 
     IHandleMaterial(
         GetPassIndex(pass), passDescription, &uniforms, piggyBacks,
-        [&](plLayerInterface* layer, uint32_t index) {
+        [this, &preEncodeTransform, &encoder, &pass, &vertexUniforms](plLayerInterface* layer, uint32_t index) {
         layer = preEncodeTransform(layer, index);
         IBuildLayerTexture(encoder, index, layer);
 
@@ -184,10 +190,8 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
         EncodeTransform(layer, &vertexUniforms->uvTransforms[index]);
 
         return layer;
-    },
-        [&](plLayerInterface* layer, uint32_t index) {
-        layer = postEncodeTransform(layer, index);
-        return layer;
+    }, [&postEncodeTransform](plLayerInterface* layer, uint32_t index) {
+        return postEncodeTransform(layer, index);
     });
 
     encoder->setFragmentBytes(&uniforms, sizeof(plMetalFragmentShaderArgumentBuffer), FragmentShaderArgumentUniforms);
@@ -253,8 +257,7 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
             currLayer, &passDescription, layerBuffer, nullptr,
             [](plLayerInterface* layer, uint32_t index) {
             return layer;
-        },
-            [](plLayerInterface* layer, uint32_t index) {
+        }, [](plLayerInterface* layer, uint32_t index) {
             return layer;
         });
 
@@ -291,7 +294,7 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
     }
 }
 
-const hsGMatState plMetalMaterialShaderRef::ICompositeLayerState(const plLayerInterface* layer)
+const hsGMatState plMetalMaterialShaderRef::ICompositeLayerState(const plLayerInterface* layer) const
 {
     hsGMatState state;
     state.Composite(layer->GetState(), fPipeline->GetMaterialOverride(true), fPipeline->GetMaterialOverride(false));
@@ -402,7 +405,12 @@ bool plMetalMaterialShaderRef::ICanEatLayer(plLayerInterface* lay)
     return true;
 }
 
-uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragmentShaderDescription* passDescription, plMetalFragmentShaderArgumentBuffer* uniforms, std::vector<plLayerInterface*>* piggybacks, const std::function<plLayerInterface*(plLayerInterface*, uint32_t)>& preEncodeTransform, const std::function<plLayerInterface*(plLayerInterface*, uint32_t)>& postEncodeTransform)
+uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, 
+                                                   plMetalFragmentShaderDescription* passDescription,
+                                                   plMetalFragmentShaderArgumentBuffer* uniforms,
+                                                   std::vector<plLayerInterface*>* piggybacks,
+                                                   const std::function<plLayerInterface*(plLayerInterface*, uint32_t)>& preEncodeTransform,
+                                                   const std::function<plLayerInterface*(plLayerInterface*, uint32_t)>& postEncodeTransform)
 {
     if (!fMaterial || layer >= fMaterial->GetNumLayers() || !fMaterial->GetLayer(layer)) {
         return -1;
@@ -422,7 +430,7 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragme
 
     // Ignoring the bit about self-rendering cube maps
 
-    plLayerInterface* currLay = /*IPushOverBaseLayer*/ fMaterial->GetLayer(layer);
+    plLayerInterface* currLay = fMaterial->GetLayer(layer);
     currLay = preEncodeTransform(currLay, 0);
 
     if (fPipeline->IsDebugFlagSet(plPipeDbg::kFlagBumpW) && (currLay->GetMiscFlags() & hsGMatState::kMiscBumpDu)) {
@@ -501,7 +509,7 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragme
         }
     }
 
-    passDescription->numLayers = (piggybacks ? piggybacks->size() : 0) + currNumLayers;
+    passDescription->fNumLayers = (piggybacks ? piggybacks->size() : 0) + currNumLayers;
 
     if (state.fBlendFlags & (hsGMatState::kBlendTest | hsGMatState::kBlendAlpha | hsGMatState::kBlendAddColorTimesAlpha) &&
         !(state.fBlendFlags & hsGMatState::kBlendAlphaAlways)) {

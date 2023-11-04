@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsGMatState.inl"
 #include "hsTimer.h"
+
 #include "pfCamera/plVirtualCamNeu.h"
 #include "plAvatar/plAvatarClothing.h"
 #include "plDrawable/plAuxSpan.h"
@@ -79,6 +80,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plLayerShadowBase.h"
 #include "plTweak.h"
 #include "plgDispatch.h"
+
 #include "pnMessage/plPipeResMakeMsg.h"
 #include "pnNetCommon/plNetApp.h" // for dbg logging
 
@@ -160,12 +162,12 @@ bool plRenderTriListFunc::RenderPrims() const
 plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord* devMode) : pl3DPipeline(devMode),
                                                                                                                     fRenderTargetRefList(),
                                                                                                                     fMatRefList(),
-                                                                                                                    fCurrentRenderPassUniforms(nullptr),
-                                                                                                                    currentDrawableCallback(nullptr),
-                                                                                                                    fFragFunction(nullptr),
-                                                                                                                    fVShaderRefList(nullptr),
-                                                                                                                    fPShaderRefList(nullptr),
-                                                                                                                    fULutTextureRef(nullptr),
+                                                                                                                    fCurrentRenderPassUniforms(),
+                                                                                                                    currentDrawableCallback(),
+                                                                                                                    fFragFunction(),
+                                                                                                                    fVShaderRefList(),
+                                                                                                                    fPShaderRefList(),
+                                                                                                                    fULutTextureRef(),
                                                                                                                     fCurrRenderLayer()
 {
     fTextureRefList = nullptr;
@@ -274,7 +276,8 @@ plTextFont* plMetalPipeline::MakeTextFont(ST::string face, uint16_t size)
 
 bool plMetalPipeline::OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly)
 {
-    // FIXME: Whats this?
+    // FIXME: What's this?
+    // Hoikas: It's for runtime reading/writing the vertices, mostly used by stuff like dynamic decals.
     return false;
 }
 
@@ -376,7 +379,8 @@ hsGDeviceRef* plMetalPipeline::MakeRenderTargetRef(plRenderTarget* owner)
     plCubicRenderTarget*    cubicRT;
 
     // If we have Shader Model 3 and support non-POT textures, let's make reflections the pipe size
-    if (plDynamicCamMap* camMap = plDynamicCamMap::ConvertNoRef(owner)) {
+    plDynamicCamMap* camMap = plDynamicCamMap::ConvertNoRef(owner);
+    if (camMap && camMap->IsReflection()) {
         camMap->ResizeViewport(IGetViewTransform());
     }
 
@@ -432,7 +436,7 @@ hsGDeviceRef* plMetalPipeline::MakeRenderTargetRef(plRenderTarget* owner)
             plRenderTarget*         face = cubicRT->GetFace(i);
             plMetalRenderTargetRef* fRef;
 
-            if (face->GetDeviceRef() != nil) {
+            if (face->GetDeviceRef() != nullptr) {
                 fRef = (plMetalRenderTargetRef*)face->GetDeviceRef();
                 if (!fRef->IsLinked())
                     fRef->Link(&fRenderTargetRefList);
@@ -956,13 +960,21 @@ void plMetalPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode>* res, 
     /*
      There are decisions to make here.
 
-     Modern macOS does not support "display modes." You panel runs at native resolution at all times, and you can over-render or under-render. But you never set the display mode of the panel, or get the display mode of the panel. Most games have a "scale slider."
+     Modern macOS does not support "display modes." You panel runs at native resolution at all times, 
+     and you can over-render or under-render. But you never set the display mode of the panel, or get
+     the display mode of the panel. Most games have a "scale slider."
 
-     Note: There are legacy APIs for display modes for compatibility with older software. In since we're here writing a new renderer, lets do things the right way. The display mode APIs also have trouble with density. I.E. a 4k display might be reported as a 2k display if the window manager is running in a higher DPI mode.
+     Note: There are legacy APIs for display modes for compatibility with older software. In since 
+     we're here writing a new renderer, lets do things the right way. The display mode APIs also have
+     trouble with density. I.E. a 4k display might be reported as a 2k display if the window manager is
+     running in a higher DPI mode.
 
-     The basic approach should be to render at whatever the resolution of our output surface is. We're mostly doing that now (aspect ratio doesn't adjust.)
+     The basic approach should be to render at whatever the resolution of our output surface is. We're 
+     mostly doing that now (aspect ratio doesn't adjust.)
 
-     Ideally we should support some sort of scaling/semi dynamic renderbuffer resolution thing. But don't mess with the window servers framebuffer size. macOS has accelerated resolution scaling like consoles do. Use that.
+     Ideally we should support some sort of scaling/semi dynamic renderbuffer resolution thing. But don't 
+     mess with the window servers framebuffer size. macOS has accelerated resolution scaling like consoles
+     do. Use that.
      */
 
     std::vector<plDisplayMode> supported;
@@ -999,7 +1011,7 @@ int plMetalPipeline::GetMaxAntiAlias(int Width, int Height, int ColorDepth)
 
 void plMetalPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync)
 {
-    // FIXME: Whats this?
+    // FIXME: What's this?
     // Seems like an entry point for passing in display settings.
 
     fDevice.SetMaxAnsiotropy(MaxAnisotropicSamples);
@@ -1310,14 +1322,13 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
     IHandleZMode(hsGMatState::kZNoZWrite);
 
     // This is a bit weird - in since this isn't a material we need to build a query for the right Metal program ourselves
-    plMetalFragmentShaderDescription description;
-    memset(&description, 0, sizeof(description));
-    description.numLayers = fCurrNumLayers = 1;
+    plMetalFragmentShaderDescription description{};
+    description.fNumLayers = fCurrNumLayers = 1;
 
     description.Populate(proj, 0);
     // DX sets the color invert when the final color should be inverted. Not sure why!
     if (proj->GetBlendFlags() & hsGMatState::kBlendInvertFinalColor) {
-        description.blendModes[0] |= hsGMatState::kBlendInvertColor;
+        description.fBlendModes[0] |= hsGMatState::kBlendInvertColor;
     }
 
     plMetalMaterialPassPipelineState      materialShaderState(&fDevice, vRef, description);
@@ -1508,7 +1519,9 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
         ISetCullMode();
     }
 
-    // Some build passes don't allow shaders. Render the geometry and the provided material, but don't allow the shader path if instructed to. In the DX source, this would be done by the render phase setting the shaders to null after calling this. That won't work here in since our pipeline state has to know the shaders.
+    // Some build passes don't allow shaders. Render the geometry and the provided material, but don't allow the 
+    // shader path if instructed to. In the DX source, this would be done by the render phase setting the shaders
+    // to null after calling this. That won't work here in since our pipeline state has to know the shaders.
     if (lay->GetVertexShader() && allowShaders) {
         lay = IPushOverBaseLayer(lay);
         lay = IPushOverAllLayer(lay);
@@ -1622,32 +1635,39 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
             fragmentShaderDescription = mRef->GetFragmentShaderDescription(pass);
         } else {
             // Plasma pulls piggybacks from the rear first, pull the number of active piggybacks
-            auto                           firstPiggyback = fPiggyBackStack.end() - numActivePiggyBacks;
-            auto                           lastPiggyback = fPiggyBackStack.end();
+            auto firstPiggyback = fPiggyBackStack.end() - numActivePiggyBacks;
+            auto lastPiggyback = fPiggyBackStack.end();
+            
             std::vector<plLayerInterface*> subPiggybacks(firstPiggyback, lastPiggyback);
-            mRef->EncodeArguments(
-                fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, pass, &fragmentShaderDescription, &subPiggybacks,
-                [&](plLayerInterface* layer, uint32_t index) {
+            
+            auto preEncodeTransform = [this](plLayerInterface* layer, uint32_t index) {
                 if (index == 0) {
                     layer = IPushOverBaseLayer(layer);
                 }
                 layer = IPushOverAllLayer(layer);
-
+                
                 return layer;
-            },
-                [&](plLayerInterface* layer, uint32_t index) {
+            };
+            
+            auto postEncodeTransform = [this](plLayerInterface* layer, uint32_t index) {
                 layer = IPopOverAllLayer(layer);
                 if (index == 0)
                     layer = IPopOverBaseLayer(layer);
                 return layer;
-            });
+            };
+            
+            mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(),
+                                  fCurrentRenderPassUniforms,
+                                  pass,
+                                  &fragmentShaderDescription,
+                                  &subPiggybacks,
+                                  preEncodeTransform,
+                                  postEncodeTransform);
         }
 
         plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalMaterialPassPipelineState(&fDevice, vRef, fragmentShaderDescription).GetRenderPipelineState();
         const MTL::RenderPipelineState*       pipelineState = linkedPipeline->pipelineState;
-
-        /*plMetalDevice::plMetalLinkedPipeline *pipeline = fDevice.pipelineStateFor(vRef, s.fBlendFlags, numActivePiggyBacks + mRef->fPassLengths[pass], plShaderID::Unregistered, plShaderID::Unregistered, sources, blendModes, miscFlags);
-        const MTL::RenderPipelineState *pipelineState = pipeline->pipelineState;*/
+        
         if (fState.fCurrentPipelineState != pipelineState) {
             fDevice.CurrentRenderCommandEncoder()->setRenderPipelineState(pipelineState);
             fState.fCurrentPipelineState = pipelineState;
@@ -2051,62 +2071,21 @@ void plMetalPipeline::ISetLayer(uint32_t lay)
 
 void plMetalPipeline::IHandleBlendMode(hsGMatState flags)
 {
-    // No color, just writing out Z values.
+    // This function is a weird leftover of CPU side blend mode setting.
+    // We need the error case, but nothing else? In Metal this is all
+    // done GPU side - but the GPU can't write an error state on a CPU
+    // side buffer.
     if (flags.fBlendFlags & hsGMatState::kBlendNoColor) {
-        // printf("glBlendFunc(GL_ZERO, GL_ONE);\n");
         flags.fBlendFlags |= 0x80000000;
     } else {
         switch (flags.fBlendFlags & hsGMatState::kBlendMask) {
-            // Detail is just a special case of alpha, handled in construction of the texture
-            // mip chain by making higher levels of the chain more transparent.
             case hsGMatState::kBlendDetail:
             case hsGMatState::kBlendAlpha:
-                if (flags.fBlendFlags & hsGMatState::kBlendInvertFinalAlpha) {
-                    if (flags.fBlendFlags & hsGMatState::kBlendAlphaPremultiplied) {
-                        // printf("glBlendFunc(GL_ONE, GL_SRC_ALPHA);\n");
-                    } else {
-                        // printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);\n");
-                    }
-                } else {
-                    if (flags.fBlendFlags & hsGMatState::kBlendAlphaPremultiplied) {
-                        // printf("glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);\n");
-                    } else {
-                        // printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);\n");
-                    }
-                }
-                break;
-
-            // Multiply the final color onto the frame buffer.
             case hsGMatState::kBlendMult:
-                if (flags.fBlendFlags & hsGMatState::kBlendInvertFinalColor) {
-                    // printf("glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);\n");
-                } else {
-                    // printf("glBlendFunc(GL_ZERO, GL_SRC_COLOR);\n");
-                }
-                break;
-
-            // Add final color to FB.
             case hsGMatState::kBlendAdd:
-                // printf("glBlendFunc(GL_ONE, GL_ONE);\n");
-                break;
-
-            // Multiply final color by FB color and add it into the FB.
             case hsGMatState::kBlendMADD:
-                // printf("glBlendFunc(GL_DST_COLOR, GL_ONE);\n");
-                break;
-
-            // Final color times final alpha, added into the FB.
             case hsGMatState::kBlendAddColorTimesAlpha:
-                if (flags.fBlendFlags & hsGMatState::kBlendInvertFinalAlpha) {
-                    // printf("glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_ONE);\n");
-                } else {
-                    // printf("glBlendFunc(GL_SRC_ALPHA, GL_ONE);\n");
-                }
-                break;
-
-            // Overwrite final color onto FB
             case 0:
-                // printf("glBlendFunc(GL_ONE, GL_ZERO);\n");
                 break;
 
             default: {
@@ -2121,7 +2100,8 @@ void plMetalPipeline::IHandleBlendMode(hsGMatState flags)
                 }
                 // layer state needs to be syncronized to the GPU
                 static_cast<plMetalMaterialShaderRef*>(fCurrMaterial->GetDeviceRef())->SetDirty(true);
-            } break;
+            } 
+                break;
         }
     }
 }
@@ -2492,7 +2472,7 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     fDevice.CurrentRenderCommandEncoder()->setDepthStencilState(pm->fDepthState);
     fDevice.CurrentRenderCommandEncoder()->setCullMode(MTL::CullModeNone);
 
-    int            uniformSize = sizeof(VertexUniforms);
+    int uniformSize = sizeof(VertexUniforms);
     VertexUniforms uniforms;
     uniforms.projectionMatrix = projMat;
     matrix_float4x4 modelMatrix;
@@ -2991,36 +2971,38 @@ void plMetalPipeline::IReleaseRenderTargetPools()
 
     for (i = 0; i < fRenderTargetPool512.size(); i++) {
         delete fRenderTargetPool512[i];
-        fRenderTargetPool512[i] = nil;
+        fRenderTargetPool512[i] = nullptr;
     }
     fRenderTargetPool512.clear();
 
     for (i = 0; i < fRenderTargetPool256.size(); i++) {
         delete fRenderTargetPool256[i];
-        fRenderTargetPool256[i] = nil;
+        fRenderTargetPool256[i] = nullptr;
     }
     fRenderTargetPool256.clear();
 
     for (i = 0; i < fRenderTargetPool128.size(); i++) {
         delete fRenderTargetPool128[i];
-        fRenderTargetPool128[i] = nil;
+        fRenderTargetPool128[i] = nullptr;
     }
     fRenderTargetPool128.clear();
 
     for (i = 0; i < fRenderTargetPool64.size(); i++) {
         delete fRenderTargetPool64[i];
-        fRenderTargetPool64[i] = nil;
+        fRenderTargetPool64[i] = nullptr;
     }
     fRenderTargetPool64.clear();
 
     for (i = 0; i < fRenderTargetPool32.size(); i++) {
         delete fRenderTargetPool32[i];
-        fRenderTargetPool32[i] = nil;
+        fRenderTargetPool32[i] = nullptr;
     }
     fRenderTargetPool32.clear();
 
     for (i = 0; i < kMaxRenderTargetNext; i++) {
         fRenderTargetNext[i] = 0;
+        // Blur is implemented in Metal through MPS.
+        // If we need a hand written blur algorithm implement here.
         // fBlurScratchRTs[i] = nil;
         // fBlurDestRTs[i] = nil;
     }
@@ -3439,13 +3421,13 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
 #endif // HS_DEBUGGING
 
     /// Check--is this renderTarget really a child of a cubicRenderTarget?
-    if (owner->GetParent() != nil) {
+    if (owner->GetParent() != nullptr) {
         /// This'll create the deviceRefs for all of its children as well
         SharedRenderTargetRef(share->GetParent(), owner->GetParent());
         return owner->GetDeviceRef();
     }
 
-    if (owner->GetDeviceRef() != nil)
+    if (owner->GetDeviceRef() != nullptr)
         ref = (plMetalRenderTargetRef*)owner->GetDeviceRef();
 
     // Look for a good format of matching color and depth size.
@@ -3467,9 +3449,9 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
     //  Check for Cubic. This is unlikely, since this function is currently only
     //  used for the shadow map pools.
     cubicRT = plCubicRenderTarget::ConvertNoRef(owner);
-    if (cubicRT != nil) {
+    if (cubicRT != nullptr) {
         /// And create the ref (it'll know how to set all the flags)
-        if (ref != nil)
+        if (ref != nullptr)
             ref->SetOwner(owner);
         else {
             ref = new plMetalRenderTargetRef();
@@ -3486,7 +3468,7 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
                 plRenderTarget*         face = cubicRT->GetFace(i);
                 plMetalRenderTargetRef* fRef;
 
-                if (face->GetDeviceRef() != nil) {
+                if (face->GetDeviceRef() != nullptr) {
                     fRef = (plMetalRenderTargetRef*)face->GetDeviceRef();
                     fRef->SetOwner(face);
                     if (!fRef->IsLinked())
@@ -3504,14 +3486,14 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
             ref->fTexture = cubeTexture;
         } else {
             hsRefCnt_SafeUnRef(ref);
-            ref = nil;
+            ref = nullptr;
         }
     }
     // Is it a texture render target? Probably, since shadow maps are all we use this for.
     else if (owner->GetFlags() & plRenderTarget::kIsTexture || owner->GetFlags() & plRenderTarget::kIsOffscreen) {
         // DX seperated the onscreen and offscreen types. Metal doesn't care. All render targets are textures.
         /// Create a normal texture
-        if (ref != nil)
+        if (ref != nullptr)
             ref->SetOwner(owner);
         else {
             ref = new plMetalRenderTargetRef();
@@ -3526,7 +3508,7 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
             ref->fTexture = texture;
         } else {
             hsRefCnt_SafeUnRef(ref);
-            ref = nil;
+            ref = nullptr;
         }
 
         if (owner->GetZDepth() && (owner->GetFlags() & (plRenderTarget::kIsTexture | plRenderTarget::kIsOffscreen))) {
@@ -3550,14 +3532,14 @@ hsGDeviceRef* plMetalPipeline::SharedRenderTargetRef(plRenderTarget* share, plRe
         owner->SetDeviceRef(ref);
         // Unref now, since for now ONLY the RT owns the ref, not us (not until we use it, at least)
         hsRefCnt_SafeUnRef(ref);
-        if (ref != nil && !ref->IsLinked())
+        if (ref != nullptr && !ref->IsLinked())
             ref->Link(&fRenderTargetRefList);
     } else {
-        if (ref != nil && !ref->IsLinked())
+        if (ref != nullptr && !ref->IsLinked())
             ref->Link(&fRenderTargetRefList);
     }
 
-    if (ref != nil) {
+    if (ref != nullptr) {
         ref->SetDirty(false);
     }
 
@@ -3592,7 +3574,7 @@ void plMetalPipeline::IMakeRenderTargetPools()
     };
     int i;
     for (i = 0; i < kMaxRenderTargetNext; i++) {
-        std::vector<plRenderTarget*>* pool = nil;
+        std::vector<plRenderTarget*>* pool = nullptr;
         switch (i) {
             default:
             case 0:
@@ -3621,7 +3603,7 @@ void plMetalPipeline::IMakeRenderTargetPools()
         if (pool) {
             pool->resize(kCount[i] + 1);
             (*pool)[0] = nil;
-            (*pool)[(int)(kCount[i])] = nil;
+            (*pool)[(int)(kCount[i])] = nullptr;
             int j;
             for (j = 0; j < kCount[i]; j++) {
                 uint16_t flags = plRenderTarget::kIsTexture | plRenderTarget::kIsProjected;
@@ -3675,8 +3657,8 @@ void plMetalPipeline::IResetRenderTargetPools()
     int i;
     for (i = 0; i < kMaxRenderTargetNext; i++) {
         fRenderTargetNext[i] = 0;
-        // fBlurScratchRTs[i] = nil;
-        // fBlurDestRTs[i] = nil;
+        // fBlurScratchRTs[i] = nullptr;
+        // fBlurDestRTs[i] = nullptr;
     }
 
     // fLights.fNextShadowLight = 0;
@@ -3695,7 +3677,7 @@ void plMetalPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSp
     plMetalVertexBufferRef* vRef = (plMetalVertexBufferRef*)drawable->GetVertexRef(span.fGroupIdx, span.fVBufferIdx);
     plMetalIndexBufferRef*  iRef = (plMetalIndexBufferRef*)drawable->GetIndexRef(span.fGroupIdx, span.fIBufferIdx);
 
-    if (vRef->GetBuffer() == nil || iRef->GetBuffer() == nil) {
+    if (vRef->GetBuffer() == nullptr || iRef->GetBuffer() == nullptr) {
         hsAssert(false, "Trying to render a nil buffer pair!");
         return;
     }
@@ -3767,10 +3749,9 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             plShadowState shadowState;
             ISetupShadowState(fShadows[i], shadowState);
 
-            struct plMetalFragmentShaderDescription passDescription;
-            memset(&passDescription, 0, sizeof(passDescription));
+            struct plMetalFragmentShaderDescription passDescription{};
 
-            passDescription.numLayers = fCurrNumLayers = 3;
+            passDescription.fNumLayers = fCurrNumLayers = 3;
 
             /*
              Things get a wee bit complicated here.
@@ -3795,7 +3776,7 @@ void plMetalPipeline::IRenderShadowsOntoSpan(const plRenderPrimFunc& render, con
             }
             // There's no texture for the third stage if we're reusing the textures
             // for the first and second stages from the last render.
-            passDescription.passTypes[2] = PassTypeColor;
+            passDescription.fPassTypes[2] = PassTypeColor;
 
             plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalRenderShadowPipelineState(&fDevice, vRef, passDescription).GetRenderPipelineState();
             if (fState.fCurrentPipelineState != linkedPipeline->pipelineState) {

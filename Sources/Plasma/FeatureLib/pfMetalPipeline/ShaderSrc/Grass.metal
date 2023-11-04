@@ -10,8 +10,8 @@ using namespace metal;
 
 #include "ShaderVertex.h"
 
-//ignoring the int and pi constants here and using whats built in
-//but reserving space for them in the buffer
+// ignoring the int and pi constants here and using whats built in
+// but reserving space for them in the buffer
 typedef struct  {
     matrix_float4x4 Local2NDC;
     float4 intConstants;
@@ -80,7 +80,7 @@ fragment half4 ps_GrassShader(vs_GrassInOut in [[stage_in]],
     
     half4 out = t0.sample(colorSampler, in.texCoord.xy);
     out *= half4(in.color);
-    if(out.a <= 0.1)
+    if (out.a <= 0.1)
         discard_fragment();
     return out;
 }

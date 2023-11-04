@@ -61,9 +61,7 @@ plMetalFragmentShader::~plMetalFragmentShader()
 
 void plMetalFragmentShader::Release()
 {
-    fPipe = nil;
-
-    // ISetError(nil);
+    fPipe = nullptr;
 }
 
 bool plMetalFragmentShader::ISetConstants(plMetalPipeline* pipe)

@@ -50,6 +50,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMetalDevice.h"
 #include "plSurface/plShaderTable.h"
 
+enum plMetalPipelineType
+{
+    // Unknown is for abstract types, don't use it
+    Unknown = 0,
+    MaterialShader,
+    ShadowCaster,
+    ShadowRender,
+    Clear,
+    Dynamic
+};
+
 //MARK: Base pipeline state
 
 class plMetalPipelineState
@@ -68,7 +79,7 @@ public:
     }
     virtual size_t                GetHash() const;
     virtual bool                  IsEqual(const plMetalPipelineState& p) const = 0;
-    virtual uint16_t              GetID() const { return 0; };
+    virtual uint16_t              GetID() const { return plMetalPipelineType::Unknown; };
     virtual plMetalPipelineState* Clone() = 0;
 
     //
@@ -129,16 +140,16 @@ protected:
 
 struct plMetalFragmentShaderDescription
 {
-    uint8_t  passTypes[8];
-    uint32_t blendModes[8];
-    uint32_t miscFlags[8];
-    uint8_t  numLayers;
+    uint8_t  fPassTypes[8];
+    uint32_t fBlendModes[8];
+    uint32_t fMiscFlags[8];
+    uint8_t  fNumLayers;
 
     size_t hash;
 
     bool operator==(const plMetalFragmentShaderDescription& p) const
     {
-        bool match = numLayers == p.numLayers && memcmp(passTypes, p.passTypes, sizeof(passTypes)) == 0 && memcmp(blendModes, p.blendModes, sizeof(blendModes)) == 0 && memcmp(miscFlags, p.miscFlags, sizeof(miscFlags)) == 0;
+        bool match = fNumLayers == p.fNumLayers && memcmp(fPassTypes, p.fPassTypes, sizeof(fPassTypes)) == 0 && memcmp(fBlendModes, p.fBlendModes, sizeof(fBlendModes)) == 0 && memcmp(fMiscFlags, p.fMiscFlags, sizeof(fMiscFlags)) == 0;
         return match;
     }
 
@@ -153,19 +164,19 @@ struct plMetalFragmentShaderDescription
         if (hash)
             return hash;
 
-        std::size_t value = std::hash<uint8_t>()(numLayers);
-        value ^= std::hash<uint8_t>()(numLayers);
+        std::size_t value = std::hash<uint8_t>()(fNumLayers);
+        value ^= std::hash<uint8_t>()(fNumLayers);
 
         for (int i = 0; i < 8; i++) {
-            value ^= std::hash<uint32_t>()(blendModes[i]);
+            value ^= std::hash<uint32_t>()(fBlendModes[i]);
         }
 
         for (int i = 0; i < 8; i++) {
-            value ^= std::hash<uint32_t>()(miscFlags[i]);
+            value ^= std::hash<uint32_t>()(fMiscFlags[i]);
         }
 
         for (int i = 0; i < 8; i++) {
-            value ^= std::hash<uint8_t>()(passTypes[i]);
+            value ^= std::hash<uint8_t>()(fPassTypes[i]);
         }
 
         return value;
@@ -178,7 +189,7 @@ struct plMetalFragmentShaderDescription
 template <>
 struct std::hash<plMetalFragmentShaderDescription>
 {
-    std::size_t operator()(plMetalFragmentShaderDescription const& s) const noexcept
+    size_t operator()(plMetalFragmentShaderDescription const& s) const noexcept
     {
         return s.GetHash();
     }
@@ -198,7 +209,7 @@ public:
 
     bool IsEqual(const plMetalPipelineState& p) const override;
 
-    uint16_t GetID() const override { return 1; };
+    uint16_t GetID() const override { return plMetalPipelineType::MaterialShader; };
 
     plMetalPipelineState* Clone() override
     {
@@ -233,7 +244,7 @@ public:
         descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
         descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorSourceAlpha);
     };
-    uint16_t GetID() const override { return 2; };
+    uint16_t GetID() const override { return plMetalPipelineType::ShadowCaster; };
 
     plMetalPipelineState* Clone() override
     {
@@ -258,7 +269,7 @@ public:
     MTL::Function*   GetVertexFunction(MTL::Library* library) override;
     MTL::Function*   GetFragmentFunction(MTL::Library* library) override;
     void             ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override;
-    uint16_t GetID() const override { return 3; };
+    uint16_t GetID() const override { return plMetalPipelineType::ShadowRender; };
 
     plMetalPipelineState* Clone() override
     {
@@ -275,9 +286,11 @@ public:
         : plMetalRenderSpanPipelineState(device, vRef),
           fVertexShaderID(vertexShaderID),
           fFragmentShaderID(fragmentShaderID),
-          fBlendMode(blendMode){
-
-          };
+          fBlendMode(blendMode)
+    {
+    };
+    
+    uint16_t GetID() const override { return plMetalPipelineType::Dynamic; };
 
     plMetalPipelineState* Clone() override
     {
@@ -351,7 +364,7 @@ public:
         return clearState->fShouldClearDepth == fShouldClearDepth && fShouldClearColor == clearState->fShouldClearColor;
     };
 
-    uint16_t              GetID() const override { return 4; };
+    uint16_t              GetID() const override { return plMetalPipelineType::Clear; };
     plMetalPipelineState* Clone() override
     {
         return new plMetalClearPipelineState(*this);
@@ -398,7 +411,7 @@ public:
 
     size_t GetHash() const override
     {
-        std::size_t value = plMetalPipelineState::GetHash();
+        size_t value = plMetalPipelineState::GetHash();
         value ^= std::hash<bool>()(fShouldClearColor);
         value ^= std::hash<bool>()(fShouldClearDepth);
 

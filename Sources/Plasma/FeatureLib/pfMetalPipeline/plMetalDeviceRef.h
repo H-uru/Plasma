@@ -80,11 +80,20 @@ public:
 };
 
 /*
- The buffer pool stores and recycles buffers so that Plasma can encode GPU commands and render in parallel. That means we can't touch buffers the GPU is using, and if a pass or frame rewrites a buffer we have to make sure it's not stomping on something that is already attached to a frame. Because Metal can triple buffer, the first dimension of caching is hard coded to 3. Some ages will also rewrite buffers an unspecified number of times between render passes. For example: A reflection render and a main render might have different index buffers. So the second dimension of caching uses an unbounded vector that will hold enough buffers to render in any one age.
+ The buffer pool stores and recycles buffers so that Plasma can encode GPU commands and render in 
+ parallel. That means we can't touch buffers the GPU is using, and if a pass or frame rewrites a
+ buffer we have to make sure it's not stomping on something that is already attached to a frame.
+ Because Metal can triple buffer, the first dimension of caching is hard coded to 3. Some ages
+ will also rewrite buffers an unspecified number of times between render passes. For example: A r
+ eflection render and a main render might have different index buffers. So the second dimension of
+ caching uses an unbounded vector that will hold enough buffers to render in any one age.
 
- Buffer pools do not allocate buffers, they only store them. The outside caller is responsible for allocating a buffer and then setting it. The buffer pool will retain any buffers within the pool, and automatically release them when they are overwritten or the pool is deallocated.
+ Buffer pools do not allocate buffers, they only store them. The outside caller is responsible for 
+ allocating a buffer and then setting it. The buffer pool will retain any buffers within the pool,
+ and automatically release them when they are overwritten or the pool is deallocated.
 
- Because buffers are only stored on write, and no allocations happen within the pool, overhead is kept low for static buffers. Completely static buffers will never expand the pool if they only write once.
+ Because buffers are only stored on write, and no allocations happen within the pool, overhead is 
+ kept low for static buffers. Completely static buffers will never expand the pool if they only write once.
  */
 class plMetalBufferPoolRef : public plMetalDeviceRef
 {
@@ -94,10 +103,10 @@ public:
     uint32_t fLastWriteFrameTime;
 
     plMetalBufferPoolRef() : plMetalDeviceRef(),
-                             fLastWriteFrameTime(0),
-                             fCurrentPass(0),
-                             fCurrentFrame(0),
-                             fBuffer(nullptr)
+                             fLastWriteFrameTime(),
+                             fCurrentPass(),
+                             fCurrentFrame(),
+                             fBuffer()
     {
     }
 
@@ -124,7 +133,7 @@ public:
 
     static void SetFrameTime(uint32_t frameTime) { fFrameTime = frameTime; };
 
-    MTL::Buffer* GetBuffer() { return fBuffer; };
+    MTL::Buffer* GetBuffer() const { return fBuffer; };
 
     void SetBuffer(MTL::Buffer* buffer)
     {
@@ -189,21 +198,21 @@ public:
     void SetRefTime(uint32_t t) { fRefTime = t; }
 
     plMetalVertexBufferRef() : plMetalBufferPoolRef(),
-                               fCount(0),
-                               fIndex(0),
-                               fVertexSize(0),
-                               fOffset(0),
-                               fOwner(nullptr),
-                               fData(nullptr),
-                               fFormat(0),
-                               fRefTime(0)
+                               fCount(),
+                               fIndex(),
+                               fVertexSize(),
+                               fOffset(),
+                               fOwner(),
+                               fData(),
+                               fFormat(),
+                               fRefTime()
     {
     }
 
     virtual ~plMetalVertexBufferRef();
 
     void                    Link(plMetalVertexBufferRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalVertexBufferRef* GetNext() { return (plMetalVertexBufferRef*)fNext; }
+    plMetalVertexBufferRef* GetNext() const { return (plMetalVertexBufferRef*)fNext; }
 
     void Release() override;
 };
@@ -239,11 +248,11 @@ public:
     virtual ~plMetalIndexBufferRef();
 
     plMetalIndexBufferRef() : plMetalBufferPoolRef(),
-                              fCount(0),
-                              fIndex(0),
-                              fRefTime(0),
-                              fLastWriteFrameTime(0),
-                              fOwner(nullptr)
+                              fCount(),
+                              fIndex(),
+                              fRefTime(),
+                              fLastWriteFrameTime(),
+                              fOwner()
     {
     }
 };
@@ -258,11 +267,11 @@ public:
     MTL::PixelFormat fFormat;
 
     void               Link(plMetalTextureRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalTextureRef* GetNext() { return (plMetalTextureRef*)fNext; }
+    plMetalTextureRef* const GetNext() { return (plMetalTextureRef*)fNext; }
 
     plMetalTextureRef() : plMetalDeviceRef(),
-                          fOwner(nullptr),
-                          fTexture(nullptr),
+                          fOwner(),
+                          fTexture(),
                           fLevels(1)
     {
     }

@@ -70,16 +70,14 @@ vertex ClearVertexOut clearVertex(ClearVertexIn in [[ stage_in ]])
     return out;
 }
 
-fragment ClearFragmentOut clearFragment(
-                                        constant half4& clearColor [[ buffer(0), function_constant(ShouldClearColor) ]],
-                                        constant float& clearDepth [[ buffer(1), function_constant(ShouldClearDepth) ]]
-                                        )
+fragment ClearFragmentOut clearFragment(constant half4& clearColor [[ buffer(0), function_constant(ShouldClearColor) ]],
+                                        constant float& clearDepth [[ buffer(1), function_constant(ShouldClearDepth) ]])
 {
     ClearFragmentOut out;
-    if(ShouldClearDepth) {
+    if (ShouldClearDepth) {
         out.depth = clearDepth;
     }
-    if(ShouldClearColor) {
+    if (ShouldClearColor) {
         out.color = clearColor;
     }
     return out;

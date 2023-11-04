@@ -246,7 +246,7 @@ private:
     MTL::CommandBuffer*      fBlitCommandBuffer;
     MTL::BlitCommandEncoder* fBlitCommandEncoder;
 
-    bool NeedsPostprocessing()
+    bool NeedsPostprocessing() const
     {
         return fGammaLUTTexture != nullptr;
     }

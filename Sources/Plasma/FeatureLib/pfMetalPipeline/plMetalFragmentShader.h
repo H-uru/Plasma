@@ -56,9 +56,9 @@ public:
     plMetalFragmentShader(plShader* owner);
     virtual ~plMetalFragmentShader();
 
-    void           Release() override;
+    void                   Release() override;
     void                   Link(plMetalFragmentShader** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalFragmentShader* GetNext() { return (plMetalFragmentShader*)fNext; }
+    plMetalFragmentShader* const GetNext() { return (plMetalFragmentShader*)fNext; }
 };
 
 #endif // plMetalFragmentShader_inc

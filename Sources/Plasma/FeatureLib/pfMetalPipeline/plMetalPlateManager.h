@@ -61,10 +61,10 @@ public:
     plMetalPlatePipelineState(plMetalDevice *device) : plMetalPipelineState(device){};
     bool                  IsEqual(const plMetalPipelineState &p) const override;
     uint16_t              GetID() const override { return 5; };
-    plMetalPipelineState *Clone() override;
-    const MTL::Function  *GetVertexFunction(MTL::Library *library) override;
-    const MTL::Function  *GetFragmentFunction(MTL::Library *library) override;
-    const NS::String     *GetDescription() override;
+    plMetalPipelineState* Clone() override;
+    const MTL::Function * GetVertexFunction(MTL::Library *library) override;
+    const MTL::Function * GetFragmentFunction(MTL::Library *library) override;
+    const NS::String*     GetDescription() override;
 
     void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) override;
 
@@ -78,11 +78,11 @@ class plMetalPlateManager : public plPlateManager
     friend class plMetalPipeline;
 
 public:
-    plMetalPlateManager(plMetalPipeline *pipe);
-    void IDrawToDevice(plPipeline *pipe) override;
+    plMetalPlateManager(plMetalPipeline* pipe);
+    void IDrawToDevice(plPipeline* pipe) override;
     void ICreateGeometry();
     void IReleaseGeometry();
-    void EncodeDraw(MTL::RenderCommandEncoder *encoder);
+    void EncodeDraw(MTL::RenderCommandEncoder* encoder);
     ~plMetalPlateManager();
 
 private:
@@ -91,9 +91,9 @@ private:
         hsPoint2 vertices[4];
         hsPoint2 uv[4];
     };
-    MTL::Buffer            *fVtxBuffer;
-    MTL::Buffer            *idxBuffer;
-    MTL::DepthStencilState *fDepthState;
+    MTL::Buffer*            fVtxBuffer;
+    MTL::Buffer*            idxBuffer;
+    MTL::DepthStencilState* fDepthState;
 };
 
 #endif /* plMetalPlateManager_hpp */
