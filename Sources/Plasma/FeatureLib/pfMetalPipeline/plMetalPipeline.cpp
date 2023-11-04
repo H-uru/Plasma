@@ -1055,7 +1055,7 @@ void plMetalPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_
 
         if (material != nullptr) {
             // First, do we have a device ref at this index?
-            plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
+            plMetalMaterialShaderRef* mRef = static_cast<plMetalMaterialShaderRef*>(material->GetDeviceRef());
 
             if (mRef == nullptr) {
                 mRef = new plMetalMaterialShaderRef(material, this);
@@ -1144,9 +1144,9 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 
     plProfile_BeginTiming(RenderBuff);
 
-    plMetalVertexBufferRef*   vRef = (plMetalVertexBufferRef*)vb;
-    plMetalIndexBufferRef*    iRef = (plMetalIndexBufferRef*)ib;
-    plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
+    plMetalVertexBufferRef*   vRef = static_cast<plMetalVertexBufferRef*>(vb);
+    plMetalIndexBufferRef*    iRef = static_cast<plMetalIndexBufferRef*>(ib);
+    plMetalMaterialShaderRef* mRef = static_cast<plMetalMaterialShaderRef*>(material->GetDeviceRef());
     mRef->CheckMateralRef();
 
     if (!vRef || !vRef->GetBuffer() || !iRef->GetBuffer()) {
@@ -1352,7 +1352,7 @@ void plMetalPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGM
     for (k = 0; k < fProjEach.size(); k++) {
         // Push it's projected texture as a piggyback.
         plLightInfo*              li = fProjEach[k];
-        plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
+        plMetalMaterialShaderRef* mRef = static_cast<plMetalMaterialShaderRef*>(material->GetDeviceRef());
 
         plLayerInterface* proj = li->GetProjection();
         hsAssert(proj, "A projector with no texture to project?");
@@ -1449,7 +1449,7 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
 
     // Now just loop through the aux material, rendering in as many passes as it takes.
     hsGMaterial*              material = aux->fMaterial;
-    plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
+    plMetalMaterialShaderRef* mRef = static_cast<plMetalMaterialShaderRef*>(material->GetDeviceRef());
 
     if (mRef == nullptr) {
         mRef = new plMetalMaterialShaderRef(material, this);
@@ -1483,7 +1483,7 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
 
 bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, const plSpan* currSpan, const plMetalVertexBufferRef* vRef, const bool allowShaders)
 {
-    plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
+    plMetalMaterialShaderRef* mRef = static_cast<plMetalMaterialShaderRef*>(material->GetDeviceRef());
 
     fCurrLayerIdx = mRef->GetPassIndex(pass);
     plLayerInterface* lay = material->GetLayer(mRef->GetPassIndex(pass));
@@ -2465,7 +2465,7 @@ void plMetalPipeline::IDrawPlate(plPlate* plate)
     IPushPiggyBacks(material);
 
     // First, do we have a device ref at this index?
-    plMetalMaterialShaderRef* mRef = (plMetalMaterialShaderRef*)material->GetDeviceRef();
+    plMetalMaterialShaderRef* mRef = static_cast<plMetalMaterialShaderRef*>(material->GetDeviceRef());
 
     if (mRef == nullptr) {
         mRef = new plMetalMaterialShaderRef(material, this);
@@ -3845,7 +3845,7 @@ void plMetalPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
 {
     // Do this first, this normally stomps all over our uniforms
     // FIXME: Way to encode layers without stomping all over uniforms?
-    plMetalMaterialShaderRef* matShader = (plMetalMaterialShaderRef*)mat->GetDeviceRef();
+    plMetalMaterialShaderRef* matShader = static_cast<plMetalMaterialShaderRef*>(mat->GetDeviceRef());
     // matShader->encodeArguments(fDevice.CurrentRenderCommandEncoder(), fCurrentRenderPassUniforms, 0, 0, nullptr);
 
     // We're whacking about with renderstate independent of current material,
