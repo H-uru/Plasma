@@ -93,9 +93,7 @@ protected:
 
     float                fLastUpdateTime;
     
-#if PLASMA_PIPELINE_GL || PLASMA_PIPELINE_METAL
     hsGDeviceRef*                   fDeviceRef;
-#endif
 
     void                IClearLayers();
     size_t              IMakeExtraLayer();
@@ -134,10 +132,8 @@ public:
     bool                    IsDecal() const             { return (fCompFlags & kCompDecal); }
     bool                    NeedsBlendChannel()         { return (fCompFlags & kCompNeedsBlendChannel); }
     
-#if PLASMA_PIPELINE_GL || PLASMA_PIPELINE_METAL
     void SetDeviceRef(hsGDeviceRef* ref);
     hsGDeviceRef* GetDeviceRef() const { return fDeviceRef; }
-#endif
 
     virtual void        Read(hsStream* s);
     virtual void        Write(hsStream* s);

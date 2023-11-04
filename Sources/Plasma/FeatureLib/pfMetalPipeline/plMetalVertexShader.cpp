@@ -41,13 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plMetalVertexShader.h"
 
-#include <Metal/Metal.hpp>
-
 #include "HeadSpin.h"
-#include "hsWindows.h"
+
 #include "plDrawable/plGBufferGroup.h"
 #include "plMetalPipeline.h"
 #include "plSurface/plShader.h"
+
+#include <Metal/Metal.hpp>
 
 plMetalVertexShader::plMetalVertexShader(plShader* owner)
     : plMetalShader(owner)
@@ -61,9 +61,7 @@ plMetalVertexShader::~plMetalVertexShader()
 
 void plMetalVertexShader::Release()
 {
-    fPipe = nil;
-
-    // ISetError(nil);
+    fPipe = nullptr;
 }
 
 bool plMetalVertexShader::ISetConstants(plMetalPipeline* pipe)

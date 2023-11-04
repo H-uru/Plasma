@@ -70,7 +70,7 @@ public:
 
     void ConfigureVertexDescriptor(MTL::VertexDescriptor *vertexDescriptor) override;
 
-    void GetFunctionConstants(MTL::FunctionConstantValues *) const override;
+    void GetFunctionConstants(MTL::FunctionConstantValues*) const override;
 };
 
 class plMetalPlateManager : public plPlateManager

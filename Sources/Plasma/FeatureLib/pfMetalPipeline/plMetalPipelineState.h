@@ -58,7 +58,8 @@ enum plMetalPipelineType
     ShadowCaster,
     ShadowRender,
     Clear,
-    Dynamic
+    Dynamic,
+    Text
 };
 
 //MARK: Base pipeline state

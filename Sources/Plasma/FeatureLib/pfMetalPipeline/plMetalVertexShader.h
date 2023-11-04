@@ -54,10 +54,10 @@ protected:
 public:
     bool ISetConstants(plMetalPipeline* pipe) override; // On error, sets error string.
     plMetalVertexShader(plShader* owner);
-    virtual ~plMetalVertexShader();
+    ~plMetalVertexShader() override;
     
     void Link(plMetalVertexShader** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalVertexShader* GetNext() { return (plMetalVertexShader*)fNext; }
+    plMetalVertexShader* GetNext() const { return (plMetalVertexShader*)fNext; }
     
     void  Release() override;
 };

@@ -200,7 +200,7 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         if (lightSource->scale == 0.0h)
             continue;
         
-        // w is attenation
+        // direction.w is attenuation
         float4 direction;
 
         if (lightSource->position.w == 0.0) {

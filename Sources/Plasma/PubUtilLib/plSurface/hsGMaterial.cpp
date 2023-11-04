@@ -207,13 +207,10 @@ void hsGMaterial::SetLayer(plLayerInterface* layer, int32_t which, bool insert, 
     }
 }
 
-#if PLASMA_PIPELINE_GL || PLASMA_PIPELINE_METAL
 void hsGMaterial::SetDeviceRef(hsGDeviceRef* ref)
 {
     hsRefCnt_SafeAssign(fDeviceRef, ref);
 }
-#endif
-
 
 void hsGMaterial::Write(hsStream* s)
 {
