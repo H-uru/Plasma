@@ -1243,7 +1243,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 
         // Projections that get applied to the frame buffer (after all passes).
         if (fProjAll.size() && !(fView.fRenderState & kRenderNoProjection)) {
-            fDevice.CurrentRenderCommandEncoder()->pushDebugGroup(NS::MakeConstantString("Render All Projections"));
+            fDevice.CurrentRenderCommandEncoder()->pushDebugGroup(MTLSTR("Render All Projections"));
             IRenderProjections(render, vRef);
             fDevice.CurrentRenderCommandEncoder()->popDebugGroup();
         }
@@ -2760,8 +2760,8 @@ void plMetalPipeline::IPreprocessAvatarTextures()
             MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init()->autorelease();
             MTL::Library*                  library = fDevice.fMetalDevice->newDefaultLibrary()->autorelease();
 
-            MTL::Function* vertFunction = library->newFunction(NS::MakeConstantString("PreprocessAvatarVertexShader"))->autorelease();
-            MTL::Function* fragFunction = library->newFunction(NS::MakeConstantString("PreprocessAvatarFragmentShader"))->autorelease();
+            MTL::Function* vertFunction = library->newFunction(MTLSTR("PreprocessAvatarVertexShader"))->autorelease();
+            MTL::Function* fragFunction = library->newFunction(MTLSTR("PreprocessAvatarFragmentShader"))->autorelease();
 
             descriptor->setVertexFunction(vertFunction);
             descriptor->setFragmentFunction(fragFunction);

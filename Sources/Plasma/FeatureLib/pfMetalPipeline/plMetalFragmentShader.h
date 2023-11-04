@@ -52,11 +52,11 @@ class plMetalFragmentShader : public plMetalShader
 {
 protected:
 public:
-    virtual bool ISetConstants(plMetalPipeline* pipe); // On error, sets error string.
+    bool ISetConstants(plMetalPipeline* pipe) override; // On error, sets error string.
     plMetalFragmentShader(plShader* owner);
     virtual ~plMetalFragmentShader();
 
-    virtual void           Release();
+    void           Release() override;
     void                   Link(plMetalFragmentShader** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
     plMetalFragmentShader* GetNext() { return (plMetalFragmentShader*)fNext; }
 };

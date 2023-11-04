@@ -283,7 +283,7 @@ MTL::Function* plMetalMaterialPassPipelineState::GetFragmentFunction(MTL::Librar
     return library->newFunction(
                       NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
                       MakeFunctionConstants(),
-                      (NS::Error**)NULL)
+                      (NS::Error**)nullptr)
         ->autorelease();
 }
 
@@ -293,7 +293,7 @@ plMetalMaterialPassPipelineState::~plMetalMaterialPassPipelineState()
 
 const NS::String* plMetalMaterialPassPipelineState::GetDescription()
 {
-    return NS::MakeConstantString("Material Pipeline");
+    return MTLSTR("Material Pipeline");
 }
 
 void plMetalMaterialPassPipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor)
@@ -336,7 +336,7 @@ MTL::Function* plMetalRenderShadowPipelineState::GetVertexFunction(MTL::Library*
     return library->newFunction(
                       NS::String::string("shadowCastVertexShader", NS::ASCIIStringEncoding),
                       MakeFunctionConstants(),
-                      (NS::Error**)NULL)
+                      (NS::Error**)nullptr)
         ->autorelease();
 }
 
@@ -345,7 +345,7 @@ MTL::Function* plMetalRenderShadowPipelineState::GetFragmentFunction(MTL::Librar
     return library->newFunction(
                       NS::String::string("shadowCastFragmentShader", NS::ASCIIStringEncoding),
                       MakeFunctionConstants(),
-                      (NS::Error**)NULL)
+                      (NS::Error**)nullptr)
         ->autorelease();
 }
 
@@ -361,7 +361,7 @@ const MTL::Function* plMetalRenderShadowCasterPipelineState::GetVertexFunction(M
 {
     NS::Error*     error = nullptr;
     MTL::Function* function = library->newFunction(
-                                         NS::MakeConstantString("shadowVertexShader"),
+                                         MTLSTR("shadowVertexShader"),
                                          MakeFunctionConstants(),
                                          &error)
                                   ->autorelease();
@@ -372,7 +372,7 @@ const MTL::Function* plMetalRenderShadowCasterPipelineState::GetFragmentFunction
 {
     NS::Error*     error = nullptr;
     MTL::Function* function = library->newFunction(
-                                         NS::MakeConstantString("shadowFragmentShader"),
+                                         MTLSTR("shadowFragmentShader"),
                                          MakeFunctionConstants(),
                                          &error)
                                   ->autorelease();

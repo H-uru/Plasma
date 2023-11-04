@@ -272,7 +272,7 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
         for (int layerOffset = 0; layerOffset < j - currLayer; layerOffset++) {
             plLayerInterface* layer = fMaterial->GetLayer(currLayer + layerOffset);
             layers[layerOffset] = layer;
-            IBuildLayerTexture(NULL, layerOffset, layer);
+            IBuildLayerTexture(nullptr, layerOffset, layer);
         }
 
         fPasses.push_back(layers);
@@ -402,7 +402,7 @@ bool plMetalMaterialShaderRef::ICanEatLayer(plLayerInterface* lay)
     return true;
 }
 
-uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragmentShaderDescription* passDescription, plMetalFragmentShaderArgumentBuffer* uniforms, std::vector<plLayerInterface*>* piggybacks, std::function<plLayerInterface*(plLayerInterface*, uint32_t)> preEncodeTransform, std::function<plLayerInterface*(plLayerInterface*, uint32_t)> postEncodeTransform)
+uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, plMetalFragmentShaderDescription* passDescription, plMetalFragmentShaderArgumentBuffer* uniforms, std::vector<plLayerInterface*>* piggybacks, const std::function<plLayerInterface*(plLayerInterface*, uint32_t)>& preEncodeTransform, const std::function<plLayerInterface*(plLayerInterface*, uint32_t)>& postEncodeTransform)
 {
     if (!fMaterial || layer >= fMaterial->GetNumLayers() || !fMaterial->GetLayer(layer)) {
         return -1;

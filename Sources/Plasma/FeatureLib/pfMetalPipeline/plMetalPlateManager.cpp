@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plMetalPlateManager::plMetalPlateManager(plMetalPipeline *pipe)
     : plPlateManager(pipe),
-      fVtxBuffer(0)
+      fVtxBuffer(nullptr)
 {
     MTL::DepthStencilDescriptor *depthDescriptor = MTL::DepthStencilDescriptor::alloc()->init();
     depthDescriptor->setDepthCompareFunction(MTL::CompareFunctionAlways);
@@ -128,17 +128,17 @@ plMetalPipelineState *plMetalPlatePipelineState::Clone()
 
 const MTL::Function *plMetalPlatePipelineState::GetVertexFunction(MTL::Library *library)
 {
-    return library->newFunction(NS::MakeConstantString("plateVertexShader"));
+    return library->newFunction(MTLSTR("plateVertexShader"));
 }
 
 const MTL::Function *plMetalPlatePipelineState::GetFragmentFunction(MTL::Library *library)
 {
-    return library->newFunction(NS::MakeConstantString("fragmentShader"));
+    return library->newFunction(MTLSTR("fragmentShader"));
 }
 
 const NS::String *plMetalPlatePipelineState::GetDescription()
 {
-    return NS::MakeConstantString("Plate Pipeline State");
+    return MTLSTR("Plate Pipeline State");
 }
 
 void plMetalPlatePipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor)

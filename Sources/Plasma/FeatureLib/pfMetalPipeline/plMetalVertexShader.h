@@ -52,13 +52,14 @@ class plMetalVertexShader : public plMetalShader
 {
 protected:
 public:
-    virtual bool ISetConstants(plMetalPipeline* pipe); // On error, sets error string.
+    bool ISetConstants(plMetalPipeline* pipe) override; // On error, sets error string.
     plMetalVertexShader(plShader* owner);
     virtual ~plMetalVertexShader();
-
-    virtual void         Release();
-    void                 Link(plMetalVertexShader** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
+    
+    void Link(plMetalVertexShader** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
     plMetalVertexShader* GetNext() { return (plMetalVertexShader*)fNext; }
+    
+    void  Release() override;
 };
 
 #endif // plMetalVertexShader_inc

@@ -91,7 +91,7 @@ void plMetalTextFont::ICreateTexture(uint16_t *data)
 
     fTexture->release();
     fTexture = fDevice->fMetalDevice->newTexture(descriptor);
-    fTexture->setLabel(NS::MakeConstantString("Font texture"));
+    fTexture->setLabel(MTLSTR("Font texture"));
 
     struct InDataValues
     {
@@ -374,17 +374,17 @@ plMetalPipelineState *plMetalTextFontPipelineState::Clone()
 
 const MTL::Function *plMetalTextFontPipelineState::GetVertexFunction(MTL::Library *library)
 {
-    return library->newFunction(NS::MakeConstantString("textFontVertexShader"));
+    return library->newFunction(MTLSTR("textFontVertexShader"));
 }
 
 const MTL::Function *plMetalTextFontPipelineState::GetFragmentFunction(MTL::Library *library)
 {
-    return library->newFunction(NS::MakeConstantString("textFontFragmentShader"));
+    return library->newFunction(MTLSTR("textFontFragmentShader"));
 }
 
 const NS::String *plMetalTextFontPipelineState::GetDescription()
 {
-    return NS::MakeConstantString("Font Rendering");
+    return MTLSTR("Font Rendering");
 }
 
 void plMetalTextFontPipelineState::ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor)

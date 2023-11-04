@@ -219,7 +219,7 @@ void plMetalDevice::BeginNewRenderPass()
 
     // lazilly create the screen render encoder if it does not yet exist
     if (!fCurrentOffscreenCommandBuffer && !fCurrentRenderTargetCommandEncoder) {
-        SetRenderTarget(NULL);
+        SetRenderTarget(nullptr);
     }
 
     if (fCurrentRenderTargetCommandEncoder) {
@@ -1000,7 +1000,8 @@ void plMetalDevice::StartPipelineBuild(plMetalPipelineRecord& record, std::condi
     }
 
     if (fNewPipelineStateMap[record] != NULL) {
-        return fNewPipelineStateMap[record];
+        // The shader is already compiled.
+        return;
     }
 
     MTL::Library* library = fMetalDevice->newDefaultLibrary();
@@ -1181,8 +1182,8 @@ void plMetalDevice::CreateGammaAdjustState()
     MTL::RenderPipelineDescriptor* gammaDescriptor = MTL::RenderPipelineDescriptor::alloc()->init();
     MTL::Library*                  library = fMetalDevice->newDefaultLibrary();
 
-    gammaDescriptor->setVertexFunction(library->newFunction(NS::MakeConstantString("gammaCorrectVertex"))->autorelease());
-    gammaDescriptor->setFragmentFunction(library->newFunction(NS::MakeConstantString("gammaCorrectFragment"))->autorelease());
+    gammaDescriptor->setVertexFunction(library->newFunction(MTLSTR("gammaCorrectVertex"))->autorelease());
+    gammaDescriptor->setFragmentFunction(library->newFunction(MTLSTR("gammaCorrectFragment"))->autorelease());
 
     library->release();
 

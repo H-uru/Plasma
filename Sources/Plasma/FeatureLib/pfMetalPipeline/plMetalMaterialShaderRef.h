@@ -75,7 +75,7 @@ public:
     plMetalMaterialShaderRef(hsGMaterial *mat, plMetalPipeline *pipe);
     ~plMetalMaterialShaderRef();
 
-    void Release();
+    void Release() override;
     void CheckMateralRef();
 
     uint32_t GetNumPasses() const { return fNumPasses; }
@@ -104,7 +104,7 @@ private:
     void ILoopOverLayers();
 
     uint32_t fNumPasses;
-    uint32_t IHandleMaterial(uint32_t layer, plMetalFragmentShaderDescription *passDescription, plMetalFragmentShaderArgumentBuffer *uniforms, std::vector<plLayerInterface *> *piggybacks, std::function<plLayerInterface *(plLayerInterface *, uint32_t)> preEncodeTransform, std::function<plLayerInterface *(plLayerInterface *, uint32_t)> postEncodeTransform);
+    uint32_t IHandleMaterial(uint32_t layer, plMetalFragmentShaderDescription *passDescription, plMetalFragmentShaderArgumentBuffer *uniforms, std::vector<plLayerInterface *> *piggybacks, const std::function<plLayerInterface *(plLayerInterface *, uint32_t)>& preEncodeTransform, const std::function<plLayerInterface *(plLayerInterface *, uint32_t)>& postEncodeTransform);
     bool     ICanEatLayer(plLayerInterface *lay);
     uint32_t ILayersAtOnce(uint32_t which);
 

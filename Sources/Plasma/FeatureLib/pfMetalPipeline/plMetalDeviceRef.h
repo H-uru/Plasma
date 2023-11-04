@@ -140,7 +140,7 @@ public:
         fBuffers[fCurrentFrame][fCurrentPass] = fBuffer;
     }
 
-    void Release()
+    void Release() override
     {
         for (int i = 0; i < 3; i++) {
             for (auto buffer : fBuffers[i]) {
@@ -205,7 +205,7 @@ public:
     void                    Link(plMetalVertexBufferRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
     plMetalVertexBufferRef* GetNext() { return (plMetalVertexBufferRef*)fNext; }
 
-    void Release();
+    void Release() override;
 };
 
 class plMetalIndexBufferRef : public plMetalBufferPoolRef
@@ -232,7 +232,7 @@ public:
     bool Expired(uint32_t t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
     void SetRefTime(uint32_t t) { fRefTime = t; }
 
-    void Release();
+    void Release() override;
 
     void                   Link(plMetalIndexBufferRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
     plMetalIndexBufferRef* GetNext() { return (plMetalIndexBufferRef*)fNext; }
@@ -269,7 +269,7 @@ public:
 
     virtual ~plMetalTextureRef();
 
-    void Release();
+    void Release() override;
 };
 
 class plMetalRenderTargetRef : public plMetalTextureRef
@@ -286,7 +286,7 @@ public:
 
     virtual ~plMetalRenderTargetRef();
 
-    void Release();
+    void Release() override;
 
     virtual void SetOwner(plRenderTarget* targ) { fOwner = (plBitmap*)targ; }
 };

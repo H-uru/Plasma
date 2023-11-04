@@ -59,12 +59,12 @@ class plMetalPlatePipelineState : public plMetalPipelineState
 {
 public:
     plMetalPlatePipelineState(plMetalDevice *device) : plMetalPipelineState(device){};
-    virtual bool                  IsEqual(const plMetalPipelineState &p) const override;
-    virtual uint16_t              GetID() const override { return 5; };
-    virtual plMetalPipelineState *Clone() override;
-    virtual const MTL::Function  *GetVertexFunction(MTL::Library *library) override;
-    virtual const MTL::Function  *GetFragmentFunction(MTL::Library *library) override;
-    virtual const NS::String     *GetDescription() override;
+    bool                  IsEqual(const plMetalPipelineState &p) const override;
+    uint16_t              GetID() const override { return 5; };
+    plMetalPipelineState *Clone() override;
+    const MTL::Function  *GetVertexFunction(MTL::Library *library) override;
+    const MTL::Function  *GetFragmentFunction(MTL::Library *library) override;
+    const NS::String     *GetDescription() override;
 
     void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor *descriptor) override;
 
