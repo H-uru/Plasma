@@ -55,7 +55,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_WIN32
 #   include "hsWindows.h"
 #   include <io.h>
+
+#ifndef __MINGW32__
 #   define ttycheck(fileinfo) (GetFileType(fileinfo) == FILE_TYPE_CHAR)
+#endif
 
     void GetConsoleWidth(size_t& width)
     {
