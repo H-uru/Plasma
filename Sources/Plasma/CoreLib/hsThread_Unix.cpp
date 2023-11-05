@@ -83,10 +83,7 @@ void hsThread::SetThisThreadName(const ST::string& name)
     hsAssert(res == 0, "Failed to set thread name");
 #elif defined(HS_BUILD_FOR_LINUX)
     // On Linux, thread names must fit into 16 bytes, including the terminator.
-    char buf[16];
-    strncpy(buf, name.c_str(), sizeof(buf));
-    buf[sizeof(buf) - 1] = '\0';
-    int res = pthread_setname_np(pthread_self(), buf);
+    int res = pthread_setname_np(pthread_self(), name.left(15).c_str());
     hsAssert(res == 0, "Failed to set thread name");
 #endif
     // Because this is just a debugging help, do nothing by default (sorry, BSDs).
