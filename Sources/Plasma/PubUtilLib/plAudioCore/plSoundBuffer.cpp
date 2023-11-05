@@ -83,6 +83,8 @@ static plAudioFileReader *CreateReader( bool fullpath, const plFileName &filenam
 
 void plSoundPreloader::Run()
 {
+    SetThisThreadName(ST_LITERAL("SoundPreloader"));
+
     std::vector<plSoundBuffer*> templist;
 
     while (fRunning)

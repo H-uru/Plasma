@@ -71,6 +71,7 @@ struct AsyncTimerManager
     AsyncTimerManager() : fWorkGuard(fContext.get_executor())
     {
         fTimerThread = AsyncThreadCreate([this] {
+            hsThread::SetThisThreadName(ST_LITERAL("AceTimerMgr"));
             fContext.run();
         });
     }

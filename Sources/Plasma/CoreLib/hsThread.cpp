@@ -52,6 +52,7 @@ void hsThread::Start()
 {
     if (!fThread.joinable()) {
         fThread = std::thread([this]() {
+            hsThread::SetThisThreadName(ST_LITERAL("hsNoNameThread"));
 #ifdef USE_VLD
             // Needs to be enabled for each thread except the WinMain
             VLDEnable();

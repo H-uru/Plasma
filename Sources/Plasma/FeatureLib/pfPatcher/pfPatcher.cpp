@@ -525,6 +525,7 @@ bool pfPatcherWorker::IssueRequest()
 
 void pfPatcherWorker::Run()
 {
+    SetThisThreadName(ST_LITERAL("pfPatcherWorker"));
     // So here's the rub:
     // We have one or many manifests in the fRequests deque. We begin issuing those requests one-by one, starting here.
     // As we receive the answer, the NetCli thread populates fQueuedFiles and pings the fFileSignal semaphore, then issues the next request...

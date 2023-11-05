@@ -49,6 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static void CreateThreadProc(AsyncThreadRef thread)
 {
+    hsThread::SetThisThreadName(ST_LITERAL("NoNameAceThread"));
+
 #ifdef USE_VLD
     VLDEnable();
 #endif

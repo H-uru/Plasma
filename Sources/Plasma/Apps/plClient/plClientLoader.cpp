@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 void plClientLoader::Run()
 {
+    SetThisThreadName(ST_LITERAL("plClientLoader"));
+
     plResManager *resMgr = new plResManager;
     resMgr->SetDataPath("dat");
     hsgResMgr::Init(resMgr);

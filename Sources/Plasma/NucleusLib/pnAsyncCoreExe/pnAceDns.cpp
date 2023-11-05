@@ -56,6 +56,7 @@ struct DnsResolver
     {
         // Start the resolver thread
         fLookupThread = AsyncThreadCreate([this] {
+            hsThread::SetThisThreadName(ST_LITERAL("AceDnsResolver"));
             fContext.run();
         });
     }

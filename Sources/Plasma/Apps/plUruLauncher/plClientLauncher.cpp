@@ -105,6 +105,8 @@ static size_t ICurlCallback(void* buffer, size_t size, size_t nmemb, void* threa
 
 void plShardStatus::Run()
 {
+    SetThisThreadName(ST_LITERAL("plShardStatus"));
+
     ST::string url = GetServerStatusUrl();
 
     // initialize CURL
@@ -180,6 +182,8 @@ public:
 
     void Run() override
     {
+        SetThisThreadName(ST_LITERAL("plRedistUpdater"));
+
         while (!fRedistQueue.empty()) {
             if (fInstallProc(fRedistQueue.back()))
                 fRedistQueue.pop_back();
