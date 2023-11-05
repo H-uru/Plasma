@@ -101,7 +101,7 @@ void ICreateHeader(const ST::string& varName, const plFileName& fileName, FILE* 
     hsSsize_t byteLen = shader->GetBufferSize();
     hsSsize_t quadLen = byteLen >> 2;
 
-    auto* codes = static_cast<unsigned char*>(shader->GetBufferPointer());
+    auto* codes = reinterpret_cast<unsigned char*>(shader->GetBufferPointer());
 
     ST::printf(fp, "static const uint32_t {}byteLen = {};\n\n", varName, byteLen);
     ST::printf(fp, "static const uint8_t {}Codes[] = {{\n", varName);
