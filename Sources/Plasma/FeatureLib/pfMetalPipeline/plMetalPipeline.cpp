@@ -864,17 +864,19 @@ bool plMetalPipeline::SetGamma(const uint16_t* const tabR, const uint16_t* const
      per channel data. The Metal renderer supports up to 10 bit colors - but it can subsample
      the texture to interpolate the colors in between what the LUT defines.
      */
+    constexpr size_t numLuts = 256;
+    
     MTL::TextureDescriptor* texDescriptor = MTL::TextureDescriptor::alloc()->init()->autorelease();
     texDescriptor->setTextureType(MTL::TextureType1DArray);
-    texDescriptor->setWidth(256);
+    texDescriptor->setWidth(numLuts);
     texDescriptor->setPixelFormat(MTL::PixelFormatR16Uint);
     texDescriptor->setArrayLength(3);
 
     fDevice.fGammaLUTTexture = fDevice.fMetalDevice->newTexture(texDescriptor);
 
-    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 0, tabR, 256 * sizeof(uint16_t), 0);
-    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 1, tabG, 256 * sizeof(uint16_t), 0);
-    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 256), 0, 2, tabB, 256 * sizeof(uint16_t), 0);
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, numLuts), 0, 0, tabR, 0, 0);
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, numLuts), 0, 1, tabG, 0, 0);
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, numLuts), 0, 2, tabB, 0, 0);
 
     return true;
 }
@@ -893,18 +895,19 @@ bool plMetalPipeline::SetGamma10(const uint16_t* const tabR, const uint16_t* con
      by normalized co-ordinate - not value. So the width of the texture can
      vary.
      */
+    constexpr size_t numLuts = 1024;
 
     MTL::TextureDescriptor* texDescriptor = MTL::TextureDescriptor::alloc()->init()->autorelease();
     texDescriptor->setTextureType(MTL::TextureType1DArray);
-    texDescriptor->setWidth(1024);
+    texDescriptor->setWidth(numLuts);
     texDescriptor->setPixelFormat(MTL::PixelFormatR16Uint);
     texDescriptor->setArrayLength(3);
 
     fDevice.fGammaLUTTexture = fDevice.fMetalDevice->newTexture(texDescriptor);
 
-    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 1024), 0, 0, tabR, 1024 * sizeof(uint16_t), 0);
-    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 1024), 0, 1, tabG, 1024 * sizeof(uint16_t), 0);
-    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, 1024), 0, 2, tabB, 1024 * sizeof(uint16_t), 0);
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, numLuts), 0, 0, tabR, 0, 0);
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, numLuts), 0, 1, tabG, 0, 0);
+    fDevice.fGammaLUTTexture->replaceRegion(MTL::Region(0, numLuts), 0, 2, tabB, 0, 0);
 
     return true;
 }
@@ -2751,9 +2754,9 @@ void plMetalPipeline::IPreprocessAvatarTextures()
             vertexDescriptor->attributes()->object(0)->setOffset(0);
             vertexDescriptor->attributes()->object(1)->setFormat(MTL::VertexFormatFloat2);
             vertexDescriptor->attributes()->object(1)->setBufferIndex(0);
-            vertexDescriptor->attributes()->object(1)->setOffset(sizeof(float) * 2);
+            vertexDescriptor->attributes()->object(1)->setOffset(sizeof(simd_float2));
 
-            vertexDescriptor->layouts()->object(0)->setStride(sizeof(float) * 4);
+            vertexDescriptor->layouts()->object(0)->setStride(sizeof(simd_float2) * 2);
 
             descriptor->setVertexDescriptor(vertexDescriptor);
 

@@ -60,12 +60,77 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMetalPipeline/plMetalPipelineState.h"
 #include "pfMetalPipeline/ShaderSrc/ShaderTypes.h"
 
+/// Macros for getting/setting data in a vertex buffer
+template<typename T>
+static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
+{
+    T* src_ptr = reinterpret_cast<T*>(src);
+    T* dst_ptr = reinterpret_cast<T*>(dst);
+    *dst_ptr = *src_ptr;
+    src += sizeof(T);
+    dst += sizeof(T);
+}
+
+static inline void inlCopy(const uint8_t*& src, uint8_t*& dst, size_t sz)
+{
+    memcpy(dst, src, sz);
+    src += sz;
+    dst += sz;
+}
+
+template<typename T>
+static inline const uint8_t* inlExtract(const uint8_t* src, T* val)
+{
+    const T* ptr = reinterpret_cast<const T*>(src);
+    *val = *ptr++;
+    return reinterpret_cast<const uint8_t*>(ptr);
+}
+
+template<>
+inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
+{
+    const float* src_ptr = reinterpret_cast<const float*>(src);
+    float* dst_ptr = reinterpret_cast<float*>(val);
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr = 1.f;
+    return reinterpret_cast<const uint8_t*>(src_ptr);
+}
+
+template<>
+inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
+{
+    const float* src_ptr = reinterpret_cast<const float*>(src);
+    float* dst_ptr = reinterpret_cast<float*>(val);
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr = 0.f;
+    return reinterpret_cast<const uint8_t*>(src_ptr);
+}
+
+template<typename T, size_t N>
+static inline void inlSkip(uint8_t*& src)
+{
+    src += sizeof(T) * N;
+}
+
+template<typename T>
+static inline uint8_t* inlStuff(uint8_t* dst, const T* val)
+{
+    T* ptr = reinterpret_cast<T*>(dst);
+    *ptr++ = *val;
+    return reinterpret_cast<uint8_t*>(ptr);
+}
+
 matrix_float4x4* hsMatrix2SIMD(const hsMatrix44& src, matrix_float4x4* dst)
 {
+    constexpr auto matrixSize = sizeof(matrix_float4x4);
     if (src.fFlags & hsMatrix44::kIsIdent) {
-        memcpy(dst, &matrix_identity_float4x4, sizeof(float) * 16);
+        memcpy(dst, &matrix_identity_float4x4, matrixSize);
     } else {
-        memcpy(dst, &src.fMap, sizeof(matrix_float4x4));
+        memcpy(dst, &src.fMap, matrixSize);
     }
 
     return dst;
@@ -170,11 +235,11 @@ void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool sh
     // we're actually drawing to screen.
 
     if (fCurrentRenderTargetCommandEncoder) {
-        half4 halfClearColor;
-        halfClearColor[0] = clearColor.r;
-        halfClearColor[1] = clearColor.g;
-        halfClearColor[2] = clearColor.b;
-        halfClearColor[3] = clearColor.a;
+        half4 clearColor;
+        clearColor[0] = clearColor.r;
+        clearColor[1] = clearColor.g;
+        clearColor[2] = clearColor.b;
+        clearColor[3] = clearColor.a;
         plMetalDevice::plMetalLinkedPipeline* linkedPipeline = plMetalClearPipelineState(this, shouldClearColor, shouldClearDepth).GetRenderPipelineState();
 
         const MTL::RenderPipelineState* pipelineState = linkedPipeline->pipelineState;
@@ -190,7 +255,7 @@ void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool sh
 
         CurrentRenderCommandEncoder()->setCullMode(MTL::CullModeNone);
         CurrentRenderCommandEncoder()->setVertexBytes(&clearCoords, sizeof(clearCoords), 0);
-        CurrentRenderCommandEncoder()->setFragmentBytes(&halfClearColor, sizeof(halfClearColor), 0);
+        CurrentRenderCommandEncoder()->setFragmentBytes(&clearColor, sizeof(clearColor), 0);
         CurrentRenderCommandEncoder()->setFragmentBytes(&clearDepth, sizeof(float), 1);
         CurrentRenderCommandEncoder()->drawPrimitives(MTL::PrimitiveTypeTriangleStrip, NS::UInteger(0), NS::UInteger(4));
     } else {
@@ -434,7 +499,7 @@ bool plMetalDevice::BeginRender()
 
 static uint32_t IGetBufferFormatSize(uint8_t format)
 {
-    uint32_t size = sizeof(float) * 6 + sizeof(uint32_t) * 2; // Position and normal, and two packed colors
+    uint32_t size = sizeof(hsPoint3) * 2 + sizeof(hsColor32) * 2; // Position and normal, and two packed colors
 
     switch (format & plGBufferGroup::kSkinWeightMask) {
         case plGBufferGroup::kSkinNoWeights:
@@ -446,7 +511,7 @@ static uint32_t IGetBufferFormatSize(uint8_t format)
             hsAssert(false, "Invalid skin weight value in IGetBufferFormatSize()");
     }
 
-    size += sizeof(float) * 3 * plGBufferGroup::CalcNumUVs(format);
+    size += sizeof(hsPoint3) * plGBufferGroup::CalcNumUVs(format);
 
     return size;
 }
@@ -579,26 +644,20 @@ void plMetalDevice::FillVolatileVertexBufferRef(plMetalDevice::VertexBufferRef* 
     uint8_t* dst = ref->fData;
     uint8_t* src = group->GetVertBufferData(idx);
 
-    size_t  uvChanSize = plGBufferGroup::CalcNumUVs(group->GetVertexFormat()) * sizeof(float) * 3;
+    size_t  uvChanSize = plGBufferGroup::CalcNumUVs(group->GetVertexFormat()) * sizeof(hsPoint3);
     uint8_t numWeights = (group->GetVertexFormat() & plGBufferGroup::kSkinWeightMask) >> 4;
 
     for (uint32_t i = 0; i < ref->fCount; ++i) {
-        memcpy(dst, src, sizeof(hsPoint3)); // pre-pos
-        dst += sizeof(hsPoint3);
-        src += sizeof(hsPoint3);
+        inlCopy<hsPoint3>(src, dst); // pre-pos
 
         src += numWeights * sizeof(float); // weights
 
         if (group->GetVertexFormat() & plGBufferGroup::kSkinIndices)
-            src += sizeof(uint32_t); // indices
-
-        memcpy(dst, src, sizeof(hsVector3)); // pre-normal
-        dst += sizeof(hsVector3);
-        src += sizeof(hsVector3);
-
-        memcpy(dst, src, sizeof(uint32_t) * 2); // diffuse & specular
-        dst += sizeof(uint32_t) * 2;
-        src += sizeof(uint32_t) * 2;
+            inlSkip<uint32_t, 1>(src); // indices
+        
+        inlCopy<hsVector3>(src, dst); // pre-normal
+        inlCopy<uint32_t>(src, dst); // diffuse
+        inlCopy<uint32_t>(src, dst); // specular
 
         // UVWs
         memcpy(dst, src, uvChanSize);

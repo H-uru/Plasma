@@ -79,7 +79,7 @@ void plMetalPlateManager::ICreateGeometry()
 
         fVtxBuffer = pipeline->fDevice.fMetalDevice->newBuffer(&vertexBuffer, sizeof(plateVertexBuffer), MTL::StorageModeManaged);
         fVtxBuffer->retain();
-        idxBuffer = pipeline->fDevice.fMetalDevice->newBuffer(&indices, sizeof(uint16_t) * 6, MTL::StorageModeManaged);
+        idxBuffer = pipeline->fDevice.fMetalDevice->newBuffer(&indices, sizeof(indices), MTL::StorageModeManaged);
     }
 }
 
@@ -157,8 +157,8 @@ void plMetalPlatePipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor*
     vertexDescriptor->attributes()->object(1)->setBufferIndex(VertexAttributeTexcoord);
     vertexDescriptor->attributes()->object(1)->setOffset(0);
 
-    vertexDescriptor->layouts()->object(0)->setStride(sizeof(float) * 2);
-    vertexDescriptor->layouts()->object(1)->setStride(sizeof(float) * 2);
+    vertexDescriptor->layouts()->object(0)->setStride(sizeof(simd_float2));
+    vertexDescriptor->layouts()->object(1)->setStride(sizeof(simd_float2));
 }
 
 void plMetalPlatePipelineState::GetFunctionConstants(MTL::FunctionConstantValues*) const

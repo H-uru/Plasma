@@ -123,14 +123,14 @@ size_t plMetalMaterialPassPipelineState::GetHash() const
 void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor)
 {
     int vertOffset = 0;
-    int skinWeightOffset = vertOffset + (sizeof(float) * 3);
+    int skinWeightOffset = vertOffset + sizeof(hsPoint3);
     if (fHasSkinIndices) {
         skinWeightOffset += sizeof(uint32_t);
     }
     int normOffset = skinWeightOffset + (sizeof(float) * this->fNumWeights);
-    int colorOffset = normOffset + (sizeof(float) * 3);
+    int colorOffset = normOffset + sizeof(hsPoint3);
     int baseUvOffset = colorOffset + (sizeof(uint32_t) * 2);
-    int stride = baseUvOffset + (sizeof(float) * 3 * this->fNumUVs);
+    int stride = baseUvOffset + sizeof(hsPoint3) * this->fNumUVs;
 
     vertexDescriptor->attributes()->object(VertexAttributePosition)->setFormat(MTL::VertexFormatFloat3);
     vertexDescriptor->attributes()->object(VertexAttributePosition)->setBufferIndex(0);
@@ -151,7 +151,7 @@ void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescri
     for (int i = 0; i < this->fNumUVs; i++) {
         vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setFormat(MTL::VertexFormatFloat3);
         vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setBufferIndex(0);
-        vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setOffset(baseUvOffset + (i * sizeof(float) * 3));
+        vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setOffset(baseUvOffset + (i * sizeof(hsPoint3)));
     }
 
     vertexDescriptor->attributes()->object(VertexAttributeColor)->setFormat(MTL::VertexFormatUChar4);

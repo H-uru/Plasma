@@ -68,7 +68,7 @@ bool plMetalFragmentShader::ISetConstants(plMetalPipeline* pipe)
 {
     if (fOwner->GetNumConsts()) {
         float* ptr = (float*)fOwner->GetConstBasePtr();
-        pipe->GetMetalDevice()->CurrentRenderCommandEncoder()->setFragmentBytes(ptr, fOwner->GetNumConsts() * sizeof(float) * 4, VertexShaderArgumentMaterialShaderUniforms);
+        pipe->GetMetalDevice()->CurrentRenderCommandEncoder()->setFragmentBytes(ptr, fOwner->GetNumConsts() * sizeof(simd_float4), VertexShaderArgumentMaterialShaderUniforms);
     }
 
     return true;
