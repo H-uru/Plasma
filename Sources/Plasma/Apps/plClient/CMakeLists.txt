@@ -184,8 +184,6 @@ if(APPLE)
     set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
          MACOSX_PACKAGE_LOCATION Resources
     )
-    target_include_directories(plClient PRIVATE "../../FeatureLib/pfMetalPipeline/metal-cpp"
-                                        PRIVATE "../../FeatureLib/pfMetalPipeline/ShaderSrc")
     target_link_libraries(plClient PRIVATE "-framework MetalPerformanceShaders")
     install(
         TARGETS plClient
