@@ -130,7 +130,10 @@ plasma_executable(plClient CLIENT INSTALL_PDB
 )
 
 if(APPLE)
-    target_sources(plClient PRIVATE ${plClient_IBSOURCES})
+    # We need to filter out the XIB files so the source XML files don't get bundled
+    set(plClient_XCODE_RESOURCES ${plClient_RESOURCES})
+    list(FILTER plClient_XCODE_RESOURCES EXCLUDE REGEX "\\.xib$")
+
     set_target_properties(plClient PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/Info.plist.in"
         # Hard coding the app name here intentionally.
@@ -142,7 +145,7 @@ if(APPLE)
         MACOSX_BUNDLE_GUI_IDENTIFIER org.Huru.UruExplorer
         MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
-        RESOURCE "${plClient_RESOURCES} ${plClient_IBSOURCES}"
+        RESOURCE "${plClient_XCODE_RESOURCES}"
         XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon
         XCODE_ATTRIBUTE_MTL_FAST_MATH "YES"
         XCODE_ATTRIBUTE_MTL_ENABLE_DEBUG_INFO[variant=Debug] "INCLUDE_SOURCE"
