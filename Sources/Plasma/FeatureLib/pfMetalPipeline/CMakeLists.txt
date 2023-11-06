@@ -46,11 +46,13 @@ target_link_libraries(pfMetalPipeline
         pnNucleusInc
         plPipeline
         "-framework Metal"
+        "-framework MetalPerformanceShaders"
     PRIVATE
         plStatusLog
     INTERFACE
         pnFactory
 )
+
 target_include_directories(pfMetalPipeline PUBLIC ${metalcpp_SOURCE_DIR})
 target_include_directories(pfMetalPipeline PUBLIC "ShaderSrc")
 
