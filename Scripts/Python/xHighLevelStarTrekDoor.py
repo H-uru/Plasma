@@ -80,7 +80,6 @@ class xHighLevelStarTrekDoor(ptModifier):
         PtDebugPrint("DEBUG: xHighLevelStarTrekDoor.__init__: v. %d" % self.version)
 
         self.DoorEnabled = 1
-        rgnSensor.volumeSensorNoArbitration(True)
 
     ##########################################
     def OnServerInitComplete(self):
@@ -122,6 +121,8 @@ class xHighLevelStarTrekDoor(ptModifier):
             # the door is really shut, someone left it open
             self.SDL['DoorState'] = (doorSDLstates.closed,)
             ageSDL[strDoorClosedVar.value] = (1,)
+
+        rgnSensor.volumeSensorNoArbitration(True)
 
     ##########################################
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
