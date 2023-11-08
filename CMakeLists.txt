@@ -60,6 +60,10 @@ if(APPLE)
         if (PLASMA_MAC_UNIVERSAL)
             set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD)")
         endif()
+
+        if(CMAKE_SYSTEM_VERSION VERSION_LESS 10) # Darwin 10 == Mac OS X 10.6
+            set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+        endif()
     endif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
 endif(APPLE)
 

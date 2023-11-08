@@ -79,6 +79,10 @@ ST::string kDefaultDeviceMagic = ST_LITERAL("(Default Device)");
 #define MAX_NUM_SOURCES 128
 #define UPDATE_TIME_MS 100
 
+#ifndef ALC_ALL_DEVICES_SPECIFIER
+#   define ALC_ALL_DEVICES_SPECIFIER 0x1013
+#endif
+
 plProfile_CreateTimer("EAX Update", "Sound", SoundEAXUpdate);
 plProfile_CreateTimer("Soft Update", "Sound", SoundSoftUpdate);
 plProfile_CreateCounter("Max Sounds", "Sound", SoundMaxNum);

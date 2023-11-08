@@ -21,7 +21,7 @@ set(CoreLib_SOURCES
     plLoadMask.cpp
     plProduct.cpp
     plViewTransform.cpp
-    hsWindows.cpp
+    $<$<PLATFORM_ID:Windows>:hsWindows.cpp>
 )
 
 if(CMAKE_USE_WIN32_THREADS_INIT)

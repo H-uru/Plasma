@@ -43,6 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cmath>
 #include <string_theory/format>
 
+#ifdef HS_BUILD_FOR_APPLE
+#   include <AvailabilityMacros.h>
+#   include <sys/time.h>
+#endif
+
 #include "plUnifiedTime.h"
 
 #include "hsStream.h"
@@ -107,10 +112,21 @@ void plUnifiedTime::ToCurrentTime()
     struct timespec ts;
 
 #if defined(HS_BUILD_FOR_APPLE)
-    // timespec_get is only supported since macOS 10.15,
-    // but clock_gettime exists since macOS 10.12.
-    int res = clock_gettime(CLOCK_REALTIME, &ts);
-    hsAssert(res == 0, "clock_gettime failed");
+#if defined(HAVE_BUILTIN_AVAILABLE) && MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
+    if (__builtin_available(macOS 10.15, *)) {
+        // timespec_get is only supported since macOS 10.15
+        int res = timespec_get(&ts, TIME_UTC);
+        hsAssert(res != 0, "timespec_get failed");
+    } else
+#endif
+    {
+        struct timeval tv;
+        int res = gettimeofday(&tv, nullptr);
+        hsAssert(res == 0, "gettimeofday failed");
+
+        ts.tv_sec = tv.tv_sec;
+        ts.tv_nsec = tv.tv_usec * 1000;
+    }
 #else
     int res = timespec_get(&ts, TIME_UTC);
     hsAssert(res != 0, "timespec_get failed");
