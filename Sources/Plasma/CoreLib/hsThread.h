@@ -100,6 +100,11 @@ public:
     // WILL NOT stop a detached thread!
     void StartDetached();
 
+    // Set a name for the current thread, to be displayed in debuggers and such.
+    // If possible, don't use names longer than 15 characters,
+    // because Linux has a really low limit.
+    static void SetThisThreadName(const ST::string& name);
+
     static inline size_t ThisThreadHash()
     {
         return std::hash<std::thread::id>()(std::this_thread::get_id());

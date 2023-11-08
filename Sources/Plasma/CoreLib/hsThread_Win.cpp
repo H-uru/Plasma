@@ -46,6 +46,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "hsExceptions.h"
 
+void hsThread::SetThisThreadName(const ST::string& name)
+{
+    // SetThreadDescription is only supported since Windows 10 v1607.
+    // There's an alternative solution that also works on older versions,
+    // but it's specific to Visual Studio and the "interface" is really gnarly.
+    // Because this is just a debugging help, that probably isn't worth the effort.
+    // https://learn.microsoft.com/en-us/visualstudio/debugger/how-to-set-a-thread-name-in-native-code?view=vs-2022#set-a-thread-name-by-throwing-an-exception
+    static plOptionalWinCall<HRESULT(HANDLE, PCWSTR)> SetThreadDescription(L"KernelBase", "SetThreadDescription");
+    
+    auto result = SetThreadDescription(GetCurrentThread(), name.to_wchar().c_str());
+    if (result) {
+        hsAssert(SUCCEEDED(*result), ST::format("Failed to set thread name: {}", hsCOMError(*result)).c_str());
+    }
+}
+
 hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const ST::string& name)
 {
     fSemaH = ::CreateSemaphoreW(nullptr, initialValue, std::numeric_limits<LONG>::max(), name.to_wchar().data());

@@ -71,11 +71,14 @@ struct AsyncIoPool
         }
 
         // create IO worker threads
+        size_t i = 0;
         for (auto& threadHandle : fThreadHandles) {
-            threadHandle = AsyncThreadCreate([this] {
+            threadHandle = AsyncThreadCreate([this, i] {
+                hsThread::SetThisThreadName(ST::format("AceSocketPool{02d}", i));
                 // This can be run concurrently from several threads
                 fContext.run();
             });
+            i++;
         }
     }
 
