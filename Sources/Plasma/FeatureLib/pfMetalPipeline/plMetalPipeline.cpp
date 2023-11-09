@@ -1176,16 +1176,6 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 
     plProfile_EndTiming(RenderBuff);
 
-#if 1
-    // Enable this for LayerAnimations, but the timing/speed seems wrong
-    for (size_t i = 0; i < material->GetNumLayers(); i++) {
-        plLayerInterface* lay = material->GetLayer(i);
-        if (lay) {
-            lay->Eval(fTime, fFrame, 0);
-        }
-    }
-#endif
-
     // Turn on this spans lights and turn off the rest.
     ISelectLights(&span, mRef);
 
