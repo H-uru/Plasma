@@ -58,3 +58,25 @@ target_include_directories(pfMetalPipeline PUBLIC "ShaderSrc")
 
 source_group("Source Files" FILES ${pfMetalPipeline_SOURCES})
 source_group("Header Files" FILES ${pfMetalPipeline_HEADERS})
+
+add_library( pfMetalPipelineShaders INTERFACE )
+set(pfMetalPipeline_SHADERS
+    ShaderSrc/FixedPipelineShaders.metal
+    ShaderSrc/PlateShaders.metal
+    ShaderSrc/BiasNormals.metal
+    ShaderSrc/CompCosines.metal
+    ShaderSrc/WaveSet7.metal
+    ShaderSrc/Grass.metal
+    ShaderSrc/WaveDecEnv.metal
+    ShaderSrc/Avatar.metal
+    ShaderSrc/WaveDec1Lay_7.metal
+    ShaderSrc/WaveRip.metal
+    ShaderSrc/Clear.metal
+    ShaderSrc/GammaCorrection.metal
+    ShaderSrc/TextFontShader.metal
+)
+set_source_files_properties(${pfMetalPipeline_SHADERS} TARGET_DIRECTORY plClient PROPERTIES LANGUAGE METAL)
+# source group does not work with an interface library in Xcode, but maybe someday...
+source_group("Metal Shaders" FILES ${pfMetalPipeline_SHADERS})
+
+target_sources(pfMetalPipelineShaders INTERFACE ${pfMetalPipeline_SHADERS})

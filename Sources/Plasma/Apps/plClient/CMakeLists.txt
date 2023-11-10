@@ -115,27 +115,7 @@ elseif(APPLE)
         Mac-Cocoa/MainMenu.xib
         Mac-Cocoa/PLSLoginWindowController.xib
         Mac-Cocoa/PLSPatcherWindowController.xib
-    ) 
-    #shaders need to be compiled as part of the app
-    #this could change in the future, but for now the Metal code expects the library to be compiled in the app
-    set(plClient_SHADERS
-	../../FeatureLib/pfMetalPipeline/ShaderSrc/FixedPipelineShaders.metal
-	../../FeatureLib/pfMetalPipeline/ShaderSrc/PlateShaders.metal
-	../../FeatureLib/pfMetalPipeline/ShaderSrc/BiasNormals.metal
-	../../FeatureLib/pfMetalPipeline/ShaderSrc/CompCosines.metal
-	../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveSet7.metal
-	../../FeatureLib/pfMetalPipeline/ShaderSrc/Grass.metal
-	../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveDecEnv.metal
-    ../../FeatureLib/pfMetalPipeline/ShaderSrc/Avatar.metal
-    ../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveDec1Lay_7.metal
-    ../../FeatureLib/pfMetalPipeline/ShaderSrc/WaveRip.metal
-    ../../FeatureLib/pfMetalPipeline/ShaderSrc/Clear.metal
-    ../../FeatureLib/pfMetalPipeline/ShaderSrc/GammaCorrection.metal
-    ../../FeatureLib/pfMetalPipeline/ShaderSrc/TextFontShader.metal
     )
-    set_source_files_properties(${plClient_SHADERS} PROPERTIES LANGUAGE METAL)
-    source_group("Metal Shaders" FILES ${plClient_SHADERS})
-    set(plClient_SOURCES ${plClient_SOURCES} ${plClient_SHADERS})
 else()
     list(APPEND plClient_SOURCES
         main.cpp
@@ -258,6 +238,7 @@ target_link_libraries(
         $<$<BOOL:${PLASMA_PIPELINE_DX}>:pfDXPipeline>
         $<$<BOOL:${PLASMA_PIPELINE_GL}>:pfGLPipeline>
         $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipelineShaders>
         CURL::libcurl
         "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
         "$<$<PLATFORM_ID:Darwin>:-framework QuartzCore>"
