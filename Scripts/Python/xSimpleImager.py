@@ -77,7 +77,7 @@ ImagerPelletUpload = ptAttribBoolean(10, "Pellet Score Imager?", 0)
 ImagerClueObject = ptAttribSceneobject(11, "Imager Object (for puzzle clue)")
 ImagerClueTime = ptAttribInt(12, "Number of seconds until clue image shows",default=870)
 ImagerRandomTime = ptAttribInt(13, "Random number added to make timer more variable",default=0)
-ImagerPermissionCheck = ptAttribString(14,"Imager upload SDL variable (optional)")
+ImagerPermissionCheck = ptAttribString(14, "Imager upload SDL variable (optional)")
 #----------
 # globals
 #----------
@@ -531,7 +531,7 @@ class xSimpleImager(ptModifier):
                 ageVault.setDeviceInbox(ImagerName.value, ageSDL[ImagerInboxVariable.value][0], self, kSettingDeviceInbox)
 
     def PermissionCheck(self):
-        #Age SDL Check to prevent unwanted access to imager
+        # Age SDL Check to prevent unwanted access to imager
         ageSDL = PtGetAgeSDL()
         permissionCheck = kPermissionEveryone
         if ImagerPermissionCheck.value:
