@@ -35,39 +35,39 @@ typedef struct {
 vertex vs_GrassInOut vs_GrassShader(Vertex in [[stage_in]],
                                            constant vs_GrassUniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_GrassInOut out;
-    
+
     float4 r0 = (in.position.x * uniforms.waveDirX) + (in.position.y * uniforms.waveDirX);
-    
+
     r0 += (uniforms.time.x * uniforms.waveSpeed); // scale by speed and add to X,Y input
     r0 = fract(r0);
-    
+
     r0 = (r0 - 0.5) * M_PI_F * 2;
-    
+
     float4 pow2 = r0 * r0;
     float4 pow3 = pow2 * r0;
     float4 pow5 = pow2 * pow3;
     float4 pow7 = pow2 * pow5;
     float4 pow9 = pow2 * pow7;
-    
+
     r0 += pow3 * uniforms.sinConstants.x;
     r0 += pow5 * uniforms.sinConstants.y;
     r0 += pow7 * uniforms.sinConstants.z;
     r0 += pow9 * uniforms.sinConstants.w;
-    
+
     float3 offset = float3(
                              dot(r0, uniforms.waveDistortX),
                              dot(r0, uniforms.waveDistortY),
                              dot(r0, uniforms.waveDistortZ)
                              );
-    
+
     offset *= (2.0 * (1.0 - in.texCoord1.y)); // mult by Y tex coord. So the waves only affect the top verts
-    
+
     float4 position = float4(in.position.xyz + offset, 1);
     out.position = position * uniforms.Local2NDC;
-    
+
     out.color = float4(in.color.r, in.color.g, in.color.b, in.color.a) / 255.0;
     out.texCoord = float4(in.texCoord1, 0.0);
-    
+
     return out;
 }
 
@@ -77,7 +77,7 @@ fragment half4 ps_GrassShader(vs_GrassInOut in [[stage_in]],
                               mag_filter::linear,
                               min_filter::linear,
                               address::repeat);
-    
+
     half4 out = t0.sample(colorSampler, in.texCoord.xy);
     out *= half4(in.color);
     if (out.a <= 0.1)

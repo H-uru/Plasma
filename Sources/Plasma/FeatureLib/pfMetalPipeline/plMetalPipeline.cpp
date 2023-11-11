@@ -1616,7 +1616,7 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
             numActivePiggyBacks = fActivePiggyBacks;
         }
 
-        struct plMetalFragmentShaderDescription fragmentShaderDescription;
+        plMetalFragmentShaderDescription fragmentShaderDescription;
 
         lay = IPopOverAllLayer(lay);
         lay = IPopOverBaseLayer(lay);
@@ -1640,14 +1640,14 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
                 
                 return layer;
             };
-            
+
             auto postEncodeTransform = [this](plLayerInterface* layer, uint32_t index) {
                 layer = IPopOverAllLayer(layer);
                 if (index == 0)
                     layer = IPopOverBaseLayer(layer);
                 return layer;
             };
-            
+
             mRef->EncodeArguments(fDevice.CurrentRenderCommandEncoder(),
                                   fCurrentRenderPassUniforms,
                                   pass,
@@ -2051,14 +2051,14 @@ void plMetalPipeline::ISetLayer(uint32_t lay)
             fCurrRenderLayer = lay;
 
             plCONST(int) kBiasMult = 8;
-            static float mult [[gnu::used]] = -8.0;
-            static float constBias [[gnu::used]] = -0.0;
-            static float max [[gnu::used]] = -0.00001;
+            static float mult [[gnu::used]] = -8.0f;
+            static float constBias [[gnu::used]] = -0.0f;
+            static float max [[gnu::used]] = -0.00001f;
             fDevice.CurrentRenderCommandEncoder()->setDepthBias(constBias, mult, max);
         }
     } else if (fCurrRenderLayer != 0) {
         fCurrRenderLayer = 0;
-        fDevice.CurrentRenderCommandEncoder()->setDepthBias(0.0, 0.0, 0.0);
+        fDevice.CurrentRenderCommandEncoder()->setDepthBias(0.0f, 0.0f, 0.0f);
     }
 }
 
@@ -2069,7 +2069,7 @@ void plMetalPipeline::IHandleBlendMode(hsGMatState flags)
     // done GPU side - but the GPU can't write an error state on a CPU
     // side buffer.
     if (flags.fBlendFlags & hsGMatState::kBlendNoColor) {
-        flags.fBlendFlags |= 0x80000000;
+        flags.fBlendFlags |= hsGMatState::kBlendAlphaPremultiplied;
     } else {
         switch (flags.fBlendFlags & hsGMatState::kBlendMask) {
             case hsGMatState::kBlendDetail:
@@ -2389,7 +2389,7 @@ void plMetalPipeline::IEnableLight(size_t i, plLightInfo* light)
 
             fLights.lampSources[i].spotProps = {falloff, gamma, phi};
         } else {
-            fLights.lampSources[i].spotProps = {0.0, 0.0, 0.0};
+            fLights.lampSources[i].spotProps = {0.0f, 0.0f, 0.0f};
         }
     } else {
         IDisableLight(i);
@@ -3877,12 +3877,12 @@ void plMetalPipeline::ISetShadowLightState(hsGMaterial* mat)
         fCurrentRenderPassUniforms->diffuseCol.r = fCurrentRenderPassUniforms->diffuseCol.g = fCurrentRenderPassUniforms->diffuseCol.b = 1.f;
     fCurrentRenderPassUniforms->diffuseCol.a = 1.f;
 
-    fCurrentRenderPassUniforms->diffuseSrc = 1.0;
-    fCurrentRenderPassUniforms->emissiveSrc = 1.0;
-    fCurrentRenderPassUniforms->emissiveCol = 0.0;
-    fCurrentRenderPassUniforms->specularSrc = 0.0;
-    fCurrentRenderPassUniforms->ambientSrc = 0.0;
-    fCurrentRenderPassUniforms->globalAmb = 0.0;
+    fCurrentRenderPassUniforms->diffuseSrc = 1.0f;
+    fCurrentRenderPassUniforms->emissiveSrc = 1.0f;
+    fCurrentRenderPassUniforms->emissiveCol = 0.0f;
+    fCurrentRenderPassUniforms->specularSrc = 0.0f;
+    fCurrentRenderPassUniforms->ambientSrc = 0.0f;
+    fCurrentRenderPassUniforms->globalAmb = 0.0f;
 }
 
 // IDisableLightsForShadow ///////////////////////////////////////////////////////////

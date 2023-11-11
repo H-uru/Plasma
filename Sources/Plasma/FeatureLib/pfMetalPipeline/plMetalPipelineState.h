@@ -75,7 +75,7 @@ public:
     void                                  PrewarmRenderPipelineState();
     bool                                  operator==(const plMetalPipelineState& p) const
     {
-        if ((&p)->GetID() != this->GetID()) {
+        if ((&p)->GetID() != GetID()) {
             return false;
         } else {
             return IsEqual(p);
@@ -97,10 +97,10 @@ public:
 protected:
     plMetalDevice*               fDevice;
     virtual void                 GetFunctionConstants(MTL::FunctionConstantValues*) const = 0;
-    MTL::FunctionConstantValues* MakeFunctionConstants()
+    MTL::FunctionConstantValues* MakeFunctionConstants() const
     {
         MTL::FunctionConstantValues* constants = MTL::FunctionConstantValues::alloc()->init()->autorelease();
-        this->GetFunctionConstants(constants);
+        GetFunctionConstants(constants);
         return constants;
     }
 };

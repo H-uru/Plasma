@@ -62,7 +62,7 @@ typedef struct {
 vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
                                constant vs_WaveDecEnv7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_WaveDecEnv7InOut out;
-    
+
     // Store our input position in world space in r6
     float4 worldPosition = float4(0);
     worldPosition.x = dot(float4(in.position, 1.0), uniforms.L2WRow0);
@@ -70,7 +70,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     worldPosition.z = dot(float4(in.position, 1.0), uniforms.L2WRow2);
     // Fill out our w (m4x3 doesn't touch w).
     worldPosition.w = 1.0;
-    
+
     //
 
     // Input diffuse v5 color is:
@@ -121,42 +121,42 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     // Dot our position with our direction vectors.
     float4 distance = uniforms.DirectionX * worldPosition.xxxx;
     distance += uniforms.DirectionY * worldPosition.yyyy;
-    
+
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
     distance = (distance * uniforms.Frequency) + uniforms.Phase;
-    
+
     //    // Now we need dist mod'd into range [-Pi..Pi]
     //    dist *= rcp(kTwoPi);
     distance += uniforms.PiConsts.zzzz;
     distance *= 1.0f / uniforms.PiConsts.wwww;
-    
+
     //    dist = frac(dist);
     distance = fract(distance);
     //    dist *= kTwoPi;
     distance *= uniforms.PiConsts.wwww;
     //    dist += -kPi;
     distance -= uniforms.PiConsts.zzzz;
-    
+
     //
     //    sincos(dist, sinDist, cosDist);
     // sin = r0 + r0^3 * vSin.y + r0^5 * vSin.z
     // cos = 1 + r0^2 * vCos.y + r0^4 * vCos.z
-    
+
     float4 pow2 = distance * distance; // r0^2
     float4 pow3 = pow2 * distance; // r0^3 - probably stall
     float4 pow4 = pow2 * pow2; // r0^4
     float4 pow5 = pow2 * pow3; // r0^5
     float4 pow7 = pow2 * pow5; // r0^7
-    
+
     //r1
     float4 cosDist = 1 + pow2 * uniforms.CosConsts.y + pow4 * uniforms.CosConsts.z;
     //r2
     float4 sinDist = distance + pow3 * uniforms.SinConsts.y + pow5 * uniforms.SinConsts.z;
-    
+
     cosDist = ((pow3 * pow3) * uniforms.CosConsts.w) + cosDist;
     sinDist = (pow7 * uniforms.SinConsts.w) + sinDist;
-    
+
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
     float4 depth = uniforms.WaterLevel - worldPosition.zzzz;
@@ -164,13 +164,13 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     depth += uniforms.MinAtten;
     // Clamp .xyz to range [0..1]
     depth = clamp(depth, 0, 1);
-    
+
     // Calc our filter (see above).
     float4 inColor = float4(in.color) / 255.0f;
     float4 filter = inColor.wwww * uniforms.Lengths;
     filter = max(filter, uniforms.NumericConsts.xxxx);
     filter = min(filter, uniforms.NumericConsts.zzzz);
-    
+
     //mov    r2, r1;
     // r2 == sinDist
     // r1 == cosDist
@@ -204,7 +204,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
                               dot(cosDist, uniforms.QADirX),
                               dot(cosDist, uniforms.QADirY)
                               );
-    
+
     // Bias our vert up a bit to compensate for precision errors.
     // In particular, our filter coefficients are coming in as
     // interpolated bytes, so there's bound to be a lot of slop
@@ -214,14 +214,14 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     // actually moving it, but this is easier and might work just
     // as well.
     worldPosition.z += uniforms.Bias.x;
-    
+
     //
     // // Transform position to screen
     //
     //
     out.position = worldPosition * uniforms.WorldToNDC;
     out.fog = (out.position.w + uniforms.FogSet.x) * uniforms.FogSet.y;
-    
+
     // Now onto texture coordinate generation.
     //
     // First is the usual texture transform
@@ -230,7 +230,7 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
                            dot(float4(in.texCoord1, 1.0), uniforms.Tex0_Row1),
                            uniforms.NumericConsts.zz
                            );
-    
+
     // Calculate our basis vectors as input into our tex3x3vspec
     // First we get our basis set off our surface. This is
     // Okay, here we go:
@@ -281,47 +281,47 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     //      |r9 dot v8, r9 dot v9, r9 dot r5|
     //
     // We will need r5 as v8 X v9
-    
+
     float4 r7 = float4(in.texCoord2, 1.0);
     float4 r5 = float4(0);
     r5.xyz = r7.yzx * in.texCoord3.zxy;
     r5.xyz = (r7.zxy * -in.texCoord3.yzx) + r5.xyz;
-    
+
     // Okay, r1 currently has the vector of cosines, and r2 has vector of sines.
     // Everything will want that times amplitude, so go ahead and fold that in.
     cosDist *= uniforms.Amplitude;
-    
+
     r7.x = dot(sinDist, -uniforms.DirXSqKW);
     r7.y = dot(sinDist, -uniforms.DirXDirYKW);
     r7.z = dot(cosDist, -uniforms.DirXW);
     r7.x += uniforms.NumericConsts.z;
-    
+
     float4 r8 = float4(0);
     r8.x = dot(sinDist, -uniforms.DirXDirYKW);
     r8.y = dot(sinDist, -uniforms.DirYSqKW);
     r8.z = dot(cosDist, -uniforms.DirYW);
     r8.y = r8.y + uniforms.NumericConsts.z;
-    
+
     float4 r9 = out.position;
     r9.z = dot(cosDist, -uniforms.WK);
     r9.x = -r7.z;
     r9.y = -r8.z;
     r9.z = r9.z + uniforms.NumericConsts.z;
-    
+
     // Okay, got everything we need, construct r1-3 as surface2world*texture2surface.
     float4 r1, r2, r3 = float4(0);
     r1.x = dot(r7.xyz, in.texCoord2);
     r1.y = dot(r7.xyz, in.texCoord3);
     r1.z = dot(r7.xyz, r5.xyz);
-    
+
     r2.x = dot(r8.xyz, in.texCoord2);
     r2.y = dot(r8.xyz, in.texCoord3);
     r2.z = dot(r8.xyz, r5.xyz);
-    
+
     r3.x = dot(r9.xyz, in.texCoord2);
     r3.y = dot(r9.xyz, in.texCoord3);
     r3.z = dot(r9.xyz, r5.xyz);
-    
+
     // Following section is debug only to skip the per-vert tangent space axes.
     //add r1, c13.zxxx, r7.zzxw;
     //add r2, c13.xzxx, r7.zzyw;
@@ -333,21 +333,21 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     // See vs_WaveFixedFin6.inl for derivation of the following
     float4 r0 = worldPosition - uniforms.CameraPos;
     r0 *= rsqrt(dot(r0.xyz, r0.xyz));
-    
+
     float4 r10 = float4(0);
     r10.x = dot(r0.xyz, uniforms.EnvAdjust.xyz);
     r10.y = (r10.x * r10.x) - uniforms.EnvAdjust.w;
-    
+
     r10.z = (r10.y * rsqrt(r10.y)) + r10.x;
     r0.xyz = (r0.xyz * r10.zzz) - uniforms.EnvAdjust.xyz;
-    
+
     // ATI 9000 is having trouble with eyeVec as computed. Normalizing seems to get it over the hump.
     r0.xyz = normalize(r0.xyz);
-    
+
     r1.w = -r0.x;
     r2.w = -r0.y;
     r3.w = -r0.z;
-    
+
     // Now r1-r3 are texture2world, with the eye-ray vector in .w. We just
     // need to normalize them and bung them into output UV's 1-3.
     // Note we're accounting for our environment map being flipped from
@@ -355,16 +355,16 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     r10.w = uniforms.NumericConsts.z;
     r10.x = rsqrt(dot(r1.xyz, r1.xyz));
     out.texCoord1 = r1 * r10.xxxw;
-    
+
     r10.x = rsqrt(dot(r3.xyz, r3.xyz));
     out.texCoord2 = r3 * r10.xxxw;
-    
+
     r10.x = rsqrt(dot(r2.xyz, r2.xyz));
     out.texCoord3 = r2 * r10.xxxw;
-    
+
     float4 matColor = uniforms.MatColor;
     out.c1 = clamp(float4(in.color).yyyz/255.0 * matColor, 0.0, 1.0);
-    
+
     return out;
 }
 
@@ -373,7 +373,7 @@ fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in [[stage_in]],
                              texturecube<float> environmentMap [[ texture(FragmentShaderArgumentAttributeCubicTextures + 1) ]]) {
     // Very simular to ps_WaveFixed.inl. Only the final coloring is different.
     // Even though so far they are identical.
-    
+
     constexpr sampler colorSampler = sampler(mip_filter::linear,
                               mag_filter::linear,
                               min_filter::linear,
@@ -382,13 +382,13 @@ fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in [[stage_in]],
     float u = dot(in.texCoord1.xyz, t0.xyz);
     float v = dot(in.texCoord2.xyz, t0.xyz);
     float w = dot(in.texCoord3.xyz, t0.xyz);
-    
+
     float3 N = float3(u, v, w);
     float3 E = float3(in.texCoord1.w, in.texCoord2.w, in.texCoord3.w);
-    
+
     //float3 coord = reflect(E, N);
     float3 coord = 2*(dot(N, E) / dot(N, N))*N - E;
-    
+
     // t3 now has our reflected environment map value
     // We've (presumably) attenuated the effect on a vertex basis
     // and have our color w/ attenuated alpha in v0. So all we need

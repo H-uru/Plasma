@@ -70,6 +70,6 @@ fragment half4 PreprocessAvatarFragmentShader(PreprocessAvatarTexturesInOut in [
                                    address::clamp_to_zero);
 
     half4 colorSample = layer.sample(colorSampler, in.uvPosition.xy) * half4(blendColor);
-    
+
     return colorSample;
 }

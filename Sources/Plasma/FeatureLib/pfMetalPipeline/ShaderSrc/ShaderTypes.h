@@ -119,27 +119,31 @@ enum plMetalLayerPassType: uint8_t
     PassTypeColor = 3
 };
 
-struct plMetalFragmentShaderArgumentBuffer {
+struct plMetalFragmentShaderArgumentBuffer
+{
     __fp16 alphaThreshold;
 };
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plMetalFragmentShaderArgumentBuffer>, "plMetalFragmentShaderArgumentBuffer must be a trivial type!");
 #endif
 
-struct plMetalShadowCastFragmentShaderArgumentBuffer {
+struct plMetalShadowCastFragmentShaderArgumentBuffer
+{
     bool pointLightCast;
 };
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plMetalShadowCastFragmentShaderArgumentBuffer>, "plMetalShadowCastFragmentShaderArgumentBuffer must be a trivial type!");
 #endif
 
-enum plMetalFragmentShaderTextures {
+enum plMetalFragmentShaderTextures
+{
     FragmentShaderArgumentAttributeTextures = 0,
     FragmentShaderArgumentAttributeCubicTextures = 8,
     FragmentShaderArgumentAttributeUniforms = 32
 };
 
-struct plMetalShaderLightSource {
+struct plMetalShaderLightSource
+{
     simd::float4 position;
     half4 ambient;
     half4 diffuse;
@@ -155,23 +159,23 @@ struct plMetalShaderLightSource {
 static_assert(std::is_trivial_v<plMetalShaderLightSource>, "plMetalShaderLightSource must be a trivial type!");
 #endif
 
-typedef struct
+struct UVOutDescriptor
 {
     uint32_t UVWSrc;
     matrix_float4x4 transform;
-} UVOutDescriptor;
+};
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<UVOutDescriptor>, "UVOutDescriptor must be a trivial type!");
 #endif
 
-typedef struct
+struct VertexUniforms
 {
     // transformation
     matrix_float4x4 projectionMatrix;
     matrix_float4x4 localToWorldMatrix;
     matrix_float4x4 cameraToWorldMatrix;
     matrix_float4x4 worldToCameraMatrix;
-    
+
     // lighting
     half4 globalAmb;
     half3 ambientCol;
@@ -183,38 +187,40 @@ typedef struct
     half3 specularCol;
     uint8_t specularSrc;
     bool invVtxAlpha;
-    
+
     uint8_t fogExponential;
     simd::float2 fogValues;
     half3 fogColor;
-    
+
     UVOutDescriptor uvTransforms[8];
 #ifdef __METAL_VERSION__
     float3 sampleLocation(size_t index, thread float3 *texCoords, const float4 normal, const float4 camPosition) constant;
     half4 calcFog(float4 camPosition) constant;
 #endif
-} VertexUniforms;
+};
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<VertexUniforms>, "VertexUniforms must be a trivial type!");
 #endif
 
 #define kMetalMaxLightCount 32
 
-typedef struct {
+struct plMetalLights
+{
     uint8_t count;
     plMetalShaderLightSource lampSources[kMetalMaxLightCount];
-} plMetalLights;
+};
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plMetalLights>, "plMetalLights must be a trivial type!");
 #endif
 
-typedef struct {
+struct plShadowState
+{
     simd::float3 lightPosition;
     simd::float3 lightDirection;
     bool directional;
     float power;
     half opacity;
-} plShadowState;
+};
 #ifndef __METAL_VERSION__
 static_assert(std::is_trivial_v<plShadowState>, "plShadowState must be a trivial type!");
 #endif

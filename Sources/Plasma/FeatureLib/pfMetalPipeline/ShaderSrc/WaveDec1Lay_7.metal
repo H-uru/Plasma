@@ -101,7 +101,7 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in [[stage_in]],
     worldPosition.z = dot(float4(in.position, 1.0), uniforms.L2WRow2);
     // Fill out our w (m4x3 doesn't touch w).
     worldPosition.w = 1.0;
-    
+
     //
 
     // Input diffuse v5 color is:
@@ -152,11 +152,11 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in [[stage_in]],
     // Dot our position with our direction vectors.
     float4 distance = uniforms.DirectionX * worldPosition.xxxx;
     distance += uniforms.DirectionY * worldPosition.yyyy;
-    
+
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
     distance = (distance * uniforms.Frequency) + uniforms.Phase;
-    
+
     //    // Now we need dist mod'd into range [-Pi..Pi]
     //    dist *= rcp(kTwoPi);
     distance += uniforms.PiConsts.zzzz;
@@ -167,26 +167,26 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in [[stage_in]],
     distance *= (2.0f * M_PI_F);
     //    dist += -kPi;
     distance += -M_PI_F;
-    
+
     //
     //    sincos(dist, sinDist, cosDist);
     // sin = r0 + r0^3 * vSin.y + r0^5 * vSin.z
     // cos = 1 + r0^2 * vCos.y + r0^4 * vCos.z
-    
+
     float4 pow2 = distance * distance; // r0^2
     float4 pow3 = pow2 * distance; // r0^3 - probably stall
     float4 pow4 = pow2 * pow2; // r0^4
     float4 pow5 = pow2 * pow3; // r0^5
     float4 pow7 = pow2 * pow5; // r0^7
-    
+
     //r1
     float4 cosDist = 1 + pow2 * uniforms.CosConsts.y + pow4 * uniforms.CosConsts.z;
     //r2
     float4 sinDist = distance + pow3 * uniforms.SinConsts.y + pow5 * uniforms.SinConsts.z;
-    
+
     cosDist = ((pow3 * pow3) * uniforms.CosConsts.w) + cosDist;
     sinDist = (pow7 * uniforms.SinConsts.w) + sinDist;
-    
+
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
     float4 depth = uniforms.WaterLevel - worldPosition.zzzz;
@@ -194,13 +194,13 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in [[stage_in]],
     depth += uniforms.MinAtten;
     // Clamp .xyz to range [0..1]
     depth = clamp(depth, 0, 1);
-    
+
     // Calc our filter (see above).
     float4 inColor = float4(in.color) / 255.0f;
     float4 filter = inColor.wwww * uniforms.Lengths;
     filter = max(filter, uniforms.NumericConsts.xxxx);
     filter = min(filter, uniforms.NumericConsts.zzzz);
-    
+
     //mov    r2, r1;
     // r2 == sinDist
     // r1 == cosDist
@@ -237,7 +237,7 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in [[stage_in]],
                               dot(cosDist, uniforms.QADirX),
                               dot(cosDist, uniforms.QADirY)
                               );
-    
+
     // Bias our vert up a bit to compensate for precision errors.
     // In particular, our filter coefficients are coming in as
     // interpolated bytes, so there's bound to be a lot of slop
@@ -247,32 +247,32 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in [[stage_in]],
     // actually moving it, but this is easier and might work just
     // as well.
     worldPosition.z += uniforms.Bias.x;
-    
+
     //
     // // Transform position to screen
     //
     //
     out.position = worldPosition * uniforms.WorldToNDC;
     out.fog = (out.position.w + uniforms.FogSet.x) * uniforms.FogSet.y;
-    
+
     // Output color is vertex green
     // Output alpha is vertex red (vtx alpha is used for wave filtering)
     // Whole thing modulated by material color/opacity.
-    
+
     out.c0 = half4(in.color.yyyz)/255.0 * half4(uniforms.MatColor);
-    
+
     // Usual texture transform
     out.texCoord0.x = dot(float4(in.texCoord1, 1.0), uniforms.Tex0_Row0);
     out.texCoord0.y = dot(float4(in.texCoord1, 1.0), uniforms.Tex0_Row1);
     out.texCoord0.z = 0.0f;
     out.texCoord0.w = 0.0f;
-    
+
     return out;
 }
 
 fragment half4 ps_CbaseAbase(vs_WaveDev1Lay_7InOut in [[stage_in]],
                              texture2d<half> texture [[ texture(0) ]]) {
-    
+
     constexpr sampler colorSampler = sampler(mip_filter::linear,
                               mag_filter::linear,
                               min_filter::linear,

@@ -45,14 +45,14 @@ using namespace metal;
 
 #include "ShaderVertex.h"
 
-typedef struct  {
+typedef struct {
     float4 c0;
     float4 c1;
     float4 c2;
     float4 c3;
     float4 c4;
 } vs_CompCosinesUniforms;
-    
+
 typedef struct {
     float4 position [[position]];
     float4 texCoord0;
@@ -64,9 +64,9 @@ typedef struct {
 vertex vs_CompCosinesnInOut vs_CompCosines(Vertex in [[stage_in]],
                                            constant vs_CompCosinesUniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_CompCosinesnInOut out;
-    
+
     out.position = float4(in.position, 1.0);
-    
+
     float4 texCoord = float4(0, 0, 0, 1);
     texCoord.x = dot(float4(in.texCoord1, 1.0), uniforms.c0);
     out.texCoord0 = texCoord;
@@ -76,10 +76,10 @@ vertex vs_CompCosinesnInOut vs_CompCosines(Vertex in [[stage_in]],
     out.texCoord2 = texCoord;
     texCoord.x = dot(float4(in.texCoord1, 1.0), uniforms.c3);
     out.texCoord3 = texCoord;
-    
+
     return out;
 }
-    
+
 typedef struct  {
     float4 c0;
     float4 c1;
@@ -109,12 +109,12 @@ fragment float4 ps_CompCosines(vs_CompCosinesnInOut in [[stage_in]],
     //
     // So c[0].z = 1, but all other c[i].z = 0
     // Note also the c4 used for biasing back at the end.
-    
+
     constexpr sampler colorSampler = sampler(mip_filter::linear,
                               mag_filter::linear,
                               min_filter::linear,
                               address::repeat);
-    
+
     float4 out =    2 * (t0.sample(colorSampler, fract(in.texCoord0.xy)) - 0.5) * uniforms.c0;
     out +=          2 * (t1.sample(colorSampler, fract(in.texCoord1.xy)) - 0.5) * uniforms.c1;
     out +=          2 * (t2.sample(colorSampler, fract(in.texCoord2.xy)) - 0.5) * uniforms.c2;

@@ -91,7 +91,7 @@ typedef struct {
 vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
                                constant vs_WaveRip7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     waveRipInOut out;
-    
+
     // Store our input position in world space in r6
     float4 worldPosition = float4(0);
     worldPosition.x = dot(float4(in.position, 1.0), uniforms.L2WRow0);
@@ -99,7 +99,7 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
     worldPosition.z = dot(float4(in.position, 1.0), uniforms.L2WRow2);
     // Fill out our w (m4x3 doesn't touch w).
     worldPosition.w = 1.0;
-    
+
     //
 
     // Input diffuse v5 color is:
@@ -150,42 +150,42 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
     // Dot our position with our direction vectors.
     float4 distance = uniforms.DirectionX * worldPosition.xxxx;
     distance += uniforms.DirectionY * worldPosition.yyyy;
-    
+
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
     distance = (distance * uniforms.Frequency) + uniforms.Phase;
-    
+
     //    // Now we need dist mod'd into range [-Pi..Pi]
     //    dist *= rcp(kTwoPi);
     distance += uniforms.PiConsts.zzzz;
     distance *= 1.0f / uniforms.PiConsts.wwww;
-    
+
     //    dist = frac(dist);
     distance = fract(distance);
     //    dist *= kTwoPi;
     distance *= uniforms.PiConsts.wwww;
     //    dist += -kPi;
     distance -= uniforms.PiConsts.zzzz;
-    
+
     //
     //    sincos(dist, sinDist, cosDist);
     // sin = r0 + r0^3 * vSin.y + r0^5 * vSin.z
     // cos = 1 + r0^2 * vCos.y + r0^4 * vCos.z
-    
+
     float4 pow2 = distance * distance; // r0^2
     float4 pow3 = pow2 * distance; // r0^3 - probably stall
     float4 pow4 = pow2 * pow2; // r0^4
     float4 pow5 = pow2 * pow3; // r0^5
     float4 pow7 = pow2 * pow5; // r0^7
-    
+
     //r1
     float4 cosDist = 1 + pow2 * uniforms.CosConsts.y + pow4 * uniforms.CosConsts.z;
     //r2
     float4 sinDist = distance + pow3 * uniforms.SinConsts.y + pow5 * uniforms.SinConsts.z;
-    
+
     cosDist = ((pow3 * pow3) * uniforms.CosConsts.w) + cosDist;
     sinDist = (pow7 * uniforms.SinConsts.w) + sinDist;
-    
+
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
     float4 depth = uniforms.WaterLevel - worldPosition.zzzz;
@@ -193,12 +193,12 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
     depth += uniforms.MinAtten;
     // Clamp .xyz to range [0..1]
     depth = clamp(depth, 0, 1);
-    
+
     // Calc our filter (see above).
     float4 inColor = float4(in.color) / 255.0f;
     float4 filter = inColor.wwww * uniforms.Lengths;
     filter = clamp(filter, 0.0f, 1.0f);
-    
+
     //mov    r2, r1;
     // r2 == sinDist
     // r1 == cosDist
@@ -232,7 +232,7 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
                               dot(cosDist, uniforms.QADirX),
                               dot(cosDist, uniforms.QADirY)
                               );
-    
+
     // Bias our vert up a bit to compensate for precision errors.
     // In particular, our filter coefficients are coming in as
     // interpolated bytes, so there's bound to be a lot of slop
@@ -242,14 +242,14 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
     // actually moving it, but this is easier and might work just
     // as well.
     worldPosition.z += uniforms.RampBias.z;
-    
+
     //
     // // Transform position to screen
     //
     //
     out.position = worldPosition * uniforms.WorldToNDC;
     out.fog = (out.position.w + uniforms.FogSet.x) * uniforms.FogSet.y;
-    
+
     // Dyna Stuff
     // Constants
     // c33 = fC1U, fC2U, fC1V, fC2V
@@ -260,7 +260,7 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
     // v7.z = fBirth (because we don't use it for anything else).
     //
     // Initialize r1.zw to 0,1
-    
+
     // Calc r1.x = age, r1.y = atten
     // age = t - birth.
     const float age = uniforms.LifeConsts.y - in.texCoord1.z;
@@ -268,13 +268,13 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
     // first clamp0_1(age/ramp)
     const float atten = clamp(age * uniforms.RampBias.y, 0.0f, 1.0f)
         * clamp((uniforms.LifeConsts.z - age) * uniforms.LifeConsts.w, 0.0f, 1.0f);
-    
+
     // color is (atten, atten, atten, 1.f)
     // Need to calculate opacity we would have had from vs_WaveFixedFin7.inl
     // Right now that's just modulating by r4.y.
-    
+
     out.c1 = (depth.y * uniforms.LifeConsts.x) * half4(atten, atten, atten, 1.0h);
-    
+
     // UVW = (inUVW - 0.5) * scale + 0.5
     // where:
     // scale = (fC1U / (age * fC2U + 1.f)), fC1V / (age * fC2U + 1.f), 1.f, 1.f
@@ -285,7 +285,7 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
     out.texCoord0 = in.texCoord1.xy - 0.5f;
     out.texCoord0 *= scale.xy;
     out.texCoord0 += 0.5f;
-    
+
     return out;
 }
 
@@ -296,6 +296,6 @@ fragment half4 ps_WaveRip(waveRipInOut in [[stage_in]],
                               min_filter::linear,
                               address::clamp_to_edge);
     half4 t0 = texture.sample(colorSampler, in.texCoord0.xy);
-    
+
     return t0 * in.c1;
 }

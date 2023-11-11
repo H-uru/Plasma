@@ -69,23 +69,23 @@ typedef struct {
 vertex vs_BiasNormalsOut vs_BiasNormals(Vertex in [[stage_in]],
                                constant vs_BiasNormalsUniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_BiasNormalsOut out;
-    
+
     out.position = float4(in.position, 1.0);
-    
+
     out.texCoord0 = float4(
                            dot(float4(in.texCoord1, 1.0), uniforms.TexU0),
                            dot(float4(in.texCoord1, 1.0), uniforms.TexV0),
                            0,
                            1
                            );
-    
+
     out.texCoord1 = float4(
                            dot(float4(in.texCoord1, 1.0), uniforms.TexU1),
                            dot(float4(in.texCoord1, 1.0), uniforms.TexV1),
                            0,
                            1
                            );
-    
+
     out.color1 = uniforms.ScaleBias.xxzz;
     out.color2 = uniforms.ScaleBias.yyzz;
     
@@ -109,7 +109,7 @@ fragment float4 ps_BiasNormals(vs_BiasNormalsOut in [[stage_in]],
     //
     // So c[0].z = 1, but all other c[i].z = 0
     // Note also the c4 used for biasing back at the end.
-    
+
     constexpr sampler colorSampler = sampler(mip_filter::linear,
                               mag_filter::linear,
                               min_filter::linear,

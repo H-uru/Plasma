@@ -57,7 +57,7 @@ protected:
     plShader*        fOwner;
     plMetalPipeline* fPipe;
     MTL::Function*   fFunction;
-    
+
     virtual bool ISetConstants(plMetalPipeline* pipe) = 0; // On error, sets error string.
 
 public:

@@ -58,7 +58,7 @@ public:
 
     void                   Release() override;
     void                   Link(plMetalFragmentShader** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
-    plMetalFragmentShader* const GetNext() { return (plMetalFragmentShader*)fNext; }
+    plMetalFragmentShader* const GetNext() const { return (plMetalFragmentShader*)fNext; }
 };
 
 #endif // plMetalFragmentShader_inc

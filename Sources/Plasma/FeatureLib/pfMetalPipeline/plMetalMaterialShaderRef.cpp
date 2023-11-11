@@ -45,20 +45,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsBitVector.h"
 #include "hsGMatState.inl"
+#include "plPipeline.h"
+
+#include "plMetalDevice.h"
+#include "plMetalPipeline.h"
 
 #include "plDrawable/plGBufferGroup.h"
 #include "plGImage/plCubicEnvironmap.h"
 #include "plGImage/plMipmap.h"
-#include "plMetalDevice.h"
-#include "plMetalPipeline.h"
 #include "plPipeDebugFlags.h"
-#include "plPipeline.h"
 #include "plPipeline/plCubicRenderTarget.h"
 #include "plPipeline/plRenderTarget.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
 
 #include <string_theory/format>
+#include <type_traits>
 
 plMetalMaterialShaderRef::plMetalMaterialShaderRef(hsGMaterial* mat, plMetalPipeline* pipe) : fPipeline(pipe),
                                                                                               fMaterial(mat),
@@ -181,18 +183,20 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
     IHandleMaterial(
         GetPassIndex(pass), passDescription, &uniforms, piggyBacks,
         [this, &preEncodeTransform, &encoder, &pass, &vertexUniforms](plLayerInterface* layer, uint32_t index) {
-        layer = preEncodeTransform(layer, index);
-        IBuildLayerTexture(encoder, index, layer);
+            layer = preEncodeTransform(layer, index);
+            IBuildLayerTexture(encoder, index, layer);
 
-        plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
+            plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
-        assert(index - GetPassIndex(pass) >= 0);
-        EncodeTransform(layer, &vertexUniforms->uvTransforms[index]);
+            assert(index - GetPassIndex(pass) >= 0);
+            EncodeTransform(layer, &vertexUniforms->uvTransforms[index]);
 
-        return layer;
-    }, [&postEncodeTransform](plLayerInterface* layer, uint32_t index) {
-        return postEncodeTransform(layer, index);
-    });
+            return layer;
+        },
+        [&postEncodeTransform](plLayerInterface* layer, uint32_t index) {
+            return postEncodeTransform(layer, index);
+        }
+    );
 
     encoder->setFragmentBytes(&uniforms, sizeof(plMetalFragmentShaderArgumentBuffer), FragmentShaderArgumentUniforms);
 }
@@ -256,10 +260,12 @@ void plMetalMaterialShaderRef::ILoopOverLayers()
         j = IHandleMaterial(
             currLayer, &passDescription, layerBuffer, nullptr,
             [](plLayerInterface* layer, uint32_t index) {
-            return layer;
-        }, [](plLayerInterface* layer, uint32_t index) {
-            return layer;
-        });
+                return layer;
+            },
+            [](plLayerInterface* layer, uint32_t index) {
+                return layer;
+            }
+        );
 
         if (j == -1)
             break;
@@ -420,6 +426,7 @@ uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer,
         return -1;
     }
 
+    static_assert(std::is_trivial_v<plMetalFragmentShaderDescription>, "plMetalFragmentShaderDescription must be a POD type!");
     memset(passDescription, 0, sizeof(plMetalFragmentShaderDescription));
 
     // Ignoring the bit about ATI Radeon and UVW limits

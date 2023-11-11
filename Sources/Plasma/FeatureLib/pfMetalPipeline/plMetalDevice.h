@@ -172,7 +172,7 @@ public:
 
     MTL::SamplerState* SampleStateForClampFlags(hsGMatState::hsGMatClampFlags sampleState) const;
 
-    NS::UInteger CurrentTargetSampleCount()
+    NS::UInteger CurrentTargetSampleCount() const
     {
         if (fCurrentRenderTarget) {
             return 1;
@@ -185,7 +185,7 @@ public:
 
     void EncodeBlur(MTL::CommandBuffer* commandBuffer, MTL::Texture* texture, float sigma);
 
-    MTL::PixelFormat GetFramebufferFormat() { return fFramebufferFormat; };
+    MTL::PixelFormat GetFramebufferFormat() const { return fFramebufferFormat; };
 
 private:
     struct plMetalPipelineRecord

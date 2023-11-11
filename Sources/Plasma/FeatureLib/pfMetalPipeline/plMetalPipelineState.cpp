@@ -127,10 +127,10 @@ void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescri
     if (fHasSkinIndices) {
         skinWeightOffset += sizeof(uint32_t);
     }
-    int normOffset = skinWeightOffset + (sizeof(float) * this->fNumWeights);
+    int normOffset = skinWeightOffset + (sizeof(float) * fNumWeights);
     int colorOffset = normOffset + sizeof(hsPoint3);
     int baseUvOffset = colorOffset + (sizeof(uint32_t) * 2);
-    int stride = baseUvOffset + sizeof(hsPoint3) * this->fNumUVs;
+    int stride = baseUvOffset + sizeof(hsPoint3) * fNumUVs;
 
     vertexDescriptor->attributes()->object(VertexAttributePosition)->setFormat(MTL::VertexFormatFloat3);
     vertexDescriptor->attributes()->object(VertexAttributePosition)->setBufferIndex(0);
@@ -148,7 +148,7 @@ void plMetalRenderSpanPipelineState::ConfigureVertexDescriptor(MTL::VertexDescri
         vertexDescriptor->attributes()->object(VertexAttributeWeights)->setOffset(weightOneOffset);
     }
 
-    for (int i = 0; i < this->fNumUVs; i++) {
+    for (int i = 0; i < fNumUVs; i++) {
         vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setFormat(MTL::VertexFormatFloat3);
         vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setBufferIndex(0);
         vertexDescriptor->attributes()->object(VertexAttributeTexcoord + i)->setOffset(baseUvOffset + (i * sizeof(hsPoint3)));
@@ -181,7 +181,6 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
                     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOne);
                 } else {
                     descriptor->setSourceRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-                    ;
                 }
                 descriptor->setDestinationRGBBlendFactor(MTL::BlendFactorSourceAlpha);
             } else {
@@ -328,7 +327,7 @@ void plMetalFragmentShaderDescription::PopulateTextureInfo(const plLayerInterfac
 
 bool plMetalMaterialPassPipelineState::IsEqual(const plMetalPipelineState& p) const
 {
-    return plMetalRenderSpanPipelineState::IsEqual(p) && static_cast<const plMetalMaterialPassPipelineState*>(&p)->fFragmentShaderDescription == this->fFragmentShaderDescription;
+    return plMetalRenderSpanPipelineState::IsEqual(p) && static_cast<const plMetalMaterialPassPipelineState*>(&p)->fFragmentShaderDescription == fFragmentShaderDescription;
 }
 
 MTL::Function* plMetalRenderShadowPipelineState::GetVertexFunction(MTL::Library* library)

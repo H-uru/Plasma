@@ -56,9 +56,9 @@ class plMetalDevice;
 class plMetalTextFontPipelineState : public plMetalPipelineState
 {
 public:
-    plMetalTextFontPipelineState(plMetalDevice* device) : plMetalPipelineState(device){};
+    plMetalTextFontPipelineState(plMetalDevice* device) : plMetalPipelineState(device){}
     bool                  IsEqual(const plMetalPipelineState& p) const override;
-    uint16_t              GetID() const override { return plMetalPipelineType::Text; };
+    uint16_t              GetID() const override { return plMetalPipelineType::Text; }
     plMetalPipelineState* Clone() override;
     const MTL::Function*  GetVertexFunction(MTL::Library* library) override;
     const MTL::Function*  GetFragmentFunction(MTL::Library* library) override;

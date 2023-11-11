@@ -81,7 +81,7 @@ typedef struct  {
     float4 DirXDirYKW;
     float4 DirYSqKW;
 } vs_WaveFixedFin7Uniforms;
-    
+
 typedef struct {
     float4 position [[position]];
     float4 c1;
@@ -96,21 +96,21 @@ typedef struct {
 vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
                                constant vs_WaveFixedFin7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_WaveFixedFin7InOut out;
-    
+
     // Store our input position in world space in r6
     float3 column1 = float3(uniforms.LocalToWorldRow1[0], uniforms.LocalToWorldRow2[0], uniforms.LocalToWorldRow3[0]);
     float3 column2 = float3(uniforms.LocalToWorldRow1[1], uniforms.LocalToWorldRow2[1], uniforms.LocalToWorldRow3[1]);
     float3 column3 = float3(uniforms.LocalToWorldRow1[2], uniforms.LocalToWorldRow2[2], uniforms.LocalToWorldRow3[2]);
     float3 column4 = float3(uniforms.LocalToWorldRow1[3], uniforms.LocalToWorldRow2[3], uniforms.LocalToWorldRow3[3]);
-    
+
     matrix_float4x3 localToWorld;
     localToWorld[0] = column1;
     localToWorld[1] = column2;
     localToWorld[2] = column3;
     localToWorld[3] = column4;
-    
+
     float4 worldPosition = float4(localToWorld * float4(in.position, 1.0), 1.0);
-    
+
     //
 
     // Input diffuse v5 color is:
@@ -179,16 +179,16 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     distance *= uniforms.PiConsts.wwww;
     //    dist += -kPi;
     distance -= uniforms.PiConsts.zzzz;
-    
+
     //Metals pow function does not like negative bases
     //Doing the same thing as the DX assembly until I know more about why
-    
+
     float4 pow2 = distance * distance; // r0^2
     float4 pow3 = pow2 * distance; // r0^3 - probably stall
     float4 pow4 = pow2 * pow2; // r0^4
     float4 pow5 = pow2 * pow3; // r0^5
     float4 pow7 = pow2 * pow5; // r0^7
-    
+
     //
     //    sincos(dist, sinDist, cosDist);
     // sin = r0 + r0^3 * vSin.y + r0^5 * vSin.z
@@ -197,11 +197,11 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     float4 cosDist = 1 + pow2 * uniforms.CosConsts.y + pow4 * uniforms.CosConsts.z;
     //r2
     float4 sinDist = distance + pow3 * uniforms.SinConsts.y + pow5 * uniforms.SinConsts.z;
-    
+
     cosDist = ((pow3 * pow3) * uniforms.CosConsts.w) + cosDist;
     sinDist = (pow7 * uniforms.SinConsts.w) + sinDist;
-    
-    
+
+
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
     float4 depth = uniforms.WaterLevel - worldPosition.zzzz;
@@ -209,13 +209,13 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     depth += uniforms.MinAtten;
     // Clamp .xyz to range [0..1]
     depth = clamp(depth, 0, 1);
-    
+
     // Calc our filter (see above).
     float4 inColor = float4(in.color) / 255.0f;
     float4 filter = inColor.wwww * uniforms.Lengths;
     filter = max(filter, uniforms.NumericConsts.xxxx);
     filter = min(filter, uniforms.NumericConsts.zzzz);
-    
+
     //mov    r2, r1;
     // r2 == sinDist
     // r1 == cosDist
@@ -269,27 +269,27 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     // Nor = (-P, -N, 1 - Q)
     //
     // But we want the transpose of that to go into r1-r3
-    
+
     worldPosition.x += dot(cosDist, uniforms.DirXK);
     worldPosition.y += dot(cosDist, uniforms.DirYK);
-    
+
     float4 r1, r2, r3 = 0;
-    
+
     r1.x = dot(sinDist, -uniforms.DirXSqKW);
     r2.x = dot(sinDist, -uniforms.DirXDirYKW);
     r3.x = dot(cosDist, uniforms.DirXW);
     r1.x = r1.x + uniforms.NumericConsts.z;
-    
+
     r1.y = dot(sinDist, -uniforms.DirXDirYKW);
     r2.y = dot(sinDist, -uniforms.DirYSqKW);
     r3.y = dot(cosDist, uniforms.DirYW);
     r2.y = r2.y + uniforms.NumericConsts.z;
-    
+
     r1.z = dot(cosDist, -uniforms.DirXW);
     r2.z = dot(cosDist, -uniforms.DirYW);
     r3.z = dot(sinDist, -uniforms.WK);
     r3.z = r3.z + uniforms.NumericConsts.z;
-    
+
     // Calculate our normalized vector from camera to vtx.
     // We'll use that a couple of times coming up.
     float4 r5 = worldPosition - uniforms.CameraPos;
@@ -297,7 +297,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     r10.x = rsqrt(dot(r5.xyz, r5.xyz));
     r5 = r5 * r10.xxxx;
     r5.w = 1.0 / r10.x;
-    
+
     // Calculate our specular attenuation from and into r5.w.
     // r5.w starts off the distance from vtx to camera.
     // Once we've turned it into an attenuation factor, we
@@ -312,7 +312,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     r5.w = max(r5.w, uniforms.NumericConsts.x);
     r5.w *= r5.w; // Square it to account for perspective
     r5.w *= uniforms.SpecAtten.z;
-    
+
     // So, our "finitized" eyeray is:
     //  camPos + D * t - envCenter = D * t - (envCenter - camPos)
     // with
@@ -341,10 +341,10 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     //      = r0 * r10.zzzz - F;
     //
     //https://developer.download.nvidia.com/books/HTML/gpugems/gpugems_ch01.html
-    
-    
+
+
     float4 r0 = float4(0);
-    
+
     {
         float3 D = r5.xyz;
         float3 F = uniforms.EnvAdjust.xyz;
@@ -353,30 +353,30 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
         float3 t = dot(D.xyz, F.xyz) + sqrt(abs(pow(abs(dot(D.xyz, F.xyz)), 2) - G));// r10.z = D dot F + SQRT((D dot F)^2 - G)
         r0.xyz = (D * t) - F; // r0.xyz = D * t - (envCenter - camPos)
     }
-    
+
     // ATI 9000 is having trouble with eyeVec as computed. Normalizing seems to get it over the hump.
     r0.xyz = normalize(r0.xyz);
-    
+
     r1.w = -r0.x;
     r2.w = -r0.y;
     r3.w = -r0.z;
-    
+
     r0.zw = uniforms.NumericConsts.xz;
-    
+
     float4 r11 = float4(0);
-    
+
     r0.x = dot(r1.xyz, r1.xyz);
     r0.xy = rsqrt(r0.x);
     r0.x *= r5.w;
     out.texCoord1 = r1 * r0.xxyw;
     r11.x = r1.z * r0.y;
-    
+
     r0.x = dot(r2.xyz, r2.xyz);
     r0.xy = rsqrt(r0.x);
     r0.x *= r5.w;
     out.texCoord3 = r2 * r0.xxyw;
     r11.y = r2.z * r0.y;
-    
+
     r0.x = dot(r3.xyz, r3.xyz);
     r0.xy = rsqrt(r0.x);
     r0.x *= r5.w;
@@ -412,11 +412,11 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     r10.x = r9.w + uniforms.FogSet.x;
     out.fog = r10.x * uniforms.FogSet.y;
     out.position = r9;
-    
+
     // Transform our uvw
     out.texCoord0 = float4(in.position.xy * uniforms.UVScale.x,
                            0, 1);
-    
+
     // Questionble attenuation follows
     // vector from this point to camera and normalize stashed in r5
     // Dot that with the computed normal
@@ -433,7 +433,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     r1.w *= uniforms.WaterTint.w;
     out.c1 = clamp(r1 * uniforms.EnvTint, 0, 1);
     out.c2 = uniforms.WaterTint; // SEENORM
-    
+
     return out;
 }
 
@@ -455,7 +455,7 @@ fragment float4 ps_WaveFixed(vs_WaveFixedFin7InOut in [[stage_in]],
     //    Since environment map has alpha = 255, the output of this
     //    shader can be used for either alpha or additive blending,
     //    as long as v0 is fed in appropriately.
-    
+
     constexpr sampler colorSampler = sampler(mip_filter::linear,
                               mag_filter::linear,
                               min_filter::linear,
@@ -464,13 +464,13 @@ fragment float4 ps_WaveFixed(vs_WaveFixedFin7InOut in [[stage_in]],
     float u = dot(in.texCoord1.xyz, t0);
     float v = dot(in.texCoord2.xyz, t0);
     float w = dot(in.texCoord3.xyz, t0);
-    
+
     float3 N = float3(u, v, w);
     float3 E = float3(in.texCoord1.w, in.texCoord2.w, in.texCoord3.w);
-    
+
     //float3 coord = reflect(E, N);
     float3 coord = 2*(dot(N, E) / dot(N, N))*N - E;
-    
+
     float4 out = float4(environmentMap.sample(colorSampler, coord));
     out = (out * in.c1) + in.c2;
     out.a = in.c1.a;
