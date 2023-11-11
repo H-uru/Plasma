@@ -228,12 +228,9 @@ macro(_find_physx_library SUFFIX)
 
         # The PhysX headers require that either _DEBUG or NDEBUG is always
         # defined (but not both at once), otherwise they produce an error.
-        # For release builds, NDEBUG is always automatically defined
-        # (either by CMake and/or the compilers).
-        # For debug builds, _DEBUG is automatically defined by MSVC,
-        # but for other compilers we need to define it ourselves.
         target_compile_definitions(${TARGET} INTERFACE
-            $<$<AND:$<CONFIG:Debug>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:_DEBUG>
+            $<$<CONFIG:Debug>:_DEBUG>
+            $<$<NOT:$<CONFIG:Debug>>:NDEBUG>
         )
     endif()
 
