@@ -69,6 +69,7 @@ set(pfMetalPipeline_SHADERS
     ShaderSrc/Grass.metal
     ShaderSrc/WaveDecEnv.metal
     ShaderSrc/Avatar.metal
+    ShaderSrc/Water.metal
     ShaderSrc/WaveDec1Lay_7.metal
     ShaderSrc/WaveRip.metal
     ShaderSrc/Clear.metal

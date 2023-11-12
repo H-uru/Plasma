@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 using namespace metal;
 
 #include "ShaderVertex.h"
+#include "Water.h"
 
 typedef struct
 {
@@ -65,9 +66,7 @@ typedef struct
     float4 WindRot;
     float4 EnvAdjust;
     float4 EnvTint;
-    float4 LocalToWorldRow1;
-    float4 LocalToWorldRow2;
-    float4 LocalToWorldRow3;
+    float3x4 LocalToWorld;
     float4 Lengths;
     float4 WaterLevel;
     float4 DepthFalloff;
@@ -101,18 +100,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     vs_WaveFixedFin7InOut out;
 
     // Store our input position in world space in r6
-    float3 column1 = float3(uniforms.LocalToWorldRow1[0], uniforms.LocalToWorldRow2[0], uniforms.LocalToWorldRow3[0]);
-    float3 column2 = float3(uniforms.LocalToWorldRow1[1], uniforms.LocalToWorldRow2[1], uniforms.LocalToWorldRow3[1]);
-    float3 column3 = float3(uniforms.LocalToWorldRow1[2], uniforms.LocalToWorldRow2[2], uniforms.LocalToWorldRow3[2]);
-    float3 column4 = float3(uniforms.LocalToWorldRow1[3], uniforms.LocalToWorldRow2[3], uniforms.LocalToWorldRow3[3]);
-
-    matrix_float4x3 localToWorld;
-    localToWorld[0] = column1;
-    localToWorld[1] = column2;
-    localToWorld[2] = column3;
-    localToWorld[3] = column4;
-
-    float4 worldPosition = float4(localToWorld * float4(in.position, 1.0), 1.0);
+    float4 worldPosition = float4(transpose(uniforms.LocalToWorld) * float4(in.position, 1.0), 1.0);
 
     //
 
@@ -168,20 +156,19 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     
     //
     //    dist = mad( dist, kFreq.xyzw, kPhase.xyzw);
-    distance = distance * uniforms.Frequency;
-    distance = distance + uniforms.Phase;
+    distance *= uniforms.Frequency;
+    distance += uniforms.Phase;
     //
     //    // Now we need dist mod'd into range [-Pi..Pi]
     //    dist *= rcp(kTwoPi);
-    float4 piRecip = 1.0f / uniforms.PiConsts.wwww;
-    distance = distance + uniforms.PiConsts.zzzz;
-    distance *= piRecip;
+    distance += M_PI_F;
+    distance /= (M_PI_F * 2.0f);
     //    dist = frac(dist);
     distance = fract(distance);
     //    dist *= kTwoPi;
-    distance *= uniforms.PiConsts.wwww;
+    distance *= (M_PI_F * 2.0f);
     //    dist += -kPi;
-    distance -= uniforms.PiConsts.zzzz;
+    distance -= M_PI_F;
 
     //Metals pow function does not like negative bases
     //Doing the same thing as the DX assembly until I know more about why
@@ -207,11 +194,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
 
     // Calc our depth based filtering here into r4 (because we don't use it again
     // after here, and we need our filtering shortly).
-    float4 depth = uniforms.WaterLevel - worldPosition.zzzz;
-    depth *= uniforms.DepthFalloff;
-    depth += uniforms.MinAtten;
-    // Clamp .xyz to range [0..1]
-    depth = clamp(depth, 0, 1);
+    float3 depthFilter = CalcDepthFilter(uniforms.WaterLevel, uniforms.DepthFalloff, worldPosition, uniforms.MinAtten);
 
     // Calc our filter (see above).
     float4 inColor = float4(in.color) / 255.0f;
@@ -232,7 +215,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     //    accumPos.z += height; (but accumPos.z is currently 0).
     float4 accumPos = 0;
     accumPos.x = dot(sinDist, uniforms.NumericConsts.zzzz);
-    accumPos.y = accumPos.x * depth.z;
+    accumPos.y = accumPos.x * depthFilter.z;
     accumPos.z = accumPos.y + uniforms.WaterLevel.w;
     worldPosition.z = max(worldPosition.z, accumPos.z); // CLAMP
     // r8.x == wave height relative to 0
@@ -360,9 +343,9 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // ATI 9000 is having trouble with eyeVec as computed. Normalizing seems to get it over the hump.
     r0.xyz = normalize(r0.xyz);
 
-    r1.w = -r0.x;
-    r2.w = -r0.y;
-    r3.w = -r0.z;
+    r1.w = r0.x;
+    r2.w = r0.y;
+    r3.w = r0.z;
 
     r0.zw = uniforms.NumericConsts.xz;
 
@@ -430,7 +413,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     r1.w *= uniforms.NumericConsts.y;
     // No need to clamp, since the destination register (in the pixel shader)
     // will saturate [0..1] anyway.
-    r1 *= depth.yyyx; // HACKTESTCOLOR
+    r1 *= depthFilter.yyyx; // HACKTESTCOLOR
     //R in the in color is the alpha value, but remember it's encoded ARGB
     r1.w *= inColor.g;
     r1.w *= uniforms.WaterTint.w;
@@ -472,10 +455,9 @@ fragment float4 ps_WaveFixed(vs_WaveFixedFin7InOut in           [[stage_in]],
     float3 N = float3(u, v, w);
     float3 E = float3(in.texCoord1.w, in.texCoord2.w, in.texCoord3.w);
 
-    //float3 coord = reflect(E, N);
-    float3 coord = 2*(dot(N, E) / dot(N, N))*N - E;
+    float3 reflectCoord = reflect(E, N);
 
-    float4 out = float4(environmentMap.sample(colorSampler, coord));
+    float4 out = float4(environmentMap.sample(colorSampler, reflectCoord));
     out = (out * in.c1) + in.c2;
     out.a = in.c1.a;
     return out;
