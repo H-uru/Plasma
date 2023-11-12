@@ -229,8 +229,7 @@ macro(_find_physx_library SUFFIX)
         # The PhysX headers require that either _DEBUG or NDEBUG is always
         # defined (but not both at once), otherwise they produce an error.
         target_compile_definitions(${TARGET} INTERFACE
-            $<$<CONFIG:Debug>:_DEBUG>
-            $<$<NOT:$<CONFIG:Debug>>:NDEBUG>
+            $<IF:$<CONFIG:Debug>,_DEBUG,NDEBUG>
         )
     endif()
 
