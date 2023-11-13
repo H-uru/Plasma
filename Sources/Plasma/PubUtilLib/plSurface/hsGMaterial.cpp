@@ -64,10 +64,8 @@ hsGMaterial::hsGMaterial() :
 fLOD(0),
 fCompFlags(0),
 fLoadFlags(0),
-fLastUpdateTime(0)
-#if PLASMA_PIPELINE_GL || PLASMA_PIPELINE_METAL
-,fDeviceRef(nullptr)
-#endif
+fLastUpdateTime(0),
+fDeviceRef()
 {
 }
 

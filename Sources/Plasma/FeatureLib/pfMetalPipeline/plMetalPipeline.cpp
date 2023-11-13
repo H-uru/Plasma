@@ -1301,16 +1301,16 @@ void plMetalPipeline::IRenderProjection(const plRenderPrimFunc& render, plLightI
 
     IScaleLight(0, true);
 
-    fCurrentRenderPassUniforms->ambientSrc = 1.0;
-    fCurrentRenderPassUniforms->diffuseSrc = 1.0;
-    fCurrentRenderPassUniforms->emissiveSrc = 1.0;
-    fCurrentRenderPassUniforms->specularSrc = 1.0;
-    fCurrentRenderPassUniforms->globalAmb = {1.0, 1.0, 1.0};
-    fCurrentRenderPassUniforms->ambientCol = {0.0, 0.0, 0.0};
-    fCurrentRenderPassUniforms->emissiveCol = {0.0, 0.0, 0.0};
-    fCurrentRenderPassUniforms->specularCol = {0.0, 0.0, 0.0};
-    fCurrentRenderPassUniforms->fogColor = {0.0, 0.0, 0.0};
-    fCurrentRenderPassUniforms->diffuseCol = {1.0, 1.0, 1.0, 1.0};
+    fCurrentRenderPassUniforms->ambientSrc = 1;
+    fCurrentRenderPassUniforms->diffuseSrc = 1;
+    fCurrentRenderPassUniforms->emissiveSrc = 1;
+    fCurrentRenderPassUniforms->specularSrc = 1;
+    fCurrentRenderPassUniforms->globalAmb = {1.f, 1.f, 1.f};
+    fCurrentRenderPassUniforms->ambientCol = {0.f, 0.f, 0.f};
+    fCurrentRenderPassUniforms->emissiveCol = {0.f, 0.f, 0.f};
+    fCurrentRenderPassUniforms->specularCol = {0.f, 0.f, 0.f};
+    fCurrentRenderPassUniforms->fogColor = {0.f, 0.f, 0.f};
+    fCurrentRenderPassUniforms->diffuseCol = {1.f, 1.f, 1.f, 1.f};
 
     matrix_float4x4 tXfm;
     hsMatrix2SIMD(proj->GetTransform(), &tXfm);
@@ -2112,18 +2112,18 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
     // plProfile_Inc(MatLightState);
 
     if (IsDebugFlagSet(plPipeDbg::kFlagAllBright)) {
-        fCurrentRenderPassUniforms->globalAmb = {1.0, 1.0, 1.0, 1.0};
+        fCurrentRenderPassUniforms->globalAmb = {1.f, 1.f, 1.f, 1.f};
 
-        fCurrentRenderPassUniforms->ambientCol = {1.0, 1.0, 1.0};
-        fCurrentRenderPassUniforms->diffuseCol = {1.0, 1.0, 1.0, 1.0};
-        fCurrentRenderPassUniforms->emissiveCol = {1.0, 1.0, 1.0};
-        fCurrentRenderPassUniforms->emissiveCol = {1.0, 1.0, 1.0};
-        fCurrentRenderPassUniforms->specularCol = {1.0, 1.0, 1.0};
+        fCurrentRenderPassUniforms->ambientCol = {1.f, 1.f, 1.f};
+        fCurrentRenderPassUniforms->diffuseCol = {1.f, 1.f, 1.f, 1.f};
+        fCurrentRenderPassUniforms->emissiveCol = {1.f, 1.f, 1.f};
+        fCurrentRenderPassUniforms->emissiveCol = {1.f, 1.f, 1.f};
+        fCurrentRenderPassUniforms->specularCol = {1.f, 1.f, 1.f};
 
-        fCurrentRenderPassUniforms->ambientSrc = 1.0;
-        fCurrentRenderPassUniforms->diffuseSrc = 1.0;
-        fCurrentRenderPassUniforms->emissiveSrc = 1.0;
-        fCurrentRenderPassUniforms->specularSrc = 1.0;
+        fCurrentRenderPassUniforms->ambientSrc = 1;
+        fCurrentRenderPassUniforms->diffuseSrc = 1;
+        fCurrentRenderPassUniforms->emissiveSrc = 1;
+        fCurrentRenderPassUniforms->specularSrc = 1;
 
         return;
     }
@@ -2143,14 +2143,14 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
         case plSpan::kLiteMaterial: // Material shading
         {
             if (state.fShadeFlags & hsGMatState::kShadeWhite) {
-                fCurrentRenderPassUniforms->globalAmb = {1.0, 1.0, 1.0, 1.0};
-                fCurrentRenderPassUniforms->ambientCol = {1.0, 1.0, 1.0};
+                fCurrentRenderPassUniforms->globalAmb = {1.f, 1.f, 1.f, 1.f};
+                fCurrentRenderPassUniforms->ambientCol = {1.f, 1.f, 1.f};
             } else if (IsDebugFlagSet(plPipeDbg::kFlagNoPreShade)) {
-                fCurrentRenderPassUniforms->globalAmb = {0.0, 0.0, 0.0, 1.0};
-                fCurrentRenderPassUniforms->ambientCol = {0.0, 0.0, 0.0};
+                fCurrentRenderPassUniforms->globalAmb = {0.f, 0.f, 0.f, 1.f};
+                fCurrentRenderPassUniforms->ambientCol = {0.f, 0.f, 0.f};
             } else {
                 hsColorRGBA amb = currLayer->GetPreshadeColor();
-                fCurrentRenderPassUniforms->globalAmb = {static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), 1.0};
+                fCurrentRenderPassUniforms->globalAmb = {static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), 1.f};
                 fCurrentRenderPassUniforms->ambientCol = {static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b)};
             }
 
@@ -2168,17 +2168,17 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
                 mat.Power = currLayer->GetSpecularPower();
 #endif
             } else {
-                fCurrentRenderPassUniforms->specularCol = {0.0, 0.0, 0.0};
+                fCurrentRenderPassUniforms->specularCol = {0.f, 0.f, 0.f};
             }
 
-            fCurrentRenderPassUniforms->diffuseSrc = 1.0;
-            fCurrentRenderPassUniforms->emissiveSrc = 1.0;
-            fCurrentRenderPassUniforms->specularSrc = 1.0;
+            fCurrentRenderPassUniforms->diffuseSrc = 1.f;
+            fCurrentRenderPassUniforms->emissiveSrc = 1.f;
+            fCurrentRenderPassUniforms->specularSrc = 1.f;
 
             if (state.fShadeFlags & hsGMatState::kShadeNoShade) {
-                fCurrentRenderPassUniforms->ambientSrc = 1.0;
+                fCurrentRenderPassUniforms->ambientSrc = 1.f;
             } else {
-                fCurrentRenderPassUniforms->ambientSrc = 0.0;
+                fCurrentRenderPassUniforms->ambientSrc = 0.f;
             }
             fCurrLightingMethod = plSpan::kLiteMaterial;
 
@@ -2187,20 +2187,20 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 
         case plSpan::kLiteVtxPreshaded: // Vtx preshaded
         {
-            fCurrentRenderPassUniforms->globalAmb = {0.0, 0.0, 0.0};
-            fCurrentRenderPassUniforms->ambientCol = {0.0, 0.0, 0.0};
-            fCurrentRenderPassUniforms->diffuseCol = {0.0, 0.0, 0.0, 0.0};
-            fCurrentRenderPassUniforms->emissiveCol = {0.0, 0.0, 0.0};
-            fCurrentRenderPassUniforms->specularCol = {0.0, 0.0, 0.0};
+            fCurrentRenderPassUniforms->globalAmb = {0.f, 0.f, 0.f};
+            fCurrentRenderPassUniforms->ambientCol = {0.f, 0.f, 0.f};
+            fCurrentRenderPassUniforms->diffuseCol = {0.f, 0.f, 0.f, 0.f};
+            fCurrentRenderPassUniforms->emissiveCol = {0.f, 0.f, 0.f};
+            fCurrentRenderPassUniforms->specularCol = {0.f, 0.f, 0.f};
 
-            fCurrentRenderPassUniforms->diffuseSrc = 0.0;
-            fCurrentRenderPassUniforms->ambientSrc = 1.0;
-            fCurrentRenderPassUniforms->specularSrc = 1.0;
+            fCurrentRenderPassUniforms->diffuseSrc = 0.f;
+            fCurrentRenderPassUniforms->ambientSrc = 1.f;
+            fCurrentRenderPassUniforms->specularSrc = 1.f;
 
             if (state.fShadeFlags & hsGMatState::kShadeEmissive) {
-                fCurrentRenderPassUniforms->emissiveSrc = 0.0;
+                fCurrentRenderPassUniforms->emissiveSrc = 0.f;
             } else {
-                fCurrentRenderPassUniforms->emissiveSrc = 1.0;
+                fCurrentRenderPassUniforms->emissiveSrc = 1.f;
             }
 
             fCurrLightingMethod = plSpan::kLiteVtxPreshaded;
@@ -2209,8 +2209,8 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
 
         case plSpan::kLiteVtxNonPreshaded: // Vtx non-preshaded
         {
-            fCurrentRenderPassUniforms->ambientCol = {0.0, 0.0, 0.0};
-            fCurrentRenderPassUniforms->diffuseCol = {0.0, 0.0, 0.0, 0.0};
+            fCurrentRenderPassUniforms->ambientCol = {0.f, 0.f, 0.f};
+            fCurrentRenderPassUniforms->diffuseCol = {0.f, 0.f, 0.f, 0.f};
 
             hsColorRGBA em = currLayer->GetAmbientColor();
             fCurrentRenderPassUniforms->emissiveCol = {static_cast<half>(em.r), static_cast<half>(em.g), static_cast<half>(em.b)};
@@ -2223,16 +2223,16 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
                 mat.Power = currLayer->GetSpecularPower();
 #endif
             } else {
-                fCurrentRenderPassUniforms->specularCol = {0.0, 0.0, 0.0};
+                fCurrentRenderPassUniforms->specularCol = {0.f, 0.f, 0.f};
             }
 
             hsColorRGBA amb = currLayer->GetPreshadeColor();
             fCurrentRenderPassUniforms->globalAmb = {static_cast<half>(amb.r), static_cast<half>(amb.g), static_cast<half>(amb.b), static_cast<half>(amb.a)};
 
-            fCurrentRenderPassUniforms->ambientSrc = 0.0;
-            fCurrentRenderPassUniforms->diffuseSrc = 0.0;
-            fCurrentRenderPassUniforms->emissiveSrc = 1.0;
-            fCurrentRenderPassUniforms->specularSrc = 1.0;
+            fCurrentRenderPassUniforms->ambientSrc = 0;
+            fCurrentRenderPassUniforms->diffuseSrc = 0;
+            fCurrentRenderPassUniforms->emissiveSrc = 1;
+            fCurrentRenderPassUniforms->specularSrc = 1;
 
             fCurrLightingMethod = plSpan::kLiteVtxNonPreshaded;
             break;
@@ -2272,13 +2272,13 @@ void plMetalPipeline::ICalcLighting(plMetalMaterialShaderRef* mRef, const plLaye
         }
         default:
             fCurrentRenderPassUniforms->fogExponential = 0;
-            fCurrentRenderPassUniforms->fogValues = {0.0, 0.0};
-            fCurrentRenderPassUniforms->fogColor = {0.0, 0.0, 0.0};
+            fCurrentRenderPassUniforms->fogValues = {0.f, 0.f};
+            fCurrentRenderPassUniforms->fogColor = {0.f, 0.f, 0.f};
             break;
     }
 
     if (currLayer->GetBlendFlags() & (hsGMatState::kBlendAdd | hsGMatState::kBlendMADD | hsGMatState::kBlendAddColorTimesAlpha)) {
-        fCurrentRenderPassUniforms->fogColor = {0.0, 0.0, 0.0};
+        fCurrentRenderPassUniforms->fogColor = {0.f, 0.f, 0.f};
     }
 }
 
