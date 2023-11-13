@@ -209,6 +209,9 @@ private:
     std::mutex                                                                                             fPipelineCreationMtx;
     void                                                                                                   StartPipelineBuild(plMetalPipelineRecord& record, std::condition_variable** condOut);
     std::condition_variable*                                                                               PrewarmPipelineStateFor(plMetalPipelineState* pipelineState);
+    
+    void SetOutputLayer(CA::MetalLayer* layer) { fLayer = layer; }
+    CA::MetalLayer* GetOutputLayer() const { return fLayer; };
 
 protected:
     plMetalLinkedPipeline* PipelineState(plMetalPipelineState* pipelineState);
@@ -226,6 +229,8 @@ private:
     MTL::CommandBuffer*        fCurrentCommandBuffer;
     MTL::CommandBuffer*        fCurrentOffscreenCommandBuffer;
     MTL::RenderCommandEncoder* fCurrentRenderTargetCommandEncoder;
+    
+    CA::MetalLayer*            fLayer;
 
     MTL::Texture* fCurrentDrawableDepthTexture;
     MTL::Texture* fCurrentFragmentOutputTexture;

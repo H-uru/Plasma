@@ -174,6 +174,8 @@ PF_CONSOLE_LINK_ALL()
 
 @implementation AppDelegate
 
+static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
+
 - (id)init
 {
     // Style flags
@@ -193,6 +195,8 @@ PF_CONSOLE_LINK_ALL()
     self.plsView = view;
     window.contentView = view;
     [window setDelegate:self];
+    
+    gClient.SetClientWindow((__bridge void *)view.layer);
 
     self = [super initWithWindow:window];
     self.window.acceptsMouseMovedEvents = YES;
@@ -457,33 +461,17 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 
     // Window controller
     [self.window setContentSize:NSMakeSize(800, 600)];
-    // #if 0
-    // allow this executation path to start in full screen
-    //[self.window toggleFullScreen:self];
-    // #endif
     [self.window center];
     [self.window makeKeyAndOrderFront:self];
     self.renderLayer = self.window.contentView.layer;
+    
+    [self.renderLayer addObserver:self
+                       forKeyPath:@"device"
+                          options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial
+                          context:DeviceDidChangeContext];
 
     gClient.SetClientWindow((hsWindowHndl)(__bridge void*)self.window);
     gClient.SetClientDisplay((hsWindowHndl)NULL);
-
-#ifdef PLASMA_PIPELINE_METAL
-    plMetalPipeline *pipeline = (plMetalPipeline *)gClient->GetPipeline();
-    pipeline->currentDrawableCallback = [self] (MTL::Device* device) {
-        id< CAMetalDrawable > drawable;
-        id<MTLDevice> metalDevice = (__bridge id<MTLDevice>)device;
-        if (((CAMetalLayer *) _renderLayer).device != metalDevice) {
-            ((CAMetalLayer *) _renderLayer).device = metalDevice;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self updateWindowTitle];
-            });
-        }
-        drawable = [((CAMetalLayer *) _renderLayer) nextDrawable];
-        CA::MetalDrawable * mtlDrawable = ( __bridge CA::MetalDrawable* ) drawable;
-        mtlDrawable->retain();
-        return mtlDrawable;
-    };
     
     if (!gClient) {
         exit(0);
@@ -502,6 +490,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 
 - (void)updateWindowTitle
 {
+#ifdef PLASMA_PIPELINE_METAL
     NSString *productTitle = [NSString stringWithSTString:plProduct::LongName()];
     id<MTLDevice> device = ((CAMetalLayer *) self.window.contentView.layer).device;
 #ifdef HS_DEBUGGING
@@ -560,6 +549,23 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
                                   NSApplicationPresentationAutoHideMenuBar];
     return NSApplicationPresentationFullScreen | NSApplicationPresentationHideDock |
            NSApplicationPresentationAutoHideMenuBar;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == DeviceDidChangeContext) {
+        // this may not happen on the main queue
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self updateWindowTitle];
+        });
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (void)dealloc
+{
+    [_renderLayer removeObserver:self forKeyPath:@"device" context:DeviceDidChangeContext];
 }
 
 @end

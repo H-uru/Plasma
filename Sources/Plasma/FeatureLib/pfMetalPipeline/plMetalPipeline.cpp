@@ -163,7 +163,6 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
                                                                                                                     fRenderTargetRefList(),
                                                                                                                     fMatRefList(),
                                                                                                                     fCurrentRenderPassUniforms(),
-                                                                                                                    currentDrawableCallback(),
                                                                                                                     fFragFunction(),
                                                                                                                     fVShaderRefList(),
                                                                                                                     fPShaderRefList(),
@@ -180,6 +179,11 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     fDevice.fPipeline = this;
 
     fMaxLayersAtOnce = 8;
+    
+    fDevice.SetOutputLayer(static_cast<CA::MetalLayer*>(window));
+    // For now - set this once at startup. If the underlying device is allow to change on
+    // the fly (eGPU, display change, etc) - revisit.
+    fDevice.GetOutputLayer()->setDevice(fDevice.fMetalDevice);
 
     // Default our output format to 8 bit BGRA. Client may immediately change this to
     // the actual framebuffer format.
@@ -623,9 +627,12 @@ bool plMetalPipeline::BeginRender()
         IPreprocessShadows();
         IPreprocessAvatarTextures();
 
-        CA::MetalDrawable* drawable = currentDrawableCallback(fDevice.fMetalDevice);
+        CA::MetalLayer* outputLayer = fDevice.GetOutputLayer();
+        
+        CA::MetalDrawable* drawable = fDevice.GetOutputLayer()->nextDrawable()->retain();
         if (!drawable) {
-            fCurrentPool->release();
+            // no framebuffer available - abort
+            EndRender();
             return true;
         }
         fDevice.CreateNewCommandBuffer(drawable);
@@ -667,6 +674,7 @@ bool plMetalPipeline::EndRender()
         }
     }
     fCurrentPool->release();
+    fCurrentPool = nullptr;
 
     return retVal;
 }
@@ -981,9 +989,11 @@ void plMetalPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode>* res, 
      */
 
     std::vector<plDisplayMode> supported;
+    CA::MetalLayer* layer = fDevice.GetOutputLayer();
+    CGSize drawableSize = layer->drawableSize();
     supported.emplace_back();
-    supported[0].Width = 800;
-    supported[0].Height = 600;
+    supported[0].Width = drawableSize.width;
+    supported[0].Height = drawableSize.height;
     supported[0].ColorDepth = 32;
 
     *res = supported;
@@ -1013,9 +1023,7 @@ int plMetalPipeline::GetMaxAntiAlias(int Width, int Height, int ColorDepth)
 
 void plMetalPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync)
 {
-    // FIXME: What's this?
-    // Seems like an entry point for passing in display settings.
-
+    Resize(Width, Height);
     fDevice.SetMaxAnsiotropy(MaxAnisotropicSamples);
 }
 
