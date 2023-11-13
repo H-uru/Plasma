@@ -94,9 +94,74 @@ typedef struct
     float fog;
 } vs_WaveFixedFin7InOut;
 
-vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[stage_in]],
-                             constant vs_WaveFixedFin7Uniforms & uniforms   [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]])
+void CalcEyeRayAndBumpAttenuation(const float4 wPos,
+                                  const float4 cameraPos,
+                                  const float4 specAtten,
+                                  thread float3 &cam2Vtx,
+                                  thread float &pertAtten)
 {
+    cam2Vtx = wPos.xyz - cameraPos.xyz;
+    pertAtten = length(cam2Vtx);
+    cam2Vtx /= pertAtten;
+
+    // Calculate our specular attenuation from and into r5.w.
+    // r5.w starts off the distance from vtx to camera.
+    // Once we've turned it into an attenuation factor, we
+    // scale the x and y of our normal map (through the transform bases)
+    // so that in the distance, the normal map is flat. Note that the
+    // geometry in the distance isn't necessarily flat. We want to apply
+    // this scale to the normal read from the normal map before it is
+    // transformed into surface space.
+    pertAtten += specAtten.x;
+    pertAtten *= specAtten.y;
+    pertAtten = clamp(pertAtten, 0.f, 1.f);
+    pertAtten *= pertAtten; // Square it to account for perspective
+    pertAtten *= specAtten.z;
+}
+
+float3 FinitizeEyeRay(const float3 cam2Vtx, const float4 envAdjust)
+{
+    // So, our "finitized" eyeray is:
+    //  camPos + D * t - envCenter = D * t - (envCenter - camPos)
+    // with
+    //  D = (pos - camPos) / |pos - camPos| // normalized usual eyeray
+    // and
+    //  t = D dot F + sqrt( (D dot F)^2 - G )
+    // with
+    //  F = (envCenter - camPos)    => c19.xyz
+    //  G = F^2 - R^2               => c19.w
+    //  R = environment radius.     => unused
+    //
+    // This all derives from the positive root of equation
+    //  (camPos + (pos - camPos) * t - envCenter)^2 = R^2,
+    // In other words, where on a sphere of radius R centered about envCenter
+    // does the ray from the real camera position through this point hit.
+    //
+    // Note that F, G, and R are all constants (one point, two scalars).
+    //
+    // So first we calculate D into r0,
+    // then D dot F into r10.x,
+    // then (D dot F)^2 - G into r10.y
+    // then rsq( (D dot F)^2 - G ) into r9.x;
+    // then t = r10.z = r10.x + r10.y * r9.x;
+    // and
+    // r0 = D * t - (envCenter - camPos)
+    //      = r0 * r10.zzzz - F;
+    //
+    //https://developer.download.nvidia.com/books/HTML/gpugems/gpugems_ch01.html
+    
+    const float3 F = envAdjust.xyz;
+    const float G = envAdjust.w;
+    // METAL NOTE: HLSL 1.1 always applies an abs operation to values it's about to sqrt
+    const float3 t = dot(cam2Vtx, F.xyz) + sqrt(abs(pow(abs(dot(cam2Vtx, F.xyz)), 2) - G));// r10.z = D dot F + SQRT((D dot F)^2 - G)
+    const float3 eyeRay = (cam2Vtx * t) - F; // r0.xyz = D * t - (envCenter - camPos)
+
+    // ATI 9000 is having trouble with eyeVec as computed. Normalizing seems to get it over the hump.
+    return normalize(eyeRay);
+}
+
+vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
+                               constant vs_WaveFixedFin7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
     vs_WaveFixedFin7InOut out;
 
     // Store our input position in world space in r6
@@ -232,9 +297,12 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     //
     // But we want the transpose of that to go into r1-r3
 
+    // CalcFinalPosition
+    
     worldPosition.x += dot(cosDist, uniforms.DirXK);
     worldPosition.y += dot(cosDist, uniforms.DirYK);
 
+    // CalcTangentBasis
     float4 r1, r2, r3 = 0;
 
     r1.x = dot(sinDist, -uniforms.DirXSqKW);
@@ -252,96 +320,37 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     r3.z = dot(sinDist, -uniforms.WK);
     r3.z = r3.z + uniforms.NumericConsts.z;
 
-    // Calculate our normalized vector from camera to vtx.
-    // We'll use that a couple of times coming up.
-    float4 r5 = worldPosition - uniforms.CameraPos;
-    float4 r10;
-    r10.x = rsqrt(dot(r5.xyz, r5.xyz));
-    r5 = r5 * r10.xxxx;
-    r5.w = 1.0 / r10.x;
+    float3 cam2Vtx;
+    float pertAtten;
+    
+    CalcEyeRayAndBumpAttenuation(worldPosition, uniforms.CameraPos, uniforms.SpecAtten, cam2Vtx, pertAtten);
 
-    // Calculate our specular attenuation from and into r5.w.
-    // r5.w starts off the distance from vtx to camera.
-    // Once we've turned it into an attenuation factor, we
-    // scale the x and y of our normal map (through the transform bases)
-    // so that in the distance, the normal map is flat. Note that the
-    // geometry in the distance isn't necessarily flat. We want to apply
-    // this scale to the normal read from the normal map before it is
-    // transformed into surface space.
-    r5.w += uniforms.SpecAtten.x;
-    r5.w *= uniforms.SpecAtten.y;
-    r5.w = min(r5.w, uniforms.NumericConsts.z);
-    r5.w = max(r5.w, uniforms.NumericConsts.x);
-    r5.w *= r5.w; // Square it to account for perspective
-    r5.w *= uniforms.SpecAtten.z;
+    float3 eyeRay = FinitizeEyeRay(cam2Vtx, uniforms.EnvAdjust);
 
-    // So, our "finitized" eyeray is:
-    //  camPos + D * t - envCenter = D * t - (envCenter - camPos)
-    // with
-    //  D = (pos - camPos) / |pos - camPos| // normalized usual eyeray
-    // and
-    //  t = D dot F + sqrt( (D dot F)^2 - G )
-    // with
-    //  F = (envCenter - camPos)    => c19.xyz
-    //  G = F^2 - R^2               => c19.w
-    //  R = environment radius.     => unused
-    //
-    // This all derives from the positive root of equation
-    //  (camPos + (pos - camPos) * t - envCenter)^2 = R^2,
-    // In other words, where on a sphere of radius R centered about envCenter
-    // does the ray from the real camera position through this point hit.
-    //
-    // Note that F, G, and R are all constants (one point, two scalars).
-    //
-    // So first we calculate D into r0,
-    // then D dot F into r10.x,
-    // then (D dot F)^2 - G into r10.y
-    // then rsq( (D dot F)^2 - G ) into r9.x;
-    // then t = r10.z = r10.x + r10.y * r9.x;
-    // and
-    // r0 = D * t - (envCenter - camPos)
-    //      = r0 * r10.zzzz - F;
-    //
-    //https://developer.download.nvidia.com/books/HTML/gpugems/gpugems_ch01.html
-
+    r1.w = -eyeRay.x;
+    r2.w = -eyeRay.y;
+    r3.w = -eyeRay.z;
 
     float4 r0 = float4(0);
-
-    {
-        float3 D = r5.xyz;
-        float3 F = uniforms.EnvAdjust.xyz;
-        float G = uniforms.EnvAdjust.w;
-        // METAL NOTE: HLSL 1.1 always applies an abs operation to values it's about to sqrt
-        float3 t = dot(D.xyz, F.xyz) + sqrt(abs(pow(abs(dot(D.xyz, F.xyz)), 2) - G));// r10.z = D dot F + SQRT((D dot F)^2 - G)
-        r0.xyz = (D * t) - F; // r0.xyz = D * t - (envCenter - camPos)
-    }
-
-    // ATI 9000 is having trouble with eyeVec as computed. Normalizing seems to get it over the hump.
-    r0.xyz = normalize(r0.xyz);
-
-    r1.w = r0.x;
-    r2.w = r0.y;
-    r3.w = r0.z;
-
     r0.zw = uniforms.NumericConsts.xz;
 
     float4 r11 = float4(0);
 
     r0.x = dot(r1.xyz, r1.xyz);
     r0.xy = rsqrt(r0.x);
-    r0.x *= r5.w;
+    r0.x *= pertAtten;
     out.texCoord1 = r1 * r0.xxyw;
     r11.x = r1.z * r0.y;
 
     r0.x = dot(r2.xyz, r2.xyz);
     r0.xy = rsqrt(r0.x);
-    r0.x *= r5.w;
+    r0.x *= pertAtten;
     out.texCoord3 = r2 * r0.xxyw;
     r11.y = r2.z * r0.y;
 
     r0.x = dot(r3.xyz, r3.xyz);
     r0.xy = rsqrt(r0.x);
-    r0.x *= r5.w;
+    r0.x *= pertAtten;
     out.texCoord2 = r3 * r0.xxyw;
     r11.z = r3.z * r0.y;
     
@@ -369,7 +378,8 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // // Transform position to screen
     //
     //
-    float4 r9;
+    // CalcScreenPosAndFog
+    float4 r9, r10;
     r9 = worldPosition * uniforms.WorldToNDC;
     r10.x = r9.w + uniforms.FogSet.x;
     out.fog = r10.x * uniforms.FogSet.y;
@@ -382,7 +392,7 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[st
     // Questionble attenuation follows
     // vector from this point to camera and normalize stashed in r5
     // Dot that with the computed normal
-    r1.x = dot(-r5, r11);
+    r1.x = dot(-cam2Vtx.xyz, r11.xyz);
     r1.x = r1.x * inColor.z;
     r1.xyzw = uniforms.NumericConsts.z - r1.x;
     r1.w += uniforms.NumericConsts.z;
