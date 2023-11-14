@@ -17,6 +17,13 @@ cmake_dependent_option(
     OFF
 )
 
+if(APPLE AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
+    find_program(IBTOOL ibtool HINTS "/usr/bin" "${OSX_DEVELOPER_ROOT}/usr/bin")
+    if(NOT IBTOOL)
+        message(SEND_ERROR "Could not find Xcode's ibtool to process .xib files")
+    endif()
+endif()
+
 function(plasma_executable TARGET)
     cmake_parse_arguments(PARSE_ARGV 1 _pex
         "WIN32;CLIENT;TOOL;QT_GUI;EXCLUDE_FROM_ALL;NO_SANITIZE;INSTALL_PDB"
@@ -27,11 +34,8 @@ function(plasma_executable TARGET)
     if(_pex_WIN32)
         list(APPEND addexe_args WIN32)
     endif()
-    if(_pex_QT_GUI)
+    if(_pex_QT_GUI OR _pex_CLIENT)
         list(APPEND addexe_args WIN32 MACOSX_BUNDLE)
-    endif()
-    if(_pex_CLIENT)
-        list(APPEND addexe_args MACOSX_BUNDLE)
     endif()
     if(_pex_EXCLUDE_FROM_ALL)
         list(APPEND addexe_args EXCLUDE_FROM_ALL)
@@ -66,6 +70,27 @@ function(plasma_executable TARGET)
 
     if(NOT _pex_NO_SANITIZE)
         plasma_sanitize_target(${TARGET})
+    endif()
+
+    # Xcode will automatically run ibtool to compile the XIB files into NIB
+    # resources, but if we're generating Makefiles or Ninja projects then we
+    # need to handle that ourselves...
+    if(APPLE AND _pex_CLIENT)
+        foreach(SRCFILE IN LISTS _pex_SOURCES)
+            get_filename_component(SRCEXTENSION ${SRCFILE} LAST_EXT)
+
+            if(CMAKE_GENERATOR STREQUAL "Xcode" AND ${SRCEXTENSION} STREQUAL ".xib")
+                set_source_files_properties(${SRCFILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+            elseif(${SRCEXTENSION} STREQUAL ".xib")
+                set_source_files_properties(${SRCFILE} PROPERTIES HEADER_FILE_ONLY ON)
+                get_filename_component(XIBFILENAME ${SRCFILE} NAME_WE)
+                add_custom_command(TARGET ${TARGET} POST_BUILD
+                    COMMAND ${IBTOOL} --output-format human-readable-text --compile "$<TARGET_BUNDLE_CONTENT_DIR:${TARGET}>/Resources/${XIBFILENAME}.nib" "${CMAKE_CURRENT_SOURCE_DIR}/${SRCFILE}"
+                    COMMENT "Compiling ${SRCFILE} to ${XIBFILENAME}.nib"
+                    VERBATIM
+                )
+            endif()
+        endforeach()
     endif()
 
     if(DEFINED install_destination)
