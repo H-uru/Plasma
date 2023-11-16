@@ -168,6 +168,8 @@ public:
 
 private:
     VertexUniforms* fCurrentRenderPassUniforms;
+    
+    bool fIsFullscreen;
 
     void FindFragFunction();
 

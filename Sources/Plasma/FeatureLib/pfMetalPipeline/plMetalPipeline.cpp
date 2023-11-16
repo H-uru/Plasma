@@ -178,7 +178,9 @@ plMetalPipeline::plMetalPipeline(hsWindowHndl display, hsWindowHndl window, cons
     fCurrLayerIdx = 0;
     fDevice.fPipeline = this;
 
-    fMaxLayersAtOnce = 8;
+    fMaxLayersAtOnce = devMode->GetDevice()->GetLayersAtOnce();
+    
+    fIsFullscreen = !fInitialPipeParams.Windowed;
     
     fDevice.SetOutputLayer(static_cast<CA::MetalLayer*>(window));
     // For now - set this once at startup. If the underlying device is allow to change on
@@ -716,7 +718,7 @@ void plMetalPipeline::RenderScreenElements()
     plProfile_EndTiming(Reset);
 }
 
-bool plMetalPipeline::IsFullScreen() const { return !fDefaultPipeParams.Windowed; }
+bool plMetalPipeline::IsFullScreen() const { return fIsFullscreen; }
 
 void plMetalPipeline::Resize(uint32_t width, uint32_t height)
 {
@@ -1023,6 +1025,7 @@ int plMetalPipeline::GetMaxAntiAlias(int Width, int Height, int ColorDepth)
 
 void plMetalPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync)
 {
+    fIsFullscreen = !Windowed;
     Resize(Width, Height);
     fDevice.SetMaxAnsiotropy(MaxAnisotropicSamples);
 }
