@@ -197,6 +197,7 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     [window setDelegate:self];
     
     gClient.SetClientWindow((__bridge void *)view.layer);
+    gClient.SetClientDisplay((hsWindowHndl)NULL);
 
     self = [super initWithWindow:window];
     self.window.acceptsMouseMovedEvents = YES;
@@ -469,9 +470,6 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
                        forKeyPath:@"device"
                           options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial
                           context:DeviceDidChangeContext];
-
-    gClient.SetClientWindow((hsWindowHndl)(__bridge void*)self.window);
-    gClient.SetClientDisplay((hsWindowHndl)NULL);
     
     if (!gClient) {
         exit(0);
