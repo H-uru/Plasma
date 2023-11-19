@@ -54,22 +54,38 @@ Mead, WA   99021
 
 plFileName plManifest::ClientExecutable()
 {
+#if HS_BUILD_FOR_MACOS
+    return MANIFEST("plClient.app", "UruExplorer.app");
+#else
     return MANIFEST("plClient.exe", "UruExplorer.exe");
+#endif
 }
 
 plFileName plManifest::PatcherExecutable()
 {
+#if HS_BUILD_FOR_MACOS
+    return MANIFEST("plClient.app", "UruExplorer.app");
+#else
     return MANIFEST("plUruLauncher.exe", "UruLauncher.exe");
+#endif
 }
 
 ST::string plManifest::ClientManifest()
 {
+#if HS_BUILD_FOR_MACOS
+    return MANIFEST("MacThinInternal", "MacThinExternal");
+#else
     return MANIFEST("ThinInternal", "ThinExternal");
+#endif
 }
 
 ST::string plManifest::ClientImageManifest()
 {
+#if HS_BUILD_FOR_MACOS
+    return MANIFEST("MacInternal", "MacExternal");
+#else
     return MANIFEST("Internal", "External");
+#endif
 }
 
 ST::string plManifest::PatcherManifest()

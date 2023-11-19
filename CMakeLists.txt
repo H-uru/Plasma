@@ -124,6 +124,7 @@ find_package(ZLIB REQUIRED)
 
 if(APPLE)
     find_package(Security)
+    find_package(libarchive REQUIRED)
 elseif(UNIX)
     find_package(LIBSECRET)
     find_package(Uuid REQUIRED)
