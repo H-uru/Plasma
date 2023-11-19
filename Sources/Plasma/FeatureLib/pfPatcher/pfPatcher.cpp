@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plFileSystem.h"
+#include "hsDarwin.h"
 #include "hsStream.h"
 #include "hsThread.h"
 #include "hsTimer.h"
@@ -99,10 +100,11 @@ enum FileFlags
 
     // Executable flags
     kRedistUpdate               = 1<<4,
+    kBundle                     = 1<<5,
 
     // Begin internal flags
-    kLastManifestFlag           = 1<<5,
-    kSelfPatch                  = 1<<6,
+    kLastManifestFlag           = 1<<6,
+    kSelfPatch                  = 1<<7,
 };
 
 // ===================================================
@@ -570,12 +572,50 @@ void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
     }
 
     // Check to see if ours matches
-    plFileInfo mine(file.fClientPath);
-    if (mine.FileSize() == file.fFileSize) {
-        plMD5Checksum cliMD5(file.fClientPath);
-        if (cliMD5 == file.fChecksum) {
-            WhitelistFile(file.fClientPath, false);
-            return;
+    if (file.fFlags & kBundle) {
+#if HS_BUILD_FOR_MACOS
+        // If this is a Mac app bundle, MD5 the executable. The executable will hold the
+        // code signing hash - and thus unique the entire bundle.
+        
+        CFURLRef bundleURL = CFURLCreateWithFileSystemPath(nullptr, CFStringCreateWithSTString(file.fClientPath.AsString()), kCFURLPOSIXPathStyle, true);
+        CFBundleRef bundle = CFBundleCreate(nullptr, bundleURL);
+        CFAutorelease(bundleURL);
+        
+        if (bundle) {
+            CFAutorelease(bundle);
+            
+            CFURLRef executableURL = CFBundleCopyExecutableURL(bundle);
+            
+            if (executableURL) {
+                // Ugh, CFBundleCopyExecutableURL returns a relative path from inside the app bundle.
+                // Sanitize.
+                CFURLRef fullExecutableURL = CFURLCreateFilePathURL(nullptr, executableURL, nullptr);
+                CFStringRef executablePath = CFURLCopyFileSystemPath(fullExecutableURL, kCFURLPOSIXPathStyle);
+                
+                plFileName path(STStringFromCFString(executablePath));
+                plMD5Checksum cliMD5(path);
+                
+                CFRelease(executablePath);
+                CFRelease(executableURL);
+                
+                if (cliMD5 == file.fChecksum) {
+                    WhitelistFile(file.fClientPath, false);
+                    return;
+                }
+            }
+        }
+#else
+        WhitelistFile(file.fClientPath, false);
+        return;
+#endif
+    } else {
+        plFileInfo mine(file.fClientPath);
+        if (mine.FileSize() == file.fFileSize) {
+            plMD5Checksum cliMD5(file.fClientPath);
+            if (cliMD5 == file.fChecksum) {
+                WhitelistFile(file.fClientPath, false);
+                return;
+            }
         }
     }
 
