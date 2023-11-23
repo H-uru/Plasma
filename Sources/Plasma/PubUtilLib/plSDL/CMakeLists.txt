@@ -45,6 +45,10 @@ target_link_libraries(plSDL
         plNetMessage
         plResMgr
 )
+install(
+    FILES ${plSDL_SDLFILES}
+    DESTINATION client/SDL
+)
 
 source_group("Source Files" FILES ${plSDL_SOURCES})
 source_group("Header Files" FILES ${plSDL_HEADERS})
