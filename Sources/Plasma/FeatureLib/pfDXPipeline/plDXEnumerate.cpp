@@ -50,16 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 typedef LPDIRECT3D9 (WINAPI * Direct3DCreateProc)( UINT sdkVersion );
 
-const uint8_t hsGDirect3DTnLEnumerate::kNumDisplayFormats = 6;
-const D3DFORMAT hsGDirect3DTnLEnumerate::kDisplayFormats[] = 
-{
-    D3DFMT_A1R5G5B5,
-        D3DFMT_A2B10G10R10,
-        D3DFMT_A8R8G8B8,
-        D3DFMT_R5G6B5,
-        D3DFMT_X1R5G5B5,
-        D3DFMT_X8R8G8B8,
-};
 
 bool hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devRec, const hsG3DDeviceMode* devMode)
 {
