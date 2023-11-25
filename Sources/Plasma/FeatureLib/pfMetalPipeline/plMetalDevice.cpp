@@ -226,15 +226,18 @@ void plMetalDevice::ReleaseSamplerStates()
 
 void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool shouldClearDepth, float clearDepth)
 {
-    // Plasma may clear a target and draw at different times.
-    // This is specifically trouble with the drawable clear
-    // Plasma might clear the drawable, and then go off and do
-    // off screen stuff. Metal doesn't work that way, we need to
-    // draw and clear at the same time. So if it's a clear for the
-    // current drawable, remember that and perform the clear when
-    // we're actually drawing to screen.
+    /*
+     In Metal, a clear is an argument to the drawable loading operation,
+     not an operation that can be done freely at any time. So lets handle
+     a clear two ways:
+     1) If we're in the middle of a rendering pass, manually clear.
+     2) If we're at the begining of a render pass, note the clear color
+     we should use to clear the framebuffer at load.
+     */
 
     if (fCurrentRenderTargetCommandEncoder) {
+        // We're mid flight, we'll need to manually paint the clear color
+
         half4 clearColor;
         clearColor[0] = clearColor.r;
         clearColor[1] = clearColor.g;
@@ -259,6 +262,9 @@ void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool sh
         CurrentRenderCommandEncoder()->setFragmentBytes(&clearDepth, sizeof(float), 1);
         CurrentRenderCommandEncoder()->drawPrimitives(MTL::PrimitiveTypeTriangleStrip, NS::UInteger(0), NS::UInteger(4));
     } else {
+        // Render has not started yet! Note which clear color we should use
+        // for clearing the render buffer when we load it.
+
         if (shouldClearColor) {
             if (fCurrentRenderTarget) {
                 fClearRenderTargetColor = clearColor;
@@ -274,6 +280,18 @@ void plMetalDevice::Clear(bool shouldClearColor, simd_float4 clearColor, bool sh
                 }
             }
         }
+        
+        /* 
+         Clear needs to count as a render operation, but Metal treats
+         it as an argument when starting a new render encoder. If a
+         render pass only cleared, but  never rendered any content,
+         the clear would never happen because no render encoder would
+         be created.
+         
+         Force render encoder creation to force the clear to happen.
+         */
+        
+        CurrentRenderCommandEncoder();
     }
 }
 
