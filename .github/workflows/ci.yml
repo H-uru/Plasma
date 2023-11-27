@@ -268,6 +268,10 @@ jobs:
               libtool \
               nasm
 
+      # Workaround for missing distutils on macOS: https://github.com/actions/runner/issues/2958
+      - name: Install setuptools
+        run: sudo -H pip install setuptools
+
       - name: Setup NuGet
         run: |
           nuget sources add \
