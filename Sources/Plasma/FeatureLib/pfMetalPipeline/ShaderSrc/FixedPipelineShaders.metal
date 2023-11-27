@@ -58,7 +58,8 @@ using namespace metal;
 
 #include "hsGMatStateEnums.h"
 
-enum plUVWSrcModifiers: uint32_t{
+enum plUVWSrcModifiers: uint32_t
+{
     kUVWPassThru                                = 0x00000000,
     kUVWIdxMask                                 = 0x0000ffff,
     kUVWNormal                                  = 0x00010000,
@@ -119,7 +120,8 @@ constant const bool hasCubicTexture6 = (sourceType6 == PassTypeCubicTexture && h
 constant const bool hasCubicTexture7 = (sourceType7 == PassTypeCubicTexture && hasLayer7);
 constant const bool hasCubicTexture8 = (sourceType8 == PassTypeCubicTexture && hasLayer8);
 
-struct FragmentShaderArguments  {
+struct FragmentShaderArguments
+{
     texture2d<half> textures  [[ texture(FragmentShaderArgumentAttributeTextures), function_constant(has2DTexture1)  ]];
     texture2d<half> texture2  [[ texture(FragmentShaderArgumentAttributeTextures + 1), function_constant(has2DTexture2)    ]];
     texture2d<half> texture3  [[ texture(FragmentShaderArgumentAttributeTextures + 2), function_constant(has2DTexture3)    ]];
@@ -172,27 +174,27 @@ typedef struct
 } ShadowCasterInOut;
 
 vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
-                                       constant VertexUniforms & uniforms [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
-                                       constant plMetalLights & lights [[ buffer(VertexShaderArgumentLights) ]],
-                                       constant float4x4 & blendMatrix1 [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
+                                       constant VertexUniforms & uniforms   [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
+                                       constant plMetalLights & lights      [[ buffer(VertexShaderArgumentLights) ]],
+                                       constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
 {
     ColorInOut out;
     // we should have been able to swizzle, but it didn't work in Xcode beta? Try again later.
-    const half4 inColor = half4(in.color.b, in.color.g, in.color.r, in.color.a) / half4(255.0f);
+    const half4 inColor = half4(in.color.b, in.color.g, in.color.r, in.color.a) / half4(255.f);
 
     const half3 MAmbient = mix(inColor.rgb, uniforms.ambientCol, uniforms.ambientSrc);
     const half4 MDiffuse = mix(inColor, uniforms.diffuseCol, uniforms.diffuseSrc);
     const half3 MEmissive = mix(inColor.rgb, uniforms.emissiveCol, uniforms.emissiveSrc);
 
-    half3 LAmbient = half3(0.0, 0.0, 0.0);
-    half3 LDiffuse = half3(0.0, 0.0, 0.0);
+    half3 LAmbient = half3(0.h, 0.h, 0.h);
+    half3 LDiffuse = half3(0.h, 0.h, 0.h);
 
-    const float3 Ndirection = normalize(float4(in.normal, 0.0) * uniforms.localToWorldMatrix).xyz;
+    const float3 Ndirection = normalize(float4(in.normal, 0.f) * uniforms.localToWorldMatrix).xyz;
 
-    float4 position = (float4(in.position, 1.0) * uniforms.localToWorldMatrix);
+    float4 position = float4(in.position, 1.f) * uniforms.localToWorldMatrix;
     if (temp_hasOnlyWeight1) {
-        const float4 position2 = blendMatrix1 * float4(in.position, 1.0);
-        position = (in.weight1 * position) + ((1.0f - in.weight1) * position2);
+        const float4 position2 = blendMatrix1 * float4(in.position, 1.f);
+        position = (in.weight1 * position) + ((1.f - in.weight1) * position2);
     }
 
     for (size_t i = 0; i < lights.count; i++) {
@@ -203,18 +205,18 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         // direction.w is attenuation
         float4 direction;
 
-        if (lightSource->position.w == 0.0) {
+        if (lightSource->position.w == 0.f) {
             // Directional Light with no attenuation
-            direction = float4(-(lightSource->direction).xyz, 1.0);
+            direction = float4(-(lightSource->direction).xyz, 1.f);
         } else {
             // Omni Light in all directions
             const float3 v2l = lightSource->position.xyz - position.xyz;
             const float distance = length(v2l);
             direction.xyz = normalize(v2l);
 
-            direction.w = 1.0 / (lightSource->constAtten + lightSource->linAtten * distance + lightSource->quadAtten * pow(distance, 2.0));
+            direction.w = 1.f / (lightSource->constAtten + lightSource->linAtten * distance + lightSource->quadAtten * pow(distance, 2.f));
 
-            if (lightSource->spotProps.x > 0.0) {
+            if (lightSource->spotProps.x > 0.f) {
                 // Spot Light with cone falloff
                 const float theta = dot(direction.xyz, normalize(-lightSource->direction).xyz);
                 // inner cutoff
@@ -222,7 +224,7 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
                 // outer cutoff
                 const float phi = lightSource->spotProps.z;
                 const float epsilon = (gamma - phi);
-                const float intensity = clamp((theta - phi) / epsilon, 0.0, 1.0);
+                const float intensity = clamp((theta - phi) / epsilon, 0.f, 1.f);
 
                 direction.w *= pow(intensity, lightSource->spotProps.x);
             }
@@ -230,12 +232,12 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
 
         LAmbient.rgb = LAmbient.rgb + half3(direction.w * (lightSource->ambient.rgb * lightSource->scale));
         const float3 dotResult = dot(Ndirection, direction.xyz);
-        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (lightSource->diffuse.rgb * lightSource->scale) * half3(max(0.0, dotResult) * direction.w);
+        LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (lightSource->diffuse.rgb * lightSource->scale) * half3(max(0.f, dotResult) * direction.w);
     }
 
-    const half3 ambient = (MAmbient.rgb) * clamp(uniforms.globalAmb.rgb + LAmbient.rgb, 0.0, 1.0);
-    const half3 diffuse = clamp(LDiffuse.rgb, 0.0, 1.0);
-    const half4 material = half4(clamp(ambient + diffuse + MEmissive.rgb, 0.0, 1.0),
+    const half3 ambient = (MAmbient.rgb) * clamp(uniforms.globalAmb.rgb + LAmbient.rgb, 0.h, 1.h);
+    const half3 diffuse = clamp(LDiffuse.rgb, 0.h, 1.h);
+    const half4 material = half4(clamp(ambient + diffuse + MEmissive.rgb, 0.h, 1.h),
                                  abs(uniforms.invVtxAlpha - MDiffuse.a));
 
     out.vtxColor = half4(material.rgb, abs(uniforms.invVtxAlpha - MDiffuse.a));
@@ -244,7 +246,7 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
     // Fog
     out.fogColor = uniforms.calcFog(vCamPosition);
 
-    const float4 normal = (uniforms.localToWorldMatrix * float4(in.normal, 0.0)) * uniforms.worldToCameraMatrix;
+    const float4 normal = (uniforms.localToWorldMatrix * float4(in.normal, 0.f)) * uniforms.worldToCameraMatrix;
 
     for (size_t layer=0; layer<num_layers; layer++) {
         (&out.texCoord1)[layer] = uniforms.sampleLocation(layer, &in.texCoord1, normal, vCamPosition);
@@ -258,14 +260,15 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
 constexpr void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags);
 constexpr void blend(half4 srcSample, thread half4 &destSample, uint32_t blendFlags);
 
-float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, const float4 normal, const float4 camPosition) constant {
+float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, const float4 normal, const float4 camPosition) constant
+{
     const uint32_t UVWSrc = uvTransforms[index].UVWSrc;
     float4x4 matrix = uvTransforms[index].transform;
     const uint32_t flags = miscFlags[index];
     // Note: If we want to require newer versions of Metal/newer hardware we could pass function pointers instead of doing these ifs.
     if (flags & (kMiscUseReflectionXform | kMiscUseRefractionXform)) {
         matrix = cameraToWorldMatrix;
-        matrix[0][3] = matrix[1][3] = matrix[2][3] = 0;
+        matrix[0][3] = matrix[1][3] = matrix[2][3] = 0.f;
 
         // This is just a rotation about X of Pi/2 (y = z, z = -y),
         // followed by flipping Z to reflect back towards us (z = -z).
@@ -298,8 +301,7 @@ float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, co
             // mat[2][2] = -mat[2][2];
             matrix[2][2] = -matrix[2][2];
         }
-    }
-    else if (flags & kMiscCam2Screen) {
+    } else if (flags & kMiscCam2Screen) {
         
         matrix_float4x4 translationMatrix = matrix_float4x4(1.0);
         // mat.MakeScaleMat(hsVector3 camScale(0.5f, -0.5f, 1.f));
@@ -308,7 +310,6 @@ float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, co
         
         matrix_float4x4 scaleMatrix = matrix_float4x4(1.0);
 
-        // hsVector3 camTrans(0.5f, 0.5f, 0.f);
         scaleMatrix[0][3] = 0.5f;
         scaleMatrix[1][3] = -0.5f;
 
@@ -334,9 +335,9 @@ float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, co
     } else if (flags & kMiscProjection) {
         matrix_float4x4 cam2World = cameraToWorldMatrix;
         if( !(UVWSrc & kUVWPosition) ) {
-            cam2World.columns[0][3] = 0;
-            cam2World.columns[1][3] = 0;
-            cam2World.columns[2][3] = 0;
+            cam2World.columns[0][3] = 0.f;
+            cam2World.columns[1][3] = 0.f;
+            cam2World.columns[2][3] = 0.f;
         }
         
         matrix = cam2World * matrix;
@@ -375,7 +376,8 @@ float3 VertexUniforms::sampleLocation(size_t index, thread float3 *texCoords, co
     return sampleCoord.xyz;
 }
 
-half4 VertexUniforms::calcFog(float4 camPosition) constant {
+half4 VertexUniforms::calcFog(float4 camPosition) constant
+{
     half4 resultColor;
     if (fogExponential > 0) {
         resultColor.a = exp(-pow(fogValues.y * length(camPosition), fogValues.x));
@@ -392,7 +394,8 @@ half4 VertexUniforms::calcFog(float4 camPosition) constant {
     return resultColor;
 }
     
-half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const {
+half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 vertexColor, const uint8_t passType, float3 sampleCoord) const
+{
     if (passType == PassTypeColor) {
         return vertexColor;
     } else {
@@ -406,7 +409,7 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 verte
         } else if (passType == PassTypeCubicTexture) {
             return (&cubicTextures)[index].sample((&samplers)[index], sampleCoord.xyz);
         } else {
-            return half4(0);
+            return half4(0.h);
         }
     }
 }
@@ -454,7 +457,8 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
     return currentColor;
 }
 
-constexpr void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
+constexpr void blendFirst(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags)
+{
     // Local variable to store the color value
     if (blendFlags & kBlendInvertColor) {
         srcSample.rgb = 1.0h - srcSample.rgb;
@@ -476,7 +480,8 @@ constexpr void blendFirst(half4 srcSample, thread half4 &destSample, const uint3
     }
 }
 
-constexpr void blend(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags) {
+constexpr void blend(half4 srcSample, thread half4 &destSample, const uint32_t blendFlags)
+{
     // Local variable to store the color value
     if (blendFlags & kBlendInvertColor) {
         srcSample.rgb = 1.0h - srcSample.rgb;
@@ -569,8 +574,8 @@ constexpr void blend(half4 srcSample, thread half4 &destSample, const uint32_t b
     }
 }
 
-vertex ShadowCasterInOut shadowVertexShader(Vertex in [[stage_in]],
-                                       constant VertexUniforms & uniforms [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]])
+vertex ShadowCasterInOut shadowVertexShader(Vertex in                       [[stage_in]],
+                                       constant VertexUniforms & uniforms   [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]])
 {
     ShadowCasterInOut out;
 
@@ -605,14 +610,14 @@ fragment half4 shadowFragmentShader(ShadowCasterInOut in [[stage_in]])
  property. There is no need to push an entirely new light table.
  */
 
-vertex ColorInOut shadowCastVertexShader(Vertex in [[stage_in]],
-                                         constant VertexUniforms & uniforms [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
-                                         constant plShadowState & shadowState [[ buffer(VertexShaderArgumentShadowState) ]])
+vertex ColorInOut shadowCastVertexShader(Vertex in                              [[ stage_in ]],
+                                         constant VertexUniforms & uniforms     [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
+                                         constant plShadowState & shadowState   [[ buffer(VertexShaderArgumentShadowState) ]])
 {
     ColorInOut out;
 
-    float4 position = (float4(in.position, 1.0) * uniforms.localToWorldMatrix);
-    const float3 Ndirection = normalize(float4(in.normal, 0.0) * uniforms.localToWorldMatrix).xyz;
+    float4 position = (float4(in.position, 1.f) * uniforms.localToWorldMatrix);
+    const float3 Ndirection = normalize(float4(in.normal, 0.f) * uniforms.localToWorldMatrix).xyz;
     // Shadow casting uses the diffuse material color to control opacity
     const half4 MDiffuse = uniforms.diffuseCol;
 
@@ -621,16 +626,16 @@ vertex ColorInOut shadowCastVertexShader(Vertex in [[stage_in]],
 
     if (shadowState.directional == true) {
         // Directional Light with no attenuation
-        direction = float4(-(shadowState.lightDirection).xyz, 1.0);
+        direction = float4(-(shadowState.lightDirection).xyz, 1.f);
     } else {
         // Omni Light in all directions
         const float3 v2l = shadowState.lightPosition.xyz - position.xyz;
         direction.xyz = normalize(v2l);
-        direction.w = 1.0;
+        direction.w = 1.f;
     }
 
     const float3 dotResult = dot(Ndirection, direction.xyz);
-    const half3 diffuse = MDiffuse.rgb * half3(max(0.0, dotResult)) * shadowState.power;
+    const half3 diffuse = MDiffuse.rgb * half3(max(0.h, dotResult)) * shadowState.power;
     out.vtxColor = half4(diffuse, 1.f);
 
     const float4 vCamPosition = position * uniforms.worldToCameraMatrix;
@@ -638,7 +643,7 @@ vertex ColorInOut shadowCastVertexShader(Vertex in [[stage_in]],
     // Fog
     out.fogColor = uniforms.calcFog(vCamPosition);
 
-    const float4 normal = (uniforms.localToWorldMatrix * float4(in.normal, 0.0)) * uniforms.worldToCameraMatrix;
+    const float4 normal = (uniforms.localToWorldMatrix * float4(in.normal, 0.f)) * uniforms.worldToCameraMatrix;
 
     for (size_t layer=0; layer<num_layers; layer++) {
         (&out.texCoord1)[layer] = uniforms.sampleLocation(layer, &in.texCoord1, normal, vCamPosition);
@@ -650,10 +655,10 @@ vertex ColorInOut shadowCastVertexShader(Vertex in [[stage_in]],
 }
 
 fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
-                                        texture2d<half> texture     [[ texture(16) ]],
-                                        constant plMetalShadowCastFragmentShaderArgumentBuffer & fragmentUniforms [[ buffer(FragmentShaderArgumentShadowCastUniforms) ]],
+                                        texture2d<half> texture                                                     [[ texture(16) ]],
+                                        constant plMetalShadowCastFragmentShaderArgumentBuffer & fragmentUniforms   [[ buffer(FragmentShaderArgumentShadowCastUniforms) ]],
                                         FragmentShaderArguments layers,
-                                        constant int & alphaSrc [[ buffer(FragmentShaderArgumentShadowCastAlphaSrc) ]])
+                                        constant int & alphaSrc                                                     [[ buffer(FragmentShaderArgumentShadowCastAlphaSrc) ]])
 {
     float3 sampleCoords = in.texCoord1;
     if (fragmentUniforms.pointLightCast) {
@@ -675,7 +680,7 @@ fragment half4 shadowCastFragmentShader(ColorInOut in [[stage_in]],
     // only possible alpha sources are layers 0 or 1
     if (alphaSrc == 0 && passCount > 0) {
 
-        half4 layerColor = layers.sampleLayer(0, in.vtxColor,sourceTypes[0], in.texCoord3);
+        half4 layerColor = layers.sampleLayer(0.h, in.vtxColor,sourceTypes[0], in.texCoord3);
 
         currentColor.rgb *= layerColor.a;
         currentColor.rgb *= in.vtxColor.a;

@@ -52,9 +52,10 @@ using namespace metal;
 
 using namespace metal;
 
-typedef struct  {
-    array<texture2d<half>, 8> textures  [[ id(FragmentShaderArgumentAttributeTextures)  ]];
-    array<texturecube<half>, 8> cubicTextures  [[ id(FragmentShaderArgumentAttributeCubicTextures)  ]];
+typedef struct
+{
+    array<texture2d<half>, 8> textures          [[ id(FragmentShaderArgumentAttributeTextures)  ]];
+    array<texturecube<half>, 8> cubicTextures   [[ id(FragmentShaderArgumentAttributeCubicTextures)  ]];
 } FragmentShaderArguments;
 
 typedef struct
@@ -71,26 +72,26 @@ typedef struct
 } ColorInOut;
 
 vertex ColorInOut plateVertexShader(PlateVertex in [[stage_in]],
-                                    constant VertexUniforms & uniforms [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
-                                    uint v_id [[vertex_id]])
+                                    constant VertexUniforms & uniforms  [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
+                                    uint v_id                           [[ vertex_id ]])
 {
     ColorInOut out;
 
-    float4 position = float4(in.position, 0.0, 1.0);
+    float4 position = float4(in.position, 0.f, 1.f);
     position =  position * uniforms.projectionMatrix;
     out.position =  ( position * uniforms.localToWorldMatrix);
-    out.position.y *= -1.0f;
+    out.position.y *= -1.f;
     out.texCoord = (float4(in.texCoord, 1.0) * uniforms.uvTransforms[0].transform).xyz;
-    out.texCoord.y = 1.0 - out.texCoord.y;
-    out.normal = float4(0.0, 0.0, 1.0, 0.0);
+    out.texCoord.y = 1.f - out.texCoord.y;
+    out.normal = float4(0.f, 0.f, 1.f, 0.f);
 
     return out;
 }
 
 fragment float4 fragmentShader(ColorInOut in [[stage_in]],
-                               constant VertexUniforms & uniforms [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
-                               constant float & alpha [[ buffer(6) ]],
-                               texture2d<half> colorMap     [[ texture(    FragmentShaderArgumentTexture) ]])
+                               constant VertexUniforms & uniforms   [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
+                               constant float & alpha               [[ buffer(6) ]],
+                               texture2d<half> colorMap             [[ texture(FragmentShaderArgumentTexture) ]])
 {
     constexpr sampler colorSampler(mip_filter::linear,
                                    mag_filter::linear,

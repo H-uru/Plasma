@@ -1,9 +1,9 @@
 include(FetchContent)
 
 FetchContent_Declare(
-  metalcpp
-  URL_HASH_SHA256 0afd87ca851465191ae4e3980aa036c7e9e02fe32e7c760ac1a74244aae6023b
-  URL "https://developer.apple.com/metal/cpp/files/metal-cpp_macOS13.3_iOS16.4.zip"
+    metalcpp
+    URL_HASH_SHA256 0afd87ca851465191ae4e3980aa036c7e9e02fe32e7c760ac1a74244aae6023b
+    URL "https://developer.apple.com/metal/cpp/files/metal-cpp_macOS13.3_iOS16.4.zip"
 )
 
 FetchContent_MakeAvailable(metalcpp)
@@ -59,7 +59,7 @@ target_include_directories(pfMetalPipeline PUBLIC "ShaderSrc")
 source_group("Source Files" FILES ${pfMetalPipeline_SOURCES})
 source_group("Header Files" FILES ${pfMetalPipeline_HEADERS})
 
-add_library( pfMetalPipelineShaders INTERFACE )
+add_library(pfMetalPipelineShaders INTERFACE)
 set(pfMetalPipeline_SHADERS
     ShaderSrc/FixedPipelineShaders.metal
     ShaderSrc/PlateShaders.metal

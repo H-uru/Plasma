@@ -165,12 +165,13 @@ void plMetalMaterialShaderRef::FastEncodeArguments(MTL::RenderCommandEncoder* en
     encoder->setFragmentBuffer(fPassArgumentBuffers[pass], 0, FragmentShaderArgumentUniforms);
 }
 
-void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encoder, 
-                                               VertexUniforms* vertexUniforms, uint pass,
+void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encoder,
+                                               VertexUniforms* vertexUniforms, 
+                                               const uint pass,
                                                plMetalFragmentShaderDescription* passDescription,
                                                std::vector<plLayerInterface*>* piggyBacks,
-                                               std::function<plLayerInterface*(plLayerInterface*, uint32_t)> preEncodeTransform,
-                                               std::function<plLayerInterface*(plLayerInterface*, uint32_t)> postEncodeTransform)
+                                               const std::function<plLayerInterface*(plLayerInterface*, uint32_t)> preEncodeTransform,
+                                               const std::function<plLayerInterface*(plLayerInterface*, uint32_t)> postEncodeTransform)
 {
     std::vector<plLayerInterface*> layers = GetLayersForPass(pass);
 
@@ -201,7 +202,7 @@ void plMetalMaterialShaderRef::EncodeArguments(MTL::RenderCommandEncoder* encode
     encoder->setFragmentBytes(&uniforms, sizeof(plMetalFragmentShaderArgumentBuffer), FragmentShaderArgumentUniforms);
 }
 
-void plMetalMaterialShaderRef::EncodeTransform(plLayerInterface* layer, UVOutDescriptor* transform)
+void plMetalMaterialShaderRef::EncodeTransform(const plLayerInterface* layer, UVOutDescriptor* transform)
 {
     matrix_float4x4 tXfm;
     hsMatrix2SIMD(layer->GetTransform(), &tXfm);
@@ -307,7 +308,7 @@ const hsGMatState plMetalMaterialShaderRef::ICompositeLayerState(const plLayerIn
     return state;
 }
 
-void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer)
+void plMetalMaterialShaderRef::IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, const uint32_t offsetFromRootLayer, plLayerInterface* layer)
 {
     // Reminder: Encoder is allowed to be null when Plasma is precompiling pipeline states
     // Metal needs to know if a shader is 2D or Cubic to compile shaders
@@ -411,7 +412,7 @@ bool plMetalMaterialShaderRef::ICanEatLayer(plLayerInterface* lay)
     return true;
 }
 
-uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer, 
+uint32_t plMetalMaterialShaderRef::IHandleMaterial(uint32_t layer,
                                                    plMetalFragmentShaderDescription* passDescription,
                                                    plMetalFragmentShaderArgumentBuffer* uniforms,
                                                    std::vector<plLayerInterface*>* piggybacks,

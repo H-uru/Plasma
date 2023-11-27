@@ -45,7 +45,8 @@ using namespace metal;
 
 #include "ShaderVertex.h"
 
-typedef struct {
+typedef struct
+{
     float4 c0;
     float4 c1;
     float4 c2;
@@ -53,7 +54,8 @@ typedef struct {
     float4 c4;
 } vs_CompCosinesUniforms;
 
-typedef struct {
+typedef struct
+{
     float4 position [[position]];
     float4 texCoord0;
     float4 texCoord1;
@@ -61,8 +63,9 @@ typedef struct {
     float4 texCoord3;
 } vs_CompCosinesnInOut;
 
-vertex vs_CompCosinesnInOut vs_CompCosines(Vertex in [[stage_in]],
-                                           constant vs_CompCosinesUniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
+vertex vs_CompCosinesnInOut vs_CompCosines(Vertex in                                    [[ stage_in ]],
+                                           constant vs_CompCosinesUniforms & uniforms   [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]])
+{
     vs_CompCosinesnInOut out;
 
     out.position = float4(in.position, 1.0);
@@ -80,7 +83,8 @@ vertex vs_CompCosinesnInOut vs_CompCosines(Vertex in [[stage_in]],
     return out;
 }
 
-typedef struct  {
+typedef struct
+{
     float4 c0;
     float4 c1;
     float4 c2;
@@ -89,12 +93,13 @@ typedef struct  {
     float4 c5;
 } ps_CompCosinesUniforms;
 
-fragment float4 ps_CompCosines(vs_CompCosinesnInOut in [[stage_in]],
-                             texture2d<float> t0 [[ texture(0) ]],
-                             texture2d<float> t1 [[ texture(1) ]],
-                             texture2d<float> t2 [[ texture(2) ]],
-                             texture2d<float> t3 [[ texture(3) ]],
-                            constant ps_CompCosinesUniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
+fragment float4 ps_CompCosines(vs_CompCosinesnInOut in                  [[ stage_in ]],
+                             texture2d<float> t0                        [[ texture(0) ]],
+                             texture2d<float> t1                        [[ texture(1) ]],
+                             texture2d<float> t2                        [[ texture(2) ]],
+                             texture2d<float> t3                        [[ texture(3) ]],
+                            constant ps_CompCosinesUniforms & uniforms  [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]])
+{
     // Composite the cosines together.
     // Input map is cosine(pix) for each of
     // the 4 waves.
@@ -111,18 +116,18 @@ fragment float4 ps_CompCosines(vs_CompCosinesnInOut in [[stage_in]],
     // Note also the c4 used for biasing back at the end.
 
     constexpr sampler colorSampler = sampler(mip_filter::linear,
-                              mag_filter::linear,
-                              min_filter::linear,
-                              address::repeat);
+                                             mag_filter::linear,
+                                             min_filter::linear,
+                                             address::repeat);
 
-    float4 out =    2 * (t0.sample(colorSampler, fract(in.texCoord0.xy)) - 0.5) * uniforms.c0;
-    out +=          2 * (t1.sample(colorSampler, fract(in.texCoord1.xy)) - 0.5) * uniforms.c1;
-    out +=          2 * (t2.sample(colorSampler, fract(in.texCoord2.xy)) - 0.5) * uniforms.c2;
-    out +=          2 * (t3.sample(colorSampler, fract(in.texCoord3.xy)) - 0.5) * uniforms.c3;
+    float4 out =    2.f * (t0.sample(colorSampler, fract(in.texCoord0.xy)) - 0.5f) * uniforms.c0;
+    out +=          2.f * (t1.sample(colorSampler, fract(in.texCoord1.xy)) - 0.5f) * uniforms.c1;
+    out +=          2.f * (t2.sample(colorSampler, fract(in.texCoord2.xy)) - 0.5f) * uniforms.c2;
+    out +=          2.f * (t3.sample(colorSampler, fract(in.texCoord3.xy)) - 0.5f) * uniforms.c3;
     // Now bias it back into range [0..1] for output.
     out *= uniforms.c4;
     out += uniforms.c5;
-    out.b = 1.0;
-    out.a = 1.0;
+    out.b = 1.f;
+    out.a = 1.f;
     return out;
 }

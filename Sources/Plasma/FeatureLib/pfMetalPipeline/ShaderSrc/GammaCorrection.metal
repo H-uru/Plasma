@@ -55,23 +55,21 @@ struct GammaVertexOut
     float2 texturePosition;
 };
 
-vertex GammaVertexOut gammaCorrectVertex(constant GammaVertexIn *in [[ buffer(0) ]],
-                                         uint vertexID [[ vertex_id ]])
+vertex GammaVertexOut gammaCorrectVertex(constant GammaVertexIn *in     [[ buffer(0) ]],
+                                         uint vertexID                  [[ vertex_id ]])
 {
     GammaVertexOut out;
     // Just pass the position through. We're clearing in NDC space.
-    out.position = float4(in[vertexID].position, 0.5, 1.0);
+    out.position = float4(in[vertexID].position, 0.5f, 1.f);
     out.texturePosition = float2(in[vertexID].texturePosition);
     return out;
 }
 
-const constant sampler lutSampler = sampler(
-                                            filter::nearest
-                                            );
+const constant sampler lutSampler = sampler(filter::nearest);
 
-fragment half4 gammaCorrectFragment(GammaVertexOut in [[stage_in]],
-                                    texture2d<float> inputTexture [[texture(0)]],
-                                    texture1d_array<ushort> LUT [[texture(1)]])
+fragment half4 gammaCorrectFragment(GammaVertexOut in               [[stage_in]],
+                                    texture2d<float> inputTexture   [[texture(0)]],
+                                    texture1d_array<ushort> LUT     [[texture(1)]])
 {
     float4 color = inputTexture.read(ushort2(in.position.xy));
     return {

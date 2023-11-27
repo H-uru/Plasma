@@ -45,7 +45,8 @@ using namespace metal;
 
 #include "ShaderVertex.h"
 
-typedef struct  {
+typedef struct
+{
     matrix_float4x4 WorldToNDC;
     float4 Frequency;
     float4 Phase;
@@ -84,15 +85,17 @@ typedef struct  {
     float4 DirYSqKW; // Only used by DecalEnv
 } vs_WaveDev1Lay_7Uniforms;
     
-typedef struct {
+typedef struct
+{
     float4 position [[position]];
     half4 c0;
     float4 texCoord0;
     half4 fog;
 } vs_WaveDev1Lay_7InOut;
 
-vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in [[stage_in]],
-                               constant vs_WaveDev1Lay_7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
+vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in                         [[stage_in]],
+                               constant vs_WaveDev1Lay_7Uniforms & uniforms     [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]])
+{
     vs_WaveDev1Lay_7InOut out;
     // Store our input position in world space in r6
     float4 worldPosition = float4(0);
@@ -270,8 +273,9 @@ vertex vs_WaveDev1Lay_7InOut vs_WaveDec1Lay_7(Vertex in [[stage_in]],
     return out;
 }
 
-fragment half4 ps_CbaseAbase(vs_WaveDev1Lay_7InOut in [[stage_in]],
-                             texture2d<half> texture [[ texture(0) ]]) {
+fragment half4 ps_CbaseAbase(vs_WaveDev1Lay_7InOut in   [[stage_in]],
+                             texture2d<half> texture    [[ texture(0) ]])
+{
 
     constexpr sampler colorSampler = sampler(mip_filter::linear,
                               mag_filter::linear,

@@ -45,7 +45,8 @@ using namespace metal;
 
 #include "ShaderVertex.h"
 
-typedef struct {
+typedef struct
+{
     matrix_float4x4 WorldToNDC;
     float4 FogSet;
     float4 Frequency;
@@ -81,15 +82,17 @@ typedef struct {
     float4 RampBias;
 } vs_WaveRip7Uniforms;
 
-typedef struct {
+typedef struct
+{
     float4 position [[position]];
     half4 c1;
     float2 texCoord0;
     float fog;
 } waveRipInOut;
 
-vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
-                               constant vs_WaveRip7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
+vertex waveRipInOut vs_WaveRip7(Vertex in                               [[stage_in]],
+                               constant vs_WaveRip7Uniforms & uniforms  [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]])
+{
     waveRipInOut out;
 
     // Store our input position in world space in r6
@@ -289,8 +292,9 @@ vertex waveRipInOut vs_WaveRip7(Vertex in [[stage_in]],
     return out;
 }
 
-fragment half4 ps_WaveRip(waveRipInOut in [[stage_in]],
-                             texture2d<half> texture [[ texture(0) ]]) {
+fragment half4 ps_WaveRip(waveRipInOut in               [[stage_in]],
+                             texture2d<half> texture    [[ texture(0) ]])
+{
     constexpr sampler colorSampler = sampler(mip_filter::linear,
                               mag_filter::linear,
                               min_filter::linear,

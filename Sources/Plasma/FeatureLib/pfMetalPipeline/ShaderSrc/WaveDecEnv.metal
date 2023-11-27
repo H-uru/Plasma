@@ -45,7 +45,8 @@ using namespace metal;
 
 #include "ShaderVertex.h"
 
-typedef struct {
+typedef struct
+{
     matrix_float4x4 WorldToNDC;
     float4 Frequency;
     float4 Phase;
@@ -84,7 +85,8 @@ typedef struct {
     float4 DirYSqKW; // Only used by DecalEnv
 } vs_WaveDecEnv7Uniforms;
 
-typedef struct {
+typedef struct
+{
     float4 position [[position]];
     float4 c1;
     float4 texCoord0;
@@ -94,8 +96,9 @@ typedef struct {
     float fog;
 } vs_WaveDecEnv7InOut;
 
-vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
-                               constant vs_WaveDecEnv7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
+vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in                        [[ stage_in ]],
+                               constant vs_WaveDecEnv7Uniforms & uniforms   [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]])
+{
     vs_WaveDecEnv7InOut out;
 
     // Store our input position in world space in r6
@@ -403,9 +406,10 @@ vertex vs_WaveDecEnv7InOut vs_WaveDecEnv_7(Vertex in [[stage_in]],
     return out;
 }
 
-fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in [[stage_in]],
-                             texture2d<float> normalMap [[ texture(0) ]],
-                             texturecube<float> environmentMap [[ texture(FragmentShaderArgumentAttributeCubicTextures + 1) ]]) {
+fragment float4 ps_WaveDecEnv(vs_WaveDecEnv7InOut in            [[ stage_in ]],
+                             texture2d<float> normalMap         [[ texture(0) ]],
+                             texturecube<float> environmentMap  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 1) ]])
+{
     // Very simular to ps_WaveFixed.inl. Only the final coloring is different.
     // Even though so far they are identical.
 

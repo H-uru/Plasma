@@ -80,16 +80,16 @@ public:
 
     uint32_t GetNumPasses() const { return fNumPasses; }
 
-    uint32_t                              GetPassIndex(size_t which) const { return fPassIndices[which]; }
+    uint32_t                              GetPassIndex(const size_t which) const { return fPassIndices[which]; }
     const std::vector<plLayerInterface *> GetLayersForPass(size_t pass) const { return fPasses[pass]; }
 
-    void                  EncodeArguments(MTL::RenderCommandEncoder* encoder, 
+    void                  EncodeArguments(MTL::RenderCommandEncoder* encoder,
                                           VertexUniforms* vertexUniforms,
-                                          uint pass,
+                                          const uint pass,
                                           plMetalFragmentShaderDescription* passDescription,
                                           std::vector<plLayerInterface*>* piggyBacks,
-                                          std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform,
-                                          std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform);
+                                          const std::function<plLayerInterface* (plLayerInterface*, uint32_t)> preEncodeTransform,
+                                          const std::function<plLayerInterface* (plLayerInterface*, uint32_t)> postEncodeTransform);
     void                  FastEncodeArguments(MTL::RenderCommandEncoder* encoder, VertexUniforms* vertexUniforms, uint pass);
     // probably not a good idea to call prepareTextures directly
     // mostly just a hack to keep plates working for now
@@ -119,8 +119,8 @@ private:
     bool     ICanEatLayer(plLayerInterface* lay);
     uint32_t ILayersAtOnce(uint32_t which);
 
-    void                                                 IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, uint32_t offsetFromRootLayer, plLayerInterface* layer);
-    void                                                 EncodeTransform(plLayerInterface* layer, UVOutDescriptor *transform);
+    void                                                 IBuildLayerTexture(MTL::RenderCommandEncoder* encoder, const uint32_t offsetFromRootLayer, plLayerInterface* layer);
+    void                                                 EncodeTransform(const plLayerInterface* layer, UVOutDescriptor *transform);
     std::vector<const std::vector<plLayerInterface*>>    fPasses;
     std::vector<struct plMetalFragmentShaderDescription> fFragmentShaderDescriptions;
 };

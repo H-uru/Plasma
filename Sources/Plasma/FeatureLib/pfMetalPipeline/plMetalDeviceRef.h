@@ -289,7 +289,7 @@ public:
     void                    Link(plMetalRenderTargetRef** back) { plMetalDeviceRef::Link((plMetalDeviceRef**)back); }
     plMetalRenderTargetRef* GetNext() const { return (plMetalRenderTargetRef*)fNext; }
 
-    plMetalRenderTargetRef() : fDepthBuffer(nullptr)
+    plMetalRenderTargetRef() : fDepthBuffer()
     {
     }
 

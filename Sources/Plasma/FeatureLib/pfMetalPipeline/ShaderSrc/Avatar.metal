@@ -44,7 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 using namespace metal;
 
 
-typedef struct {
+typedef struct
+{
     float4 position [[position]];
     float2 uvPosition;
     half4 color;
@@ -56,20 +57,21 @@ typedef struct
     float2 uvPostion     [[attribute(1)]];
 } PreprocessAvatarVertex;
 
-vertex PreprocessAvatarTexturesInOut PreprocessAvatarVertexShader(PreprocessAvatarVertex in [[stage_in]]) {
+vertex PreprocessAvatarTexturesInOut PreprocessAvatarVertexShader(PreprocessAvatarVertex in [[stage_in]])
+{
     return { float4(in.position.x, in.position.y, 0.0, 1.0 ), in.uvPostion };
 }
 
-fragment half4 PreprocessAvatarFragmentShader(PreprocessAvatarTexturesInOut in [[stage_in]],
-                                              texture2d<half> layer            [[ texture(0) ]],
-                                              constant float4& blendColor [[ buffer(0 )]])
+fragment half4 PreprocessAvatarFragmentShader(PreprocessAvatarTexturesInOut in  [[stage_in]],
+                                              texture2d<half> layer             [[ texture(0) ]],
+                                              constant float4& blendColor       [[ buffer(0 )]])
 {
     constexpr sampler colorSampler(mip_filter::linear,
                                    mag_filter::linear,
                                    min_filter::linear,
                                    address::clamp_to_zero);
-
+    
     half4 colorSample = layer.sample(colorSampler, in.uvPosition.xy) * half4(blendColor);
-
+    
     return colorSample;
 }

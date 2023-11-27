@@ -42,12 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <metal_stdlib>
 using namespace metal;
-// File for Metal kernel and shader functions
 
 #include <metal_stdlib>
 #include <simd/simd.h>
 
-// Including header shared between this Metal shader code and Swift/C code executing Metal API commands
 #import "ShaderTypes.h"
 
 
@@ -68,8 +66,8 @@ typedef struct
     half4  color;
 } ColorInOut;
 
-vertex ColorInOut textFontVertexShader(constant Vertex *in [[ buffer(0) ]],
-                                       constant matrix_float4x4 & transform [[ buffer(1) ]],
+vertex ColorInOut textFontVertexShader(constant Vertex *in                      [[ buffer(0) ]],
+                                       constant matrix_float4x4 & transform     [[ buffer(1) ]],
                                        uint v_id [[vertex_id]])
 {
     ColorInOut out;
@@ -84,8 +82,8 @@ vertex ColorInOut textFontVertexShader(constant Vertex *in [[ buffer(0) ]],
     return out;
 }
 
-fragment half4 textFontFragmentShader(ColorInOut in [[stage_in]],
-                                      texture2d<half> colorMap     [[ texture(0) ]])
+fragment half4 textFontFragmentShader(ColorInOut in                 [[stage_in]],
+                                      texture2d<half> colorMap      [[ texture(0) ]])
 {
     constexpr sampler colorSampler(mip_filter::nearest,
                                    mag_filter::nearest,

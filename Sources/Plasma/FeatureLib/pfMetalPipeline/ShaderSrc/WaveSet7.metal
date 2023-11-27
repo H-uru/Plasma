@@ -45,7 +45,8 @@ using namespace metal;
 
 #include "ShaderVertex.h"
 
-typedef struct  {
+typedef struct
+{
     matrix_float4x4 WorldToNDC;
     float4 WaterTint;
     float4 Frequency;
@@ -82,7 +83,8 @@ typedef struct  {
     float4 DirYSqKW;
 } vs_WaveFixedFin7Uniforms;
 
-typedef struct {
+typedef struct
+{
     float4 position [[position]];
     float4 c1;
     float4 c2;
@@ -93,8 +95,9 @@ typedef struct {
     float fog;
 } vs_WaveFixedFin7InOut;
 
-vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
-                               constant vs_WaveFixedFin7Uniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
+vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in                     [[stage_in]],
+                             constant vs_WaveFixedFin7Uniforms & uniforms   [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]])
+{
     vs_WaveFixedFin7InOut out;
 
     // Store our input position in world space in r6
@@ -437,9 +440,10 @@ vertex vs_WaveFixedFin7InOut vs_WaveFixedFin7(Vertex in [[stage_in]],
     return out;
 }
 
-fragment float4 ps_WaveFixed(vs_WaveFixedFin7InOut in [[stage_in]],
-                             texture2d<float> normalMap [[ texture(0) ]],
-                             texturecube<float> environmentMap [[ texture(FragmentShaderArgumentAttributeCubicTextures + 3) ]]) {
+fragment float4 ps_WaveFixed(vs_WaveFixedFin7InOut in           [[stage_in]],
+                             texture2d<float> normalMap         [[ texture(0) ]],
+                             texturecube<float> environmentMap  [[ texture(FragmentShaderArgumentAttributeCubicTextures + 3) ]])
+{
     // Short pixel shader. Use the texm3x3vspec to do a per-pixel
     // reflected lookup into our environment map.
     // Input:

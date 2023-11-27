@@ -45,7 +45,8 @@ using namespace metal;
 
 #include "ShaderVertex.h"
 
-typedef struct  {
+typedef struct
+{
     float4 TexU0;
     float4 TexV0;
 
@@ -57,7 +58,8 @@ typedef struct  {
     float4 ScaleBias;
 } vs_BiasNormalsUniforms;
     
-typedef struct {
+typedef struct
+{
     float4 position [[position]];
     float4 texCoord0;
     float4 texCoord1;
@@ -66,25 +68,22 @@ typedef struct {
     float4 color2;
 } vs_BiasNormalsOut;
 
-vertex vs_BiasNormalsOut vs_BiasNormals(Vertex in [[stage_in]],
-                               constant vs_BiasNormalsUniforms & uniforms [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]]) {
+vertex vs_BiasNormalsOut vs_BiasNormals(Vertex in                           [[ stage_in ]],
+                               constant vs_BiasNormalsUniforms & uniforms   [[ buffer(VertexShaderArgumentMaterialShaderUniforms) ]])
+{
     vs_BiasNormalsOut out;
 
     out.position = float4(in.position, 1.0);
 
-    out.texCoord0 = float4(
-                           dot(float4(in.texCoord1, 1.0), uniforms.TexU0),
+    out.texCoord0 = float4(dot(float4(in.texCoord1, 1.0), uniforms.TexU0),
                            dot(float4(in.texCoord1, 1.0), uniforms.TexV0),
-                           0,
-                           1
-                           );
+                           0.f,
+                           1.f);
 
-    out.texCoord1 = float4(
-                           dot(float4(in.texCoord1, 1.0), uniforms.TexU1),
+    out.texCoord1 = float4(dot(float4(in.texCoord1, 1.0), uniforms.TexU1),
                            dot(float4(in.texCoord1, 1.0), uniforms.TexV1),
-                           0,
-                           1
-                           );
+                           0.f,
+                           1.f);
 
     out.color1 = uniforms.ScaleBias.xxzz;
     out.color2 = uniforms.ScaleBias.yyzz;
@@ -92,9 +91,10 @@ vertex vs_BiasNormalsOut vs_BiasNormals(Vertex in [[stage_in]],
     return out;
 }
 
-fragment float4 ps_BiasNormals(vs_BiasNormalsOut in [[stage_in]],
-                             texture2d<float> t0 [[ texture(0) ]],
-                             texture2d<float> t1 [[ texture(1) ]]) {
+fragment float4 ps_BiasNormals(vs_BiasNormalsOut in     [[ stage_in ]],
+                             texture2d<float> t0        [[ texture(0) ]],
+                             texture2d<float> t1        [[ texture(1) ]])
+{
     // Composite the cosines together.
     // Input map is cosine(pix) for each of
     // the 4 waves.
@@ -111,13 +111,14 @@ fragment float4 ps_BiasNormals(vs_BiasNormalsOut in [[stage_in]],
     // Note also the c4 used for biasing back at the end.
 
     constexpr sampler colorSampler = sampler(mip_filter::linear,
-                              mag_filter::linear,
-                              min_filter::linear,
-                              address::repeat);
+                                             mag_filter::linear,
+                                             min_filter::linear,
+                                             address::repeat);
+    
     float4 sample1 = t0.sample(colorSampler, in.texCoord0.xy);
     float4 sample2 = t1.sample(colorSampler, in.texCoord0.xy);
-    float4 out = float4(sample1.rgb - 0.5 + sample2.rgb - 0.5,
-                        sample1.a + sample2.a);
+    float4 out = float4(sample1.rgb - 0.5 + sample2.rgb - 0.5, sample1.a + sample2.a);
     out.rgb = (out.rgb * in.color1.rgb) + in.color2.rgb;
+    
     return out;
 }

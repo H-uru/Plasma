@@ -102,7 +102,7 @@ protected:
 
 public:
     plMetalPipeline(hsWindowHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord* devMode);
-    virtual ~plMetalPipeline();
+    ~plMetalPipeline();
 
     CLASSNAME_REGISTER(plMetalPipeline);
     GETINTERFACE_ANY(plMetalPipeline, plPipeline);
@@ -201,12 +201,12 @@ private:
     plLayerInterface* IPushOverAllLayer(plLayerInterface* li);
     plLayerInterface* IPopOverAllLayer(plLayerInterface* li);
 
-    void   IPushPiggyBacks(hsGMaterial* mat);
-    void   IPopPiggyBacks();
-    void   IPushProjPiggyBack(plLayerInterface* li);
-    void   IPopProjPiggyBacks();
+    void IPushPiggyBacks(hsGMaterial* mat);
+    void IPopPiggyBacks();
+    void IPushProjPiggyBack(plLayerInterface* li);
+    void IPopProjPiggyBacks();
     size_t ISetNumActivePiggyBacks();
-    bool   ICheckAuxBuffers(const plAuxSpan* span);
+    bool ICheckAuxBuffers(const plAuxSpan* span);
 
     void ISetPipeConsts(plShader* shader);
     bool ISetShaders(const plMetalVertexBufferRef* vRef, const hsGMatState blendMode, plShader* vShader, plShader* pShader);

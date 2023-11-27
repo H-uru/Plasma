@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plMetalPlateManager::plMetalPlateManager(plMetalPipeline* pipe)
     : plPlateManager(pipe),
-      fVtxBuffer(nullptr)
+      fVtxBuffer()
 {
     MTL::DepthStencilDescriptor *depthDescriptor = MTL::DepthStencilDescriptor::alloc()->init();
     depthDescriptor->setDepthCompareFunction(MTL::CompareFunctionAlways);
