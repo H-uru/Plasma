@@ -1,5 +1,4 @@
 set(pnNetProtocol_HEADERS
-    Intern.h
     Pch.h
     pnNetProtocol.h
 )
