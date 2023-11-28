@@ -47,7 +47,6 @@ target_link_libraries(plNetClient
         plNetTransport
         plUnifiedTime
     PRIVATE
-        pnAsyncCore
         pnDispatch
         pnMessage
         pnModifier

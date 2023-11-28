@@ -179,18 +179,18 @@ static void INetBufferCallback (
     const uint8_t      buffer[]
 ) {
     if (!plFactory::IsValidClassIndex(type)) {
-        LogMsg(kLogError, "NetComm: received junk propagated buffer");
+        plNetApp::StaticErrorMsg("NetComm: received junk propagated buffer");
         return;
     }
     plNetMessage * msg = plNetMessage::ConvertNoRef(plFactory::Create(type));
     if (!msg) {
-        LogMsg(kLogError, "NetComm: could not convert plNetMessage to class {}", type);
+        plNetApp::StaticErrorMsg("NetComm: could not convert plNetMessage to class {}", type);
         return;
     }
 
     hsReadOnlyStream stream(bytes, buffer);
     if (!msg->PeekBuffer(&stream)) {
-        LogMsg(kLogError, "NetComm: plNetMessage %u failed to peek buffer", type);
+        plNetApp::StaticErrorMsg("NetComm: plNetMessage %u failed to peek buffer", type);
         return;
     }
 
@@ -373,7 +373,7 @@ static void INetCliAuthLoginRequestCallback (
         s_account.billingType   = billingType;
         s_players.resize(playerCount);
         for (unsigned i = 0; i < playerCount; ++i) {
-            LogMsg(kLogDebug, "Player {}: {} explorer: {}", playerInfoArr[i].playerInt, playerInfoArr[i].playerName, playerInfoArr[i].explorer);
+            plNetApp::StaticDebugMsg("Player {}: {} explorer: {}", playerInfoArr[i].playerInt, playerInfoArr[i].playerName, playerInfoArr[i].explorer);
             s_players[i].playerInt         = playerInfoArr[i].playerInt;
             s_players[i].explorer          = playerInfoArr[i].explorer;
             s_players[i].playerName        = playerInfoArr[i].playerName;
@@ -411,10 +411,10 @@ static void INetCliAuthCreatePlayerRequestCallback (
     const NetCliAuthPlayerInfo &    playerInfo
 ) {
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, "Create player failed: {}", NetErrorToString(result));
+        plNetApp::StaticErrorMsg("Create player failed: {}", NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, "Created player {}: {}", playerInfo.playerName, playerInfo.playerInt);
+        plNetApp::StaticDebugMsg("Created player {}: {}", playerInfo.playerName, playerInfo.playerInt);
 
         unsigned currPlayer = s_player ? s_player->playerInt : 0;
         s_players.emplace_back(playerInfo.playerInt, playerInfo.playerName,
@@ -443,10 +443,10 @@ static void INetCliAuthDeletePlayerCallback (
     uint32_t playerInt = (uint32_t)((uintptr_t)param);
 
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, "Delete player failed: {} {}", playerInt, NetErrorToString(result));
+        plNetApp::StaticErrorMsg("Delete player failed: {} {}", playerInt, NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, "Player deleted: {}", playerInt);
+        plNetApp::StaticDebugMsg("Player deleted: {}", playerInt);
 
         uint32_t currPlayer = s_player ? s_player->playerInt : 0;
 
@@ -478,10 +478,10 @@ static void INetCliAuthChangePasswordCallback (
     void *          param
 ) {
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, "Change password failed: {}", NetErrorToString(result));
+        plNetApp::StaticErrorMsg("Change password failed: {}", NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, "Password changed!");
+        plNetApp::StaticDebugMsg("Password changed!");
     }
 
     plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kChangePassword);
@@ -536,8 +536,7 @@ static void INetCliAuthAgeRequestCallback (
         ST::string gameAddrStr = gameAddr.GetHostString();
         ST::string ageInstIdStr = ageInstId.AsString();
 
-        LogMsg(
-            kLogPerf,
+        plNetApp::StaticDebugMsg(
             "Connecting to game server {}, ageInstId {}",
             gameAddrStr,
             ageInstIdStr
@@ -569,10 +568,10 @@ static void INetCliAuthUpgradeVisitorRequestCallback (
     uint32_t playerInt = (uint32_t)((uintptr_t)param);
 
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, "Upgrade visitor failed: {} {}", playerInt, NetErrorToString(result));
+        plNetApp::StaticErrorMsg("Upgrade visitor failed: {} {}", playerInt, NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, "Upgrade visitor succeeded: {}", playerInt);
+        plNetApp::StaticDebugMsg("Upgrade visitor succeeded: {}", playerInt);
 
         for (NetCommPlayer& player : s_players) {
             if (player.playerInt == playerInt) {
@@ -692,7 +691,7 @@ void NetCommStartup () {
     s_shutdown = false;
 
     AsyncCoreInitialize();
-    LogMsg(kLogPerf, "Client: {}", plProduct::ProductString());
+    plNetApp::StaticDebugMsg("Client: {}", plProduct::ProductString());
 
     NetClientInitialize();
     NetClientSetErrorHandler(IPreInitNetErrorCallback);
