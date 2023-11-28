@@ -56,6 +56,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsRefCnt.h"
 
 
+/****************************************************************************
+*
+*   Socket connect packet
+*
+***/
+
+#pragma pack(push,1)
+struct AsyncSocketConnectPacket {
+    uint8_t     connType;
+    uint16_t    hdrBytes;
+    uint32_t    buildId;
+    uint32_t    buildType;
+    uint32_t    branchId;
+    plUUID      productId;
+};
+#pragma pack(pop)
+
+
 /*****************************************************************************
 *
 *   Client message field types

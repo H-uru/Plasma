@@ -290,11 +290,6 @@ static bool SocketInitConnect(ConnectOperation& op)
             return false;
     }
 
-    if (!IS_TEXT_CONNTYPE(op.fConnectionType)
-        && op.fConnectBuffer.size() < sizeof(AsyncSocketConnectPacket)) {
-        return false;
-    }
-
     // perform callback notification
     AsyncNotifySocketConnect notify;
     SocketGetAddresses(sock.get(), &notify.localAddr, &notify.remoteAddr);

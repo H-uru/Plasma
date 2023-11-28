@@ -43,7 +43,6 @@ target_link_libraries(
         pnNetBase
         pnUUID
     PRIVATE
-        pnAsyncCore
         pnNetCli
         pnUtils
 )
