@@ -73,8 +73,8 @@ typedef std::function<unsigned()> FAsyncTimerProc;
 // 1) Timer procs do not get starved by I/O, they are called periodically.
 // 2) Timer procs will never be called by multiple threads simultaneously.
 AsyncTimer* AsyncTimerCreate (
-    FAsyncTimerProc timerProc,
-    unsigned        callbackMs
+    unsigned callbackMs,
+    FAsyncTimerProc timerProc
 );
 
 // Timer procs can be in the process of getting called in

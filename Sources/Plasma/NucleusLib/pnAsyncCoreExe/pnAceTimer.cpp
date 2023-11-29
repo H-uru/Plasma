@@ -143,7 +143,7 @@ void TimerDestroy(unsigned exitThreadWaitMs)
     }
 }
 
-AsyncTimer* AsyncTimerCreate(FAsyncTimerProc timerProc, unsigned callbackMs)
+AsyncTimer* AsyncTimerCreate(unsigned callbackMs, FAsyncTimerProc timerProc)
 {
     ASSERT(timerProc);
 

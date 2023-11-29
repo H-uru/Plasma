@@ -433,13 +433,10 @@ void CliGmConn::AutoPing () {
     ASSERT(!pingTimer);
     Ref("PingTimer");
     hsLockGuard(critsect);
-    pingTimer = AsyncTimerCreate(
-        [this]() {
-            TimerPing();
-            return kPingIntervalMs;
-        },
-        sock ? 0 : kAsyncTimeInfinite
-    );
+    pingTimer = AsyncTimerCreate(sock ? 0 : kAsyncTimeInfinite, [this]() {
+        TimerPing();
+        return kPingIntervalMs;
+    });
 }
 
 //============================================================================

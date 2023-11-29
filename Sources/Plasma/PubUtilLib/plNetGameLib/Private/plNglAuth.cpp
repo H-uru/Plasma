@@ -1675,13 +1675,10 @@ void CliAuConn::AutoReconnect () {
     ASSERT(!reconnectTimer);
     Ref("ReconnectTimer");
     hsLockGuard(critsect);
-    reconnectTimer = AsyncTimerCreate(
-        [this]() {
-            TimerReconnect();
-            return kAsyncTimeInfinite;
-        },
-        0 // immediate callback
-    );
+    reconnectTimer = AsyncTimerCreate(0, [this]() { // immediate callback
+        TimerReconnect();
+        return kAsyncTimeInfinite;
+    });
 }
 
 //============================================================================
@@ -1707,13 +1704,10 @@ void CliAuConn::AutoPing () {
     ASSERT(!pingTimer);
     Ref("PingTimer");
     hsLockGuard(critsect);
-    pingTimer = AsyncTimerCreate(
-        [this]() {
-            TimerPing();
-            return kPingIntervalMs;
-        },
-        sock ? 0 : kAsyncTimeInfinite
-    );
+    pingTimer = AsyncTimerCreate(sock ? 0 : kAsyncTimeInfinite, [this]() {
+        TimerPing();
+        return kPingIntervalMs;
+    });
 }
 
 //============================================================================

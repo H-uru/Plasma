@@ -636,13 +636,10 @@ void CliFileConn::AutoReconnect () {
     hsLockGuard(timerCritsect);
     ASSERT(!reconnectTimer);
     Ref("ReconnectTimer");
-    reconnectTimer = AsyncTimerCreate(
-        [this]() {
-            TimerReconnect();
-            return kAsyncTimeInfinite;            
-        },
-        0 // immediate callback
-    );
+    reconnectTimer = AsyncTimerCreate(0, [this]() { // immediate callback
+        TimerReconnect();
+        return kAsyncTimeInfinite;
+    });
 }
 
 //============================================================================
@@ -668,13 +665,10 @@ void CliFileConn::AutoPing () {
         timerPeriod = sock ? 0 : kAsyncTimeInfinite;
     }
 
-    pingTimer = AsyncTimerCreate(
-        [this]() {
-            TimerPing();
-            return kPingIntervalMs;
-        },
-        timerPeriod
-    );
+    pingTimer = AsyncTimerCreate(timerPeriod, [this]() {
+        TimerPing();
+        return kPingIntervalMs;
+    });
 }
 
 //============================================================================
