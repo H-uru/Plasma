@@ -291,7 +291,10 @@ public:
 
 // Old versions of Max define this as an integer, not a Class_ID
 #define XREFOBJ_COMPAT_CLASS_ID Class_ID(0x92aab38c, 0)
-
+//this define is removed in later versions of the sdk
+#if MAX_VERSION_MAJOR < 24
+#   define BIPDRIVEN_CONTROL_CLASS_ID BIPSLAVE_CONTROL_CLASS_ID
+#endif
 // Special 3ds Max message box support added in 2021 for HiDPI
 #if MAX_VERSION_MAJOR >= 23
 #   define plMaxMessageBox  MaxSDK::MaxMessageBox
