@@ -127,7 +127,12 @@ void hsControlConverter::DeInit()
 class KRStatus : public KeyReduceStatus
 {
     void Init(int total) override { }
+
+#if MAX_VERSION_MAJOR >= 23
+    KeyReduceResult Progress(int p) override { return KEYREDUCE_CONTINUE; }
+#else
     int Progress(int p) override { return KEYREDUCE_CONTINUE; }
+#endif
 };
 
 void hsControlConverter::ReduceKeys(Control *control, float threshold)
