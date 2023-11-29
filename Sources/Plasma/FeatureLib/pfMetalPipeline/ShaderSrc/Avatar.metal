@@ -40,52 +40,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import "PLSServerStatus.h"
-#import "NSString+StringTheory.h"
-#include "plNetGameLib/plNetGameLib.h"
+#include <metal_stdlib>
+using namespace metal;
 
-@interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString* serverStatusString;
-@end
 
-@implementation PLSServerStatus
-
-+ (id)sharedStatus
+typedef struct
 {
-    static PLSServerStatus* shared = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        shared = [[self alloc] init];
-    });
-    return shared;
+    float4 position [[position]];
+    float2 uvPosition;
+    half4 color;
+} PreprocessAvatarTexturesInOut;
+
+typedef struct
+{
+    float2 position      [[attribute(0)]];
+    float2 uvPostion     [[attribute(1)]];
+} PreprocessAvatarVertex;
+
+vertex PreprocessAvatarTexturesInOut PreprocessAvatarVertexShader(PreprocessAvatarVertex in [[stage_in]])
+{
+    return { float4(in.position.x, in.position.y, 0.0, 1.0 ), in.uvPostion };
 }
 
-- (void)loadServerStatus
+fragment half4 PreprocessAvatarFragmentShader(PreprocessAvatarTexturesInOut in  [[stage_in]],
+                                              texture2d<half> layer             [[ texture(0) ]],
+                                              constant float4& blendColor       [[ buffer(0 )]])
 {
-    NSString* urlString = [NSString stringWithSTString:GetServerStatusUrl()];
-    NSURL* url = [NSURL URLWithString:urlString];
+    constexpr sampler colorSampler(mip_filter::linear,
+                                   mag_filter::linear,
+                                   min_filter::linear,
+                                   address::clamp_to_zero);
     
-    if (!url || !url.host) {
-        self.serverStatusString = @"";
-        return;
-    }
+    half4 colorSample = layer.sample(colorSampler, in.uvPosition.xy) * half4(blendColor);
     
-    NSURLSessionConfiguration* URLSessionConfiguration =
-        [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
-                                                          delegate:self
-                                                     delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask* statusTask = [session
-          dataTaskWithURL:url
-        completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response,
-                            NSError* _Nullable error) {
-            if (data) {
-                NSString* statusString = [[NSString alloc] initWithData:data
-                                                               encoding:NSUTF8StringEncoding];
-                self.serverStatusString = statusString;
-            }
-        }];
-    [statusTask resume];
+    return colorSample;
 }
-
-@end

@@ -276,12 +276,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     }
 
 #if PLASMA_PIPELINE_METAL
-    if (newSize.width == _metalLayer.drawableSize.width &&
-        newSize.height == _metalLayer.drawableSize.height)
-    {
-        return;
-    }
-
     _metalLayer.drawableSize = newSize;
 #endif
     [self.delegate renderView:self

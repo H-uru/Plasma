@@ -147,6 +147,7 @@ endif(PLASMA_EXTERNAL_RELEASE)
 # Pipeline Renderers
 cmake_dependent_option(PLASMA_PIPELINE_DX "Enable DirectX rendering pipeline?" ON "DirectX_FOUND" OFF)
 cmake_dependent_option(PLASMA_PIPELINE_GL "Enable OpenGL rendering pipeline?" ON "TARGET epoxy::epoxy" OFF)
+cmake_dependent_option(PLASMA_PIPELINE_METAL "Enable Metal rendering pipeline?" ON "APPLE" OFF)
 
 if(PLASMA_PIPELINE_DX)
     add_definitions(-DPLASMA_PIPELINE_DX)
@@ -155,6 +156,10 @@ endif(PLASMA_PIPELINE_DX)
 if(PLASMA_PIPELINE_GL)
     add_definitions(-DPLASMA_PIPELINE_GL)
 endif(PLASMA_PIPELINE_GL)
+
+if(PLASMA_PIPELINE_METAL)
+    add_definitions(-DPLASMA_PIPELINE_METAL)
+endif(PLASMA_PIPELINE_METAL)
 
 # Allow us to disable certain parts of the build
 option(PLASMA_BUILD_CLIENT "Do we want to build plClient?" ON)

@@ -39,53 +39,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include "plMetalVertexShader.h"
 
-#import "PLSServerStatus.h"
-#import "NSString+StringTheory.h"
-#include "plNetGameLib/plNetGameLib.h"
+#include "HeadSpin.h"
 
-@interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString* serverStatusString;
-@end
+#include "plDrawable/plGBufferGroup.h"
+#include "plMetalPipeline.h"
+#include "plSurface/plShader.h"
 
-@implementation PLSServerStatus
+#include <Metal/Metal.hpp>
 
-+ (id)sharedStatus
+plMetalVertexShader::plMetalVertexShader(plShader* owner)
+    : plMetalShader(owner)
 {
-    static PLSServerStatus* shared = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        shared = [[self alloc] init];
-    });
-    return shared;
 }
 
-- (void)loadServerStatus
+plMetalVertexShader::~plMetalVertexShader()
 {
-    NSString* urlString = [NSString stringWithSTString:GetServerStatusUrl()];
-    NSURL* url = [NSURL URLWithString:urlString];
-    
-    if (!url || !url.host) {
-        self.serverStatusString = @"";
-        return;
+    Release();
+}
+
+void plMetalVertexShader::Release()
+{
+    fPipe = nullptr;
+}
+
+bool plMetalVertexShader::ISetConstants(plMetalPipeline* pipe)
+{
+    if (fOwner->GetNumConsts()) {
+        float* ptr = (float*)fOwner->GetConstBasePtr();
+        pipe->GetMetalDevice()->CurrentRenderCommandEncoder()->setVertexBytes(ptr, fOwner->GetNumConsts() * sizeof(simd_float4), VertexShaderArgumentMaterialShaderUniforms);
     }
-    
-    NSURLSessionConfiguration* URLSessionConfiguration =
-        [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
-                                                          delegate:self
-                                                     delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask* statusTask = [session
-          dataTaskWithURL:url
-        completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response,
-                            NSError* _Nullable error) {
-            if (data) {
-                NSString* statusString = [[NSString alloc] initWithData:data
-                                                               encoding:NSUTF8StringEncoding];
-                self.serverStatusString = statusString;
-            }
-        }];
-    [statusTask resume];
-}
 
-@end
+    return true;
+}

@@ -40,52 +40,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import "PLSServerStatus.h"
-#import "NSString+StringTheory.h"
-#include "plNetGameLib/plNetGameLib.h"
+#include <metal_stdlib>
+using namespace metal;
 
-@interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString* serverStatusString;
-@end
-
-@implementation PLSServerStatus
-
-+ (id)sharedStatus
+struct GammaVertexIn
 {
-    static PLSServerStatus* shared = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        shared = [[self alloc] init];
-    });
-    return shared;
+    float2 position [[ attribute(0) ]];
+    float2 texturePosition [[ attribute(0) ]];
+};
+
+struct GammaVertexOut
+{
+    float4 position [[ position ]];
+    float2 texturePosition;
+};
+
+vertex GammaVertexOut gammaCorrectVertex(constant GammaVertexIn *in     [[ buffer(0) ]],
+                                         uint vertexID                  [[ vertex_id ]])
+{
+    GammaVertexOut out;
+    // Just pass the position through. We're clearing in NDC space.
+    out.position = float4(in[vertexID].position, 0.5f, 1.f);
+    out.texturePosition = float2(in[vertexID].texturePosition);
+    return out;
 }
 
-- (void)loadServerStatus
-{
-    NSString* urlString = [NSString stringWithSTString:GetServerStatusUrl()];
-    NSURL* url = [NSURL URLWithString:urlString];
-    
-    if (!url || !url.host) {
-        self.serverStatusString = @"";
-        return;
-    }
-    
-    NSURLSessionConfiguration* URLSessionConfiguration =
-        [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
-                                                          delegate:self
-                                                     delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask* statusTask = [session
-          dataTaskWithURL:url
-        completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response,
-                            NSError* _Nullable error) {
-            if (data) {
-                NSString* statusString = [[NSString alloc] initWithData:data
-                                                               encoding:NSUTF8StringEncoding];
-                self.serverStatusString = statusString;
-            }
-        }];
-    [statusTask resume];
-}
+const constant sampler lutSampler = sampler(filter::nearest);
 
-@end
+fragment half4 gammaCorrectFragment(GammaVertexOut in               [[stage_in]],
+                                    texture2d<float> inputTexture   [[texture(0)]],
+                                    texture1d_array<ushort> LUT     [[texture(1)]])
+{
+    float4 color = inputTexture.read(ushort2(in.position.xy));
+    return {
+        half(float(LUT.sample(lutSampler, color.r, 0).x)/USHRT_MAX),
+        half(float(LUT.sample(lutSampler, color.g, 1).x)/USHRT_MAX),
+        half(float(LUT.sample(lutSampler, color.b, 2).x)/USHRT_MAX),
+        1.0
+    };
+}

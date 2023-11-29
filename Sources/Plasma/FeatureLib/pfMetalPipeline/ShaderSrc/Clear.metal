@@ -40,52 +40,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import "PLSServerStatus.h"
-#import "NSString+StringTheory.h"
-#include "plNetGameLib/plNetGameLib.h"
+#include <metal_stdlib>
+using namespace metal;
 
-@interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString* serverStatusString;
-@end
+constant const bool ShouldClearDepth [[ function_constant(0) ]];
+constant const bool ShouldClearColor [[ function_constant(1) ]];
 
-@implementation PLSServerStatus
-
-+ (id)sharedStatus
+struct ClearVertexIn
 {
-    static PLSServerStatus* shared = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        shared = [[self alloc] init];
-    });
-    return shared;
+    float2 position [[ attribute(0) ]];
+};
+
+struct ClearVertexOut
+{
+    float4 position [[ position ]];
+};
+
+struct ClearFragmentOut
+{
+    float depth [[depth(any), function_constant(ShouldClearDepth)]];
+    half4 color [[color(0), function_constant(ShouldClearColor)]];
+};
+
+vertex ClearVertexOut clearVertex(ClearVertexIn in [[ stage_in ]])
+{
+    ClearVertexOut out;
+    // Just pass the position through. We're clearing in NDC space.
+    out.position = float4(in.position, 0.5, 1.0);
+    return out;
 }
 
-- (void)loadServerStatus
+fragment ClearFragmentOut clearFragment(constant half4& clearColor [[ buffer(0), function_constant(ShouldClearColor) ]],
+                                        constant float& clearDepth [[ buffer(1), function_constant(ShouldClearDepth) ]])
 {
-    NSString* urlString = [NSString stringWithSTString:GetServerStatusUrl()];
-    NSURL* url = [NSURL URLWithString:urlString];
-    
-    if (!url || !url.host) {
-        self.serverStatusString = @"";
-        return;
+    ClearFragmentOut out;
+    if (ShouldClearDepth) {
+        out.depth = clearDepth;
     }
-    
-    NSURLSessionConfiguration* URLSessionConfiguration =
-        [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
-                                                          delegate:self
-                                                     delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask* statusTask = [session
-          dataTaskWithURL:url
-        completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response,
-                            NSError* _Nullable error) {
-            if (data) {
-                NSString* statusString = [[NSString alloc] initWithData:data
-                                                               encoding:NSUTF8StringEncoding];
-                self.serverStatusString = statusString;
-            }
-        }];
-    [statusTask resume];
+    if (ShouldClearColor) {
+        out.color = clearColor;
+    }
+    return out;
 }
-
-@end

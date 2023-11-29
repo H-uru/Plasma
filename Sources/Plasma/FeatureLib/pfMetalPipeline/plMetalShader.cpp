@@ -39,53 +39,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include "plMetalShader.h"
 
-#import "PLSServerStatus.h"
-#import "NSString+StringTheory.h"
-#include "plNetGameLib/plNetGameLib.h"
+#include "HeadSpin.h"
+#include "plMetalPipeline.h"
+#include "plSurface/plShader.h"
 
-@interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString* serverStatusString;
-@end
-
-@implementation PLSServerStatus
-
-+ (id)sharedStatus
+plMetalShader::plMetalShader(plShader* owner)
+    : fOwner(owner),
+      fPipe()
 {
-    static PLSServerStatus* shared = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        shared = [[self alloc] init];
-    });
-    return shared;
+    owner->SetDeviceRef(this);
 }
 
-- (void)loadServerStatus
+plMetalShader::~plMetalShader()
 {
-    NSString* urlString = [NSString stringWithSTString:GetServerStatusUrl()];
-    NSURL* url = [NSURL URLWithString:urlString];
-    
-    if (!url || !url.host) {
-        self.serverStatusString = @"";
-        return;
+    fPipe = nullptr;
+}
+
+void plMetalShader::SetOwner(plShader* owner)
+{
+    if (owner != fOwner) {
+        Release();
+        fOwner = owner;
+        owner->SetDeviceRef(this);
     }
-    
-    NSURLSessionConfiguration* URLSessionConfiguration =
-        [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
-                                                          delegate:self
-                                                     delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask* statusTask = [session
-          dataTaskWithURL:url
-        completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response,
-                            NSError* _Nullable error) {
-            if (data) {
-                NSString* statusString = [[NSString alloc] initWithData:data
-                                                               encoding:NSUTF8StringEncoding];
-                self.serverStatusString = statusString;
-            }
-        }];
-    [statusTask resume];
 }
-
-@end

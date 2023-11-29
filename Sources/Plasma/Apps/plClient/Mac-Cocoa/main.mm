@@ -42,6 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // System Frameworks
 #import <Cocoa/Cocoa.h>
+#ifdef PLASMA_PIPELINE_GL
+#import <OpenGL/gl.h>
+#endif
+#ifdef PLASMA_PIPELINE_METAL
+#import <Metal/Metal.h>
+#endif
 #import <QuartzCore/QuartzCore.h>
 
 // Cocoa client
@@ -63,7 +69,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCmdParser.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
+#ifdef PLASMA_PIPELINE_GL
+#include "pfGLPipeline/plGLPipeline.h"
+#endif
 #include "plInputCore/plInputDevice.h"
+#ifdef PLASMA_PIPELINE_METAL
+#include "pfMetalPipeline/plMetalPipeline.h"
+#endif
 #include "plMessage/plDisplayScaleChangedMsg.h"
 #include "plMessageBox/hsMessageBox.h"
 #include "plNetClient/plNetClientMgr.h"
@@ -162,6 +174,8 @@ PF_CONSOLE_LINK_ALL()
 
 @implementation AppDelegate
 
+static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
+
 - (id)init
 {
     // Style flags
@@ -181,6 +195,9 @@ PF_CONSOLE_LINK_ALL()
     self.plsView = view;
     window.contentView = view;
     [window setDelegate:self];
+    
+    gClient.SetClientWindow((__bridge void *)view.layer);
+    gClient.SetClientDisplay((hsWindowHndl)NULL);
 
     self = [super initWithWindow:window];
     self.window.acceptsMouseMovedEvents = YES;
@@ -445,17 +462,15 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 
     // Window controller
     [self.window setContentSize:NSMakeSize(800, 600)];
-    // #if 0
-    // allow this executation path to start in full screen
-    //[self.window toggleFullScreen:self];
-    // #endif
     [self.window center];
     [self.window makeKeyAndOrderFront:self];
     self.renderLayer = self.window.contentView.layer;
-
-    gClient.SetClientWindow((hsWindowHndl)(__bridge void*)self.window);
-    gClient.SetClientDisplay((hsWindowHndl)NULL);
-
+    
+    [self.renderLayer addObserver:self
+                       forKeyPath:@"device"
+                          options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial
+                          context:DeviceDidChangeContext];
+    
     if (!gClient) {
         exit(0);
     }
@@ -473,8 +488,25 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 
 - (void)updateWindowTitle
 {
-    NSString* productTitle = [NSString stringWithSTString:plProduct::LongName()];
+#ifdef PLASMA_PIPELINE_METAL
+    NSString *productTitle = [NSString stringWithSTString:plProduct::LongName()];
+    id<MTLDevice> device = ((CAMetalLayer *) self.window.contentView.layer).device;
+#ifdef HS_DEBUGGING
+    [self.window setTitle:[NSString stringWithFormat:@"%@ - %@, %@",
+                           productTitle,
+#ifdef __arm64__
+                           @"ARM64",
+#else
+                           @"x86_64",
+#endif
+                           device.name]];
+#else
     [self.window setTitle:productTitle];
+#endif
+    
+#else
+    [NSString stringWithSTString:plProduct::LongName()];
+#endif
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
@@ -515,6 +547,23 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
                                   NSApplicationPresentationAutoHideMenuBar];
     return NSApplicationPresentationFullScreen | NSApplicationPresentationHideDock |
            NSApplicationPresentationAutoHideMenuBar;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == DeviceDidChangeContext) {
+        // this may not happen on the main queue
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self updateWindowTitle];
+        });
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (void)dealloc
+{
+    [_renderLayer removeObserver:self forKeyPath:@"device" context:DeviceDidChangeContext];
 }
 
 @end

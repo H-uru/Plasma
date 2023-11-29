@@ -40,52 +40,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import "PLSServerStatus.h"
-#import "NSString+StringTheory.h"
-#include "plNetGameLib/plNetGameLib.h"
+#ifndef plDXShader_inc
+#define plDXShader_inc
 
-@interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString* serverStatusString;
-@end
+#include <Metal/Metal.hpp>
+#include <string_theory/string>
 
-@implementation PLSServerStatus
+#include "plMetalDeviceRef.h"
 
-+ (id)sharedStatus
+class plShader;
+class plMetalPipeline;
+
+class plMetalShader : public plMetalDeviceRef
 {
-    static PLSServerStatus* shared = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        shared = [[self alloc] init];
-    });
-    return shared;
-}
+protected:
+    plShader*        fOwner;
+    plMetalPipeline* fPipe;
+    MTL::Function*   fFunction;
 
-- (void)loadServerStatus
-{
-    NSString* urlString = [NSString stringWithSTString:GetServerStatusUrl()];
-    NSURL* url = [NSURL URLWithString:urlString];
-    
-    if (!url || !url.host) {
-        self.serverStatusString = @"";
-        return;
-    }
-    
-    NSURLSessionConfiguration* URLSessionConfiguration =
-        [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
-                                                          delegate:self
-                                                     delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask* statusTask = [session
-          dataTaskWithURL:url
-        completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response,
-                            NSError* _Nullable error) {
-            if (data) {
-                NSString* statusString = [[NSString alloc] initWithData:data
-                                                               encoding:NSUTF8StringEncoding];
-                self.serverStatusString = statusString;
-            }
-        }];
-    [statusTask resume];
-}
+    virtual bool ISetConstants(plMetalPipeline* pipe) = 0; // On error, sets error string.
 
-@end
+public:
+    plMetalShader(plShader* owner);
+    virtual ~plMetalShader();
+
+    void           SetOwner(plShader* owner);
+    MTL::Function* GetShader(plMetalPipeline* pipe) const { return fFunction; };
+};
+
+#endif // plDXShader_inc

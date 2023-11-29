@@ -40,52 +40,60 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import "PLSServerStatus.h"
-#import "NSString+StringTheory.h"
-#include "plNetGameLib/plNetGameLib.h"
+#ifndef plMetalPlateManager_hpp
+#define plMetalPlateManager_hpp
 
-@interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString* serverStatusString;
-@end
+#include <simd/simd.h>
+#include <stdio.h>
 
-@implementation PLSServerStatus
+#include <Metal/Metal.hpp>
 
-+ (id)sharedStatus
+#include "hsPoint2.h"
+#include "plMetalPipelineState.h"
+#include "plPipeline/plPlates.h"
+
+class plMetalPipeline;
+class plMetalDevice;
+
+class plMetalPlatePipelineState : public plMetalPipelineState
 {
-    static PLSServerStatus* shared = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        shared = [[self alloc] init];
-    });
-    return shared;
-}
+public:
+    plMetalPlatePipelineState(plMetalDevice* device) : plMetalPipelineState(device){};
+    bool                  IsEqual(const plMetalPipelineState& p) const override;
+    uint16_t              GetID() const override { return plMetalPipelineType::Plate; }
+    plMetalPipelineState* Clone() override;
+    const MTL::Function * GetVertexFunction(MTL::Library* library) override;
+    const MTL::Function * GetFragmentFunction(MTL::Library* library) override;
+    const NS::String*     GetDescription() override;
 
-- (void)loadServerStatus
+    void ConfigureBlend(MTL::RenderPipelineColorAttachmentDescriptor* descriptor) override;
+
+    void ConfigureVertexDescriptor(MTL::VertexDescriptor* vertexDescriptor) override;
+
+    void GetFunctionConstants(MTL::FunctionConstantValues*) const override;
+};
+
+class plMetalPlateManager : public plPlateManager
 {
-    NSString* urlString = [NSString stringWithSTString:GetServerStatusUrl()];
-    NSURL* url = [NSURL URLWithString:urlString];
-    
-    if (!url || !url.host) {
-        self.serverStatusString = @"";
-        return;
-    }
-    
-    NSURLSessionConfiguration* URLSessionConfiguration =
-        [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
-                                                          delegate:self
-                                                     delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask* statusTask = [session
-          dataTaskWithURL:url
-        completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response,
-                            NSError* _Nullable error) {
-            if (data) {
-                NSString* statusString = [[NSString alloc] initWithData:data
-                                                               encoding:NSUTF8StringEncoding];
-                self.serverStatusString = statusString;
-            }
-        }];
-    [statusTask resume];
-}
+    friend class plMetalPipeline;
 
-@end
+public:
+    plMetalPlateManager(plMetalPipeline* pipe);
+    void IDrawToDevice(plPipeline* pipe) override;
+    void ICreateGeometry();
+    void IReleaseGeometry();
+    void EncodeDraw(MTL::RenderCommandEncoder* encoder);
+    ~plMetalPlateManager();
+
+private:
+    struct plateVertexBuffer
+    {
+        hsPoint2 vertices[4];
+        hsPoint2 uv[4];
+    };
+    MTL::Buffer*            fVtxBuffer;
+    MTL::Buffer*            idxBuffer;
+    MTL::DepthStencilState* fDepthState;
+};
+
+#endif /* plMetalPlateManager_hpp */

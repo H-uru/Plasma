@@ -40,52 +40,57 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#import "PLSServerStatus.h"
-#import "NSString+StringTheory.h"
-#include "plNetGameLib/plNetGameLib.h"
+#include <metal_stdlib>
+using namespace metal;
 
-@interface PLSServerStatus () <NSURLSessionDelegate>
-@property NSString* serverStatusString;
-@end
+#include <metal_stdlib>
+#include <simd/simd.h>
 
-@implementation PLSServerStatus
+#import "ShaderTypes.h"
 
-+ (id)sharedStatus
+
+using namespace metal;
+
+typedef struct
 {
-    static PLSServerStatus* shared = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        shared = [[self alloc] init];
-    });
-    return shared;
+    packed_float3    position;
+    uchar4     color;
+    packed_float3    UV;
+} Vertex;
+
+typedef struct
+{
+    float4 position [[position]];
+    float3 texCoord;
+    float4 normal;
+    half4  color;
+} ColorInOut;
+
+vertex ColorInOut textFontVertexShader(constant Vertex *in                      [[ buffer(0) ]],
+                                       constant matrix_float4x4 & transform     [[ buffer(1) ]],
+                                       uint v_id [[vertex_id]])
+{
+    ColorInOut out;
+
+    Vertex vert = in[v_id];
+    float4 position = float4(vert.position, 1.0);
+    out.position =  (transform * position);
+    out.texCoord = vert.UV;
+    out.normal = float4(0.0, 0.0, 1.0, 0.0);
+    out.color = half4(vert.color.b, vert.color.g, vert.color.r, vert.color.a) / 255.0f;
+
+    return out;
 }
 
-- (void)loadServerStatus
+fragment half4 textFontFragmentShader(ColorInOut in                 [[stage_in]],
+                                      texture2d<half> colorMap      [[ texture(0) ]])
 {
-    NSString* urlString = [NSString stringWithSTString:GetServerStatusUrl()];
-    NSURL* url = [NSURL URLWithString:urlString];
-    
-    if (!url || !url.host) {
-        self.serverStatusString = @"";
-        return;
-    }
-    
-    NSURLSessionConfiguration* URLSessionConfiguration =
-        [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:URLSessionConfiguration
-                                                          delegate:self
-                                                     delegateQueue:NSOperationQueue.mainQueue];
-    NSURLSessionTask* statusTask = [session
-          dataTaskWithURL:url
-        completionHandler:^(NSData* _Nullable data, NSURLResponse* _Nullable response,
-                            NSError* _Nullable error) {
-            if (data) {
-                NSString* statusString = [[NSString alloc] initWithData:data
-                                                               encoding:NSUTF8StringEncoding];
-                self.serverStatusString = statusString;
-            }
-        }];
-    [statusTask resume];
-}
+    constexpr sampler colorSampler(mip_filter::nearest,
+                                   mag_filter::nearest,
+                                   min_filter::nearest);
 
-@end
+    half4 colorSample = colorMap.sample(colorSampler, in.texCoord.xy);
+    colorSample *= in.color;
+
+    return colorSample;
+}

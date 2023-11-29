@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 #include "hsColorRGBA.h"
+#include "hsGDeviceRef.h"
 #include "hsGMatState.h"
 
 #include "pnNetCommon/plSynchedObject.h"
@@ -91,6 +92,8 @@ protected:
     uint32_t                  fLoadFlags;
 
     float                fLastUpdateTime;
+    
+    hsGDeviceRef*                   fDeviceRef;
 
     void                IClearLayers();
     size_t              IMakeExtraLayer();
@@ -128,6 +131,10 @@ public:
     bool                    IsDynamic() const           { return (fCompFlags & kCompDynamic); }
     bool                    IsDecal() const             { return (fCompFlags & kCompDecal); }
     bool                    NeedsBlendChannel()         { return (fCompFlags & kCompNeedsBlendChannel); }
+    
+    
+    void SetDeviceRef(hsGDeviceRef* ref) { hsRefCnt_SafeAssign(fDeviceRef, ref); }
+    hsGDeviceRef* GetDeviceRef() const { return fDeviceRef; }
 
     virtual void        Read(hsStream* s);
     virtual void        Write(hsStream* s);

@@ -40,8 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsGMaterial.h"
 #include <cmath>
+#include "hsGMaterial.h"
 
 #include "HeadSpin.h"
 #include "plProfile.h"
@@ -64,7 +64,8 @@ hsGMaterial::hsGMaterial() :
 fLOD(0),
 fCompFlags(0),
 fLoadFlags(0),
-fLastUpdateTime(0)
+fLastUpdateTime(0),
+fDeviceRef()
 {
 }
 
@@ -201,7 +202,6 @@ void hsGMaterial::SetLayer(plLayerInterface* layer, int32_t which, bool insert, 
             layers.emplace_back(layer);
     }
 }
-
 
 void hsGMaterial::Write(hsStream* s)
 {

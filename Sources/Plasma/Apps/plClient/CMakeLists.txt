@@ -110,7 +110,6 @@ elseif(APPLE)
         Mac-Cocoa/PLSServerStatus.h
     )
     list(APPEND plClient_RESOURCES
-        Mac-Cocoa/Assets.xcassets
         Mac-Cocoa/banner.png
         Mac-Cocoa/banner@2x.png
         Mac-Cocoa/MainMenu.xib
@@ -158,8 +157,17 @@ if(APPLE)
         XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/plClient.entitlements"
         XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES"
         XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC "YES"
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER org.Huru.UruExplorer
     )
     target_compile_options(plClient PRIVATE -fobjc-arc)
+    target_sources(plClient PRIVATE Mac-Cocoa/Assets.xcassets)
+    set_source_files_properties(Mac-Cocoa/Assets.xcassets ${RESOURCES} PROPERTIES
+         MACOSX_PACKAGE_LOCATION Resources
+    )
+    install(
+        TARGETS plClient
+        DESTINATION client
+    )
 
     if(PLASMA_APPLE_DEVELOPMENT_TEAM_ID)
             set_target_properties(plClient PROPERTIES
@@ -229,6 +237,8 @@ target_link_libraries(
         pfPython
         $<$<BOOL:${PLASMA_PIPELINE_DX}>:pfDXPipeline>
         $<$<BOOL:${PLASMA_PIPELINE_GL}>:pfGLPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipeline>
+        $<$<BOOL:${PLASMA_PIPELINE_METAL}>:pfMetalPipelineShaders>
         CURL::libcurl
         "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
         "$<$<PLATFORM_ID:Darwin>:-framework QuartzCore>"
