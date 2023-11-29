@@ -412,19 +412,6 @@ static void Connect (
 *
 ***/
 
-//===========================================================================
-static unsigned CliGmConnTimerDestroyed (void * param) {
-    CliGmConn * conn = (CliGmConn *) param;
-    conn->UnRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
-}
-
-//===========================================================================
-static unsigned CliGmConnPingTimerProc (void * param) {
-    ((CliGmConn *) param)->TimerPing();
-    return kPingIntervalMs;
-}
-
 //============================================================================
 CliGmConn::CliGmConn ()
     : hsRefCnt(0), sock(), cancelId(), cli()
@@ -447,9 +434,11 @@ void CliGmConn::AutoPing () {
     Ref("PingTimer");
     hsLockGuard(critsect);
     pingTimer = AsyncTimerCreate(
-        CliGmConnPingTimerProc,
-        sock ? 0 : kAsyncTimeInfinite,
-        this
+        [this]() {
+            TimerPing();
+            return kPingIntervalMs;
+        },
+        sock ? 0 : kAsyncTimeInfinite
     );
 }
 
@@ -457,7 +446,10 @@ void CliGmConn::AutoPing () {
 void CliGmConn::StopAutoPing () {
     hsLockGuard(critsect);
     if (pingTimer) {
-        AsyncTimerDeleteCallback(pingTimer, CliGmConnTimerDestroyed);
+        AsyncTimerDeleteCallback(pingTimer, [this]() {
+            UnRef("PingTimer");
+            return kAsyncTimeInfinite;
+        });
         pingTimer = nullptr;
     }
 }

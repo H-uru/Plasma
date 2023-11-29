@@ -47,12 +47,10 @@ struct AsyncTimer
     asio::steady_timer fTimer;
     FAsyncTimerProc    fTimerProc;
     FAsyncTimerProc    fDestroyProc;
-    void*              fParam;
 
-    AsyncTimer(asio::io_context& context, FAsyncTimerProc&& timerProc, void* param)
+    AsyncTimer(asio::io_context& context, FAsyncTimerProc&& timerProc)
         : fTimer(context),
-          fTimerProc(std::move(timerProc)),
-          fParam(param)
+          fTimerProc(std::move(timerProc))
     {
     }
 
@@ -76,9 +74,9 @@ struct AsyncTimerManager
         });
     }
 
-    AsyncTimer* AddTimer(FAsyncTimerProc&& timerProc, void* param)
+    AsyncTimer* AddTimer(FAsyncTimerProc&& timerProc)
     {
-        return &fTimers.emplace_back(fContext, std::move(timerProc), param);
+        return &fTimers.emplace_back(fContext, std::move(timerProc));
     }
 
     void DelTimer(AsyncTimer* timer)
@@ -88,7 +86,7 @@ struct AsyncTimerManager
         // at the same time.
         asio::post(fContext, [timer, this] {
             if (timer->fDestroyProc)
-                timer->fDestroyProc(timer->fParam);
+                timer->fDestroyProc();
 
             hsLockGuard(s_timerCrit);
             auto iter = std::find_if(fTimers.cbegin(), fTimers.cend(),
@@ -110,7 +108,7 @@ struct AsyncTimerManager
         // Cancel all remaining timers
         for (AsyncTimer& timer : fTimers) {
             if (timer.fDestroyProc)
-                timer.fDestroyProc(timer.fParam);
+                timer.fDestroyProc();
         }
         fTimers.clear();
     }
@@ -128,7 +126,7 @@ void AsyncTimer::Start(unsigned callbackMs)
         if (err == asio::error::operation_aborted)
             return;
 
-        unsigned timerMs = fTimerProc(fParam);
+        unsigned timerMs = fTimerProc();
 
         // Requeue timer
         hsLockGuard(s_timerCrit);
@@ -145,7 +143,7 @@ void TimerDestroy(unsigned exitThreadWaitMs)
     }
 }
 
-AsyncTimer* AsyncTimerCreate(FAsyncTimerProc timerProc, unsigned callbackMs, void* param)
+AsyncTimer* AsyncTimerCreate(FAsyncTimerProc timerProc, unsigned callbackMs)
 {
     ASSERT(timerProc);
 
@@ -154,7 +152,7 @@ AsyncTimer* AsyncTimerCreate(FAsyncTimerProc timerProc, unsigned callbackMs, voi
     if (!s_timerMgr)
         s_timerMgr = new AsyncTimerManager;
 
-    AsyncTimer* timer = s_timerMgr->AddTimer(std::move(timerProc), param);
+    AsyncTimer* timer = s_timerMgr->AddTimer(std::move(timerProc));
     timer->Start(callbackMs);
 
     return timer;

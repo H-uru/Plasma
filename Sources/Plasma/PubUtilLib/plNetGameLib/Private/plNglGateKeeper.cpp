@@ -483,25 +483,6 @@ static void AsyncLookupCallback(void* param, const ST::string& name,
 *
 ***/
 
-//===========================================================================
-static unsigned CliGkConnTimerDestroyed (void * param) {
-    CliGkConn * conn = (CliGkConn *) param;
-    conn->UnRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
-}
-
-//===========================================================================
-static unsigned CliGkConnReconnectTimerProc (void * param) {
-    ((CliGkConn *) param)->TimerReconnect();
-    return kAsyncTimeInfinite;
-}
-
-//===========================================================================
-static unsigned CliGkConnPingTimerProc (void * param) {
-    ((CliGkConn *) param)->TimerPing();
-    return kPingIntervalMs;
-}
-
 //============================================================================
 CliGkConn::CliGkConn ()
     : hsRefCnt(0), reconnectTimer(), reconnectStartMs()
@@ -573,9 +554,11 @@ void CliGkConn::AutoReconnect () {
     Ref("ReconnectTimer");
     hsLockGuard(critsect);
     reconnectTimer = AsyncTimerCreate(
-        CliGkConnReconnectTimerProc,
-        0,  // immediate callback
-        this
+        [this]() {
+            TimerReconnect();
+            return kAsyncTimeInfinite;
+        },
+        0 // immediate callback
     );
 }
 
@@ -584,7 +567,10 @@ void CliGkConn::StopAutoReconnect () {
     hsLockGuard(critsect);
     if (AsyncTimer * timer = reconnectTimer) {
         reconnectTimer = nullptr;
-        AsyncTimerDeleteCallback(timer, CliGkConnTimerDestroyed);
+        AsyncTimerDeleteCallback(timer, [this]() {
+            UnRef("ReconnectTimer");
+            return kAsyncTimeInfinite;
+        });
     }
 }
 
@@ -600,9 +586,11 @@ void CliGkConn::AutoPing () {
     Ref("PingTimer");
     hsLockGuard(critsect);
     pingTimer = AsyncTimerCreate(
-        CliGkConnPingTimerProc,
-        sock ? 0 : kAsyncTimeInfinite,
-        this
+        [this]() {
+            TimerPing();
+            return kPingIntervalMs;
+        },
+        sock ? 0 : kAsyncTimeInfinite
     );
 }
 
@@ -610,7 +598,10 @@ void CliGkConn::AutoPing () {
 void CliGkConn::StopAutoPing () {
     hsLockGuard(critsect);
     if (pingTimer) {
-        AsyncTimerDeleteCallback(pingTimer, CliGkConnTimerDestroyed);
+        AsyncTimerDeleteCallback(pingTimer, [this]() {
+            UnRef("PingTimer");
+            return kAsyncTimeInfinite;
+        });
         pingTimer = nullptr;
     }
 }

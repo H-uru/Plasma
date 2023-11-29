@@ -610,12 +610,6 @@ void CliFileConn::TimerReconnect () {
 }
 
 //===========================================================================
-static unsigned CliFileConnTimerReconnectProc (void * param) {
-    ((CliFileConn *) param)->TimerReconnect();
-    return kAsyncTimeInfinite;
-}
-
-//===========================================================================
 // This function is called when after a disconnect to start a new connection
 void CliFileConn::StartAutoReconnect () {
     hsLockGuard(timerCritsect);
@@ -643,17 +637,12 @@ void CliFileConn::AutoReconnect () {
     ASSERT(!reconnectTimer);
     Ref("ReconnectTimer");
     reconnectTimer = AsyncTimerCreate(
-        CliFileConnTimerReconnectProc,
-        0,  // immediate callback
-        this
+        [this]() {
+            TimerReconnect();
+            return kAsyncTimeInfinite;            
+        },
+        0 // immediate callback
     );
-}
-
-//===========================================================================
-static unsigned CliFileConnTimerDestroyed (void * param) {
-    CliFileConn * sock = (CliFileConn *) param;
-    sock->UnRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
 }
 
 //============================================================================
@@ -661,14 +650,11 @@ void CliFileConn::StopAutoReconnect () {
     hsLockGuard(timerCritsect);
     if (AsyncTimer * timer = reconnectTimer) {
         reconnectTimer = nullptr;
-        AsyncTimerDeleteCallback(timer, CliFileConnTimerDestroyed);
+        AsyncTimerDeleteCallback(timer, [this]() {
+            UnRef("ReconnectTimer");
+            return kAsyncTimeInfinite;
+        });
     }
-}
-
-//===========================================================================
-static unsigned CliFileConnPingTimerProc (void * param) {
-    ((CliFileConn *) param)->TimerPing();
-    return kPingIntervalMs;
 }
 
 //============================================================================
@@ -683,9 +669,11 @@ void CliFileConn::AutoPing () {
     }
 
     pingTimer = AsyncTimerCreate(
-        CliFileConnPingTimerProc,
-        timerPeriod,
-        this
+        [this]() {
+            TimerPing();
+            return kPingIntervalMs;
+        },
+        timerPeriod
     );
 }
 
@@ -694,7 +682,10 @@ void CliFileConn::StopAutoPing () {
     hsLockGuard(timerCritsect);
     if (AsyncTimer * timer = pingTimer) {
         pingTimer = nullptr;
-        AsyncTimerDeleteCallback(timer, CliFileConnTimerDestroyed);
+        AsyncTimerDeleteCallback(timer, [this]() {
+            UnRef("PingTimer");
+            return kAsyncTimeInfinite;
+        });
     }
 }
 
