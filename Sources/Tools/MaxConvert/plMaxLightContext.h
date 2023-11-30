@@ -109,7 +109,7 @@ public:
 
     void GetBGColor(Color &bgcol, Color& transp, BOOL fogBG=TRUE) override { bgcol.Black(); transp.Black(); }   // returns Background color, bg transparency
     // these became virtual in 2023
-#if MAX_VERSION_MAJOR >= 25
+#if MAX_VERSION_MAJOR >= 26
     Matrix3 MatrixTo(RefFrame ito) override { return Matrix3::Identity; }
     Matrix3 MatrixFrom(RefFrame ifrom) override { return Matrix3::Identity; }
 #endif
