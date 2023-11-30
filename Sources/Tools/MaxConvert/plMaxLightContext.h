@@ -112,7 +112,7 @@ public:
     #if MAX_VERSION_MAJOR >= 25
     Matrix3 MatrixTo(RefFrame ito) override { return Matrix3::Identity; }
     Matrix3 MatrixFrom(RefFrame ifrom) override { return Matrix3::Identity; }
-    #endif
+#endif
     Point3 PointTo(const Point3& p, RefFrame ito) override { return p; }
     Point3 PointFrom(const Point3& p, RefFrame ifrom) override { return p; }
     Point3 VectorTo(const Point3& p, RefFrame ito) override { return p; }
