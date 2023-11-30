@@ -3,7 +3,7 @@ Here you will find the build artifacts for the last successful build of the mast
 
 For Age building and development activities, use an **Internal** client.  
 
-The clients for macOS and Linux are not functional at this time, but other tools should run as expected.
+The client for Linux is not functional at this time, but other tools should run as expected.
 
 Windows Clients & Tools
 -----------------------
@@ -14,10 +14,14 @@ Windows Clients & Tools
 
 macOS Clients & Tools
 ---------------------
-Currently the automated build system does not produce Apple Silicon (M1) builds.
 
-* 64-bit Intel Internal Client: `plasma-macos-x64-internal-release.zip`
-* 64-bit Intel External Client: `plasma-macos-x64-external-release.zip`
+### Intel
+* 64-bit Internal Client: `plasma-macos-x64-internal-release.zip`
+* 64-bit External Client: `plasma-macos-x64-external-release.zip`
+
+### Apple Silicon
+* 64-bit Internal Client: `plasma-macos-arm64-internal-release.zip`
+* 64-bit External Client: `plasma-macos-arm64-external-release.zip`
 
 Linux Clients & Tools
 ---------------------
