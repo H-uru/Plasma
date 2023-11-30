@@ -461,21 +461,6 @@ static void Connect (
     conn->AutoReconnect();
 }
 
-//============================================================================
-static void AsyncLookupCallback(void* param, const ST::string& name,
-                                const std::vector<plNetAddress>& addrs)
-{
-    if (addrs.empty()) {
-        ReportNetError(kNetProtocolCli2GateKeeper, kNetErrNameLookupFailed);
-        return;
-    }
-
-    for (const plNetAddress& addr : addrs)
-        Connect(name, addr);
-}
-
-
-
 
 /*****************************************************************************
 *
@@ -969,10 +954,18 @@ void NetCliGateKeeperStartConnect (
         for (pos = name.begin(); pos != name.end(); ++pos) {
             if (!(isdigit(*pos) || *pos == '.' || *pos == ':')) {
                 AsyncAddressLookupName(
-                    AsyncLookupCallback,
+                    [name](auto addrs) {
+                        if (addrs.empty()) {
+                            ReportNetError(kNetProtocolCli2GateKeeper, kNetErrNameLookupFailed);
+                            return;
+                        }
+
+                        for (const plNetAddress& addr : addrs) {
+                            Connect(name, addr);
+                        }
+                    },
                     name,
-                    GetClientPort(),
-                    nullptr
+                    GetClientPort()
                 );
                 break;
             }

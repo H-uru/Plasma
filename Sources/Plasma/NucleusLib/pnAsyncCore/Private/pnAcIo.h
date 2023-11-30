@@ -162,12 +162,10 @@ void AsyncSocketEnableNagling (
 *
 ***/
 
-typedef std::function<void (void* /* param */, const ST::string& /* name */,
-                            const std::vector<plNetAddress>& /* addrs */)> FAsyncLookupProc;
+typedef std::function<void(const std::vector<plNetAddress>& /* addrs */)> FAsyncLookupProc;
 
 void AsyncAddressLookupName (
     FAsyncLookupProc    lookupProc,
     const ST::string &  name,
-    unsigned            port,
-    void *              param
+    unsigned            port
 );
