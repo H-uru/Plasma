@@ -103,12 +103,11 @@ struct ConnectOperation
     plNetAddress            fRemoteAddr;
     AsyncCancelId           fCancelId;
     FAsyncNotifySocketProc  fNotifyProc;
-    void*                   fParam;
     std::vector<uint8_t>    fConnectBuffer;
     unsigned int            fConnectionType;
 
     ConnectOperation(asio::io_context& context)
-        : fSock(context), fCancelId(), fParam(), fConnectionType()
+        : fSock(context), fCancelId(), fConnectionType()
     { }
     ConnectOperation(const ConnectOperation&) = delete;
 };
@@ -132,9 +131,7 @@ struct AsyncSocketStruct
     std::recursive_mutex        fCritsect;
     tcp::socket                 fSock;
     FAsyncNotifySocketProc      fNotifyProc;
-    void*                       fParam;
     unsigned int                fConnectionType;
-    void*                       fUserState;
     uint8_t                     fBuffer[kAsyncSocketBufferSize];
     size_t                      fBytesLeft;
     std::list<WriteOperation *> fWriteOps;
@@ -143,8 +140,8 @@ struct AsyncSocketStruct
 
     AsyncSocketStruct(ConnectOperation& op)
         : fSock(std::move(op.fSock)), fNotifyProc(op.fNotifyProc),
-          fParam(op.fParam), fConnectionType(op.fConnectionType),
-          fUserState(), fBuffer(), fBytesLeft(), initTimeMs(), closeTimeMs()
+          fConnectionType(op.fConnectionType),
+          fBuffer(), fBytesLeft(), initTimeMs(), closeTimeMs()
     { }
 };
 
@@ -200,7 +197,7 @@ static void SocketStartAsyncRead(AsyncSocket sock)
                     // calling AsyncSocketDelete at some later point in time.
                     FAsyncNotifySocketProc notifyProc = sock->fNotifyProc;
                     sock->fNotifyProc = nullptr;
-                    notifyProc((AsyncSocket)sock, kNotifySocketDisconnect, nullptr, &sock->fUserState);
+                    notifyProc((AsyncSocket)sock, kNotifySocketDisconnect, nullptr);
                 }
             } else {
                 LogMsg(kLogError, "Failed to read from socket: {}", err.message());
@@ -217,7 +214,7 @@ static void SocketStartAsyncRead(AsyncSocket sock)
         notifyRead.buffer = sock->fBuffer;
         notifyRead.bytes = sock->fBytesLeft;
 
-        if (!sock->fNotifyProc || !sock->fNotifyProc(sock, kNotifySocketRead, &notifyRead, &sock->fUserState)) {
+        if (!sock->fNotifyProc || !sock->fNotifyProc(sock, kNotifySocketRead, &notifyRead)) {
             // No callback, or the callback told us to stop reading
             return;
         }
@@ -293,9 +290,9 @@ static bool SocketInitConnect(ConnectOperation& op)
     // perform callback notification
     AsyncNotifySocketConnect notify;
     SocketGetAddresses(sock.get(), &notify.localAddr, &notify.remoteAddr);
-    notify.param        = sock->fParam;
-    if (!sock->fNotifyProc(sock.get(), kNotifySocketConnectSuccess, &notify, &sock->fUserState))
+    if (!sock->fNotifyProc(sock.get(), kNotifySocketConnectSuccess, &notify)) {
         return false;
+    }
 
     // start reading from the socket
     SocketStartAsyncRead(sock.release());
@@ -303,7 +300,7 @@ static bool SocketInitConnect(ConnectOperation& op)
 }
 
 void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
-                        FAsyncNotifySocketProc notifyProc, void* param,
+                        FAsyncNotifySocketProc notifyProc,
                         const void* sendData, unsigned sendBytes)
 {
     ASSERT(notifyProc);
@@ -318,7 +315,6 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
     auto op = s_connectList.emplace(s_connectList.end(), s_ioPool->fContext);
     op->fRemoteAddr = netAddr;
     op->fNotifyProc = std::move(notifyProc);
-    op->fParam = param;
     if (sendBytes) {
         auto sendBuffer = reinterpret_cast<const uint8_t*>(sendData);
         op->fConnectBuffer.assign(sendBuffer, sendBuffer + sendBytes);
@@ -350,10 +346,9 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
 
         if (!success) {
             AsyncNotifySocketConnect failed;
-            failed.param = op->fParam;
             failed.remoteAddr = op->fRemoteAddr;
             failed.localAddr.Clear();
-            op->fNotifyProc(nullptr, kNotifySocketConnectFailed, &failed, nullptr);
+            op->fNotifyProc(nullptr, kNotifySocketConnectFailed, &failed);
         }
 
         {

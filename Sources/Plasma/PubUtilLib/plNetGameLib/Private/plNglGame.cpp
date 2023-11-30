@@ -316,18 +316,14 @@ static bool NotifyConnSocketRead (CliGmConn * conn, AsyncNotifySocketRead * read
 
 //============================================================================
 static bool SocketNotifyCallback (
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-    void **             userState
+    CliGmConn* conn,
+    AsyncSocket sock,
+    EAsyncNotifySocket code,
+    AsyncNotifySocket* notify
 ) {
     bool result = true;
-    CliGmConn * conn;
-
     switch (code) {
         case kNotifySocketConnectSuccess:
-            conn = (CliGmConn *) notify->param;
-            *userState = conn;
             conn->TransferRef("Connecting", "Connected");
             bool abandoned;
             {
@@ -343,17 +339,14 @@ static bool SocketNotifyCallback (
         break;
 
         case kNotifySocketConnectFailed:
-            conn = (CliGmConn *) notify->param;
             NotifyConnSocketConnectFailed(conn);
         break;
 
         case kNotifySocketDisconnect:
-            conn = (CliGmConn *) *userState;
             NotifyConnSocketDisconnect(conn);
         break;
 
         case kNotifySocketRead:
-            conn = (CliGmConn *) *userState;
             result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
         break;
 
@@ -398,8 +391,9 @@ static void Connect (
     AsyncSocketConnect(
         &conn->cancelId,
         addr,
-        SocketNotifyCallback,
-        conn,
+        [conn](auto sock, auto code, auto notify) {
+            return SocketNotifyCallback(conn, sock, code, notify);
+        },
         &connect,
         sizeof(connect)
     );

@@ -446,18 +446,14 @@ static bool NotifyConnSocketRead (CliFileConn * conn, AsyncNotifySocketRead * re
 
 //============================================================================
 static bool SocketNotifyCallback (
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-        void **             userState
+    CliFileConn* conn,
+    AsyncSocket sock,
+    EAsyncNotifySocket code,
+    AsyncNotifySocket* notify
 ) {
     bool result = true;
-    CliFileConn * conn;
-
     switch (code) {
         case kNotifySocketConnectSuccess:
-            conn = (CliFileConn *) notify->param;
-            *userState = conn;
             {
                 hsLockGuard(s_critsect);
                 hsLockForWriting lock(conn->sockLock);
@@ -468,17 +464,14 @@ static bool SocketNotifyCallback (
         break;
 
         case kNotifySocketConnectFailed:
-            conn = (CliFileConn *) notify->param;
             NotifyConnSocketConnectFailed(conn);
         break;
 
         case kNotifySocketDisconnect:
-            conn = (CliFileConn *) *userState;
             NotifyConnSocketDisconnect(conn);
         break;
 
         case kNotifySocketRead:
-            conn = (CliFileConn *) *userState;
             result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
         break;
 
@@ -521,8 +514,9 @@ static void Connect (CliFileConn * conn) {
     AsyncSocketConnect(
         &conn->cancelId,
         conn->addr,
-        SocketNotifyCallback,
-        conn,
+        [conn](auto sock, auto code, auto notify) {
+            return SocketNotifyCallback(conn, sock, code, notify);
+        },
         &connect,
         sizeof(connect)
     );

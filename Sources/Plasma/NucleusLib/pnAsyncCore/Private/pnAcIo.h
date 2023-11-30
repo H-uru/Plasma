@@ -82,11 +82,7 @@ enum EAsyncNotifySocket {
     kNotifySocketWrite
 };
 
-struct AsyncNotifySocket {
-    void *          param;
-
-    AsyncNotifySocket() : param() { }
-};
+struct AsyncNotifySocket {};
 
 struct AsyncNotifySocketConnect : AsyncNotifySocket {
     plNetAddress    localAddr;
@@ -113,7 +109,7 @@ struct AsyncNotifySocketWrite : AsyncNotifySocketRead {
     \param code
     \param notify
 */
-using FAsyncNotifySocketProc = std::function<bool(AsyncSocket, EAsyncNotifySocket, AsyncNotifySocket*, void**)> ;
+using FAsyncNotifySocketProc = std::function<bool(AsyncSocket, EAsyncNotifySocket, AsyncNotifySocket*)>;
 
 
 /****************************************************************************
@@ -126,7 +122,6 @@ void AsyncSocketConnect (
     AsyncCancelId *         cancelId,
     const plNetAddress&     netAddr,
     FAsyncNotifySocketProc  notifyProc,
-    void *                  param = nullptr,
     const void *            sendData = nullptr,
     unsigned                sendBytes = 0
 );
