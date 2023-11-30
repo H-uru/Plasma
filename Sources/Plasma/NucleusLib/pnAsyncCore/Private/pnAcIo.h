@@ -91,24 +91,6 @@ struct AsyncNotifySocket {
 struct AsyncNotifySocketConnect : AsyncNotifySocket {
     plNetAddress    localAddr;
     plNetAddress    remoteAddr;
-    unsigned        connType;
-
-    AsyncNotifySocketConnect() : connType(0) { }
-};
-
-struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
-    unsigned        buildId;
-    unsigned        buildType;
-    unsigned        branchId;
-    plUUID          productId;
-    plNetAddress    addr;
-    uint8_t *       buffer;
-    unsigned        bytes;
-    unsigned        bytesProcessed;
-
-    AsyncNotifySocketListen()
-        : buildId(), buildType(), branchId(), buffer(), bytes(),
-          bytesProcessed() { }
 };
 
 struct AsyncNotifySocketRead : AsyncNotifySocket {

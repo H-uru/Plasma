@@ -294,7 +294,6 @@ static bool SocketInitConnect(ConnectOperation& op)
     AsyncNotifySocketConnect notify;
     SocketGetAddresses(sock.get(), &notify.localAddr, &notify.remoteAddr);
     notify.param        = sock->fParam;
-    notify.connType     = sock->fConnectionType;
     if (!sock->fNotifyProc(sock.get(), kNotifySocketConnectSuccess, &notify, &sock->fUserState))
         return false;
 
@@ -352,7 +351,6 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
         if (!success) {
             AsyncNotifySocketConnect failed;
             failed.param = op->fParam;
-            failed.connType = op->fConnectBuffer[0];
             failed.remoteAddr = op->fRemoteAddr;
             failed.localAddr.Clear();
             op->fNotifyProc(nullptr, kNotifySocketConnectFailed, &failed, nullptr);
