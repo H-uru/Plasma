@@ -964,22 +964,22 @@ void NetCliGateKeeperStartConnect (
 
     for (unsigned i = 0; i < gateKeeperAddrCount; ++i) {
         // Do we need to lookup the address?
-        const char* name = gateKeeperAddrList[i].c_str();
-        while (unsigned ch = *name) {
-            ++name;
-            if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
+        ST::string name = gateKeeperAddrList[i];
+        const char* pos;
+        for (pos = name.begin(); pos != name.end(); ++pos) {
+            if (!(isdigit(*pos) || *pos == '.' || *pos == ':')) {
                 AsyncAddressLookupName(
                     AsyncLookupCallback,
-                    gateKeeperAddrList[i],
+                    name,
                     GetClientPort(),
                     nullptr
                 );
                 break;
             }
         }
-        if (!name[0]) {
-            plNetAddress addr(gateKeeperAddrList[i], GetClientPort());
-            Connect(gateKeeperAddrList[i], addr);
+        if (pos == name.end()) {
+            plNetAddress addr(name, GetClientPort());
+            Connect(name, addr);
         }
     }
 }

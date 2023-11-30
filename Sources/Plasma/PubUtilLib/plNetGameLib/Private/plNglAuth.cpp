@@ -4728,22 +4728,22 @@ void NetCliAuthStartConnect (
 
     for (unsigned i = 0; i < authAddrCount; ++i) {
         // Do we need to lookup the address?
-        const char* name = authAddrList[i].c_str();
-        while (unsigned ch = *name) {
-            ++name;
-            if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
+        ST::string name = authAddrList[i];
+        const char* pos;
+        for (pos = name.begin(); pos != name.end(); ++pos) {
+            if (!(isdigit(*pos) || *pos == '.' || *pos == ':')) {
                 AsyncAddressLookupName(
                     AsyncLookupCallback,
-                    authAddrList[i],
+                    name,
                     GetClientPort(),
                     nullptr
                 );
                 break;
             }
         }
-        if (!name[0]) {
-            plNetAddress addr(authAddrList[i], GetClientPort());
-            Connect(authAddrList[i], addr);
+        if (pos == name.end()) {
+            plNetAddress addr(name, GetClientPort());
+            Connect(name, addr);
         }
     }
 }

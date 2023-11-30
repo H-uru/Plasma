@@ -1346,22 +1346,22 @@ void NetCliFileStartConnect (
 
     for (unsigned i = 0; i < fileAddrCount; ++i) {
         // Do we need to lookup the address?
-        const char* name = fileAddrList[i].c_str();
-        while (unsigned ch = *name) {
-            ++name;
-            if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
+        ST::string name = fileAddrList[i];
+        const char* pos;
+        for (pos = name.begin(); pos != name.end(); ++pos) {
+            if (!(isdigit(*pos) || *pos == '.' || *pos == ':')) {
                 AsyncAddressLookupName(
                     AsyncLookupCallback,
-                    fileAddrList[i],
+                    name,
                     GetClientPort(),
                     nullptr
                 );
                 break;
             }
         }
-        if (!name[0]) {
-            plNetAddress addr(fileAddrList[i], GetClientPort());
-            Connect(fileAddrList[i], addr);
+        if (pos == name.end()) {
+            plNetAddress addr(name, GetClientPort());
+            Connect(name, addr);
         }
     }
 }
