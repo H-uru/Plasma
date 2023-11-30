@@ -79,7 +79,6 @@ enum EAsyncNotifySocket {
     kNotifySocketConnectSuccess,
     kNotifySocketDisconnect,
     kNotifySocketRead,
-    kNotifySocketWrite
 };
 
 struct AsyncNotifySocket {};
