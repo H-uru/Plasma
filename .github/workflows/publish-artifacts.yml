@@ -24,18 +24,21 @@ jobs:
     needs: [check-publishing-enabled]
     if: needs.check-publishing-enabled.outputs.SHOULD_PUBLISH == 'true'
 
+    permissions:
+      contents: write
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - run: |
           mkdir artifacts
           echo "updated_on=$(/bin/date -u '+%Y-%m-%d %H:%M')" >> $GITHUB_ENV
 
       - name: Download Build Artifacts
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
+            const fs = require('node:fs');
             const allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
                owner: context.repo.owner,
                repo: context.repo.repo,
@@ -52,18 +55,25 @@ jobs:
               fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/artifacts/${art.name}.zip`, Buffer.from(download.data));
             }));
 
-      - name: Delete Previous Release
-        uses: dev-drprasad/delete-tag-and-release@v1.0.1
-        with:
-          tag_name: last-successful
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get release body text
+        id: read_release
+        shell: bash
+        run: |
+          r=$(cat .github/PRERELEASE_NOTES.md)
+          r="${r//'%'/'%25'}"   # Multiline escape sequences for %
+          r="${r//$'\n'/'%0A'}" # Multiline escape sequences for '\n'
+          r="${r//$'\r'/'%0D'}" # Multiline escape sequences for '\r'
+          echo "RELEASE_BODY=$r" >> $GITHUB_OUTPUT
 
       - name: Update Release
         id: release
-        uses: softprops/action-gh-release@v0.1.15
+        uses: svenstaro/upload-release-action@v2
         with:
           prerelease: true
-          tag_name: last-successful
-          name: "Last successful build (unstable)"
-          files: 'artifacts/*.zip'
-          body_path: '.github/PRERELEASE_NOTES.md'
+          overwrite: true
+          tag: last-successful
+          release_name: "Last successful build (unstable)"
+          file_glob: true
+          file: artifacts/*.zip
+          body: |
+            ${{ steps.read_release.outputs.RELEASE_BODY }}
