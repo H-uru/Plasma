@@ -295,7 +295,7 @@ public:
 // In newer versions of the sdk Progress returns an enum value of KeyReduceResult
 #if MAX_VERSION_MAJOR <= 25
 #   define BIPDRIVEN_CONTROL_CLASS_ID BIPSLAVE_CONTROL_CLASS_ID
-#   define KeyReduceResult int
+    using KeyReduceResult = int;
 #endif
 
 // Special 3ds Max message box support added in 2021 for HiDPI
