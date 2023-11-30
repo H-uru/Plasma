@@ -325,7 +325,7 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
         op->fConnectBuffer.assign(sendBuffer, sendBuffer + sendBytes);
         op->fConnectionType = sendBuffer[0];
     } else {
-        op->fConnectionType = kConnTypeNil;
+        op->fConnectionType = 0;
     }
 
     if (cancelId) {

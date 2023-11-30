@@ -136,46 +136,6 @@ using FAsyncNotifySocketProc = std::function<bool(AsyncSocket, EAsyncNotifySocke
 
 /****************************************************************************
 *
-*   Connection type functions
-*
-***/
-
-// These codes may not be changed unless ALL servers and clients are
-// simultaneously replaced; so basically forget it =)
-enum EConnType {
-    kConnTypeNil                    = 0,
-    
-    // For test applications
-    kConnTypeDebug                  = 1,
-
-    // Binary connections
-    kConnTypeCliToAuth              = 10,
-    kConnTypeCliToGame              = 11,
-    kConnTypeSrvToAgent             = 12,
-    kConnTypeSrvToMcp               = 13,
-    kConnTypeSrvToVault             = 14,
-    kConnTypeSrvToDb                = 15,
-    kConnTypeCliToFile              = 16,
-    kConnTypeSrvToState             = 17,
-    kConnTypeSrvToLog               = 18,
-    kConnTypeSrvToScore             = 19,
-    kConnTypeCliToCsr               = 20, // DEAD
-    kConnTypeSimpleNet              = 21, // DEAD
-    kConnTypeCliToGateKeeper        = 22,
-    
-    // Text connections
-    kConnTypeAdminInterface         = 97,   // 'a'
-
-    kNumConnTypes
-};
-static_assert(kNumConnTypes <= 0xFF, "EConnType overflows uint8");
-
-#define IS_TEXT_CONNTYPE(c)     \
-    (((int)(c)) == kConnTypeAdminInterface)
-
-
-/****************************************************************************
-*
 *   Socket functions
 *
 ***/
