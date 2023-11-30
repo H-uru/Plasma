@@ -4719,20 +4719,16 @@ void NetCliAuthStartConnect (
         const char* pos;
         for (pos = name.begin(); pos != name.end(); ++pos) {
             if (!(isdigit(*pos) || *pos == '.' || *pos == ':')) {
-                AsyncAddressLookupName(
-                    [name](auto addrs) {
-                        if (addrs.empty()) {
-                            ReportNetError(kNetProtocolCli2Auth, kNetErrNameLookupFailed);
-                            return;
-                        }
+                AsyncAddressLookupName(name, GetClientPort(), [name](auto addrs) {
+                    if (addrs.empty()) {
+                        ReportNetError(kNetProtocolCli2Auth, kNetErrNameLookupFailed);
+                        return;
+                    }
 
-                        for (const plNetAddress& addr : addrs) {
-                            Connect(name, addr);
-                        }
-                    },
-                    name,
-                    GetClientPort()
-                );
+                    for (const plNetAddress& addr : addrs) {
+                        Connect(name, addr);
+                    }
+                });
                 break;
             }
         }

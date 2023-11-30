@@ -165,7 +165,7 @@ void AsyncSocketEnableNagling (
 typedef std::function<void(const std::vector<plNetAddress>& /* addrs */)> FAsyncLookupProc;
 
 void AsyncAddressLookupName (
-    FAsyncLookupProc    lookupProc,
-    const ST::string &  name,
-    unsigned            port
+    const ST::string& name,
+    unsigned port,
+    FAsyncLookupProc lookupProc
 );
