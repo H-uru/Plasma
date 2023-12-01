@@ -102,12 +102,12 @@ struct ConnectOperation
     tcp::socket             fSock;
     plNetAddress            fRemoteAddr;
     AsyncCancelId           fCancelId;
-    FAsyncNotifySocketProc  fNotifyProc;
+    AsyncNotifySocketCallbacks* fCallbacks;
     std::vector<uint8_t>    fConnectBuffer;
     unsigned int            fConnectionType;
 
     ConnectOperation(asio::io_context& context)
-        : fSock(context), fCancelId(), fConnectionType()
+        : fSock(context), fCancelId(), fCallbacks(), fConnectionType()
     { }
     ConnectOperation(const ConnectOperation&) = delete;
 };
@@ -130,7 +130,7 @@ struct AsyncSocketStruct
 {
     std::recursive_mutex        fCritsect;
     tcp::socket                 fSock;
-    FAsyncNotifySocketProc      fNotifyProc;
+    AsyncNotifySocketCallbacks* fCallbacks;
     unsigned int                fConnectionType;
     uint8_t                     fBuffer[kAsyncSocketBufferSize];
     size_t                      fBytesLeft;
@@ -139,7 +139,7 @@ struct AsyncSocketStruct
     unsigned                    closeTimeMs;
 
     AsyncSocketStruct(ConnectOperation& op)
-        : fSock(std::move(op.fSock)), fNotifyProc(op.fNotifyProc),
+        : fSock(std::move(op.fSock)), fCallbacks(op.fCallbacks),
           fConnectionType(op.fConnectionType),
           fBuffer(), fBytesLeft(), initTimeMs(), closeTimeMs()
     { }
@@ -190,14 +190,14 @@ static void SocketStartAsyncRead(AsyncSocket sock)
             bool isEOFError     = (err.category() == asio::error::get_misc_category() && err.value() == asio::error::eof);
             bool isAbortedError = (err.category() == asio::error::get_system_category() && err.value() == asio::error::operation_aborted);
             if (isEOFError || isAbortedError) {
-                if (sock->fNotifyProc) {
+                if (sock->fCallbacks) {
                     // We have to be extremely careful from this point because
                     // sockets can be deleted during the notification callback.
                     // After this call, the application becomes responsible for
                     // calling AsyncSocketDelete at some later point in time.
-                    FAsyncNotifySocketProc notifyProc = sock->fNotifyProc;
-                    sock->fNotifyProc = nullptr;
-                    notifyProc((AsyncSocket)sock, kNotifySocketDisconnect, nullptr);
+                    auto callbacks = sock->fCallbacks;
+                    sock->fCallbacks = nullptr;
+                    callbacks->AsyncNotifySocketDisconnect(sock);
                 }
             } else {
                 LogMsg(kLogError, "Failed to read from socket: {}", err.message());
@@ -210,28 +210,29 @@ static void SocketStartAsyncRead(AsyncSocket sock)
 
         sock->fBytesLeft += bytes;
 
-        AsyncNotifySocketRead notifyRead;
-        notifyRead.buffer = sock->fBuffer;
-        notifyRead.bytes = sock->fBytesLeft;
-
-        if (!sock->fNotifyProc || !sock->fNotifyProc(sock, kNotifySocketRead, &notifyRead)) {
+        size_t bytesNotified = sock->fBytesLeft;
+        std::optional<size_t> res;
+        if (sock->fCallbacks) {
+            res = sock->fCallbacks->AsyncNotifySocketRead(sock, sock->fBuffer, bytesNotified);
+        }
+        if (!res) {
             // No callback, or the callback told us to stop reading
             return;
         }
 
         // if only some of the bytes were used, then shift
         // remaining bytes down.  Otherwise, clear the buffer.
-        sock->fBytesLeft -= notifyRead.bytesProcessed;
+        size_t bytesProcessed = *res;
+        sock->fBytesLeft -= bytesProcessed;
         if (sock->fBytesLeft != 0) {
-            if ((sock->fBytesLeft > sizeof(sock->fBuffer)) || ((notifyRead.bytesProcessed + sock->fBytesLeft) > sizeof(sock->fBuffer))) {
+            if ((sock->fBytesLeft > sizeof(sock->fBuffer)) || ((bytesProcessed + sock->fBytesLeft) > sizeof(sock->fBuffer))) {
                 LogMsg(kLogError, "SocketDispatchRead error: {} {} {}",
-                       sock->fBytesLeft, notifyRead.bytes, notifyRead.bytesProcessed);
+                       sock->fBytesLeft, bytesNotified, bytesProcessed);
                 return;
             }
 
-            if (notifyRead.bytesProcessed) {
-                memmove(sock->fBuffer, sock->fBuffer + notifyRead.bytesProcessed,
-                        sock->fBytesLeft);
+            if (bytesProcessed != 0) {
+                memmove(sock->fBuffer, sock->fBuffer + bytesProcessed, sock->fBytesLeft);
             }
         }
 
@@ -288,9 +289,10 @@ static bool SocketInitConnect(ConnectOperation& op)
     }
 
     // perform callback notification
-    AsyncNotifySocketConnect notify;
-    SocketGetAddresses(sock.get(), &notify.localAddr, &notify.remoteAddr);
-    if (!sock->fNotifyProc(sock.get(), kNotifySocketConnectSuccess, &notify)) {
+    plNetAddress localAddr;
+    plNetAddress remoteAddr;
+    SocketGetAddresses(sock.get(), &localAddr, &remoteAddr);
+    if (!sock->fCallbacks->AsyncNotifySocketConnectSuccess(sock.get(), localAddr, remoteAddr)) {
         return false;
     }
 
@@ -300,10 +302,10 @@ static bool SocketInitConnect(ConnectOperation& op)
 }
 
 void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
-                        FAsyncNotifySocketProc notifyProc,
+                        AsyncNotifySocketCallbacks* callbacks,
                         const void* sendData, unsigned sendBytes)
 {
-    ASSERT(notifyProc);
+    ASSERT(callbacks);
     ASSERT(s_ioPool);
 
     PerfAddCounter(kAsyncPerfSocketConnAttemptsOutCurr, 1);
@@ -314,7 +316,7 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
     hsLockGuard(s_connectCrit);
     auto op = s_connectList.emplace(s_connectList.end(), s_ioPool->fContext);
     op->fRemoteAddr = netAddr;
-    op->fNotifyProc = std::move(notifyProc);
+    op->fCallbacks = callbacks;
     if (sendBytes) {
         auto sendBuffer = reinterpret_cast<const uint8_t*>(sendData);
         op->fConnectBuffer.assign(sendBuffer, sendBuffer + sendBytes);
@@ -345,10 +347,7 @@ void AsyncSocketConnect(AsyncCancelId* cancelId, const plNetAddress& netAddr,
         }
 
         if (!success) {
-            AsyncNotifySocketConnect failed;
-            failed.remoteAddr = op->fRemoteAddr;
-            failed.localAddr.Clear();
-            op->fNotifyProc(nullptr, kNotifySocketConnectFailed, &failed);
+            op->fCallbacks->AsyncNotifySocketConnectFailed(op->fRemoteAddr);
         }
 
         {

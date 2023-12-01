@@ -54,7 +54,7 @@ namespace Ngl { namespace Game {
 *
 ***/
 
-struct CliGmConn : hsRefCnt {
+struct CliGmConn : hsRefCnt, AsyncNotifySocketCallbacks {
     std::recursive_mutex  critsect;
     AsyncSocket     socket;
     AsyncCancelId   cancelId;
@@ -72,11 +72,10 @@ struct CliGmConn : hsRefCnt {
     ~CliGmConn ();
 
     // Callbacks
-    void NotifyConnSocketConnect();
-    void NotifyConnSocketConnectFailed();
-    void NotifyConnSocketDisconnect();
-    bool NotifyConnSocketRead(AsyncNotifySocketRead* read);
-    bool SocketNotifyCallback(AsyncSocket sock, EAsyncNotifySocket code, AsyncNotifySocket* notify);
+    void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) override;
+    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr) override;
+    void AsyncNotifySocketDisconnect(AsyncSocket sock) override;
+    std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) override;
 
     // ping
     void AutoPing ();
@@ -227,11 +226,24 @@ static bool ConnEncrypt (ENetError error, void * param) {
 }
 
 //============================================================================
-void CliGmConn::NotifyConnSocketConnect()
+bool CliGmConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr)
 {
     TransferRef("Connecting", "Connected");
+    bool wasAbandoned;
+    {
+        hsLockGuard(s_critsect);
+        socket = sock;
+        cancelId = nullptr;
+        wasAbandoned = abandoned;
+    }
+    if (wasAbandoned) {
+        AsyncSocketDisconnect(sock, true);
+        return true;
+    }
+
+    TransferRef("Connecting", "Connected");
     cli = NetCliConnectAccept(
-        socket,
+        sock,
         kNetProtocolCli2Game,
         true,
         ConnEncrypt,
@@ -239,10 +251,11 @@ void CliGmConn::NotifyConnSocketConnect()
         nullptr,
         this
     );
+    return true;
 }
 
 //============================================================================
-void CliGmConn::NotifyConnSocketConnectFailed()
+void CliGmConn::AsyncNotifySocketConnectFailed(plNetAddress remoteAddr)
 {
     bool notify;
     {
@@ -272,7 +285,7 @@ void CliGmConn::NotifyConnSocketConnectFailed()
 }
 
 //============================================================================
-void CliGmConn::NotifyConnSocketDisconnect()
+void CliGmConn::AsyncNotifySocketDisconnect(AsyncSocket sock)
 {
     StopAutoPing();
 
@@ -317,53 +330,14 @@ void CliGmConn::NotifyConnSocketDisconnect()
 }
 
 //============================================================================
-bool CliGmConn::NotifyConnSocketRead(AsyncNotifySocketRead* read)
+std::optional<size_t> CliGmConn::AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes)
 {
     // TODO: Only dispatch messages from the active game server
     lastHeardTimeMs = GetNonZeroTimeMs();
-    bool result = NetCliDispatch(cli, read->buffer, read->bytes, nullptr);
-    read->bytesProcessed += read->bytes;
-    return result;
-}
-
-//============================================================================
-bool CliGmConn::SocketNotifyCallback(
-    AsyncSocket sock,
-    EAsyncNotifySocket code,
-    AsyncNotifySocket* notify
-) {
-    bool result = true;
-    switch (code) {
-        case kNotifySocketConnectSuccess:
-            TransferRef("Connecting", "Connected");
-            bool wasAbandoned;
-            {
-                hsLockGuard(s_critsect);
-                socket = sock;
-                cancelId = nullptr;
-                wasAbandoned = abandoned;
-            }
-            if (wasAbandoned) {
-                AsyncSocketDisconnect(sock, true);
-            } else {
-                NotifyConnSocketConnect();
-            }
-        break;
-
-        case kNotifySocketConnectFailed:
-            NotifyConnSocketConnectFailed();
-        break;
-
-        case kNotifySocketDisconnect:
-            NotifyConnSocketDisconnect();
-        break;
-
-        case kNotifySocketRead:
-            result = NotifyConnSocketRead((AsyncNotifySocketRead*)notify);
-        break;
+    if (!NetCliDispatch(cli, buffer, bytes, nullptr)) {
+        return {};
     }
-    
-    return result;
+    return bytes;
 }
 
 //============================================================================
@@ -399,9 +373,7 @@ static void Connect (
     AsyncSocketConnect(
         &conn->cancelId,
         addr,
-        [conn](auto sock, auto code, auto notify) {
-            return conn->SocketNotifyCallback(sock, code, notify);
-        },
+        conn,
         &connect,
         sizeof(connect)
     );

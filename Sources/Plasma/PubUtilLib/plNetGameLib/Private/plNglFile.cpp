@@ -70,7 +70,7 @@ namespace Ngl { namespace File {
 *
 ***/
 
-struct CliFileConn : hsRefCnt {
+struct CliFileConn : hsRefCnt, AsyncNotifySocketCallbacks {
     hsReaderWriterLock  socketLock; // to protect the socket pointer so we don't nuke it while using it
     AsyncSocket         socket;
     ST::string          name;
@@ -100,11 +100,10 @@ struct CliFileConn : hsRefCnt {
     ~CliFileConn ();
 
     // Callbacks
-    void NotifyConnSocketConnect();
-    void NotifyConnSocketConnectFailed();
-    void NotifyConnSocketDisconnect();
-    bool NotifyConnSocketRead(AsyncNotifySocketRead * read);
-    bool SocketNotifyCallback(AsyncSocket sock, EAsyncNotifySocket code, AsyncNotifySocket* notify);
+    void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) override;
+    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr) override;
+    void AsyncNotifySocketDisconnect(AsyncSocket sock) override;
+    std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) override;
 
     // This function should be called during object construction
     // to initiate connection attempts to the remote host whenever
@@ -309,8 +308,15 @@ static void AbandonConn(CliFileConn* conn) {
 }
 
 //============================================================================
-void CliFileConn::NotifyConnSocketConnect()
+bool CliFileConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr)
 {
+    {
+        hsLockGuard(s_critsect);
+        hsLockForWriting lock(socketLock);
+        socket = sock;
+        cancelId = nullptr;
+    }
+
     TransferRef("Connecting", "Connected");
     connectStartMs = hsTimer::GetMilliSeconds<uint32_t>();
     numFailedConnects = 0;
@@ -322,12 +328,13 @@ void CliFileConn::NotifyConnSocketConnect()
         s_active = this;
     } else {
         hsLockForReading lock(socketLock);
-        AsyncSocketDisconnect(socket, true);
+        AsyncSocketDisconnect(sock, true);
     }
+    return true;
 }
 
 //============================================================================
-void CliFileConn::NotifyConnSocketConnectFailed()
+void CliFileConn::AsyncNotifySocketConnectFailed(plNetAddress remoteAddr)
 {
     {
         hsLockGuard(s_critsect);
@@ -359,7 +366,7 @@ void CliFileConn::NotifyConnSocketConnectFailed()
 }
 
 //============================================================================
-void CliFileConn::NotifyConnSocketDisconnect()
+void CliFileConn::AsyncNotifySocketDisconnect(AsyncSocket sock)
 {
     StopAutoPing();
     {
@@ -431,20 +438,19 @@ void CliFileConn::NotifyConnSocketDisconnect()
 }
 
 //============================================================================
-bool CliFileConn::NotifyConnSocketRead(AsyncNotifySocketRead* read)
+std::optional<size_t> CliFileConn::AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes)
 {
     lastHeardTimeMs = GetNonZeroTimeMs();
-    recvBuffer.insert(recvBuffer.end(), read->buffer, read->buffer + read->bytes);
-    read->bytesProcessed += read->bytes;
+    recvBuffer.insert(recvBuffer.end(), buffer, buffer + bytes);
 
     for (;;) {
         if (recvBuffer.size() < sizeof(uint32_t)) {
-            return true;
+            return bytes;
         }
 
         uint32_t msgSize = hsToLE32(*(uint32_t*)recvBuffer.data());
         if (recvBuffer.size() < msgSize) {
-            return true;
+            return bytes;
         }
 
         Cli2File_MsgHeader* msg = (Cli2File_MsgHeader*)recvBuffer.data();
@@ -452,40 +458,6 @@ bool CliFileConn::NotifyConnSocketRead(AsyncNotifySocketRead* read)
 
         recvBuffer.erase(recvBuffer.begin(), recvBuffer.begin() + msgSize);
     }
-}
-
-//============================================================================
-bool CliFileConn::SocketNotifyCallback(
-    AsyncSocket sock,
-    EAsyncNotifySocket code,
-    AsyncNotifySocket* notify
-) {
-    bool result = true;
-    switch (code) {
-        case kNotifySocketConnectSuccess:
-            {
-                hsLockGuard(s_critsect);
-                hsLockForWriting lock(socketLock);
-                socket = sock;
-                cancelId = nullptr;
-            }
-            NotifyConnSocketConnect();
-        break;
-
-        case kNotifySocketConnectFailed:
-            NotifyConnSocketConnectFailed();
-        break;
-
-        case kNotifySocketDisconnect:
-            NotifyConnSocketDisconnect();
-        break;
-
-        case kNotifySocketRead:
-            result = NotifyConnSocketRead((AsyncNotifySocketRead*)notify);
-        break;
-    }
-
-    return result;
 }
 
 //============================================================================
@@ -519,9 +491,7 @@ static void Connect (CliFileConn * conn) {
     AsyncSocketConnect(
         &conn->cancelId,
         conn->addr,
-        [conn](auto sock, auto code, auto notify) {
-            return conn->SocketNotifyCallback(sock, code, notify);
-        },
+        conn,
         &connect,
         sizeof(connect)
     );

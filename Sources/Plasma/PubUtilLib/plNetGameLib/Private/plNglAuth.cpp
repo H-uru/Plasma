@@ -60,7 +60,7 @@ namespace Ngl { namespace Auth {
 *
 ***/
 
-struct CliAuConn : hsRefCnt {
+struct CliAuConn : hsRefCnt, AsyncNotifySocketCallbacks {
     CliAuConn ();
     ~CliAuConn ();
 
@@ -74,11 +74,10 @@ struct CliAuConn : hsRefCnt {
     unsigned            lastHeardTimeMs;
 
     // Callbacks
-    void NotifyConnSocketConnect();
-    void NotifyConnSocketConnectFailed();
-    void NotifyConnSocketDisconnect();
-    bool NotifyConnSocketRead(AsyncNotifySocketRead* read);
-    bool SocketNotifyCallback(AsyncSocket sock, EAsyncNotifySocket code, AsyncNotifySocket* notify);
+    void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) override;
+    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr) override;
+    void AsyncNotifySocketDisconnect(AsyncSocket sock) override;
+    std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) override;
 
     // This function should be called during object construction
     // to initiate connection attempts to the remote host whenever
@@ -1380,11 +1379,23 @@ static bool ConnEncrypt (ENetError error, void * param) {
 }
 
 //============================================================================
-void CliAuConn::NotifyConnSocketConnect()
+bool CliAuConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr)
 {
+    bool wasAbandoned;
+    {
+        hsLockGuard(s_critsect);
+        socket = sock;
+        cancelId = nullptr;
+        wasAbandoned = abandoned;
+    }
+    if (wasAbandoned) {
+        AsyncSocketDisconnect(sock, true);
+        return true;
+    }
+
     TransferRef("Connecting", "Connected");
     cli = NetCliConnectAccept(
-        socket,
+        sock,
         kNetProtocolCli2Auth,
         false,
         ConnEncrypt,
@@ -1392,6 +1403,7 @@ void CliAuConn::NotifyConnSocketConnect()
         nullptr,
         this
     );
+    return true;
 }
 
 //============================================================================
@@ -1426,7 +1438,7 @@ static void CheckedReconnect (CliAuConn * conn, ENetError error) {
 }
 
 //============================================================================
-void CliAuConn::NotifyConnSocketConnectFailed()
+void CliAuConn::AsyncNotifySocketConnectFailed(plNetAddress remoteAddr)
 {
     {
         hsLockGuard(s_critsect);
@@ -1446,7 +1458,7 @@ void CliAuConn::NotifyConnSocketConnectFailed()
 }
 
 //============================================================================
-void CliAuConn::NotifyConnSocketDisconnect()
+void CliAuConn::AsyncNotifySocketDisconnect(AsyncSocket sock)
 {
     StopAutoPing();
 
@@ -1468,52 +1480,14 @@ void CliAuConn::NotifyConnSocketDisconnect()
 }
 
 //============================================================================
-bool CliAuConn::NotifyConnSocketRead(AsyncNotifySocketRead* read)
+std::optional<size_t> CliAuConn::AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes)
 {
     // TODO: Only dispatch messages from the active auth server
     lastHeardTimeMs = GetNonZeroTimeMs();
-    bool result = NetCliDispatch(cli, read->buffer, read->bytes, this);
-    read->bytesProcessed += read->bytes;
-    return result;
-}
-
-//============================================================================
-bool CliAuConn::SocketNotifyCallback(
-    AsyncSocket sock,
-    EAsyncNotifySocket code,
-    AsyncNotifySocket* notify
-) {
-    bool result = true;
-    switch (code) {
-        case kNotifySocketConnectSuccess:
-            bool wasAbandoned;
-            {
-                hsLockGuard(s_critsect);
-                socket = sock;
-                cancelId = nullptr;
-                wasAbandoned = abandoned;
-            }
-            if (wasAbandoned) {
-                AsyncSocketDisconnect(sock, true);
-            } else {
-                NotifyConnSocketConnect();
-            }
-        break;
-
-        case kNotifySocketConnectFailed:
-            NotifyConnSocketConnectFailed();
-        break;
-
-        case kNotifySocketDisconnect:
-            NotifyConnSocketDisconnect();
-        break;
-
-        case kNotifySocketRead:
-            result = NotifyConnSocketRead((AsyncNotifySocketRead*)notify);
-        break;
+    if (!NetCliDispatch(cli, buffer, bytes, this)) {
+        return {};
     }
-    
-    return result;
+    return bytes;
 }
 
 //============================================================================
@@ -1548,9 +1522,7 @@ static void Connect (
     AsyncSocketConnect(
         &conn->cancelId,
         conn->addr,
-        [conn](auto sock, auto code, auto notify) {
-            return conn->SocketNotifyCallback(sock, code, notify);
-        },
+        conn,
         &connect,
         sizeof(connect)
     );

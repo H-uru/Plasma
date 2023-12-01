@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACIO_H
 
 #include <functional>
+#include <optional>
 
 #include "pnNetCommon/plNetAddress.h"
 #include "pnUUID/pnUUID.h"
@@ -74,13 +75,6 @@ constexpr unsigned kAsyncSocketBufferSize   = 1460;
 *
 ***/
 
-enum EAsyncNotifySocket {
-    kNotifySocketConnectFailed,
-    kNotifySocketConnectSuccess,
-    kNotifySocketDisconnect,
-    kNotifySocketRead,
-};
-
 struct AsyncNotifySocket {};
 
 struct AsyncNotifySocketConnect : AsyncNotifySocket {
@@ -103,12 +97,14 @@ struct AsyncNotifySocketWrite : AsyncNotifySocketRead {
     AsyncNotifySocketWrite() : AsyncNotifySocketRead(), bytesCommitted() { }
 };
 
-/*! \brief return false to disconnect
-    \param sock
-    \param code
-    \param notify
-*/
-using FAsyncNotifySocketProc = std::function<bool(AsyncSocket, EAsyncNotifySocket, AsyncNotifySocket*)>;
+class AsyncNotifySocketCallbacks
+{
+public:
+    virtual void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) = 0;
+    virtual bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr) = 0;
+    virtual void AsyncNotifySocketDisconnect(AsyncSocket sock) = 0;
+    virtual std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) = 0;
+};
 
 
 /****************************************************************************
@@ -120,7 +116,7 @@ using FAsyncNotifySocketProc = std::function<bool(AsyncSocket, EAsyncNotifySocke
 void AsyncSocketConnect (
     AsyncCancelId *         cancelId,
     const plNetAddress&     netAddr,
-    FAsyncNotifySocketProc  notifyProc,
+    AsyncNotifySocketCallbacks* callbacks,
     const void *            sendData = nullptr,
     unsigned                sendBytes = 0
 );
