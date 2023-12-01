@@ -228,7 +228,6 @@ static bool ConnEncrypt (ENetError error, void * param) {
 //============================================================================
 bool CliGmConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr)
 {
-    TransferRef("Connecting", "Connected");
     bool wasAbandoned;
     {
         hsLockGuard(s_critsect);
