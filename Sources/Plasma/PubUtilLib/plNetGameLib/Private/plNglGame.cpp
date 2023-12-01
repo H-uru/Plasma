@@ -56,7 +56,7 @@ namespace Ngl { namespace Game {
 
 struct CliGmConn : hsRefCnt {
     std::recursive_mutex  critsect;
-    AsyncSocket     sock;
+    AsyncSocket     socket;
     AsyncCancelId   cancelId;
     NetCli *        cli;
     plNetAddress    addr;
@@ -70,6 +70,13 @@ struct CliGmConn : hsRefCnt {
 
     CliGmConn ();
     ~CliGmConn ();
+
+    // Callbacks
+    void NotifyConnSocketConnect();
+    void NotifyConnSocketConnectFailed();
+    void NotifyConnSocketDisconnect();
+    bool NotifyConnSocketRead(AsyncNotifySocketRead* read);
+    bool SocketNotifyCallback(AsyncSocket sock, EAsyncNotifySocket code, AsyncNotifySocket* notify);
 
     // ping
     void AutoPing ();
@@ -198,11 +205,9 @@ static void AbandonConn(CliGmConn* conn) {
     if (conn->cancelId) {
         AsyncSocketConnectCancel(conn->cancelId);
         conn->cancelId  = nullptr;
-    }
-    else if (conn->sock) {
-        AsyncSocketDisconnect(conn->sock, true);
-    }
-    else {
+    } else if (conn->socket) {
+        AsyncSocketDisconnect(conn->socket, true);
+    } else {
         conn->UnRef("Lifetime");
     }
 }
@@ -222,71 +227,76 @@ static bool ConnEncrypt (ENetError error, void * param) {
 }
 
 //============================================================================
-static void NotifyConnSocketConnect (CliGmConn * conn) {
-
-    conn->TransferRef("Connecting", "Connected");
-    conn->cli = NetCliConnectAccept(
-        conn->sock,
+void CliGmConn::NotifyConnSocketConnect()
+{
+    TransferRef("Connecting", "Connected");
+    cli = NetCliConnectAccept(
+        socket,
         kNetProtocolCli2Game,
         true,
         ConnEncrypt,
         0,
         nullptr,
-        conn
+        this
     );
 }
 
 //============================================================================
-static void NotifyConnSocketConnectFailed (CliGmConn * conn) {
+void CliGmConn::NotifyConnSocketConnectFailed()
+{
     bool notify;
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = nullptr;
-        if (s_conn == conn) {
+        cancelId = nullptr;
+        if (s_conn == this) {
             s_conn = nullptr;
         }
-        
+
         notify
             =  s_running
-            && !conn->abandoned
-            && (!s_active || conn == s_active);
-            
-        if (conn == s_active)
+            && !abandoned
+            && (!s_active || s_active == this);
+
+        if (s_active == this) {
             s_active = nullptr;
+        }
     }
 
-    NetTransCancelByConnId(conn->seq, kNetErrTimeout);
-    conn->UnRef("Connecting");
-    conn->UnRef("Lifetime");
+    NetTransCancelByConnId(seq, kNetErrTimeout);
+    UnRef("Connecting");
+    UnRef("Lifetime");
 
-    if (notify)
+    if (notify) {
         ReportNetError(kNetProtocolCli2Game, kNetErrConnectFailed);
+    }
 }
 
 //============================================================================
-static void NotifyConnSocketDisconnect (CliGmConn * conn) {
-    conn->StopAutoPing();
+void CliGmConn::NotifyConnSocketDisconnect()
+{
+    StopAutoPing();
 
     bool notify;
     {
         hsLockGuard(s_critsect);
-        if (s_conn == conn) {
+        if (s_conn == this) {
             s_conn = nullptr;
         }
 
         notify
             =  s_running
-            && !conn->abandoned
-            && (!s_active || conn == s_active);
+            && !abandoned
+            && (!s_active || s_active == this);
 
-        if (conn == s_active)
+        if (s_active == this) {
             s_active = nullptr;
+        }
     }
 
     // Cancel all transactions in process on this connection.
-    NetTransCancelByConnId(conn->seq, kNetErrTimeout);
-    conn->UnRef("Connected");
-    conn->UnRef("Lifetime");
+    NetTransCancelByConnId(seq, kNetErrTimeout);
+    UnRef("Connected");
+    UnRef("Lifetime");
 
     // Send a fake GameMgr transaction telling all the GameClis to die.
     {
@@ -301,22 +311,23 @@ static void NotifyConnSocketDisconnect (CliGmConn * conn) {
         NetTransSend(trans);
     }
 
-    if (notify)
+    if (notify) {
         ReportNetError(kNetProtocolCli2Game, kNetErrDisconnected);
+    }
 }
 
 //============================================================================
-static bool NotifyConnSocketRead (CliGmConn * conn, AsyncNotifySocketRead * read) {
+bool CliGmConn::NotifyConnSocketRead(AsyncNotifySocketRead* read)
+{
     // TODO: Only dispatch messages from the active game server
-    conn->lastHeardTimeMs = GetNonZeroTimeMs();
-    bool result = NetCliDispatch(conn->cli, read->buffer, read->bytes, nullptr);
+    lastHeardTimeMs = GetNonZeroTimeMs();
+    bool result = NetCliDispatch(cli, read->buffer, read->bytes, nullptr);
     read->bytesProcessed += read->bytes;
     return result;
 }
 
 //============================================================================
-static bool SocketNotifyCallback (
-    CliGmConn* conn,
+bool CliGmConn::SocketNotifyCallback(
     AsyncSocket sock,
     EAsyncNotifySocket code,
     AsyncNotifySocket* notify
@@ -324,30 +335,31 @@ static bool SocketNotifyCallback (
     bool result = true;
     switch (code) {
         case kNotifySocketConnectSuccess:
-            conn->TransferRef("Connecting", "Connected");
-            bool abandoned;
+            TransferRef("Connecting", "Connected");
+            bool wasAbandoned;
             {
                 hsLockGuard(s_critsect);
-                conn->sock      = sock;
-                conn->cancelId  = nullptr;
-                abandoned       = conn->abandoned;
+                socket = sock;
+                cancelId = nullptr;
+                wasAbandoned = abandoned;
             }
-            if (abandoned)
+            if (wasAbandoned) {
                 AsyncSocketDisconnect(sock, true);
-            else
-                NotifyConnSocketConnect(conn);
+            } else {
+                NotifyConnSocketConnect();
+            }
         break;
 
         case kNotifySocketConnectFailed:
-            NotifyConnSocketConnectFailed(conn);
+            NotifyConnSocketConnectFailed();
         break;
 
         case kNotifySocketDisconnect:
-            NotifyConnSocketDisconnect(conn);
+            NotifyConnSocketDisconnect();
         break;
 
         case kNotifySocketRead:
-            result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
+            result = NotifyConnSocketRead((AsyncNotifySocketRead*)notify);
         break;
     }
     
@@ -388,7 +400,7 @@ static void Connect (
         &conn->cancelId,
         addr,
         [conn](auto sock, auto code, auto notify) {
-            return SocketNotifyCallback(conn, sock, code, notify);
+            return conn->SocketNotifyCallback(sock, code, notify);
         },
         &connect,
         sizeof(connect)
@@ -404,7 +416,7 @@ static void Connect (
 
 //============================================================================
 CliGmConn::CliGmConn ()
-    : hsRefCnt(0), sock(), cancelId(), cli()
+    : hsRefCnt(0), socket(), cancelId(), cli()
     , seq(), abandoned()
     , pingTimer(), pingSendTimeMs(), lastHeardTimeMs()
 {
@@ -423,7 +435,7 @@ void CliGmConn::AutoPing () {
     ASSERT(!pingTimer);
     Ref("PingTimer");
     hsLockGuard(critsect);
-    pingTimer = AsyncTimerCreate(sock ? 0 : kAsyncTimeInfinite, [this]() {
+    pingTimer = AsyncTimerCreate(socket ? 0 : kAsyncTimeInfinite, [this]() {
         TimerPing();
         return kPingIntervalMs;
     });

@@ -68,6 +68,13 @@ struct CliGkConn : hsRefCnt {
     unsigned            pingSendTimeMs;
     unsigned            lastHeardTimeMs;
 
+    // Callbacks
+    void NotifyConnSocketConnect();
+    void NotifyConnSocketConnectFailed();
+    void NotifyConnSocketDisconnect();
+    bool NotifyConnSocketRead(AsyncNotifySocketRead* read);
+    bool SocketNotifyCallback(AsyncSocket sock, EAsyncNotifySocket code, AsyncNotifySocket* notify);
+
     // This function should be called during object construction
     // to initiate connection attempts to the remote host whenever
     // the socket is disconnected.
@@ -85,7 +92,7 @@ struct CliGkConn : hsRefCnt {
     void Send (const uintptr_t fields[], unsigned count);
 
     std::recursive_mutex  critsect;
-    AsyncSocket     sock;
+    AsyncSocket     socket;
     NetCli *        cli;
     ST::string      name;
     plNetAddress    addr;
@@ -228,11 +235,9 @@ static void AbandonConn(CliGkConn* conn) {
     if (conn->cancelId) {
         AsyncSocketConnectCancel(conn->cancelId);
         conn->cancelId  = nullptr;
-    }
-    else if (conn->sock) {
-        AsyncSocketDisconnect(conn->sock, true);
-    }
-    else {
+    } else if (conn->socket) {
+        AsyncSocketDisconnect(conn->socket, true);
+    } else {
         conn->UnRef("Lifetime");
     }
 }
@@ -259,17 +264,17 @@ static bool ConnEncrypt (ENetError error, void * param) {
 }
 
 //============================================================================
-static void NotifyConnSocketConnect (CliGkConn * conn) {
-
-    conn->TransferRef("Connecting", "Connected");
-    conn->cli = NetCliConnectAccept(
-        conn->sock,
+void CliGkConn::NotifyConnSocketConnect()
+{
+    TransferRef("Connecting", "Connected");
+    cli = NetCliConnectAccept(
+        socket,
         kNetProtocolCli2GateKeeper,
         false,
         ConnEncrypt,
         0,
         nullptr,
-        conn
+        this
     );
 }
 
@@ -299,65 +304,67 @@ static void CheckedReconnect (CliGkConn * conn, ENetError error) {
         if (conn->cli)
             NetCliDelete(conn->cli, true);
         conn->cli = nullptr;
-        conn->sock = nullptr;
+        conn->socket = nullptr;
         
         conn->StartAutoReconnect();
     }
 }
 
 //============================================================================
-static void NotifyConnSocketConnectFailed (CliGkConn * conn) {
-
+void CliGkConn::NotifyConnSocketConnectFailed()
+{
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = nullptr;
-        if (s_conn == conn) {
+        cancelId = nullptr;
+        if (s_conn == this) {
             s_conn = nullptr;
         }
 
-        if (conn == s_active)
+        if (s_active == this) {
             s_active = nullptr;
+        }
     }
-    
-    CheckedReconnect(conn, kNetErrConnectFailed);
-    
-    conn->UnRef("Connecting");
+
+    CheckedReconnect(this, kNetErrConnectFailed);
+
+    UnRef("Connecting");
 }
 
 //============================================================================
-static void NotifyConnSocketDisconnect (CliGkConn * conn) {
-
-    conn->StopAutoPing();
+void CliGkConn::NotifyConnSocketDisconnect()
+{
+    StopAutoPing();
 
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = nullptr;
-        if (s_conn == conn) {
+        cancelId = nullptr;
+        if (s_conn == this) {
             s_conn = nullptr;
         }
-            
-        if (conn == s_active)
+
+        if (s_active == this) {
             s_active = nullptr;
+        }
     }
 
     // Cancel all transactions in process on this connection.
-    NetTransCancelByConnId(conn->seq, kNetErrTimeout);
-    conn->UnRef("Connected");
-    conn->UnRef("Lifetime");
+    NetTransCancelByConnId(seq, kNetErrTimeout);
+    UnRef("Connected");
+    UnRef("Lifetime");
 }
 
 //============================================================================
-static bool NotifyConnSocketRead (CliGkConn * conn, AsyncNotifySocketRead * read) {
+bool CliGkConn::NotifyConnSocketRead(AsyncNotifySocketRead* read)
+{
     // TODO: Only dispatch messages from the active auth server
-    conn->lastHeardTimeMs = GetNonZeroTimeMs();
-    bool result = NetCliDispatch(conn->cli, read->buffer, read->bytes, conn);
+    lastHeardTimeMs = GetNonZeroTimeMs();
+    bool result = NetCliDispatch(cli, read->buffer, read->bytes, this);
     read->bytesProcessed += read->bytes;
     return result;
 }
 
 //============================================================================
-static bool SocketNotifyCallback (
-    CliGkConn* conn,
+bool CliGkConn::SocketNotifyCallback(
     AsyncSocket sock,
     EAsyncNotifySocket code,
     AsyncNotifySocket* notify
@@ -365,29 +372,30 @@ static bool SocketNotifyCallback (
     bool result = true;
     switch (code) {
         case kNotifySocketConnectSuccess:
-            bool abandoned;
+            bool wasAbandoned;
             {
                 hsLockGuard(s_critsect);
-                conn->sock      = sock;
-                conn->cancelId  = nullptr;
-                abandoned       = conn->abandoned;
+                socket = sock;
+                cancelId = nullptr;
+                wasAbandoned = abandoned;
             }
-            if (abandoned)
+            if (wasAbandoned) {
                 AsyncSocketDisconnect(sock, true);
-            else
-                NotifyConnSocketConnect(conn);
+            } else {
+                NotifyConnSocketConnect();
+            }
         break;
 
         case kNotifySocketConnectFailed:
-            NotifyConnSocketConnectFailed(conn);
+            NotifyConnSocketConnectFailed();
         break;
 
         case kNotifySocketDisconnect:
-            NotifyConnSocketDisconnect(conn);
+            NotifyConnSocketDisconnect();
         break;
 
         case kNotifySocketRead:
-            result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
+            result = NotifyConnSocketRead((AsyncNotifySocketRead*)notify);
         break;
     }
     
@@ -427,7 +435,7 @@ static void Connect (
         &conn->cancelId,
         conn->addr,
         [conn](auto sock, auto code, auto notify) {
-            return SocketNotifyCallback(conn, sock, code, notify);
+            return conn->SocketNotifyCallback(sock, code, notify);
         },
         &connect,
         sizeof(connect)
@@ -462,7 +470,7 @@ static void Connect (
 CliGkConn::CliGkConn ()
     : hsRefCnt(0), reconnectTimer(), reconnectStartMs()
     , pingTimer(), pingSendTimeMs(), lastHeardTimeMs()
-    , sock(), cli(), seq(), serverChallenge()
+    , socket(), cli(), seq(), serverChallenge()
     , cancelId(), abandoned()
 {
     ++s_perf[kPerfConnCount];
@@ -477,7 +485,7 @@ CliGkConn::~CliGkConn () {
 
 //===========================================================================
 void CliGkConn::TimerReconnect () {
-    ASSERT(!sock);
+    ASSERT(!socket);
     ASSERT(!cancelId);
     
     if (!s_running) {
@@ -557,7 +565,7 @@ void CliGkConn::AutoPing () {
     ASSERT(!pingTimer);
     Ref("PingTimer");
     hsLockGuard(critsect);
-    pingTimer = AsyncTimerCreate(sock ? 0 : kAsyncTimeInfinite, [this]() {
+    pingTimer = AsyncTimerCreate(socket ? 0 : kAsyncTimeInfinite, [this]() {
         TimerPing();
         return kPingIntervalMs;
     });

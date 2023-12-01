@@ -71,8 +71,8 @@ namespace Ngl { namespace File {
 ***/
 
 struct CliFileConn : hsRefCnt {
-    hsReaderWriterLock  sockLock; // to protect the socket pointer so we don't nuke it while using it
-    AsyncSocket         sock;
+    hsReaderWriterLock  socketLock; // to protect the socket pointer so we don't nuke it while using it
+    AsyncSocket         socket;
     ST::string          name;
     plNetAddress        addr;
     unsigned            seq;
@@ -98,6 +98,13 @@ struct CliFileConn : hsRefCnt {
 
     CliFileConn ();
     ~CliFileConn ();
+
+    // Callbacks
+    void NotifyConnSocketConnect();
+    void NotifyConnSocketConnectFailed();
+    void NotifyConnSocketDisconnect();
+    bool NotifyConnSocketRead(AsyncNotifySocketRead * read);
+    bool SocketNotifyCallback(AsyncSocket sock, EAsyncNotifySocket code, AsyncNotifySocket* notify);
 
     // This function should be called during object construction
     // to initiate connection attempts to the remote host whenever
@@ -290,9 +297,9 @@ static void AbandonConn(CliFileConn* conn) {
         needsDecref = false;
     }
     else {
-        hsLockForReading lock(conn->sockLock);
-        if (conn->sock) {
-            AsyncSocketDisconnect(conn->sock, true);
+        hsLockForReading lock(conn->socketLock);
+        if (conn->socket) {
+            AsyncSocketDisconnect(conn->socket, true);
             needsDecref = false;
         }
     }
@@ -302,73 +309,73 @@ static void AbandonConn(CliFileConn* conn) {
 }
 
 //============================================================================
-static void NotifyConnSocketConnect (CliFileConn * conn) {
-
-    conn->TransferRef("Connecting", "Connected");
-    conn->connectStartMs = hsTimer::GetMilliSeconds<uint32_t>();
-    conn->numFailedConnects = 0;
+void CliFileConn::NotifyConnSocketConnect()
+{
+    TransferRef("Connecting", "Connected");
+    connectStartMs = hsTimer::GetMilliSeconds<uint32_t>();
+    numFailedConnects = 0;
 
     // Make this the active server
     hsLockGuard(s_critsect);
-    if (!conn->abandoned) {
-        conn->AutoPing();
-        s_active = conn;
-    }
-    else
-    {
-        hsLockForReading lock(conn->sockLock);
-        AsyncSocketDisconnect(conn->sock, true);
+    if (!abandoned) {
+        AutoPing();
+        s_active = this;
+    } else {
+        hsLockForReading lock(socketLock);
+        AsyncSocketDisconnect(socket, true);
     }
 }
 
 //============================================================================
-static void NotifyConnSocketConnectFailed (CliFileConn * conn) {
+void CliFileConn::NotifyConnSocketConnectFailed()
+{
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = nullptr;
-        if (s_conn == conn) {
+        cancelId = nullptr;
+        if (s_conn == this) {
             s_conn = nullptr;
         }
 
-        if (conn == s_active)
+        if (s_active == this) {
             s_active = nullptr;
+        }
     }
-    
+
     // Cancel all transactions in progress on this connection.
-    NetTransCancelByConnId(conn->seq, kNetErrTimeout);
-    
+    NetTransCancelByConnId(seq, kNetErrTimeout);
+
     // Client apps fail if unable to connect for a time
-    if (++conn->numFailedConnects >= kMaxFailedConnects) {
+    if (++numFailedConnects >= kMaxFailedConnects) {
         ReportNetError(kNetProtocolCli2File, kNetErrConnectFailed);
-    }
-    else
-    {
+    } else {
         // start reconnect, if we are doing that
-        if (s_running && conn->AutoReconnectEnabled())
-            conn->StartAutoReconnect();
-        else
-            conn->UnRef("Lifetime"); // if we are not reconnecting, this socket is done, so remove the lifetime ref
+        if (s_running && AutoReconnectEnabled()) {
+            StartAutoReconnect();
+        } else {
+            UnRef("Lifetime"); // if we are not reconnecting, this socket is done, so remove the lifetime ref
+        }
     }
-    conn->UnRef("Connecting");
+    UnRef("Connecting");
 }
 
 //============================================================================
-static void NotifyConnSocketDisconnect (CliFileConn * conn) {
-    conn->StopAutoPing();
+void CliFileConn::NotifyConnSocketDisconnect()
+{
+    StopAutoPing();
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = nullptr;
-        if (s_conn == conn) {
+        cancelId = nullptr;
+        if (s_conn == this) {
             s_conn = nullptr;
         }
 
-        if (conn == s_active)
+        if (s_active == this) {
             s_active = nullptr;
+        }
     }
 
     // Cancel all transactions in progress on this connection.
-    NetTransCancelByConnId(conn->seq, kNetErrTimeout);
-
+    NetTransCancelByConnId(seq, kNetErrTimeout);
 
     bool notify = false;
 
@@ -380,73 +387,75 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
         // less time elapsed then the connection was likely to a server
         // with an open port but with no notification procedure registered
         // for this type of communication channel.
-        if (hsTimer::GetMilliSeconds<uint32_t>() - conn->connectStartMs > kMinValidConnectionMs) {
-            conn->reconnectStartMs = 0;
-        }
-        else {
-            if (++conn->numImmediateDisconnects < kMaxImmediateDisconnects)
-                conn->reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
-            else
+        if (hsTimer::GetMilliSeconds<uint32_t>() - connectStartMs > kMinValidConnectionMs) {
+            reconnectStartMs = 0;
+        } else {
+            if (++numImmediateDisconnects < kMaxImmediateDisconnects) {
+                reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
+            } else {
                 notify = true;
+            }
         }
     #else
         // File server is running behind a load-balancer, so the next connection may
         // send us to a new server, therefore attempt a reconnection to the same
         // address even if the disconnect was immediate.  This is safe because the
         // file server is stateless with respect to clients.
-        if (hsTimer::GetMilliSeconds<uint32_t>() - conn->connectStartMs <= kMinValidConnectionMs) {
-            if (++conn->numImmediateDisconnects < kMaxImmediateDisconnects)
-                conn->reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
-            else
+        if (hsTimer::GetMilliSeconds<uint32_t>() - connectStartMs <= kMinValidConnectionMs) {
+            if (++numImmediateDisconnects < kMaxImmediateDisconnects) {
+                reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
+            } else {
                 notify = true;
-        }
-        else {
+            }
+        } else {
             // disconnect was not immediate. attempt a reconnect unless we're shutting down
-            conn->numImmediateDisconnects = 0;
-            conn->reconnectStartMs = 0;
+            numImmediateDisconnects = 0;
+            reconnectStartMs = 0;
         }
     #endif  // LOAD_BALANCER
     }
 
     if (notify) {
         ReportNetError(kNetProtocolCli2File, kNetErrDisconnected);
-    }
-    else {  
+    } else {  
         // clean up the socket and start reconnect, if we are doing that
-        conn->Destroy();
-        if (conn->AutoReconnectEnabled())
-            conn->StartAutoReconnect();
-        else
-            conn->UnRef("Lifetime"); // if we are not reconnecting, this socket is done, so remove the lifetime ref
+        Destroy();
+        if (AutoReconnectEnabled()) {
+            StartAutoReconnect();
+        } else {
+            UnRef("Lifetime"); // if we are not reconnecting, this socket is done, so remove the lifetime ref
+        }
     }
 
-    conn->UnRef("Connected");
+    UnRef("Connected");
 }
 
 //============================================================================
-static bool NotifyConnSocketRead (CliFileConn * conn, AsyncNotifySocketRead * read) {
-    conn->lastHeardTimeMs = GetNonZeroTimeMs();
-    conn->recvBuffer.insert(conn->recvBuffer.end(), read->buffer, read->buffer + read->bytes);
+bool CliFileConn::NotifyConnSocketRead(AsyncNotifySocketRead* read)
+{
+    lastHeardTimeMs = GetNonZeroTimeMs();
+    recvBuffer.insert(recvBuffer.end(), read->buffer, read->buffer + read->bytes);
     read->bytesProcessed += read->bytes;
 
     for (;;) {
-        if (conn->recvBuffer.size() < sizeof(uint32_t))
+        if (recvBuffer.size() < sizeof(uint32_t)) {
             return true;
+        }
 
-        uint32_t msgSize = hsToLE32(*(uint32_t *)conn->recvBuffer.data());
-        if (conn->recvBuffer.size() < msgSize)
+        uint32_t msgSize = hsToLE32(*(uint32_t*)recvBuffer.data());
+        if (recvBuffer.size() < msgSize) {
             return true;
+        }
 
-        Cli2File_MsgHeader * msg = (Cli2File_MsgHeader *) conn->recvBuffer.data();
-        conn->Dispatch(msg);
+        Cli2File_MsgHeader* msg = (Cli2File_MsgHeader*)recvBuffer.data();
+        Dispatch(msg);
 
-        conn->recvBuffer.erase(conn->recvBuffer.begin(), conn->recvBuffer.begin() + msgSize);
+        recvBuffer.erase(recvBuffer.begin(), recvBuffer.begin() + msgSize);
     }
 }
 
 //============================================================================
-static bool SocketNotifyCallback (
-    CliFileConn* conn,
+bool CliFileConn::SocketNotifyCallback(
     AsyncSocket sock,
     EAsyncNotifySocket code,
     AsyncNotifySocket* notify
@@ -456,23 +465,23 @@ static bool SocketNotifyCallback (
         case kNotifySocketConnectSuccess:
             {
                 hsLockGuard(s_critsect);
-                hsLockForWriting lock(conn->sockLock);
-                conn->sock      = sock;
-                conn->cancelId  = nullptr;
+                hsLockForWriting lock(socketLock);
+                socket = sock;
+                cancelId = nullptr;
             }
-            NotifyConnSocketConnect(conn);
+            NotifyConnSocketConnect();
         break;
 
         case kNotifySocketConnectFailed:
-            NotifyConnSocketConnectFailed(conn);
+            NotifyConnSocketConnectFailed();
         break;
 
         case kNotifySocketDisconnect:
-            NotifyConnSocketDisconnect(conn);
+            NotifyConnSocketDisconnect();
         break;
 
         case kNotifySocketRead:
-            result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
+            result = NotifyConnSocketRead((AsyncNotifySocketRead*)notify);
         break;
     }
 
@@ -511,7 +520,7 @@ static void Connect (CliFileConn * conn) {
         &conn->cancelId,
         conn->addr,
         [conn](auto sock, auto code, auto notify) {
-            return SocketNotifyCallback(conn, sock, code, notify);
+            return conn->SocketNotifyCallback(sock, code, notify);
         },
         &connect,
         sizeof(connect)
@@ -545,7 +554,7 @@ static void Connect (
 
 //============================================================================
 CliFileConn::CliFileConn ()
-    : hsRefCnt(0), sock(), seq(), cancelId(), abandoned()
+    : hsRefCnt(0), socket(), seq(), cancelId(), abandoned()
     , buildId(), serverType()
     , reconnectTimer(), reconnectStartMs(), connectStartMs()
     , numImmediateDisconnects(), numFailedConnects()
@@ -564,7 +573,7 @@ CliFileConn::~CliFileConn () {
 
 //===========================================================================
 void CliFileConn::TimerReconnect () {
-    ASSERT(!sock);
+    ASSERT(!socket);
     ASSERT(!cancelId);
     
     if (!s_running) {
@@ -638,8 +647,8 @@ void CliFileConn::AutoPing () {
     hsLockGuard(timerCritsect);
     unsigned timerPeriod;
     {
-        hsLockForReading lock(sockLock);
-        timerPeriod = sock ? 0 : kAsyncTimeInfinite;
+        hsLockForReading lock(socketLock);
+        timerPeriod = socket ? 0 : kAsyncTimeInfinite;
     }
 
     pingTimer = AsyncTimerCreate(timerPeriod, [this]() {
@@ -662,10 +671,10 @@ void CliFileConn::StopAutoPing () {
 
 //============================================================================
 void CliFileConn::TimerPing () {
-    hsLockForReading lock(sockLock);
+    hsLockForReading lock(socketLock);
 
     for (;;) {
-        if (!sock) // make sure it exists
+        if (!socket) // make sure it exists
             break;
 #if 0
         // if the time difference between when we last sent a ping and when we last
@@ -697,8 +706,8 @@ void CliFileConn::Destroy () {
     AsyncSocket oldSock = nullptr;
 
     {
-        hsLockForWriting lock(sockLock);
-        std::swap(oldSock, sock);
+        hsLockForWriting lock(socketLock);
+        std::swap(oldSock, socket);
     }
 
     if (oldSock)
@@ -708,10 +717,10 @@ void CliFileConn::Destroy () {
 
 //============================================================================
 void CliFileConn::Send (const void * data, unsigned bytes) {
-    hsLockForReading lock(sockLock);
+    hsLockForReading lock(socketLock);
 
-    if (sock) {
-        AsyncSocketSend(sock, data, bytes);
+    if (socket) {
+        AsyncSocketSend(socket, data, bytes);
     }
 }
 
