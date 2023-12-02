@@ -36,12 +36,12 @@ jobs:
 
     steps:
       - name: Checkout Plasma
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Checkout MaxSDK
         continue-on-error: true
         if: needs.max-secrets.outputs.HAS_MACHINE_USER_TOKEN == 'true'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: H-uruMachineUser/3dsMaxSDK
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
@@ -122,10 +122,10 @@ jobs:
 
     steps:
       - name: Checkout Plasma
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Checkout MaxSDK
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: H-uruMachineUser/3dsMaxSDK
           token: ${{ secrets.MACHINE_USER_REPO_READ }}
@@ -183,7 +183,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
@@ -259,7 +259,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
