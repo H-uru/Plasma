@@ -5,6 +5,8 @@ if(WIN32)
     # Of course, 32-bit 2013 is basically impossible to find. Oh well.
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(_3dsm_PATH_HINTS
+            ENV ADSK_3DSMAX_SDK_2024
+            ENV ADSK_3DSMAX_SDK_2023
             ENV ADSK_3DSMAX_SDK_2022
             ENV ADSK_3DSMAX_SDK_2021
             ENV ADSK_3DSMAX_SDK_2020

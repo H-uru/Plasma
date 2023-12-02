@@ -375,7 +375,7 @@ bool HasBipController(INode* node)
     if (!node)
         return false;
     Control* c = node->GetTMController();
-    if (c && ((c->ClassID()== BIPSLAVE_CONTROL_CLASS_ID) ||
+    if (c && ((c->ClassID()== BIPDRIVEN_CONTROL_CLASS_ID) ||
         (c->ClassID()== BIPBODY_CONTROL_CLASS_ID) || 
         (c->ClassID()== FOOTPRINT_CLASS_ID)) )
         return true;

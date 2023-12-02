@@ -127,7 +127,8 @@ void hsControlConverter::DeInit()
 class KRStatus : public KeyReduceStatus
 {
     void Init(int total) override { }
-    int Progress(int p) override { return KEYREDUCE_CONTINUE; }
+
+    KeyReduceResult Progress(int p) override { return KEYREDUCE_CONTINUE; }
 };
 
 void hsControlConverter::ReduceKeys(Control *control, float threshold)

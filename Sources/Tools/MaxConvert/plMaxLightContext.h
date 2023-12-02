@@ -108,7 +108,11 @@ public:
     void DPdUVW(Point3 dP[3],int channel=0) override { dP[0] = dP[1] = dP[2] = Point3(0,0,0); } // Bump vectors for UVW (camera space)
 
     void GetBGColor(Color &bgcol, Color& transp, BOOL fogBG=TRUE) override { bgcol.Black(); transp.Black(); }   // returns Background color, bg transparency
-
+    // these became virtual in 2023
+#if MAX_VERSION_MAJOR >= 26
+    Matrix3 MatrixTo(RefFrame ito) override { return Matrix3::Identity; }
+    Matrix3 MatrixFrom(RefFrame ifrom) override { return Matrix3::Identity; }
+#endif
     Point3 PointTo(const Point3& p, RefFrame ito) override { return p; }
     Point3 PointFrom(const Point3& p, RefFrame ifrom) override { return p; }
     Point3 VectorTo(const Point3& p, RefFrame ito) override { return p; }
