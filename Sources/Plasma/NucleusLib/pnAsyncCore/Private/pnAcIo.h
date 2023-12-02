@@ -68,35 +68,6 @@ typedef struct AsyncCancelIdStruct *   AsyncCancelId;
 
 constexpr unsigned kAsyncSocketBufferSize   = 1460;
 
-
-/****************************************************************************
-*
-*   Socket event notifications
-*
-***/
-
-struct AsyncNotifySocket {};
-
-struct AsyncNotifySocketConnect : AsyncNotifySocket {
-    plNetAddress    localAddr;
-    plNetAddress    remoteAddr;
-};
-
-struct AsyncNotifySocketRead : AsyncNotifySocket {
-    uint8_t *       buffer;
-    size_t          bytes;
-    size_t          bytesProcessed;
-
-    AsyncNotifySocketRead() : buffer(), bytes(), bytesProcessed() { }
-};
-
-
-struct AsyncNotifySocketWrite : AsyncNotifySocketRead {
-    size_t          bytesCommitted;
-    
-    AsyncNotifySocketWrite() : AsyncNotifySocketRead(), bytesCommitted() { }
-};
-
 class AsyncNotifySocketCallbacks
 {
 public:

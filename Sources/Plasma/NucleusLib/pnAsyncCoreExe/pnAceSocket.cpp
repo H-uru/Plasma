@@ -114,15 +114,18 @@ struct ConnectOperation
 
 struct WriteOperation
 {
-    size_t                  fAllocSize;
-    AsyncNotifySocketWrite  fNotify;
-    unsigned                queueTimeMs;
+    size_t fAllocSize;
+    uint8_t* buffer;
+    size_t bytes;
+    size_t bytesProcessed;
+    size_t bytesCommitted;
+    unsigned queueTimeMs;
 
-    WriteOperation() : fAllocSize() { }
+    WriteOperation() : fAllocSize(), buffer(), bytes(), bytesProcessed(), bytesCommitted() {}
 
     asio::const_buffer AsBuffer() const
     {
-        return asio::buffer(fNotify.buffer + fNotify.bytesCommitted, fNotify.bytes - fNotify.bytesCommitted);
+        return asio::buffer(buffer + bytesCommitted, bytes - bytesCommitted);
     }
 };
 
@@ -432,11 +435,11 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
     // If the last buffer still has space available then add data to it
     if (!conn->fWriteOps.empty()) {
         WriteOperation* op = conn->fWriteOps.back();
-        size_t bytesLeft = std::min(op->fAllocSize - op->fNotify.bytes, bytes);
+        size_t bytesLeft = std::min(op->fAllocSize - op->bytes, bytes);
         if (bytesLeft) {
             PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytesLeft);
-            memcpy(op->fNotify.buffer + op->fNotify.bytes, data, bytesLeft);
-            op->fNotify.bytes += bytesLeft;
+            memcpy(op->buffer + op->bytes, data, bytesLeft);
+            op->bytes += bytesLeft;
             data = (const uint8_t*)data + bytesLeft;
             bytes -= bytesLeft;
         }
@@ -451,11 +454,11 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
         conn->fWriteOps.emplace_back(op);
 
         op->fAllocSize = bytesAlloc;
-        op->fNotify.buffer = membuf + sizeof(WriteOperation);
-        op->fNotify.bytes = bytes;
-        op->fNotify.bytesProcessed = 0;
+        op->buffer = membuf + sizeof(WriteOperation);
+        op->bytes = bytes;
+        op->bytesProcessed = 0;
         op->queueTimeMs = hsTimer::GetMilliSeconds<unsigned>();
-        memcpy(op->fNotify.buffer, data, bytes);
+        memcpy(op->buffer, data, bytes);
 
         PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytes);
     }
@@ -463,9 +466,9 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
     std::vector<asio::const_buffer> allWrites;
     allWrites.reserve(conn->fWriteOps.size());
     for (WriteOperation* op : conn->fWriteOps) {
-        if (op->fNotify.bytes - op->fNotify.bytesCommitted > 0) {
+        if (op->bytes - op->bytesCommitted > 0) {
             allWrites.emplace_back(op->AsBuffer());
-            op->fNotify.bytesCommitted = op->fNotify.bytes;
+            op->bytesCommitted = op->bytes;
         }
     }
     async_write(conn->fSock, allWrites, [conn](const asio::error_code& err, size_t bytes) {
@@ -474,10 +477,10 @@ static bool SocketQueueAsyncWrite(AsyncSocket conn, const void* data, size_t byt
             hsAssert(conn->fWriteOps.size() > 0, "buffer mismatch");
             WriteOperation* op = conn->fWriteOps.front();
 
-            size_t opBytesWritten = std::min(bytes, (size_t)op->fNotify.bytes - op->fNotify.bytesProcessed);
-            op->fNotify.bytesProcessed += opBytesWritten;
+            size_t opBytesWritten = std::min(bytes, op->bytes - op->bytesProcessed);
+            op->bytesProcessed += opBytesWritten;
             bytes -= opBytesWritten;
-            if (op->fNotify.bytes == op->fNotify.bytesProcessed) {
+            if (op->bytes == op->bytesProcessed) {
                 conn->fWriteOps.pop_front();
             }
         }
