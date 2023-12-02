@@ -858,18 +858,6 @@ static bool ClientRecvError (
     return false;
 }
 
-//============================================================================
-typedef bool (* FNetCliPacket)(
-    NetCli *                    cli,
-    const NetCli_PacketHeader & pkt
-);
-
-static const FNetCliPacket s_recvTbl[kNumNetCliMsgs] = {
-    ServerRecvConnect,
-    ClientRecvEncrypt,
-    ClientRecvError,
-};
-
 //===========================================================================
 static unsigned DispatchPacket (
     NetCli *        cli,
@@ -884,10 +872,22 @@ static unsigned DispatchPacket (
             break;
         if (pkt.message >= kNumNetCliMsgs)
             break;
-        if (!s_recvTbl[pkt.message])
+
+        bool result = false;
+        switch (pkt.message) {
+            case kNetCliCli2SrvConnect:
+                result = ServerRecvConnect(cli, pkt);
+                break;
+            case kNetCliSrv2CliEncrypt:
+                result = ClientRecvEncrypt(cli, pkt);
+                break;
+            case kNetCliSrv2CliError:
+                result = ClientRecvError(cli, pkt);
+                break;
+        }
+        if (!result) {
             break;
-        if (!s_recvTbl[pkt.message](cli, pkt))
-            break;
+        }
 
         // Success!
         return pkt.length;
