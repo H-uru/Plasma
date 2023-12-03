@@ -46,7 +46,7 @@ struct AsyncTimer
 {
     asio::steady_timer fTimer;
     FAsyncTimerProc    fTimerProc;
-    FAsyncTimerProc    fDestroyProc;
+    FAsyncTimerDestroyProc fDestroyProc;
 
     AsyncTimer(asio::io_context& context, FAsyncTimerProc&& timerProc)
         : fTimer(context),
@@ -164,7 +164,7 @@ void AsyncTimerDelete(AsyncTimer* timer)
     AsyncTimerDeleteCallback(timer, nullptr);
 }
 
-void AsyncTimerDeleteCallback(AsyncTimer* timer, FAsyncTimerProc destroyProc)
+void AsyncTimerDeleteCallback(AsyncTimer* timer, FAsyncTimerDestroyProc destroyProc)
 {
     ASSERT(timer);
     ASSERT(s_timerMgr);

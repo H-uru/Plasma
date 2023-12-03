@@ -77,6 +77,8 @@ AsyncTimer* AsyncTimerCreate (
     FAsyncTimerProc timerProc
 );
 
+typedef std::function<void()> FAsyncTimerDestroyProc;
+
 // Timer procs can be in the process of getting called in
 // another thread during the unregister function -- be careful!
 // This will wait until the timer has been unregistered and is
@@ -84,7 +86,7 @@ AsyncTimer* AsyncTimerCreate (
 void AsyncTimerDelete(AsyncTimer* timer);
 void AsyncTimerDeleteCallback (
     AsyncTimer *    timer,
-    FAsyncTimerProc destroyProc
+    FAsyncTimerDestroyProc destroyProc
 );
 
 // Set the time value for a timer

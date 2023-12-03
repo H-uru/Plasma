@@ -418,7 +418,6 @@ void CliGmConn::StopAutoPing () {
     if (pingTimer) {
         AsyncTimerDeleteCallback(pingTimer, [this]() {
             UnRef("PingTimer");
-            return kAsyncTimeInfinite;
         });
         pingTimer = nullptr;
     }

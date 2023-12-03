@@ -521,7 +521,6 @@ void CliGkConn::StopAutoReconnect () {
         reconnectTimer = nullptr;
         AsyncTimerDeleteCallback(timer, [this]() {
             UnRef("ReconnectTimer");
-            return kAsyncTimeInfinite;
         });
     }
 }
@@ -549,7 +548,6 @@ void CliGkConn::StopAutoPing () {
     if (pingTimer) {
         AsyncTimerDeleteCallback(pingTimer, [this]() {
             UnRef("PingTimer");
-            return kAsyncTimeInfinite;
         });
         pingTimer = nullptr;
     }

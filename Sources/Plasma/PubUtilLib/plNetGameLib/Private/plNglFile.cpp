@@ -605,7 +605,6 @@ void CliFileConn::StopAutoReconnect () {
         reconnectTimer = nullptr;
         AsyncTimerDeleteCallback(timer, [this]() {
             UnRef("ReconnectTimer");
-            return kAsyncTimeInfinite;
         });
     }
 }
@@ -634,7 +633,6 @@ void CliFileConn::StopAutoPing () {
         pingTimer = nullptr;
         AsyncTimerDeleteCallback(timer, [this]() {
             UnRef("PingTimer");
-            return kAsyncTimeInfinite;
         });
     }
 }

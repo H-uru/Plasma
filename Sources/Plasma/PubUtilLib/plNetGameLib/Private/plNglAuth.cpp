@@ -1644,7 +1644,6 @@ void CliAuConn::StopAutoReconnect () {
         reconnectTimer = nullptr;
         AsyncTimerDeleteCallback(timer, [this]() {
             UnRef("ReconnectTimer");
-            return kAsyncTimeInfinite;
         });
     }
 }
@@ -1672,7 +1671,6 @@ void CliAuConn::StopAutoPing () {
     if (pingTimer) {
         AsyncTimerDeleteCallback(pingTimer, [this]() {
             UnRef("PingTimer");
-            return kAsyncTimeInfinite;
         });
         pingTimer = nullptr;
     }
