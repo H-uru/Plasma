@@ -1953,12 +1953,8 @@ bool plMetalPipeline::ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup
 
     // If our vertex buffer ref is volatile and the timestamp is off
     // then it needs to be refilled
-    // MTL::PurgeableState bufferState = vRef->fVertexBuffer->setPurgeableState(MTL::PurgeableStateNonVolatile);
     if (vRef->Expired(fVtxRefTime)) {
         IRefreshDynVertices(group, vRef);
-        // fDevice.GetCurrentCommandBuffer()->addCompletedHandler( ^(MTL::CommandBuffer *buffer) {
-        // vRef->fVertexBuffer->setPurgeableState(MTL::PurgeableStateVolatile);
-        // });
     }
 
     if (iRef->IsDirty()) {
@@ -1990,12 +1986,19 @@ bool plMetalPipeline::IRefreshDynVertices(plGBufferGroup* group, plMetalVertexBu
     vRef->PrepareForWrite();
 
     MTL::Buffer* vertexBuffer = vRef->GetBuffer();
+    // Metal note: we don't need to check if the buffer is purged, Plasma always wants to refill.
+    // This works a bit differently than a typical volatile resource pattern where we'd want
+    // to check if the resource is empty before refilling.
+    vertexBuffer->setPurgeableState(MTL::PurgeableStateNonVolatile);
     if (!vertexBuffer || vertexBuffer->length() < size) {
         // Plasma will present different length buffers at different times
         vertexBuffer = fDevice.fMetalDevice->newBuffer(vData, size, MTL::ResourceStorageModeManaged)->autorelease();
         if (vRef->Volatile()) {
-            fDevice.GetCurrentCommandBuffer()->addCompletedHandler(^(MTL::CommandBuffer* buffer){
-                // vRef->fVertexBuffer->setPurgeableState(MTL::PurgeableStateVolatile);
+            // We need to manually mark the buffer as eligible for freeing after render
+            // Only allow this resource to be volatile after the on screen command buffer.
+            // It should not be freed after something like a shadow render command buffer.
+            fDevice.GetCurrentDrawableCommandBuffer()->addCompletedHandler(^(MTL::CommandBuffer* buffer) {
+                vertexBuffer->setPurgeableState(MTL::PurgeableStateVolatile);
             });
         }
         vRef->SetBuffer(vertexBuffer);

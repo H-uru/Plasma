@@ -162,6 +162,7 @@ public:
     // Currently requires a CA drawable and not a Metal drawable. In since CA drawable is only abstract implementation I know about, not sure where we would find others?
     void                CreateNewCommandBuffer(CA::MetalDrawable* drawable);
     MTL::CommandBuffer* GetCurrentCommandBuffer();
+    MTL::CommandBuffer* GetCurrentDrawableCommandBuffer() { return fCurrentCommandBuffer; }
     CA::MetalDrawable*  GetCurrentDrawable() const;
     /// Submit the command buffer to the GPU and draws all the render passes. Clears the current command buffer.
     void                SubmitCommandBuffer();
