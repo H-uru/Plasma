@@ -98,7 +98,7 @@ struct NetMsgChannel : hsRefCnt {
 };
 
 static ChannelCrit                  s_channelCrit;
-static std::list<NetMsgChannel*>*   s_channels;
+static std::list<NetMsgChannel*> s_channels;
 
 
 /****************************************************************************
@@ -111,15 +111,10 @@ static std::list<NetMsgChannel*>*   s_channels;
 ChannelCrit::~ChannelCrit () {
     hsLockGuard(*this);
 
-    if (s_channels) {
-        while (s_channels->size()) {
-            NetMsgChannel* const channel = s_channels->front();
-            s_channels->remove(channel);
-            channel->UnRef("ChannelLink");
-        }
-
-        delete s_channels;
-        s_channels = nullptr;
+    while (!s_channels.empty()) {
+        NetMsgChannel* const channel = s_channels.front();
+        s_channels.remove(channel);
+        channel->UnRef("ChannelLink");
     }
 }
 
@@ -256,13 +251,10 @@ static void AddRecvMsgs_CS (
 
 //===========================================================================
 static NetMsgChannel* FindChannel_CS (uint32_t protocol, bool server) {
-    if (!s_channels)
-        return nullptr;
-
-    std::list<NetMsgChannel*>::iterator it = s_channels->begin();
-    for (; it != s_channels->end(); ++it) {
-        if (((*it)->m_protocol == protocol) && ((*it)->m_server == server))
-            return *it;
+    for (auto channel : s_channels) {
+        if (channel->m_protocol == protocol && channel->m_server == server) {
+            return channel;
+        }
     }
 
     return nullptr;
@@ -270,10 +262,6 @@ static NetMsgChannel* FindChannel_CS (uint32_t protocol, bool server) {
 
 //===========================================================================
 static NetMsgChannel* FindOrCreateChannel_CS (uint32_t protocol, bool server) {
-    if (!s_channels) {
-        s_channels = new std::list<NetMsgChannel*>();
-    }
-
     // find or create protocol
     NetMsgChannel * channel = FindChannel_CS(protocol, server);
     if (!channel) {
@@ -281,7 +269,7 @@ static NetMsgChannel* FindOrCreateChannel_CS (uint32_t protocol, bool server) {
         channel->m_protocol     = protocol;
         channel->m_server       = server;
 
-        s_channels->push_back(channel);
+        s_channels.push_back(channel);
         channel->Ref("ChannelLink");
     }
 
@@ -408,7 +396,7 @@ void NetMsgProtocolDestroy (uint32_t protocol, bool server) {
     hsLockGuard(s_channelCrit);
 
     if (NetMsgChannel* channel = FindChannel_CS(protocol, server)) {
-        s_channels->remove(channel);
+        s_channels.remove(channel);
         channel->UnRef("ChannelLink");
     }
 }
