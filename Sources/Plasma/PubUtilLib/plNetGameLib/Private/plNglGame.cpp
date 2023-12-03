@@ -212,20 +212,6 @@ static void AbandonConn(CliGmConn* conn) {
 }
 
 //============================================================================
-static bool ConnEncrypt (ENetError error, void * param) {
-    CliGmConn * conn = (CliGmConn *) param;
-    if (!s_perf[kPingDisabled])
-        conn->AutoPing();
-
-    if (IS_NET_SUCCESS(error)) {
-        hsLockGuard(s_critsect);
-        std::swap(s_active, conn);
-    }
-
-    return IS_NET_SUCCESS(error);
-}
-
-//============================================================================
 bool CliGmConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr)
 {
     bool wasAbandoned;
@@ -245,10 +231,20 @@ bool CliGmConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress l
         sock,
         kNetProtocolCli2Game,
         true,
-        ConnEncrypt,
+        [this](ENetError error) {
+            if (!s_perf[kPingDisabled]) {
+                AutoPing();
+            }
+
+            if (IS_NET_SUCCESS(error)) {
+                hsLockGuard(s_critsect);
+                s_active = this;
+            }
+
+            return IS_NET_SUCCESS(error);
+        },
         0,
-        nullptr,
-        this
+        nullptr
     );
     return true;
 }

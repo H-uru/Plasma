@@ -1361,24 +1361,6 @@ static void SendClientRegisterRequest (CliAuConn * conn) {
 }
 
 //============================================================================
-static bool ConnEncrypt (ENetError error, void * param) {
-    CliAuConn * conn = (CliAuConn *) param;
-        
-    if (IS_NET_SUCCESS(error)) {
-
-        SendClientRegisterRequest(conn);
-
-        if (!s_perf[kPingDisabled])
-            conn->AutoPing();
-            
-        AuthConnectedNotifyTrans * trans = new AuthConnectedNotifyTrans;
-        NetTransSend(trans);
-    }
-
-    return IS_NET_SUCCESS(error);
-}
-
-//============================================================================
 bool CliAuConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr)
 {
     bool wasAbandoned;
@@ -1398,10 +1380,22 @@ bool CliAuConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress l
         sock,
         kNetProtocolCli2Auth,
         false,
-        ConnEncrypt,
+        [this](ENetError error) {
+            if (IS_NET_SUCCESS(error)) {
+                SendClientRegisterRequest(this);
+
+                if (!s_perf[kPingDisabled]) {
+                    AutoPing();
+                }
+
+                AuthConnectedNotifyTrans * trans = new AuthConnectedNotifyTrans;
+                NetTransSend(trans);
+            }
+
+            return IS_NET_SUCCESS(error);
+        },
         0,
-        nullptr,
-        this
+        nullptr
     );
     return true;
 }

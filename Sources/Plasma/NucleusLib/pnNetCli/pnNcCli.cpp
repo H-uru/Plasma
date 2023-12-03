@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsLockGuard.h"
 #include <mutex>
 #include <string>
+#include <utility>
 
 #ifdef HS_DEBUGGING
 # define NCCLI_LOG  LogMsg
@@ -137,7 +138,6 @@ struct NetCli {
     uint8_t                 seed[kNetMaxSymmetricSeedBytes];
     CryptKey *              cryptIn; // nil if encrytpion is disabled
     CryptKey *              cryptOut; // nil if encrytpion is disabled
-    void *                  encryptParam;
 
     // Message buffers
     uint8_t                    sendBuffer[kAsyncSocketBufferSize];
@@ -146,8 +146,7 @@ struct NetCli {
     NetCli()
         : sock(), protocol(), channel(), server(), recvMsg()
         , recvField(), recvFieldBytes(), recvDispatch(), sendCurr(), mode()
-        , encryptFcn(), seed(), cryptIn(), cryptOut(), encryptParam()
-        , sendBuffer()
+        , encryptFcn(), seed(), cryptIn(), cryptOut(), sendBuffer()
     {
     }
 };
@@ -791,7 +790,7 @@ static bool ServerRecvConnect (
     }
     
     cli->mode = kNetCliModeEncrypted; // should rather be called "established", but whatever
-    return cli->encryptFcn(kNetSuccess, cli->encryptParam);
+    return cli->encryptFcn(kNetSuccess);
 }
 
 //============================================================================
@@ -836,7 +835,7 @@ static bool ClientRecvEncrypt (
     }
 
     cli->mode = kNetCliModeEncrypted; // should rather be called "established", but whatever
-    return cli->encryptFcn(kNetSuccess, cli->encryptParam);
+    return cli->encryptFcn(kNetSuccess);
 }
 
 //============================================================================
@@ -854,7 +853,7 @@ static bool ClientRecvError (
     if (pkt.length < sizeof(msg))
         return false;
 
-    cli->encryptFcn((ENetError) msg.error, cli->encryptParam);
+    cli->encryptFcn((ENetError)msg.error);
     return false;
 }
 
@@ -994,15 +993,13 @@ NetCli * NetCliConnectAccept (
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
     unsigned            seedBytes,
-    const uint8_t          seedData[],
-    void *              encryptParam
+    const uint8_t       seedData[]
 ) {
     // Create connection
     NetCli * cli = ConnCreate(sock, protocol, kNetCliModeClientStart);
     if (cli) {
         AsyncSocketEnableNagling(sock, !unbuffered);
-        cli->encryptFcn     = encryptFcn;
-        cli->encryptParam   = encryptParam;
+        cli->encryptFcn = std::move(encryptFcn);
         SetConnSeed(cli, seedBytes, seedData);
         Connect::ClientConnect(cli);
     }

@@ -242,27 +242,6 @@ static void AbandonConn(CliGkConn* conn) {
 }
 
 //============================================================================
-static bool ConnEncrypt (ENetError error, void * param) {
-    CliGkConn * conn = (CliGkConn *) param;
-        
-    if (IS_NET_SUCCESS(error)) {
-
-        if (!s_perf[kPingDisabled])
-            conn->AutoPing();
-
-        {
-            hsLockGuard(s_critsect);
-            std::swap(s_active, conn);
-        }
-
-    //  AuthConnectedNotifyTrans * trans = new AuthConnectedNotifyTrans;
-    //  NetTransSend(trans);
-    }
-
-    return IS_NET_SUCCESS(error);
-}
-
-//============================================================================
 bool CliGkConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr)
 {
     bool wasAbandoned;
@@ -282,10 +261,20 @@ bool CliGkConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress l
         sock,
         kNetProtocolCli2GateKeeper,
         false,
-        ConnEncrypt,
+        [this](ENetError error) {
+            if (IS_NET_SUCCESS(error)) {
+                if (!s_perf[kPingDisabled]) {
+                    AutoPing();
+                }
+
+                hsLockGuard(s_critsect);
+                s_active = this;
+            }
+
+            return IS_NET_SUCCESS(error);
+        },
         0,
-        nullptr,
-        this
+        nullptr
     );
     return true;
 }

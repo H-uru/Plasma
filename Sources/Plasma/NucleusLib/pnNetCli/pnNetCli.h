@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PNNETCLI_H
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PNNETCLI_H
 
+#include <functional>
+
 #include "pnEncryption/plBigNum.h"
 
 /*****************************************************************************
@@ -345,10 +347,7 @@ void NetMsgProtocolDestroy (
 // Manual forward declaration to avoid publicly including all of pnAsyncCore :(
 typedef struct AsyncSocketStruct* AsyncSocket;
 
-typedef bool (* FNetCliEncrypt) (
-    ENetError       error,
-    void *          encryptParam
-);
+typedef std::function<bool(ENetError /* error */)> FNetCliEncrypt;
 
 NetCli * NetCliConnectAccept (
     AsyncSocket         sock,
@@ -356,8 +355,7 @@ NetCli * NetCliConnectAccept (
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
     unsigned            seedBytes,      // optional
-    const uint8_t          seedData[],     // optional
-    void *              encryptParam    // optional
+    const uint8_t       seedData[]      // optional
 );
 
 void NetCliClearSocket (
