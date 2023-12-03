@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientMgr.h"
 #include "plNetLinkingMgr.h"
 
-#include "pnAsyncCore/pnAsyncCore.h"
 #include "pnDispatch/plDispatch.h"
 #include "pnMessage/plPlayerPageMsg.h"
 
@@ -140,7 +139,7 @@ void AgeVaultDownloadCallback (
     }
     else {
         // vault downloaded. start loading age data
-        LogMsg(kLogPerf, "AgeJoiner: Next:kLoadAge (vault downloaded)");
+        plNetApp::StaticDebugMsg("AgeJoiner: Next:kLoadAge (vault downloaded)");
         joiner->nextOp = plNCAgeJoiner::kLoadAge;
     }
 }
@@ -250,7 +249,7 @@ void plNCAgeJoiner::ExecNextOp () {
             
         //====================================================================
         case kLoadAge: {
-            LogMsg(kLogPerf, "AgeJoiner: Exec:kLoadAge");
+            nc->DebugMsg("AgeJoiner: Exec:kLoadAge");
 
             // Start progress bar
             ST::string str;
@@ -268,7 +267,7 @@ void plNCAgeJoiner::ExecNextOp () {
 
         //====================================================================
         case kLoadPlayer: {
-            LogMsg(kLogPerf, "AgeJoiner: Exec:kLoadPlayer");
+            nc->DebugMsg("AgeJoiner: Exec:kLoadPlayer");
             // Start loading local player
             ST::string avatarName;
             if (NetCommNeedToLoadAvatar()) {
@@ -280,7 +279,7 @@ void plNCAgeJoiner::ExecNextOp () {
                 am->LoadPlayer(avatarName, "", linkInName);
             }
             else {
-                LogMsg(kLogPerf, "AgeJoiner: Next:kPropagatePlayer");
+                nc->DebugMsg("AgeJoiner: Next:kPropagatePlayer");
                 nextOp = kPropagatePlayer;
             }
         }
@@ -288,7 +287,7 @@ void plNCAgeJoiner::ExecNextOp () {
 
         //====================================================================
         case kPropagatePlayer: {
-            LogMsg(kLogPerf, "AgeJoiner: Exec:kPropagatePlayer");
+            nc->DebugMsg("AgeJoiner: Exec:kPropagatePlayer");
             // Add our avatar to the scene
             int spawnPt = am->FindSpawnPoint(age.spawnPtName);
             nc->IPlayerChangeAge(false /*not exiting*/, spawnPt);
@@ -297,16 +296,16 @@ void plNCAgeJoiner::ExecNextOp () {
                 // Add our avatar to the game state
                 am->PropagateLocalPlayer(spawnPt);
             
-            LogMsg(kLogPerf, "AgeJoiner: Next:kRequestAgeState");
+            nc->DebugMsg("AgeJoiner: Next:kRequestAgeState");
             nextOp = kRequestAgeState;
         }
         break;
 
         //============================================================================
         case kRequestAgeState: {
-            LogMsg(kLogPerf, "AgeJoiner: Exec:kRequestAgeState");
+            nc->DebugMsg("AgeJoiner: Exec:kRequestAgeState");
             if (nc->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge)) {
-                LogMsg(kLogPerf, "AgeJoiner: Next:kSimStateRcvd");
+                nc->DebugMsg("AgeJoiner: Next:kSimStateRcvd");
                 nextOp = kSimStateRcvd;
             }
             else {
@@ -344,18 +343,18 @@ void plNCAgeJoiner::ExecNextOp () {
 
         //====================================================================
         case kEnableClickables: {
-            LogMsg(kLogPerf, "AgeJoiner: Exec:kEnableClickables");
+            nc->DebugMsg("AgeJoiner: Exec:kEnableClickables");
             // Enable scene clickables
             (void)(new plInputIfaceMgrMsg(plInputIfaceMgrMsg::kEnableClickables))->Send();
 
-            LogMsg(kLogPerf, "AgeJoiner: Next:kNotifyAgeLoaded");
+            nc->DebugMsg("AgeJoiner: Next:kNotifyAgeLoaded");
             nextOp = kNotifyAgeLoaded;
         }
         break;
         
         //====================================================================
         case kNotifyAgeLoaded: {
-            LogMsg(kLogPerf, "AgeJoiner: Exec:kNotifyAgeLoaded");
+            nc->DebugMsg("AgeJoiner: Exec:kNotifyAgeLoaded");
             nc->SetFlagsBit(plNetClientApp::kPlayingGame);
             nc->SetFlagsBit(plNetClientApp::kNeedToSendInitialAgeStateLoadedMsg);
             plAgeLoader::GetInstance()->NotifyAgeLoaded(true);
@@ -385,7 +384,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
                 age,
                 this
             );
-            LogMsg(kLogPerf, "AgeJoiner: Next:kNoOp (age updated)");
+            nc->DebugMsg("AgeJoiner: Next:kNoOp (age updated)");
         } else
             Complete(false, resMsg->GetError().c_str());
         return true;
@@ -411,7 +410,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
         }
         else {
             // not vault to downloaded, just start loading age data
-            LogMsg(kLogPerf, "AgeJoiner: Next:kLoadAge (no vault)");
+            nc->DebugMsg("AgeJoiner: Next:kLoadAge (no vault)");
             nextOp = kLoadAge;
         }
         return true;
@@ -425,7 +424,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
         al->ExecPendingAgeFniFiles();
         al->ExecPendingAgeCsvFiles();
 
-        LogMsg(kLogPerf, "AgeJoiner: Next:kLoadPlayer");
+        nc->DebugMsg("AgeJoiner: Next:kLoadPlayer");
         nextOp = kLoadPlayer;
         return true;
     }
@@ -439,7 +438,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
         if (NetCommNeedToLoadAvatar())
             NetCommSetAvatarLoaded();
         
-        LogMsg(kLogPerf, "AgeJoiner: Next:kPropagatePlayer");
+        nc->DebugMsg("AgeJoiner: Next:kPropagatePlayer");
         nextOp = kPropagatePlayer;
         return false;   // NetClientMgr must also handle this message
     }
@@ -449,7 +448,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
     //========================================================================
     plNetClientMgrMsg * netClientMgrMsg = plNetClientMgrMsg::ConvertNoRef(msg);
     if (netClientMgrMsg && netClientMgrMsg->type == plNetClientMgrMsg::kNotifyRcvdAllSDLStates) {
-        LogMsg(kLogPerf, "AgeJoiner: Next:kEnableClickables");
+        nc->DebugMsg("AgeJoiner: Next:kEnableClickables");
         nextOp = kDestroyProgressBar;
         return true;
     }

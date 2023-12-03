@@ -67,23 +67,6 @@ typedef struct AsyncCancelIdStruct *   AsyncCancelId;
 
 constexpr unsigned kAsyncSocketBufferSize   = 1460;
 
-/****************************************************************************
-*
-*   Socket connect packet
-*
-***/
-
-#pragma pack(push,1)
-struct AsyncSocketConnectPacket {
-    uint8_t     connType;
-    uint16_t    hdrBytes;
-    uint32_t    buildId;
-    uint32_t    buildType;
-    uint32_t    branchId;
-    plUUID      productId;
-};
-#pragma pack(pop)
-
 
 /****************************************************************************
 *
@@ -108,24 +91,6 @@ struct AsyncNotifySocket {
 struct AsyncNotifySocketConnect : AsyncNotifySocket {
     plNetAddress    localAddr;
     plNetAddress    remoteAddr;
-    unsigned        connType;
-
-    AsyncNotifySocketConnect() : connType(0) { }
-};
-
-struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
-    unsigned        buildId;
-    unsigned        buildType;
-    unsigned        branchId;
-    plUUID          productId;
-    plNetAddress    addr;
-    uint8_t *       buffer;
-    unsigned        bytes;
-    unsigned        bytesProcessed;
-
-    AsyncNotifySocketListen()
-        : buildId(), buildType(), branchId(), buffer(), bytes(),
-          bytesProcessed() { }
 };
 
 struct AsyncNotifySocketRead : AsyncNotifySocket {
@@ -149,46 +114,6 @@ struct AsyncNotifySocketWrite : AsyncNotifySocketRead {
     \param notify
 */
 using FAsyncNotifySocketProc = std::function<bool(AsyncSocket, EAsyncNotifySocket, AsyncNotifySocket*, void**)> ;
-
-
-/****************************************************************************
-*
-*   Connection type functions
-*
-***/
-
-// These codes may not be changed unless ALL servers and clients are
-// simultaneously replaced; so basically forget it =)
-enum EConnType {
-    kConnTypeNil                    = 0,
-    
-    // For test applications
-    kConnTypeDebug                  = 1,
-
-    // Binary connections
-    kConnTypeCliToAuth              = 10,
-    kConnTypeCliToGame              = 11,
-    kConnTypeSrvToAgent             = 12,
-    kConnTypeSrvToMcp               = 13,
-    kConnTypeSrvToVault             = 14,
-    kConnTypeSrvToDb                = 15,
-    kConnTypeCliToFile              = 16,
-    kConnTypeSrvToState             = 17,
-    kConnTypeSrvToLog               = 18,
-    kConnTypeSrvToScore             = 19,
-    kConnTypeCliToCsr               = 20, // DEAD
-    kConnTypeSimpleNet              = 21, // DEAD
-    kConnTypeCliToGateKeeper        = 22,
-    
-    // Text connections
-    kConnTypeAdminInterface         = 97,   // 'a'
-
-    kNumConnTypes
-};
-static_assert(kNumConnTypes <= 0xFF, "EConnType overflows uint8");
-
-#define IS_TEXT_CONNTYPE(c)     \
-    (((int)(c)) == kConnTypeAdminInterface)
 
 
 /****************************************************************************

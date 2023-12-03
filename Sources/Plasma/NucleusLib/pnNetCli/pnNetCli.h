@@ -342,6 +342,9 @@ void NetMsgProtocolDestroy (
 *
 ***/
 
+// Manual forward declaration to avoid publicly including all of pnAsyncCore :(
+typedef struct AsyncSocketStruct* AsyncSocket;
+
 typedef bool (* FNetCliEncrypt) (
     ENetError       error,
     void *          encryptParam

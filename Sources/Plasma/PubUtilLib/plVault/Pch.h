@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PCH_H
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PCH_H
 
-#include "pnAsyncCore/pnAsyncCore.h"
 #include "pnNetProtocol/pnNetProtocol.h"
 
 #include "plVault.h"

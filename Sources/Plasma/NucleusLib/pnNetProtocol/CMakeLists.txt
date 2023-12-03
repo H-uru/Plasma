@@ -1,5 +1,4 @@
 set(pnNetProtocol_HEADERS
-    Intern.h
     Pch.h
     pnNetProtocol.h
 )
@@ -43,7 +42,6 @@ target_link_libraries(
         pnNetBase
         pnUUID
     PRIVATE
-        pnAsyncCore
         pnNetCli
         pnUtils
 )

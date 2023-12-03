@@ -28,7 +28,6 @@ target_link_libraries(
         pnNetBase
         pnNetProtocol # plVaultNodeAccess
     PRIVATE
-        pnAsyncCore
         pnDispatch
         pnNucleusInc
         plGImage
