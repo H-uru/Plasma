@@ -63,8 +63,7 @@ struct NetMsgChannel;
 
 NetMsgChannel * NetMsgChannelLock (
     unsigned        protocol,
-    bool            server,
-    unsigned *      largestRecv
+    bool            server
 );
 void NetMsgChannelUnlock (
     NetMsgChannel * channel

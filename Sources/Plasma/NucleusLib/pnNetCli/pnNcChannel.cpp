@@ -82,13 +82,12 @@ private:
 };
 
 struct NetMsgChannel : hsRefCnt {
-    NetMsgChannel() : hsRefCnt(0), m_protocol(), m_server(), m_largestRecv(), m_dh_g() { }
+    NetMsgChannel() : hsRefCnt(0), m_protocol(), m_server(), m_dh_g() {}
 
     uint32_t                m_protocol;
     bool                    m_server;
 
     // Message definitions
-    uint32_t                m_largestRecv;
     std::vector<NetMsgInitSend>  m_sendMsgs;
     std::vector<NetMsgInitRecv>  m_recvMsgs;
 
@@ -251,8 +250,7 @@ static void AddRecvMsgs_CS (
         // copy the message handler
         *dst = *src;
 
-        const uint32_t bytes = ValidateMsg(*dst->msg);
-        channel->m_largestRecv = std::max(channel->m_largestRecv, bytes);
+        ValidateMsg(*dst->msg);
     }
 }
 
@@ -282,7 +280,6 @@ static NetMsgChannel* FindOrCreateChannel_CS (uint32_t protocol, bool server) {
         channel                 = new NetMsgChannel();
         channel->m_protocol     = protocol;
         channel->m_server       = server;
-        channel->m_largestRecv  = 0;
 
         s_channels->push_back(channel);
         channel->Ref("ChannelLink");
@@ -301,17 +298,12 @@ static NetMsgChannel* FindOrCreateChannel_CS (uint32_t protocol, bool server) {
 //============================================================================
 NetMsgChannel * NetMsgChannelLock (
     unsigned        protocol,
-    bool            server,
-    uint32_t *      largestRecv
+    bool            server
 ) {
     NetMsgChannel * channel;
     hsLockGuard(s_channelCrit);
     if (nullptr != (channel = FindChannel_CS(protocol, server))) {
-        *largestRecv = channel->m_largestRecv;
         channel->Ref("ChannelLock");
-    }
-    else {
-        *largestRecv = 0;
     }
     return channel;
 }

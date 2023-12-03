@@ -923,12 +923,7 @@ static NetCli * ConnCreate (
     ENetCliMode     mode
 ) {
     // find channel
-    unsigned largestRecv;
-    NetMsgChannel * channel = NetMsgChannelLock(
-        protocol,
-        mode == kNetCliModeServerStart,
-        &largestRecv
-    );
+    NetMsgChannel * channel = NetMsgChannelLock(protocol, mode == kNetCliModeServerStart);
     if (!channel)
         return nullptr;
 
