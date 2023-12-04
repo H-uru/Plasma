@@ -59,10 +59,8 @@ namespace pnNetCli {
 *
 ***/
 
-struct NetMsgChannel;
-
-NetMsgChannel * NetMsgChannelLock (
-    unsigned protocol
+void NetMsgChannelLock(
+    NetMsgChannel* channel
 );
 void NetMsgChannelUnlock (
     NetMsgChannel * channel
@@ -74,6 +72,9 @@ const NetMsgInitRecv * NetMsgChannelFindRecvMessage (
 const NetMsgInitSend * NetMsgChannelFindSendMessage (
     NetMsgChannel * channel,
     uintptr_t       messageId
+);
+uint32_t NetMsgChannelGetProtocol(
+    NetMsgChannel* channel
 );
 void NetMsgChannelGetDhConstants (
     const NetMsgChannel *   channel,

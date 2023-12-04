@@ -46,10 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
-#include <list>
-#include <mutex>
+
 #include "hsRefCnt.h"
-#include "hsLockGuard.h"
 
 
 namespace pnNetCli {
@@ -60,29 +58,13 @@ namespace pnNetCli {
 *
 ***/
 
-struct ChannelCrit {
-    ~ChannelCrit();
-    ChannelCrit() : m_init(true) { }
-
-    inline void lock()
-    {
-        hsAssert(m_init, "Bad things have happened.");
-        m_critsect.lock();
-    }
-
-    inline void unlock()
-    {
-        hsAssert(m_init, "Bad things have happened.");
-        m_critsect.unlock();
-    }
-
-private:
-    bool        m_init;
-    std::mutex  m_critsect;
-};
-
 struct NetMsgChannel : hsRefCnt {
-    NetMsgChannel() : hsRefCnt(0), m_protocol(), m_dh_g() {}
+    NetMsgChannel(uint32_t protocol, uint32_t dh_g, const plBigNum& dh_x, const plBigNum& dh_n) :
+        m_protocol(protocol),
+        m_dh_g(dh_g),
+        m_dh_x(dh_x),
+        m_dh_n(dh_n)
+    {}
 
     uint32_t                m_protocol;
 
@@ -95,27 +77,6 @@ struct NetMsgChannel : hsRefCnt {
     plBigNum                m_dh_x;
     plBigNum                m_dh_n;
 };
-
-static ChannelCrit                  s_channelCrit;
-static std::list<NetMsgChannel*> s_channels;
-
-
-/****************************************************************************
-*
-*   ChannelCrit
-*
-***/
-
-//===========================================================================
-ChannelCrit::~ChannelCrit () {
-    hsLockGuard(*this);
-
-    while (!s_channels.empty()) {
-        NetMsgChannel* const channel = s_channels.front();
-        s_channels.remove(channel);
-        channel->UnRef("ChannelLink");
-    }
-}
 
 
 /*****************************************************************************
@@ -204,7 +165,7 @@ static unsigned MaxMsgId (const T msgs[], unsigned count) {
 }
 
 //===========================================================================
-static void AddSendMsgs_CS (
+static void AddSendMsgs(
     NetMsgChannel *         channel,
     const NetMsgInitSend    src[],
     unsigned                count
@@ -225,7 +186,7 @@ static void AddSendMsgs_CS (
 }
 
 //===========================================================================
-static void AddRecvMsgs_CS (
+static void AddRecvMsgs(
     NetMsgChannel *         channel,
     const NetMsgInitRecv    src[],
     unsigned                count
@@ -248,34 +209,6 @@ static void AddRecvMsgs_CS (
     }
 }
 
-//===========================================================================
-static NetMsgChannel* FindChannel_CS(uint32_t protocol)
-{
-    for (auto channel : s_channels) {
-        if (channel->m_protocol == protocol) {
-            return channel;
-        }
-    }
-
-    return nullptr;
-}
-
-//===========================================================================
-static NetMsgChannel* FindOrCreateChannel_CS(uint32_t protocol)
-{
-    // find or create protocol
-    NetMsgChannel* channel = FindChannel_CS(protocol);
-    if (!channel) {
-        channel                 = new NetMsgChannel();
-        channel->m_protocol     = protocol;
-
-        s_channels.push_back(channel);
-        channel->Ref("ChannelLink");
-    }
-
-    return channel;
-}
-
 
 /*****************************************************************************
 *
@@ -284,23 +217,14 @@ static NetMsgChannel* FindOrCreateChannel_CS(uint32_t protocol)
 ***/
 
 //============================================================================
-NetMsgChannel * NetMsgChannelLock (
-    unsigned protocol
-) {
-    NetMsgChannel * channel;
-    hsLockGuard(s_channelCrit);
-    if (nullptr != (channel = FindChannel_CS(protocol))) {
-        channel->Ref("ChannelLock");
-    }
-    return channel;
+void NetMsgChannelLock(NetMsgChannel* channel)
+{
+    channel->Ref("ChannelLock");
 }
 
 //============================================================================
-void NetMsgChannelUnlock (
-    NetMsgChannel * channel
-) {
-    hsLockGuard(s_channelCrit);
-
+void NetMsgChannelUnlock(NetMsgChannel* channel)
+{
     channel->UnRef("ChannelLock");
 }
 
@@ -338,6 +262,11 @@ const NetMsgInitSend * NetMsgChannelFindSendMessage (
 }
 
 //============================================================================
+uint32_t NetMsgChannelGetProtocol(NetMsgChannel* channel)
+{
+    return channel->m_protocol;
+}
+
 void NetMsgChannelGetDhConstants (
     const NetMsgChannel *   channel,
     uint32_t *              dh_g,
@@ -360,7 +289,7 @@ void NetMsgChannelGetDhConstants (
 ***/
 
 //===========================================================================
-void NetMsgProtocolRegister (
+NetMsgChannel* NetMsgChannelCreate(
     uint32_t                protocol,
     const NetMsgInitSend    sendMsgs[],
     uint32_t                sendMsgCount,
@@ -370,32 +299,20 @@ void NetMsgProtocolRegister (
     const plBigNum&         dh_x,
     const plBigNum&         dh_n
 ) {
-    hsLockGuard(s_channelCrit);
+    NetMsgChannel* channel = new NetMsgChannel(protocol, dh_g, dh_x, dh_n);
 
-    NetMsgChannel* channel = FindOrCreateChannel_CS(protocol);
+    if (sendMsgCount) {
+        AddSendMsgs(channel, sendMsgs, sendMsgCount);
+    }
+    if (recvMsgCount) {
+        AddRecvMsgs(channel, recvMsgs, recvMsgCount);
+    }
 
-    // make sure no connections have been established on this protocol, otherwise
-    // we'll be modifying a live data structure; NetCli's don't lock their protocol
-    // to operate on it once they have linked to it!
-    ASSERT(channel->RefCnt() == 1);
-
-    channel->m_dh_g = dh_g;
-    channel->m_dh_x = dh_x;
-    channel->m_dh_n = dh_n;
-
-    if (sendMsgCount)
-        AddSendMsgs_CS(channel, sendMsgs, sendMsgCount);
-    if (recvMsgCount)
-        AddRecvMsgs_CS(channel, recvMsgs, recvMsgCount);
+    return channel;
 }
 
 //===========================================================================
-void NetMsgProtocolDestroy(uint32_t protocol)
+void NetMsgChannelDelete(NetMsgChannel* channel)
 {
-    hsLockGuard(s_channelCrit);
-
-    if (NetMsgChannel* channel = FindChannel_CS(protocol)) {
-        s_channels.remove(channel);
-        channel->UnRef("ChannelLink");
-    }
+    channel->UnRef("Lifetime");
 }

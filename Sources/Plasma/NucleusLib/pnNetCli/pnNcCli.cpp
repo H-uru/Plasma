@@ -119,7 +119,6 @@ struct NetCli {
 
     // communication channel
     AsyncSocket             sock;
-    ENetProtocol            protocol;
     NetMsgChannel *         channel;
 
     // message send/recv
@@ -142,7 +141,7 @@ struct NetCli {
     std::vector<uint8_t>       recvBuffer;
 
     NetCli()
-        : sock(), protocol(), channel(), recvMsg()
+        : sock(), channel(), recvMsg()
         , recvField(), recvFieldBytes(), recvDispatch(), sendCurr(), mode()
         , encryptFcn(), seed(), cryptIn(), cryptOut(), sendBuffer()
     {
@@ -175,7 +174,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
     // Write to the netlog
     if (s_netlog) {
         NetLogMessage_Header header;
-        header.m_protocol = cli->protocol;
+        header.m_protocol = NetMsgChannelGetProtocol(cli->channel);
         header.m_direction = 0; // kCli2Srv
         header.m_time = GetAdjustedTimer();
         header.m_size = bytes;
@@ -849,16 +848,12 @@ static void ResetSendRecv (NetCli * cli) {
 }
 
 //===========================================================================
-static NetCli* ConnCreate(AsyncSocket sock, unsigned protocol)
+static NetCli* ConnCreate(AsyncSocket sock, NetMsgChannel* channel)
 {
-    // find channel
-    NetMsgChannel * channel = NetMsgChannelLock(protocol);
-    if (!channel)
-        return nullptr;
+    NetMsgChannelLock(channel);
 
     NetCli * const cli  = new NetCli;
     cli->sock           = sock;
-    cli->protocol       = (ENetProtocol) protocol;
     cli->channel        = channel;
     cli->mode           = kNetCliModeClientStart;
 
@@ -913,20 +908,18 @@ static void SetConnSeed (
 //============================================================================
 NetCli * NetCliConnectAccept (
     AsyncSocket         sock,
-    unsigned            protocol,
+    NetMsgChannel*      channel,
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
     unsigned            seedBytes,
     const uint8_t       seedData[]
 ) {
     // Create connection
-    NetCli* cli = ConnCreate(sock, protocol);
-    if (cli) {
-        AsyncSocketEnableNagling(sock, !unbuffered);
-        cli->encryptFcn = std::move(encryptFcn);
-        SetConnSeed(cli, seedBytes, seedData);
-        Connect::ClientConnect(cli);
-    }
+    NetCli* cli = ConnCreate(sock, channel);
+    AsyncSocketEnableNagling(sock, !unbuffered);
+    cli->encryptFcn = std::move(encryptFcn);
+    SetConnSeed(cli, seedBytes, seedData);
+    Connect::ClientConnect(cli);
     return cli;
 }
 
@@ -1021,7 +1014,7 @@ bool NetCliDispatch (
             // Write to the netlog
             if (s_netlog) {
                 NetLogMessage_Header header;
-                header.m_protocol = cli->protocol;
+                header.m_protocol = NetMsgChannelGetProtocol(cli->channel);
                 header.m_direction = 1; // kSrv2Cli
                 header.m_time = GetAdjustedTimer();
                 header.m_size = bytes;

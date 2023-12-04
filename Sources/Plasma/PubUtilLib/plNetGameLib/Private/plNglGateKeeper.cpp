@@ -187,6 +187,7 @@ enum {
     kNumPerf
 };
 
+static NetMsgChannel* s_channel;
 static bool                         s_running;
 static std::recursive_mutex         s_critsect;
 static CliGkConn* s_conn = nullptr;
@@ -259,7 +260,7 @@ bool CliGkConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAdd
     TransferRef("Connecting", "Connected");
     cli = NetCliConnectAccept(
         sock,
-        kNetProtocolCli2GateKeeper,
+        s_channel,
         false,
         [this](ENetError error) {
             if (IS_NET_SUCCESS(error)) {
@@ -833,7 +834,8 @@ void NetGateKeeperTrans::ReleaseConn () {
 //============================================================================
 void GateKeeperInitialize () {
     s_running = true;
-    NetMsgProtocolRegister(
+    ASSERT(!s_channel);
+    s_channel = NetMsgChannelCreate(
         kNetProtocolCli2GateKeeper,
         s_send, std::size(s_send),
         s_recv, std::size(s_recv),
@@ -851,7 +853,10 @@ void GateKeeperDestroy (bool wait) {
         kNetProtocolCli2GateKeeper,
         kNetErrRemoteShutdown
     );
-    NetMsgProtocolDestroy(kNetProtocolCli2GateKeeper);
+    if (s_channel != nullptr) {
+        NetMsgChannelDelete(s_channel);
+        s_channel = nullptr;
+    }
 
     {
         hsLockGuard(s_critsect);

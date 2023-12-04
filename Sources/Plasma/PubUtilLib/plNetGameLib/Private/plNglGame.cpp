@@ -159,6 +159,7 @@ enum {
     kNumPerf
 };
 
+static NetMsgChannel* s_channel;
 static bool                             s_running;
 static std::recursive_mutex             s_critsect;
 static CliGmConn* s_conn = nullptr;
@@ -229,7 +230,7 @@ bool CliGmConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAdd
     TransferRef("Connecting", "Connected");
     cli = NetCliConnectAccept(
         sock,
-        kNetProtocolCli2Game,
+        s_channel,
         true,
         [this](ENetError error) {
             if (!s_perf[kPingDisabled]) {
@@ -655,7 +656,8 @@ void NetGameTrans::ReleaseConn () {
 //============================================================================
 void GameInitialize () {
     s_running = true;
-    NetMsgProtocolRegister(
+    ASSERT(!s_channel);
+    s_channel = NetMsgChannelCreate(
         kNetProtocolCli2Game,
         s_send, std::size(s_send),
         s_recv, std::size(s_recv),
@@ -675,7 +677,10 @@ void GameDestroy (bool wait) {
         kNetProtocolCli2Game,
         kNetErrRemoteShutdown
     );
-    NetMsgProtocolDestroy(kNetProtocolCli2Game);
+    if (s_channel != nullptr) {
+        NetMsgChannelDelete(s_channel);
+        s_channel = nullptr;
+    }
     
     {
         hsLockGuard(s_critsect);

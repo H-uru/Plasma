@@ -142,7 +142,7 @@ How to create a message sender/receiver:
         { s_ping,       RecvMsgPing         },
     };
 
-    NetMsgProtocolRegister(
+    s_channel = NetMsgChannelCreate(
         kNetProtocolCliToGame,
         s_send, std::size(s_send),
         s_recv, std::size(s_recv)
@@ -290,6 +290,10 @@ struct NetCli;
 *
 ***/
 
+// Opaque type
+namespace pnNetCli { struct NetMsgChannel; }
+using pnNetCli::NetMsgChannel;
+
 struct NetMsgInitSend {
     const NetMsg  *msg;
 };
@@ -298,7 +302,7 @@ struct NetMsgInitRecv {
     bool (* recv)(const uint8_t msg[], unsigned bytes, void * param);
 };
 
-void NetMsgProtocolRegister (
+NetMsgChannel* NetMsgChannelCreate(
     uint32_t                protocol,       // from pnNetBase/pnNbProtocol.h
     const NetMsgInitSend    sendMsgs[],     // messages this program can send
     uint32_t                sendMsgCount,
@@ -310,8 +314,8 @@ void NetMsgProtocolRegister (
     const plBigNum&         dh_n
 );
 
-void NetMsgProtocolDestroy (
-    uint32_t protocol
+void NetMsgChannelDelete(
+    NetMsgChannel* channel
 );
 
 
@@ -328,7 +332,7 @@ typedef std::function<bool(ENetError /* error */)> FNetCliEncrypt;
 
 NetCli * NetCliConnectAccept (
     AsyncSocket         sock,
-    unsigned            protocol,
+    NetMsgChannel*      channel,
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
     unsigned            seedBytes,      // optional
