@@ -657,7 +657,6 @@ void GameInitialize () {
     s_running = true;
     NetMsgProtocolRegister(
         kNetProtocolCli2Game,
-        false,
         s_send, std::size(s_send),
         s_recv, std::size(s_recv),
         kGameDhGValue,
@@ -675,11 +674,8 @@ void GameDestroy (bool wait) {
     NetTransCancelByProtocol(
         kNetProtocolCli2Game,
         kNetErrRemoteShutdown
-    );    
-    NetMsgProtocolDestroy(
-        kNetProtocolCli2Game,
-        false
     );
+    NetMsgProtocolDestroy(kNetProtocolCli2Game);
     
     {
         hsLockGuard(s_critsect);

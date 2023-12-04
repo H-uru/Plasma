@@ -100,7 +100,6 @@ namespace pnNetCli {
 ***/
 
 enum ENetCliMode {
-    kNetCliModeServerStart,
     kNetCliModeClientStart,
     kNetCliModeEncrypted,
     kNumNetCliModes
@@ -122,7 +121,6 @@ struct NetCli {
     AsyncSocket             sock;
     ENetProtocol            protocol;
     NetMsgChannel *         channel;
-    bool                    server;
 
     // message send/recv
     const NetMsgInitRecv *  recvMsg;
@@ -144,7 +142,7 @@ struct NetCli {
     std::vector<uint8_t>       recvBuffer;
 
     NetCli()
-        : sock(), protocol(), channel(), server(), recvMsg()
+        : sock(), protocol(), channel(), recvMsg()
         , recvField(), recvFieldBytes(), recvDispatch(), sendCurr(), mode()
         , encryptFcn(), seed(), cryptIn(), cryptOut(), sendBuffer()
     {
@@ -728,72 +726,6 @@ static void ClientConnect (NetCli * cli) {
 }
 
 //============================================================================
-static bool ServerRecvConnect (
-    NetCli *                    cli,
-    const NetCli_PacketHeader & pkt
-) {
-    // Validate connection state
-    if (cli->mode != kNetCliModeServerStart)
-        return false;
-
-    // Validate message size
-    const NetCli_Cli2Srv_Connect & msg =
-        * (const NetCli_Cli2Srv_Connect *) &pkt;
-    if (pkt.length < sizeof(msg))
-        return false;
-    int seedLength = msg.length - sizeof(pkt);
-
-    // Send the server seed to the client (unencrypted)
-    if (cli->sock) {
-        NetCli_Srv2Cli_Encrypt reply;
-        reply.message   = kNetCliSrv2CliEncrypt;
-        reply.length    = seedLength == 0 ? 0 : sizeof(reply); // reply with empty seed if we got empty seed (this means: no encryption)
-        memcpy(reply.serverSeed, cli->seed, sizeof(reply.serverSeed));
-        AsyncSocketSend(cli->sock, &reply, reply.length);
-    }
-
-    if (seedLength == 0) { // client wishes no encryption (that's okay, nobody else can "fake" us as nobody has the private key, so if the client actually wants encryption it will only work with the correct peer)
-        cli->cryptIn = nullptr;
-        cli->cryptOut = nullptr;
-    }
-    else {
-        // Compute client seed
-        uint8_t clientSeed[kNetMaxSymmetricSeedBytes];
-        plBigNum clientSeedValue;
-        {
-            NetMsgCryptServerConnect(
-                cli->channel,
-                seedLength,
-                msg.dh_y_data,
-                &clientSeedValue
-            );
-
-            memset(&clientSeed, 0, sizeof(clientSeed));
-            unsigned bytes;
-            unsigned char * data = clientSeedValue.GetData_LE(&bytes);
-            memcpy(clientSeed, data, std::min(size_t(bytes), sizeof(clientSeed)));
-            delete [] data;
-        }
-
-        // Create the symmetric key from a combination
-        // of the client seed and the server seed
-        uint8_t sharedSeed[kNetMaxSymmetricSeedBytes];
-        CreateSymmetricKey(
-            sizeof(cli->seed),  cli->seed,  // server seed
-            sizeof(clientSeed), clientSeed, // client seed
-            sizeof(sharedSeed), sharedSeed  // combined seed
-        );
-
-        // Switch to encrypted mode
-        cli->cryptIn  = CryptKeyCreate(kCryptRc4, sizeof(sharedSeed), sharedSeed);
-        cli->cryptOut = CryptKeyCreate(kCryptRc4, sizeof(sharedSeed), sharedSeed);
-    }
-    
-    cli->mode = kNetCliModeEncrypted; // should rather be called "established", but whatever
-    return cli->encryptFcn(kNetSuccess);
-}
-
-//============================================================================
 static bool ClientRecvEncrypt (
     NetCli *                    cli,
     const NetCli_PacketHeader & pkt
@@ -875,7 +807,7 @@ static unsigned DispatchPacket (
         bool result = false;
         switch (pkt.message) {
             case kNetCliCli2SrvConnect:
-                result = ServerRecvConnect(cli, pkt);
+                hsAssert(false, "Server sent a client-to-server encryption packet!?");
                 break;
             case kNetCliSrv2CliEncrypt:
                 result = ClientRecvEncrypt(cli, pkt);
@@ -917,13 +849,10 @@ static void ResetSendRecv (NetCli * cli) {
 }
 
 //===========================================================================
-static NetCli * ConnCreate (
-    AsyncSocket     sock,
-    unsigned        protocol,
-    ENetCliMode     mode
-) {
+static NetCli* ConnCreate(AsyncSocket sock, unsigned protocol)
+{
     // find channel
-    NetMsgChannel * channel = NetMsgChannelLock(protocol, mode == kNetCliModeServerStart);
+    NetMsgChannel * channel = NetMsgChannelLock(protocol);
     if (!channel)
         return nullptr;
 
@@ -931,7 +860,7 @@ static NetCli * ConnCreate (
     cli->sock           = sock;
     cli->protocol       = (ENetProtocol) protocol;
     cli->channel        = channel;
-    cli->mode           = mode;
+    cli->mode           = kNetCliModeClientStart;
 
 #if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
     // Network debug pipe
@@ -991,7 +920,7 @@ NetCli * NetCliConnectAccept (
     const uint8_t       seedData[]
 ) {
     // Create connection
-    NetCli * cli = ConnCreate(sock, protocol, kNetCliModeClientStart);
+    NetCli* cli = ConnCreate(sock, protocol);
     if (cli) {
         AsyncSocketEnableNagling(sock, !unbuffered);
         cli->encryptFcn = std::move(encryptFcn);

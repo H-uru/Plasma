@@ -132,41 +132,20 @@ How to create a message sender/receiver:
 
 5. Register message description blocks
 
-// for server:
-    static const NetMsgInitSend s_srvSend[] = {
-        { s_moveObject  },
-        { s_playerJoin  },
-        { s_ping        },
-    };
-
-    static const NetMsgInitRecv s_srvRecv[] = {
-        { s_pingReply,  RecvMsgPingReply    },
-    };
-
-    s_srvConn = NetMsgProtocolRegister(
-        kNetProtocolCliToGame,
-        true,
-        s_srvSend, std::size(s_srvSend),
-        s_srvRecv, std::size(s_srvRecv)
-    );
-
-
-// for client:
-    static const NetMsgInitSend s_cliSend[] = {
+    static const NetMsgInitSend s_send[] = {
         { s_pingReply },
     };
 
-    static const NetMsgInitRecv s_cliRecv[] = {
+    static const NetMsgInitRecv s_recv[] = {
         { s_moveObject, RecvMsgMoveObject   },
         { s_playerJoin, RecvMsgPlayerJoin   },
         { s_ping,       RecvMsgPing         },
     };
 
-    s_cliConn = NetMsgProtocolRegister(
+    NetMsgProtocolRegister(
         kNetProtocolCliToGame,
-        false,
-        s_cliSend, std::size(s_cliSend),
-        s_cliRecv, std::size(s_cliRecv)
+        s_send, std::size(s_send),
+        s_recv, std::size(s_recv)
     );
 
 
@@ -321,20 +300,18 @@ struct NetMsgInitRecv {
 
 void NetMsgProtocolRegister (
     uint32_t                protocol,       // from pnNetBase/pnNbProtocol.h
-    bool                    server,
     const NetMsgInitSend    sendMsgs[],     // messages this program can send
     uint32_t                sendMsgCount,
     const NetMsgInitRecv    recvMsgs[],     // messages this program can receive
     uint32_t                recvMsgCount,
     // Diffie-Hellman keys
     uint32_t                dh_g,
-    const plBigNum&         dh_xa,          // client: dh_x     server: dh_a
+    const plBigNum&         dh_x,
     const plBigNum&         dh_n
 );
 
 void NetMsgProtocolDestroy (
-    uint32_t                protocol,
-    bool                    server
+    uint32_t protocol
 );
 
 

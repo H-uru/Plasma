@@ -4579,7 +4579,6 @@ void AuthInitialize () {
     s_running = true;
     NetMsgProtocolRegister(
         kNetProtocolCli2Auth,
-        false,
         s_send, std::size(s_send),
         s_recv, std::size(s_recv),
         kAuthDhGValue,
@@ -4604,11 +4603,8 @@ void AuthDestroy (bool wait) {
     NetTransCancelByProtocol(
         kNetProtocolCli2Auth,
         kNetErrRemoteShutdown
-    );    
-    NetMsgProtocolDestroy(
-        kNetProtocolCli2Auth,
-        false
     );
+    NetMsgProtocolDestroy(kNetProtocolCli2Auth);
 
     {
         hsLockGuard(s_critsect);

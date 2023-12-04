@@ -62,8 +62,7 @@ namespace pnNetCli {
 struct NetMsgChannel;
 
 NetMsgChannel * NetMsgChannelLock (
-    unsigned        protocol,
-    bool            server
+    unsigned protocol
 );
 void NetMsgChannelUnlock (
     NetMsgChannel * channel
@@ -79,7 +78,7 @@ const NetMsgInitSend * NetMsgChannelFindSendMessage (
 void NetMsgChannelGetDhConstants (
     const NetMsgChannel *   channel,
     unsigned *              dh_g,
-    const plBigNum**        dh_xa,  // client: dh_x     server: dh_a
+    const plBigNum**        dh_x,
     const plBigNum**        dh_n
 );
 
@@ -96,13 +95,6 @@ void NetMsgCryptClientStart (
     const uint8_t   seedData[],
     plBigNum*       clientSeed,
     plBigNum*       serverSeed
-);
-
-void NetMsgCryptServerConnect (
-    NetMsgChannel*  channel,
-    unsigned        seedBytes,
-    const uint8_t   seedData[],
-    plBigNum*       clientSeed
 );
 
 

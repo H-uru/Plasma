@@ -82,10 +82,9 @@ private:
 };
 
 struct NetMsgChannel : hsRefCnt {
-    NetMsgChannel() : hsRefCnt(0), m_protocol(), m_server(), m_dh_g() {}
+    NetMsgChannel() : hsRefCnt(0), m_protocol(), m_dh_g() {}
 
     uint32_t                m_protocol;
-    bool                    m_server;
 
     // Message definitions
     std::vector<NetMsgInitSend>  m_sendMsgs;
@@ -93,7 +92,7 @@ struct NetMsgChannel : hsRefCnt {
 
     // Diffie-Hellman constants
     uint32_t                m_dh_g;
-    plBigNum                m_dh_xa;    // client: dh_x     server: dh_a
+    plBigNum                m_dh_x;
     plBigNum                m_dh_n;
 };
 
@@ -250,9 +249,10 @@ static void AddRecvMsgs_CS (
 }
 
 //===========================================================================
-static NetMsgChannel* FindChannel_CS (uint32_t protocol, bool server) {
+static NetMsgChannel* FindChannel_CS(uint32_t protocol)
+{
     for (auto channel : s_channels) {
-        if (channel->m_protocol == protocol && channel->m_server == server) {
+        if (channel->m_protocol == protocol) {
             return channel;
         }
     }
@@ -261,13 +261,13 @@ static NetMsgChannel* FindChannel_CS (uint32_t protocol, bool server) {
 }
 
 //===========================================================================
-static NetMsgChannel* FindOrCreateChannel_CS (uint32_t protocol, bool server) {
+static NetMsgChannel* FindOrCreateChannel_CS(uint32_t protocol)
+{
     // find or create protocol
-    NetMsgChannel * channel = FindChannel_CS(protocol, server);
+    NetMsgChannel* channel = FindChannel_CS(protocol);
     if (!channel) {
         channel                 = new NetMsgChannel();
         channel->m_protocol     = protocol;
-        channel->m_server       = server;
 
         s_channels.push_back(channel);
         channel->Ref("ChannelLink");
@@ -285,12 +285,11 @@ static NetMsgChannel* FindOrCreateChannel_CS (uint32_t protocol, bool server) {
 
 //============================================================================
 NetMsgChannel * NetMsgChannelLock (
-    unsigned        protocol,
-    bool            server
+    unsigned protocol
 ) {
     NetMsgChannel * channel;
     hsLockGuard(s_channelCrit);
-    if (nullptr != (channel = FindChannel_CS(protocol, server))) {
+    if (nullptr != (channel = FindChannel_CS(protocol))) {
         channel->Ref("ChannelLock");
     }
     return channel;
@@ -342,12 +341,12 @@ const NetMsgInitSend * NetMsgChannelFindSendMessage (
 void NetMsgChannelGetDhConstants (
     const NetMsgChannel *   channel,
     uint32_t *              dh_g,
-    const plBigNum**        dh_xa,
+    const plBigNum**        dh_x,
     const plBigNum**        dh_n
 ) {
-    if (dh_g) *dh_g   =  channel->m_dh_g;
-    if (dh_xa) *dh_xa  = &channel->m_dh_xa;
-    if (dh_n) *dh_n   = &channel->m_dh_n;
+    if (dh_g) *dh_g = channel->m_dh_g;
+    if (dh_x) *dh_x = &channel->m_dh_x;
+    if (dh_n) *dh_n = &channel->m_dh_n;
 }
 
 
@@ -363,27 +362,26 @@ void NetMsgChannelGetDhConstants (
 //===========================================================================
 void NetMsgProtocolRegister (
     uint32_t                protocol,
-    bool                    server,
     const NetMsgInitSend    sendMsgs[],
     uint32_t                sendMsgCount,
     const NetMsgInitRecv    recvMsgs[],
     uint32_t                recvMsgCount,
     uint32_t                dh_g,
-    const plBigNum&         dh_xa,    // client: dh_x     server: dh_a
+    const plBigNum&         dh_x,
     const plBigNum&         dh_n
 ) {
     hsLockGuard(s_channelCrit);
 
-    NetMsgChannel * channel = FindOrCreateChannel_CS(protocol, server);
+    NetMsgChannel* channel = FindOrCreateChannel_CS(protocol);
 
     // make sure no connections have been established on this protocol, otherwise
     // we'll be modifying a live data structure; NetCli's don't lock their protocol
     // to operate on it once they have linked to it!
     ASSERT(channel->RefCnt() == 1);
 
-    channel->m_dh_g     = dh_g;
-    channel->m_dh_xa    = dh_xa;
-    channel->m_dh_n     = dh_n;
+    channel->m_dh_g = dh_g;
+    channel->m_dh_x = dh_x;
+    channel->m_dh_n = dh_n;
 
     if (sendMsgCount)
         AddSendMsgs_CS(channel, sendMsgs, sendMsgCount);
@@ -392,10 +390,11 @@ void NetMsgProtocolRegister (
 }
 
 //===========================================================================
-void NetMsgProtocolDestroy (uint32_t protocol, bool server) {
+void NetMsgProtocolDestroy(uint32_t protocol)
+{
     hsLockGuard(s_channelCrit);
 
-    if (NetMsgChannel* channel = FindChannel_CS(protocol, server)) {
+    if (NetMsgChannel* channel = FindChannel_CS(protocol)) {
         s_channels.remove(channel);
         channel->UnRef("ChannelLink");
     }

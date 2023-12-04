@@ -835,7 +835,6 @@ void GateKeeperInitialize () {
     s_running = true;
     NetMsgProtocolRegister(
         kNetProtocolCli2GateKeeper,
-        false,
         s_send, std::size(s_send),
         s_recv, std::size(s_recv),
         kGateKeeperDhGValue,
@@ -851,11 +850,8 @@ void GateKeeperDestroy (bool wait) {
     NetTransCancelByProtocol(
         kNetProtocolCli2GateKeeper,
         kNetErrRemoteShutdown
-    );    
-    NetMsgProtocolDestroy(
-        kNetProtocolCli2GateKeeper,
-        false
     );
+    NetMsgProtocolDestroy(kNetProtocolCli2GateKeeper);
 
     {
         hsLockGuard(s_critsect);
