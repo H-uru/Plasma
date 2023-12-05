@@ -85,21 +85,19 @@ struct NetMsgChannel : hsRefCnt {
 *
 ***/
 
-//===========================================================================
-// Returns max size of message in bytes
-static unsigned ValidateMsg (const NetMsg & msg) {
+static void ValidateMsg(const NetMsg& msg)
+{
     ASSERT(msg.fields);
     ASSERT(msg.count);
 
-    unsigned maxBytes = sizeof(uint16_t);    // for message id
+    bool gotVarCount = false;
+    bool gotVarField = false;
     bool prevFieldWasVarCount = false;
 
     for (unsigned i = 0; i < msg.count; i++) {
         const NetMsgField & field = msg.fields[i];
 
         for (;;) {
-            bool gotVarCount = false;
-            bool gotVarField = false;
             if (field.type == kNetMsgFieldVarCount) {
                 if (gotVarField || gotVarCount)
                     FATAL("Msg definition may only include one variable length field");
@@ -107,7 +105,7 @@ static unsigned ValidateMsg (const NetMsg & msg) {
                 break;
             }
             if (field.type == kNetMsgFieldVarPtr) {
-                if (gotVarField || gotVarCount)
+                if (gotVarField)
                     FATAL("Msg definition may only include one variable length field");
                 if (!prevFieldWasVarCount)
                     FATAL("Variable length field must preceded by variable length count field");
@@ -122,25 +120,18 @@ static unsigned ValidateMsg (const NetMsg & msg) {
         prevFieldWasVarCount = false;
         switch (field.type) {
             case kNetMsgFieldInteger:
-                maxBytes += sizeof(uint64_t);
-            break;
-
+            case kNetMsgFieldString:
+            case kNetMsgFieldData:
             case kNetMsgFieldVarPtr:
-            break;
+                break;
 
             case kNetMsgFieldVarCount:
                 prevFieldWasVarCount = true;
-                // fall-thru...
-            case kNetMsgFieldString:
-            case kNetMsgFieldData:
-                maxBytes += msg.fields[i].count * msg.fields[i].size;
-            break;
+                break;
 
             DEFAULT_FATAL(field.type);
         }
     }
-
-    return maxBytes;
 }
 
 
