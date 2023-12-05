@@ -103,7 +103,7 @@ How to create a message sender/receiver:
     static const NetMsgField kFieldPlayerId     = NET_MSG_FIELD_DWORD();
     static const NetMsgField kFieldObjectPos    = NET_MSG_FIELD_FLOAT_ARRAY(3);
     static const NetMsgField kFieldPlayerName   = NET_MSG_FIELD_STRING(kPlayerNameMaxLength);
-    static const NetMsgField kFieldPlayerData   = NET_MSG_FIELD_PTR(kPlayerDataMaxLength);
+    static const NetMsgField kFieldPlayerData   = NET_MSG_FIELD_DATA(kPlayerDataMaxLength);
     static const NetMsgField kFieldVaultDataLen = NET_MSG_FIELD_VAR_COUNT(kVaultDataMaxLength);
     static const NetMsgField kFieldVaultData    = NET_MSG_FIELD_VAR_PTR();
     static const NetMsgField kFieldPingTimeMs   = NET_MSG_FIELD_DWORD();
@@ -211,20 +211,12 @@ How to create a message sender/receiver:
 ***/
 
 enum ENetMsgFieldType {
-    // Compressable fields
     kNetMsgFieldInteger,
     kNetMsgFieldReal,
     kNetMsgFieldString,             // variable length unicode string
     kNetMsgFieldData,               // data with length <= sizeof(uint32_t)
-    kNetMsgFieldPtr,                // pointer to fixed length data
     kNetMsgFieldVarPtr,             // pointer to variable length data
-
-    // Non-compressible fields (images, sounds, encrypted data, etc)
-    kNetMsgFieldRawData,            // data with length <= sizeof(uint32_t)
-    kNetMsgFieldRawPtr,             // pointer to fixed length data
-    kNetMsgFieldRawVarPtr,          // pointer to variable length data
-
-    kNetMsgFieldVarCount,           // count for kNetMsgFieldVarPtr and kNetMsgFieldRawVarPtr
+    kNetMsgFieldVarCount,           // count for kNetMsgFieldVarPtr
 
     kNumNetMsgFieldTypes
 };
@@ -272,15 +264,8 @@ struct NetCli;
 #define NET_MSG_FIELD_DOUBLE_ARRAY(maxCount)    NET_MSG_FIELD(kNetMsgFieldReal, maxCount, sizeof(double))
 
 #define NET_MSG_FIELD_STRING(maxLength)         NET_MSG_FIELD(kNetMsgFieldString, maxLength, sizeof(char16_t))
-
-#define NET_MSG_FIELD_DATA(maxBytes)            NET_MSG_FIELD(kNetMsgFieldData,     maxBytes, 1)
-#define NET_MSG_FIELD_PTR(maxBytes)             NET_MSG_FIELD(kNetMsgFieldPtr,      maxBytes, 1)
-#define NET_MSG_FIELD_RAW_DATA(maxBytes)        NET_MSG_FIELD(kNetMsgFieldRawData,  maxBytes, 1)
-#define NET_MSG_FIELD_RAW_PTR(maxBytes)         NET_MSG_FIELD(kNetMsgFieldRawPtr,   maxBytes, 1)
-
-#define NET_MSG_FIELD_VAR_PTR()                 NET_MSG_FIELD(kNetMsgFieldVarPtr,    0, 0)
-#define NET_MSG_FIELD_RAW_VAR_PTR()             NET_MSG_FIELD(kNetMsgFieldRawVarPtr, 0, 0)
-
+#define NET_MSG_FIELD_DATA(maxBytes)            NET_MSG_FIELD(kNetMsgFieldData, maxBytes, 1)
+#define NET_MSG_FIELD_VAR_PTR()                 NET_MSG_FIELD(kNetMsgFieldVarPtr, 0, 0)
 #define NET_MSG_FIELD_VAR_COUNT(elemSize, maxCount) NET_MSG_FIELD(kNetMsgFieldVarCount, maxCount, elemSize)
 
 

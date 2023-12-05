@@ -368,8 +368,7 @@ static void BufferedSendData (
             }
             break;
 
-            case kNetMsgFieldData:
-            case kNetMsgFieldRawData: {
+            case kNetMsgFieldData: {
                 // write values to send buffer
                 AddToSendBuffer(cli, cmd->count * cmd->size, (const void *) *msg);
             }
@@ -386,20 +385,12 @@ static void BufferedSendData (
             }
             break;
 
-            case kNetMsgFieldVarPtr:
-            case kNetMsgFieldRawVarPtr: {
+            case kNetMsgFieldVarPtr: {
                 ASSERT(varSize);
                 // write var sized array
                 AddToSendBuffer(cli, varCount * varSize, (const void *) *msg);
                 varCount    = 0;
                 varSize     = 0;
-            }
-            break;
-
-            case kNetMsgFieldPtr:
-            case kNetMsgFieldRawPtr: {
-                // write values
-                AddToSendBuffer(cli, cmd->count * cmd->size, (const void *) *msg);
             }
             break;
 
@@ -505,8 +496,7 @@ static bool DispatchData (NetCli * cli, void * param) {
                 }
                 break;
 
-                case kNetMsgFieldData:
-                case kNetMsgFieldRawData: {
+                case kNetMsgFieldData: {
                     // Read fixed-length data into destination buffer
                     const unsigned bytes = cli->recvField->count * cli->recvField->size;
                     const size_t oldSize = cli->recvBuffer.size();
@@ -542,8 +532,7 @@ static bool DispatchData (NetCli * cli, void * param) {
                 }
                 break;
 
-                case kNetMsgFieldVarPtr:
-                case kNetMsgFieldRawVarPtr: {
+                case kNetMsgFieldVarPtr: {
                     // Read var-length data into destination buffer
                     const unsigned bytes = cli->recvFieldBytes;
                     const size_t oldSize = cli->recvBuffer.size();

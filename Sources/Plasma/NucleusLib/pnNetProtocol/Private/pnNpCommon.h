@@ -126,7 +126,7 @@ struct AsyncSocketConnectPacket {
 
 const NetMsgField kNetMsgFieldAccountName   = NET_MSG_FIELD_STRING(kMaxAccountNameLength);
 const NetMsgField kNetMsgFieldPlayerName    = NET_MSG_FIELD_STRING(kMaxPlayerNameLength);
-const NetMsgField kNetMsgFieldShaDigest     = NET_MSG_FIELD_RAW_DATA(sizeof(ShaDigest));
+const NetMsgField kNetMsgFieldShaDigest     = NET_MSG_FIELD_DATA(sizeof(ShaDigest));
 const NetMsgField kNetMsgFieldUuid          = NET_MSG_FIELD_DATA(sizeof(plUUID));
 const NetMsgField kNetMsgFieldTransId       = NET_MSG_FIELD_DWORD();
 const NetMsgField kNetMsgFieldTimeMs        = NET_MSG_FIELD_DWORD();

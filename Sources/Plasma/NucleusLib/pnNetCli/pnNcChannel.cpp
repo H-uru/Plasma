@@ -106,7 +106,7 @@ static unsigned ValidateMsg (const NetMsg & msg) {
                 gotVarCount = true;
                 break;
             }
-            if (field.type == kNetMsgFieldVarPtr || field.type == kNetMsgFieldRawVarPtr) {
+            if (field.type == kNetMsgFieldVarPtr) {
                 if (gotVarField || gotVarCount)
                     FATAL("Msg definition may only include one variable length field");
                 if (!prevFieldWasVarCount)
@@ -130,17 +130,13 @@ static unsigned ValidateMsg (const NetMsg & msg) {
             break;
 
             case kNetMsgFieldVarPtr:
-            case kNetMsgFieldRawVarPtr:
             break;
 
             case kNetMsgFieldVarCount:
                 prevFieldWasVarCount = true;
                 // fall-thru...
             case kNetMsgFieldString:
-            case kNetMsgFieldPtr:
-            case kNetMsgFieldRawPtr:
             case kNetMsgFieldData:
-            case kNetMsgFieldRawData:
                 maxBytes += msg.fields[i].count * msg.fields[i].size;
             break;
 
