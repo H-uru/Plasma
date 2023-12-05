@@ -247,26 +247,24 @@ struct NetCli;
 
 #define NET_MSG(msgId, msgFields)               { #msgId, msgId, msgFields, (unsigned)std::size(msgFields) }
 
-#define NET_MSG_FIELD(type, count, size)        { type, count, size }
+#define NET_MSG_FIELD_BYTE()                    { kNetMsgFieldInteger, 0, sizeof(uint8_t) }
+#define NET_MSG_FIELD_WORD()                    { kNetMsgFieldInteger, 0, sizeof(uint16_t) }
+#define NET_MSG_FIELD_DWORD()                   { kNetMsgFieldInteger, 0, sizeof(uint32_t) }
+#define NET_MSG_FIELD_QWORD()                   { kNetMsgFieldInteger, 0, sizeof(uint64_t) }
+#define NET_MSG_FIELD_FLOAT()                   { kNetMsgFieldReal, 0, sizeof(float) }
+#define NET_MSG_FIELD_DOUBLE()                  { kNetMsgFieldReal, 0, sizeof(double) }
 
-#define NET_MSG_FIELD_BYTE()                    NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint8_t))
-#define NET_MSG_FIELD_WORD()                    NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint16_t))
-#define NET_MSG_FIELD_DWORD()                   NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint32_t))
-#define NET_MSG_FIELD_QWORD()                   NET_MSG_FIELD(kNetMsgFieldInteger, 0, sizeof(uint64_t))
-#define NET_MSG_FIELD_FLOAT()                   NET_MSG_FIELD(kNetMsgFieldReal, 0, sizeof(float))
-#define NET_MSG_FIELD_DOUBLE()                  NET_MSG_FIELD(kNetMsgFieldReal, 0, sizeof(double))
+#define NET_MSG_FIELD_BYTE_ARRAY(maxCount)      { kNetMsgFieldInteger, maxCount, sizeof(uint8_t) }
+#define NET_MSG_FIELD_WORD_ARRAY(maxCount)      { kNetMsgFieldInteger, maxCount, sizeof(uint16_t) }
+#define NET_MSG_FIELD_DWORD_ARRAY(maxCount)     { kNetMsgFieldInteger, maxCount, sizeof(uint32_t) }
+#define NET_MSG_FIELD_QWORD_ARRAY(maxCount)     { kNetMsgFieldInteger, maxCount, sizeof(uint64_t) }
+#define NET_MSG_FIELD_FLOAT_ARRAY(maxCount)     { kNetMsgFieldReal, maxCount, sizeof(float) }
+#define NET_MSG_FIELD_DOUBLE_ARRAY(maxCount)    { kNetMsgFieldReal, maxCount, sizeof(double) }
 
-#define NET_MSG_FIELD_BYTE_ARRAY(maxCount)      NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint8_t))
-#define NET_MSG_FIELD_WORD_ARRAY(maxCount)      NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint16_t))
-#define NET_MSG_FIELD_DWORD_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint32_t))
-#define NET_MSG_FIELD_QWORD_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldInteger, maxCount, sizeof(uint64_t))
-#define NET_MSG_FIELD_FLOAT_ARRAY(maxCount)     NET_MSG_FIELD(kNetMsgFieldReal, maxCount, sizeof(float))
-#define NET_MSG_FIELD_DOUBLE_ARRAY(maxCount)    NET_MSG_FIELD(kNetMsgFieldReal, maxCount, sizeof(double))
-
-#define NET_MSG_FIELD_STRING(maxLength)         NET_MSG_FIELD(kNetMsgFieldString, maxLength, sizeof(char16_t))
-#define NET_MSG_FIELD_DATA(maxBytes)            NET_MSG_FIELD(kNetMsgFieldData, maxBytes, 1)
-#define NET_MSG_FIELD_VAR_PTR()                 NET_MSG_FIELD(kNetMsgFieldVarPtr, 0, 0)
-#define NET_MSG_FIELD_VAR_COUNT(elemSize, maxCount) NET_MSG_FIELD(kNetMsgFieldVarCount, maxCount, elemSize)
+#define NET_MSG_FIELD_STRING(maxLength)         { kNetMsgFieldString, maxLength, sizeof(char16_t) }
+#define NET_MSG_FIELD_DATA(maxBytes)            { kNetMsgFieldData, maxBytes, 1 }
+#define NET_MSG_FIELD_VAR_PTR()                 { kNetMsgFieldVarPtr, 0, 0 }
+#define NET_MSG_FIELD_VAR_COUNT(elemSize, maxCount) { kNetMsgFieldVarCount, maxCount, elemSize }
 
 
 /*****************************************************************************
