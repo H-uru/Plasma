@@ -125,10 +125,6 @@ static unsigned ValidateMsg (const NetMsg & msg) {
                 maxBytes += sizeof(uint64_t);
             break;
 
-            case kNetMsgFieldReal:
-                maxBytes += sizeof(double);
-            break;
-
             case kNetMsgFieldVarPtr:
             break;
 

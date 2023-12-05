@@ -297,8 +297,6 @@ static void BufferedSendData (
                         *(uint16_t*)&temp[0] = hsToLE16(*(uint16_t*)msg);
                     } else if (cmd->size == sizeof(uint32_t)) {
                         *(uint32_t*)&temp[0] = hsToLE32(*(uint32_t*)msg);
-                    } else if (cmd->size == sizeof(uint64_t)) {
-                        *(uint64_t*)&temp[0] = hsToLE64(*(uint64_t*)msg);
                     }
                 } else {
                     // Value arrays are passed in by ptr
@@ -309,36 +307,6 @@ static void BufferedSendData (
                             *(uint16_t*)&temp[i] = hsToLE16(((uint16_t*)*msg)[i]);
                         } else if (cmd->size == sizeof(uint32_t)) {
                             *(uint32_t*)&temp[i] = hsToLE32(((uint32_t*)*msg)[i]);
-                        } else if (cmd->size == sizeof(uint64_t)) {
-                            *(uint64_t*)&temp[i] = hsToLE64(((uint64_t*)*msg)[i]);
-                        }
-                    }
-                }
-
-                // Write values to send buffer
-                AddToSendBuffer(cli, bytes, temp.get());
-            }
-            break;
-
-            case kNetMsgFieldReal: {
-                const unsigned count = cmd->count ? cmd->count : 1;
-                const unsigned bytes = cmd->size * count;
-                auto temp = std::make_unique<uint8_t[]>(bytes);
-
-                if (count == 1) {
-                    // Single values are passed in by value
-                    if (cmd->size == sizeof(float)) {
-                        *(float*)&temp[0] = hsToLEFloat(*(float*)msg);
-                    } else if (cmd->size == sizeof(double)) {
-                        *(double*)&temp[0] = hsToLEFloat(*(double*)msg);
-                    }
-                } else {
-                    // Value arrays are passed in by ptr
-                    for (size_t i = 0; i < count; i++) {
-                        if (cmd->size == sizeof(float)) {
-                            *(float*)&temp[i] = hsToLEFloat(((float*)*msg)[i]);
-                        } else if (cmd->size == sizeof(double)) {
-                            *(double*)&temp[i] = hsToLEFloat(((double*)*msg)[i]);
                         }
                     }
                 }
@@ -458,37 +426,6 @@ static bool DispatchData (NetCli * cli, void * param) {
                             ((uint16_t*)data)[i] = hsToLE16(((uint16_t*)data)[i]);
                         } else if (cli->recvField->size == sizeof(uint32_t)) {
                             ((uint32_t*)data)[i] = hsToLE32(((uint32_t*)data)[i]);
-                        } else if (cli->recvField->size == sizeof(uint64_t)) {
-                            ((uint64_t*)data)[i] = hsToLE64(((uint64_t*)data)[i]);
-                        }
-                    }
-
-                    // Field complete
-                }
-                break;
-
-                case kNetMsgFieldReal: {
-                    const unsigned count
-                        = cli->recvField->count
-                        ? cli->recvField->count
-                        : 1;
-
-                    // Get float values
-                    const unsigned bytes = count * cli->recvField->size;
-                    const size_t oldSize = cli->recvBuffer.size();
-                    cli->recvBuffer.resize(oldSize + bytes);
-                    uint8_t * data = cli->recvBuffer.data() + oldSize;
-                    if (!cli->input.Get(bytes, data)) {
-                        cli->recvBuffer.resize(oldSize);
-                        goto NEED_MORE_DATA;
-                    }
-
-                    // Convert to platform endianness
-                    for (size_t i = 0; i < count; i++) {
-                        if (cli->recvField->size == sizeof(float)) {
-                            ((float*)data)[i] = hsToLEFloat(((float*)data)[i]);
-                        } else if (cli->recvField->size == sizeof(double)) {
-                            ((double*)data)[i] = hsToLEDouble(((double*)data)[i]);
                         }
                     }
 
