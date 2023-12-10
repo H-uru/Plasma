@@ -45,10 +45,12 @@ This module contains the routines to read and write the input.ini file
 """
 
 import xIniHelper
+from PlasmaConstants import *
+from Plasma import *
 
-
-gFilename = "./init/input.fni"
 gIniFile = None
+gFilename = "input.ini"
+gFilenameAndPath = ""
 
 # the different volume commands
 kBindCmd = "Keyboard.BindAction"
@@ -60,19 +62,48 @@ kWalkBack = '"Walk Backward"'
 kTurnLeft = '"Turn Left"'
 kTurnRight = '"Turn Right"'
 kJump = '"Jump Key"'
+kStrafeLeft = '"Strafe Left"'
+kStrafeRight = '"Strafe Right"'
 kExit = '"Exit Mode"'
-kExiGUI = '"Exit GUI Mode"'
+kToggleFP = '"Toggle First Person"'
+kOpenYB = '"Game.KIOpenYeeshaBook"'
+kHelp = '"Game.KIHelp"'
+kOpenKi = '"Game.KIOpenKI"'
+kTakePicture = '"Game.KITakePicture"'
+kKICreateJournal = '"Game.KICreateJournal"'
 kTalk = '"Push to talk"'
+kChat = '"Game.EnterChatMode"'
+kCreateMarkerFolder = '"Game.KICreateMarkerFolder"'
+kCreateMarker = '"Game.KICreateMarker"'
 
+kIniArray = [ kWalkForward, kWalkBack, kTurnLeft, kTurnRight, kJump, kStrafeLeft, kStrafeRight, kExit, kToggleFP, kOpenYB, kHelp, kOpenKi, kTakePicture, kKICreateJournal, kTalk, kChat, kCreateMarkerFolder, kCreateMarker ]
+
+
+
+def ConstructFilenameAndPath():
+    global gFilenameAndPath
+    if gFilenameAndPath == "":
+        if PtIsInternalRelease():
+            # check for local file
+            localNameAndPath = "init/" + gFilename
+            if PtFileExists(localNameAndPath):
+                gFilenameAndPath = localNameAndPath
+                PtDebugPrint("xIniInput::ConstructFilenameAndPath(): Using internal \"" + gFilenameAndPath + "\" file")
+                return
+        # otherwise, use the standard init path
+        gFilenameAndPath = PtGetInitPath() + "/" + gFilename
+        PtDebugPrint("xIniInput::ConstructFilenameAndPath(): Using user-level \"" + gFilenameAndPath + "\" file")
 
 def WriteIni():
     global gIniFile
     if gIniFile:
-        gIniFile.writeFile(gFilename)
+        ConstructFilenameAndPath()
+        gIniFile.writeFile(gFilenameAndPath)
 
 def ReadIni():
     global gIniFile
-    gIniFile = xIniHelper.iniFile(gFilename)
+    ConstructFilenameAndPath()
+    gIniFile = xIniHelper.iniFile(gFilenameAndPath)
     if gIniFile.isEmpty():
         # add defaults
         gIniFile.addEntry("# This is an auto-generated file.")
@@ -93,7 +124,7 @@ def GetControlKey(controlKey):
         if entry and entry.getValue(0) and entry.getValue(1):
             return entry.getValue(0),entry.getValue(1)
         else:
-            return "(unmapped),","(unmapped),"
+            return None
 
 def SetConsoleKey(consoleCommand,primary="(unmapped),"):
     if gIniFile:

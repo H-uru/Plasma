@@ -65,9 +65,11 @@ import PlasmaControlKeys
 
 from xGUILinkHandler import xGUILinkHandler
 import xJournalBookDefs
+import xIniInput
 import xIniAudio
 import xIniDisplay
 import xIniNumSounds
+import re
 
 # define the attributes that will be entered in max
 OptionsMenuDlg          = ptAttribGUIDialog(1,"The Options Menu dialog")
@@ -512,12 +514,13 @@ class xOptionsMenu(ptModifier):
             gJournalBook.hide()
 
     def OnServerInitComplete(self):
+        xIniInput.ReadIni()
         if self.refreshBindings:
             self.refreshBindings = False
-
+            testInputINI = xIniInput.GetControlKey(xIniInput.kWalkForward)
             vault = ptVault()
             entry = vault.findChronicleEntry("KeyMap")
-            if entry is None:
+            if entry is None and testInputINI is None:
                 # not found... create defaults
                 self.ISetDefaultKeyMappings()
 
@@ -733,10 +736,9 @@ class xOptionsMenu(ptModifier):
                     textField.setString(PtGetLocalizedString("OptionsMenu.Main.GoBack"))
                     self.IShowMappedKeys(control,gKM1ControlCodesRow1,gKM1ControlCodesRow2)
                     # read the ini file in
-                    # xIniInput.ReadIni()
+                    xIniInput.ReadIni()
                 else:
-                    # xIniInput.WriteIni()
-                    pass
+                    xIniInput.WriteIni()
             elif event == kAction or event == kValueChanged:
                 kmID = control.getTagID()
                 if kmID == kKMOkBtn:
@@ -755,6 +757,7 @@ class xOptionsMenu(ptModifier):
                         for key in KeyMapArray:
                             NewKeyMapString += key + " "
                         self.setNewChronicleVar("KeyMap", NewKeyMapString.rstrip())
+                        xIniInput.SetConsoleKey('"' + cCode + '"', key1 + ',')
                     elif cCode is not None:
                         otherID = kmID + 100
                         otherField = ptGUIControlEditBox(KeyMapDlg.dialog.getControlFromTag(otherID))
@@ -768,6 +771,7 @@ class xOptionsMenu(ptModifier):
                         for key in KeyMapArray:
                             NewKeyMapString += key + " "
                         self.setNewChronicleVar("KeyMap", NewKeyMapString.rstrip())
+                        xIniInput.SetControlKey('"' + controlStr + '"', key1 + ',', key2 + ',')
                     # lose the focus when done
                     KeyMapDlg.dialog.noFocus()
                     # force writing the keymap
@@ -775,7 +779,7 @@ class xOptionsMenu(ptModifier):
                     # re-show the keymap because they may have been stupid and map the same key to multiple actions
                     self.IShowMappedKeys(KeyMapDlg.dialog,gKM1ControlCodesRow1,gKM1ControlCodesRow2)
                     # need to re-set the ini file, in case something got unmapped
-                    #self.IMatchIniToGame()
+                    self.IMatchIniToGame()
                 elif kmID in gKM1ControlCodesRow2.keys():
                     NewKeyMapString = ""
                     # get the new keys and bind
@@ -792,7 +796,7 @@ class xOptionsMenu(ptModifier):
                         for key in KeyMapArray:
                             NewKeyMapString += key + " "
                         self.setNewChronicleVar("KeyMap", NewKeyMapString.rstrip())
-                        #xIniInput.SetConsoleKey('"'+cCode+'"',key1+',')
+                        xIniInput.SetConsoleKey('"'+cCode+'"',key1+',')
                     elif cCode is not None:
                         otherID = kmID - 100
                         otherField = ptGUIControlEditBox(KeyMapDlg.dialog.getControlFromTag(otherID))
@@ -806,7 +810,7 @@ class xOptionsMenu(ptModifier):
                         for key in KeyMapArray:
                             NewKeyMapString += key + " "
                         self.setNewChronicleVar("KeyMap", NewKeyMapString.rstrip())
-                        #xIniInput.SetControlKey('"'+controlStr+'"',key1+',',key2+',')
+                        xIniInput.SetControlKey('"'+controlStr+'"',key1+',',key2+',')
                     # lose the focus when done
                     KeyMapDlg.dialog.noFocus()
                     # force writing the keymap
@@ -814,7 +818,7 @@ class xOptionsMenu(ptModifier):
                     # re-show the keymap because they may have been stupid and map the same key to multiple actions
                     self.IShowMappedKeys(KeyMapDlg.dialog,gKM1ControlCodesRow1,gKM1ControlCodesRow2)
                     # need to re-set the ini file, in case something got unmapped
-                    #self.IMatchIniToGame()
+                    self.IMatchIniToGame()
                 elif kmID == kKMDefaultsBtn:
                     self.ISetDefaultKeyMappings()
                     self.IShowMappedKeys(KeyMapDlg.dialog,gKM1ControlCodesRow1,gKM1ControlCodesRow2)
@@ -1929,10 +1933,18 @@ class xOptionsMenu(ptModifier):
 
     def LoadKeyMap(self):
         km = ptKeyMap()
-        KeyMapString = self.getChronicleVar("KeyMap")
-        if not KeyMapString:
-            PtDebugPrint("xOptionsMenu.LoadKeyMap():\tHmm... Empty chronicle...")
-            return
+        KeyMapString = ""
+        kWalkForward = xIniInput.GetControlKey(xIniInput.kWalkForward)
+        if kWalkForward is None:
+            KeyMapString = self.getChronicleVar("KeyMap")
+            if not KeyMapString:
+                PtDebugPrint("xOptionsMenu.LoadKeyMap():\tHmm... Empty chronicle...")
+                return
+        else:
+            for key in xIniInput.kIniArray:
+                key = xIniInput.GetControlKey(key)
+                KeyMapString += re.sub('\$ $', ' ', key[0].replace(",","")+"$"+re.sub('"Game.*', '', key[1].replace(",",""))+" ")
+            
 
         KeyMapArray = KeyMapString.split()
         # set the key binds back to the saved
@@ -1992,6 +2004,18 @@ class xOptionsMenu(ptModifier):
             else:
                 # disable this field
                 field.hide()
+
+    def IMatchIniToGame(self):
+        km = ptKeyMap()
+        for control_code in defaultControlCodeBinds.keys():
+            if type(control_code) == type(''):
+                key1 = km.convertVKeyToChar(km.getBindingKeyConsole(control_code), km.getBindingFlagsConsole(control_code))
+                xIniInput.SetConsoleKey('"' + control_code + '"', key1 + ',')
+            else:
+                controlStr = km.convertControlCodeToString(control_code)
+                key1 = km.convertVKeyToChar(km.getBindingKey1(control_code), km.getBindingFlags1(control_code))
+                key2 = km.convertVKeyToChar(km.getBindingKey2(control_code), km.getBindingFlags2(control_code))
+                xIniInput.SetControlKey('"' + controlStr + '"', key1 + ',', key2 + ',')
 
     def ISetDefaultKeyMappings(self):
         km = ptKeyMap()
