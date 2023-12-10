@@ -1797,7 +1797,6 @@ bool RecvMsg<Auth2Cli_KickedOff>(const uint8_t buffer[], unsigned bytes, void* p
     const Auth2Cli_KickedOff & msg = *(const Auth2Cli_KickedOff *)buffer;
 
     ReportNetError(kNetProtocolCli2Auth, msg.reason);
-    NetCliAuthDisconnect();
 
     return true;
 }
