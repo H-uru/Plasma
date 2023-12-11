@@ -63,6 +63,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 @interface PLSView ()
 
 @property NSTrackingArea* mouseTrackingArea;
+@property id windowDidChangeObserver;
+
 #if PLASMA_PIPELINE_METAL
 @property(weak) CAMetalLayer* metalLayer;
 #endif
@@ -79,11 +81,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     CAMetalLayer* layer = [CAMetalLayer layer];
     layer.contentsScale = [[NSScreen mainScreen] backingScaleFactor];
     layer.maximumDrawableCount = 3;
-    layer.pixelFormat = MTLPixelFormatBGR10A2Unorm;
     self.layer = self.metalLayer = layer;
 #endif
     self.layer.backgroundColor = NSColor.blackColor.CGColor;
+    [self configureLayerColorDepth];
+    self.windowDidChangeObserver = [NSNotificationCenter.defaultCenter addObserverForName:NSWindowDidChangeScreenNotification object:self.window queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull notification) {
+        [self configureLayerColorDepth];
+    }];
     return self;
+}
+
+-(void)dealloc
+{
+    [NSNotificationCenter.defaultCenter removeObserver:self.windowDidChangeObserver];
 }
 
 - (BOOL)acceptsFirstResponder
@@ -281,6 +291,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     [self.delegate renderView:self
           didChangeOutputSize:newSize
                         scale:scaleFactor];
+}
+
+-(void)configureLayerColorDepth
+{
+    NSWindow *window = self.window;
+    if (window)
+    {
+        NSDictionary<NSDeviceDescriptionKey, id> *windowProperties = [window deviceDescription];
+        NSUInteger bitsPerPixel = [windowProperties[NSDeviceBitsPerSample] unsignedIntValue];
+#if PLASMA_PIPELINE_METAL
+        if (bitsPerPixel <=8)
+        {
+            if (self.metalLayer.pixelFormat != MTLPixelFormatBGRA8Unorm)
+            {
+                self.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+            }
+        } else {
+            if (self.metalLayer.pixelFormat != MTLPixelFormatBGR10A2Unorm)
+            {
+                self.metalLayer.pixelFormat = MTLPixelFormatBGR10A2Unorm;
+            }
+        }
+#endif
+    }
 }
 
 @end

@@ -189,6 +189,7 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
                                                    styleMask:windowStyle
                                                      backing:NSBackingStoreBuffered
                                                        defer:NO];
+    window.depthLimit = NSWindowDepthSixtyfourBitRGB;
     window.backgroundColor = NSColor.blackColor;
 
     PLSView* view = [[PLSView alloc] init];
