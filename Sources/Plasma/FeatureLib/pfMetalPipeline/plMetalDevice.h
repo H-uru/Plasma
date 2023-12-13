@@ -161,7 +161,8 @@ public:
     /// Create a new command buffer to encode all the operations needed to draw a frame
     // Currently requires a CA drawable and not a Metal drawable. In since CA drawable is only abstract implementation I know about, not sure where we would find others?
     void                CreateNewCommandBuffer(CA::MetalDrawable* drawable);
-    MTL::CommandBuffer* GetCurrentCommandBuffer();
+    MTL::CommandBuffer* GetCurrentCommandBuffer() const;
+    MTL::CommandBuffer* GetCurrentDrawableCommandBuffer() const { return fCurrentCommandBuffer; }
     CA::MetalDrawable*  GetCurrentDrawable() const;
     /// Submit the command buffer to the GPU and draws all the render passes. Clears the current command buffer.
     void                SubmitCommandBuffer();
