@@ -57,8 +57,9 @@ from xCensor import xCensor
 # https://(anything not a space)
 # http://(anything not a space)
 # www.(anything not a space or a dot).(anything not a space)
+# They also allow for a trailing slash to be part of the URL.
 _HOST_REGEX = re.compile(R"(?:https?:\/\/)?(?:www\.)?([^\/?#]+).*", re.IGNORECASE)
-_URL_REGEX = re.compile(R"\b(?:https?:\/\/[\S]+|www\.[^\s.]+\.[^\s]+)\b", re.IGNORECASE)
+_URL_REGEX = re.compile(R"\b(?:https?:\/\/[\S]+|www\.[^\s.]+\.[^\s]+)\b/?", re.IGNORECASE)
 
 @dataclass
 class _Link:
