@@ -1749,44 +1749,28 @@ PyObject* PythonInterface::RunFunction(PyObject* module, const char* name, PyObj
     return result;
 }
 
-PyObject* PythonInterface::ParseArgs(const char* args)
-{
-    PyObject* result = nullptr;
-    PyObject* scope = PyDict_New();
-    if (scope) 
-    {
-        //- Py_eval_input makes this function accept only single expresion (not statement)
-        //- When using empty scope, functions and classes like 'file' or '__import__' are not visible
-        result = PyRun_String(args, Py_eval_input, scope, nullptr);
-        Py_DECREF(scope);
-    }
-   
-    return result;
-}
-
-bool PythonInterface::RunFunctionSafe(const char* module, const char* function, const char* args) 
+bool PythonInterface::RunFunctionStringArg(const char* module, const char* name, const ST::string& arg)
 {
     PyObject* moduleObj = ImportModule(module);
     bool result = false;
-    if (moduleObj) 
-    {
-        PyObject* argsObj = ParseArgs(args);
-        if (argsObj) 
-        {
-            PyObject* callResult = RunFunction(moduleObj, function, argsObj);
-            if (callResult) 
-            {
-                result = true;
-                Py_DECREF(callResult);
+    if (moduleObj) {
+        PyObject* argObj = PyUnicode_FromSTString(arg);
+        if (argObj) {
+            PyObject* argsObj = PyTuple_Pack(1, argObj);
+            if (argsObj) {
+                PyObject* callResult = RunFunction(moduleObj, name, argsObj);
+                if (callResult) {
+                    result = true;
+                    Py_DECREF(callResult);
+                }
+                Py_DECREF(argsObj);
             }
-
-            Py_DECREF(argsObj);
+            Py_DECREF(argObj);
         }
         Py_DECREF(moduleObj);
     }
 
-    if (!result)
-    {
+    if (!result) {
         PyErr_Print();
     }
 

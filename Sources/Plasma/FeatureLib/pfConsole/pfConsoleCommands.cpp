@@ -6124,16 +6124,8 @@ PF_CONSOLE_CMD( Python,
                 "Run a cheat command" )
 {
     const ST::string& function = params[0];
-    ST::string args;
-    if (numParams > 1) 
-    {
-        args = ST::format("({},)", static_cast<const ST::string&>(params[1]));
-    }
-    else
-        args = "()";
-
-    PythonInterface::RunFunctionSafe("xCheat", function.c_str(), args.c_str());
-
+    const ST::string& args = numParams > 1 ? params[1] : ST::string();
+    PythonInterface::RunFunctionStringArg("xCheat", function.c_str(), args);
     // get the messages
     PrintString(PythonInterface::getOutputAndReset());
 }

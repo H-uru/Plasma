@@ -221,9 +221,8 @@ public:
 
     static PyObject* RunFunction(PyObject* module, const char* name, PyObject* args);
 
-    static PyObject* ParseArgs(const char* args);
+    static bool RunFunctionStringArg(const char* module, const char* name, const ST::string& arg);
 
-    static bool RunFunctionSafe(const char* module, const char* function, const char* args);
     /////////////////////////////////////////////////////////////////////////////
     //
     //  Function   : GetpyKeyFromPython
