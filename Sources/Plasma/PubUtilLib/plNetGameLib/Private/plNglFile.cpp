@@ -101,7 +101,7 @@ struct CliFileConn : hsRefCnt, AsyncNotifySocketCallbacks {
 
     // Callbacks
     void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) override;
-    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr) override;
+    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr) override;
     void AsyncNotifySocketDisconnect(AsyncSocket sock) override;
     std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) override;
 
@@ -308,7 +308,7 @@ static void AbandonConn(CliFileConn* conn) {
 }
 
 //============================================================================
-bool CliFileConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr)
+bool CliFileConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr)
 {
     {
         hsLockGuard(s_critsect);
@@ -1300,7 +1300,7 @@ void NetCliFileStartConnect (
 
     for (unsigned i = 0; i < fileAddrCount; ++i) {
         // Do we need to lookup the address?
-        ST::string name = fileAddrList[i];
+        const ST::string& name = fileAddrList[i];
         const char* pos;
         for (pos = name.begin(); pos != name.end(); ++pos) {
             if (!(isdigit(*pos) || *pos == '.' || *pos == ':')) {

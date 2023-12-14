@@ -72,7 +72,7 @@ class AsyncNotifySocketCallbacks
 {
 public:
     virtual void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) = 0;
-    virtual bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr) = 0;
+    virtual bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr) = 0;
     virtual void AsyncNotifySocketDisconnect(AsyncSocket sock) = 0;
     virtual std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) = 0;
 };

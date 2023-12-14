@@ -73,7 +73,7 @@ struct CliGmConn : hsRefCnt, AsyncNotifySocketCallbacks {
 
     // Callbacks
     void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) override;
-    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr) override;
+    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr) override;
     void AsyncNotifySocketDisconnect(AsyncSocket sock) override;
     std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) override;
 
@@ -212,7 +212,7 @@ static void AbandonConn(CliGmConn* conn) {
 }
 
 //============================================================================
-bool CliGmConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr)
+bool CliGmConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr)
 {
     bool wasAbandoned;
     {

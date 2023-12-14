@@ -75,7 +75,7 @@ struct CliAuConn : hsRefCnt, AsyncNotifySocketCallbacks {
 
     // Callbacks
     void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) override;
-    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr) override;
+    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr) override;
     void AsyncNotifySocketDisconnect(AsyncSocket sock) override;
     std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) override;
 
@@ -1361,7 +1361,7 @@ static void SendClientRegisterRequest (CliAuConn * conn) {
 }
 
 //============================================================================
-bool CliAuConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, plNetAddress localAddr, plNetAddress remoteAddr)
+bool CliAuConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr)
 {
     bool wasAbandoned;
     {
@@ -4676,7 +4676,7 @@ void NetCliAuthStartConnect (
 
     for (unsigned i = 0; i < authAddrCount; ++i) {
         // Do we need to lookup the address?
-        ST::string name = authAddrList[i];
+        const ST::string& name = authAddrList[i];
         const char* pos;
         for (pos = name.begin(); pos != name.end(); ++pos) {
             if (!(isdigit(*pos) || *pos == '.' || *pos == ':')) {
