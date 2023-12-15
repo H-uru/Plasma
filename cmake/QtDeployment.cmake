@@ -63,7 +63,7 @@ function(plasma_deploy_qt)
     endforeach()
 
     # Deploy only once on install
-    if(PLASMA_INSTALL_QT)
+    if(PLASMA_INSTALL_QT AND _INSTALL_DEPLOY)
         string(JOIN [[" "]] _DEPLOY_ARG ${_INSTALL_DEPLOY})
         install(
             CODE
