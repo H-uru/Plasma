@@ -1724,50 +1724,18 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     return true;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : RunFunction
-//  PARAMETERS : module - module name to run 'name' in
-//             : name - name of function
-//             : args - tuple with arguments
-//
-//
-PyObject* PythonInterface::RunFunction(PyObject* module, const char* name, PyObject* args)
-{
-    if (module == nullptr)
-        return nullptr;
-
-    PyObject* function = PyObject_GetAttrString(module, name);
-
-    PyObject* result = nullptr;
-    if (function != nullptr)
-    {
-        result = PyObject_Call(function, args, nullptr);
-        Py_DECREF(function);
-    }
-
-    return result;
-}
-
 bool PythonInterface::RunFunctionStringArg(const char* module, const char* name, const ST::string& arg)
 {
-    PyObject* moduleObj = ImportModule(module);
+    pyObjectRef moduleObj = ImportModule(module);
     bool result = false;
     if (moduleObj) {
-        PyObject* argObj = PyUnicode_FromSTString(arg);
-        if (argObj) {
-            PyObject* argsObj = PyTuple_Pack(1, argObj);
-            if (argsObj) {
-                PyObject* callResult = RunFunction(moduleObj, name, argsObj);
-                if (callResult) {
-                    result = true;
-                    Py_DECREF(callResult);
-                }
-                Py_DECREF(argsObj);
+        pyObjectRef functionObj = PyObject_GetAttrString(moduleObj.Get(), name);
+        if (functionObj) {
+            pyObjectRef callResult = plPython::CallObject(functionObj, arg);
+            if (callResult) {
+                result = true;
             }
-            Py_DECREF(argObj);
         }
-        Py_DECREF(moduleObj);
     }
 
     if (!result) {
