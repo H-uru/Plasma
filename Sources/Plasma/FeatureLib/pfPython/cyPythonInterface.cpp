@@ -1724,69 +1724,21 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
     return true;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : RunFunction
-//  PARAMETERS : module - module name to run 'name' in
-//             : name - name of function
-//             : args - tuple with arguments
-//
-//
-PyObject* PythonInterface::RunFunction(PyObject* module, const char* name, PyObject* args)
+bool PythonInterface::RunFunctionStringArg(const char* module, const char* name, const ST::string& arg)
 {
-    if (module == nullptr)
-        return nullptr;
-
-    PyObject* function = PyObject_GetAttrString(module, name);
-
-    PyObject* result = nullptr;
-    if (function != nullptr)
-    {
-        result = PyObject_Call(function, args, nullptr);
-        Py_DECREF(function);
-    }
-
-    return result;
-}
-
-PyObject* PythonInterface::ParseArgs(const char* args)
-{
-    PyObject* result = nullptr;
-    PyObject* scope = PyDict_New();
-    if (scope) 
-    {
-        //- Py_eval_input makes this function accept only single expresion (not statement)
-        //- When using empty scope, functions and classes like 'file' or '__import__' are not visible
-        result = PyRun_String(args, Py_eval_input, scope, nullptr);
-        Py_DECREF(scope);
-    }
-   
-    return result;
-}
-
-bool PythonInterface::RunFunctionSafe(const char* module, const char* function, const char* args) 
-{
-    PyObject* moduleObj = ImportModule(module);
+    pyObjectRef moduleObj = ImportModule(module);
     bool result = false;
-    if (moduleObj) 
-    {
-        PyObject* argsObj = ParseArgs(args);
-        if (argsObj) 
-        {
-            PyObject* callResult = RunFunction(moduleObj, function, argsObj);
-            if (callResult) 
-            {
+    if (moduleObj) {
+        pyObjectRef functionObj = PyObject_GetAttrString(moduleObj.Get(), name);
+        if (functionObj) {
+            pyObjectRef callResult = plPython::CallObject(functionObj, arg);
+            if (callResult) {
                 result = true;
-                Py_DECREF(callResult);
             }
-
-            Py_DECREF(argsObj);
         }
-        Py_DECREF(moduleObj);
     }
 
-    if (!result)
-    {
+    if (!result) {
         PyErr_Print();
     }
 
