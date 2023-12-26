@@ -186,27 +186,14 @@ void plMetalDevice::SetMaxAnsiotropy(uint8_t maxAnsiotropy)
 
 void plMetalDevice::SetMSAASampleCount(uint8_t sampleCount)
 {
-    // Plasma has some MSAA levels that don't completely correspond to what Metal can do
-    // Best fit them to levels Metal can do. Once they are best fit see if the hardware
-    // is capable.
-
-    uint8_t actualSampleCount = 1;
-    if (sampleCount == 6) {
-        actualSampleCount = 8;
-    } else if (sampleCount == 4) {
-        actualSampleCount = 4;
-    } else if (sampleCount == 2) {
-        actualSampleCount = 2;
-    }
-
-    while (actualSampleCount != 1) {
-        if (fMetalDevice->supportsTextureSampleCount(actualSampleCount)) {
+    while (sampleCount != 1) {
+        if (fMetalDevice->supportsTextureSampleCount(sampleCount)) {
             break;
         }
-        actualSampleCount /= 2;
+        sampleCount--;
     }
 
-    fSampleCount = actualSampleCount;
+    fSampleCount = sampleCount;
 }
 
 void plMetalDevice::ReleaseSamplerStates()
