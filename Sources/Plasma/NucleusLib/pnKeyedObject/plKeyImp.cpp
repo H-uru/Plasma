@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 #if defined(HS_DEBUGGING) || defined(LOG_ACTIVE_REFS)
+#include <string_theory/format>
 #include "pnFactory/plFactory.h"
 #endif
 
@@ -88,11 +89,7 @@ plKeyImp::plKeyImp() :
     fDataLen(-1),
     fNumActiveRefs(),
     fPendingRefs(1)
-{
-#ifdef HS_DEBUGGING
-    fClassType = nullptr;
-#endif
-}
+{}
 
 plKeyImp::plKeyImp(plUoid u, uint32_t pos,uint32_t len):
     fUoid(std::move(u)),
@@ -103,23 +100,11 @@ plKeyImp::plKeyImp(plUoid u, uint32_t pos,uint32_t len):
     fPendingRefs(1)
 {
     plProfile_NewMem(KeyMem, CalcKeySize(this));
-
-#ifdef HS_DEBUGGING
-    fIDName = fUoid.GetObjectName();
-    fClassType = plFactory::GetNameOfClass( fUoid.GetClassType() );
-#endif
 }
 
 plKeyImp::~plKeyImp()
 {
     plProfile_DelMem(KeyMem, CalcKeySize(this));
-
-#if defined(HS_DEBUGGING) && 0
-    // Colin debugging
-    char buf[512];
-    sprintf(buf, "0x%x %s %s\n", this, fIDName, fClassType);
-    hsStatusMessage(buf);
-#endif
 
     hsAssert(fObjectPtr == nullptr, "Deleting non-nil key!  Bad idea!");
 
@@ -144,10 +129,6 @@ plKeyImp::~plKeyImp()
 void plKeyImp::SetUoid(const plUoid& uoid)
 {
     fUoid = uoid;
-#ifdef HS_DEBUGGING
-    fIDName = fUoid.GetObjectName();
-    fClassType = plFactory::GetNameOfClass(fUoid.GetClassType());
-#endif
 }
 
 ST::string plKeyImp::GetName() const
@@ -170,11 +151,6 @@ void plKeyImp::CopyForClone(const plKeyImp *p, uint32_t playerID, uint32_t clone
 {
     fObjectPtr = nullptr;           // the clone object start as nil
     fUoid = p->GetUoid();           // we will set the UOID the same to start
-
-#ifdef HS_DEBUGGING
-    fIDName = fUoid.GetObjectName();
-    fClassType = plFactory::GetNameOfClass( fUoid.GetClassType() );
-#endif
 
     fStartPos = p->GetStartPos();
     fDataLen = p->GetDataLen();
@@ -200,11 +176,6 @@ void plKeyImp::Read(hsStream* s)
     s->ReadLE32(&fDataLen);
 
     plProfile_NewMem(KeyMem, CalcKeySize(this));
-
-#ifdef HS_DEBUGGING
-    fIDName = fUoid.GetObjectName();
-    fClassType = plFactory::GetNameOfClass(fUoid.GetClassType());
-#endif
 }
 
 void plKeyImp::SkipRead(hsStream* s)
@@ -310,14 +281,9 @@ hsKeyedObject* plKeyImp::SetObjectPtr(hsKeyedObject* p)
     if (p)
     {
 #ifdef HS_DEBUGGING
-        if (fClassType)
-        {
-            char str[2048];
-            sprintf(str, "Mismatch of class (we are a %s, given a %s)", fClassType, p->ClassName());
-            hsAssert(fClassType == p->ClassName() || strcmp(fClassType, p->ClassName()) == 0, str); // points to static
+        if (fUoid.GetClassType() != p->ClassIndex()) {
+            hsAssert(false, ST::format("Mismatch of class (we are a {}, given a {})", plFactory::GetNameOfClass(fUoid.GetClassType()), p->ClassName()).c_str());
         }
-        else
-            fClassType = p->ClassName();
 #endif
 
         hsAssert(!fObjectPtr, "Setting an ObjectPtr thats already Set!");

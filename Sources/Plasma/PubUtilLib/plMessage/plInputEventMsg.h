@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnInputCore/plControlDefinition.h"
 #include "hsGeometry3.h"
 
+#include <string_theory/string>
 #include <utility>
 
 class plKeyEventMsg;

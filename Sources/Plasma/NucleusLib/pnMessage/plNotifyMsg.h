@@ -44,6 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMessage.h"
 
+#include <string_theory/string>
+
 #include "hsGeometry3.h"
 
 
