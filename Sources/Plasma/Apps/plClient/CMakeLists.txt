@@ -131,7 +131,7 @@ plasma_executable(plClient CLIENT INSTALL_PDB
 if(APPLE)
     # We need to filter out the XIB files so the source XML files don't get bundled
     set(plClient_XCODE_RESOURCES ${plClient_RESOURCES})
-    list(FILTER plClient_XCODE_RESOURCES EXCLUDE REGEX "\\.xib$")
+    list(FILTER plClient_XCODE_RESOURCES EXCLUDE REGEX "\\.x(ib|cassets)$")
 
     set_target_properties(plClient PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Mac-Cocoa/Info.plist.in"

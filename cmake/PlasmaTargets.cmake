@@ -22,6 +22,16 @@ if(APPLE AND NOT CMAKE_GENERATOR STREQUAL "Xcode")
     if(NOT IBTOOL)
         message(SEND_ERROR "Could not find Xcode's ibtool to process .xib files")
     endif()
+
+    find_program(ACTOOL actool HINTS "/usr/bin" "${OSX_DEVELOPER_ROOT}/usr/bin")
+    if(NOT ACTOOL)
+        message(SEND_ERROR "Could not find Xcode's actool to process .xcasset files")
+    endif()
+
+    find_program(PLISTBUDDY PlistBuddy HINTS "/usr/libexec" "${OSX_DEVELOPER_ROOT}/usr/libexec")
+    if(NOT PLISTBUDDY)
+        message(SEND_ERROR "Could not find PlistBuddy for plist file processing")
+    endif()
 endif()
 
 function(plasma_executable TARGET)
@@ -79,7 +89,7 @@ function(plasma_executable TARGET)
         foreach(SRCFILE IN LISTS _pex_SOURCES)
             get_filename_component(SRCEXTENSION ${SRCFILE} LAST_EXT)
 
-            if(CMAKE_GENERATOR STREQUAL "Xcode" AND ${SRCEXTENSION} STREQUAL ".xib")
+            if(CMAKE_GENERATOR STREQUAL "Xcode" AND (${SRCEXTENSION} STREQUAL ".xib" OR ${SRCEXTENSION} STREQUAL ".xcassets"))
                 set_source_files_properties(${SRCFILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
             elseif(${SRCEXTENSION} STREQUAL ".xib")
                 set_source_files_properties(${SRCFILE} PROPERTIES HEADER_FILE_ONLY ON)
@@ -87,6 +97,19 @@ function(plasma_executable TARGET)
                 add_custom_command(TARGET ${TARGET} POST_BUILD
                     COMMAND ${IBTOOL} --output-format human-readable-text --compile "$<TARGET_BUNDLE_CONTENT_DIR:${TARGET}>/Resources/${XIBFILENAME}.nib" "${CMAKE_CURRENT_SOURCE_DIR}/${SRCFILE}"
                     COMMENT "Compiling ${SRCFILE} to ${XIBFILENAME}.nib"
+                    VERBATIM
+                )
+            elseif(${SRCEXTENSION} STREQUAL ".xcassets")
+                set_source_files_properties(${SRCFILE} PROPERTIES HEADER_FILE_ONLY ON)
+                get_filename_component(XACFILENAME ${SRCFILE} NAME_WE)
+                add_custom_command(TARGET ${TARGET} POST_BUILD
+                    COMMAND ${ACTOOL} --output-format human-readable-text --notices --warnings --output-partial-info-plist "${XACFILENAME}.plist" --app-icon AppIcon --enable-on-demand-resources NO --development-region en --target-device mac --minimum-deployment-target ${CMAKE_OSX_DEPLOYMENT_TARGET} --platform macosx --compile "$<TARGET_BUNDLE_CONTENT_DIR:${TARGET}>/Resources" "${CMAKE_CURRENT_SOURCE_DIR}/${SRCFILE}"
+                    COMMENT "Processing ${SRCFILE}..."
+                    VERBATIM
+                )
+                add_custom_command(TARGET ${TARGET} POST_BUILD
+                    COMMAND ${PLISTBUDDY} -c "Clear dict" -c "Merge ${XACFILENAME}.plist" -c "Merge $<TARGET_BUNDLE_CONTENT_DIR:${TARGET}>/Info.plist" "$<TARGET_BUNDLE_CONTENT_DIR:${TARGET}>/Info.plist"
+                    COMMENT "Merging Info.plist..."
                     VERBATIM
                 )
             endif()
