@@ -68,7 +68,6 @@ typedef struct
 {
     float4 position [[position]];
     float3 texCoord;
-    float4 normal;
 } ColorInOut;
 
 vertex ColorInOut plateVertexShader(PlateVertex in [[stage_in]],
@@ -83,15 +82,14 @@ vertex ColorInOut plateVertexShader(PlateVertex in [[stage_in]],
     out.position.y *= -1.f;
     out.texCoord = (float4(in.texCoord, 1.0) * uniforms.uvTransforms[0].transform).xyz;
     out.texCoord.y = 1.f - out.texCoord.y;
-    out.normal = float4(0.f, 0.f, 1.f, 0.f);
 
     return out;
 }
 
-fragment float4 fragmentShader(ColorInOut in [[stage_in]],
-                               constant VertexUniforms & uniforms   [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
-                               constant float & alpha               [[ buffer(6) ]],
-                               texture2d<half> colorMap             [[ texture(FragmentShaderArgumentTexture) ]])
+fragment half4 fragmentShader(ColorInOut in [[stage_in]],
+                              constant VertexUniforms & uniforms   [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
+                              constant float & alpha               [[ buffer(6) ]],
+                              texture2d<half> colorMap             [[ texture(FragmentShaderArgumentTexture) ]])
 {
     constexpr sampler colorSampler(mip_filter::linear,
                                    mag_filter::linear,
@@ -100,5 +98,5 @@ fragment float4 fragmentShader(ColorInOut in [[stage_in]],
     half4 colorSample = colorMap.sample(colorSampler, in.texCoord.xy);
     colorSample.a *= alpha;
 
-    return float4(colorSample);
+    return colorSample;
 }
