@@ -68,15 +68,16 @@ struct AsyncTimer;
 
 // Return callbackMs to wait that long until next callback.
 // Return kAsyncTimeInfinite to stop callbacks (note: does not destroy Timer structure)
-typedef std::function<unsigned (void* /* param */)> FAsyncTimerProc;
+typedef std::function<unsigned()> FAsyncTimerProc;
 
 // 1) Timer procs do not get starved by I/O, they are called periodically.
 // 2) Timer procs will never be called by multiple threads simultaneously.
 AsyncTimer* AsyncTimerCreate (
-    FAsyncTimerProc timerProc,
-    unsigned        callbackMs,
-    void *          param = nullptr
+    unsigned callbackMs,
+    FAsyncTimerProc timerProc
 );
+
+typedef std::function<void()> FAsyncTimerDestroyProc;
 
 // Timer procs can be in the process of getting called in
 // another thread during the unregister function -- be careful!
@@ -85,7 +86,7 @@ AsyncTimer* AsyncTimerCreate (
 void AsyncTimerDelete(AsyncTimer* timer);
 void AsyncTimerDeleteCallback (
     AsyncTimer *    timer,
-    FAsyncTimerProc destroyProc
+    FAsyncTimerDestroyProc destroyProc
 );
 
 // Set the time value for a timer

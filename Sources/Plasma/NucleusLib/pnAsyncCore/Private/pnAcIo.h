@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACIO_H
 
 #include <functional>
+#include <optional>
 
 #include "pnNetCommon/plNetAddress.h"
 #include "pnUUID/pnUUID.h"
@@ -67,53 +68,14 @@ typedef struct AsyncCancelIdStruct *   AsyncCancelId;
 
 constexpr unsigned kAsyncSocketBufferSize   = 1460;
 
-
-/****************************************************************************
-*
-*   Socket event notifications
-*
-***/
-
-enum EAsyncNotifySocket {
-    kNotifySocketConnectFailed,
-    kNotifySocketConnectSuccess,
-    kNotifySocketDisconnect,
-    kNotifySocketRead,
-    kNotifySocketWrite
+class AsyncNotifySocketCallbacks
+{
+public:
+    virtual void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) = 0;
+    virtual bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr) = 0;
+    virtual void AsyncNotifySocketDisconnect(AsyncSocket sock) = 0;
+    virtual std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) = 0;
 };
-
-struct AsyncNotifySocket {
-    void *          param;
-
-    AsyncNotifySocket() : param() { }
-};
-
-struct AsyncNotifySocketConnect : AsyncNotifySocket {
-    plNetAddress    localAddr;
-    plNetAddress    remoteAddr;
-};
-
-struct AsyncNotifySocketRead : AsyncNotifySocket {
-    uint8_t *       buffer;
-    size_t          bytes;
-    size_t          bytesProcessed;
-
-    AsyncNotifySocketRead() : buffer(), bytes(), bytesProcessed() { }
-};
-
-
-struct AsyncNotifySocketWrite : AsyncNotifySocketRead {
-    size_t          bytesCommitted;
-    
-    AsyncNotifySocketWrite() : AsyncNotifySocketRead(), bytesCommitted() { }
-};
-
-/*! \brief return false to disconnect
-    \param sock
-    \param code
-    \param notify
-*/
-using FAsyncNotifySocketProc = std::function<bool(AsyncSocket, EAsyncNotifySocket, AsyncNotifySocket*, void**)> ;
 
 
 /****************************************************************************
@@ -125,8 +87,7 @@ using FAsyncNotifySocketProc = std::function<bool(AsyncSocket, EAsyncNotifySocke
 void AsyncSocketConnect (
     AsyncCancelId *         cancelId,
     const plNetAddress&     netAddr,
-    FAsyncNotifySocketProc  notifyProc,
-    void *                  param = nullptr,
+    AsyncNotifySocketCallbacks* callbacks,
     const void *            sendData = nullptr,
     unsigned                sendBytes = 0
 );
@@ -162,12 +123,10 @@ void AsyncSocketEnableNagling (
 *
 ***/
 
-typedef std::function<void (void* /* param */, const ST::string& /* name */,
-                            const std::vector<plNetAddress>& /* addrs */)> FAsyncLookupProc;
+typedef std::function<void(const std::vector<plNetAddress>& /* addrs */)> FAsyncLookupProc;
 
 void AsyncAddressLookupName (
-    FAsyncLookupProc    lookupProc,
-    const ST::string &  name,
-    unsigned            port,
-    void *              param
+    const ST::string& name,
+    unsigned port,
+    FAsyncLookupProc lookupProc
 );

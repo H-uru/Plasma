@@ -55,7 +55,7 @@ namespace Ngl { namespace GateKeeper {
 *
 ***/
     
-struct CliGkConn : hsRefCnt {
+struct CliGkConn : hsRefCnt, AsyncNotifySocketCallbacks {
     CliGkConn ();
     ~CliGkConn ();
 
@@ -67,6 +67,12 @@ struct CliGkConn : hsRefCnt {
     AsyncTimer *        pingTimer;
     unsigned            pingSendTimeMs;
     unsigned            lastHeardTimeMs;
+
+    // Callbacks
+    void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) override;
+    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr) override;
+    void AsyncNotifySocketDisconnect(AsyncSocket sock) override;
+    std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) override;
 
     // This function should be called during object construction
     // to initiate connection attempts to the remote host whenever
@@ -85,7 +91,7 @@ struct CliGkConn : hsRefCnt {
     void Send (const uintptr_t fields[], unsigned count);
 
     std::recursive_mutex  critsect;
-    AsyncSocket     sock;
+    AsyncSocket     socket;
     NetCli *        cli;
     ST::string      name;
     plNetAddress    addr;
@@ -228,49 +234,49 @@ static void AbandonConn(CliGkConn* conn) {
     if (conn->cancelId) {
         AsyncSocketConnectCancel(conn->cancelId);
         conn->cancelId  = nullptr;
-    }
-    else if (conn->sock) {
-        AsyncSocketDisconnect(conn->sock, true);
-    }
-    else {
+    } else if (conn->socket) {
+        AsyncSocketDisconnect(conn->socket, true);
+    } else {
         conn->UnRef("Lifetime");
     }
 }
 
 //============================================================================
-static bool ConnEncrypt (ENetError error, void * param) {
-    CliGkConn * conn = (CliGkConn *) param;
-        
-    if (IS_NET_SUCCESS(error)) {
-
-        if (!s_perf[kPingDisabled])
-            conn->AutoPing();
-
-        {
-            hsLockGuard(s_critsect);
-            std::swap(s_active, conn);
-        }
-
-    //  AuthConnectedNotifyTrans * trans = new AuthConnectedNotifyTrans;
-    //  NetTransSend(trans);
+bool CliGkConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr)
+{
+    bool wasAbandoned;
+    {
+        hsLockGuard(s_critsect);
+        socket = sock;
+        cancelId = nullptr;
+        wasAbandoned = abandoned;
+    }
+    if (wasAbandoned) {
+        AsyncSocketDisconnect(sock, true);
+        return true;
     }
 
-    return IS_NET_SUCCESS(error);
-}
-
-//============================================================================
-static void NotifyConnSocketConnect (CliGkConn * conn) {
-
-    conn->TransferRef("Connecting", "Connected");
-    conn->cli = NetCliConnectAccept(
-        conn->sock,
+    TransferRef("Connecting", "Connected");
+    cli = NetCliConnectAccept(
+        sock,
         kNetProtocolCli2GateKeeper,
         false,
-        ConnEncrypt,
+        [this](ENetError error) {
+            if (IS_NET_SUCCESS(error)) {
+                if (!s_perf[kPingDisabled]) {
+                    AutoPing();
+                }
+
+                hsLockGuard(s_critsect);
+                s_active = this;
+            }
+
+            return IS_NET_SUCCESS(error);
+        },
         0,
-        nullptr,
-        conn
+        nullptr
     );
+    return true;
 }
 
 //============================================================================
@@ -299,110 +305,64 @@ static void CheckedReconnect (CliGkConn * conn, ENetError error) {
         if (conn->cli)
             NetCliDelete(conn->cli, true);
         conn->cli = nullptr;
-        conn->sock = nullptr;
+        conn->socket = nullptr;
         
         conn->StartAutoReconnect();
     }
 }
 
 //============================================================================
-static void NotifyConnSocketConnectFailed (CliGkConn * conn) {
-
+void CliGkConn::AsyncNotifySocketConnectFailed(plNetAddress remoteAddr)
+{
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = nullptr;
-        if (s_conn == conn) {
+        cancelId = nullptr;
+        if (s_conn == this) {
             s_conn = nullptr;
         }
 
-        if (conn == s_active)
+        if (s_active == this) {
             s_active = nullptr;
+        }
     }
-    
-    CheckedReconnect(conn, kNetErrConnectFailed);
-    
-    conn->UnRef("Connecting");
+
+    CheckedReconnect(this, kNetErrConnectFailed);
+
+    UnRef("Connecting");
 }
 
 //============================================================================
-static void NotifyConnSocketDisconnect (CliGkConn * conn) {
-
-    conn->StopAutoPing();
+void CliGkConn::AsyncNotifySocketDisconnect(AsyncSocket sock)
+{
+    StopAutoPing();
 
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = nullptr;
-        if (s_conn == conn) {
+        cancelId = nullptr;
+        if (s_conn == this) {
             s_conn = nullptr;
         }
-            
-        if (conn == s_active)
+
+        if (s_active == this) {
             s_active = nullptr;
+        }
     }
 
     // Cancel all transactions in process on this connection.
-    NetTransCancelByConnId(conn->seq, kNetErrTimeout);
-    conn->UnRef("Connected");
-    conn->UnRef("Lifetime");
+    NetTransCancelByConnId(seq, kNetErrTimeout);
+    UnRef("Connected");
+    UnRef("Lifetime");
 }
 
 //============================================================================
-static bool NotifyConnSocketRead (CliGkConn * conn, AsyncNotifySocketRead * read) {
+std::optional<size_t> CliGkConn::AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes)
+{
     // TODO: Only dispatch messages from the active auth server
-    conn->lastHeardTimeMs = GetNonZeroTimeMs();
-    bool result = NetCliDispatch(conn->cli, read->buffer, read->bytes, conn);
-    read->bytesProcessed += read->bytes;
-    return result;
-}
-
-//============================================================================
-static bool SocketNotifyCallback (
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-    void **             userState
-) {
-    bool result = true;
-    CliGkConn * conn;
-
-    switch (code) {
-        case kNotifySocketConnectSuccess:
-            conn = (CliGkConn *) notify->param;
-            *userState = conn;
-            bool abandoned;
-            {
-                hsLockGuard(s_critsect);
-                conn->sock      = sock;
-                conn->cancelId  = nullptr;
-                abandoned       = conn->abandoned;
-            }
-            if (abandoned)
-                AsyncSocketDisconnect(sock, true);
-            else
-                NotifyConnSocketConnect(conn);
-        break;
-
-        case kNotifySocketConnectFailed:
-            conn = (CliGkConn *) notify->param;
-            NotifyConnSocketConnectFailed(conn);
-        break;
-
-        case kNotifySocketDisconnect:
-            conn = (CliGkConn *) *userState;
-            NotifyConnSocketDisconnect(conn);
-        break;
-
-        case kNotifySocketRead:
-            conn = (CliGkConn *) *userState;
-            result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
-        break;
-
-        case kNotifySocketWrite:
-            // No action
-        break;
+    lastHeardTimeMs = GetNonZeroTimeMs();
+    if (!NetCliDispatch(cli, buffer, bytes, this)) {
+        return {};
     }
-    
-    return result;
+    return bytes;
 }
 
 //============================================================================
@@ -437,7 +397,6 @@ static void Connect (
     AsyncSocketConnect(
         &conn->cancelId,
         conn->addr,
-        SocketNotifyCallback,
         conn,
         &connect,
         sizeof(connect)
@@ -461,21 +420,6 @@ static void Connect (
     conn->AutoReconnect();
 }
 
-//============================================================================
-static void AsyncLookupCallback(void* param, const ST::string& name,
-                                const std::vector<plNetAddress>& addrs)
-{
-    if (addrs.empty()) {
-        ReportNetError(kNetProtocolCli2GateKeeper, kNetErrNameLookupFailed);
-        return;
-    }
-
-    for (const plNetAddress& addr : addrs)
-        Connect(name, addr);
-}
-
-
-
 
 /*****************************************************************************
 *
@@ -483,30 +427,11 @@ static void AsyncLookupCallback(void* param, const ST::string& name,
 *
 ***/
 
-//===========================================================================
-static unsigned CliGkConnTimerDestroyed (void * param) {
-    CliGkConn * conn = (CliGkConn *) param;
-    conn->UnRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
-}
-
-//===========================================================================
-static unsigned CliGkConnReconnectTimerProc (void * param) {
-    ((CliGkConn *) param)->TimerReconnect();
-    return kAsyncTimeInfinite;
-}
-
-//===========================================================================
-static unsigned CliGkConnPingTimerProc (void * param) {
-    ((CliGkConn *) param)->TimerPing();
-    return kPingIntervalMs;
-}
-
 //============================================================================
 CliGkConn::CliGkConn ()
     : hsRefCnt(0), reconnectTimer(), reconnectStartMs()
     , pingTimer(), pingSendTimeMs(), lastHeardTimeMs()
-    , sock(), cli(), seq(), serverChallenge()
+    , socket(), cli(), seq(), serverChallenge()
     , cancelId(), abandoned()
 {
     ++s_perf[kPerfConnCount];
@@ -521,7 +446,7 @@ CliGkConn::~CliGkConn () {
 
 //===========================================================================
 void CliGkConn::TimerReconnect () {
-    ASSERT(!sock);
+    ASSERT(!socket);
     ASSERT(!cancelId);
     
     if (!s_running) {
@@ -572,11 +497,10 @@ void CliGkConn::AutoReconnect () {
     ASSERT(!reconnectTimer);
     Ref("ReconnectTimer");
     hsLockGuard(critsect);
-    reconnectTimer = AsyncTimerCreate(
-        CliGkConnReconnectTimerProc,
-        0,  // immediate callback
-        this
-    );
+    reconnectTimer = AsyncTimerCreate(0, [this]() { // immediate callback
+        TimerReconnect();
+        return kAsyncTimeInfinite;
+    });
 }
 
 //============================================================================
@@ -584,7 +508,9 @@ void CliGkConn::StopAutoReconnect () {
     hsLockGuard(critsect);
     if (AsyncTimer * timer = reconnectTimer) {
         reconnectTimer = nullptr;
-        AsyncTimerDeleteCallback(timer, CliGkConnTimerDestroyed);
+        AsyncTimerDeleteCallback(timer, [this]() {
+            UnRef("ReconnectTimer");
+        });
     }
 }
 
@@ -599,18 +525,19 @@ void CliGkConn::AutoPing () {
     ASSERT(!pingTimer);
     Ref("PingTimer");
     hsLockGuard(critsect);
-    pingTimer = AsyncTimerCreate(
-        CliGkConnPingTimerProc,
-        sock ? 0 : kAsyncTimeInfinite,
-        this
-    );
+    pingTimer = AsyncTimerCreate(socket ? 0 : kAsyncTimeInfinite, [this]() {
+        TimerPing();
+        return kPingIntervalMs;
+    });
 }
 
 //============================================================================
 void CliGkConn::StopAutoPing () {
     hsLockGuard(critsect);
     if (pingTimer) {
-        AsyncTimerDeleteCallback(pingTimer, CliGkConnTimerDestroyed);
+        AsyncTimerDeleteCallback(pingTimer, [this]() {
+            UnRef("PingTimer");
+        });
         pingTimer = nullptr;
     }
 }
@@ -979,22 +906,26 @@ void NetCliGateKeeperStartConnect (
 
     for (unsigned i = 0; i < gateKeeperAddrCount; ++i) {
         // Do we need to lookup the address?
-        const char* name = gateKeeperAddrList[i].c_str();
-        while (unsigned ch = *name) {
-            ++name;
-            if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncAddressLookupName(
-                    AsyncLookupCallback,
-                    gateKeeperAddrList[i],
-                    GetClientPort(),
-                    nullptr
-                );
+        const ST::string& name = gateKeeperAddrList[i];
+        const char* pos;
+        for (pos = name.begin(); pos != name.end(); ++pos) {
+            if (!(isdigit(*pos) || *pos == '.' || *pos == ':')) {
+                AsyncAddressLookupName(name, GetClientPort(), [name](auto addrs) {
+                    if (addrs.empty()) {
+                        ReportNetError(kNetProtocolCli2GateKeeper, kNetErrNameLookupFailed);
+                        return;
+                    }
+
+                    for (const plNetAddress& addr : addrs) {
+                        Connect(name, addr);
+                    }
+                });
                 break;
             }
         }
-        if (!name[0]) {
-            plNetAddress addr(gateKeeperAddrList[i], GetClientPort());
-            Connect(gateKeeperAddrList[i], addr);
+        if (pos == name.end()) {
+            plNetAddress addr(name, GetClientPort());
+            Connect(name, addr);
         }
     }
 }

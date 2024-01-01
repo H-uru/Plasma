@@ -73,7 +73,6 @@ struct DnsResolveData
 {
     ST::string       fName;
     FAsyncLookupProc fLookupProc;
-    void*            fParam;
 };
 
 static std::recursive_mutex s_critsect;
@@ -95,7 +94,7 @@ static void AddressResolved(const asio::error_code&            err,
     if (err || results.empty()) {
         if (err)
             LogMsg(kLogFatal, "DNS: Failed to resolve {}: {}", data.fName, err.message());
-        data.fLookupProc(data.fParam, data.fName, {});
+        data.fLookupProc({});
         return;
     }
 
@@ -113,14 +112,12 @@ static void AddressResolved(const asio::error_code&            err,
         addrs.emplace_back(ipv4_addr.to_bytes(), endpoint.port());
     }
 
-    data.fLookupProc(data.fParam, data.fName, addrs);
+    data.fLookupProc(addrs);
 
     PerfSubCounter(kAsyncPerfNameLookupAttemptsCurr, 1);
 }
 
-void AsyncAddressLookupName(FAsyncLookupProc lookupProc,
-
-                            const ST::string& name, unsigned port, void* param)
+void AsyncAddressLookupName(const ST::string& name, unsigned port, FAsyncLookupProc lookupProc)
 {
     ASSERT(lookupProc);
 
@@ -142,7 +139,6 @@ void AsyncAddressLookupName(FAsyncLookupProc lookupProc,
     DnsResolveData data;
     data.fName = name;
     data.fLookupProc = std::move(lookupProc);
-    data.fParam = param;
 
     hsLockGuard(s_critsect);
 

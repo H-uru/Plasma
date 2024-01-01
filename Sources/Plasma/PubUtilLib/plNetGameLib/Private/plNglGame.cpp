@@ -54,9 +54,9 @@ namespace Ngl { namespace Game {
 *
 ***/
 
-struct CliGmConn : hsRefCnt {
+struct CliGmConn : hsRefCnt, AsyncNotifySocketCallbacks {
     std::recursive_mutex  critsect;
-    AsyncSocket     sock;
+    AsyncSocket     socket;
     AsyncCancelId   cancelId;
     NetCli *        cli;
     plNetAddress    addr;
@@ -70,6 +70,12 @@ struct CliGmConn : hsRefCnt {
 
     CliGmConn ();
     ~CliGmConn ();
+
+    // Callbacks
+    void AsyncNotifySocketConnectFailed(plNetAddress remoteAddr) override;
+    bool AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr) override;
+    void AsyncNotifySocketDisconnect(AsyncSocket sock) override;
+    std::optional<size_t> AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes) override;
 
     // ping
     void AutoPing ();
@@ -198,95 +204,107 @@ static void AbandonConn(CliGmConn* conn) {
     if (conn->cancelId) {
         AsyncSocketConnectCancel(conn->cancelId);
         conn->cancelId  = nullptr;
-    }
-    else if (conn->sock) {
-        AsyncSocketDisconnect(conn->sock, true);
-    }
-    else {
+    } else if (conn->socket) {
+        AsyncSocketDisconnect(conn->socket, true);
+    } else {
         conn->UnRef("Lifetime");
     }
 }
 
 //============================================================================
-static bool ConnEncrypt (ENetError error, void * param) {
-    CliGmConn * conn = (CliGmConn *) param;
-    if (!s_perf[kPingDisabled])
-        conn->AutoPing();
-
-    if (IS_NET_SUCCESS(error)) {
+bool CliGmConn::AsyncNotifySocketConnectSuccess(AsyncSocket sock, const plNetAddress& localAddr, const plNetAddress& remoteAddr)
+{
+    bool wasAbandoned;
+    {
         hsLockGuard(s_critsect);
-        std::swap(s_active, conn);
+        socket = sock;
+        cancelId = nullptr;
+        wasAbandoned = abandoned;
+    }
+    if (wasAbandoned) {
+        AsyncSocketDisconnect(sock, true);
+        return true;
     }
 
-    return IS_NET_SUCCESS(error);
-}
-
-//============================================================================
-static void NotifyConnSocketConnect (CliGmConn * conn) {
-
-    conn->TransferRef("Connecting", "Connected");
-    conn->cli = NetCliConnectAccept(
-        conn->sock,
+    TransferRef("Connecting", "Connected");
+    cli = NetCliConnectAccept(
+        sock,
         kNetProtocolCli2Game,
         true,
-        ConnEncrypt,
+        [this](ENetError error) {
+            if (!s_perf[kPingDisabled]) {
+                AutoPing();
+            }
+
+            if (IS_NET_SUCCESS(error)) {
+                hsLockGuard(s_critsect);
+                s_active = this;
+            }
+
+            return IS_NET_SUCCESS(error);
+        },
         0,
-        nullptr,
-        conn
+        nullptr
     );
+    return true;
 }
 
 //============================================================================
-static void NotifyConnSocketConnectFailed (CliGmConn * conn) {
+void CliGmConn::AsyncNotifySocketConnectFailed(plNetAddress remoteAddr)
+{
     bool notify;
     {
         hsLockGuard(s_critsect);
-        conn->cancelId = nullptr;
-        if (s_conn == conn) {
+        cancelId = nullptr;
+        if (s_conn == this) {
             s_conn = nullptr;
         }
-        
+
         notify
             =  s_running
-            && !conn->abandoned
-            && (!s_active || conn == s_active);
-            
-        if (conn == s_active)
+            && !abandoned
+            && (!s_active || s_active == this);
+
+        if (s_active == this) {
             s_active = nullptr;
+        }
     }
 
-    NetTransCancelByConnId(conn->seq, kNetErrTimeout);
-    conn->UnRef("Connecting");
-    conn->UnRef("Lifetime");
+    NetTransCancelByConnId(seq, kNetErrTimeout);
+    UnRef("Connecting");
+    UnRef("Lifetime");
 
-    if (notify)
+    if (notify) {
         ReportNetError(kNetProtocolCli2Game, kNetErrConnectFailed);
+    }
 }
 
 //============================================================================
-static void NotifyConnSocketDisconnect (CliGmConn * conn) {
-    conn->StopAutoPing();
+void CliGmConn::AsyncNotifySocketDisconnect(AsyncSocket sock)
+{
+    StopAutoPing();
 
     bool notify;
     {
         hsLockGuard(s_critsect);
-        if (s_conn == conn) {
+        if (s_conn == this) {
             s_conn = nullptr;
         }
 
         notify
             =  s_running
-            && !conn->abandoned
-            && (!s_active || conn == s_active);
+            && !abandoned
+            && (!s_active || s_active == this);
 
-        if (conn == s_active)
+        if (s_active == this) {
             s_active = nullptr;
+        }
     }
 
     // Cancel all transactions in process on this connection.
-    NetTransCancelByConnId(conn->seq, kNetErrTimeout);
-    conn->UnRef("Connected");
-    conn->UnRef("Lifetime");
+    NetTransCancelByConnId(seq, kNetErrTimeout);
+    UnRef("Connected");
+    UnRef("Lifetime");
 
     // Send a fake GameMgr transaction telling all the GameClis to die.
     {
@@ -301,68 +319,20 @@ static void NotifyConnSocketDisconnect (CliGmConn * conn) {
         NetTransSend(trans);
     }
 
-    if (notify)
+    if (notify) {
         ReportNetError(kNetProtocolCli2Game, kNetErrDisconnected);
-}
-
-//============================================================================
-static bool NotifyConnSocketRead (CliGmConn * conn, AsyncNotifySocketRead * read) {
-    // TODO: Only dispatch messages from the active game server
-    conn->lastHeardTimeMs = GetNonZeroTimeMs();
-    bool result = NetCliDispatch(conn->cli, read->buffer, read->bytes, nullptr);
-    read->bytesProcessed += read->bytes;
-    return result;
-}
-
-//============================================================================
-static bool SocketNotifyCallback (
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-    void **             userState
-) {
-    bool result = true;
-    CliGmConn * conn;
-
-    switch (code) {
-        case kNotifySocketConnectSuccess:
-            conn = (CliGmConn *) notify->param;
-            *userState = conn;
-            conn->TransferRef("Connecting", "Connected");
-            bool abandoned;
-            {
-                hsLockGuard(s_critsect);
-                conn->sock      = sock;
-                conn->cancelId  = nullptr;
-                abandoned       = conn->abandoned;
-            }
-            if (abandoned)
-                AsyncSocketDisconnect(sock, true);
-            else
-                NotifyConnSocketConnect(conn);
-        break;
-
-        case kNotifySocketConnectFailed:
-            conn = (CliGmConn *) notify->param;
-            NotifyConnSocketConnectFailed(conn);
-        break;
-
-        case kNotifySocketDisconnect:
-            conn = (CliGmConn *) *userState;
-            NotifyConnSocketDisconnect(conn);
-        break;
-
-        case kNotifySocketRead:
-            conn = (CliGmConn *) *userState;
-            result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
-        break;
-
-        case kNotifySocketWrite:
-            // No action
-        break;
     }
-    
-    return result;
+}
+
+//============================================================================
+std::optional<size_t> CliGmConn::AsyncNotifySocketRead(AsyncSocket sock, uint8_t* buffer, size_t bytes)
+{
+    // TODO: Only dispatch messages from the active game server
+    lastHeardTimeMs = GetNonZeroTimeMs();
+    if (!NetCliDispatch(cli, buffer, bytes, nullptr)) {
+        return {};
+    }
+    return bytes;
 }
 
 //============================================================================
@@ -398,7 +368,6 @@ static void Connect (
     AsyncSocketConnect(
         &conn->cancelId,
         addr,
-        SocketNotifyCallback,
         conn,
         &connect,
         sizeof(connect)
@@ -412,22 +381,9 @@ static void Connect (
 *
 ***/
 
-//===========================================================================
-static unsigned CliGmConnTimerDestroyed (void * param) {
-    CliGmConn * conn = (CliGmConn *) param;
-    conn->UnRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
-}
-
-//===========================================================================
-static unsigned CliGmConnPingTimerProc (void * param) {
-    ((CliGmConn *) param)->TimerPing();
-    return kPingIntervalMs;
-}
-
 //============================================================================
 CliGmConn::CliGmConn ()
-    : hsRefCnt(0), sock(), cancelId(), cli()
+    : hsRefCnt(0), socket(), cancelId(), cli()
     , seq(), abandoned()
     , pingTimer(), pingSendTimeMs(), lastHeardTimeMs()
 {
@@ -446,18 +402,19 @@ void CliGmConn::AutoPing () {
     ASSERT(!pingTimer);
     Ref("PingTimer");
     hsLockGuard(critsect);
-    pingTimer = AsyncTimerCreate(
-        CliGmConnPingTimerProc,
-        sock ? 0 : kAsyncTimeInfinite,
-        this
-    );
+    pingTimer = AsyncTimerCreate(socket ? 0 : kAsyncTimeInfinite, [this]() {
+        TimerPing();
+        return kPingIntervalMs;
+    });
 }
 
 //============================================================================
 void CliGmConn::StopAutoPing () {
     hsLockGuard(critsect);
     if (pingTimer) {
-        AsyncTimerDeleteCallback(pingTimer, CliGmConnTimerDestroyed);
+        AsyncTimerDeleteCallback(pingTimer, [this]() {
+            UnRef("PingTimer");
+        });
         pingTimer = nullptr;
     }
 }
