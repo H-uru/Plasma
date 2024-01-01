@@ -558,8 +558,8 @@ namespace
 
 #ifdef PLASMA_PIPELINE_DX
 void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
-                                                    D3DEnum_DriverInfo *driverInfo,
-                                                    D3DEnum_DeviceInfo *deviceInfo )
+                                                    D3DEnum_DisplayInfo *driverInfo,
+                                                    D3DEnum_RendererInfo *deviceInfo )
 {
     uint32_t    vendorID, deviceID;
     char        *szDriver, *szDesc;

@@ -63,16 +63,16 @@ const D3DFORMAT hsGDirect3DTnLEnumerate::kDisplayFormats[] =
 
 bool hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devRec, const hsG3DDeviceMode* devMode)
 {
-    for (size_t i = 0; i < GetNumDrivers(); i++)
+    for (size_t i = 0; i < GetNumDisplays(); i++)
     {
-        if (devRec->GetDriverDesc().compare_i(GetDriver(i)->fAdapterInfo.Description) == 0)
+        if (devRec->GetDriverDesc().compare_i(GetDisplay(i)->fAdapterInfo.Description) == 0)
         {
-            for (D3DEnum_DeviceInfo& device : GetDriver(i)->fDevices)
+            for (D3DEnum_RendererInfo& device : GetDisplay(i)->fRenderers)
             {
                 if (devRec->GetDeviceDesc().compare_i(device.fStrName) == 0)
                 {
-                    SetCurrentDriver(GetDriver(i));
-                    SetCurrentDevice(&device);
+                    SetCurrentDisplay(GetDisplay(i));
+                    SetCurrentRenderer(&device);
                     D3DEnum_SelectDefaultMode(
                         devMode->GetWidth(),
                         devMode->GetHeight(),
@@ -98,17 +98,17 @@ bool hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devRec,
         enumFlags |= D3DENUM_CANWINDOW;
     enumFlags |= D3DENUM_TNLHAL;
 
-    D3DEnum_SelectDefaultDriver(enumFlags);
+    D3DEnum_SelectDefaultDisplay(enumFlags);
 
     // If we didn't get what we want, try for anything.
-    if( !GetCurrentDriver() || !GetCurrentDevice() )
+    if( !GetCurrentDisplay() || !GetCurrentRenderer() )
     {
         enumFlags = colorDepth ? 0 : D3DENUM_CANWINDOW;
-        D3DEnum_SelectDefaultDriver(enumFlags);
+        D3DEnum_SelectDefaultDisplay(enumFlags);
     }
-    if( !GetCurrentDriver() || !GetCurrentDevice() )
-        D3DEnum_SelectDefaultDriver(0);
-    if( !GetCurrentDriver() || !GetCurrentDevice() )
+    if( !GetCurrentDisplay() || !GetCurrentRenderer() )
+        D3DEnum_SelectDefaultDisplay(0);
+    if( !GetCurrentDisplay() || !GetCurrentRenderer() )
     {
         if( !*GetEnumeErrorStr() )
             SetEnumeErrorStr("Error finding device");
@@ -127,7 +127,7 @@ bool hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devRec,
 
 HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultMode(int width, int height, int depth)
 {
-    hsAssert(GetCurrentDriver() && GetCurrentDevice(), "Must have selected device already");
+    hsAssert(GetCurrentDisplay() && GetCurrentRenderer(), "Must have selected device already");
 
     BOOL windowed = false;
     if (depth == 0)
@@ -137,7 +137,7 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultMode(int width, int height
         depth = 32;
     }
 
-    D3DEnum_DeviceInfo* device = GetCurrentDevice();
+    D3DEnum_RendererInfo* device = GetCurrentRenderer();
     for (D3DEnum_ModeInfo& mode : device->fModes)
     {
         if (mode.fWindowed != windowed)
@@ -155,7 +155,7 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultMode(int width, int height
 
         if( GetCurrentMode() )
         {
-            D3DEnum_ModeInfo* curMode = GetCurrentDriver()->fCurrentMode;
+            D3DEnum_ModeInfo* curMode = GetCurrentDisplay()->fCurrentMode;
             if( depth )
             {
                 if (curMode->fDDmode.Width > mode.fDDmode.Width)
@@ -177,14 +177,14 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultMode(int width, int height
 // Name: D3DEnum_SelectDefaultDriver()
 // Desc: Picks a default driver according to the passed in flags.
 //-----------------------------------------------------------------------------
-HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDriver( DWORD dwFlags )
+HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDisplay( DWORD dwFlags )
 {
     // If a specific driver was requested, perform that search here
     if( dwFlags & D3DENUM_MASK )
     {
-        for (D3DEnum_DriverInfo& driver : fDrivers)
+        for (D3DEnum_DisplayInfo& driver : fDisplays)
         {
-            for (D3DEnum_DeviceInfo& device : driver.fDevices)
+            for (D3DEnum_RendererInfo& device : driver.fRenderers)
             {
                 BOOL bFound = FALSE;
 
@@ -203,7 +203,7 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDriver( DWORD dwFlags )
                 {
                     if( dwFlags & D3DENUM_CANWINDOW )
                     {
-                        if ((&driver == &fDrivers[0]))
+                        if ((&driver == &fDisplays[0]))
                         {
                             if ((device.fDDCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
                                 ^ !(dwFlags & D3DENUM_TNLHAL) )
@@ -213,21 +213,21 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDriver( DWORD dwFlags )
                     else
                         if( dwFlags & D3DENUM_PRIMARYHAL )
                         {
-                            if (&driver == &fDrivers[0])
+                            if (&driver == &fDisplays[0])
                                 bFound = TRUE;
                         }
                         else
                             if( dwFlags & D3DENUM_SECONDARYHAL )
                             {
-                                if (&driver != &fDrivers[0])
+                                if (&driver != &fDisplays[0])
                                     bFound = TRUE;
                             }
                 }
 
                 if( bFound )
                 {
-                    SetCurrentDriver(&driver);
-                    SetCurrentDevice(&device);
+                    SetCurrentDisplay(&driver);
+                    SetCurrentRenderer(&device);
                     return S_OK;
                 }
             }
@@ -235,15 +235,15 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDriver( DWORD dwFlags )
         return D3DENUMERR_NOTFOUND;
     }
 
-    for (D3DEnum_DriverInfo& driver : fDrivers)
+    for (D3DEnum_DisplayInfo& driver : fDisplays)
     {
-        for (D3DEnum_DeviceInfo& device : driver.fDevices)
+        for (D3DEnum_RendererInfo& device : driver.fRenderers)
         {
             if (!device.fIsHardware)
                 continue;
 
-            SetCurrentDriver(&driver);
-            SetCurrentDevice(&device);
+            SetCurrentDisplay(&driver);
+            SetCurrentRenderer(&device);
 
             return S_OK;
         }
@@ -262,8 +262,8 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
 {
     memset( &fEnumeErrorStr[0], 0x00, sizeof(fEnumeErrorStr) );
 
-    fCurrentDriver = nullptr;   // The selected DD driver
-    fDrivers.clear();           // List of DD drivers
+    fCurrentDisplay = nullptr;   // The selected DD driver
+    fDisplays.clear();           // List of DD drivers
 
     // Create a D3D object to use
     IDirect3D9* pD3D = hsGDirect3D::GetDirect3D();
@@ -277,7 +277,7 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
     UINT    iAdapter;
     for( iAdapter = 0; iAdapter < pD3D->GetAdapterCount(); iAdapter++ )
     {
-        D3DEnum_DriverInfo& newDriver = fDrivers.emplace_back();
+        D3DEnum_DisplayInfo& newDriver = fDisplays.emplace_back();
 
         // Copy data to a device info structure
         D3DADAPTER_IDENTIFIER9      adapterInfo;
@@ -301,7 +301,7 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
 //  two faked modes for HAL and REF, attaches the modes to each "device" that
 //  can support them. 
 
-void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAdapter, D3DEnum_DriverInfo *drivInfo )
+void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAdapter, D3DEnum_DisplayInfo *drivInfo )
 {
     // A bit backwards from DX8... First we have to go through our list of formats and check for validity.
     // Then we can enum through the modes for each format.
@@ -315,7 +315,7 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
     UINT iDevice;
     for (iDevice = 0; iDevice < numDeviceTypes; iDevice++)
     {
-        D3DEnum_DeviceInfo& deviceInfo = drivInfo->fDevices.emplace_back();
+        D3DEnum_RendererInfo& deviceInfo = drivInfo->fRenderers.emplace_back();
 
         pD3D->GetDeviceCaps(iAdapter, deviceTypes[iDevice], &deviceInfo.fDDCaps);
         strncpy(deviceInfo.fStrName, strDeviceDescs[iDevice], 39);
@@ -604,8 +604,8 @@ bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,        
                                               uint32_t *vendorID, uint32_t *deviceID, // Out
                                               char **driverString, char **descString  )
 {
-    D3DEnum_DriverInfo  *driverD3DInfo = (D3DEnum_DriverInfo *)driverInfo;
-    D3DEnum_DeviceInfo  *deviceD3DInfo = (D3DEnum_DeviceInfo *)deviceInfo;
+    D3DEnum_DisplayInfo  *driverD3DInfo = (D3DEnum_DisplayInfo *)driverInfo;
+    D3DEnum_RendererInfo  *deviceD3DInfo = (D3DEnum_RendererInfo *)deviceInfo;
 
     D3DADAPTER_IDENTIFIER9  *adapterInfo;
 
@@ -625,9 +625,9 @@ void hsG3DDeviceSelector::ITryDirect3DTnL(hsWinRef winRef)
 {
     hsGDirect3DTnLEnumerate& d3dEnum = hsGDirect3D::EnumerateTnL();
 
-    for (size_t i = 0; i < d3dEnum.GetNumDrivers(); i++)
+    for (size_t i = 0; i < d3dEnum.GetNumDisplays(); i++)
     {
-        ITryDirect3DTnLDriver(d3dEnum.GetDriver(i));
+        ITryDirect3DTnLDriver(d3dEnum.GetDisplay(i));
     }
 }
 
@@ -635,7 +635,7 @@ void hsG3DDeviceSelector::ITryDirect3DTnL(hsWinRef winRef)
 //
 //  New DirectX Way
 
-void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo)
+void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DisplayInfo* drivInfo)
 {
     hsG3DDeviceRecord devRec;
     devRec.Clear();
@@ -656,7 +656,7 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo)
 
     devRec.SetMemoryBytes(drivInfo->fMemory);
 
-    for (D3DEnum_DeviceInfo& device : drivInfo->fDevices)
+    for (D3DEnum_RendererInfo& device : drivInfo->fRenderers)
     {
         /// 9.6.2000 mcn - Changed here so we can do fudging here, rather
         /// than passing all the messy driver data to the function
@@ -675,7 +675,7 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo)
 //
 //  New DirectX Way
 
-void hsG3DDeviceSelector::ITryDirect3DTnLDevice(D3DEnum_DeviceInfo* devInfo, hsG3DDeviceRecord& devRec)
+void hsG3DDeviceSelector::ITryDirect3DTnLDevice(D3DEnum_RendererInfo* devInfo, hsG3DDeviceRecord& devRec)
 {
     devRec.SetDeviceDesc(devInfo->fStrName);
 
