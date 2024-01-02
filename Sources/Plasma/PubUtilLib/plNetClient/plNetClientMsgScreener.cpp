@@ -156,7 +156,7 @@ bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg) const
         // This message has a flawed read/write
         return false;
     case CLASS_INDEX_SCOPED(plConsoleMsg):
-        // Python remote code execution vunerability
+        // Python remote code execution vulnerability
         return false;
     case CLASS_INDEX_SCOPED(pfKIMsg):
         {
@@ -178,7 +178,7 @@ bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg) const
             return false;
         }
 
-        // Default allow everything else, otherweise we
+        // Default allow everything else, otherwise we
         // might break something that we really shouldn't...
         return true;
     }
