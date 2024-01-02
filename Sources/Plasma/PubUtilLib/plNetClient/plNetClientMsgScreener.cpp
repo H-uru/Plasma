@@ -171,6 +171,13 @@ bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg) const
         if (plFactory::DerivesFrom(CLASS_INDEX_SCOPED(plRefMsg), msg->ClassIndex()))
             return false;
 
+        // Other clients have no business sending us inputs.
+        // Also mitigates another remote code execution risk:
+        // plControlEventMsg can run console commands.
+        if (plFactory::DerivesFrom(CLASS_INDEX_SCOPED(plInputEventMsg), msg->ClassIndex())) {
+            return false;
+        }
+
         // Default allow everything else, otherweise we
         // might break something that we really shouldn't...
         return true;
