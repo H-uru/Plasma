@@ -68,9 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////
 
 plNetClientMsgScreener::plNetClientMsgScreener()
-{
-    DebugMsg("created");
-}
+{}
 
 //
 // For plLoggable base
