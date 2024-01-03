@@ -104,15 +104,15 @@ public:
     void ReadVersion(hsStream* stream, hsResMgr* mgr) override;
     void WriteVersion(hsStream* stream, hsResMgr* mgr) override;
     
-    plKey   GetCloneKey();
-    plKey   GetRequestorKey();
-    bool    IsValidMessage();
-    uint32_t  GetUserData();
-    uint32_t  GetOriginatingPlayerID();
+    plKey   GetCloneKey() const;
+    plKey   GetRequestorKey() const;
+    bool    IsValidMessage() const;
+    uint32_t  GetUserData() const;
+    uint32_t  GetOriginatingPlayerID() const;
     void    SetOriginatingPlayerID(uint32_t playerId);
-    bool    GetIsLoading();
+    bool    GetIsLoading() const;
     void    SetTriggerMsg(plMessage *msg);
-    plMessage *GetTriggerMsg();
+    plMessage *GetTriggerMsg() const;
 
 
 protected:

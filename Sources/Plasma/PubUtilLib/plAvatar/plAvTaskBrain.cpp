@@ -107,7 +107,7 @@ void plAvTaskBrain::DumpDebug(const char *name, int &x, int&y, int lineHeight, p
 
 // GetBrain ------------------------
 // ---------
-plArmatureBrain *plAvTaskBrain::GetBrain()
+plArmatureBrain* plAvTaskBrain::GetBrain() const
 {
     return fBrain;
 }

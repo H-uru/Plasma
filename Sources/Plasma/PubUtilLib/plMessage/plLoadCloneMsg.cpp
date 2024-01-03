@@ -212,32 +212,27 @@ void plLoadCloneMsg::WriteVersion(hsStream* stream, hsResMgr* mgr)
     mgr->WriteCreatable(stream, fTriggerMsg);
 }
 
-// GETCLONEKEY
-plKey plLoadCloneMsg::GetCloneKey()
+plKey plLoadCloneMsg::GetCloneKey() const
 {
     return fCloneKey;
 }
 
-// GETREQUESTORKEY
-plKey plLoadCloneMsg::GetRequestorKey()
+plKey plLoadCloneMsg::GetRequestorKey() const
 {
     return fRequestorKey;
 }
 
-// ISVALIDMESSAGE
-bool plLoadCloneMsg::IsValidMessage()
+bool plLoadCloneMsg::IsValidMessage() const
 {
     return fValidMsg;
 }
 
-// GETUSERDATA
-uint32_t plLoadCloneMsg::GetUserData()
+uint32_t plLoadCloneMsg::GetUserData() const
 {
     return fUserData;
 }
 
-// GETORIGINATINGPLAYERID
-uint32_t plLoadCloneMsg::GetOriginatingPlayerID()
+uint32_t plLoadCloneMsg::GetOriginatingPlayerID() const
 {
     return fOriginatingPlayerID;
 }
@@ -247,7 +242,7 @@ void plLoadCloneMsg::SetOriginatingPlayerID(uint32_t playerId)
     fOriginatingPlayerID = playerId;
 }
 
-bool plLoadCloneMsg::GetIsLoading()
+bool plLoadCloneMsg::GetIsLoading() const
 {
     return fIsLoading;
 }
@@ -261,7 +256,7 @@ void plLoadCloneMsg::SetTriggerMsg(plMessage *msg)
     fTriggerMsg = msg;
 }
 
-plMessage *plLoadCloneMsg::GetTriggerMsg()
+plMessage *plLoadCloneMsg::GetTriggerMsg() const
 {
     return fTriggerMsg;
 }

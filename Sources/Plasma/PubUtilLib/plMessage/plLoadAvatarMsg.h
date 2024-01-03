@@ -93,16 +93,16 @@ public:
                     bool isPlayer, bool isLoading, const ST::string &userStr = {});
 
     void SetIsPlayer(bool is) { fIsPlayer = is; }
-    bool GetIsPlayer() { return fIsPlayer; }
+    bool GetIsPlayer() const { return fIsPlayer; }
 
     void SetSpawnPoint(const plKey &spawnPoint) { fSpawnPoint = spawnPoint; }
-    plKey GetSpawnPoint() { return fSpawnPoint; }
+    plKey GetSpawnPoint() const { return fSpawnPoint; }
 
     void SetInitialTask(plAvTask *task) { fInitialTask = task; }
-    plAvTask * GetInitialTask() { return fInitialTask; }
+    plAvTask* GetInitialTask() const { return fInitialTask; }
 
     void SetUserStr(const ST::string &userStr) { fUserStr = userStr; }
-    ST::string GetUserStr() { return fUserStr; }
+    ST::string GetUserStr() const { return fUserStr; }
 
     CLASSNAME_REGISTER(plLoadAvatarMsg);
     GETINTERFACE_ANY(plLoadAvatarMsg, plLoadCloneMsg);
