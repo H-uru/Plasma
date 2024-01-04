@@ -46,10 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsRefCnt.h"
 
+#include <string_theory/string>
+
 #include "pnKeyedObject/plKey.h"
 #include "pnNetBase/pnNetBase.h"
-
-namespace ST { class string; }
 
 // TODO: Rank List (seems to be unused in regular gameplay though...)
 //       That's some strange stuff...

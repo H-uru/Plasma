@@ -44,12 +44,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plRefFlags.h"
-#include <string_theory/string>
 
 class hsKeyedObject;
 class plRefMsg;
 class plUoid;
 class hsBitVector;
+namespace ST { class string; }
 
 //// plKey ///////////////////////////////////////////////////////////////////
 //  Pointer to a plKeyData struct, which is a handle to a keyedObject
@@ -140,12 +140,6 @@ protected:
     // Protected so only the registry can create it
     plKeyData();
     virtual ~plKeyData();
-
-#ifdef HS_DEBUGGING
-    // Debugging info fields
-    ST::string  fIDName;
-    const char* fClassType;
-#endif
 
     //// RefCount Stuff //////////////////////////////////////////////////////////
     //  The refcounts on plKeyData/plKeyImps are zero-based. When you first create
