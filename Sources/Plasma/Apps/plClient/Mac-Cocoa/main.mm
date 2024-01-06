@@ -42,9 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // System Frameworks
 #import <Cocoa/Cocoa.h>
-#ifdef PLASMA_PIPELINE_GL
-#import <OpenGL/gl.h>
-#endif
 #ifdef PLASMA_PIPELINE_METAL
 #import <Metal/Metal.h>
 #endif
@@ -82,17 +79,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetGameLib/plNetGameLib.h"
 #include "plProduct.h"
 
-// Until a pipeline is integrated with macOS, need to import the
-// abstract definition.
-#include "plPipeline/pl3DPipeline.h"
-
 void PumpMessageQueueProc();
 
 extern bool gDataServerLocal;
 extern bool gPythonLocal;
 extern bool gSDLLocal;
-
-bool NeedsResolutionUpdate = false;
 
 std::vector<ST::string> args;
 
@@ -111,7 +102,6 @@ std::vector<ST::string> args;
 @property CVDisplayLinkRef displayLink;
 @property dispatch_queue_t renderQueue;
 @property CALayer* renderLayer;
-@property(weak) PLSView* plsView;
 @property PLSPatcherWindowController* patcherWindow;
 @property NSModalSession currentModalSession;
 @property PLSPatcher* patcher;
@@ -191,16 +181,18 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
                                                        defer:NO];
     window.backgroundColor = NSColor.blackColor;
 
-    PLSView* view = [[PLSView alloc] init];
-    self.plsView = view;
-    window.contentView = view;
-    [window setDelegate:self];
-    
-    gClient.SetClientWindow((__bridge void *)view.layer);
+    PLSView* plView = [[PLSView alloc] init];
+    window.contentView = plView;
+
+    gClient.SetClientWindow((__bridge void *)plView.layer);
     gClient.SetClientDisplay((hsWindowHndl)NULL);
 
     self = [super initWithWindow:window];
     self.window.acceptsMouseMovedEvents = YES;
+
+    plView.delegate = self;
+    [window setDelegate:self];
+
     return self;
 }
 
@@ -209,7 +201,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 - (void)startRunLoop
 {
     [[NSRunLoop currentRunLoop] addPort:[NSMachPort port] forMode:@"PlasmaEventMode"];
-    [self.plsView setBoundsSize:self.plsView.bounds.size];
+    [self.window.contentView setBoundsSize:self.window.contentView.bounds.size];
     auto* msg = new plDisplayScaleChangedMsg(self.window.backingScaleFactor);
     msg->Send();
 
@@ -457,20 +449,27 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 {
     PF_CONSOLE_INITIALIZE(Audio)
 
-    self.plsView.delegate = self;
+    self.renderLayer = gClient->GetPipeline()->GetRenderLayer();
+    _renderLayer.backgroundColor = NSColor.blackColor.CGColor;
+
+    self.window.contentView.layer = _renderLayer;
+    self.window.contentView.wantsLayer = YES;
     // Create a window:
 
     // Window controller
     [self.window setContentSize:NSMakeSize(800, 600)];
     [self.window center];
     [self.window makeKeyAndOrderFront:self];
-    self.renderLayer = self.window.contentView.layer;
-    
-    [self.renderLayer addObserver:self
-                       forKeyPath:@"device"
-                          options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial
-                          context:DeviceDidChangeContext];
-    
+
+#ifdef PLASMA_PIPELINE_METAL
+    if ([_renderLayer respondsToSelector:@selector(device)]) {
+        [_renderLayer addObserver:self
+                           forKeyPath:@"device"
+                              options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial
+                              context:DeviceDidChangeContext];
+    }
+#endif
+
     if (!gClient) {
         exit(0);
     }
@@ -563,7 +562,11 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
 
 - (void)dealloc
 {
-    [_renderLayer removeObserver:self forKeyPath:@"device" context:DeviceDidChangeContext];
+#ifdef PLASMA_PIPELINE_METAL
+    if ([_renderLayer respondsToSelector:@selector(device)]) {
+        [_renderLayer removeObserver:self forKeyPath:@"device" context:DeviceDidChangeContext];
+    }
+#endif
 }
 
 @end

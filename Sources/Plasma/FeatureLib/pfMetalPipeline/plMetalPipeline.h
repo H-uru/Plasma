@@ -138,6 +138,7 @@ public:
     int            GetMaxAnisotropicSamples() override;
     int            GetMaxAntiAlias(int Width, int Height, int ColorDepth) override;
     void           ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync = false) override;
+    CALayer*       GetRenderLayer() override;
     void           RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList) override;
     void           ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W);
     bool           ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* group, const plSpan* spanBase);

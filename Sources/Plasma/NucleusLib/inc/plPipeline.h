@@ -60,6 +60,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define DEFAULT_SHADOWS 0
 #define DEFAULT_PLANARREFLECTIONS 0
 
+#if __OBJC__
+    @class CALayer;
+#else
+    class CALayer;
+#endif
 
 struct hsPoint3;
 struct hsVector3;
@@ -354,7 +359,11 @@ public:
     plDisplayMode fDesktopParams;
 
     virtual size_t GetViewStackSize() const = 0;
-    
+
+#ifdef HS_BUILD_FOR_MACOS
+    virtual CALayer* GetRenderLayer() { return nullptr; }
+#endif
+
     float fBackingScale = 1.0f;
     void SetBackingScale(float scale) { fBackingScale = scale; };
 };
