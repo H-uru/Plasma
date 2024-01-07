@@ -62,6 +62,8 @@ enum plMetalVertexShaderArgument
     VertexShaderArgumentMaterialShaderUniforms          = 3,
     /// Light Table
     VertexShaderArgumentLights                          = 4,
+    /// Material properties for vertex lighting
+    VertexShaderArgumentMaterialLighting                = 5,
     /// Blend matrix for GPU side animation blending
     VertexShaderArgumentBlendMatrix1                    = 6,
     /// Describes the state of a shadow caster for shadow cast shader
@@ -169,15 +171,8 @@ struct UVOutDescriptor
 static_assert(std::is_trivial_v<UVOutDescriptor>, "UVOutDescriptor must be a trivial type!");
 #endif
 
-struct VertexUniforms
+struct plMaterialLightingDescriptor
 {
-    // transformation
-    matrix_float4x4 projectionMatrix;
-    matrix_float4x4 localToWorldMatrix;
-    matrix_float4x4 cameraToWorldMatrix;
-    matrix_float4x4 worldToCameraMatrix;
-
-    // lighting
     half4 globalAmb;
     half3 ambientCol;
     uint8_t ambientSrc;
@@ -187,6 +182,16 @@ struct VertexUniforms
     uint8_t emissiveSrc;
     half3 specularCol;
     uint8_t specularSrc;
+};
+
+struct VertexUniforms
+{
+    // transformation
+    matrix_float4x4 projectionMatrix;
+    matrix_float4x4 localToWorldMatrix;
+    matrix_float4x4 cameraToWorldMatrix;
+    matrix_float4x4 worldToCameraMatrix;
+
     bool invVtxAlpha;
 
     uint8_t fogExponential;
