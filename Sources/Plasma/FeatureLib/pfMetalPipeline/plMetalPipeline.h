@@ -170,6 +170,7 @@ public:
 
 private:
     VertexUniforms* fCurrentRenderPassUniforms;
+    plMaterialLightingDescriptor fCurrentRenderPassMaterialLighting;
     
     bool fIsFullscreen;
 

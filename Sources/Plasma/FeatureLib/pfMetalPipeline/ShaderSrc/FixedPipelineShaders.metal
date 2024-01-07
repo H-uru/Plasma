@@ -100,7 +100,7 @@ constant const uint32_t miscFlags8 [[ function_constant(FunctionConstantLayerFla
 constant const uint8_t sourceTypes[MAX_BLEND_PASSES] = { sourceType1, sourceType2, sourceType3, sourceType4, sourceType5, sourceType6, sourceType7, sourceType8};
 constant const uint32_t blendModes[MAX_BLEND_PASSES] = { blendModes1, blendModes2, blendModes3, blendModes4, blendModes5, blendModes6, blendModes7, blendModes8};
 constant const uint32_t miscFlags[MAX_BLEND_PASSES] = { miscFlags1, miscFlags2, miscFlags3, miscFlags4, miscFlags5, miscFlags6, miscFlags7, miscFlags8};
-    constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
+constant const uint8_t passCount = (sourceType1 > 0) + (sourceType2 > 0) + (sourceType3 > 0) + (sourceType4 > 0) + (sourceType5 > 0) + (sourceType6 > 0) + (sourceType7 > 0) + (sourceType8 > 0);
     
 constant const bool has2DTexture1 = (sourceType1 == PassTypeTexture && hasLayer1);
 constant const bool has2DTexture2 = (sourceType2 == PassTypeTexture && hasLayer2);
@@ -172,31 +172,20 @@ typedef struct
     float4 position [[position, invariant]];
     float3 texCoord1;
 } ShadowCasterInOut;
-
-vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
-                                       constant VertexUniforms & uniforms   [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
-                                       constant plMetalLights & lights      [[ buffer(VertexShaderArgumentLights) ]],
-                                       constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
+    
+half4 calcLitMaterialColor(constant plMetalLights & lights,
+                          const half4 materialColor,
+                          constant plMaterialLightingDescriptor & materialLighting,
+                          const float4 position,
+                          const float3 normal)
 {
-    ColorInOut out;
-    // we should have been able to swizzle, but it didn't work in Xcode beta? Try again later.
-    const half4 inColor = half4(in.color.b, in.color.g, in.color.r, in.color.a) / half4(255.f);
-
-    const half3 MAmbient = mix(inColor.rgb, uniforms.ambientCol, uniforms.ambientSrc);
-    const half4 MDiffuse = mix(inColor, uniforms.diffuseCol, uniforms.diffuseSrc);
-    const half3 MEmissive = mix(inColor.rgb, uniforms.emissiveCol, uniforms.emissiveSrc);
-
     half3 LAmbient = half3(0.h, 0.h, 0.h);
     half3 LDiffuse = half3(0.h, 0.h, 0.h);
-
-    const float3 Ndirection = normalize(float4(in.normal, 0.f) * uniforms.localToWorldMatrix).xyz;
-
-    float4 position = float4(in.position, 1.f) * uniforms.localToWorldMatrix;
-    if (temp_hasOnlyWeight1) {
-        const float4 position2 = float4(in.position, 1.f) * blendMatrix1;
-        position = (in.weight1 * position) + ((1.f - in.weight1) * position2);
-    }
-
+    
+    const half3 MAmbient = mix(materialColor.rgb, materialLighting.ambientCol, materialLighting.ambientSrc);
+    const half4 MDiffuse = mix(materialColor, materialLighting.diffuseCol, materialLighting.diffuseSrc);
+    const half3 MEmissive = mix(materialColor.rgb, materialLighting.emissiveCol, materialLighting.emissiveSrc);
+    
     for (size_t i = 0; i < lights.count; i++) {
         constant const plMetalShaderLightSource *lightSource = &lights.lampSources[i];
         if (lightSource->scale == 0.0h)
@@ -236,16 +225,35 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         }
 
         LAmbient.rgb = LAmbient.rgb + half3(direction.w * (lightSource->ambient.rgb * lightSource->scale));
-        const float3 dotResult = dot(Ndirection, direction.xyz);
+        const float3 dotResult = dot(normal, direction.xyz);
         LDiffuse.rgb = LDiffuse.rgb + MDiffuse.rgb * (lightSource->diffuse.rgb * lightSource->scale) * half3(max(0.f, dotResult) * direction.w);
     }
 
-    const half3 ambient = (MAmbient.rgb) * clamp(uniforms.globalAmb.rgb + LAmbient.rgb, 0.h, 1.h);
+    const half3 ambient = (MAmbient.rgb) * clamp(materialLighting.globalAmb.rgb + LAmbient.rgb, 0.h, 1.h);
     const half3 diffuse = clamp(LDiffuse.rgb, 0.h, 1.h);
-    const half4 material = half4(clamp(ambient + diffuse + MEmissive.rgb, 0.h, 1.h),
-                                 abs(uniforms.invVtxAlpha - MDiffuse.a));
+    return clamp(half4(ambient + diffuse + MEmissive.rgb, MDiffuse.a), 0.h, 1.h);
+}
 
-    out.vtxColor = half4(material.rgb, abs(uniforms.invVtxAlpha - MDiffuse.a));
+vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
+                                       constant VertexUniforms & uniforms   [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
+                                       constant plMaterialLightingDescriptor & materialLighting   [[ buffer(    VertexShaderArgumentMaterialLighting) ]],
+                                       constant plMetalLights & lights      [[ buffer(VertexShaderArgumentLights) ]],
+                                       constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
+{
+    ColorInOut out;
+    const half4 inColor = half4(in.color.b, in.color.g, in.color.r, in.color.a) / half4(255.f);
+
+    const float3 Ndirection = normalize(float4(in.normal, 0.f) * uniforms.localToWorldMatrix).xyz;
+
+    float4 position = float4(in.position, 1.f) * uniforms.localToWorldMatrix;
+    if (temp_hasOnlyWeight1) {
+        const float4 position2 = float4(in.position, 1.f) * blendMatrix1;
+        position = (in.weight1 * position) + ((1.f - in.weight1) * position2);
+    }
+
+    out.vtxColor = calcLitMaterialColor(lights, inColor, materialLighting, position, Ndirection);
+    out.vtxColor.a = abs(uniforms.invVtxAlpha - out.vtxColor.a);
+    
     const float4 vCamPosition = position * uniforms.worldToCameraMatrix;
     
     // Fog
@@ -617,6 +625,7 @@ fragment half4 shadowFragmentShader(ShadowCasterInOut in [[stage_in]])
 
 vertex ColorInOut shadowCastVertexShader(Vertex in                              [[ stage_in ]],
                                          constant VertexUniforms & uniforms     [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
+                                         constant plMaterialLightingDescriptor & materialLighting   [[ buffer(    VertexShaderArgumentMaterialLighting) ]],
                                          constant plShadowState & shadowState   [[ buffer(VertexShaderArgumentShadowState) ]])
 {
     ColorInOut out;
