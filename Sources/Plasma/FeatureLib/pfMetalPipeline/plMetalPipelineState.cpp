@@ -110,6 +110,8 @@ void plMetalMaterialPassPipelineState::GetFunctionConstants(MTL::FunctionConstan
     constants->setConstantValues(&fFragmentShaderDescription.fPassTypes, MTL::DataTypeUChar, NS::Range(FunctionConstantSources, 8));
     constants->setConstantValues(&fFragmentShaderDescription.fBlendModes, MTL::DataTypeUInt, NS::Range(FunctionConstantBlendModes, 8));
     constants->setConstantValues(&fFragmentShaderDescription.fMiscFlags, MTL::DataTypeUInt, NS::Range(FunctionConstantLayerFlags, 8));
+    bool perPixelLighting = PLASMA_PER_PIXEL_LIGHTING;
+    constants->setConstantValue(&perPixelLighting, MTL::DataTypeBool, FunctionConstantPerPixelLighting);
 }
 
 size_t plMetalMaterialPassPipelineState::GetHash() const
@@ -267,23 +269,21 @@ void plMetalRenderSpanPipelineState::ConfigureBlendMode(const uint32_t blendMode
 MTL::Function* plMetalMaterialPassPipelineState::GetVertexFunction(MTL::Library* library)
 {
     NS::Error*                   error = nullptr;
-    MTL::FunctionConstantValues* constants = MTL::FunctionConstantValues::alloc()->init()->autorelease();
-    GetFunctionConstants(constants);
-    MTL::Function* function = library->newFunction(
-                                         NS::String::string("pipelineVertexShader", NS::ASCIIStringEncoding),
-                                         MakeFunctionConstants(),
-                                         &error)
-                                  ->autorelease();
-    return function;
+    MTL::Function* function = library->newFunction(NS::String::string("pipelineVertexShader", NS::ASCIIStringEncoding),
+                                                   MakeFunctionConstants(),
+                                                   &error);
+    assert(!error);
+    return function->autorelease();
 }
 
 MTL::Function* plMetalMaterialPassPipelineState::GetFragmentFunction(MTL::Library* library)
 {
-    return library->newFunction(
-                      NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
-                      MakeFunctionConstants(),
-                      (NS::Error**)nullptr)
-        ->autorelease();
+    NS::Error* error = nullptr;
+    MTL::Function* function = library->newFunction(NS::String::string("pipelineFragmentShader", NS::ASCIIStringEncoding),
+                                                   MakeFunctionConstants(),
+                                                   &error);
+    assert(!error);
+    return function->autorelease();
 }
 
 plMetalMaterialPassPipelineState::~plMetalMaterialPassPipelineState()

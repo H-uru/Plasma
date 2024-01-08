@@ -151,12 +151,22 @@ bool plRenderTriListFunc::RenderPrims() const
 
     size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
     fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
+    
     fDevice->CurrentRenderCommandEncoder()->setVertexBytes(&fDevice->fPipeline->fCurrentRenderPassMaterialLighting, sizeof(plMaterialLightingDescriptor), VertexShaderArgumentMaterialLighting);
+    if (PLASMA_PER_PIXEL_LIGHTING)
+    {
+        fDevice->CurrentRenderCommandEncoder()->setFragmentBytes(&fDevice->fPipeline->fCurrentRenderPassMaterialLighting, sizeof(plMaterialLightingDescriptor), FragmentShaderArgumentMaterialLighting);
+    }
 
     plMetalLights* lights = &fDevice->fPipeline->fLights;
     size_t         lightSize = offsetof(plMetalLights, lampSources) + (sizeof(plMetalShaderLightSource) * lights->count);
 
-    fDevice->CurrentRenderCommandEncoder()->setVertexBytes(lights, sizeof(plMetalLights), VertexShaderArgumentLights);
+    if (PLASMA_PER_PIXEL_LIGHTING)
+    {
+        fDevice->CurrentRenderCommandEncoder()->setFragmentBytes(lights, sizeof(plMetalLights), FragmentShaderArgumentLights);
+    } else {
+        fDevice->CurrentRenderCommandEncoder()->setVertexBytes(lights, sizeof(plMetalLights), VertexShaderArgumentLights);
+    }
     fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris * 3, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
 }
 
@@ -1600,9 +1610,9 @@ bool plMetalPipeline::IHandleMaterialPass(hsGMaterial* material, uint32_t pass, 
         }
 
         if (s.fBlendFlags & hsGMatState::kBlendInvertVtxAlpha)
-            fCurrentRenderPassUniforms->invVtxAlpha = true;
+            fCurrentRenderPassMaterialLighting.invertAlpha = true;
         else
-            fCurrentRenderPassUniforms->invVtxAlpha = false;
+            fCurrentRenderPassMaterialLighting.invertAlpha = false;
 
         std::vector<plLightInfo*>& spanLights = currSpan->GetLightList(false);
 
