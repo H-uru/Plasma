@@ -54,7 +54,7 @@ typedef __attribute__((__ext_vector_type__(3))) half half3;
 typedef __attribute__((__ext_vector_type__(4))) half half4;
 #endif
 
-enum plMetalVertexShaderArgument
+enum plMetalShaderArgument
 {
     /// Material State
     VertexShaderArgumentFixedFunctionUniforms           = 2,
@@ -67,11 +67,8 @@ enum plMetalVertexShaderArgument
     /// Blend matrix for GPU side animation blending
     VertexShaderArgumentBlendMatrix1                    = 6,
     /// Describes the state of a shadow caster for shadow cast shader
-    VertexShaderArgumentShadowState                     = 9
-};
-
-enum plMetalFragmentShaderArgumentIndex
-{
+    VertexShaderArgumentShadowState                     = 9,
+    
     /// Texture is a legacy argument for the simpler plate shader
     FragmentShaderArgumentTexture                       = 1,
     /// Fragment uniforms
@@ -79,7 +76,11 @@ enum plMetalFragmentShaderArgumentIndex
     /// Legacy argument buffer
     FragmentShaderArgumentUniforms                      = 5,
     /// Layer index of alpha for shadow fragment shader
-    FragmentShaderArgumentShadowCastAlphaSrc            = 8
+    FragmentShaderArgumentShadowCastAlphaSrc            = 8,
+    /// Light Table
+    FragmentShaderArgumentLights                        = 10,
+    /// Material properties for vertex lighting
+    FragmentShaderArgumentMaterialLighting              = 11
 };
 
 enum plMetalVertexAttribute
@@ -112,6 +113,8 @@ enum plMetalFunctionConstant
     FunctionConstantLayerFlags                          = 18,
     /// Numbrer of weights in the FVF vertex layout.
     FunctionConstantNumWeights                          = 26,
+    /// Per pixel lighting enable flag
+    FunctionConstantPerPixelLighting                    = 27,
 };
 
 enum plMetalLayerPassType: uint8_t
@@ -182,6 +185,8 @@ struct plMaterialLightingDescriptor
     uint8_t emissiveSrc;
     half3 specularCol;
     uint8_t specularSrc;
+    
+    bool invertAlpha;
 };
 
 struct VertexUniforms
@@ -191,8 +196,6 @@ struct VertexUniforms
     matrix_float4x4 localToWorldMatrix;
     matrix_float4x4 cameraToWorldMatrix;
     matrix_float4x4 worldToCameraMatrix;
-
-    bool invVtxAlpha;
 
     uint8_t fogExponential;
     simd::float2 fogValues;

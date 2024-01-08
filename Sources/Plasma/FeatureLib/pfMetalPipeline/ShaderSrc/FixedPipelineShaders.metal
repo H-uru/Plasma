@@ -69,6 +69,9 @@ enum plUVWSrcModifiers: uint32_t
 
 using namespace metal;
 
+constant const bool perPixelLighting [[ function_constant(FunctionConstantPerPixelLighting)    ]];
+constant const bool perVertexLighting = !perPixelLighting;
+
 constant const uint8_t sourceType1 [[ function_constant(FunctionConstantSources + 0)    ]];
 constant const uint8_t sourceType2 [[ function_constant(FunctionConstantSources + 1)    ]];
 constant const uint8_t sourceType3 [[ function_constant(FunctionConstantSources + 2)    ]];
@@ -153,16 +156,18 @@ struct FragmentShaderArguments
 
 typedef struct
 {
-    float4 position [[position]];
-    float3 texCoord1 [[function_constant(hasLayer1)]];
-    float3 texCoord2 [[function_constant(hasLayer2)]];
-    float3 texCoord3 [[function_constant(hasLayer3)]];
-    float3 texCoord4 [[function_constant(hasLayer4)]];
-    float3 texCoord5 [[function_constant(hasLayer5)]];
-    float3 texCoord6 [[function_constant(hasLayer6)]];
-    float3 texCoord7 [[function_constant(hasLayer7)]];
-    float3 texCoord8 [[function_constant(hasLayer8)]];
-    half4 vtxColor [[ centroid_perspective ]];
+    float4 position  [[ position ]];
+    float4 worldPos  [[ function_constant(perPixelLighting) ]];
+    float3 normal    [[ function_constant(perPixelLighting) ]];
+    float3 texCoord1 [[ function_constant(hasLayer1) ]];
+    float3 texCoord2 [[ function_constant(hasLayer2) ]];
+    float3 texCoord3 [[ function_constant(hasLayer3) ]];
+    float3 texCoord4 [[ function_constant(hasLayer4) ]];
+    float3 texCoord5 [[ function_constant(hasLayer5) ]];
+    float3 texCoord6 [[ function_constant(hasLayer6) ]];
+    float3 texCoord7 [[ function_constant(hasLayer7) ]];
+    float3 texCoord8 [[ function_constant(hasLayer8) ]];
+    half4 vtxColor   [[ centroid_perspective ]];
     half4 fogColor;
 } ColorInOut;
 
@@ -174,10 +179,10 @@ typedef struct
 } ShadowCasterInOut;
     
 half4 calcLitMaterialColor(constant plMetalLights & lights,
-                          const half4 materialColor,
-                          constant plMaterialLightingDescriptor & materialLighting,
-                          const float4 position,
-                          const float3 normal)
+                           const half4 materialColor,
+                           constant plMaterialLightingDescriptor & materialLighting,
+                           const float4 position,
+                           const float3 normal)
 {
     half3 LAmbient = half3(0.h, 0.h, 0.h);
     half3 LDiffuse = half3(0.h, 0.h, 0.h);
@@ -231,13 +236,13 @@ half4 calcLitMaterialColor(constant plMetalLights & lights,
 
     const half3 ambient = (MAmbient.rgb) * clamp(materialLighting.globalAmb.rgb + LAmbient.rgb, 0.h, 1.h);
     const half3 diffuse = clamp(LDiffuse.rgb, 0.h, 1.h);
-    return clamp(half4(ambient + diffuse + MEmissive.rgb, MDiffuse.a), 0.h, 1.h);
+    return clamp(half4(ambient + diffuse + MEmissive.rgb, abs(materialLighting.invertAlpha - MDiffuse.a)), 0.h, 1.h);
 }
 
 vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
-                                       constant VertexUniforms & uniforms   [[ buffer(    VertexShaderArgumentFixedFunctionUniforms) ]],
-                                       constant plMaterialLightingDescriptor & materialLighting   [[ buffer(    VertexShaderArgumentMaterialLighting) ]],
-                                       constant plMetalLights & lights      [[ buffer(VertexShaderArgumentLights) ]],
+                                       constant VertexUniforms & uniforms   [[ buffer(VertexShaderArgumentFixedFunctionUniforms) ]],
+                                       constant plMaterialLightingDescriptor & materialLighting   [[ buffer(VertexShaderArgumentMaterialLighting), function_constant(perVertexLighting) ]],
+                                       constant plMetalLights & lights      [[ buffer(VertexShaderArgumentLights), function_constant(perVertexLighting) ]],
                                        constant float4x4 & blendMatrix1     [[ buffer(VertexShaderArgumentBlendMatrix1), function_constant(temp_hasOnlyWeight1) ]])
 {
     ColorInOut out;
@@ -250,9 +255,20 @@ vertex ColorInOut pipelineVertexShader(Vertex in [[stage_in]],
         const float4 position2 = float4(in.position, 1.f) * blendMatrix1;
         position = (in.weight1 * position) + ((1.f - in.weight1) * position2);
     }
-
-    out.vtxColor = calcLitMaterialColor(lights, inColor, materialLighting, position, Ndirection);
-    out.vtxColor.a = abs(uniforms.invVtxAlpha - out.vtxColor.a);
+    
+    if (perPixelLighting)
+    {
+        // send the world pos on to the pixel shader for lighting
+        out.worldPos = position;
+        out.normal = Ndirection;
+    }
+    
+    if (perPixelLighting)
+    {
+        out.vtxColor = inColor;
+    } else {
+        out.vtxColor = calcLitMaterialColor(lights, inColor, materialLighting, position, Ndirection);
+    }
     
     const float4 vCamPosition = position * uniforms.worldToCameraMatrix;
     
@@ -428,9 +444,12 @@ half4 FragmentShaderArguments::sampleLayer(const size_t index, const half4 verte
 }
 
 fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
-                                      const FragmentShaderArguments fragmentShaderArgs)
+                                      const FragmentShaderArguments fragmentShaderArgs,
+                                      constant plMetalLights & lights      [[ buffer(FragmentShaderArgumentLights), function_constant(perPixelLighting) ]],
+                                      constant plMaterialLightingDescriptor & materialLighting   [[ buffer(FragmentShaderArgumentMaterialLighting), function_constant(perPixelLighting) ]])
 {
-    half4 currentColor = in.vtxColor;
+    const half4 lightingContributionColor = perPixelLighting ? calcLitMaterialColor(lights, in.vtxColor, materialLighting, in.worldPos, in.normal) : in.vtxColor;
+    half4 currentColor = lightingContributionColor;
 
     /*
      SPECIAL PLASMA RULE:
@@ -458,7 +477,7 @@ fragment half4 pipelineFragmentShader(ColorInOut in [[stage_in]],
             }
         }
         
-        currentColor = half4(in.vtxColor.rgb, 1.0h) * currentColor;
+        currentColor = lightingContributionColor * currentColor;
     }
     
     currentColor.rgb = mix(in.fogColor.rgb, currentColor.rgb, (float)clamp(in.fogColor.a, 0.0h, 1.0h));
