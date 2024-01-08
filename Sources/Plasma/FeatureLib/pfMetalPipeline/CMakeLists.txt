@@ -11,6 +11,7 @@ FetchContent_MakeAvailable(metalcpp)
 set(pfMetalPipeline_SOURCES
     plMetalDevice.cpp
     plMetalDeviceRefs.cpp
+    plMetalEnumerate.cpp
     plMetalMaterialShaderRef.cpp
     plMetalPipeline.cpp
     plMetalPipelineState.cpp
@@ -19,7 +20,6 @@ set(pfMetalPipeline_SOURCES
     plMetalFragmentShader.cpp
     plMetalVertexShader.cpp
     plMetalTextFont.cpp
-    plMetalEnumerate.mm
     plMetalDevicePerformanceShaders.mm
 )
 

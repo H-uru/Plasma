@@ -44,10 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 #include <vector>
+#include <string_theory/format>
+#include <Foundation/Foundation.hpp>
 
-#include <Foundation/Foundation.h>
-
-#include <sys/utsname.h>
 #include "plMetalPipeline.h"
 
 void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
@@ -62,17 +61,11 @@ void plMetalEnumerate::Enumerate(std::vector<hsG3DDeviceRecord>& records)
         devRec.SetG3DDeviceType(hsG3DDeviceSelector::kDevTypeMetal);
         devRec.SetDriverName("Metal");
         devRec.SetDeviceDesc(device->name()->utf8String());
+
         // Metal has ways to query capabilities, but doesn't expose a flat version
         // Populate with the OS version
-        @autoreleasepool {
-            NSProcessInfo*           processInfo = [NSProcessInfo processInfo];
-            NSOperatingSystemVersion version = processInfo.operatingSystemVersion;
-            NSString*                versionString =
-                [NSString stringWithFormat:@"%li.%li.%li", (long)version.majorVersion,
-                                           (long)version.minorVersion, version.patchVersion];
-            devRec.SetDriverVersion([versionString cStringUsingEncoding:NSUTF8StringEncoding]);
-        }
-        devRec.SetDriverDesc(device->name()->utf8String());
+        auto version = NS::ProcessInfo::processInfo()->operatingSystemVersion();
+        devRec.SetDriverVersion(ST::format("{}.{}.{}", version.majorVersion, version.minorVersion, version.patchVersion));
 
         devRec.SetCap(hsG3DDeviceSelector::kCapsMipmap);
         devRec.SetCap(hsG3DDeviceSelector::kCapsPerspective);
