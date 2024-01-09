@@ -573,7 +573,7 @@ void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
 
     // Check to see if ours matches
     if (file.fFlags & kBundle) {
-#if HS_BUILD_FOR_MACOS
+#ifdef HS_BUILD_FOR_MACOS
         // If this is a Mac app bundle, MD5 the executable. The executable will hold the
         // code signing hash - and thus unique the entire bundle.
         
