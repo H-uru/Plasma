@@ -54,7 +54,7 @@ Mead, WA   99021
 
 plFileName plManifest::ClientExecutable()
 {
-#if HS_BUILD_FOR_MACOS
+#ifdef HS_BUILD_FOR_MACOS
     return MANIFEST("plClient.app", "UruExplorer.app");
 #else
     return MANIFEST("plClient.exe", "UruExplorer.exe");
@@ -63,7 +63,7 @@ plFileName plManifest::ClientExecutable()
 
 plFileName plManifest::PatcherExecutable()
 {
-#if HS_BUILD_FOR_MACOS
+#ifdef HS_BUILD_FOR_MACOS
     return MANIFEST("plClient.app", "UruExplorer.app");
 #else
     return MANIFEST("plUruLauncher.exe", "UruLauncher.exe");
@@ -72,8 +72,8 @@ plFileName plManifest::PatcherExecutable()
 
 ST::string plManifest::ClientManifest()
 {
-#if HS_BUILD_FOR_MACOS
-    return MANIFEST("MacThinInternal", "MacThinExternal");
+#ifdef HS_BUILD_FOR_MACOS
+    return MANIFEST("macThinInternal", "macThinExternal");
 #else
     return MANIFEST("ThinInternal", "ThinExternal");
 #endif
@@ -81,8 +81,8 @@ ST::string plManifest::ClientManifest()
 
 ST::string plManifest::ClientImageManifest()
 {
-#if HS_BUILD_FOR_MACOS
-    return MANIFEST("MacInternal", "MacExternal");
+#ifdef HS_BUILD_FOR_MACOS
+    return MANIFEST("macInternal", "macExternal");
 #else
     return MANIFEST("Internal", "External");
 #endif
