@@ -4372,7 +4372,7 @@ uint32_t plMetalPipeline::IGetBufferFormatSize(uint8_t format) const
     return size;
 }
 
-CALayer* plMetalPipeline::GetRenderLayer()
+CALayer* plMetalPipeline::GetRenderLayer() const
 {
     CA::MetalLayer* layer = CA::MetalLayer::layer();
     layer->setPixelFormat(MTL::PixelFormatBGR10A2Unorm);

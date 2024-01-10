@@ -361,7 +361,7 @@ public:
     virtual size_t GetViewStackSize() const = 0;
 
 #ifdef HS_BUILD_FOR_MACOS
-    virtual CALayer* GetRenderLayer() { return nullptr; }
+    virtual CALayer* GetRenderLayer() const { return nullptr; }
 #endif
 
     float fBackingScale = 1.0f;
