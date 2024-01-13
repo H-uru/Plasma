@@ -38,11 +38,6 @@
     ],
     "overrides": [
       {
-        "name": "openssl",
-        "version": "3.0.8#2",
-        "$comment": "OpenSSL 3.1.x has a bug on arm64 macOS that causes crashes in debug builds. Use 3.0.x for now."
-      },
-      {
         "name": "physx",
         "version": "4.1.2#6",
         "$comment": "Upstream vcpkg updated to PhysX 5, which drops support for several target platforms. Stick with 4.1.2 for now."
@@ -59,7 +54,7 @@
         ]
       }
     },
-    "builtin-baseline": "a42af01b72c28a8e1d7b48107b33e4f286a55ef6",
+    "builtin-baseline": "53bef8994c541b6561884a8395ea35715ece75db",
     "vcpkg-configuration": {
       "overlay-ports": ["./Scripts/Ports"],
       "overlay-triplets": ["./Scripts/Triplets"]
