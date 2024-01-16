@@ -91,3 +91,17 @@ STATEDESC EderNaybree
     VAR BOOL                    FirepitVis[1]                 DEFAULT=0
     VAR BOOL                    GhostRaftVis[1]               DEFAULT=0
 }
+
+STATEDESC EderNaybree
+{
+    VERSION 6
+    VAR AGETIMEOFDAY            NaybreeTimeOfDay[1]
+    VAR BOOL                    VCatBookVis[1]                DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL                    ExtcolBookVis[1]              DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL                    RewardKelsFleeceVis[1]        DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL                    YeeshaPageNBVis[1]            DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL                    DecemberFountainVis[1]        DEFAULT=0    DEFAULTOPTION=VAULT
+    VAR BOOL                    FirepitVis[1]                 DEFAULT=0
+    VAR BOOL                    GhostRaftVis[1]               DEFAULT=0
+    VAR BOOL                    PsnlMusicCanenVis[1]          DEFAULT=0    DEFAULTOPTION=VAULT
+}
