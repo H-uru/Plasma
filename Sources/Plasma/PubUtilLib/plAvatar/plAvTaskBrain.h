@@ -77,7 +77,7 @@ public:
     /** dump descriptive stuff to the given debug text */
     void DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt) override;
 
-    plArmatureBrain *GetBrain();
+    plArmatureBrain* GetBrain() const;
 
     CLASSNAME_REGISTER( plAvTaskBrain );
     GETINTERFACE_ANY( plAvTaskBrain, plAvTask );

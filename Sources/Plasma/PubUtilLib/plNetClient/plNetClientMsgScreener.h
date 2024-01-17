@@ -44,6 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetCommon/plNetMsgScreener.h"
 
+class plArmatureBrain;
+class plAvTask;
+
 //
 // Client-side version
 //
@@ -57,9 +60,12 @@ protected:
     bool IIsLocalArmatureModKey(const plKey& key, const plNetGameMember* gm) const override;
     bool IIsSenderCCR(const plNetGameMember* gm=nullptr) const override;
     bool IAmClient() const override { return true; }
-    bool IScreenIncoming(const plMessage* msg) const;
-public:
 
+    static bool IScreenIncomingBrain(const plArmatureBrain* brain);
+    static bool IScreenIncomingTask(const plAvTask* task);
+    static bool IScreenIncoming(const plMessage* msg);
+
+public:
     plNetClientMsgScreener();
     
     bool AllowOutgoingMessage(const plMessage* msg) const;

@@ -46,10 +46,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plFactory.h"
 #include "pnMessage/plMessage.h"
+#include "pnMessage/plMessageWithCallbacks.h"
 #include "pnNetCommon/plNetApp.h"
 
+#include "plAvatar/plAvBrain.h"
+#include "plAvatar/plAvBrainCoop.h"
+#include "plAvatar/plAvTaskBrain.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plCoopCoordinator.h"
+#include "plMessage/plAvCoopMsg.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plLoadAvatarMsg.h"
+#include "plMessage/plLoadCloneMsg.h"
 #include "plStatusLog/plStatusLog.h"
 
 #include "pfMessage/pfKIMsg.h"
@@ -59,9 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ///////////////////////////////////////////////////////////////
 
 plNetClientMsgScreener::plNetClientMsgScreener()
-{
-    DebugMsg("created");
-}
+{}
 
 //
 // For plLoggable base
@@ -129,6 +136,69 @@ bool plNetClientMsgScreener::AllowOutgoingMessage(const plMessage* msg) const
     return true;
 }
 
+bool plNetClientMsgScreener::IScreenIncomingBrain(const plArmatureBrain* brain)
+{
+    if (!brain) {
+        return true;
+    }
+
+    const plAvBrainGeneric* brainGeneric;
+    switch (brain->ClassIndex()) {
+        case CLASS_INDEX_SCOPED(plAvBrainCoop):
+        case CLASS_INDEX_SCOPED(plAvBrainGeneric):
+            // These brains can contain nested messages, which need to be recursively screened.
+            brainGeneric = plAvBrainGeneric::ConvertNoRef(brain);
+            ASSERT(brainGeneric);
+            if (!IScreenIncoming(brainGeneric->GetStartMessage()) || !IScreenIncoming(brainGeneric->GetEndMessage())) {
+                return false;
+            }
+            return true;
+
+        case CLASS_INDEX_SCOPED(plAvBrainClimb):
+        case CLASS_INDEX_SCOPED(plAvBrainCritter):
+        case CLASS_INDEX_SCOPED(plAvBrainDrive):
+        case CLASS_INDEX_SCOPED(plAvBrainHuman):
+        case CLASS_INDEX_SCOPED(plAvBrainSwim):
+            // The data for these brains can't contain anything scary.
+            return true;
+
+        default:
+            // Don't know this type of brain!
+            return false;
+    }
+}
+
+bool plNetClientMsgScreener::IScreenIncomingTask(const plAvTask* task)
+{
+    if (!task) {
+        return true;
+    }
+
+    const plAvTaskBrain* taskBrain;
+    switch (task->ClassIndex()) {
+        case CLASS_INDEX_SCOPED(plAvTaskBrain):
+            // This task contains a brain, which needs to be recursively screened.
+            taskBrain = plAvTaskBrain::ConvertNoRef(task);
+            ASSERT(taskBrain);
+            if (!IScreenIncomingBrain(taskBrain->GetBrain())) {
+                return false;
+            }
+            return true;
+
+        case CLASS_INDEX_SCOPED(plAvAnimTask):
+        case CLASS_INDEX_SCOPED(plAvOneShotTask):
+        case CLASS_INDEX_SCOPED(plAvOneShotLinkTask):
+        case CLASS_INDEX_SCOPED(plAvSeekTask):
+        case CLASS_INDEX_SCOPED(plAvTaskSeek):
+            // The data for these tasks can't contain anything scary.
+            return true;
+
+        default:
+            // Don't know this type of task!
+            return false;
+    }
+}
+
 //
 // Return false for obvious hacked network messages
 // This is all because we cannot trust Cyan's servers
@@ -145,8 +215,14 @@ bool plNetClientMsgScreener::AllowIncomingMessage(const plMessage* msg) const
     return result;
 }
 
-bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg) const
+bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg)
 {
+    if (!msg) {
+        // The top-level message cannot be nullptr (this is checked by AllowIncomingMessage).
+        // plMessage* fields within other messages are allowed to be nullptr though.
+        return true;
+    }
+
     // Blacklist some obvious hacks here...
     switch (msg->ClassIndex())
     {
@@ -156,7 +232,7 @@ bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg) const
         // This message has a flawed read/write
         return false;
     case CLASS_INDEX_SCOPED(plConsoleMsg):
-        // Python remote code execution vunerability
+        // Python remote code execution vulnerability
         return false;
     case CLASS_INDEX_SCOPED(pfKIMsg):
         {
@@ -171,7 +247,62 @@ bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg) const
         if (plFactory::DerivesFrom(CLASS_INDEX_SCOPED(plRefMsg), msg->ClassIndex()))
             return false;
 
-        // Default allow everything else, otherweise we
+        // Other clients have no business sending us inputs.
+        // Also mitigates another remote code execution risk:
+        // plControlEventMsg can run console commands.
+        if (plFactory::DerivesFrom(CLASS_INDEX_SCOPED(plInputEventMsg), msg->ClassIndex())) {
+            return false;
+        }
+
+        // Recursively screen messages contained within other messages (directly or indirectly).
+
+        if (auto msgWithCallbacks = plMessageWithCallbacks::ConvertNoRef(msg)) {
+            size_t numCallbacks = msgWithCallbacks->GetNumCallbacks();
+            for (size_t i = 0; i < numCallbacks; i++) {
+                if (!IScreenIncoming(msgWithCallbacks->GetCallback(i))) {
+                    return false;
+                }
+            }
+        }
+
+        // Some avatar brains can contain messages and some avatar tasks contain brains,
+        // so we have to recursively screen all of those as well...
+
+        if (auto loadCloneMsg = plLoadCloneMsg::ConvertNoRef(msg)) {
+            if (!IScreenIncoming(loadCloneMsg->GetTriggerMsg())) {
+                return false;
+            }
+
+            if (auto loadAvatarMsg = plLoadAvatarMsg::ConvertNoRef(loadCloneMsg)) {
+                if (!IScreenIncomingTask(loadAvatarMsg->GetInitialTask())) {
+                    return false;
+                }
+            }
+        }
+
+        if (auto avCoopMsg = plAvCoopMsg::ConvertNoRef(msg)) {
+            if (avCoopMsg->fCoordinator && (
+                !IScreenIncomingBrain(avCoopMsg->fCoordinator->fHostBrain)
+                || !IScreenIncomingBrain(avCoopMsg->fCoordinator->fGuestBrain)
+                || !IScreenIncoming(avCoopMsg->fCoordinator->fGuestAcceptMsg)
+            )) {
+                return false;
+            }
+        }
+
+        if (auto avTaskMsg = plAvTaskMsg::ConvertNoRef(msg)) {
+            if (!IScreenIncomingTask(avTaskMsg->GetTask())) {
+                return false;
+            }
+            
+            if (auto avPushBrainMsg = plAvPushBrainMsg::ConvertNoRef(avTaskMsg)) {
+                if (!IScreenIncomingBrain(avPushBrainMsg->fBrain)) {
+                    return false;
+                }
+            }
+        }
+
+        // Default allow everything else, otherwise we
         // might break something that we really shouldn't...
         return true;
     }

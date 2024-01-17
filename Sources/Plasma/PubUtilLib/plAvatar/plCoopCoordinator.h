@@ -128,6 +128,8 @@ protected:
     bool fGuestAccepted;
 
     bool fGuestLinked; // guest linked, so ignore the timeout timer
+
+    friend class plNetClientMsgScreener; // Needs to screen the brains and message
 };
 
 #endif // plCoopCoordinator_h
