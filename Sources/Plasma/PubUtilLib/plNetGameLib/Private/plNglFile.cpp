@@ -1242,10 +1242,6 @@ void FileDestroy (bool wait) {
     NetTransCancelByProtocol(
         kNetProtocolCli2File,
         kNetErrRemoteShutdown
-    );    
-    NetMsgProtocolDestroy(
-        kNetProtocolCli2File,
-        false
     );
 
     {

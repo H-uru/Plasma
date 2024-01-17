@@ -46,10 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
-#include <list>
-#include <mutex>
+
 #include "hsRefCnt.h"
-#include "hsLockGuard.h"
 
 
 namespace pnNetCli {
@@ -60,69 +58,25 @@ namespace pnNetCli {
 *
 ***/
 
-struct ChannelCrit {
-    ~ChannelCrit();
-    ChannelCrit() : m_init(true) { }
-
-    inline void lock()
-    {
-        hsAssert(m_init, "Bad things have happened.");
-        m_critsect.lock();
-    }
-
-    inline void unlock()
-    {
-        hsAssert(m_init, "Bad things have happened.");
-        m_critsect.unlock();
-    }
-
-private:
-    bool        m_init;
-    std::mutex  m_critsect;
-};
-
 struct NetMsgChannel : hsRefCnt {
-    NetMsgChannel() : hsRefCnt(0), m_protocol(), m_server(), m_largestRecv(), m_dh_g() { }
+    NetMsgChannel(uint32_t protocol, uint32_t dh_g, const plBigNum& dh_x, const plBigNum& dh_n) :
+        m_protocol(protocol),
+        m_dh_g(dh_g),
+        m_dh_x(dh_x),
+        m_dh_n(dh_n)
+    {}
 
     uint32_t                m_protocol;
-    bool                    m_server;
 
     // Message definitions
-    uint32_t                m_largestRecv;
     std::vector<NetMsgInitSend>  m_sendMsgs;
     std::vector<NetMsgInitRecv>  m_recvMsgs;
 
     // Diffie-Hellman constants
     uint32_t                m_dh_g;
-    plBigNum                m_dh_xa;    // client: dh_x     server: dh_a
+    plBigNum                m_dh_x;
     plBigNum                m_dh_n;
 };
-
-static ChannelCrit                  s_channelCrit;
-static std::list<NetMsgChannel*>*   s_channels;
-
-
-/****************************************************************************
-*
-*   ChannelCrit
-*
-***/
-
-//===========================================================================
-ChannelCrit::~ChannelCrit () {
-    hsLockGuard(*this);
-
-    if (s_channels) {
-        while (s_channels->size()) {
-            NetMsgChannel* const channel = s_channels->front();
-            s_channels->remove(channel);
-            channel->UnRef("ChannelLink");
-        }
-
-        delete s_channels;
-        s_channels = nullptr;
-    }
-}
 
 
 /*****************************************************************************
@@ -131,29 +85,27 @@ ChannelCrit::~ChannelCrit () {
 *
 ***/
 
-//===========================================================================
-// Returns max size of message in bytes
-static unsigned ValidateMsg (const NetMsg & msg) {
+static void ValidateMsg(const NetMsg& msg)
+{
     ASSERT(msg.fields);
     ASSERT(msg.count);
 
-    unsigned maxBytes = sizeof(uint16_t);    // for message id
+    bool gotVarCount = false;
+    bool gotVarField = false;
     bool prevFieldWasVarCount = false;
 
     for (unsigned i = 0; i < msg.count; i++) {
         const NetMsgField & field = msg.fields[i];
 
         for (;;) {
-            bool gotVarCount = false;
-            bool gotVarField = false;
             if (field.type == kNetMsgFieldVarCount) {
                 if (gotVarField || gotVarCount)
                     FATAL("Msg definition may only include one variable length field");
                 gotVarCount = true;
                 break;
             }
-            if (field.type == kNetMsgFieldVarPtr || field.type == kNetMsgFieldRawVarPtr) {
-                if (gotVarField || gotVarCount)
+            if (field.type == kNetMsgFieldVarPtr) {
+                if (gotVarField)
                     FATAL("Msg definition may only include one variable length field");
                 if (!prevFieldWasVarCount)
                     FATAL("Variable length field must preceded by variable length count field");
@@ -168,33 +120,18 @@ static unsigned ValidateMsg (const NetMsg & msg) {
         prevFieldWasVarCount = false;
         switch (field.type) {
             case kNetMsgFieldInteger:
-                maxBytes += sizeof(uint64_t);
-            break;
-
-            case kNetMsgFieldReal:
-                maxBytes += sizeof(double);
-            break;
-
+            case kNetMsgFieldString:
+            case kNetMsgFieldData:
             case kNetMsgFieldVarPtr:
-            case kNetMsgFieldRawVarPtr:
-            break;
+                break;
 
             case kNetMsgFieldVarCount:
                 prevFieldWasVarCount = true;
-                // fall-thru...
-            case kNetMsgFieldString:
-            case kNetMsgFieldPtr:
-            case kNetMsgFieldRawPtr:
-            case kNetMsgFieldData:
-            case kNetMsgFieldRawData:
-                maxBytes += msg.fields[i].count * msg.fields[i].size;
-            break;
+                break;
 
             DEFAULT_FATAL(field.type);
         }
     }
-
-    return maxBytes;
 }
 
 
@@ -211,7 +148,7 @@ static unsigned MaxMsgId (const T msgs[], unsigned count) {
 }
 
 //===========================================================================
-static void AddSendMsgs_CS (
+static void AddSendMsgs(
     NetMsgChannel *         channel,
     const NetMsgInitSend    src[],
     unsigned                count
@@ -232,7 +169,7 @@ static void AddSendMsgs_CS (
 }
 
 //===========================================================================
-static void AddRecvMsgs_CS (
+static void AddRecvMsgs(
     NetMsgChannel *         channel,
     const NetMsgInitRecv    src[],
     unsigned                count
@@ -251,44 +188,8 @@ static void AddRecvMsgs_CS (
         // copy the message handler
         *dst = *src;
 
-        const uint32_t bytes = ValidateMsg(*dst->msg);
-        channel->m_largestRecv = std::max(channel->m_largestRecv, bytes);
+        ValidateMsg(*dst->msg);
     }
-}
-
-//===========================================================================
-static NetMsgChannel* FindChannel_CS (uint32_t protocol, bool server) {
-    if (!s_channels)
-        return nullptr;
-
-    std::list<NetMsgChannel*>::iterator it = s_channels->begin();
-    for (; it != s_channels->end(); ++it) {
-        if (((*it)->m_protocol == protocol) && ((*it)->m_server == server))
-            return *it;
-    }
-
-    return nullptr;
-}
-
-//===========================================================================
-static NetMsgChannel* FindOrCreateChannel_CS (uint32_t protocol, bool server) {
-    if (!s_channels) {
-        s_channels = new std::list<NetMsgChannel*>();
-    }
-
-    // find or create protocol
-    NetMsgChannel * channel = FindChannel_CS(protocol, server);
-    if (!channel) {
-        channel                 = new NetMsgChannel();
-        channel->m_protocol     = protocol;
-        channel->m_server       = server;
-        channel->m_largestRecv  = 0;
-
-        s_channels->push_back(channel);
-        channel->Ref("ChannelLink");
-    }
-
-    return channel;
 }
 
 
@@ -299,29 +200,14 @@ static NetMsgChannel* FindOrCreateChannel_CS (uint32_t protocol, bool server) {
 ***/
 
 //============================================================================
-NetMsgChannel * NetMsgChannelLock (
-    unsigned        protocol,
-    bool            server,
-    uint32_t *      largestRecv
-) {
-    NetMsgChannel * channel;
-    hsLockGuard(s_channelCrit);
-    if (nullptr != (channel = FindChannel_CS(protocol, server))) {
-        *largestRecv = channel->m_largestRecv;
-        channel->Ref("ChannelLock");
-    }
-    else {
-        *largestRecv = 0;
-    }
-    return channel;
+void NetMsgChannelLock(NetMsgChannel* channel)
+{
+    channel->Ref("ChannelLock");
 }
 
 //============================================================================
-void NetMsgChannelUnlock (
-    NetMsgChannel * channel
-) {
-    hsLockGuard(s_channelCrit);
-
+void NetMsgChannelUnlock(NetMsgChannel* channel)
+{
     channel->UnRef("ChannelLock");
 }
 
@@ -359,15 +245,20 @@ const NetMsgInitSend * NetMsgChannelFindSendMessage (
 }
 
 //============================================================================
+uint32_t NetMsgChannelGetProtocol(NetMsgChannel* channel)
+{
+    return channel->m_protocol;
+}
+
 void NetMsgChannelGetDhConstants (
     const NetMsgChannel *   channel,
     uint32_t *              dh_g,
-    const plBigNum**        dh_xa,
+    const plBigNum**        dh_x,
     const plBigNum**        dh_n
 ) {
-    if (dh_g) *dh_g   =  channel->m_dh_g;
-    if (dh_xa) *dh_xa  = &channel->m_dh_xa;
-    if (dh_n) *dh_n   = &channel->m_dh_n;
+    if (dh_g) *dh_g = channel->m_dh_g;
+    if (dh_x) *dh_x = &channel->m_dh_x;
+    if (dh_n) *dh_n = &channel->m_dh_n;
 }
 
 
@@ -381,42 +272,30 @@ void NetMsgChannelGetDhConstants (
 ***/
 
 //===========================================================================
-void NetMsgProtocolRegister (
+NetMsgChannel* NetMsgChannelCreate(
     uint32_t                protocol,
-    bool                    server,
     const NetMsgInitSend    sendMsgs[],
     uint32_t                sendMsgCount,
     const NetMsgInitRecv    recvMsgs[],
     uint32_t                recvMsgCount,
     uint32_t                dh_g,
-    const plBigNum&         dh_xa,    // client: dh_x     server: dh_a
+    const plBigNum&         dh_x,
     const plBigNum&         dh_n
 ) {
-    hsLockGuard(s_channelCrit);
+    NetMsgChannel* channel = new NetMsgChannel(protocol, dh_g, dh_x, dh_n);
 
-    NetMsgChannel * channel = FindOrCreateChannel_CS(protocol, server);
+    if (sendMsgCount) {
+        AddSendMsgs(channel, sendMsgs, sendMsgCount);
+    }
+    if (recvMsgCount) {
+        AddRecvMsgs(channel, recvMsgs, recvMsgCount);
+    }
 
-    // make sure no connections have been established on this protocol, otherwise
-    // we'll be modifying a live data structure; NetCli's don't lock their protocol
-    // to operate on it once they have linked to it!
-    ASSERT(channel->RefCnt() == 1);
-
-    channel->m_dh_g     = dh_g;
-    channel->m_dh_xa    = dh_xa;
-    channel->m_dh_n     = dh_n;
-
-    if (sendMsgCount)
-        AddSendMsgs_CS(channel, sendMsgs, sendMsgCount);
-    if (recvMsgCount)
-        AddRecvMsgs_CS(channel, recvMsgs, recvMsgCount);
+    return channel;
 }
 
 //===========================================================================
-void NetMsgProtocolDestroy (uint32_t protocol, bool server) {
-    hsLockGuard(s_channelCrit);
-
-    if (NetMsgChannel* channel = FindChannel_CS(protocol, server)) {
-        s_channels->remove(channel);
-        channel->UnRef("ChannelLink");
-    }
+void NetMsgChannelDelete(NetMsgChannel* channel)
+{
+    channel->UnRef("Lifetime");
 }
