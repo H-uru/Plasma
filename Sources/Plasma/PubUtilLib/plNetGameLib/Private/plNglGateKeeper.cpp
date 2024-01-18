@@ -739,7 +739,7 @@ bool FileSrvIpAddressRequestTrans::Recv (
 
 //============================================================================
 AuthSrvIpAddressRequestTrans::AuthSrvIpAddressRequestTrans (
-    FNetCliGateKeeperFileSrvIpAddressRequestCallback    callback,
+    FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback,
     void *                                              param
 ) : NetGateKeeperTrans(kGkAuthSrvIpAddressRequestTrans)
 ,   m_callback(callback)
