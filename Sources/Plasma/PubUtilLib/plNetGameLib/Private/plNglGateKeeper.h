@@ -66,21 +66,11 @@ void NetCliGateKeeperStartConnect (
     uint32_t         gateKeeperAddrCount
 );
 
-bool NetCliGateKeeperQueryConnected ();
-void NetCliGateKeeperAutoReconnectEnable (bool enable); // is enabled by default
-
-// Called after the gatekeeper/client connection is encrypted
-typedef void (*FNetCliGateKeeperConnectCallback)();
-void NetCliGateKeeperSetConnectCallback (
-    FNetCliGateKeeperConnectCallback callback
-);
-
 
 //============================================================================
 // Disconnect
 //============================================================================
 void NetCliGateKeeperDisconnect ();
-void NetCliGateKeeperUnexpectedDisconnect ();
 
 
 //============================================================================
