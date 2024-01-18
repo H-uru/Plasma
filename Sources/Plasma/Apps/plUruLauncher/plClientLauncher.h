@@ -95,6 +95,7 @@ private:
 
     void IOnPatchComplete(ENetError result, const ST::string& msg);
     bool IApproveDownload(const plFileName& file);
+    void IGotFileServIPs(ENetError result, const ST::string& addr);
 
 public:
     plClientLauncher();

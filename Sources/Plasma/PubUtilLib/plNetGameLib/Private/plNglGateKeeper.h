@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLGATEKEEPER_H
 
+#include <functional>
 
 /*****************************************************************************
 *
@@ -76,35 +77,31 @@ void NetCliGateKeeperDisconnect ();
 //============================================================================
 // Ping
 //============================================================================
-typedef void (*FNetCliGateKeeperPingRequestCallback)(
+using FNetCliGateKeeperPingRequestCallback = std::function<void(
     ENetError   result,
-    void *      param,
     unsigned    pingAtMs,
     unsigned    replyAtMs,
     unsigned    payloadBytes,
     const uint8_t  payload[]
-);
+)>;
 void NetCliGateKeeperPingRequest (
     unsigned                                pingTimeMs,
     unsigned                                payloadBytes,   // max 64k (pnNetCli enforced upon send)
     const void *                            payload,
-    FNetCliGateKeeperPingRequestCallback    callback,
-    void *                                  param
+    FNetCliGateKeeperPingRequestCallback    callback
 );
 
 
 //============================================================================
 // FileSrvIpAddress
 //============================================================================
-typedef void (*FNetCliGateKeeperFileSrvIpAddressRequestCallback)(
+using FNetCliGateKeeperFileSrvIpAddressRequestCallback = std::function<void(
     ENetError       result,
-    void *          param,
     const ST::string& addr
-);
+)>;
 
 void NetCliGateKeeperFileSrvIpAddressRequest (
     FNetCliGateKeeperFileSrvIpAddressRequestCallback    callback,
-    void *                                              param,
     bool                                                isPatcher
 );
 
@@ -112,15 +109,13 @@ void NetCliGateKeeperFileSrvIpAddressRequest (
 //============================================================================
 // AuthSrvIpAddress
 //============================================================================
-typedef void (*FNetCliGateKeeperAuthSrvIpAddressRequestCallback)(
+using FNetCliGateKeeperAuthSrvIpAddressRequestCallback = std::function<void(
     ENetError       result,
-    void *          param,
     const ST::string& addr
-);
+)>;
 
 void NetCliGateKeeperAuthSrvIpAddressRequest (
-    FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback,
-    void *                                              param
+    FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback
 );
 
 
