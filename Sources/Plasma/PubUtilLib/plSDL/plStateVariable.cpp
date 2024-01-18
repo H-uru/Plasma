@@ -379,7 +379,10 @@ bool plSimpleStateVariable::SetFromString(const ST::string& value, int idx, bool
             int i=idx*fVar.GetAtomicCount();
             for (std::vector<ST::string>::iterator ptr = bits.begin(); ptr != bits.end(); ++ptr)
             {
-                hsStrncpy(fS32[i++], ptr->c_str(), 32);
+                plVarDescriptor::String32& dest = fS32[i];
+                strncpy(dest, ptr->c_str(), std::size(dest) - 1);
+                dest[std::size(dest) - 1] = 0;
+                i++;
             }
         }
         break;
@@ -1730,7 +1733,7 @@ bool plSimpleStateVariable::Get(char value[], int idx) const
 
     if (fVar.GetType()==plVarDescriptor::kString32)
     {
-        hsStrcpy(value, fS32[idx]);
+        strcpy(value, fS32[idx]);
         return true;
     }
     hsAssert(false, "passing wrong value type to SDL variable"); 

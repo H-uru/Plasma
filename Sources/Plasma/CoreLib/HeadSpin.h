@@ -258,20 +258,6 @@ template <> inline double hsToLE(double value) { return hsToLEDouble(value); }
     void    hsStatusMessageF(const char * fmt, ...);
 #endif // PLASMA_EXTERNAL_RELEASE
 
-char*   hsStrcpy(char* dstOrNil, const char* src);
-
-inline char* hsStrcpy(const char* src)
-{
-    return hsStrcpy(nullptr, src);
-}
-
-inline char *hsStrncpy(char *strDest, const char *strSource, size_t count)
-{
-    char *temp = strncpy(strDest, strSource, count-1);
-    strDest[count-1] = 0;
-    return temp;
-}
-
 // Use "correct" non-standard string functions based on the
 // selected compiler / library
 #if HS_BUILD_FOR_WIN32

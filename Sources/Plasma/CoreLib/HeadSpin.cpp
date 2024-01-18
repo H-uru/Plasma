@@ -274,26 +274,3 @@ void hsStatusMessageF(const char * fmt, ...)
 }
 
 #endif
-
-/**************************************/
-char* hsStrcpy(char* dst, const char* src)
-{
-    if (src)
-    {
-        if (dst == nullptr)
-        {
-            size_t count = strlen(src);
-            dst = new char[count + 1];
-            memcpy(dst, src, count);
-            dst[count] = 0;
-            return dst;
-        }
-
-        int32_t i;
-        for (i = 0; src[i] != 0; i++)
-            dst[i] = src[i];
-        dst[i] = 0;
-    }
-
-    return dst;
-}
