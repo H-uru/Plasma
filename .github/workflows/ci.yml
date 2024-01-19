@@ -84,11 +84,11 @@ jobs:
 
       - name: Build
         run: |
-          cmake --build build --config "${{ matrix.cfg.type }}" -j 2
+          cmake --build build --config "${{ matrix.cfg.type }}" -j 4
 
       - name: Install
         run: |
-          cmake --build build --target INSTALL --config "${{ matrix.cfg.type }}" -j 2
+          cmake --build build --target INSTALL --config "${{ matrix.cfg.type }}" -j 4
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
@@ -98,7 +98,7 @@ jobs:
 
       - name: Test
         run: |
-          cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 2
+          cmake --build build --target check --config "${{ matrix.cfg.type }}" -j 4
 
   max:
     # Can only run if we have a token for our super seekrit Max SDK repo. Sad.
@@ -161,7 +161,7 @@ jobs:
 
       - name: Build
         run: |
-          cmake --build build --target INSTALL --config Release -j 2
+          cmake --build build --target INSTALL --config Release -j 4
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
@@ -231,11 +231,11 @@ jobs:
 
       - name: Test
         run: |
-          cmake --build build --target check -j 2
+          cmake --build build --target check -j 4
 
       - name: Install
         run: |
-          cmake --build build --target install -j 2
+          cmake --build build --target install -j 4
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
