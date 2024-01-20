@@ -548,8 +548,9 @@ static void INetCliAuthAgeRequestCallback (
             ageMcpId,
             s_account.accountUuid,
             s_player->playerInt,
-            INetCliGameJoinAgeRequestCallback,
-            param
+            [param](auto result) {
+                INetCliGameJoinAgeRequestCallback(result, param);
+            }
         );
     }
     else {
