@@ -351,7 +351,7 @@ static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFile
     }
 }
 
-static void IHandleManifestDownload(pfPatcherWorker* patcher, const char16_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+static void IHandleManifestDownload(pfPatcherWorker* patcher, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
 {
     PatcherLogGreen("\tDownloaded Manifest '{}'", group);
     {
@@ -363,10 +363,8 @@ static void IHandleManifestDownload(pfPatcherWorker* patcher, const char16_t gro
     patcher->IssueRequest();
 }
 
-static void IPreloaderManifestDownloadCB(ENetError result, void* param, const char16_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+static void IPreloaderManifestDownloadCB(pfPatcherWorker* patcher, ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
 {
-    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
-
     if (IS_NET_SUCCESS(result)) {
         IHandleManifestDownload(patcher, group, manifest, entryCount);
     } else {
@@ -375,23 +373,18 @@ static void IPreloaderManifestDownloadCB(ENetError result, void* param, const ch
     }
 }
 
-static void IFileManifestDownloadCB(ENetError result, void* param, const char16_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+static void IFileManifestDownloadCB(pfPatcherWorker* patcher, ENetError result, const ST::string& group, const NetCliFileManifestEntry manifest[], unsigned entryCount)
 {
-    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
-
     if (IS_NET_SUCCESS(result))
         IHandleManifestDownload(patcher, group, manifest, entryCount);
     else {
         PatcherLogRed("\tDownload Failed: Manifest '{}'", group);
-        patcher->EndPatch(result, ST::string::from_utf16(group));
+        patcher->EndPatch(result, group);
     }
 }
 
-static void IFileThingDownloadCB(ENetError result, void* param, const plFileName& filename, hsStream* writer)
+static void IFileThingDownloadCB(pfPatcherWorker* patcher, ENetError result, const plFileName& filename, pfPatcherStream* stream)
 {
-    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
-    pfPatcherStream* stream = static_cast<pfPatcherStream*>(writer);
-
     // We need to explicitly close any underlying streams NOW because we
     // might be about to signal the client that this file needs to be acted
     // on, eg installed, decompressed from ogg to wave, etc. We can't wait
@@ -494,15 +487,21 @@ bool pfPatcherWorker::IssueRequest()
             if (fFileBeginDownload)
                 fFileBeginDownload(req.fStream->GetFileName());
 
-            NetCliFileDownloadRequest(req.fName, req.fStream, IFileThingDownloadCB, this);
+            NetCliFileDownloadRequest(req.fName, req.fStream, [this, filename = req.fName, stream = req.fStream](auto result) {
+                IFileThingDownloadCB(this, result, filename, stream);
+            });
             break;
         case Request::kManifest:
-            NetCliFileManifestRequest(IFileManifestDownloadCB, this, req.fName.to_utf16().data());
+            NetCliFileManifestRequest([this, group = req.fName](auto result, auto manifest, auto entryCount) {
+                IFileManifestDownloadCB(this, result, group, manifest, entryCount);
+            }, req.fName.to_utf16().data());
             break;
         case Request::kSecurePreloader:
             // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
             // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
-            NetCliFileManifestRequest(IPreloaderManifestDownloadCB, this, req.fName.to_utf16().data());
+            NetCliFileManifestRequest([this, group = req.fName](auto result, auto manifest, auto entryCount) {
+                IPreloaderManifestDownloadCB(this, result, group, manifest, entryCount);
+            }, req.fName.to_utf16().data());
             break;
         case Request::kAuthFile:
             // ffffffuuuuuu

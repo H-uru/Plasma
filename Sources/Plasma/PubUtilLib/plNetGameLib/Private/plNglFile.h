@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETGAMELIB_PRIVATE_PLNGLFILE_H
 
+#include <functional>
 
 /*****************************************************************************
 *
@@ -76,16 +77,13 @@ void NetCliFileDisconnect ();
 //============================================================================
 // File server related messages
 //============================================================================
-typedef void (*FNetCliFileBuildIdRequestCallback)(
+using FNetCliFileBuildIdRequestCallback = std::function<void(
     ENetError       result,
-    void *          param,
     unsigned        buildId
-);
-void NetCliFileBuildIdRequest (
-    FNetCliFileBuildIdRequestCallback   callback,
-    void *                              param
-);
-typedef void (*FNetCliFileBuildIdUpdateCallback)(unsigned buildId);
+)>;
+void NetCliFileBuildIdRequest(FNetCliFileBuildIdRequestCallback callback);
+
+using FNetCliFileBuildIdUpdateCallback = std::function<void(unsigned buildId)>;
 void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback);
 
 //============================================================================
@@ -100,16 +98,13 @@ struct NetCliFileManifestEntry {
     unsigned    zipSize;
     unsigned    flags;
 };
-typedef void (*FNetCliFileManifestRequestCallback)(
+using FNetCliFileManifestRequestCallback = std::function<void(
     ENetError                       result,
-    void *                          param,
-    const char16_t                  group[],
     const NetCliFileManifestEntry   manifest[],
     unsigned                        entryCount
-);
+)>;
 void NetCliFileManifestRequest (
     FNetCliFileManifestRequestCallback  callback,
-    void *                              param,
     const char16_t                      group[], // the group of files you want (empty or nil = all)
     unsigned                            buildId = 0 // 0 = get latest, other = get particular build (servers only)
 );
@@ -117,16 +112,10 @@ void NetCliFileManifestRequest (
 //============================================================================
 // File Download
 //============================================================================
-typedef void (*FNetCliFileDownloadRequestCallback)(
-    ENetError           result,
-    void *              param,
-    const plFileName &  filename,
-    hsStream *          writer
-);
+using FNetCliFileDownloadRequestCallback = std::function<void(ENetError result)>;
 void NetCliFileDownloadRequest (
     const plFileName &                  filename,
     hsStream *                          writer,
     FNetCliFileDownloadRequestCallback  callback,
-    void *                              param,
     unsigned                            buildId = 0 // 0 = get latest, other = get particular build (servers only)
 );
