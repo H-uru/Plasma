@@ -304,10 +304,8 @@ public:
 
 // ===================================================
 
-static void IAuthThingDownloadCB(ENetError result, void* param, const plFileName& filename, hsStream* writer)
+static void IAuthThingDownloadCB(pfPatcherWorker* patcher, ENetError result, const plFileName& filename, hsStream* writer)
 {
-    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
-
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded Legacy File '{}'", filename);
         patcher->IssueRequest();
@@ -323,10 +321,8 @@ static void IAuthThingDownloadCB(ENetError result, void* param, const plFileName
     }
 }
 
-static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFileInfo infoArr[], unsigned infoCount)
+static void IGotAuthFileList(pfPatcherWorker* patcher, ENetError result, const NetCliAuthFileInfo infoArr[], unsigned infoCount)
 {
-    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
-
     if (IS_NET_SUCCESS(result)) {
         // so everything goes directly into the Requests deque because AuthSrv lists
         // don't have any hashes attached. WHY did eap think this was a good idea?!?!
@@ -509,13 +505,19 @@ bool pfPatcherWorker::IssueRequest()
             if (fFileBeginDownload)
                 fFileBeginDownload(req.fStream->GetFileName());
 
-            NetCliAuthFileRequest(req.fName, req.fStream, IAuthThingDownloadCB, this);
+            NetCliAuthFileRequest(req.fName, req.fStream, [this, filename = req.fName, writer = req.fStream](auto result) {
+                IAuthThingDownloadCB(this, result, filename, writer);
+            });
             break;
         case Request::kPythonList:
-            NetCliAuthFileListRequest(u"Python", u"pak", IGotAuthFileList, this);
+            NetCliAuthFileListRequest(u"Python", u"pak", [this](auto result, auto infoArr, auto infoCount) {
+                IGotAuthFileList(this, result, infoArr, infoCount);
+            });
             break;
         case Request::kSdlList:
-            NetCliAuthFileListRequest(u"SDL", u"sdl", IGotAuthFileList, this);
+            NetCliAuthFileListRequest(u"SDL", u"sdl", [this](auto result, auto infoArr, auto infoCount) {
+                IGotAuthFileList(this, result, infoArr, infoCount);
+            });
             break;
         DEFAULT_FATAL(req.fType);
     }
