@@ -84,55 +84,6 @@ struct IRelVaultNode {
 };
 
 
-struct VaultCreateNodeTrans {
-    FVaultCreateNodeCallback    callback;
-    void *                      state;
-    void *                      param;
-
-    unsigned                    nodeId;
-    hsRef<RelVaultNode>         node;
-
-    VaultCreateNodeTrans ()
-        : callback(), state(), param(), nodeId() { }
-
-    VaultCreateNodeTrans (FVaultCreateNodeCallback _callback,
-                          void * _state, void * _param)
-        : callback(_callback), state(_state), param(_param),
-          nodeId() { }
-
-    static void VaultNodeCreated (
-        VaultCreateNodeTrans* trans,
-        ENetError           result,
-        unsigned            nodeId
-    );
-    static void VaultNodeFetched (
-        VaultCreateNodeTrans* trans,
-        ENetError           result,
-        NetVaultNode *      node
-    );
-
-    void Complete (ENetError result);
-};
-
-
-struct VaultFindNodeTrans {
-    FVaultFindNodeCallback      callback;
-    void *                      param;
-
-    VaultFindNodeTrans () : callback(), param() { }
-
-    VaultFindNodeTrans (FVaultFindNodeCallback _callback, void * _param)
-        : callback(_callback), param(_param) { }
-
-    static void VaultNodeFound (
-        VaultFindNodeTrans* trans,
-        ENetError           result,
-        unsigned            nodeIdCount,
-        const unsigned      nodeIds[]
-    );
-};
-
-
 struct VaultDownloadTrans {
     FVaultDownloadCallback      callback;
     void *                      cbParam;
@@ -193,26 +144,6 @@ struct VaultDownloadNoCallbacksTrans : VaultDownloadTrans {
     {
         VaultEnableCallbacks();
     }
-};
-
-struct VaultAgeInitTrans {
-    FVaultInitAgeCallback   callback;
-    void *                  cbState;
-    void *                  cbParam;
-
-    VaultAgeInitTrans()
-        : callback(), cbState(), cbParam() { }
-
-    VaultAgeInitTrans(FVaultInitAgeCallback _callback,
-                      void * state, void * param)
-        : callback(_callback), cbState(state), cbParam(param) { }
-
-    static void AgeInitCallback (
-        VaultAgeInitTrans* trans,
-        ENetError       result,
-        unsigned        ageVaultId,
-        unsigned        ageInfoVaultId
-    );
 };
 
 struct AddChildNodeFetchTrans {
@@ -716,85 +647,6 @@ static hsRef<RelVaultNode> GetChildPlayerInfoListNode (
 
 /*****************************************************************************
 *
-*   VaultCreateNodeTrans
-*
-***/
-
-//============================================================================
-void VaultCreateNodeTrans::VaultNodeCreated (
-    VaultCreateNodeTrans* trans,
-    ENetError           result,
-    unsigned            nodeId
-) {
-    if (IS_NET_ERROR(result)) {
-        trans->Complete(result);
-    }
-    else {
-        trans->nodeId = nodeId;
-        NetCliAuthVaultNodeFetch(nodeId, [trans](auto result, auto node) {
-            VaultCreateNodeTrans::VaultNodeFetched(trans, result, node);
-        });
-    }
-}
-
-//============================================================================
-void VaultCreateNodeTrans::VaultNodeFetched (
-    VaultCreateNodeTrans* trans,
-    ENetError           result,
-    NetVaultNode *      node
-) {
-    ::VaultNodeFetched(result, node);
-
-    if (IS_NET_SUCCESS(result)) {
-        trans->node = s_nodes.at(node->GetNodeId());
-    } else {
-        trans->node = nullptr;
-    }
-    
-    trans->Complete(result);
-}
-
-//============================================================================
-void VaultCreateNodeTrans::Complete (ENetError result) {
-
-    if (callback)
-        callback(
-            result,
-            state,
-            param,
-            node
-        );
-
-    delete this;
-}
-
-
-/*****************************************************************************
-*
-*   VaultFindNodeTrans
-*
-***/
-
-//============================================================================
-void VaultFindNodeTrans::VaultNodeFound (
-    VaultFindNodeTrans* trans,
-    ENetError           result,
-    unsigned            nodeIdCount,
-    const unsigned      nodeIds[]
-) {
-    if (trans->callback)
-        trans->callback(
-            result,
-            trans->param,
-            nodeIdCount,
-            nodeIds
-        );
-    delete trans;
-}
-
-
-/*****************************************************************************
-*
 *   VaultDownloadTrans
 *
 ***/
@@ -882,32 +734,6 @@ void VaultDownloadTrans::VaultNodeRefsFetched (
 
         delete trans;
     }
-}
-
-
-/*****************************************************************************
-*
-*   VaultAgeInitTrans
-*
-***/
-
-//============================================================================
-void VaultAgeInitTrans::AgeInitCallback (
-    VaultAgeInitTrans* trans,
-    ENetError       result,
-    unsigned        ageVaultId,
-    unsigned        ageInfoVaultId
-) {
-    if (trans->callback)
-        trans->callback(
-            result,
-            trans->cbState,
-            trans->cbParam,
-            ageVaultId,
-            ageInfoVaultId
-        );
-    
-    delete trans;
 }
 
 
@@ -1770,16 +1596,33 @@ void VaultCreateNode (
     void *                      state,
     void *                      param
 ) {
-    VaultCreateNodeTrans * trans = new VaultCreateNodeTrans(callback, state, param);
-
     if (hsRef<RelVaultNode> age = VaultGetAgeNode()) {
         VaultAgeNode access(age);
         templateNode->SetCreateAgeName(access.GetAgeName());
         templateNode->SetCreateAgeUuid(access.GetAgeInstanceGuid());
     }
-    
-    NetCliAuthVaultNodeCreate(templateNode.Get(), [trans](auto result, auto nodeId) {
-        VaultCreateNodeTrans::VaultNodeCreated(trans, result, nodeId);
+
+    NetCliAuthVaultNodeCreate(templateNode.Get(), [callback, state, param](auto result, auto nodeId) {
+        if (IS_NET_ERROR(result)) {
+            if (callback) {
+                callback(result, state, param, nullptr);
+            }
+        } else {
+            NetCliAuthVaultNodeFetch(nodeId, [callback, state, param](auto result, auto node) {
+                VaultNodeFetched(result, node);
+
+                hsRef<RelVaultNode> globalNode;
+                if (IS_NET_SUCCESS(result)) {
+                    globalNode = s_nodes.at(node->GetNodeId());
+                } else {
+                    globalNode = nullptr;
+                }
+
+                if (callback) {
+                    callback(result, state, param, globalNode);
+                }
+            });
+        }
     });
 }
 
@@ -1861,35 +1704,15 @@ hsRef<RelVaultNode> VaultCreateNodeAndWait (
 }
 
 //============================================================================
-namespace _VaultForceSaveNodeAndWait {
-
-struct _SaveNodeParam {
-    ENetError       result;
-    bool            complete;
-};
-static void _SaveNodeCallback (
-    ENetError       result,
-    _SaveNodeParam* param
-) {
-    param->result   = result;
-    param->complete = true;
-}
-
-} // namespace _VaultForceSaveNodeAndWait
-
 void VaultForceSaveNodeAndWait (
     hsWeakRef<NetVaultNode> node
 ) {
-    using namespace _VaultForceSaveNodeAndWait;
-    
-    _SaveNodeParam param;
-    memset(&param, 0, sizeof(param));
-    
-    NetCliAuthVaultNodeSave(node.Get(), [&param](auto result) {
-        _SaveNodeCallback(result, &param);
+    bool complete = false;
+    NetCliAuthVaultNodeSave(node.Get(), [&complete](auto result) {
+        complete = true;
     });
-    
-    while (!param.complete) {
+
+    while (!complete) {
         NetClientUpdate();
         plgDispatch::Dispatch()->MsgQueueProcess();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -1902,56 +1725,31 @@ void VaultFindNodes (
     FVaultFindNodeCallback  callback,
     void *                  param
 ) {
-    VaultFindNodeTrans * trans = new VaultFindNodeTrans(callback, param);
-
-    NetCliAuthVaultNodeFind(templateNode.Get(), [trans](auto result, auto nodeIdCount, auto nodeIds) {
-        VaultFindNodeTrans::VaultNodeFound(trans, result, nodeIdCount, nodeIds);
+    NetCliAuthVaultNodeFind(templateNode.Get(), [callback, param](auto result, auto nodeIdCount, auto nodeIds) {
+        if (callback) {
+            callback(result, param, nodeIdCount, nodeIds);
+        }
     });  
 }
 
 //============================================================================
-namespace _VaultFindNodesAndWait {
-    struct _FindNodeParam {
-        std::vector<unsigned> nodeIds;
-        ENetError           result;
-        bool                complete;
-
-        _FindNodeParam()
-            : result(kNetPending), complete(false)
-        { }
-    };
-    static void _FindNodeCallback (
-        ENetError           result,
-        _FindNodeParam* param,
-        unsigned            nodeIdCount,
-        const unsigned      nodeIds[]
-    ) {
-        param->nodeIds.assign(nodeIds, nodeIds + nodeIdCount);
-        param->result   = result;
-        param->complete = true;
-    }
-
-} // namespace _VaultFindNodesAndWait
-
 void VaultFindNodesAndWait (
     hsWeakRef<NetVaultNode> templateNode,
     std::vector<unsigned> * nodeIds
 ) {
-    using namespace _VaultFindNodesAndWait;
-
-    _FindNodeParam  param;
-    NetCliAuthVaultNodeFind(templateNode.Get(), [&param](auto result, auto nodeIdCount, auto nodeIds) {
-        _FindNodeCallback(result, &param, nodeIdCount, nodeIds);
+    bool complete = false;
+    NetCliAuthVaultNodeFind(templateNode.Get(), [nodeIds, &complete](auto result, auto idCount, auto ids) {
+        if (IS_NET_SUCCESS(result)) {
+            nodeIds->insert(nodeIds->end(), ids, ids + idCount);
+        }
+        complete = true;
     });
 
-    while (!param.complete) {
+    while (!complete) {
         NetClientUpdate();
         plgDispatch::Dispatch()->MsgQueueProcess();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-
-    if (IS_NET_SUCCESS(param.result))
-        nodeIds->insert(nodeIds->end(), param.nodeIds.begin(), param.nodeIds.end());
 }
 
 //============================================================================
@@ -1967,27 +1765,11 @@ void VaultLocalFindNodes (
 }
 
 //============================================================================
-namespace _VaultFetchNodesAndWait {
-
-    static void _VaultNodeFetched (
-        std::atomic<unsigned>& nodeCount,
-        ENetError           result,
-        NetVaultNode *      node
-    ) {
-        ::VaultNodeFetched(result, node);
-
-        --nodeCount;
-    }
-
-} // namespace _VaultFetchNodesAndWait
-
 void VaultFetchNodesAndWait (
     const unsigned  nodeIds[],
     unsigned        count,
     bool            force
 ) {
-    using namespace _VaultFetchNodesAndWait;
-    
     std::atomic<unsigned> nodeCount(count);
     
     for (unsigned i = 0; i < count; ++i) {
@@ -2002,7 +1784,8 @@ void VaultFetchNodesAndWait (
 
         // Start fetching the node
         NetCliAuthVaultNodeFetch(nodeIds[i], [&nodeCount](auto result, auto node) {
-            _VaultNodeFetched(nodeCount, result, node);
+            VaultNodeFetched(result, node);
+            --nodeCount;
         });
     }
 
@@ -2021,8 +1804,6 @@ void VaultInitAge (
     void *                  state,
     void *                  param
 ) {
-    VaultAgeInitTrans * trans = new VaultAgeInitTrans(callback, state, param);
-
     NetCliAuthVaultInitAge(
         *info->GetAgeInstanceGuid(),
         parentAgeInstId,
@@ -2032,8 +1813,10 @@ void VaultInitAge (
         info->GetAgeDescription(),
         info->GetAgeSequenceNumber(),
         info->GetAgeLanguage(),
-        [trans](auto result, auto ageVaultId, auto ageInfoVaultId) {
-            VaultAgeInitTrans::AgeInitCallback(trans, result, ageVaultId, ageInfoVaultId);
+        [callback, state, param](auto result, auto ageVaultId, auto ageInfoVaultId) {
+            if (callback) {
+                callback(result, state, param, ageVaultId, ageInfoVaultId);
+            }
         }
     );
 }
