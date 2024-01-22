@@ -53,9 +53,9 @@ public:
                 hsRefCnt(int initRefs = 1);
     virtual     ~hsRefCnt();
 
-    inline int  RefCnt() const { return fRefCnt; }
-    void        UnRef(const char* tag = nullptr);
-    void        Ref(const char* tag = nullptr);
+    virtual int  RefCnt() const { return fRefCnt; }
+    virtual void UnRef(const char* tag = nullptr);
+    virtual void Ref(const char* tag = nullptr);
 
     // Useless, but left here for debugging compatibility with AtomicRef
     void        TransferRef(const char* oldTag, const char* newTag);
