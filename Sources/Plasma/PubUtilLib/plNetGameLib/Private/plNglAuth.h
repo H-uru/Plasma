@@ -601,59 +601,46 @@ void NetCliAuthSetNotifyNewBuildHandler (FNotifyNewBuildHandler handler);
 //============================================================================
 struct NetGameScore;
 
-typedef void (*FNetCliAuthScoreUpdateCallback)(
-    ENetError           result,
-    void *              param
-);
+using FNetCliAuthScoreUpdateCallback = std::function<void(ENetError result)>;
 
 //============================================================================
-typedef void (*FNetCliAuthCreateScoreCallback)(
+using FNetCliAuthCreateScoreCallback = std::function<void(
     ENetError       result,
-    void *          param,
     unsigned        scoreId,
-    uint32_t        createdTime,
-    unsigned        ownerId,
-    const ST::string& gameName,
-    unsigned        gameType,
-    int             value
-);
+    uint32_t        createdTime
+)>;
 void NetCliAuthScoreCreate(
     unsigned                        ownerId,
     const ST::string&               gameName,
     unsigned                        gameType,
     int                             value,
-    FNetCliAuthCreateScoreCallback  callback,
-    void *                          param
+    FNetCliAuthCreateScoreCallback  callback
 );
 
 //============================================================================
 void NetCliAuthScoreDelete(
     unsigned                        scoreId,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 );
 
 //============================================================================
-typedef void (*FNetCliAuthGetScoresCallback)(
+using FNetCliAuthGetScoresCallback = std::function<void(
     ENetError           result,
-    void *              param,
     const NetGameScore  scores[],
     unsigned            scoreCount
-);
+)>;
 
 void NetCliAuthScoreGetScores(
     unsigned                        ownerId,
     const ST::string&               gameName,
-    FNetCliAuthGetScoresCallback    callback,
-    void *                          param
+    FNetCliAuthGetScoresCallback    callback
 );
 
 //============================================================================
 void NetCliAuthScoreAddPoints(
     unsigned                        scoreId,
     int                             numPoints,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 );
 
 //============================================================================
@@ -661,26 +648,23 @@ void NetCliAuthScoreTransferPoints(
     unsigned                        srcScoreId,
     unsigned                        destScoreId,
     int                             numPoints,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 );
 
 //============================================================================
 void NetCliAuthScoreSetPoints(
     unsigned                        scoreId,
     int                             numPoints,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 );
 
 //============================================================================
 struct NetGameRank;
-typedef void (*FNetCliAuthGetRanksCallback)(
+using FNetCliAuthGetRanksCallback = std::function<void(
     ENetError           result,
-    void *              param,
     const NetGameRank   ranks[],
     unsigned            rankCount
-);
+)>;
 
 void NetCliAuthScoreGetRankList(
     unsigned                    ownerId,
@@ -691,8 +675,7 @@ void NetCliAuthScoreGetRankList(
     unsigned                    numResults,
     unsigned                    pageNumber,
     bool                        sortDesc,
-    FNetCliAuthGetRanksCallback callback,
-    void *                      param
+    FNetCliAuthGetRanksCallback callback
 );
 
 //============================================================================
@@ -700,6 +683,5 @@ void NetCliAuthScoreGetHighScores(
     unsigned                        ageId,
     unsigned                        maxScores,
     const ST::string&               gameName,
-    FNetCliAuthGetScoresCallback    callback,
-    void *                          param
+    FNetCliAuthGetScoresCallback    callback
 );

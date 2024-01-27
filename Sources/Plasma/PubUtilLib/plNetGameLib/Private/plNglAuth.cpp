@@ -979,7 +979,6 @@ struct AuthConnectedNotifyTrans : NetNotifyTrans {
 //============================================================================
 struct ScoreCreateTrans : NetAuthTrans {
     FNetCliAuthCreateScoreCallback  m_callback;
-    void *                          m_param;
 
     // send    
     unsigned                        m_ownerId;
@@ -996,8 +995,7 @@ struct ScoreCreateTrans : NetAuthTrans {
         const ST::string&               gameName,
         unsigned                        gameType,
         int                             value,
-        FNetCliAuthCreateScoreCallback  callback,
-        void *                          param
+        FNetCliAuthCreateScoreCallback  callback
     );
 
     bool Send() override;
@@ -1013,15 +1011,13 @@ struct ScoreCreateTrans : NetAuthTrans {
 //============================================================================
 struct ScoreDeleteTrans : NetAuthTrans {
     FNetCliAuthScoreUpdateCallback  m_callback;
-    void *                          m_param;
 
     // send    
     unsigned                        m_scoreId;
 
     ScoreDeleteTrans (
         unsigned                        scoreId,
-        FNetCliAuthScoreUpdateCallback  callback,
-        void *                          param
+        FNetCliAuthScoreUpdateCallback  callback
     );
 
     bool Send() override;
@@ -1037,7 +1033,6 @@ struct ScoreDeleteTrans : NetAuthTrans {
 //============================================================================
 struct ScoreGetScoresTrans : NetAuthTrans {
     FNetCliAuthGetScoresCallback    m_callback;
-    void *                          m_param;
 
     // send
     unsigned                        m_ownerId;
@@ -1050,8 +1045,7 @@ struct ScoreGetScoresTrans : NetAuthTrans {
     ScoreGetScoresTrans (
         unsigned                        ownerId,
         const ST::string&               gameName,
-        FNetCliAuthGetScoresCallback    callback,
-        void *                          param
+        FNetCliAuthGetScoresCallback    callback
     );
 
     ~ScoreGetScoresTrans();
@@ -1069,7 +1063,6 @@ struct ScoreGetScoresTrans : NetAuthTrans {
 //============================================================================
 struct ScoreAddPointsTrans : NetAuthTrans {
     FNetCliAuthScoreUpdateCallback  m_callback;
-    void *                          m_param;
 
     // send    
     unsigned                        m_scoreId;
@@ -1078,8 +1071,7 @@ struct ScoreAddPointsTrans : NetAuthTrans {
     ScoreAddPointsTrans (
         unsigned                        scoreId,
         int                             numPoints,
-        FNetCliAuthScoreUpdateCallback  callback,
-        void *                          param
+        FNetCliAuthScoreUpdateCallback  callback
     );
 
     bool Send() override;
@@ -1095,7 +1087,6 @@ struct ScoreAddPointsTrans : NetAuthTrans {
 //============================================================================
 struct ScoreTransferPointsTrans : NetAuthTrans {
     FNetCliAuthScoreUpdateCallback  m_callback;
-    void *                          m_param;
 
     // send    
     unsigned                        m_srcScoreId;
@@ -1106,8 +1097,7 @@ struct ScoreTransferPointsTrans : NetAuthTrans {
         unsigned                        srcScoreId,
         unsigned                        destScoreId,
         int                             numPoints,
-        FNetCliAuthScoreUpdateCallback  callback,
-        void *                          param
+        FNetCliAuthScoreUpdateCallback  callback
     );
 
     bool Send() override;
@@ -1123,7 +1113,6 @@ struct ScoreTransferPointsTrans : NetAuthTrans {
 //============================================================================
 struct ScoreSetPointsTrans : NetAuthTrans {
     FNetCliAuthScoreUpdateCallback  m_callback;
-    void *                          m_param;
 
     // send    
     unsigned                        m_scoreId;
@@ -1132,8 +1121,7 @@ struct ScoreSetPointsTrans : NetAuthTrans {
     ScoreSetPointsTrans (
         unsigned                        scoreId,
         int                             numPoints,
-        FNetCliAuthScoreUpdateCallback  callback,
-        void *                          param
+        FNetCliAuthScoreUpdateCallback  callback
     );
 
     bool Send() override;
@@ -1149,7 +1137,6 @@ struct ScoreSetPointsTrans : NetAuthTrans {
 //============================================================================
 struct ScoreGetRanksTrans : NetAuthTrans {
     FNetCliAuthGetRanksCallback     m_callback;
-    void *                          m_param;
 
     // send
     unsigned                        m_ownerId;
@@ -1174,8 +1161,7 @@ struct ScoreGetRanksTrans : NetAuthTrans {
         unsigned                    numResults,
         unsigned                    pageNumber,
         bool                        sortDesc,
-        FNetCliAuthGetRanksCallback callback,
-        void *                      param
+        FNetCliAuthGetRanksCallback callback
     );
 
     bool Send() override;
@@ -1191,7 +1177,6 @@ struct ScoreGetRanksTrans : NetAuthTrans {
 //============================================================================
 struct ScoreGetHighScoresTrans : NetAuthTrans {
     FNetCliAuthGetScoresCallback    m_callback;
-    void *                          m_param;
 
     // send
     unsigned                        m_ageId;
@@ -1206,9 +1191,8 @@ struct ScoreGetHighScoresTrans : NetAuthTrans {
         unsigned                        ageId,
         unsigned                        maxScores,
         const ST::string&               gameName,
-        FNetCliAuthGetScoresCallback    callback,
-        void *                          param
-        );
+        FNetCliAuthGetScoresCallback    callback
+    );
 
     ~ScoreGetHighScoresTrans();
 
@@ -3894,11 +3878,9 @@ ScoreCreateTrans::ScoreCreateTrans (
     const ST::string&               gameName,
     unsigned                        gameType,
     int                             value,
-    FNetCliAuthCreateScoreCallback  callback,
-    void *                          param
+    FNetCliAuthCreateScoreCallback  callback
 ) : NetAuthTrans(kScoreCreateTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_ownerId(ownerId)
 ,   m_gameName(gameName)
 ,   m_gameType(gameType)
@@ -3931,18 +3913,7 @@ bool ScoreCreateTrans::Send () {
 
 //============================================================================
 void ScoreCreateTrans::Post () {
-    if (m_callback) {
-        m_callback(
-            m_result,
-            m_param,
-            m_scoreId,
-            m_createdTime,
-            m_ownerId,
-            m_gameName,
-            m_gameType,
-            m_value
-        );
-    }
+    m_callback(m_result, m_scoreId, m_createdTime);
 }
 
 //============================================================================
@@ -3969,11 +3940,9 @@ bool ScoreCreateTrans::Recv (
 //============================================================================
 ScoreDeleteTrans::ScoreDeleteTrans (
     unsigned                        scoreId,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 ) : NetAuthTrans(kScoreDeleteTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_scoreId(scoreId)
 {
 }
@@ -3996,12 +3965,7 @@ bool ScoreDeleteTrans::Send () {
 
 //============================================================================
 void ScoreDeleteTrans::Post () {
-    if (m_callback) {
-        m_callback(
-            m_result,
-            m_param
-        );
-    }
+    m_callback(m_result);
 }
 
 //============================================================================
@@ -4026,11 +3990,9 @@ bool ScoreDeleteTrans::Recv (
 ScoreGetScoresTrans::ScoreGetScoresTrans (
     unsigned                        ownerId,
     const ST::string&               gameName,
-    FNetCliAuthGetScoresCallback    callback,
-    void *                          param
+    FNetCliAuthGetScoresCallback    callback
 ) : NetAuthTrans(kScoreGetScoresTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_ownerId(ownerId)
 ,   m_gameName(gameName)
 ,   m_scores(nullptr)
@@ -4064,14 +4026,7 @@ bool ScoreGetScoresTrans::Send () {
 
 //============================================================================
 void ScoreGetScoresTrans::Post () {
-    if (m_callback) {
-        m_callback(
-            m_result,
-            m_param,
-            m_scores,
-            m_scoreCount
-        );
-    }
+    m_callback(m_result, m_scores, m_scoreCount);
 }
 
 //============================================================================
@@ -4112,11 +4067,9 @@ bool ScoreGetScoresTrans::Recv (
 ScoreAddPointsTrans::ScoreAddPointsTrans (
     unsigned                        scoreId,
     int                             numPoints,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 ) : NetAuthTrans(kScoreAddPointsTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_scoreId(scoreId)
 ,   m_numPoints(numPoints)
 {
@@ -4141,12 +4094,7 @@ bool ScoreAddPointsTrans::Send () {
 
 //============================================================================
 void ScoreAddPointsTrans::Post () {
-    if (m_callback) {
-        m_callback(
-            m_result,
-            m_param
-        );
-    }
+    m_callback(m_result);
 }
 
 //============================================================================
@@ -4172,11 +4120,9 @@ ScoreTransferPointsTrans::ScoreTransferPointsTrans (
     unsigned                        srcScoreId,
     unsigned                        destScoreId,
     int                             numPoints,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 ) : NetAuthTrans(kScoreTransferPointsTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_srcScoreId(srcScoreId)
 ,   m_destScoreId(destScoreId)
 ,   m_numPoints(numPoints)
@@ -4203,12 +4149,7 @@ bool ScoreTransferPointsTrans::Send () {
 
 //============================================================================
 void ScoreTransferPointsTrans::Post () {
-    if (m_callback) {
-        m_callback(
-            m_result,
-            m_param
-        );
-    }
+    m_callback(m_result);
 }
 
 //============================================================================
@@ -4233,11 +4174,9 @@ bool ScoreTransferPointsTrans::Recv (
 ScoreSetPointsTrans::ScoreSetPointsTrans (
     unsigned                        scoreId,
     int                             numPoints,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 ) : NetAuthTrans(kScoreSetPointsTrans)
-,   m_callback(callback)
-,   m_param(param)
+,   m_callback(std::move(callback))
 ,   m_scoreId(scoreId)
 ,   m_numPoints(numPoints)
 {
@@ -4262,12 +4201,7 @@ bool ScoreSetPointsTrans::Send () {
 
 //============================================================================
 void ScoreSetPointsTrans::Post () {
-    if (m_callback) {
-        m_callback(
-            m_result,
-            m_param
-        );
-    }
+    m_callback(m_result);
 }
 
 //============================================================================
@@ -4293,9 +4227,8 @@ bool ScoreSetPointsTrans::Recv (
 ScoreGetRanksTrans::ScoreGetRanksTrans(
         unsigned ownerId, unsigned scoreGroup, unsigned parentFolderId,
         const ST::string& gameName, unsigned timePeriod, unsigned numResults,
-        unsigned pageNumber, bool sortDesc, FNetCliAuthGetRanksCallback callback,
-        void* param)
-    : NetAuthTrans(kScoreGetRanksTrans), m_callback(callback), m_param(param),
+        unsigned pageNumber, bool sortDesc, FNetCliAuthGetRanksCallback callback)
+    : NetAuthTrans(kScoreGetRanksTrans), m_callback(std::move(callback)),
       m_ownerId(ownerId),  m_scoreGroup(scoreGroup), m_parentFolderId(parentFolderId),
       m_gameName(gameName), m_timePeriod(timePeriod), m_numResults(numResults),
       m_pageNumber(pageNumber), m_sortDesc(sortDesc), m_ranks(), m_rankCount()
@@ -4328,14 +4261,7 @@ bool ScoreGetRanksTrans::Send () {
 
 //============================================================================
 void ScoreGetRanksTrans::Post () {
-    if (m_callback) {
-        m_callback(
-            m_result,
-            m_param,
-            m_ranks,
-            m_rankCount
-        );
-    }
+    m_callback(m_result, m_ranks, m_rankCount);
 }
 
 //============================================================================
@@ -4377,11 +4303,9 @@ ScoreGetHighScoresTrans::ScoreGetHighScoresTrans(
     unsigned                        ageId,
     unsigned                        maxScores,
     const ST::string&               gameName,
-    FNetCliAuthGetScoresCallback    callback,
-    void *                          param
-    ) : NetAuthTrans(kScoreGetHighScoresTrans)
-    , m_callback(callback)
-    , m_param(param)
+    FNetCliAuthGetScoresCallback    callback
+) : NetAuthTrans(kScoreGetHighScoresTrans)
+    , m_callback(std::move(callback))
     , m_ageId(ageId)
     , m_maxScores(maxScores)
     , m_gameName(gameName)
@@ -4417,14 +4341,7 @@ bool ScoreGetHighScoresTrans::Send() {
 
 //============================================================================
 void ScoreGetHighScoresTrans::Post() {
-    if (m_callback) {
-        m_callback(
-            m_result,
-            m_param,
-            m_scores,
-            m_scoreCount
-            );
-    }
+    m_callback(m_result, m_scores, m_scoreCount);
 }
 
 //============================================================================
@@ -5367,16 +5284,14 @@ void NetCliAuthScoreCreate (
     const ST::string&               gameName,
     unsigned                        gameType,
     int                             value,
-    FNetCliAuthCreateScoreCallback  callback,
-    void *                          param
+    FNetCliAuthCreateScoreCallback  callback
 ) {
     ScoreCreateTrans * trans = new ScoreCreateTrans(
         ownerId,
         gameName,
         gameType,
         value,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5384,13 +5299,11 @@ void NetCliAuthScoreCreate (
 //============================================================================
 void NetCliAuthScoreDelete(
     unsigned                        scoreId,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 ) {
     ScoreDeleteTrans * trans = new ScoreDeleteTrans(
         scoreId,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5399,14 +5312,12 @@ void NetCliAuthScoreDelete(
 void NetCliAuthScoreGetScores(
     unsigned                        ownerId,
     const ST::string&               gameName,
-    FNetCliAuthGetScoresCallback    callback,
-    void *                          param
+    FNetCliAuthGetScoresCallback    callback
 ) {
     ScoreGetScoresTrans * trans = new ScoreGetScoresTrans(
         ownerId,
         gameName,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5415,14 +5326,12 @@ void NetCliAuthScoreGetScores(
 void NetCliAuthScoreAddPoints(
     unsigned                        scoreId,
     int                             numPoints,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 ) {
     ScoreAddPointsTrans * trans = new ScoreAddPointsTrans(
         scoreId,
         numPoints,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5432,15 +5341,13 @@ void NetCliAuthScoreTransferPoints(
     unsigned                        srcScoreId,
     unsigned                        destScoreId,
     int                             numPoints,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 ) {
     ScoreTransferPointsTrans * trans = new ScoreTransferPointsTrans(
         srcScoreId,
         destScoreId,
         numPoints,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5449,14 +5356,12 @@ void NetCliAuthScoreTransferPoints(
 void NetCliAuthScoreSetPoints(
     unsigned                        scoreId,
     int                             numPoints,
-    FNetCliAuthScoreUpdateCallback  callback,
-    void *                          param
+    FNetCliAuthScoreUpdateCallback  callback
 ) {
     ScoreSetPointsTrans * trans = new ScoreSetPointsTrans(
         scoreId,
         numPoints,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5471,8 +5376,7 @@ void NetCliAuthScoreGetRankList(
     unsigned                    numResults,
     unsigned                    pageNumber,
     bool                        sortDesc,
-    FNetCliAuthGetRanksCallback callback,
-    void *                      param
+    FNetCliAuthGetRanksCallback callback
 ) {
     ScoreGetRanksTrans * trans = new ScoreGetRanksTrans(
         ownerId,
@@ -5483,8 +5387,7 @@ void NetCliAuthScoreGetRankList(
         numResults,
         pageNumber,
         sortDesc,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
@@ -5494,15 +5397,13 @@ void NetCliAuthScoreGetHighScores(
     unsigned                        ageId,
     unsigned                        maxScores,
     const ST::string&               gameName,
-    FNetCliAuthGetScoresCallback    callback,
-    void *                          param
+    FNetCliAuthGetScoresCallback    callback
     ) {
     ScoreGetHighScoresTrans * trans = new ScoreGetHighScoresTrans(
         ageId,
         maxScores,
         gameName,
-        callback,
-        param
+        std::move(callback)
     );
     NetTransSend(trans);
 }
