@@ -104,9 +104,9 @@ using FNetCliFileManifestRequestCallback = std::function<void(
     unsigned                        entryCount
 )>;
 void NetCliFileManifestRequest (
-    FNetCliFileManifestRequestCallback  callback,
     const char16_t                      group[], // the group of files you want (empty or nil = all)
-    unsigned                            buildId = 0 // 0 = get latest, other = get particular build (servers only)
+    unsigned                            buildId, // 0 = get latest, other = get particular build (servers only)
+    FNetCliFileManifestRequestCallback  callback
 );
 
 //============================================================================
@@ -116,6 +116,6 @@ using FNetCliFileDownloadRequestCallback = std::function<void(ENetError result)>
 void NetCliFileDownloadRequest (
     const plFileName &                  filename,
     hsStream *                          writer,
-    FNetCliFileDownloadRequestCallback  callback,
-    unsigned                            buildId = 0 // 0 = get latest, other = get particular build (servers only)
+    unsigned                            buildId, // 0 = get latest, other = get particular build (servers only)
+    FNetCliFileDownloadRequestCallback  callback
 );

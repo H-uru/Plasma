@@ -483,21 +483,21 @@ bool pfPatcherWorker::IssueRequest()
             if (fFileBeginDownload)
                 fFileBeginDownload(req.fStream->GetFileName());
 
-            NetCliFileDownloadRequest(req.fName, req.fStream, [this, filename = req.fName, stream = req.fStream](auto result) {
+            NetCliFileDownloadRequest(req.fName, req.fStream, 0, [this, filename = req.fName, stream = req.fStream](auto result) {
                 IFileThingDownloadCB(this, result, filename, stream);
             });
             break;
         case Request::kManifest:
-            NetCliFileManifestRequest([this, group = req.fName](auto result, auto manifest, auto entryCount) {
+            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, auto manifest, auto entryCount) {
                 IFileManifestDownloadCB(this, result, group, manifest, entryCount);
-            }, req.fName.to_utf16().data());
+            });
             break;
         case Request::kSecurePreloader:
             // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
             // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
-            NetCliFileManifestRequest([this, group = req.fName](auto result, auto manifest, auto entryCount) {
+            NetCliFileManifestRequest(req.fName.to_utf16().data(), 0, [this, group = req.fName](auto result, auto manifest, auto entryCount) {
                 IPreloaderManifestDownloadCB(this, result, group, manifest, entryCount);
-            }, req.fName.to_utf16().data());
+            });
             break;
         case Request::kAuthFile:
             // ffffffuuuuuu
