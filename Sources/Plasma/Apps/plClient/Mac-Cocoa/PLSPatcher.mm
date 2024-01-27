@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/format>
 
 #include "HeadSpin.h"
+#include "hsDarwin.h"
 #include "hsTimer.h"
 
 #include "pfPatcher/pfPatcher.h"
@@ -64,6 +65,7 @@ public:
     void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const ST::string& status);
     void IOnDownloadBegin(const plFileName& file);
     void ISelfPatch(const plFileName& file);
+    plFileName IFindBundleExe(const plFileName& file);
 };
 
 @interface PLSPatcher ()
@@ -93,6 +95,7 @@ public:
                                      std::placeholders::_2));
     _patcher->OnFileDownloadDesired(IApproveDownload);
     _patcher->OnSelfPatch(std::bind(&Patcher::ISelfPatch, _cppPatcher, std::placeholders::_1));
+    _patcher->OnFindBundleExe(std::bind(&Patcher::IFindBundleExe, _cppPatcher, std::placeholders::_1));
 
     self.networkPumpTimer = [NSTimer timerWithTimeInterval:1.0 / 1000.0
                                                    repeats:true
@@ -283,6 +286,25 @@ void Patcher::IOnPatchComplete(ENetError result, const ST::string& msg)
                                                               NSLocalizedFailureErrorKey : msgString
                                                           }]];
         });
+    }
+}
+
+plFileName Patcher::IFindBundleExe(const plFileName& clientPath)
+{
+    // If this is a Mac app bundle, MD5 the executable. The executable will hold the
+    // code signing hash - and thus unique the entire bundle.
+    
+    @autoreleasepool {
+        NSURL* bundleURL = [NSURL fileURLWithPath:[NSString stringWithSTString:clientPath.AsString()]];
+        NSBundle* bundle = [NSBundle bundleWithURL:bundleURL];
+        NSURL* executableURL = [bundle executableURL];
+        
+        if (executableURL) {
+            NSString* executablePath = [executableURL path];
+            return plFileName([[executableURL path] STString]);
+        }
+        
+        return clientPath;
     }
 }
 

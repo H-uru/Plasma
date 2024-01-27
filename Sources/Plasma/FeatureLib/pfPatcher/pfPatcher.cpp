@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plFileSystem.h"
-#include "hsDarwin.h"
 #include "hsStream.h"
 #include "hsThread.h"
 #include "hsTimer.h"
@@ -170,6 +169,7 @@ struct pfPatcherWorker : public hsThread
     hsSemaphore fFileSignal;
 
     pfPatcher::CompletionFunc fOnComplete;
+    pfPatcher::FindBundleExeFunc fFindBundleExe;
     pfPatcher::FileDownloadFunc fFileBeginDownload;
     pfPatcher::FileDesiredFunc fFileDownloadDesired;
     pfPatcher::FileDownloadFunc fFileDownloaded;
@@ -572,50 +572,19 @@ void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
     }
 
     // Check to see if ours matches
+    plFileName clientPathForComparison = file.fClientPath;
     if (file.fFlags & kBundle) {
-#ifdef HS_BUILD_FOR_MACOS
-        // If this is a Mac app bundle, MD5 the executable. The executable will hold the
-        // code signing hash - and thus unique the entire bundle.
-        
-        CFURLRef bundleURL = CFURLCreateWithFileSystemPath(nullptr, CFStringCreateWithSTString(file.fClientPath.AsString()), kCFURLPOSIXPathStyle, true);
-        CFBundleRef bundle = CFBundleCreate(nullptr, bundleURL);
-        CFAutorelease(bundleURL);
-        
-        if (bundle) {
-            CFAutorelease(bundle);
-            
-            CFURLRef executableURL = CFBundleCopyExecutableURL(bundle);
-            
-            if (executableURL) {
-                // Ugh, CFBundleCopyExecutableURL returns a relative path from inside the app bundle.
-                // Sanitize.
-                CFURLRef fullExecutableURL = CFURLCreateFilePathURL(nullptr, executableURL, nullptr);
-                CFStringRef executablePath = CFURLCopyFileSystemPath(fullExecutableURL, kCFURLPOSIXPathStyle);
-                
-                plFileName path(STStringFromCFString(executablePath));
-                plMD5Checksum cliMD5(path);
-                
-                CFRelease(executablePath);
-                CFRelease(executableURL);
-                
-                if (cliMD5 == file.fChecksum) {
-                    WhitelistFile(file.fClientPath, false);
-                    return;
-                }
-            }
+        bool whitelistBundle = true;
+        if (fFindBundleExe) {
+            clientPathForComparison = fFindBundleExe(clientPathForComparison);
         }
-#else
-        WhitelistFile(file.fClientPath, false);
-        return;
-#endif
-    } else {
-        plFileInfo mine(file.fClientPath);
-        if (mine.FileSize() == file.fFileSize) {
-            plMD5Checksum cliMD5(file.fClientPath);
-            if (cliMD5 == file.fChecksum) {
-                WhitelistFile(file.fClientPath, false);
-                return;
-            }
+    }
+    plFileInfo mine(clientPathForComparison);
+    if (mine.FileSize() == file.fFileSize) {
+        plMD5Checksum cliMD5(clientPathForComparison);
+        if (cliMD5 == file.fChecksum) {
+            WhitelistFile(file.fClientPath, false);
+            return;
         }
     }
 
@@ -732,6 +701,11 @@ pfPatcher::pfPatcher() : fWorker(new pfPatcherWorker) { }
 pfPatcher::~pfPatcher() { }
 
 // ===================================================
+
+void pfPatcher::OnFindBundleExe(FindBundleExeFunc vb)
+{
+    fWorker->fFindBundleExe = std::move(vb);
+}
 
 void pfPatcher::OnCompletion(CompletionFunc cb)
 {
