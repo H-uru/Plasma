@@ -591,11 +591,11 @@ class nxusBookMachine(ptModifier):
 
     def IPublicAgeCreated(self, ageName):
         PtDebugPrint("IPublicAgeCreated: " + ageName)
-        PtGetPublicAgeList(ageName, self)
+        PtGetPublicAgeList(ageName)
 
     def IPublicAgeRemoved(self, ageName):
         PtDebugPrint("IPublicAgeRemoved: " + ageName)
-        PtGetPublicAgeList(ageName, self)
+        PtGetPublicAgeList(ageName)
 
     def IHoodCreated(self, ageInfo):
         PtDebugPrint("OnVaultNotify: Setting the new hood's language to %d " % PtGetLanguage())
@@ -707,8 +707,8 @@ class nxusBookMachine(ptModifier):
                         ageInfo.setAgeFilename(ageFilename)
                         ageInfo.setAgeInstanceGuid(hardcoded)
                         ageData.instances.append(AgeInstance((ageInfo, 0, 0)))
-                PtGetPublicAgeList(ageFilename, self)
-            PtGetPublicAgeList('Neighborhood', self)
+                PtGetPublicAgeList(ageFilename)
+            PtGetPublicAgeList('Neighborhood')
 
             # set up the camera so when the one shot returns it gets set up right (one shot was fighting with python for camera control)
             virtCam = ptCamera()

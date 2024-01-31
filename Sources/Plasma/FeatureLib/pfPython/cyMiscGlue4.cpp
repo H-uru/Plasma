@@ -230,17 +230,15 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtShootBulletFromObject, args, "Params: selfkey,
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtGetPublicAgeList, args, "Params: ageName, cbObject=None\nGet list of public ages for the given age name.\n"
-            "cbObject, if supplied should have a method called gotPublicAgeList(self,ageList). ageList is a list of tuple(ptAgeInfoStruct,nPlayersInAge)")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtGetPublicAgeList, args, "Params: ageName\nGet list of public ages for the given age name.\n"
+            "The age list will be delivered asynchronously through the callback method gotPublicAgeList(self,ageList). ageList is a list of tuple(ptAgeInfoStruct,nPlayersInAge)")
 {
     ST::string ageName;
-    PyObject* cbObject = nullptr;
-    if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &ageName, &cbObject))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtGetPublicAgeList expects a string and an optional object with a gotPublicAgeList() method");
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &ageName)) {
+        PyErr_SetString(PyExc_TypeError, "PtGetPublicAgeList expects a string");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::GetPublicAgeList(ageName, cbObject);
+    cyMisc::GetPublicAgeList(ageName);
     PYTHON_RETURN_NONE;
 }
 

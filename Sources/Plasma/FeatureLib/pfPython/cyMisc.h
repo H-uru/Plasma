@@ -745,11 +745,11 @@ public:
     //////////////////////////////////////////////////////////////////////////////
     //
     // Function   : GetPublicAgeList
-    // PARAMETERS : ageName, callback object
+    // PARAMETERS : ageName
     //
     // PURPOSE    : Get the list of public ages for the given age name.
     //
-    static void GetPublicAgeList(const ST::string& ageName, PyObject * cbObject = nullptr);
+    static void GetPublicAgeList(const ST::string& ageName);
 
     //////////////////////////////////////////////////////////////////////////////
     //
