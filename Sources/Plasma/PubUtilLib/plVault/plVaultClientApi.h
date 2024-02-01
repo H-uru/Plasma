@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTCLIENTAPI_H
 
+#include <functional>
 #include <list>
 
 /*****************************************************************************
@@ -210,31 +211,23 @@ hsRef<RelVaultNode> VaultGetNode(hsWeakRef<NetVaultNode> templateNode);
 
 // VaultAddChildNode will download the child node if necessary
 // the parent exists locally before making the callback.
-typedef void (*FVaultAddChildNodeCallback)(
-    ENetError       result,
-    void *          param
-);
+using FVaultAddChildNodeCallback = std::function<void(ENetError result)>;
 void VaultAddChildNode (
     unsigned                    parentId,
     unsigned                    childId,
     unsigned                    ownerId,
-    FVaultAddChildNodeCallback  callback,   // optional
-    void *                      param       // optional
+    const FVaultAddChildNodeCallback& callback // optional
 );
 void VaultAddChildNodeAndWait (
     unsigned                    parentId,
     unsigned                    childId,
     unsigned                    ownerId
 );
-typedef void (*FVaultRemoveChildNodeCallback)(
-    ENetError       result,
-    void *          param
-);
+using FVaultRemoveChildNodeCallback = std::function<void(ENetError result)>;
 void VaultRemoveChildNode (
     unsigned                        parentId,
     unsigned                        childId,
-    FVaultRemoveChildNodeCallback   callback,
-    void *                          param
+    FVaultRemoveChildNodeCallback   callback
 );
 void VaultSetNodeSeen (
     unsigned    nodeId,
