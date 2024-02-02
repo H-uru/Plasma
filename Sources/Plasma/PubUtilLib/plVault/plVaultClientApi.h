@@ -287,19 +287,15 @@ void VaultFetchNodesAndWait (   // Use VaultGetNode to access the fetched nodes
     unsigned                count,
     bool                    force = false
 );
-typedef void (*FVaultInitAgeCallback)(
+using FVaultInitAgeCallback = std::function<void(
     ENetError       result,
-    void *          state,
-    void *          param,
     unsigned        ageVaultId,
     unsigned        ageInfoVaultId
-);
+)>;
 void VaultInitAge (
     const class plAgeInfoStruct *   info,
     const plUUID                    parentAgeInstId,
-    FVaultInitAgeCallback           callback,
-    void *                          state,
-    void *                          param
+    FVaultInitAgeCallback           callback
 );
 
 

@@ -1761,9 +1761,7 @@ void VaultFetchNodesAndWait (
 void VaultInitAge (
     const plAgeInfoStruct * info,
     const plUUID            parentAgeInstId,    // optional
-    FVaultInitAgeCallback   callback,
-    void *                  state,
-    void *                  param
+    FVaultInitAgeCallback   callback
 ) {
     NetCliAuthVaultInitAge(
         *info->GetAgeInstanceGuid(),
@@ -1774,9 +1772,9 @@ void VaultInitAge (
         info->GetAgeDescription(),
         info->GetAgeSequenceNumber(),
         info->GetAgeLanguage(),
-        [callback, state, param](auto result, auto ageVaultId, auto ageInfoVaultId) {
+        [callback = std::move(callback)](auto result, auto ageVaultId, auto ageInfoVaultId) {
             if (callback) {
-                callback(result, state, param, ageVaultId, ageInfoVaultId);
+                callback(result, ageVaultId, ageInfoVaultId);
             }
         }
     );
@@ -2115,12 +2113,10 @@ struct _InitAgeParam {
 };
 static void _InitAgeCallback (
     ENetError       result,
-    void *          ,
-    void *          vparam,
+    _InitAgeParam* param,
     unsigned        ageVaultId,
     unsigned        ageInfoVaultId
 ) {
-    _InitAgeParam * param = (_InitAgeParam *)vparam;
     param->ageInfoId    = ageInfoVaultId;
     param->result       = result;
     param->complete     = true;
@@ -2199,9 +2195,9 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             VaultInitAge(
                 link->GetAgeInfo(),
                 kNilUuid,
-                _InitAgeCallback,
-                nullptr,
-                &param
+                [&param](auto result, auto ageVaultId, auto ageInfoVaultId) {
+                    _InitAgeCallback(result, &param, ageVaultId, ageInfoVaultId);
+                }
             );
 
             while (!param.complete) {
@@ -2418,11 +2414,11 @@ namespace _VaultRegisterOwnedAge {
             });
     }
 
-    void _InitAgeCallback(ENetError result, void* state, void* param, uint32_t ageVaultId, uint32_t ageInfoVaultId) {
+    void _InitAgeCallback(ENetError result, plSpawnPointInfo* spawn, uint32_t ageVaultId, uint32_t ageInfoVaultId) {
         if (IS_NET_SUCCESS(result)) {
             _Params* p = new _Params();
             p->fAgeInfoId = (void*)(uintptr_t)ageInfoVaultId;
-            p->fSpawn = (plSpawnPointInfo*)param;
+            p->fSpawn = spawn;
 
             VaultDownload(
                 "RegisterOwnedAge",
@@ -2451,11 +2447,14 @@ void VaultRegisterOwnedAge(const plAgeLinkStruct* link) {
         return;
 
     // Let's go async, my friend :)
-    VaultInitAge(link->GetAgeInfo(), 
-        kNilUuid, 
-        (FVaultInitAgeCallback)_InitAgeCallback, 
-        nullptr,
-        new plSpawnPointInfo(link->SpawnPoint()));
+    auto spawn = new plSpawnPointInfo(link->SpawnPoint());
+    VaultInitAge(
+        link->GetAgeInfo(),
+        kNilUuid,
+        [spawn](auto result, auto ageVaultId, auto ageInfoVaultId) {
+            _InitAgeCallback(result, spawn, ageVaultId, ageInfoVaultId);
+        }
+    );
 }
 
 //============================================================================
@@ -2468,12 +2467,10 @@ struct _InitAgeParam {
 };
 static void _InitAgeCallback (
     ENetError       result,
-    void *          ,
-    void *          vparam,
+    _InitAgeParam* param,
     unsigned        ageVaultId,
     unsigned        ageInfoVaultId
 ) {
-    _InitAgeParam * param = (_InitAgeParam *)vparam;
     param->ageInfoId    = ageInfoVaultId;
     param->result       = result;
     param->complete     = true;
@@ -2552,9 +2549,9 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             VaultInitAge(
                 link->GetAgeInfo(),
                 kNilUuid,
-                _InitAgeCallback,
-                nullptr,
-                &param
+                [&param](auto result, auto ageVaultId, auto ageInfoVaultId) {
+                    _InitAgeCallback(result, &param, ageVaultId, ageInfoVaultId);
+                }
             );
 
             while (!param.complete) {
@@ -2758,21 +2755,20 @@ namespace _VaultRegisterVisitAge {
         });
     }
     
-    void _InitAgeCallback(ENetError result, void* state, void* param, uint32_t ageVaultId, uint32_t ageInfoId) {
+    void _InitAgeCallback(ENetError result, _Params* p, uint32_t ageVaultId, uint32_t ageInfoId) {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("RegisterVisitAge: Failed to init age vault (async)");
-            delete (_Params*)param;
+            delete p;
             return;
         }
 
         // Save the AgeInfo nodeID, then download the age vault
-        _Params* p = (_Params*)param;
         p->fAgeInfoId = (void*)(uintptr_t)ageInfoId;
         
         VaultDownload("RegisterVisitAge",
                       ageInfoId,
                       (FVaultDownloadCallback)_DownloadCallback,
-                      param,
+                      p,
                       nullptr,
                       nullptr
         );
@@ -2793,11 +2789,12 @@ void VaultRegisterVisitAge(const plAgeLinkStruct* link) {
 
     // This doesn't actually *create* a new age but rather fetches the
     // already existing age vault. Weird? Yes...
-    VaultInitAge(link->GetAgeInfo(),
-                 kNilUuid,
-                 (FVaultInitAgeCallback)_InitAgeCallback,
-                 nullptr,
-                 p
+    VaultInitAge(
+        link->GetAgeInfo(),
+        kNilUuid,
+        [p](auto result, auto ageVaultId, auto ageInfoVaultId) {
+            _InitAgeCallback(result, p, ageVaultId, ageInfoVaultId);
+        }
     );
 }
 
@@ -3625,7 +3622,7 @@ namespace _VaultCreateSubAge {
         });
     }
 
-    void _InitAgeCallback(ENetError result, void* state, void* param, uint32_t ageVaultId, uint32_t ageInfoId) {
+    void _InitAgeCallback(ENetError result, uint32_t ageVaultId, uint32_t ageInfoId) {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("CreateSubAge: Failed to init age (async)");
             return;
@@ -3658,12 +3655,7 @@ bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct
         return true;
     }
     
-    VaultInitAge(info,
-                 parentUuid,
-                 (FVaultInitAgeCallback)_InitAgeCallback,
-                 nullptr,
-                 nullptr
-    );
+    VaultInitAge(info, parentUuid, _InitAgeCallback);
 
     return false;
 }
@@ -3709,21 +3701,20 @@ namespace _VaultCreateChildAge {
         });
     }
 
-    void _InitAgeCallback(ENetError result, void* state, void* param, uint32_t ageVaultId, uint32_t ageInfoId) {
+    void _InitAgeCallback(ENetError result, _Params* p, uint32_t ageVaultId, uint32_t ageInfoId) {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("CreateChildAge: Failed to init age (async)");
-            delete (_Params*)param;
+            delete p;
             return;
         }
 
-        _Params* p = (_Params*)param;
         p->fAgeInfoId = (void*)(uintptr_t)ageInfoId;
 
         // Download age vault
         VaultDownload("CreateChildAge",
                       ageInfoId,
                       (FVaultDownloadCallback)_DownloadCallback,
-                      param,
+                      p,
                       nullptr,
                       nullptr
         );
@@ -3776,11 +3767,12 @@ plVaultChildAgeLinkResult VaultAgeFindOrCreateChildAgeLink(
             p->fChildAgesFldr = (void*)(uintptr_t)rvnChildAges->GetNodeId();
 
             VaultAgeInfoNode accParentInfo(rvnParentInfo);
-            VaultInitAge(info,
-                         accParentInfo.GetAgeInstanceGuid(),
-                         (FVaultInitAgeCallback)_InitAgeCallback,
-                         nullptr,
-                         p
+            VaultInitAge(
+                info,
+                accParentInfo.GetAgeInstanceGuid(),
+                [p](auto result, auto ageVaultId, auto ageInfoVaultId) {
+                    _InitAgeCallback(result, p, ageVaultId, ageInfoVaultId);
+                }
             );
             retval = plVaultChildAgeLinkResult::kCreatingNew;
         }
