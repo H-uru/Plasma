@@ -86,9 +86,7 @@ struct IRelVaultNode {
 
 struct VaultDownloadTrans {
     FVaultDownloadCallback      callback;
-    void *                      cbParam;
     FVaultProgressCallback      progressCallback;
-    void *                      cbProgressParam;
 
     ST::string  tag;
     unsigned    nodeCount;
@@ -97,16 +95,14 @@ struct VaultDownloadTrans {
     ENetError   result;
 
     VaultDownloadTrans ()
-        : callback(), cbParam(), progressCallback(), cbProgressParam(),
+        : callback(), progressCallback(),
           nodeCount(), nodesLeft(), vaultId(), result(kNetSuccess)
     { }
 
     VaultDownloadTrans (const ST::string& _tag, FVaultDownloadCallback _callback,
-                        void * _cbParam, FVaultProgressCallback _progressCallback,
-                        void * _cbProgressParam, unsigned _vaultId)
-        : callback(_callback), cbParam(_cbParam), progressCallback(_progressCallback),
-          cbProgressParam(_cbProgressParam), nodeCount(), nodesLeft(),
-          vaultId(_vaultId), result(kNetSuccess), tag(_tag)
+                        FVaultProgressCallback _progressCallback, unsigned _vaultId)
+        : callback(std::move(_callback)), progressCallback(std::move(_progressCallback)),
+          nodeCount(), nodesLeft(), vaultId(_vaultId), result(kNetSuccess), tag(_tag)
     { }
 
     virtual ~VaultDownloadTrans() = default;
@@ -131,9 +127,8 @@ struct VaultDownloadNoCallbacksTrans : VaultDownloadTrans {
     }
 
     VaultDownloadNoCallbacksTrans(const ST::string& _tag, FVaultDownloadCallback _callback,
-                                  void* _cbParam, FVaultProgressCallback _progressCallback,
-                                  void* _cbProgressParam, unsigned _vaultId)
-        : VaultDownloadTrans(_tag, _callback, _cbParam, _progressCallback, _cbProgressParam, _vaultId)
+                                  FVaultProgressCallback _progressCallback, unsigned _vaultId)
+        : VaultDownloadTrans(_tag, std::move(_callback), std::move(_progressCallback), _vaultId)
     {
         VaultSuppressCallbacks();
     }
@@ -206,9 +201,8 @@ static void VaultNodeFound (
 );
 
 //============================================================================
-static void VaultNodeAddedDownloadCallback(ENetError result, void * param) {
-    unsigned childId = (unsigned)((uintptr_t)param);
-
+static void VaultNodeAddedDownloadCallback(ENetError result, unsigned childId)
+{
     auto it = s_notifyAfterDownload.find(childId);
 
     if (it != s_notifyAfterDownload.end()) {
@@ -529,9 +523,9 @@ static void VaultNodeAdded (
         VaultDownload(
             "NodeAdded",
             nodeIds[i],
-            VaultNodeAddedDownloadCallback,
-            (void*)(uintptr_t)nodeIds[i],
-            nullptr,
+            [childId = nodeIds[i]](auto result) {
+                VaultNodeAddedDownloadCallback(result, childId);
+            },
             nullptr
         );
     }
@@ -662,21 +656,14 @@ void VaultDownloadTrans::VaultNodeFetched (
     //s_log->AddLineF("(Download) {} of {} nodes fetched", nodeCount - nodesLeft, nodeCount);
 
     if (progressCallback) {
-        progressCallback(
-            nodeCount,
-            nodeCount - nodesLeft,
-            cbProgressParam
-        );
+        progressCallback(nodeCount, nodeCount - nodesLeft);
     }
 
     if (!nodesLeft) {
         VaultDump(tag, vaultId);
 
         if (callback)
-            callback(
-                result,
-                cbParam
-            );
+            callback(result);
 
         delete this;
     }
@@ -718,10 +705,7 @@ void VaultDownloadTrans::VaultNodeRefsFetched (
     // Make the callback now if there are no nodes to fetch, or if error
     if (!nodesLeft) {
         if (callback)
-            callback(
-                result,
-                cbParam
-            );
+            callback(result);
 
         delete this;
     }
@@ -2127,9 +2111,8 @@ struct _FetchVaultParam {
 };
 static void _FetchVaultCallback (
     ENetError       result,
-    void *          vparam
+    _FetchVaultParam* param
 ) {
-    _FetchVaultParam * param = (_FetchVaultParam *)vparam;
     param->result       = result;
     param->complete     = true;
 }
@@ -2245,9 +2228,9 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             VaultDownload(
                 "RegisterOwnedAge",
                 ageInfoId,
-                _FetchVaultCallback,
-                &param,
-                nullptr,
+                [&param](auto result) {
+                    _FetchVaultCallback(result, &param);
+                },
                 nullptr
             );
             
@@ -2404,13 +2387,13 @@ namespace _VaultRegisterOwnedAge {
         delete p;
     }
 
-    void _DownloadCallback(ENetError result, void* param) {
+    void _DownloadCallback(ENetError result, _Params* param) {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("VaultRegisterOwnedAge: Failed to download age vault (async)");
-            delete (_Params*)param;
+            delete param;
         } else
             VaultCreateNode(plVault::kNodeType_AgeLink, [param](auto result, auto node) {
-                _CreateAgeLinkNode(result, (_Params*)param, node);
+                _CreateAgeLinkNode(result, param, node);
             });
     }
 
@@ -2423,10 +2406,11 @@ namespace _VaultRegisterOwnedAge {
             VaultDownload(
                 "RegisterOwnedAge",
                 ageInfoVaultId,
-                (FVaultDownloadCallback)_DownloadCallback,
-                p,
-                nullptr,
-                nullptr);
+                [p](auto result) {
+                    _DownloadCallback(result, p);
+                },
+                nullptr
+            );
         } else
             s_log->AddLine("VaultRegisterOwnedAge: Failed to init age (async)");
     }
@@ -2481,9 +2465,8 @@ struct _FetchVaultParam {
 };
 static void _FetchVaultCallback (
     ENetError       result,
-    void *          vparam
+    _FetchVaultParam* param
 ) {
-    _FetchVaultParam * param = (_FetchVaultParam *)vparam;
     param->result       = result;
     param->complete     = true;
 }
@@ -2599,9 +2582,9 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             VaultDownload(
                 "RegisterVisitAge",
                 ageInfoId,
-                _FetchVaultCallback,
-                &param,
-                nullptr,
+                [&param](auto result) {
+                    _FetchVaultCallback(result, &param);
+                },
                 nullptr
             );
             
@@ -2742,16 +2725,16 @@ namespace _VaultRegisterVisitAge {
         delete p;
     }
 
-    void _DownloadCallback(ENetError result, void* param) {
+    void _DownloadCallback(ENetError result, _Params* param) {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("RegisterVisitAge: Failed to download age vault (async)");
-            delete (_Params*)param;
+            delete param;
             return;
         }
 
         // Create the AgeLink node 
         VaultCreateNode(plVault::kNodeType_AgeLink, [param](auto result, auto node) {
-            _CreateAgeLinkNode(result, (_Params*)param, node);
+            _CreateAgeLinkNode(result, param, node);
         });
     }
     
@@ -2765,12 +2748,13 @@ namespace _VaultRegisterVisitAge {
         // Save the AgeInfo nodeID, then download the age vault
         p->fAgeInfoId = (void*)(uintptr_t)ageInfoId;
         
-        VaultDownload("RegisterVisitAge",
-                      ageInfoId,
-                      (FVaultDownloadCallback)_DownloadCallback,
-                      p,
-                      nullptr,
-                      nullptr
+        VaultDownload(
+            "RegisterVisitAge",
+            ageInfoId,
+            [p](auto result) {
+                _DownloadCallback(result, p);
+            },
+            nullptr
         );
     }
 };
@@ -3608,15 +3592,15 @@ namespace _VaultCreateSubAge {
         msg->Send();
     }
 
-    void _DownloadCallback(ENetError result, void* param) {
+    void _DownloadCallback(ENetError result, uint32_t ageInfoId) {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("CreateSubAge: Failed to download age vault (async)");
             return;
         }
 
         // Create the AgeLink node
-        VaultCreateNode(plVault::kNodeType_AgeLink, [param](auto result, auto node) {
-            _CreateNodeCallback(result, (uint32_t)((uintptr_t)param), node);
+        VaultCreateNode(plVault::kNodeType_AgeLink, [ageInfoId](auto result, auto node) {
+            _CreateNodeCallback(result, ageInfoId, node);
         });
     }
 
@@ -3627,12 +3611,13 @@ namespace _VaultCreateSubAge {
         }
 
         // Download age vault
-        VaultDownload("CreateSubAge",
-                      ageInfoId,
-                      (FVaultDownloadCallback)_DownloadCallback,
-                      (void*)(uintptr_t)ageInfoId,
-                      nullptr,
-                      nullptr
+        VaultDownload(
+            "CreateSubAge",
+            ageInfoId,
+            [ageInfoId](auto result) {
+                _DownloadCallback(result, ageInfoId);
+            },
+            nullptr
         );
     }
 }; // namespace _VaultCreateSubAge
@@ -3686,16 +3671,16 @@ namespace _VaultCreateChildAge {
         delete p;
     }
 
-    void _DownloadCallback(ENetError result, void* param) {
+    void _DownloadCallback(ENetError result, _Params* param) {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("CreateChildAge: Failed to download age vault (async)");
-            delete (_Params*)param;
+            delete param;
             return;
         }
 
         // Create the AgeLink node
         VaultCreateNode(plVault::kNodeType_AgeLink, [param](auto result, auto node) {
-            _CreateNodeCallback(result, (_Params*)param, node);
+            _CreateNodeCallback(result, param, node);
         });
     }
 
@@ -3709,12 +3694,13 @@ namespace _VaultCreateChildAge {
         p->fAgeInfoId = (void*)(uintptr_t)ageInfoId;
 
         // Download age vault
-        VaultDownload("CreateChildAge",
-                      ageInfoId,
-                      (FVaultDownloadCallback)_DownloadCallback,
-                      p,
-                      nullptr,
-                      nullptr
+        VaultDownload(
+            "CreateChildAge",
+            ageInfoId,
+            [p](auto result) {
+                _DownloadCallback(result, p);
+            },
+            nullptr
         );
     }
 }; // namespace _VaultCreateAge
@@ -3803,12 +3789,10 @@ void VaultDownload (
     const ST::string&           tag,
     unsigned                    vaultId,
     FVaultDownloadCallback      callback,
-    void *                      cbParam,
-    FVaultProgressCallback      progressCallback,
-    void *                      cbProgressParam
+    FVaultProgressCallback      progressCallback
 ) {
-    VaultDownloadTrans * trans = new VaultDownloadTrans(tag, callback, cbParam,
-        progressCallback, cbProgressParam, vaultId);
+    VaultDownloadTrans * trans = new VaultDownloadTrans(tag, std::move(callback),
+        std::move(progressCallback), vaultId);
 
     NetCliAuthVaultFetchNodeRefs(vaultId, [trans](auto result, auto refs, auto refCount) {
         trans->VaultNodeRefsFetched(result, refs, refCount);
@@ -3820,12 +3804,10 @@ void VaultDownloadNoCallbacks (
     const ST::string&           tag,
     unsigned                    vaultId,
     FVaultDownloadCallback      callback,
-    void *                      cbParam,
-    FVaultProgressCallback      progressCallback,
-    void *                      cbProgressParam
+    FVaultProgressCallback      progressCallback
 ) {
     VaultDownloadNoCallbacksTrans * trans = new VaultDownloadNoCallbacksTrans(tag,
-        callback, cbParam, progressCallback, cbProgressParam, vaultId);
+        std::move(callback), std::move(progressCallback), vaultId);
 
     NetCliAuthVaultFetchNodeRefs(vaultId, [trans](auto result, auto refs, auto refCount) {
         trans->VaultNodeRefsFetched(result, refs, refCount);
@@ -3839,9 +3821,8 @@ struct _DownloadVaultParam {
 };
 static void _DownloadVaultCallback (
     ENetError       result,
-    void *          vparam
+    _DownloadVaultParam* param
 ) {
-    _DownloadVaultParam * param = (_DownloadVaultParam *)vparam;
     param->result       = result;
     param->complete     = true;
 }
@@ -3849,8 +3830,7 @@ static void _DownloadVaultCallback (
 void VaultDownloadAndWait (
     const ST::string&           tag,
     unsigned                    vaultId,
-    FVaultProgressCallback      progressCallback,
-    void *                      cbProgressParam
+    FVaultProgressCallback      progressCallback
 ) {
     _DownloadVaultParam param;
     memset(&param, 0, sizeof(param));
@@ -3858,10 +3838,10 @@ void VaultDownloadAndWait (
     VaultDownload(
         tag,
         vaultId,
-        _DownloadVaultCallback,
-        &param,
-        progressCallback,
-        cbProgressParam
+        [&param](auto result) {
+            _DownloadVaultCallback(result, &param);
+        },
+        std::move(progressCallback)
     );
     
     while (!param.complete) {

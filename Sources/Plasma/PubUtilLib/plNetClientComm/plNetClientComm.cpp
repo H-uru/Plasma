@@ -270,9 +270,9 @@ static void INetCliAuthSetPlayerRequestCallback (
         VaultDownloadNoCallbacks(
             "SetActivePlayer",
             s_player->playerInt,
-            PlayerInitCallback,
-            param,
-            nullptr,
+            [param](auto result) {
+                PlayerInitCallback(result, param);
+            },
             nullptr
         );
     }
@@ -326,9 +326,9 @@ static void INetCliAuthLoginSetPlayerRequestCallback (
         VaultDownloadNoCallbacks(
             "SetActivePlayer",
             s_player->playerInt,
-            LoginPlayerInitCallback,
-            param,
-            nullptr,
+            [param](auto result) {
+                LoginPlayerInitCallback(result, param);
+            },
             nullptr
         );
     }

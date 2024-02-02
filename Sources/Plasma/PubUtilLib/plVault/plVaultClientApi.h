@@ -431,37 +431,25 @@ void VaultCCRDumpPlayers();
 *
 ***/
 
-typedef void (*FVaultDownloadCallback)(
-    ENetError                   result,
-    void *                      param
-);
-typedef void (*FVaultProgressCallback)(
-    unsigned                    total,
-    unsigned                    curr,
-    void *                      param
-);
+using FVaultDownloadCallback = std::function<void(ENetError result)>;
+using FVaultProgressCallback = std::function<void(unsigned total, unsigned curr)>;
 
 void VaultDownload (
     const ST::string&           tag,
     unsigned                    vaultId,
     FVaultDownloadCallback      callback,
-    void *                      cbParam,
-    FVaultProgressCallback      progressCallback,
-    void *                      cbProgressParam
+    FVaultProgressCallback      progressCallback
 );
 void VaultDownloadNoCallbacks (
     const ST::string&           tag,
     unsigned                    vaultId,
     FVaultDownloadCallback      callback,
-    void *                      cbParam,
-    FVaultProgressCallback      progressCallback,
-    void *                      cbProgressParam
+    FVaultProgressCallback      progressCallback
 );
 void VaultDownloadAndWait (
     const ST::string&           tag,
     unsigned                    vaultId,
-    FVaultProgressCallback      progressCallback,
-    void *                      cbProgressParam
+    FVaultProgressCallback      progressCallback
 );
 
 void VaultCull (
