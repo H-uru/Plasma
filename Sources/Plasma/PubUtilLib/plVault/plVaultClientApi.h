@@ -241,23 +241,17 @@ void VaultSendNode (
     unsigned                dstPlayerId
 );
 
-typedef void (*FVaultCreateNodeCallback)(
+using FVaultCreateNodeCallback = std::function<void(
     ENetError       result,
-    void *          state,
-    void *          param,
     hsWeakRef<RelVaultNode> node
-);
+)>;
 void VaultCreateNode (          // non-blocking
     plVault::NodeTypes          nodeType,
-    FVaultCreateNodeCallback    callback,
-    void *                      state,
-    void *                      param
+    FVaultCreateNodeCallback    callback
 );
 void VaultCreateNode (          // non-blocking
     hsWeakRef<NetVaultNode>     templateNode,
-    FVaultCreateNodeCallback    callback,
-    void *                      state,
-    void *                      param
+    FVaultCreateNodeCallback    callback
 );
 hsRef<RelVaultNode> VaultCreateNodeAndWait (   // block until completion. returns node. nullptr --> failure
     plVault::NodeTypes          nodeType,

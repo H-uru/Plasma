@@ -486,13 +486,6 @@ void pyVault::UnRegisterVisitAge(const ST::string& guidstr)
     VaultUnregisterVisitAge(&info);
 }
 
-//============================================================================
-void _InvitePlayerToAge(ENetError result, void* state, void* param, hsWeakRef<RelVaultNode> node)
-{
-    if (result == kNetSuccess)
-        VaultSendNode(node, (uint32_t)((uintptr_t)param));
-}
-
 void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID )
 {
     NetVaultNode templateNode;
@@ -500,14 +493,10 @@ void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID
     VaultTextNoteNode visitAcc(&templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_Visit);
     visitAcc.SetVisitInfo(*link.GetAgeLink()->GetAgeInfo());
-    VaultCreateNode(&templateNode, (FVaultCreateNodeCallback)_InvitePlayerToAge, nullptr, (void*)(uintptr_t)playerID);
-}
-
-//============================================================================
-void _UninvitePlayerToAge(ENetError result, void* state, void* param, hsWeakRef<RelVaultNode> node)
-{
-    if (result == kNetSuccess)
-        VaultSendNode(node, (uint32_t)((uintptr_t)param));
+    VaultCreateNode(&templateNode, [playerID](auto result, auto node) {
+        if (result == kNetSuccess)
+            VaultSendNode(node, playerID);
+    });
 }
 
 void pyVault::UnInvitePlayerToAge(const ST::string& str, uint32_t playerID)
@@ -528,7 +517,10 @@ void pyVault::UnInvitePlayerToAge(const ST::string& str, uint32_t playerID)
     VaultTextNoteNode visitAcc(&templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_UnVisit);
     visitAcc.SetVisitInfo(info);
-    VaultCreateNode(&templateNode, (FVaultCreateNodeCallback)_UninvitePlayerToAge, nullptr, (void*)(uintptr_t)playerID);
+    VaultCreateNode(&templateNode, [playerID](auto result, auto node) {
+        if (result == kNetSuccess)
+            VaultSendNode(node, playerID);
+    });
 }
 
 //============================================================================
