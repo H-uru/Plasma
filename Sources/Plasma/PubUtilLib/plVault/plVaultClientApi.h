@@ -384,13 +384,13 @@ void           VaultAddAgeChronicleEntry (
     int               entryType,
     const ST::string& entryValue
 );
-typedef void (*FVaultAgeAddDeviceCallback)(ENetError result, hsRef<RelVaultNode> device, void* param);
-void VaultAgeAddDevice(const ST::string& deviceName, FVaultAgeAddDeviceCallback callback, void* param);
+using FVaultAgeAddDeviceCallback = std::function<void(ENetError result, hsRef<RelVaultNode> device)>;
+void VaultAgeAddDevice(const ST::string& deviceName, FVaultAgeAddDeviceCallback callback);
 void VaultAgeRemoveDevice (const ST::string& deviceName);
 bool VaultAgeHasDevice (const ST::string& deviceName);
 hsRef<RelVaultNode> VaultAgeGetDevice(const ST::string& deviceName);
-typedef void (*FVaultAgeSetDeviceInboxCallback)(ENetError result, hsRef<RelVaultNode> inbox, void* param);
-void VaultAgeSetDeviceInbox(const ST::string& deviceName, const ST::string& inboxName, FVaultAgeSetDeviceInboxCallback callback, void* param);
+using FVaultAgeSetDeviceInboxCallback = std::function<void(ENetError result, hsRef<RelVaultNode> inbox)>;
+void VaultAgeSetDeviceInbox(const ST::string& deviceName, const ST::string& inboxName, FVaultAgeSetDeviceInboxCallback callback);
 hsRef<RelVaultNode> VaultAgeGetDeviceInbox(const ST::string& deviceName);
 void VaultClearDeviceInboxMap ();
 
