@@ -1684,12 +1684,11 @@ void VaultForceSaveNodeAndWait (
 //============================================================================
 void VaultFindNodes (
     hsWeakRef<NetVaultNode> templateNode,
-    FVaultFindNodeCallback  callback,
-    void *                  param
+    FVaultFindNodeCallback  callback
 ) {
-    NetCliAuthVaultNodeFind(templateNode.Get(), [callback, param](auto result, auto nodeIdCount, auto nodeIds) {
+    NetCliAuthVaultNodeFind(templateNode.Get(), [callback = std::move(callback)](auto result, auto nodeIdCount, auto nodeIds) {
         if (callback) {
-            callback(result, param, nodeIdCount, nodeIds);
+            callback(result, nodeIdCount, nodeIds);
         }
     });  
 }

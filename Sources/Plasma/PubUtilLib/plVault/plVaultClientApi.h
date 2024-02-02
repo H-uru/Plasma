@@ -265,16 +265,14 @@ void VaultForceSaveNodeAndWait (
     hsWeakRef<NetVaultNode>     node
 );
 
-typedef void (*FVaultFindNodeCallback)(
+using FVaultFindNodeCallback = std::function<void(
     ENetError           result,
-    void *              param,
     unsigned            nodeIdCount,
     const unsigned      nodeIds[]
-);
+)>;
 void VaultFindNodes (
     hsWeakRef<NetVaultNode> templateNode,
-    FVaultFindNodeCallback  callback,
-    void *                  param
+    FVaultFindNodeCallback  callback
 );
 void VaultFindNodesAndWait (
     hsWeakRef<NetVaultNode> templateNode,
