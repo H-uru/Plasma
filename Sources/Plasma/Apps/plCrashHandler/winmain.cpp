@@ -60,6 +60,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plClipboard/plClipboard.h"
 #include "plMessageBox/hsMessageBox.h"
+#include "plStatusLog/plStatusLog.h"
+#include "plWinDpi/plWinDpi.h"
 
 #include "pfCrashHandler/plCrashSrv.h"
 
@@ -363,6 +365,9 @@ static void IShowCrashDialog(HINSTANCE hInstance)
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
+    plStatusLog::fLoggingOff = true;
+    plWinDpi::Instance();
+
     enum { kArgCrashFile, kArgForceShow };
     const plCmdArgDef cmdLineArgs[] = {
         { kCmdArgRequired | kCmdTypeString, "file", kArgCrashFile },
