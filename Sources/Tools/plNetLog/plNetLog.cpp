@@ -176,7 +176,7 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     m_autoscroll = new QCheckBox(tr("&Autoscroll"), searchBar);
     m_autoscroll->setChecked(true);
     QGridLayout* searchLayout = new QGridLayout(searchBar);
-    searchLayout->setMargin(0);
+    searchLayout->setContentsMargins(0, 0, 0, 0);
     searchLayout->setHorizontalSpacing(4);
     searchLayout->addWidget(m_searchText, 0, 0);
     searchLayout->addWidget(btnSearch, 0, 1);
@@ -200,7 +200,7 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     QLabel* lblPath = new QLabel(tr("MOULa &Client:"), pathSpec);
     lblPath->setBuddy(m_exePath);
     QGridLayout* pathLayout = new QGridLayout(pathSpec);
-    pathLayout->setMargin(0);
+    pathLayout->setContentsMargins(0, 0, 0, 0);
     pathLayout->setHorizontalSpacing(4);
     pathLayout->addWidget(lblPath, 0, 0);
     pathLayout->addWidget(m_exePath, 0, 1);
@@ -211,14 +211,14 @@ plNetLogGUI::plNetLogGUI(QWidget* parent)
     QPushButton* loadAuth = new QPushButton(tr("Load Auth Log"), loadBar);
     QPushButton* loadGame = new QPushButton(tr("Load Game Log"), loadBar);
     QGridLayout* loadLayout = new QGridLayout(loadBar);
-    loadLayout->setMargin(0);
+    loadLayout->setContentsMargins(0, 0, 0, 0);
     loadLayout->setHorizontalSpacing(4);
     loadLayout->addWidget(loadGate, 0, 0);
     loadLayout->addWidget(loadAuth, 0, 1);
     loadLayout->addWidget(loadGame, 0, 2);
 
     QGridLayout* layout = new QGridLayout(window);
-    layout->setMargin(4);
+    layout->setContentsMargins(4, 4, 4, 4);
     layout->addWidget(btnClear, 0, 0);
     layout->addWidget(searchBar, 1, 0);
     layout->addWidget(m_logView, 2, 0);

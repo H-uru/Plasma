@@ -47,7 +47,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <variant>
 
 #include "hsWindows.h"
-#include <ShellScalingApi.h>
+
+#ifdef HAVE_SHELLSCALINGAPI
+#   include <ShellScalingApi.h>
+#else
+    typedef enum
+    {
+        PROCESS_DPI_UNAWARE = 0,
+        PROCESS_SYSTEM_DPI_AWARE = 1,
+        PROCESS_PER_MONITOR_DPI_AWARE = 2
+    } PROCESS_DPI_AWARENESS;
+
+    typedef enum
+    {
+        MDT_EFFECTIVE_DPI = 0,
+        MDT_ANGULAR_DPI = 1,
+        MDT_RAW_DPI = 2,
+        MDT_DEFAULT = MDT_EFFECTIVE_DPI
+    } MONITOR_DPI_TYPE;
+#endif
 
 #include "plStatusLog/plStatusLog.h"
 

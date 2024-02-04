@@ -149,7 +149,7 @@ private:
     QMutex              m_mutex;
     std::list<Buffer>   m_chunks;
 
-    void waitOnData(QMutexLocker& lock);
+    void waitOnData(QMutexLocker<QMutex>& lock);
 };
 
 #endif
