@@ -121,6 +121,17 @@ public:
     
     NSError* errorInScope;
     
+    if (!self.updatedClientURL) {
+        // uh oh - this implies we weren't able to decompress the client
+        if (error)
+        {
+            // Handle as a generic could not read file error.
+            // Bad compression on the server will require correction on the server end.
+            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadNoSuchFileError userInfo:nil];
+        }
+        return;
+    }
+    
     if ([NSFileManager.defaultManager fileExistsAtPath:destinationPath]) {
         // need to swap
         int swapError = renamex_np(destinationURL.path.fileSystemRepresentation, self.updatedClientURL.path.fileSystemRepresentation, RENAME_SWAP);
@@ -205,6 +216,16 @@ static la_ssize_t copy_data(struct archive *ar, struct archive *aw)
 
 void Patcher::ISelfPatch(const plFileName& file)
 {
+    /*
+     Note on errors:
+     This function does not return errors, but a self patch
+     without a populated updatedClientURL will imply something
+     went wrong during decompress.
+     */
+    
+    PLSPatcher* patcher = parent;
+    patcher.selfPatched = true;
+    
     struct archive *a;
     struct archive *ext;
     struct archive_entry *entry;
@@ -223,8 +244,10 @@ void Patcher::ISelfPatch(const plFileName& file)
     ext = archive_write_disk_new();
     archive_write_disk_set_options(ext, flags);
     archive_write_disk_set_standard_lookup(ext);
-    if ((r = archive_read_open_filename(a, file.GetFileName().c_str(), 10240)))
-        exit(1);
+    if ((r = archive_read_open_filename(a, file.GetFileName().c_str(), 10240))) {
+        // couldn't read
+        return;
+    }
     
     plFileSystem::Unlink(plManifest::PatcherExecutable());
     
@@ -233,14 +256,18 @@ void Patcher::ISelfPatch(const plFileName& file)
     [NSFileManager.defaultManager createDirectoryAtURL:outputURL withIntermediateDirectories:false attributes:nil error:nil];
     ST::string outputPath = [outputURL.path STString];
     
+    bool succeeded = true;
+    
     while (true) {
         r = archive_read_next_header(a, &entry);
         if (r == ARCHIVE_EOF)
             break;
         if (r < ARCHIVE_OK)
             fprintf(stderr, "%s\n", archive_error_string(a));
-        if (r < ARCHIVE_WARN)
-            exit(1);
+        if (r < ARCHIVE_WARN) {
+            succeeded = false;
+            break;
+        }
         const char* currentFile = archive_entry_pathname(entry);
         auto fullOutputPath = outputPath + "/" + currentFile;
         archive_entry_set_pathname(entry, fullOutputPath.c_str());
@@ -251,14 +278,18 @@ void Patcher::ISelfPatch(const plFileName& file)
             r = copy_data(a, ext);
             if (r < ARCHIVE_OK)
                 fprintf(stderr, "%s\n", archive_error_string(ext));
-            if (r < ARCHIVE_WARN)
-                exit(1);
+            if (r < ARCHIVE_WARN) {
+                succeeded = false;
+                break;
+            }
         }
         r = archive_write_finish_entry(ext);
         if (r < ARCHIVE_OK)
             fprintf(stderr, "%s\n", archive_error_string(ext));
-        if (r < ARCHIVE_WARN)
-            exit(1);
+        if (r < ARCHIVE_WARN) {
+            succeeded = false;
+            break;
+        }
     }
     archive_read_close(a);
     archive_read_free(a);
@@ -267,8 +298,10 @@ void Patcher::ISelfPatch(const plFileName& file)
     
     plFileSystem::Unlink(file);
     
-    PLSPatcher* patcher = parent;
-    parent.updatedClientURL = outputURL;
+    if (succeeded)
+    {
+        parent.updatedClientURL = outputURL;
+    }
 }
 
 void Patcher::IOnPatchComplete(ENetError result, const ST::string& msg)
@@ -278,7 +311,7 @@ void Patcher::IOnPatchComplete(ENetError result, const ST::string& msg)
         PLSPatcher* patcher = parent;
         dispatch_async(dispatch_get_main_queue(), ^{
             [patcher.delegate patcherCompleted:patcher
-                                  didSelfPatch:(patcher.updatedClientURL != nil)];
+                                  didSelfPatch:patcher.selfPatched];
         });
     } else {
         NSString* msgString = [NSString stringWithSTString:msg];
