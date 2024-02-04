@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPXCooking.h"
 #include "hsGeometry3.h"
 #include "hsStream.h"
+#include <string_theory/format>
 
 // ==========================================================================
 

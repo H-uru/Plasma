@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <vector>
+#include <string_theory/format>
 
 #include "HeadSpin.h"
 #include "plProxyGen.h"

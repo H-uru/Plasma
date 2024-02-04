@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 
 #include <vector>
+#include <string_theory/string>
 
 class hsStream;
 class hsResMgr;

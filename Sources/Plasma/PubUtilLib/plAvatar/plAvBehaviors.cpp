@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvBehaviors.h"
 
 #include <algorithm>
+#include <string_theory/format>
 
 #include "plAvBrainHuman.h"
 #include "plArmatureMod.h"

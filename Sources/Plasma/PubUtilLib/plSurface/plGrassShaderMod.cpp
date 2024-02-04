@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plGrassShaderMod.h"
+#include <string_theory/format>
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"

@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGeoSpanDice.h"
 #include "plGeometrySpan.h"
 #include "plGBufferGroup.h"
+#include <string_theory/format>
 #include "hsFastMath.h"
 #include "plRenderLevel.h"
 #include "hsResMgr.h"

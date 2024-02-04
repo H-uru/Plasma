@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plMsgForwarder_h_inc
 
 #include <map>
+#include <vector>
 #include "hsKeyedObject.h"
 
 

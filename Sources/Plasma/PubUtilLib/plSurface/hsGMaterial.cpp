@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <cmath>
+#include <string_theory/format>
 #include "hsGMaterial.h"
 
 #include "HeadSpin.h"

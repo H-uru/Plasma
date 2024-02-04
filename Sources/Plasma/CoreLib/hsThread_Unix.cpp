@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <cstring>
+#include <string_theory/format>
 
 #define NO_POSIX_CLOCK 1
 

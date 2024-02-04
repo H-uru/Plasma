@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsBitVector.h"
 
+#include <string_theory/format>
+
 #include "pnMessage/plMessage.h"
 
 const plSpawnPointInfo kDefaultSpawnPoint( kDefaultSpawnPtTitle, kDefaultSpawnPtName );

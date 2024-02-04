@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plRegistryNode.h"
+#include <string_theory/format>
 
 #include "hsStream.h"
 #include "plRegistryHelpers.h"
