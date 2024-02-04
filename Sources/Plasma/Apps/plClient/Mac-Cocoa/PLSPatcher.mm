@@ -114,21 +114,36 @@ public:
     self.patcher->Start();
 }
 
-- (NSURL *)completeSelfPatch
+- (NSURL *)completeSelfPatch:(NSError **)error;
 {
     NSString* destinationPath = [NSString stringWithSTString:plManifest::PatcherExecutable().AsString()];
     NSURL* destinationURL = [NSURL fileURLWithPath:[NSString stringWithSTString:plManifest::PatcherExecutable().AsString()]];
     
+    NSError* errorInScope;
+    
     if ([NSFileManager.defaultManager fileExistsAtPath:destinationPath]) {
         // need to swap
-        renamex_np(destinationURL.path.fileSystemRepresentation, self.updatedClientURL.path.fileSystemRepresentation, RENAME_SWAP);
-        
-        // delete the old version - this is very likely us
-        // we want to terminate after. Our bundle will no longer be valid.
-        [NSFileManager.defaultManager removeItemAtURL:self.updatedClientURL error:nil];
+        int swapError = renamex_np(destinationURL.path.fileSystemRepresentation, self.updatedClientURL.path.fileSystemRepresentation, RENAME_SWAP);
+        if (swapError == 0) {
+            // delete the old version - this is very likely us
+            // we want to terminate after. Our bundle will no longer be valid.
+            [NSFileManager.defaultManager removeItemAtURL:self.updatedClientURL error:&errorInScope];
+        } else {
+            // abort and return an error
+            errorInScope = [NSError errorWithDomain:NSPOSIXErrorDomain code:swapError userInfo:nil];
+        }
     } else {
         // no executable already present! Just move things into place.
-        [NSFileManager.defaultManager moveItemAtURL:self.updatedClientURL toURL:destinationURL error:nil];
+        [NSFileManager.defaultManager moveItemAtURL:self.updatedClientURL toURL:destinationURL error:&errorInScope];
+    }
+    
+    if (errorInScope) {
+        // Try to clean up if there was an error
+        [NSFileManager.defaultManager removeItemAtURL:self.updatedClientURL error:nil];
+        if (error) {
+            *error = errorInScope;
+        }
+        return nil;
     }
     
     return destinationURL;

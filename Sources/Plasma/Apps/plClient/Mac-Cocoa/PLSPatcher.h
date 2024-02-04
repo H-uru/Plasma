@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(weak) id<PLSPatcherDelegate> delegate;
 @property(readonly) BOOL selfPatched;
 
-- (NSURL*)completeSelfPatch;
+- (NSURL*)completeSelfPatch:(NSError **)error;
 - (void)start;
 
 @end

@@ -427,7 +427,19 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     [NSApp endModalSession:self.currentModalSession];
     [self.patcherWindow.window close];
     if (selfPatched) {
-        NSURL* finalURL = [patcher completeSelfPatch];
+        NSError *error;
+        NSURL* finalURL = [patcher completeSelfPatch:&error];
+        
+        if (error) {
+            // uh oh, we couldn't self patch, present the error and bail
+            // this should be very rare and could be related to permissions issues
+            // we expect the game directory to be writable by all
+            NSAlert *errorAlert = [NSAlert alertWithError:error];
+            [errorAlert runModal];
+            [NSApp terminate:self];
+            // return just in case we ever reach here
+            return;
+        }
         
         // Pass the "we've already patched" argument
         NSArray* applicationArguments = [[[NSProcessInfo processInfo] arguments] arrayByAddingObject:@"-NoSelfPatch"];
