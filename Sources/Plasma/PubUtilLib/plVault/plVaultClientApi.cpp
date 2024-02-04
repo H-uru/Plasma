@@ -2227,17 +2227,16 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
 
 //============================================================================
 namespace _VaultRegisterOwnedAge {
-    void _CreateAgeLinkNode(ENetError result, plSpawnPointInfo* spawn, uint32_t ageInfoVaultId, hsWeakRef<RelVaultNode> node)
+    void _CreateAgeLinkNode(ENetError result, const plSpawnPointInfo& spawn, uint32_t ageInfoVaultId, hsWeakRef<RelVaultNode> node)
     {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("VaultRegisterOwnedAge: Failed to create AgeLink (async)");
-            delete spawn;
             return;
         }
 
         // Set swpoint
         VaultAgeLinkNode aln(node);
-        aln.AddSpawnPoint(*spawn);
+        aln.AddSpawnPoint(spawn);
 
         // Make some refs
         hsRef<RelVaultNode> agesIOwn = VaultGetAgesIOwnFolder();
@@ -2269,9 +2268,6 @@ namespace _VaultRegisterOwnedAge {
         msg->SetResultCode(result);
         msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->GetNodeId());
         msg->Send();
-
-        // Don't leak memory
-        delete spawn;
     }
 }; // namespace _VaultRegisterOwnedAge
 
@@ -2288,11 +2284,10 @@ void VaultRegisterOwnedAge(const plAgeLinkStruct* link) {
         return;
 
     // Let's go async, my friend :)
-    auto spawn = new plSpawnPointInfo(link->SpawnPoint());
     VaultInitAge(
         link->GetAgeInfo(),
         kNilUuid,
-        [spawn](auto result, auto ageVaultId, auto ageInfoVaultId) {
+        [spawn = link->SpawnPoint()](auto result, auto ageVaultId, auto ageInfoVaultId) {
             if (IS_NET_SUCCESS(result)) {
                 VaultDownload(
                     "RegisterOwnedAge",
@@ -2300,7 +2295,6 @@ void VaultRegisterOwnedAge(const plAgeLinkStruct* link) {
                     [spawn, ageInfoVaultId](auto result) {
                         if (IS_NET_ERROR(result)) {
                             s_log->AddLine("VaultRegisterOwnedAge: Failed to download age vault (async)");
-                            delete spawn;
                         } else {
                             VaultCreateNode(plVault::kNodeType_AgeLink, [spawn, ageInfoVaultId](auto result, auto node) {
                                 _VaultRegisterOwnedAge::_CreateAgeLinkNode(result, spawn, ageInfoVaultId, node);
@@ -2495,11 +2489,10 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
 
 //============================================================================
 namespace _VaultRegisterVisitAge {
-    void _CreateAgeLinkNode(ENetError result, plSpawnPointInfo* spawn, uint32_t ageInfoId, hsWeakRef<RelVaultNode> node)
+    void _CreateAgeLinkNode(ENetError result, const plSpawnPointInfo& spawn, uint32_t ageInfoId, hsWeakRef<RelVaultNode> node)
     {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("RegisterVisitAge: Failed to create AgeLink (async)");
-            delete spawn;
             return;
         }
 
@@ -2519,7 +2512,7 @@ namespace _VaultRegisterVisitAge {
 
         // Update the AgeLink with a spawn point
         VaultAgeLinkNode access(node);
-        access.AddSpawnPoint(*spawn);
+        access.AddSpawnPoint(spawn);
 
         // Send out the VaultNotify msg
         plVaultNotifyMsg * msg = new plVaultNotifyMsg;
@@ -2527,9 +2520,6 @@ namespace _VaultRegisterVisitAge {
         msg->SetResultCode(result);
         msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->GetNodeId());
         msg->Send();
-
-        //Don't leak memory
-        delete spawn;
     }
 };
 
@@ -2540,17 +2530,14 @@ void VaultRegisterVisitAge(const plAgeLinkStruct* link) {
         return;
 
     // Still here? We need to actually do some work, then.
-    plSpawnPointInfo* spawn = new plSpawnPointInfo(link->SpawnPoint());
-
     // This doesn't actually *create* a new age but rather fetches the
     // already existing age vault. Weird? Yes...
     VaultInitAge(
         link->GetAgeInfo(),
         kNilUuid,
-        [spawn](auto result, auto ageVaultId, auto ageInfoVaultId) {
+        [spawn = link->SpawnPoint()](auto result, auto ageVaultId, auto ageInfoVaultId) {
             if (IS_NET_ERROR(result)) {
                 s_log->AddLine("RegisterVisitAge: Failed to init age vault (async)");
-                delete spawn;
                 return;
             }
 
@@ -2561,7 +2548,6 @@ void VaultRegisterVisitAge(const plAgeLinkStruct* link) {
                 [spawn, ageInfoVaultId](auto result) {
                     if (IS_NET_ERROR(result)) {
                         s_log->AddLine("RegisterVisitAge: Failed to download age vault (async)");
-                        delete spawn;
                         return;
                     }
 
