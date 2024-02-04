@@ -117,30 +117,21 @@ public:
 - (NSURL *)completeSelfPatch
 {
     NSString* destinationPath = [NSString stringWithSTString:plManifest::PatcherExecutable().AsString()];
-    NSURL *destinationURL = [NSURL fileURLWithPath:[NSString stringWithSTString:plManifest::PatcherExecutable().AsString()]];
+    NSURL* destinationURL = [NSURL fileURLWithPath:[NSString stringWithSTString:plManifest::PatcherExecutable().AsString()]];
     
     if ([NSFileManager.defaultManager fileExistsAtPath:destinationPath]) {
         // need to swap
-        
-        char originalPath[PATH_MAX] = {0};
-        [self.updatedClientURL.path getFileSystemRepresentation:originalPath maxLength:sizeof(originalPath)];
-        
-        char newPath[PATH_MAX] = {0};
-        [destinationURL.path getFileSystemRepresentation:newPath maxLength:sizeof(newPath)];
-        
-        renamex_np(newPath, originalPath, RENAME_SWAP);
+        renamex_np(destinationURL.path.fileSystemRepresentation, self.updatedClientURL.path.fileSystemRepresentation, RENAME_SWAP);
         
         // delete the old version - this is very likely us
         // we want to terminate after. Our bundle will no longer be valid.
         [NSFileManager.defaultManager removeItemAtURL:self.updatedClientURL error:nil];
-        return destinationURL;
     } else {
         // no executable already present! Just move things into place.
         [NSFileManager.defaultManager moveItemAtURL:self.updatedClientURL toURL:destinationURL error:nil];
-        return destinationURL;
     }
     
-    return nil;
+    return destinationURL;
 }
 
 void Patcher::IOnDownloadBegin(const plFileName& file)
@@ -227,7 +218,7 @@ void Patcher::ISelfPatch(const plFileName& file)
     [NSFileManager.defaultManager createDirectoryAtURL:outputURL withIntermediateDirectories:false attributes:nil error:nil];
     ST::string outputPath = [outputURL.path STString];
     
-    for (;;) {
+    while (true) {
         r = archive_read_next_header(a, &entry);
         if (r == ARCHIVE_EOF)
             break;

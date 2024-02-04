@@ -574,7 +574,6 @@ void pfPatcherWorker::IHashFile(pfPatcherQueuedFile& file)
     // Check to see if ours matches
     plFileName clientPathForComparison = file.fClientPath;
     if (file.fFlags & kBundle) {
-        bool whitelistBundle = true;
         if (fFindBundleExe) {
             clientPathForComparison = fFindBundleExe(clientPathForComparison);
         }
