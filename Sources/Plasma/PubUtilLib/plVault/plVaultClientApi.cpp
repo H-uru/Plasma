@@ -1441,45 +1441,26 @@ void VaultAddChildNode (
 }
 
 //============================================================================
-namespace _VaultAddChildNodeAndWait {
-
-struct _AddChildNodeParam {
-    ENetError       result;
-    bool            complete;
-};
-static void _AddChildNodeCallback (
-    ENetError       result,
-    _AddChildNodeParam* param
-) {
-    param->result       = result;
-    param->complete     = true;
-}
-
-} // namespace _VaultAddChildNodeAndWait
-
-//============================================================================
 void VaultAddChildNodeAndWait (
     unsigned                    parentId,
     unsigned                    childId,
     unsigned                    ownerId
 ) {
-    using namespace _VaultAddChildNodeAndWait;
-    
-    _AddChildNodeParam param;
-    memset(&param, 0, sizeof(param));
-    
-    VaultAddChildNode(parentId, childId, ownerId, [&param](auto result) {
-        _AddChildNodeCallback(result, &param);
+    ENetError result = kNetPending;
+    bool complete = false;
+    VaultAddChildNode(parentId, childId, ownerId, [&result, &complete](auto res) {
+        result = res;
+        complete = true;
     });
 
-    while (!param.complete) {
+    while (!complete) {
         NetClientUpdate();
         plgDispatch::Dispatch()->MsgQueueProcess();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    
-    if (IS_NET_ERROR(param.result))
-        s_log->AddLineF("VaultAddChildNodeAndWait: Failed to add child node: p:{},c:{}. {}", parentId, childId, NetErrorToString(param.result));
+
+    if (IS_NET_ERROR(result))
+        s_log->AddLineF("VaultAddChildNodeAndWait: Failed to add child node: p:{},c:{}. {}", parentId, childId, NetErrorToString(result));
 }
 
 //============================================================================
@@ -1596,46 +1577,25 @@ void VaultCreateNode (
 }
 
 //============================================================================
-namespace _VaultCreateNodeAndWait {
-
-struct _CreateNodeParam {
-    hsWeakRef<RelVaultNode> node;
-    ENetError       result;
-    bool            complete;
-};
-static void _CreateNodeCallback (
-    ENetError       result,
-    _CreateNodeParam* param,
-    hsWeakRef<RelVaultNode>  node
-) {
-    param->node     = node;
-    param->result   = result;
-    param->complete = true;
-}
-
-} // namespace _VaultCreateNodeAndWait
-
 hsRef<RelVaultNode> VaultCreateNodeAndWait (
     hsWeakRef<NetVaultNode>     templateNode,
     ENetError *                 result
 ) {
-    using namespace _VaultCreateNodeAndWait;
-    
-    _CreateNodeParam param;
-    memset(&param, 0, sizeof(param));
-    
-    VaultCreateNode(templateNode, [&param](auto result, auto node) {
-        _CreateNodeCallback(result, &param, node);
+    hsWeakRef<RelVaultNode> node;
+    bool complete = false;
+    VaultCreateNode(templateNode, [&node, result, &complete](auto res, auto n) {
+        node = n;
+        *result = res;
+        complete = true;
     });
-    
-    while (!param.complete) {
+
+    while (!complete) {
         NetClientUpdate();
         plgDispatch::Dispatch()->MsgQueueProcess();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    
-    *result = param.result;
-    return param.node;
+
+    return node;
 }
 
 //============================================================================
@@ -2088,67 +2048,7 @@ bool VaultGetVisitAgeLink (const plAgeInfoStruct * info, class plAgeLinkStruct *
 }
 
 //============================================================================
-namespace _VaultRegisterOwnedAgeAndWait {
-
-struct _InitAgeParam {
-    ENetError       result;
-    bool            complete;
-    unsigned        ageInfoId;
-};
-static void _InitAgeCallback (
-    ENetError       result,
-    _InitAgeParam* param,
-    unsigned        ageVaultId,
-    unsigned        ageInfoVaultId
-) {
-    param->ageInfoId    = ageInfoVaultId;
-    param->result       = result;
-    param->complete     = true;
-}
-struct _FetchVaultParam {
-    ENetError       result;
-    bool            complete;
-};
-static void _FetchVaultCallback (
-    ENetError       result,
-    _FetchVaultParam* param
-) {
-    param->result       = result;
-    param->complete     = true;
-}
-struct _CreateNodeParam {
-    ENetError       result;
-    bool            complete;
-    unsigned        nodeId;
-};
-static void _CreateNodeCallback (
-    ENetError       result,
-    _CreateNodeParam* param,
-    hsWeakRef<RelVaultNode> node
-) {
-    if (IS_NET_SUCCESS(result))
-        param->nodeId = node->GetNodeId();
-    param->result       = result;
-    param->complete     = true;
-}
-struct _AddChildNodeParam {
-    ENetError       result;
-    bool            complete;
-};
-static void _AddChildNodeCallback (
-    ENetError       result,
-    _AddChildNodeParam* param
-) {
-    param->result       = result;
-    param->complete     = true;
-}
-
-} // namespace _VaultRegisterOwnedAgeAndWait
-
-//============================================================================
 bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
-    using namespace _VaultRegisterOwnedAgeAndWait;
-
     unsigned ageLinkId = 0;
     unsigned ageInfoId;
     unsigned agesIOwnId;
@@ -2172,77 +2072,76 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
         }
         
         {   // Init age vault
-            _InitAgeParam   param;
-            memset(&param, 0, sizeof(param));
-
+            ENetError initResult = kNetPending;
+            bool complete = false;
             VaultInitAge(
                 link->GetAgeInfo(),
                 kNilUuid,
-                [&param](auto result, auto ageVaultId, auto ageInfoVaultId) {
-                    _InitAgeCallback(result, &param, ageVaultId, ageInfoVaultId);
+                [&ageInfoId, &initResult, &complete](auto res, auto ageVaultId, auto ageInfoVaultId) {
+                    ageInfoId = ageInfoVaultId;
+                    initResult = res;
+                    complete = true;
                 }
             );
 
-            while (!param.complete) {
+            while (!complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-            
-            if (IS_NET_ERROR(param.result)) {
+
+            if (IS_NET_ERROR(initResult)) {
                 s_log->AddLineF("RegisterOwnedAge: Failed to init age {}", link->GetAgeInfo()->GetAgeFilename());
-                result = param.result;
+                result = initResult;
                 break;
             }
-                
-            ageInfoId = param.ageInfoId;
-        }       
-        
-        {   // Create age link
-            _CreateNodeParam    param;
-            memset(&param, 0, sizeof(param));
+        }
 
-            VaultCreateNode(plVault::kNodeType_AgeLink, [&param](auto result, auto node) {
-                _CreateNodeCallback(result, &param, node);
+        {   // Create age link
+            ENetError createResult = kNetPending;
+            bool complete = false;
+            VaultCreateNode(plVault::kNodeType_AgeLink, [&ageLinkId, &createResult, &complete](auto res, auto node) {
+                if (IS_NET_SUCCESS(res))
+                    ageLinkId = node->GetNodeId();
+                createResult = res;
+                complete = true;
             });
 
-            while (!param.complete) {
+            while (!complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-            
-            if (IS_NET_ERROR(param.result)) {
+
+            if (IS_NET_ERROR(createResult)) {
                 s_log->AddLine("RegisterOwnedAge: Failed create age link node");
-                result = param.result;
+                result = createResult;
                 break;
             }
-                
-            ageLinkId = param.nodeId;
-        }       
+        }
 
         {   // Fetch age info node tree
-            _FetchVaultParam    param;
-            memset(&param, 0, sizeof(param));
-            
+            ENetError downloadResult = kNetPending;
+            bool complete = false;
             VaultDownload(
                 "RegisterOwnedAge",
                 ageInfoId,
-                [&param](auto result) {
-                    _FetchVaultCallback(result, &param);
+                [&downloadResult, &complete](auto res) {
+                    downloadResult = res;
+                    complete = true;
                 },
                 nullptr
             );
-            
-            while (!param.complete) {
+
+            while (!complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-            
-            if (IS_NET_ERROR(param.result)) {
+
+            if (IS_NET_ERROR(downloadResult)) {
                 s_log->AddLine("RegisterOwnedAge: Failed to download age info vault");
-                result = param.result;
+                result = downloadResult;
                 break;
             }
         }
@@ -2251,14 +2150,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             // ageLink to player's bookshelf folder
             // ageInfo to ageLink
             // playerInfo to ageOwners
-            _AddChildNodeParam  param1;
-            _AddChildNodeParam  param2;
-            _AddChildNodeParam  param3;
-            memset(&param1, 0, sizeof(param1));
-            memset(&param2, 0, sizeof(param2));
-            memset(&param3, 0, sizeof(param3));
-
-            unsigned ageOwnersId = 0;       
+            unsigned ageOwnersId = 0;
             if (hsRef<RelVaultNode> rvnAgeInfo = VaultGetNode(ageInfoId)) {
                 if (hsRef<RelVaultNode> rvnAgeOwners = rvnAgeInfo->GetChildPlayerInfoListNode(plVault::kAgeOwnersFolder, 1))
                     ageOwnersId = rvnAgeOwners->GetNodeId();
@@ -2268,37 +2160,46 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             if (hsRef<RelVaultNode> rvnPlayerInfo = VaultGetPlayerInfoNode())
                 playerInfoId = rvnPlayerInfo->GetNodeId();
 
-            VaultAddChildNode(agesIOwnId, ageLinkId, 0, [&param1](auto result) {
-                _AddChildNodeCallback(result, &param1);
+            ENetError addResult1 = kNetPending;
+            bool complete1 = false;
+            VaultAddChildNode(agesIOwnId, ageLinkId, 0, [&addResult1, &complete1](auto res) {
+                addResult1 = res;
+                complete1 = true;
             });
 
-            VaultAddChildNode(ageLinkId, ageInfoId, 0, [&param2](auto result) {
-                _AddChildNodeCallback(result, &param2);
+            ENetError addResult2 = kNetPending;
+            bool complete2 = false;
+            VaultAddChildNode(ageLinkId, ageInfoId, 0, [&addResult2, &complete2](auto res) {
+                addResult2 = res;
+                complete2 = true;
             });
 
-            VaultAddChildNode(ageOwnersId, playerInfoId, 0, [&param3](auto result) {
-                _AddChildNodeCallback(result, &param3);
+            ENetError addResult3 = kNetPending;
+            bool complete3 = false;
+            VaultAddChildNode(ageOwnersId, playerInfoId, 0, [&addResult3, &complete3](auto res) {
+                addResult3 = res;
+                complete3 = true;
             });
 
-            while (!param1.complete && !param2.complete && !param3.complete) {
+            while (!complete1 && !complete2 && !complete3) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-            
-            if (IS_NET_ERROR(param1.result)) {
+
+            if (IS_NET_ERROR(addResult1)) {
                 s_log->AddLine("RegisterOwnedAge: Failed to add link to player's bookshelf");
-                result = param1.result;
+                result = addResult1;
                 break;
             }
-            if (IS_NET_ERROR(param2.result)) {
+            if (IS_NET_ERROR(addResult2)) {
                 s_log->AddLine("RegisterOwnedAge: Failed to add info to link");
-                result = param2.result;
+                result = addResult2;
                 break;
             }
-            if (IS_NET_ERROR(param3.result)) {
+            if (IS_NET_ERROR(addResult3)) {
                 s_log->AddLine("RegisterOwnedAge: Failed to add playerInfo to ageOwners");
-                result = param3.result;
+                result = addResult3;
                 break;
             }
         }
@@ -2326,54 +2227,40 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
 
 //============================================================================
 namespace _VaultRegisterOwnedAge {
-    struct _Params {
-        plSpawnPointInfo* fSpawn;
-        void*           fAgeInfoId;
-
-        ~_Params() {
-            delete fSpawn;
-        }
-    };
-
-    void _AddAgeInfoNode(ENetError result)
+    void _CreateAgeLinkNode(ENetError result, plSpawnPointInfo* spawn, uint32_t ageInfoVaultId, hsWeakRef<RelVaultNode> node)
     {
-        if (IS_NET_ERROR(result))
-            s_log->AddLine("VaultRegisterOwnedAge: Failed to add info to link (async)");
-    }
-
-    void _AddAgeLinkNode(ENetError result)
-    {
-        if (IS_NET_ERROR(result))
-            s_log->AddLine("VaultRegisterOwnedAge: Failed to add age to bookshelf (async)");
-    }
-
-    void _AddPlayerInfoNode(ENetError result)
-    {
-        if (IS_NET_ERROR(result))
-            s_log->AddLine("VaultRegisterOwnedAge: Failed to add playerInfo to ageOwners (async)");
-    }
-
-    void _CreateAgeLinkNode(ENetError result, _Params* p, hsWeakRef<RelVaultNode> node) {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("VaultRegisterOwnedAge: Failed to create AgeLink (async)");
-            delete p;
+            delete spawn;
             return;
         }
 
         // Set swpoint
         VaultAgeLinkNode aln(node);
-        aln.AddSpawnPoint(*(p->fSpawn));
+        aln.AddSpawnPoint(*spawn);
 
         // Make some refs
         hsRef<RelVaultNode> agesIOwn = VaultGetAgesIOwnFolder();
         hsRef<RelVaultNode> plyrInfo = VaultGetPlayerInfoNode();
-        VaultAddChildNode(agesIOwn->GetNodeId(), node->GetNodeId(), 0, _AddAgeLinkNode);
-        VaultAddChildNode(node->GetNodeId(), (uint32_t)((uintptr_t)p->fAgeInfoId), 0, _AddAgeInfoNode);
+        VaultAddChildNode(agesIOwn->GetNodeId(), node->GetNodeId(), 0, [](auto res) {
+            if (IS_NET_ERROR(res)) {
+                s_log->AddLine("VaultRegisterOwnedAge: Failed to add age to bookshelf (async)");
+            }
+        });
+        VaultAddChildNode(node->GetNodeId(), ageInfoVaultId, 0, [](auto res) {
+            if (IS_NET_ERROR(res)) {
+                s_log->AddLine("VaultRegisterOwnedAge: Failed to add info to link (async)");
+            }
+        });
 
         // Add our PlayerInfo to important places
-        if (hsRef<RelVaultNode> rvnAgeInfo = VaultGetNode((uint32_t)((uintptr_t)p->fAgeInfoId))) {
+        if (hsRef<RelVaultNode> rvnAgeInfo = VaultGetNode(ageInfoVaultId)) {
             if (hsRef<RelVaultNode> rvnAgeOwners = rvnAgeInfo->GetChildPlayerInfoListNode(plVault::kAgeOwnersFolder, 1))
-                VaultAddChildNode(rvnAgeOwners->GetNodeId(), plyrInfo->GetNodeId(), 0, _AddPlayerInfoNode);
+                VaultAddChildNode(rvnAgeOwners->GetNodeId(), plyrInfo->GetNodeId(), 0, [](auto res) {
+                    if (IS_NET_ERROR(res)) {
+                        s_log->AddLine("VaultRegisterOwnedAge: Failed to add playerInfo to ageOwners (async)");
+                    }
+                });
         }
 
         // Fire off vault callbacks
@@ -2384,41 +2271,11 @@ namespace _VaultRegisterOwnedAge {
         msg->Send();
 
         // Don't leak memory
-        delete p;
-    }
-
-    void _DownloadCallback(ENetError result, _Params* param) {
-        if (IS_NET_ERROR(result)) {
-            s_log->AddLine("VaultRegisterOwnedAge: Failed to download age vault (async)");
-            delete param;
-        } else
-            VaultCreateNode(plVault::kNodeType_AgeLink, [param](auto result, auto node) {
-                _CreateAgeLinkNode(result, param, node);
-            });
-    }
-
-    void _InitAgeCallback(ENetError result, plSpawnPointInfo* spawn, uint32_t ageVaultId, uint32_t ageInfoVaultId) {
-        if (IS_NET_SUCCESS(result)) {
-            _Params* p = new _Params();
-            p->fAgeInfoId = (void*)(uintptr_t)ageInfoVaultId;
-            p->fSpawn = spawn;
-
-            VaultDownload(
-                "RegisterOwnedAge",
-                ageInfoVaultId,
-                [p](auto result) {
-                    _DownloadCallback(result, p);
-                },
-                nullptr
-            );
-        } else
-            s_log->AddLine("VaultRegisterOwnedAge: Failed to init age (async)");
+        delete spawn;
     }
 }; // namespace _VaultRegisterOwnedAge
 
 void VaultRegisterOwnedAge(const plAgeLinkStruct* link) {
-    using namespace _VaultRegisterOwnedAge;
-
     hsRef<RelVaultNode> agesIOwn = VaultGetAgesIOwnFolder();
     if (agesIOwn == nullptr) {
         s_log->AddLine("VaultRegisterOwnedAge: Couldn't find the stupid AgesIOwnfolder!");
@@ -2436,73 +2293,31 @@ void VaultRegisterOwnedAge(const plAgeLinkStruct* link) {
         link->GetAgeInfo(),
         kNilUuid,
         [spawn](auto result, auto ageVaultId, auto ageInfoVaultId) {
-            _InitAgeCallback(result, spawn, ageVaultId, ageInfoVaultId);
+            if (IS_NET_SUCCESS(result)) {
+                VaultDownload(
+                    "RegisterOwnedAge",
+                    ageInfoVaultId,
+                    [spawn, ageInfoVaultId](auto result) {
+                        if (IS_NET_ERROR(result)) {
+                            s_log->AddLine("VaultRegisterOwnedAge: Failed to download age vault (async)");
+                            delete spawn;
+                        } else {
+                            VaultCreateNode(plVault::kNodeType_AgeLink, [spawn, ageInfoVaultId](auto result, auto node) {
+                                _VaultRegisterOwnedAge::_CreateAgeLinkNode(result, spawn, ageInfoVaultId, node);
+                            });
+                        }
+                    },
+                    nullptr
+                );
+            } else {
+                s_log->AddLine("VaultRegisterOwnedAge: Failed to init age (async)");
+            }
         }
     );
 }
 
 //============================================================================
-namespace _VaultRegisterVisitAgeAndWait {
-
-struct _InitAgeParam {
-    ENetError       result;
-    bool            complete;
-    unsigned        ageInfoId;
-};
-static void _InitAgeCallback (
-    ENetError       result,
-    _InitAgeParam* param,
-    unsigned        ageVaultId,
-    unsigned        ageInfoVaultId
-) {
-    param->ageInfoId    = ageInfoVaultId;
-    param->result       = result;
-    param->complete     = true;
-}
-struct _FetchVaultParam {
-    ENetError       result;
-    bool            complete;
-};
-static void _FetchVaultCallback (
-    ENetError       result,
-    _FetchVaultParam* param
-) {
-    param->result       = result;
-    param->complete     = true;
-}
-struct _CreateNodeParam {
-    ENetError       result;
-    bool            complete;
-    unsigned        nodeId;
-};
-static void _CreateNodeCallback (
-    ENetError       result,
-    _CreateNodeParam* param,
-    hsWeakRef<RelVaultNode> node
-) {
-    if (IS_NET_SUCCESS(result))
-        param->nodeId = node->GetNodeId();
-    param->result       = result;
-    param->complete     = true;
-}
-struct _AddChildNodeParam {
-    ENetError       result;
-    bool            complete;
-};
-static void _AddChildNodeCallback (
-    ENetError       result,
-    _AddChildNodeParam* param
-) {
-    param->result       = result;
-    param->complete     = true;
-}
-
-} // namespace _VaultRegisterVisitAgeAndWait
-
-//============================================================================
 bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
-    using namespace _VaultRegisterVisitAgeAndWait;
-
     unsigned ageLinkId = 0;
     unsigned ageInfoId;
     unsigned agesICanVisitId;
@@ -2526,77 +2341,76 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
         
         
         {   // Init age vault
-            _InitAgeParam   param;
-            memset(&param, 0, sizeof(param));
-
+            ENetError initResult = kNetPending;
+            bool complete = false;
             VaultInitAge(
                 link->GetAgeInfo(),
                 kNilUuid,
-                [&param](auto result, auto ageVaultId, auto ageInfoVaultId) {
-                    _InitAgeCallback(result, &param, ageVaultId, ageInfoVaultId);
+                [&ageInfoId, &initResult, &complete](auto res, auto ageVaultId, auto ageInfoVaultId) {
+                    ageInfoId = ageInfoVaultId;
+                    initResult = res;
+                    complete = true;
                 }
             );
 
-            while (!param.complete) {
+            while (!complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-            
-            if (IS_NET_ERROR(param.result)) {
+
+            if (IS_NET_ERROR(initResult)) {
                 s_log->AddLineF("RegisterVisitAge: Failed to init age {}", link->GetAgeInfo()->GetAgeFilename());
-                result = param.result;
+                result = initResult;
                 break;
             }
-                
-            ageInfoId = param.ageInfoId;
-        }       
-        
-        {   // Create age link
-            _CreateNodeParam    param;
-            memset(&param, 0, sizeof(param));
+        }
 
-            VaultCreateNode(plVault::kNodeType_AgeLink, [&param](auto result, auto node) {
-                _CreateNodeCallback(result, &param, node);
+        {   // Create age link
+            ENetError createResult = kNetPending;
+            bool complete = false;
+            VaultCreateNode(plVault::kNodeType_AgeLink, [&ageLinkId, &createResult, &complete](auto res, auto node) {
+                if (IS_NET_SUCCESS(res))
+                    ageLinkId = node->GetNodeId();
+                createResult = res;
+                complete = true;
             });
 
-            while (!param.complete) {
+            while (!complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-            
-            if (IS_NET_ERROR(param.result)) {
+
+            if (IS_NET_ERROR(createResult)) {
                 s_log->AddLine("RegisterVisitAge: Failed create age link node");
-                result = param.result;
+                result = createResult;
                 break;
             }
-                
-            ageLinkId = param.nodeId;
-        }       
+        }
 
         {   // Fetch age info node tree
-            _FetchVaultParam    param;
-            memset(&param, 0, sizeof(param));
-            
+            ENetError downloadResult = kNetPending;
+            bool complete = false;
             VaultDownload(
                 "RegisterVisitAge",
                 ageInfoId,
-                [&param](auto result) {
-                    _FetchVaultCallback(result, &param);
+                [&downloadResult, &complete](auto res) {
+                    downloadResult = res;
+                    complete = true;
                 },
                 nullptr
             );
-            
-            while (!param.complete) {
+
+            while (!complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-            
-            if (IS_NET_ERROR(param.result)) {
+
+            if (IS_NET_ERROR(downloadResult)) {
                 s_log->AddLine("RegisterVisitAge: Failed to download age info vault");
-                result = param.result;
+                result = downloadResult;
                 break;
             }
         }
@@ -2604,14 +2418,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
         { // Link:
             // ageLink to player's "can visit" folder
             // ageInfo to ageLink
-            _AddChildNodeParam  param1;
-            _AddChildNodeParam  param2;
-            _AddChildNodeParam  param3;
-            memset(&param1, 0, sizeof(param1));
-            memset(&param2, 0, sizeof(param2));
-            memset(&param3, 0, sizeof(param3));
-
-            unsigned ageVisitorsId = 0;     
+            unsigned ageVisitorsId = 0;
             if (hsRef<RelVaultNode> rvnAgeInfo = VaultGetNode(ageInfoId)) {
                 if (hsRef<RelVaultNode> rvnAgeVisitors = rvnAgeInfo->GetChildPlayerInfoListNode(plVault::kCanVisitFolder, 1))
                     ageVisitorsId = rvnAgeVisitors->GetNodeId();
@@ -2621,37 +2428,46 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             if (hsRef<RelVaultNode> rvnPlayerInfo = VaultGetPlayerInfoNode())
                 playerInfoId = rvnPlayerInfo->GetNodeId();
 
-            VaultAddChildNode(agesICanVisitId, ageLinkId, 0, [&param1](auto result) {
-                _AddChildNodeCallback(result, &param1);
+            ENetError addResult1 = kNetPending;
+            bool complete1 = false;
+            VaultAddChildNode(agesICanVisitId, ageLinkId, 0, [&addResult1, &complete1](auto res) {
+                addResult1 = res;
+                complete1 = true;
             });
 
-            VaultAddChildNode(ageLinkId, ageInfoId, 0, [&param2](auto result) {
-                _AddChildNodeCallback(result, &param2);
+            ENetError addResult2 = kNetPending;
+            bool complete2 = false;
+            VaultAddChildNode(ageLinkId, ageInfoId, 0, [&addResult2, &complete2](auto res) {
+                addResult2 = res;
+                complete2 = true;
             });
 
-            VaultAddChildNode(ageVisitorsId, playerInfoId, 0, [&param3](auto result) {
-                _AddChildNodeCallback(result, &param3);
+            ENetError addResult3 = kNetPending;
+            bool complete3 = false;
+            VaultAddChildNode(ageVisitorsId, playerInfoId, 0, [&addResult3, &complete3](auto res) {
+                addResult3 = res;
+                complete3 = true;
             });
 
-            while (!param1.complete && !param2.complete && !param3.complete) {
+            while (!complete1 && !complete2 && !complete3) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-            
-            if (IS_NET_ERROR(param1.result)) {
+
+            if (IS_NET_ERROR(addResult1)) {
                 s_log->AddLine("RegisterVisitAge: Failed to add link to folder");
-                result = param1.result;
+                result = addResult1;
                 break;
             }
-            if (IS_NET_ERROR(param2.result)) {
+            if (IS_NET_ERROR(addResult2)) {
                 s_log->AddLine("RegisterVisitAge: Failed to add info to link");
-                result = param2.result;
+                result = addResult2;
                 break;
             }
-            if (IS_NET_ERROR(param3.result)) {
+            if (IS_NET_ERROR(addResult3)) {
                 s_log->AddLine("RegisterVisitAge: Failed to add playerInfo to canVisit folder");
-                result = param3.result;
+                result = addResult3;
                 break;
             }
         }
@@ -2679,24 +2495,15 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
 
 //============================================================================
 namespace _VaultRegisterVisitAge {
-    struct _Params {
-
-        plSpawnPointInfo* fSpawn;
-        void*             fAgeInfoId;
-
-        ~_Params() {
-            delete fSpawn;
-        }
-    };
-
-    void _CreateAgeLinkNode(ENetError result, _Params* p, hsWeakRef<RelVaultNode> node) {
+    void _CreateAgeLinkNode(ENetError result, plSpawnPointInfo* spawn, uint32_t ageInfoId, hsWeakRef<RelVaultNode> node)
+    {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("RegisterVisitAge: Failed to create AgeLink (async)");
-            delete p;
+            delete spawn;
             return;
         }
 
-        hsRef<RelVaultNode> ageInfo = VaultGetNode((uint32_t)((uintptr_t)p->fAgeInfoId));
+        hsRef<RelVaultNode> ageInfo = VaultGetNode(ageInfoId);
 
         // Add ourselves to the Can Visit folder of the age
         if (hsRef<RelVaultNode> playerInfo = VaultGetPlayerInfoNode()) {
@@ -2712,7 +2519,7 @@ namespace _VaultRegisterVisitAge {
 
         // Update the AgeLink with a spawn point
         VaultAgeLinkNode access(node);
-        access.AddSpawnPoint(*p->fSpawn);
+        access.AddSpawnPoint(*spawn);
 
         // Send out the VaultNotify msg
         plVaultNotifyMsg * msg = new plVaultNotifyMsg;
@@ -2722,62 +2529,49 @@ namespace _VaultRegisterVisitAge {
         msg->Send();
 
         //Don't leak memory
-        delete p;
-    }
-
-    void _DownloadCallback(ENetError result, _Params* param) {
-        if (IS_NET_ERROR(result)) {
-            s_log->AddLine("RegisterVisitAge: Failed to download age vault (async)");
-            delete param;
-            return;
-        }
-
-        // Create the AgeLink node 
-        VaultCreateNode(plVault::kNodeType_AgeLink, [param](auto result, auto node) {
-            _CreateAgeLinkNode(result, param, node);
-        });
-    }
-    
-    void _InitAgeCallback(ENetError result, _Params* p, uint32_t ageVaultId, uint32_t ageInfoId) {
-        if (IS_NET_ERROR(result)) {
-            s_log->AddLine("RegisterVisitAge: Failed to init age vault (async)");
-            delete p;
-            return;
-        }
-
-        // Save the AgeInfo nodeID, then download the age vault
-        p->fAgeInfoId = (void*)(uintptr_t)ageInfoId;
-        
-        VaultDownload(
-            "RegisterVisitAge",
-            ageInfoId,
-            [p](auto result) {
-                _DownloadCallback(result, p);
-            },
-            nullptr
-        );
+        delete spawn;
     }
 };
 
 void VaultRegisterVisitAge(const plAgeLinkStruct* link) {
-    using namespace _VaultRegisterVisitAge;
-
     // Test to see if we already have this visit age...
     plAgeLinkStruct existing;
     if (VaultGetVisitAgeLink(link->GetAgeInfo(), &existing))
         return;
 
     // Still here? We need to actually do some work, then.
-    _Params* p = new _Params;
-    p->fSpawn = new plSpawnPointInfo(link->SpawnPoint());
+    plSpawnPointInfo* spawn = new plSpawnPointInfo(link->SpawnPoint());
 
     // This doesn't actually *create* a new age but rather fetches the
     // already existing age vault. Weird? Yes...
     VaultInitAge(
         link->GetAgeInfo(),
         kNilUuid,
-        [p](auto result, auto ageVaultId, auto ageInfoVaultId) {
-            _InitAgeCallback(result, p, ageVaultId, ageInfoVaultId);
+        [spawn](auto result, auto ageVaultId, auto ageInfoVaultId) {
+            if (IS_NET_ERROR(result)) {
+                s_log->AddLine("RegisterVisitAge: Failed to init age vault (async)");
+                delete spawn;
+                return;
+            }
+
+            // Save the AgeInfo nodeID, then download the age vault
+            VaultDownload(
+                "RegisterVisitAge",
+                ageInfoVaultId,
+                [spawn, ageInfoVaultId](auto result) {
+                    if (IS_NET_ERROR(result)) {
+                        s_log->AddLine("RegisterVisitAge: Failed to download age vault (async)");
+                        delete spawn;
+                        return;
+                    }
+
+                    // Create the AgeLink node 
+                    VaultCreateNode(plVault::kNodeType_AgeLink, [spawn, ageInfoVaultId](auto result, auto node) {
+                        _VaultRegisterVisitAge::_CreateAgeLinkNode(result, spawn, ageInfoVaultId, node);
+                    });
+                },
+                nullptr
+            );
         }
     );
 }
@@ -3310,44 +3104,8 @@ void VaultAddAgeChronicleEntry (
 }
 
 //============================================================================
-namespace _VaultAgeAddDevice
-{
-    struct _Params
-    {
-        ST::string deviceName;
-        FVaultAgeAddDeviceCallback callback;
-        hsRef<RelVaultNode> folder;
-        hsRef<RelVaultNode> device;
-    };
-
-    static void _AddFolderDeviceChildCallback(ENetError result, _Params* p)
-    {
-        p->callback(result, IS_NET_SUCCESS(result) ? std::move(p->device) : nullptr);
-        delete p;
-    }
-
-    static void _CreateDeviceCallback(ENetError result, _Params* p, hsWeakRef<RelVaultNode> node)
-    {
-        if (IS_NET_SUCCESS(result)) {
-            VaultTextNoteNode access(node);
-            access.SetNoteType(plVault::kNoteType_Device);
-            access.SetNoteTitle(p->deviceName);
-
-            p->device = node;
-            VaultAddChildNode(p->folder->GetNodeId(), node->GetNodeId(), 0, [p](auto result) {
-                _AddFolderDeviceChildCallback(result, p);
-            });
-        } else {
-            p->callback(result, nullptr);
-            delete p;
-        }
-    }
-}
-
 void VaultAgeAddDevice(const ST::string& deviceName, FVaultAgeAddDeviceCallback callback)
 {
-    using namespace _VaultAgeAddDevice;
-
     if (hsRef<RelVaultNode> existing = VaultAgeGetDevice(deviceName)) {
         callback(kNetSuccess, std::move(existing));
         return;
@@ -3359,9 +3117,18 @@ void VaultAgeAddDevice(const ST::string& deviceName, FVaultAgeAddDeviceCallback 
         return;
     }
 
-    _Params* p = new _Params {deviceName, std::move(callback), std::move(folder)};
-    VaultCreateNode(plVault::kNodeType_TextNote, [p](auto result, auto node) {
-        _CreateDeviceCallback(result, p, node);
+    VaultCreateNode(plVault::kNodeType_TextNote, [deviceName, callback = std::move(callback), folderId = folder->GetNodeId()](auto result, auto node) mutable {
+        if (IS_NET_SUCCESS(result)) {
+            VaultTextNoteNode access(node);
+            access.SetNoteType(plVault::kNoteType_Device);
+            access.SetNoteTitle(deviceName);
+
+            VaultAddChildNode(folderId, node->GetNodeId(), 0, [callback = std::move(callback), device = hsRef(node)](auto result) mutable {
+                callback(result, IS_NET_SUCCESS(result) ? std::move(device) : nullptr);
+            });
+        } else {
+            callback(result, nullptr);
+        }
     });
 }
 
@@ -3410,44 +3177,8 @@ hsRef<RelVaultNode> VaultAgeGetDevice (const ST::string& deviceName) {
 }
 
 //============================================================================
-namespace _VaultAgeSetDeviceInbox
-{
-    struct _Params
-    {
-        ST::string inboxName;
-        FVaultAgeSetDeviceInboxCallback callback;
-        hsRef<RelVaultNode> device;
-        hsRef<RelVaultNode> inbox;
-    };
-
-    static void _AddDeviceInboxChildCallback(ENetError result, _Params* p)
-    {
-        p->callback(result, IS_NET_SUCCESS(result) ? std::move(p->inbox) : nullptr);
-        delete p;
-    }
-
-    static void _CreateDefaultInboxCallback(ENetError result, _Params* p, hsWeakRef<RelVaultNode> node)
-    {
-        if (IS_NET_SUCCESS(result)) {
-            VaultFolderNode access(node);
-            access.SetFolderName(p->inboxName);
-            access.SetFolderType(plVault::kDeviceInboxFolder);
-
-            p->inbox = node;
-            VaultAddChildNode(p->device->GetNodeId(), node->GetNodeId(), 0, [p](auto result) {
-                _AddDeviceInboxChildCallback(result, p);
-            });
-        } else {
-            p->callback(result, nullptr);
-            delete p;
-        }
-    }
-}
-
 void VaultAgeSetDeviceInbox(const ST::string& deviceName, const ST::string& inboxName, FVaultAgeSetDeviceInboxCallback callback)
 {
-    using namespace _VaultAgeSetDeviceInbox;
-
     s_ageDeviceInboxes[deviceName] = inboxName;
 
     // if we found the inbox or its a global inbox then return here, otherwise if its the default inbox and
@@ -3467,9 +3198,18 @@ void VaultAgeSetDeviceInbox(const ST::string& deviceName, const ST::string& inbo
         return;
     }
 
-    _Params* p = new _Params {inboxName, std::move(callback), std::move(device)};
-    VaultCreateNode(plVault::kNodeType_Folder, [p](auto result, auto node) {
-        _CreateDefaultInboxCallback(result, p, node);
+    VaultCreateNode(plVault::kNodeType_Folder, [inboxName, callback = std::move(callback), deviceId = device->GetNodeId()](auto result, auto node) mutable {
+        if (IS_NET_SUCCESS(result)) {
+            VaultFolderNode access(node);
+            access.SetFolderName(inboxName);
+            access.SetFolderType(plVault::kDeviceInboxFolder);
+
+            VaultAddChildNode(deviceId, node->GetNodeId(), 0, [callback = std::move(callback), inbox = hsRef(node)](auto result) mutable {
+                callback(result, IS_NET_SUCCESS(result) ? std::move(inbox) : nullptr);
+            });
+        } else {
+            callback(result, nullptr);
+        }
     });
 }
 
@@ -3591,40 +3331,9 @@ namespace _VaultCreateSubAge {
         msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->GetNodeId());
         msg->Send();
     }
-
-    void _DownloadCallback(ENetError result, uint32_t ageInfoId) {
-        if (IS_NET_ERROR(result)) {
-            s_log->AddLine("CreateSubAge: Failed to download age vault (async)");
-            return;
-        }
-
-        // Create the AgeLink node
-        VaultCreateNode(plVault::kNodeType_AgeLink, [ageInfoId](auto result, auto node) {
-            _CreateNodeCallback(result, ageInfoId, node);
-        });
-    }
-
-    void _InitAgeCallback(ENetError result, uint32_t ageVaultId, uint32_t ageInfoId) {
-        if (IS_NET_ERROR(result)) {
-            s_log->AddLine("CreateSubAge: Failed to init age (async)");
-            return;
-        }
-
-        // Download age vault
-        VaultDownload(
-            "CreateSubAge",
-            ageInfoId,
-            [ageInfoId](auto result) {
-                _DownloadCallback(result, ageInfoId);
-            },
-            nullptr
-        );
-    }
 }; // namespace _VaultCreateSubAge
 
 bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const plUUID& parentUuid) {
-    using namespace _VaultCreateSubAge;
-
     // First, try to find an already existing subage
     if (hsRef<RelVaultNode> rvnLink = VaultGetSubAgeLink(info)) {
         VaultAgeLinkNode accLink(rvnLink);
@@ -3638,28 +3347,46 @@ bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct
         return true;
     }
     
-    VaultInitAge(info, parentUuid, _InitAgeCallback);
+    VaultInitAge(info, parentUuid, [](auto result, auto ageVaultId, auto ageInfoId) {
+        if (IS_NET_ERROR(result)) {
+            s_log->AddLine("CreateSubAge: Failed to init age (async)");
+            return;
+        }
+
+        // Download age vault
+        VaultDownload(
+            "CreateSubAge",
+            ageInfoId,
+            [ageInfoId](auto result) {
+                if (IS_NET_ERROR(result)) {
+                    s_log->AddLine("CreateSubAge: Failed to download age vault (async)");
+                    return;
+                }
+
+                // Create the AgeLink node
+                VaultCreateNode(plVault::kNodeType_AgeLink, [ageInfoId](auto result, auto node) {
+                    _VaultCreateSubAge::_CreateNodeCallback(result, ageInfoId, node);
+                });
+            },
+            nullptr
+        );
+    });
 
     return false;
 }
 
 //============================================================================
 namespace _VaultCreateChildAge {
-    struct _Params {
-        void* fChildAgesFldr;
-        void* fAgeInfoId;
-    };
-
-    void _CreateNodeCallback(ENetError result, _Params* p, hsWeakRef<RelVaultNode> node) {
+    void _CreateNodeCallback(ENetError result, uint32_t childAgesId, uint32_t ageInfoId, hsWeakRef<RelVaultNode> node)
+    {
         if (IS_NET_ERROR(result)) {
             s_log->AddLine("CreateChildAge: Failed to create AgeLink (async)");
-            delete p;
             return;
         }
 
         // Add the children to the right places
-        VaultAddChildNode(node->GetNodeId(), (uint32_t)((uintptr_t)p->fAgeInfoId), 0, nullptr);
-        VaultAddChildNode((uint32_t)((uintptr_t)p->fChildAgesFldr), node->GetNodeId(), 0, nullptr);
+        VaultAddChildNode(node->GetNodeId(), ageInfoId, 0, nullptr);
+        VaultAddChildNode(childAgesId, node->GetNodeId(), 0, nullptr);
 
         // Send the VaultNotify that the plNetLinkingMgr wants...
         plVaultNotifyMsg * msg = new plVaultNotifyMsg;
@@ -3667,41 +3394,6 @@ namespace _VaultCreateChildAge {
         msg->SetResultCode(result);
         msg->GetArgs()->AddInt(plNetCommon::VaultTaskArgs::kAgeLinkNode, node->GetNodeId());
         msg->Send();
-
-        delete p;
-    }
-
-    void _DownloadCallback(ENetError result, _Params* param) {
-        if (IS_NET_ERROR(result)) {
-            s_log->AddLine("CreateChildAge: Failed to download age vault (async)");
-            delete param;
-            return;
-        }
-
-        // Create the AgeLink node
-        VaultCreateNode(plVault::kNodeType_AgeLink, [param](auto result, auto node) {
-            _CreateNodeCallback(result, param, node);
-        });
-    }
-
-    void _InitAgeCallback(ENetError result, _Params* p, uint32_t ageVaultId, uint32_t ageInfoId) {
-        if (IS_NET_ERROR(result)) {
-            s_log->AddLine("CreateChildAge: Failed to init age (async)");
-            delete p;
-            return;
-        }
-
-        p->fAgeInfoId = (void*)(uintptr_t)ageInfoId;
-
-        // Download age vault
-        VaultDownload(
-            "CreateChildAge",
-            ageInfoId,
-            [p](auto result) {
-                _DownloadCallback(result, p);
-            },
-            nullptr
-        );
     }
 }; // namespace _VaultCreateAge
 
@@ -3710,8 +3402,6 @@ plVaultChildAgeLinkResult VaultAgeFindOrCreateChildAgeLink(
     const plAgeInfoStruct* info,
     plAgeLinkStruct*       link) 
 {
-    using namespace _VaultCreateChildAge;
-
     // First, try to find an already existing ChildAge
     plAgeInfoStruct search;
     search.SetAgeFilename(parentAgeName);
@@ -3747,15 +3437,33 @@ plVaultChildAgeLinkResult VaultAgeFindOrCreateChildAgeLink(
 
             retval = plVaultChildAgeLinkResult::kFoundExisting;
         } else {
-            _Params* p = new _Params;
-            p->fChildAgesFldr = (void*)(uintptr_t)rvnChildAges->GetNodeId();
-
             VaultAgeInfoNode accParentInfo(rvnParentInfo);
             VaultInitAge(
                 info,
                 accParentInfo.GetAgeInstanceGuid(),
-                [p](auto result, auto ageVaultId, auto ageInfoVaultId) {
-                    _InitAgeCallback(result, p, ageVaultId, ageInfoVaultId);
+                [childAgesId = rvnChildAges->GetNodeId()](auto result, auto ageVaultId, auto ageInfoVaultId) {
+                    if (IS_NET_ERROR(result)) {
+                        s_log->AddLine("CreateChildAge: Failed to init age (async)");
+                        return;
+                    }
+
+                    // Download age vault
+                    VaultDownload(
+                        "CreateChildAge",
+                        ageInfoVaultId,
+                        [childAgesId, ageInfoVaultId](auto result) {
+                            if (IS_NET_ERROR(result)) {
+                                s_log->AddLine("CreateChildAge: Failed to download age vault (async)");
+                                return;
+                            }
+
+                            // Create the AgeLink node
+                            VaultCreateNode(plVault::kNodeType_AgeLink, [childAgesId, ageInfoVaultId](auto result, auto node) {
+                                _VaultCreateChildAge::_CreateNodeCallback(result, childAgesId, ageInfoVaultId, node);
+                            });
+                        },
+                        nullptr
+                    );
                 }
             );
             retval = plVaultChildAgeLinkResult::kCreatingNew;
@@ -3815,36 +3523,22 @@ void VaultDownloadNoCallbacks (
 }
 
 //============================================================================
-struct _DownloadVaultParam {
-    ENetError       result;
-    bool            complete;
-};
-static void _DownloadVaultCallback (
-    ENetError       result,
-    _DownloadVaultParam* param
-) {
-    param->result       = result;
-    param->complete     = true;
-}
-
 void VaultDownloadAndWait (
     const ST::string&           tag,
     unsigned                    vaultId,
     FVaultProgressCallback      progressCallback
 ) {
-    _DownloadVaultParam param;
-    memset(&param, 0, sizeof(param));
-    
+    bool complete = false;
     VaultDownload(
         tag,
         vaultId,
-        [&param](auto result) {
-            _DownloadVaultCallback(result, &param);
+        [&complete](auto res) {
+            complete = true;
         },
         std::move(progressCallback)
     );
     
-    while (!param.complete) {
+    while (!complete) {
         NetClientUpdate();
         plgDispatch::Dispatch()->MsgQueueProcess();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
