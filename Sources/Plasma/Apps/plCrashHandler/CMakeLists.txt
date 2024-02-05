@@ -14,6 +14,8 @@ target_link_libraries(
         CoreLib
         plClipboard
         plMessageBox
+        plStatusLog
+        plWinDpi
         pfCrashHandler
 
         $<$<PLATFORM_ID:Windows>:Comctl32>
