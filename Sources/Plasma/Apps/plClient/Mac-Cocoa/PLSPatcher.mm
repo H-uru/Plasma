@@ -226,9 +226,6 @@ void Patcher::ISelfPatch(const plFileName& file)
     PLSPatcher* patcher = parent;
     patcher.selfPatched = true;
     
-    struct archive *a;
-    struct archive *ext;
-    struct archive_entry *entry;
     int flags;
     la_ssize_t r;
 
@@ -238,11 +235,11 @@ void Patcher::ISelfPatch(const plFileName& file)
     flags |= ARCHIVE_EXTRACT_ACL;
     flags |= ARCHIVE_EXTRACT_FFLAGS;
     
-    a = archive_read_new();
-    ext = archive_write_disk_new();
+    struct archive *a = archive_read_new();
     archive_read_support_format_tar(a);
     archive_read_support_filter_gzip(a);
     archive_read_support_filter_bzip2(a);
+    struct archive *ext = archive_write_disk_new();
     archive_write_disk_set_options(ext, flags);
     archive_write_disk_set_standard_lookup(ext);
     if ((r = archive_read_open_filename(a, file.GetFileName().c_str(), 10240))) {
@@ -252,13 +249,24 @@ void Patcher::ISelfPatch(const plFileName& file)
     
     plFileSystem::Unlink(plManifest::PatcherExecutable());
     
-    NSURL *tempDirectory = [NSFileManager.defaultManager URLForDirectory:NSItemReplacementDirectory inDomain:NSUserDomainMask appropriateForURL:[NSURL fileURLWithPath:NSFileManager.defaultManager.currentDirectoryPath] create:YES error:nil];
+    NSError *error;
+    NSURL *tempDirectory = [NSFileManager.defaultManager URLForDirectory:NSItemReplacementDirectory inDomain:NSUserDomainMask appropriateForURL:[NSURL fileURLWithPath:NSFileManager.defaultManager.currentDirectoryPath] create:YES error:&error];
     NSURL *outputURL = [tempDirectory URLByAppendingPathComponent:[NSString stringWithSTString:plManifest::PatcherExecutable().GetFileName()]];
-    [NSFileManager.defaultManager createDirectoryAtURL:outputURL withIntermediateDirectories:false attributes:nil error:nil];
+    [NSFileManager.defaultManager createDirectoryAtURL:outputURL withIntermediateDirectories:false attributes:nil error:&error];
+    
+    if (error) {
+        // Not sure why things would go wrong, we should be able to
+        // get a writable temp directory. But if we could not, bail.
+        // Not populating the patched client path will be caught
+        // later.
+        return;
+    }
+    
     ST::string outputPath = [outputURL.path STString];
     
     bool succeeded = true;
     
+    struct archive_entry *entry;
     while (true) {
         r = archive_read_next_header(a, &entry);
         if (r == ARCHIVE_EOF)
