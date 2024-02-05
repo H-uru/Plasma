@@ -200,7 +200,7 @@ static la_ssize_t copy_data(struct archive *ar, struct archive *aw)
     size_t size;
     la_int64_t offset;
     
-    for (;;) {
+    while (true) {
         r = archive_read_data_block(ar, &buff, &size, &offset);
         if (r == ARCHIVE_EOF)
             return (ARCHIVE_OK);
