@@ -50,6 +50,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <QString>
 #include <QMutex>
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+using qtMutexLocker = QMutexLocker<QMutex>;
+#else
+using qtMutexLocker = QMutexLocker;
+#endif
+
 class ChunkBuffer
 {
     ChunkBuffer(const ChunkBuffer&) = delete;
@@ -149,7 +155,7 @@ private:
     QMutex              m_mutex;
     std::list<Buffer>   m_chunks;
 
-    void waitOnData(QMutexLocker<QMutex>& lock);
+    void waitOnData(qtMutexLocker& lock);
 };
 
 #endif
