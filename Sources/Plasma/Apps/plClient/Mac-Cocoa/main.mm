@@ -421,7 +421,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     [self.patcherWindow patcher:patcher beganDownloadOfFile:file];
 }
 
-- (void)patcherCompleted:(PLSPatcher *)patcher didSelfPatch:(BOOL)selfPatched
+- (void)patcherCompleted:(PLSPatcher*)patcher didSelfPatch:(BOOL)selfPatched
 {
     self.patcher = nil;
     [NSApp endModalSession:self.currentModalSession];
