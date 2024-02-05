@@ -87,17 +87,17 @@ public:
     /** Represents a function that takes (bytesDLed, totalBytes, statsStr) as a progress indicator. */
     typedef std::function<void(uint64_t, uint64_t, const ST::string&)> ProgressTickFunc;
     
-    /** Represents a function that takes (const plFileName&, hsStream*) on game code discovery.
-     *  You are responsible for closing and deleting the provided stream.
+    /** Represents a function that takes (const plFileName&) and returns the executable inside the
+     *  macOS application bundle at that path.
      */
     typedef std::function<plFileName(const plFileName&)> FindBundleExeFunc;
 
     pfPatcher();
     ~pfPatcher();
     
-    /** Set a callback that will be fired when the patcher downloads an updated redistributable. Such as
-     *  the Visual C++ runtime (vcredist_x86.exe). You are responsible for installing it.
-     *  \remarks This will be called from the network thread.
+    /** Set a callback that will be fired when the patcher needs to find an executable file
+     *  within an executable bundle. This only occurs on the macOS client and is
+     *  specific to macOS executable application bundles.
      */
     void OnFindBundleExe(FindBundleExeFunc cb);
 
