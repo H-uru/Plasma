@@ -134,14 +134,14 @@ public:
     
     if ([NSFileManager.defaultManager fileExistsAtPath:destinationPath]) {
         // need to swap
-        int swapError = renamex_np(destinationURL.path.fileSystemRepresentation, self.updatedClientURL.path.fileSystemRepresentation, RENAME_SWAP);
-        if (swapError == 0) {
+        BOOL swapSucceeded = renamex_np(destinationURL.path.fileSystemRepresentation, self.updatedClientURL.path.fileSystemRepresentation, RENAME_SWAP) == 0;
+        if (swapSucceeded) {
             // delete the old version - this is very likely us
             // we want to terminate after. Our bundle will no longer be valid.
             [NSFileManager.defaultManager removeItemAtURL:self.updatedClientURL error:&errorInScope];
         } else {
             // abort and return an error
-            errorInScope = [NSError errorWithDomain:NSPOSIXErrorDomain code:swapError userInfo:nil];
+            errorInScope = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
         }
     } else {
         // no executable already present! Just move things into place.
