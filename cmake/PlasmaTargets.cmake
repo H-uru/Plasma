@@ -9,11 +9,17 @@ cmake_dependent_option(
     OFF
 )
 
+# CMake 3.28.2 breaks precompiled headers and unity builds.
+# Debounce this known bad combination.
+if(CMAKE_VERSION VERSION_EQUAL 3.28.2 AND PLASMA_USE_PCH AND CMAKE_GENERATOR MATCHES Ninja|Makefiles)
+    set(_UNITY_BROKEN TRUE)
+endif()
+
 cmake_dependent_option(
     PLASMA_UNITY_BUILD
     "Enable unity build?"
     ON
-    "CMAKE_VERSION VERSION_GREATER_EQUAL 3.16;ALLOW_BUILD_OPTIMIZATIONS"
+    "CMAKE_VERSION VERSION_GREATER_EQUAL 3.16;ALLOW_BUILD_OPTIMIZATIONS;NOT _UNITY_BROKEN"
     OFF
 )
 
