@@ -242,7 +242,7 @@ void Patcher::ISelfPatch(const plFileName& file)
     struct archive *ext = archive_write_disk_new();
     archive_write_disk_set_options(ext, flags);
     archive_write_disk_set_standard_lookup(ext);
-    if ((r = archive_read_open_filename(a, file.GetFileName().c_str(), 10240))) {
+    if ((r = archive_read_open_filename(a, file.GetFileName().c_str(), 10240)) != ARCHIVE_OK) {
         // couldn't read
         return;
     }
@@ -272,7 +272,7 @@ void Patcher::ISelfPatch(const plFileName& file)
         if (r == ARCHIVE_EOF)
             break;
         if (r < ARCHIVE_OK)
-            fprintf(stderr, "%s\n", archive_error_string(a));
+            pfPatcher::GetLog()->AddLineF(plStatusLog::kRed, "Failed to read bundle archive: {}", archive_error_string(a));
         if (r < ARCHIVE_WARN) {
             succeeded = false;
             break;
@@ -282,11 +282,11 @@ void Patcher::ISelfPatch(const plFileName& file)
         archive_entry_set_pathname(entry, fullOutputPath.c_str());
         r = archive_write_header(ext, entry);
         if (r < ARCHIVE_OK)
-            fprintf(stderr, "%s\n", archive_error_string(ext));
+            pfPatcher::GetLog()->AddLineF(plStatusLog::kRed, "Failed to extract file while patching app bundle: {}", archive_error_string(ext));
         else if (archive_entry_size(entry) > 0) {
             r = copy_data(a, ext);
             if (r < ARCHIVE_OK)
-                fprintf(stderr, "%s\n", archive_error_string(ext));
+                pfPatcher::GetLog()->AddLineF(plStatusLog::kRed, "Failed to extract file while patching app bundle: {}", archive_error_string(ext));
             if (r < ARCHIVE_WARN) {
                 succeeded = false;
                 break;
@@ -294,7 +294,7 @@ void Patcher::ISelfPatch(const plFileName& file)
         }
         r = archive_write_finish_entry(ext);
         if (r < ARCHIVE_OK)
-            fprintf(stderr, "%s\n", archive_error_string(ext));
+            pfPatcher::GetLog()->AddLineF(plStatusLog::kRed, "Failed to extract file while patching app bundle: {}", archive_error_string(ext));
         if (r < ARCHIVE_WARN) {
             succeeded = false;
             break;
