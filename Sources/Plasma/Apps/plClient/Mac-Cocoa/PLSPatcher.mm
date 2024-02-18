@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfPatcher/plManifests.h"
 #include "plFileSystem.h"
 #include "plNetGameLib/plNetGameLib.h"
+#include "plStatusLog/plStatusLog.h"
 
 class Patcher
 {
