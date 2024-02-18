@@ -252,8 +252,10 @@ void Patcher::ISelfPatch(const plFileName& file)
     
     NSError *error;
     NSURL *tempDirectory = [NSFileManager.defaultManager URLForDirectory:NSItemReplacementDirectory inDomain:NSUserDomainMask appropriateForURL:[NSURL fileURLWithPath:NSFileManager.defaultManager.currentDirectoryPath] create:YES error:&error];
-    NSURL *outputURL = [tempDirectory URLByAppendingPathComponent:[NSString stringWithSTString:plManifest::PatcherExecutable().GetFileName()]];
-    [NSFileManager.defaultManager createDirectoryAtURL:outputURL withIntermediateDirectories:false attributes:nil error:&error];
+    if (tempDirectory) {
+        NSURL *outputURL = [tempDirectory URLByAppendingPathComponent:[NSString stringWithSTString:plManifest::PatcherExecutable().GetFileName()]];
+        [NSFileManager.defaultManager createDirectoryAtURL:outputURL withIntermediateDirectories:false attributes:nil error:&error];
+    }
     
     if (error) {
         // Not sure why things would go wrong, we should be able to
