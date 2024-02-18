@@ -237,12 +237,23 @@ void Patcher::ISelfPatch(const plFileName& file)
     flags |= ARCHIVE_EXTRACT_FFLAGS;
     
     struct archive *a = archive_read_new();
-    archive_read_support_format_tar(a);
-    archive_read_support_filter_gzip(a);
-    archive_read_support_filter_bzip2(a);
     struct archive *ext = archive_write_disk_new();
-    archive_write_disk_set_options(ext, flags);
-    archive_write_disk_set_standard_lookup(ext);
+    
+    {
+        int error;
+        error = archive_read_support_format_tar(a);
+        hsAssert(error == ARCHIVE_OK, "Unable to set tar format option");
+        error = archive_read_support_filter_gzip(a);
+        hsAssert(error == ARCHIVE_OK, "Unable to set gzip filter");
+        error = archive_read_support_filter_bzip2(a);
+        hsAssert(error == ARCHIVE_OK, "Unable to set bzip filter");
+        
+        error = archive_write_disk_set_options(ext, flags);
+        hsAssert(error == ARCHIVE_OK, "Unable to set write options");
+        error = archive_write_disk_set_standard_lookup(ext);
+        hsAssert(error == ARCHIVE_OK, "Unable to set write standard lookup");
+    }
+    
     if ((r = archive_read_open_filename(a, file.GetFileName().c_str(), 10240)) != ARCHIVE_OK) {
         // couldn't read
         return;
