@@ -196,12 +196,12 @@ bool IApproveDownload(const plFileName& file)
 
 static la_ssize_t copy_data(struct archive *ar, struct archive *aw)
 {
-    la_ssize_t r;
-    const void *buff;
-    size_t size;
-    la_int64_t offset;
-    
     while (true) {
+        la_ssize_t r;
+        const void *buff;
+        size_t size;
+        la_int64_t offset;
+        
         r = archive_read_data_block(ar, &buff, &size, &offset);
         if (r == ARCHIVE_EOF)
             return (ARCHIVE_OK);
@@ -252,8 +252,9 @@ void Patcher::ISelfPatch(const plFileName& file)
     
     NSError *error;
     NSURL *tempDirectory = [NSFileManager.defaultManager URLForDirectory:NSItemReplacementDirectory inDomain:NSUserDomainMask appropriateForURL:[NSURL fileURLWithPath:NSFileManager.defaultManager.currentDirectoryPath] create:YES error:&error];
+    NSURL *outputURL;
     if (tempDirectory) {
-        NSURL *outputURL = [tempDirectory URLByAppendingPathComponent:[NSString stringWithSTString:plManifest::PatcherExecutable().GetFileName()]];
+        outputURL = [tempDirectory URLByAppendingPathComponent:[NSString stringWithSTString:plManifest::PatcherExecutable().GetFileName()]];
         [NSFileManager.defaultManager createDirectoryAtURL:outputURL withIntermediateDirectories:false attributes:nil error:&error];
     }
     
