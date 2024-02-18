@@ -129,7 +129,7 @@ public:
             // Bad compression on the server will require correction on the server end.
             *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileReadNoSuchFileError userInfo:nil];
         }
-        return;
+        return nil;
     }
     
     if ([NSFileManager.defaultManager fileExistsAtPath:destinationPath]) {
