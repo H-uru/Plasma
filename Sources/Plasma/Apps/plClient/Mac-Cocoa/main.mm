@@ -75,6 +75,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGLPipeline/plGLPipeline.h"
 #endif
 #include "plInputCore/plInputDevice.h"
+#include "plMacDisplayHelper.h"
 #ifdef PLASMA_PIPELINE_METAL
 #include "pfMetalPipeline/plMetalPipeline.h"
 #endif
@@ -107,6 +108,7 @@ std::vector<ST::string> args;
    @public
     plClientLoader gClient;
     dispatch_source_t _displaySource;
+    std::shared_ptr<plMacDisplayHelper> _displayHelper;
 }
 
 @property(retain) PLSKeyboardEventMonitor* eventMonitor;
@@ -198,6 +200,9 @@ static void* const DeviceDidChangeContext = (void*)&DeviceDidChangeContext;
     window.contentView = view;
     [window setDelegate:self];
     
+    _displayHelper = std::make_shared<plMacDisplayHelper>();
+    _displayHelper->SetCurrentScreen([window screen]);
+    
     gClient.SetClientWindow((__bridge void *)view.layer);
     gClient.SetClientDisplay((hsWindowHndl)NULL);
 
@@ -233,6 +238,7 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
                             object:self.window
                              queue:[NSOperationQueue mainQueue]
                         usingBlock:^(NSNotification* _Nonnull note) {
+                            _displayHelper->SetCurrentScreen(self.window.screen);
                             // if we change displays, setup a new draw loop. The new display might
                             // have a different or variable refresh rate.
                             [self setupRunLoop];
@@ -397,6 +403,8 @@ dispatch_queue_t loadingQueue = dispatch_queue_create("", DISPATCH_QUEUE_SERIAL)
     while (!gClient.IsInited()) {
         [NSRunLoop.mainRunLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
     }
+    
+    gClient->GetPipeline()->SetDisplayHelper(_displayHelper);
 
     if (!gClient || gClient->GetDone()) {
         [NSApp terminate:self];
