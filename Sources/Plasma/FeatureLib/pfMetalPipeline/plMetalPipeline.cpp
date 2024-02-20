@@ -970,35 +970,7 @@ plMipmap* plMetalPipeline::ExtractMipMap(plRenderTarget* targ)
 
 void plMetalPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode>* res, int ColorDepth)
 {
-    /*
-     There are decisions to make here.
-
-     Modern macOS does not support "display modes." You panel runs at native resolution at all times, 
-     and you can over-render or under-render. But you never set the display mode of the panel, or get
-     the display mode of the panel. Most games have a "scale slider."
-
-     Note: There are legacy APIs for display modes for compatibility with older software. In since 
-     we're here writing a new renderer, lets do things the right way. The display mode APIs also have
-     trouble with density. I.E. a 4k display might be reported as a 2k display if the window manager is
-     running in a higher DPI mode.
-
-     The basic approach should be to render at whatever the resolution of our output surface is. We're 
-     mostly doing that now (aspect ratio doesn't adjust.)
-
-     Ideally we should support some sort of scaling/semi dynamic renderbuffer resolution thing. But don't 
-     mess with the window servers framebuffer size. macOS has accelerated resolution scaling like consoles
-     do. Use that.
-     */
-
-    std::vector<plDisplayMode> supported;
-    CA::MetalLayer* layer = fDevice.GetOutputLayer();
-    CGSize drawableSize = layer->drawableSize();
-    supported.emplace_back();
-    supported[0].Width = drawableSize.width;
-    supported[0].Height = drawableSize.height;
-    supported[0].ColorDepth = 32;
-
-    *res = supported;
+    fDisplayHelper->GetSupportedDisplayModes(res);
 }
 
 int plMetalPipeline::GetMaxAnisotropicSamples()
