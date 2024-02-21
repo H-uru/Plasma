@@ -55,6 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 
+#include <string_theory/string_stream>
+
 #include "pfGameGUIMgr.h"
 
 #include "pnInputCore/plKeyMap.h"

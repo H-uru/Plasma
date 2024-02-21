@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCommon.h"
 
 #include <utility>
+#include <string_theory/string_stream>
 
 #include "hsStream.h"
 

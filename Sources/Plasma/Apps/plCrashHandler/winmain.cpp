@@ -50,11 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_view>
 #include <type_traits>
 
-#include <CommCtrl.h>
+#include <commctrl.h>
 #include <shellapi.h>
-#include <Vsstyle.h>
+#include <vsstyle.h>
 #include <vssym32.h>
-#include <Uxtheme.h>
+#include <uxtheme.h>
 
 #include "resource.h"
 

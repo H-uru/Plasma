@@ -111,7 +111,10 @@ void plUnifiedTime::ToCurrentTime()
 {
     struct timespec ts;
 
-#if defined(HS_BUILD_FOR_APPLE)
+#if defined(__MINGW32__)
+    int res = clock_gettime(CLOCK_REALTIME, &ts);
+    hsAssert(res == 0, "clock_gettime failed");
+#elif defined(HS_BUILD_FOR_APPLE)
 #if defined(HAVE_BUILTIN_AVAILABLE) && MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
     if (__builtin_available(macOS 10.15, *)) {
         // timespec_get is only supported since macOS 10.15

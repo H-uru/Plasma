@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "cyPhysics.h"
 
+#include <string_theory/format>
+
 #include "plMessage/plAngularVelocityMsg.h"
 #include "plMessage/plDampMsg.h"
 #include "pnMessage/plEnableMsg.h"

@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 #include <cmath>
+#include <string_theory/format>
 
 #ifdef HS_BUILD_FOR_APPLE
 #include <Accelerate/Accelerate.h>

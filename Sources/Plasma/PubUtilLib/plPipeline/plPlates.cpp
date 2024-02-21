@@ -47,6 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPlates.h"
 
+#include <string_theory/format>
+
 #include "plPipeline.h"
 #include "hsGDeviceRef.h"
 #include "plPipeDebugFlags.h"

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plSDLModifierMsg_INC
 
 #include "plMessage.h"
-
+#include <string_theory/string>
 
 //
 // A msg sent to an SDL modifier to tell it send or recv state.

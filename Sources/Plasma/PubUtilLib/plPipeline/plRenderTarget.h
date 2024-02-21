@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plRenderTarget_h
 #define _plRenderTarget_h
 
+#include <string_theory/string>
+
 #include "plPipeResReq.h"
 
 #include "plGImage/plBitmap.h"

@@ -56,6 +56,7 @@ class pyAgeInfoStruct;
 class pyPoint3;
 
 #include "HeadSpin.h"
+#include <vector>
 
 class pyGUIDialog;
 class plPipeline;

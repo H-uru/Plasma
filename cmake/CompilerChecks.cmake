@@ -40,6 +40,9 @@ CHECK_INCLUDE_FILE("pmmintrin.h" HAVE_SSE3)
 CHECK_INCLUDE_FILE("emmintrin.h" HAVE_SSE2)
 CHECK_INCLUDE_FILE("xmmintrin.h" HAVE_SSE1)
 
+# Check for Windows Shell Scaling DPI support
+CHECK_INCLUDE_FILE("ShellScalingApi.h" HAVE_SHELLSCALINGAPI)
+
 # GCC requires us to set the -m<instructionset> flag for the source file using the intrinsics.
 # We can't do that project-wide or we'll just crash on launch with an illegal instruction on some
 # systems. So, we have another helper method...

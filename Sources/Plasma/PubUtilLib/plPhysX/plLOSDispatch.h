@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLOSDispatch_H
 
 #include <vector>
+#include <string_theory/string>
 
 #include "hsGeometry3.h"
 

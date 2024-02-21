@@ -184,7 +184,7 @@ QString ChunkBuffer::readSafeWString()
     return QString::fromUtf16(buffer.get(), length);
 }
 
-void ChunkBuffer::waitOnData(QMutexLocker& lock)
+void ChunkBuffer::waitOnData(qtMutexLocker& lock)
 {
     while (m_chunks.size() == 0) {
         // Give the buffer some time to fill

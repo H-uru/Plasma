@@ -50,12 +50,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
+#include "hsStream.h"
 #include "pyGlueHelpers.h"
 
 #include <memory>
 #include <vector>
 
-class hsStream;
 class plFileName;
 namespace ST { class string; }
 
