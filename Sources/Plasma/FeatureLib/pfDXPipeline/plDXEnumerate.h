@@ -176,7 +176,7 @@ public:
     void SetCurrentRenderer(D3DEnum_RendererInfo* d) { hsAssert(GetCurrentDisplay(), "Set Display first"); GetCurrentDisplay()->fCurrentRenderer = d; } 
     void SetCurrentMode(D3DEnum_ModeInfo* m) { hsAssert(GetCurrentDisplay(), "Set Display first"); GetCurrentDisplay()->fCurrentMode = m; } 
 
-    ST::string GetEnumeErrorStr() { return fEnumeErrorStr; }
+    ST::string GetEnumeErrorStr() const { return fEnumeErrorStr; }
 };
 
 
