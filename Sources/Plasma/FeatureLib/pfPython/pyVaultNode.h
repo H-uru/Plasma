@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct RelVaultNode;
 class plUUID;
+namespace ST { class string; }
 
 class pyVaultNode
 {
