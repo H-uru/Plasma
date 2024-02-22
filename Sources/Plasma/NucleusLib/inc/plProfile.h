@@ -189,7 +189,7 @@ public:
 
     uint32_t GetTimerSamples() const { return fTimerSamples; }
 
-    ST::string GetName() { return fName; }
+    ST::string GetName() const { return fName; }
 
     void SetActive(bool s) { fActive = s; }
 
@@ -243,7 +243,7 @@ public:
     void BeginLap(const ST::string& lapName) { if (fActive && fRunning) IBeginLap(lapName); }
     void EndLap(const ST::string& lapName) { if (fActive && fRunning) IEndLap(lapName); }
 
-    ST::string GetGroup() { return fGroup; }
+    ST::string GetGroup() const { return fGroup; }
 
     plProfileLaps* GetLaps() { return fLaps; }
 
