@@ -70,6 +70,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #define ASSERT_UNCOMPRESSED()               
 #endif
 
+#ifdef MEMORY_LEAK_TRACER
+    #include <string_theory/string>
+#endif
+
 //// Class Definition /////////////////////////////////////////////////////////
 
 class plBitmapCreator;
