@@ -45,12 +45,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Python.h>
 #include <string_theory/format>
 
 #include "plPipeline.h"
 #include "hsResMgr.h"
 
+#include "pyGlueHelpers.h"
 #include "pyVaultImageNode.h"
 #ifndef BUILDING_PYPLASMA
 #   include "pyVault.h"

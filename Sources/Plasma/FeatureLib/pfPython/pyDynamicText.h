@@ -54,7 +54,7 @@ class pyImage;
 class pyKey;
 namespace ST { class string; }
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 #include "pnKeyedObject/plKey.h"
 
 class pyDynamicText

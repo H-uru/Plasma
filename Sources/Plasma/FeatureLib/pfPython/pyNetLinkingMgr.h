@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pyNetLinkingMgr_h_inc
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 //////////////////////////////////////////////////////////////////////
 //

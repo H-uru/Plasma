@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pyCritterBrain_h_
 #define _pyCritterBrain_h_
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 class plAvBrainCritter;
 class pyKey;

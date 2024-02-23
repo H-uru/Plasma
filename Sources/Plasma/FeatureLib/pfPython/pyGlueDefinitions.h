@@ -39,50 +39,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef pyStream_h_inc
-#define pyStream_h_inc
+#ifndef _pyGlueDefinitions_h_
+#define _pyGlueDefinitions_h_
 
-//////////////////////////////////////////////////////////////////////
-//
-// pyStream   - a wrapper class to provide interface to the File stream stuff
-//
-//////////////////////////////////////////////////////////////////////
+// Macros for use in Python glue header files.
+// This header MUST NOT depend on any Python headers.
+// Any macros and functions that require Python headers
+// should go into pyGlueHelpers.h instead.
 
+typedef struct _object PyObject;
+typedef struct _typeobject PyTypeObject;
 
-#include "HeadSpin.h"
-#include "hsStream.h"
-#include "pyGlueDefinitions.h"
+// This makes sure that our python new function can access our constructors
+#define PYTHON_CLASS_NEW_FRIEND(pythonClassName) friend PyObject *pythonClassName##_new(PyTypeObject *type, PyObject *args, PyObject *keywords)
 
-#include <memory>
-#include <vector>
+#define PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION \
+    static PyObject* New(hsRef<RelVaultNode> vaultNode=nullptr);
 
-class plFileName;
-namespace ST { class string; }
+// This defines the basic new function for a class
+#define PYTHON_CLASS_NEW_DEFINITION static PyObject *New()
 
-class pyStream
-{
-private:
-    std::unique_ptr<hsStream> fStream;
+// This defines the basic check function for a class
+#define PYTHON_CLASS_CHECK_DEFINITION static bool Check(PyObject *obj)
 
-protected:
-    pyStream();
+// This defines the basic convert from function for a class
+#define PYTHON_CLASS_CONVERT_FROM_DEFINITION(glueClassName) static glueClassName *ConvertFrom(PyObject *obj)
 
-public:
-    // required functions for PyObject interoperability
-    PYTHON_CLASS_NEW_FRIEND(ptStream);
-    PYTHON_CLASS_NEW_DEFINITION;
-    PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyStream object
-    PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyStream); // converts a PyObject to a pyStream (throws error if not correct type)
+// small macros so that the type object can be accessed outside the glue file (for subclassing)
+#define PYTHON_EXPOSE_TYPE static PyTypeObject* type_ptr
 
-    static void AddPlasmaClasses(PyObject *m);
-
-    bool Open(const plFileName& fileName, const ST::string& flags);
-    std::vector<ST::string> ReadLines();
-    bool WriteLines(const std::vector<ST::string> & lines);
-    void Close();
-
-    bool IsOpen() { return (fStream != nullptr); }
-};
-
-
-#endif // pyStream_h_inc
+#endif // _pyGlueDefinitions_h_

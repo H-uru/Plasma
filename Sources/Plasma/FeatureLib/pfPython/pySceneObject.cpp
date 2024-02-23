@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
 #include <string_theory/format>
 
 #include "plAudible.h"
 #include "plgDispatch.h"
 #include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
 #include "pyKey.h"
 #include "pyMatrix44.h"
 

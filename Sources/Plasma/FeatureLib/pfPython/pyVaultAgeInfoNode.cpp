@@ -45,10 +45,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Python.h>
 #include <string_theory/string>
 #include <string_theory/string_stream>
 
+#include "pyGlueHelpers.h"
 #include "pyVaultAgeInfoNode.h"
 
 #include "pyVaultAgeInfoListNode.h"

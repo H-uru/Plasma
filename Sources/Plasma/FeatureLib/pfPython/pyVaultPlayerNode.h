@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 #include "pyVaultNode.h"
 
 class pyAgeInfoStruct;

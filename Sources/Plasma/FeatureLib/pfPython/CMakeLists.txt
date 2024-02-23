@@ -207,6 +207,7 @@ set(pfPython_GLUE
     pyGameScoreGlue.cpp
     pyGameScoreMsgGlue.cpp
     pyGeometry3Glue.cpp
+    pyGlueDefinitions.h
     pyGlueHelpers.h
     pyGmBlueSpiralGlue.cpp
     pyGmMarkerGlue.cpp

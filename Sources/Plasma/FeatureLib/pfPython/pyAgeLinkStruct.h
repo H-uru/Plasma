@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pyAgeLinkStruct_h_inc
 
 #include "plNetCommon/plNetServerSessionInfo.h"
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 //////////////////////////////////////////////////////////////////////
 //

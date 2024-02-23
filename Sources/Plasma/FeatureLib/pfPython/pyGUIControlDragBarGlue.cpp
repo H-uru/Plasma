@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pyGlueHelpers.h"
 #include "pyKey.h"
 
 #include "pyGUIControlDragBar.h"

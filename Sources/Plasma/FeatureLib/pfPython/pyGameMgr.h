@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pyGameMgr_h_
 #define _pyGameMgr_h_
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 class pyGameMgr
 {

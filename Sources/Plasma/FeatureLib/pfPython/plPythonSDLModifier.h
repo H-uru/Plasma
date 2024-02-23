@@ -50,7 +50,7 @@ class pyKey;
 #include <map>
 #include "plModifier/plSDLModifier.h"
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 
 // hack for plNetClientVNodeMgr single-player mode SDLHook stuff.

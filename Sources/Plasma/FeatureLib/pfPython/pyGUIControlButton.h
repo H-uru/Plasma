@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
 
 class plKey;

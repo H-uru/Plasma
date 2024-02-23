@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plgDispatch.h"
 #include "hsResMgr.h"
+#include "pyGlueHelpers.h"
 #include "pyKey.h"
 
 #include "cyMisc.h"

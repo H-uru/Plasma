@@ -40,13 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
 #include <string_theory/string>
 
 #include "plFileSystem.h"
 
 #include "pyKey.h"
 
+#include "pyGlueHelpers.h"
 #include "cyAvatar.h"
 #include "pyColor.h"
 #include "pyEnum.h"

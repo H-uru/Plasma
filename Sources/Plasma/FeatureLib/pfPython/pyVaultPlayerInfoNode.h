@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "pyVaultNode.h"
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 class plUUID;
 namespace ST { class string; }

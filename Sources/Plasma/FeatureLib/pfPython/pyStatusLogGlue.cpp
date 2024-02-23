@@ -40,11 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
 #include <string_theory/string>
 
 #include "pyColor.h"
 #include "pyEnum.h"
+#include "pyGlueHelpers.h"
 #include "plStatusLog/plStatusLog.h"
 #include "pyStatusLog.h"
 

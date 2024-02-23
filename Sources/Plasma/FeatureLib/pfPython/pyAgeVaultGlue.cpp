@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
 #include <string_theory/string>
 
+#include "pyGlueHelpers.h"
 #include "pyAgeVault.h"
 #include "pyAgeInfoStruct.h"
 #include "pySDL.h"

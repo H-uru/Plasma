@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for Python to the player data
 //
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 #include "pnKeyedObject/plKey.h"
 #include <string_theory/string>
 

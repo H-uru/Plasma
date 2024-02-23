@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <vector>
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 class plStateDataRecord;
 class plSimpleStateVariable;

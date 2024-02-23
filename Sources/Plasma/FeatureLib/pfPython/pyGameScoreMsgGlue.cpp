@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
 #include <string_theory/string>
 
+#include "pyGlueHelpers.h"
 #include "pyGameScoreMsg.h"
 
 // Maybe we need a better exception? Seems to be the best built in one though
