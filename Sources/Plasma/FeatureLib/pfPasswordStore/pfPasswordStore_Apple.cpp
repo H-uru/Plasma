@@ -93,8 +93,8 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
     CFAutorelease(serviceName);
     CFAutorelease(passwordData);
 
-    const void* keys[] = { kSecClass, kSecAttrService, kSecReturnData, kSecValueData };
-    const void* values[] = { kSecClassGenericPassword, serviceName, kCFBooleanTrue, passwordData };
+    const void* keys[] = { kSecClass, kSecAttrService, kSecAttrAccount, kSecValueData };
+    const void* values[] = { kSecClassGenericPassword, serviceName, accountName, passwordData };
 
     CFDictionaryRef query = CFDictionaryCreate(nullptr, keys, values, 4, nullptr, nullptr);
     CFAutorelease(query);
@@ -104,14 +104,14 @@ bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::str
     if (err == errSecDuplicateItem) {
         // the keychain item already exists, update it
 
-        const void* queryKeys[2] = { kSecClass, kSecAttrService };
-        const void* queryValues[2] = { kSecClassGenericPassword, serviceName };
-        CFDictionaryRef updateQuery = CFDictionaryCreate(nullptr, queryKeys, queryValues, 2, nullptr, nullptr);
+        const void* queryKeys[] = { kSecClass, kSecAttrService, kSecAttrAccount };
+        const void* queryValues[] = { kSecClassGenericPassword, serviceName, accountName };
+        CFDictionaryRef updateQuery = CFDictionaryCreate(nullptr, queryKeys, queryValues, 3, nullptr, nullptr);
         CFAutorelease(updateQuery);
 
-        const void* attributeKeys[2] = { kSecAttrAccount, kSecValueData };
-        const void* attributeValues[2] = { accountName, passwordData };
-        CFDictionaryRef attributes = CFDictionaryCreate(nullptr, attributeKeys, attributeValues, 2, nullptr, nullptr);
+        const void* attributeKeys[1] = { kSecValueData };
+        const void* attributeValues[1] = { passwordData };
+        CFDictionaryRef attributes = CFDictionaryCreate(nullptr, attributeKeys, attributeValues, 1, nullptr, nullptr);
 
         err = SecItemUpdate(updateQuery, attributes);
 
