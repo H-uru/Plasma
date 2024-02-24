@@ -45,9 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <vector>
 
+#include "hsColorRGBA.h"
+#include "hsPoint2.h"
+
 #include "pnMessage/plMessage.h"
 #include "pnKeyedObject/plFixedKey.h"
-#include "hsPoint2.h"
 
 class plMovieMsg : public plMessage
 {
