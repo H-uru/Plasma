@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pySwimCurrentInterface.h"
+
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pySwimCurrentInterface.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptSwimCurrentInterface, pySwimCurrentInterface);

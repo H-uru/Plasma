@@ -40,14 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pySDL.h"
+
 #include <string_theory/string>
 
+#include "plSDL/plSDL.h"
+
+#include "pyEnum.h"
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pySDL.h"
-#include "plSDL/plSDL.h"
-#include "pyEnum.h"
 
 void pySDL::AddPlasmaConstantsClasses(PyObject *m)
 {

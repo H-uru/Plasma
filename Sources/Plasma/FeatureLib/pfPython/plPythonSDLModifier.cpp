@@ -40,24 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
-
 #include "plPythonSDLModifier.h"
-#include "cyPythonInterface.h"
-
-#include "plPythonFileMod.h"
-#include "pyObjectRef.h"
-#include "cyMisc.h"
 
 #include <optional>
 
 #include "pnNetCommon/plNetApp.h"
 #include "pnSceneObject/plSceneObject.h"
-#include "plResMgr/plKeyFinder.h"
-#include "plAgeDescription/plAgeDescription.h"
 
+#include "plAgeDescription/plAgeDescription.h"
+#include "plResMgr/plKeyFinder.h"
 #include "plSDL/plSDL.h"
+
+#include "cyMisc.h"
+#include "cyPythonInterface.h"
+#include "plPythonFileMod.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
+#include "pyObjectRef.h"
 
 plStateDataRecord * GetAgeSDL()
 {

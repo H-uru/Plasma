@@ -40,13 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
+#include "pyGUIControlCheckBox.h"
 
 #include "pfGameGUIMgr/pfGUICheckBoxCtrl.h"
 #include "pfGameGUIMgr/pfGUIDialogMod.h"
 
-#include "pyGUIControlCheckBox.h"
-#include "pyGUIDialog.h"
+#include "pyKey.h"
 
 pyGUIControlCheckBox::pyGUIControlCheckBox(pyKey& gckey) : pyGUIControl(gckey)
 {

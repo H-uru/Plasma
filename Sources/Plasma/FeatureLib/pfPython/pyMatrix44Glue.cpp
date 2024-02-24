@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyGlueHelpers.h"
+#include "pyMatrix44.h"
 
 #include "pyGeometry3.h"
-#include "pyMatrix44.h"
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptMatrix44, pyMatrix44);

@@ -52,11 +52,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 #include "pnKeyedObject/plKey.h"
+
 #include "pyGlueDefinitions.h"
 
+class pyKey;
+class pyMatrix44;
 class pyPoint3;
 class pyVector3;
-class pyMatrix44;
 
 class cyPhysics
 {

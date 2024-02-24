@@ -40,22 +40,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyImage.h"
+
 #include <string_theory/format>
 
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
-
-#include "plFileSystem.h"
 #include "hsResMgr.h"
+#include "plFileSystem.h"
 
-#include "pyColor.h"
+#include "pnKeyedObject/plUoid.h"
 
-#include "pyImage.h"
-#include "pyGeometry3.h"
 #include "plGImage/plJPEG.h"
 #include "plGImage/plMipmap.h"
 #include "plGImage/plPNG.h"
-#include "pnKeyedObject/plUoid.h"
+
+#include "pyColor.h"
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 void pyImage::setKey(pyKey& mipmapKey) // only for python glue, do NOT call
 {

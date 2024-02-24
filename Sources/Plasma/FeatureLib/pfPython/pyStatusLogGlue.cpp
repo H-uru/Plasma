@@ -40,13 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyStatusLog.h"
+
 #include <string_theory/string>
+
+#include "plStatusLog/plStatusLog.h"
 
 #include "pyColor.h"
 #include "pyEnum.h"
 #include "pyGlueHelpers.h"
-#include "plStatusLog/plStatusLog.h"
-#include "pyStatusLog.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptStatusLog, pyStatusLog);

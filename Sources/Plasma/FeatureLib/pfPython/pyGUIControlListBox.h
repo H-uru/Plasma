@@ -51,15 +51,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <vector>
 
-#include "pyGUIControl.h"
 #include "pyGlueDefinitions.h"
+#include "pyGUIControl.h"
 
+class pfGUIListTreeRoot;
 class plKey;
 class pyColor;
 class pyImage;
 class pyKey;
-
-class pfGUIListTreeRoot;
 namespace ST { class string; }
 
 class pyGUIControlListBox : public pyGUIControl

@@ -40,9 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "cyDraw.h"
+
 #include "plgDispatch.h"
 
-#include "cyDraw.h"
 #include "pnMessage/plEnableMsg.h"
 
 cyDraw::cyDraw(plKey sender, plKey recvr)

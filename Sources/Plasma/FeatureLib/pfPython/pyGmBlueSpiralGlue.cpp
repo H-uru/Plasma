@@ -40,12 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyGlueHelpers.h"
-
 #include "pyGmBlueSpiral.h"
 
-#include "pyGameCli.h"
 #include "plPythonConvert.h"
+#include "pyGameCli.h"
+#include "pyGlueHelpers.h"
 
 // ===========================================================================
 

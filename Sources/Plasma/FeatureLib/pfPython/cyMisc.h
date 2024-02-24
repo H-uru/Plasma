@@ -48,22 +48,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // PURPOSE: Class wrapper to map misc functions, such as the console
 //
-class pyKey;
-class pySceneObject;
-class pyPlayer;
-class pyColor;
-class pyAgeInfoStruct;
-class pyPoint3;
 
 #include "HeadSpin.h"
 #include <vector>
 
-class pyGUIDialog;
-class plPipeline;
-class plDisplayMode;
-class plUUID;
-class plFileName;
 struct PipelineParams;
+class plDisplayMode;
+class plFileName;
+class plPipeline;
+class plUUID;
+class pyAgeInfoStruct;
+class pyColor;
+class pyGUIDialog;
+class pyKey;
+class pyPlayer;
+class pyPoint3;
+class pySceneObject;
 namespace ST { class string; }
 
 typedef struct _object PyObject;

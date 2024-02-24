@@ -49,11 +49,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pyGlueDefinitions.h"
-#include "pyObjectRef.h"
 #include "hsRefCnt.h"
 
 #include "pnNetBase/pnNbError.h"
+
+#include "pyGlueDefinitions.h"
+#include "pyObjectRef.h"
 
 struct RelVaultNode;
 class plUUID;

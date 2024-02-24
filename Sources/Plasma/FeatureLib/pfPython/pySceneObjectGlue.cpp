@@ -40,14 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pySceneObject.h"
+
 #include <string_theory/string>
 
 #include "pyGeometry3.h"
 #include "pyGlueHelpers.h"
-#include "pyKey.h"
 #include "pyMatrix44.h"
-
-#include "pySceneObject.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptSceneobject, pySceneObject);

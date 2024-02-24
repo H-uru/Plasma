@@ -48,13 +48,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <string_theory/string>
+
+#include "HeadSpin.h"
+
+#include "pnKeyedObject/plKey.h"
+
 #include "pyGlueDefinitions.h"
 
-class pyImage;
 class pfJournalBook;
-class plKey;
+class pyImage;
 class pyKey;
-namespace ST { class string; }
 
 class pyJournalBook
 {

@@ -40,11 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
+#include "pyGUIControlRadioGroup.h"
 
 #include "pfGameGUIMgr/pfGUIRadioGroupCtrl.h"
 
-#include "pyGUIControlRadioGroup.h"
+#include "pyKey.h"
 
 pyGUIControlRadioGroup::pyGUIControlRadioGroup(pyKey& gckey) :pyGUIControl(gckey)
 {

@@ -45,19 +45,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "plgDispatch.h"
-#include "hsResMgr.h"
-
 #include "pyDrawControl.h"
 
 #include <string_theory/format>
 
+#include "hsResMgr.h"
+#include "plgDispatch.h"
+
 #ifndef BUILDING_PYPLASMA
+#   include "pnMessage/plClientMsg.h"
+
 #   include "plAvatar/plArmatureMod.h"
 #   include "plGLight/plShadowCaster.h"
 #   include "plGLight/plShadowMaster.h"
 #   include "plInputCore/plInputDevice.h"
-#   include "pnMessage/plClientMsg.h"
 #   include "plMessage/plInputEventMsg.h"
 #endif
 

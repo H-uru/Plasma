@@ -40,17 +40,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyCritterBrain.h"
+
 #include <string_theory/string>
+
+#include "plAvatar/plAvBrainCritter.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "pyGeometry3.h"
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pyCritterBrain.h"
 #include "pySceneObject.h"
-
-#include "plAvatar/plAvBrainCritter.h"
-#include "pnSceneObject/plSceneObject.h"
 
 pyCritterBrain::pyCritterBrain() : fBrain() { }
 

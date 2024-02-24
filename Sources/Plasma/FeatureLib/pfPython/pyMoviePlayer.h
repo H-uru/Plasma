@@ -50,8 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string_theory/string>
 
-#include "pyGlueDefinitions.h"
 #include "pnKeyedObject/plKey.h"
+
+#include "pyGlueDefinitions.h"
 
 class pyColor;
 class pyKey;

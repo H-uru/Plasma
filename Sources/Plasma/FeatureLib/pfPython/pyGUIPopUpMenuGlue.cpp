@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGUIPopUpMenu.h"
+
 #include <string_theory/string>
 
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pyGUIPopUpMenu.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIPopUpMenu, pyGUIPopUpMenu);

@@ -55,13 +55,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGlueDefinitions.h"
 
-class plFileName;
-class pySceneObject;
-class pyColor;
-class plMipmap;
-class plClothingItem;
 class plArmatureMod;
+class plClothingItem;
+class plFileName;
+class plMipmap;
 class plMorphSequence;
+class pyColor;
+class pyKey;
+class pySceneObject;
 namespace ST { class string; }
 
 class cyAvatar

@@ -40,16 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyDynamicText.h"
+
 #include <string_theory/string>
 #include <utility>
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
 
-#include "pyDynamicText.h"
-#include "pyEnum.h"
-#include "pyColor.h"
-#include "pyImage.h"
 #include "plGImage/plDynamicTextMap.h"
+
+#include "pyColor.h"
+#include "pyEnum.h"
+#include "pyGlueHelpers.h"
+#include "pyImage.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptDynamicMap, pyDynamicText);

@@ -40,11 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGUIControl.h"
+
+#include "pyGeometry3.h"
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pyGUIControl.h"
-#include "pyGeometry3.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControl, pyGUIControl);

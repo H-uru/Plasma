@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyGlueHelpers.h"
-
 #include "pySpawnPointInfo.h"
+
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptSpawnPointInfo, pySpawnPointInfo);

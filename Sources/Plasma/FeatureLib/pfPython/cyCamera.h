@@ -50,9 +50,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include "HeadSpin.h"
-#include "pyGlueDefinitions.h"
+
 #include "pnKeyedObject/plKey.h"
-#include "pfCamera/plVirtualCamNeu.h" 
+
+#include "pfCamera/plVirtualCamNeu.h"
+
+#include "pyGlueDefinitions.h"
+
+class pyKey;
 
 class cyCamera
 {

@@ -40,15 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGUIControlTextBox.h"
+
 #include <string_theory/string>
 
-#include "pyKey.h"
-
-#include "pfGameGUIMgr/pfGUITextBoxMod.h"
 #include "pfGameGUIMgr/pfGUIListElement.h"
+#include "pfGameGUIMgr/pfGUITextBoxMod.h"
 
-#include "pyGUIControlTextBox.h"
 #include "pyColor.h"
+#include "pyKey.h"
 
 pyGUIControlTextBox::pyGUIControlTextBox(pyKey& gckey) : pyGUIControl(gckey)
 {

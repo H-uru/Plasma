@@ -50,8 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string_theory/string>
 
-#include "plInputCore/plInputInterfaceMgr.h"
 #include "pnInputCore/plKeyMap.h"
+
+#include "plInputCore/plInputInterfaceMgr.h"
 
 // conversion functions
 ST::string pyKeyMap::ConvertVKeyToChar(uint32_t vk, uint32_t flags)

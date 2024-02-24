@@ -49,9 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
+
+#include "plNetCommon/plNetServerSessionInfo.h" // for plAgeLinkStruct
+
 #include "pyGlueDefinitions.h"
 #include "pyVaultNode.h"
-#include "plNetCommon/plNetServerSessionInfo.h" // for plAgeLinkStruct
 
 class pySpawnPointInfo;
 class pySpawnPointInfoRef;

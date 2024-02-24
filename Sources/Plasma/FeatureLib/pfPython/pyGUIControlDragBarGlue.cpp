@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGUIControlDragBar.h"
+
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pyGUIControlDragBar.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlDragBar, pyGUIControlDragBar);

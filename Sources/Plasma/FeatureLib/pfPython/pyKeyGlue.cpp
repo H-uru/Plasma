@@ -40,10 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyKey.h"
+
 #include <string_theory/string>
 
 #include "pyGlueHelpers.h"
-#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptKey, pyKey);

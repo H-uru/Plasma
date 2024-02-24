@@ -49,8 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper for Python to a plMipMap image
 //
 
-#include "pyGlueDefinitions.h"
-
 #include <map>
 
 #include "pnKeyedObject/plKey.h"
@@ -58,6 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef BUILDING_PYPLASMA
 #   include "plGImage/plMipmap.h"
 #endif
+
+#include "pyGlueDefinitions.h"
 
 class plFileName;
 class pyColor;

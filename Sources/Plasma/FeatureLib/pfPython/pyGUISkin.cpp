@@ -40,11 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
+#include "pyGUISkin.h"
 
 #include "pfGameGUIMgr/pfGUIPopUpMenu.h"
 
-#include "pyGUISkin.h"
+#include "pyKey.h"
 
 pyGUISkin::pyGUISkin(pyKey& gckey)
 {

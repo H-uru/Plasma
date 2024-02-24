@@ -44,9 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGlueDefinitions.h"
 
+struct hsPoint3;
 class plAvBrainCritter;
 class pyKey;
-struct hsPoint3;
 namespace ST { class string; }
 
 // simply here so we can pass our message types on to python

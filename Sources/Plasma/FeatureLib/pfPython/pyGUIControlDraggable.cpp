@@ -40,13 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
+#include "pyGUIControlDraggable.h"
 
 #include "pfGameGUIMgr/pfGUIDraggableMod.h"
 
-#include "pyGUIControlDraggable.h"
 #include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 pyGUIControlDraggable::pyGUIControlDraggable(pyKey& gckey) : pyGUIControl(gckey)
 {

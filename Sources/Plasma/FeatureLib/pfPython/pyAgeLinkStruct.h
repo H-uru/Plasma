@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pyAgeLinkStruct_h_inc
 
 #include "plNetCommon/plNetServerSessionInfo.h"
+
 #include "pyGlueDefinitions.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -51,10 +52,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+class pyAgeInfoStruct;
+class pyAgeLinkStructRef;
 class pySpawnPointInfo;
 class pySpawnPointInfoRef;
-class pyAgeLinkStructRef;
-class pyAgeInfoStruct;
 
 class pyAgeLinkStruct
 {

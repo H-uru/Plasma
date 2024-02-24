@@ -40,18 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGUIPopUpMenu.h"
+
 #include <string_theory/string>
 
-#include "pyKey.h"
-
-#include "pyColor.h"
-
+#include "pfGameGUIMgr/pfGUIControlHandlers.h"
 #include "pfGameGUIMgr/pfGUIControlMod.h"
 #include "pfGameGUIMgr/pfGUIPopUpMenu.h"
 
-#include "pyGUIPopUpMenu.h"
-
-#include "pfGameGUIMgr/pfGUIControlHandlers.h"
+#include "pyColor.h"
+#include "pyKey.h"
 
 #define kGetMenuPtr(ret) \
         if (fGCkey == nullptr) \

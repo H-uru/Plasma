@@ -40,14 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGameScore.h"
+
 #include <string_theory/string>
 
+#include "pfGameScoreMgr/pfGameScoreMgr.h"
+
+#include "pyEnum.h"
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pyGameScore.h"
-#include "pyEnum.h"
-#include "pfGameScoreMgr/pfGameScoreMgr.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGameScore, pyGameScore);

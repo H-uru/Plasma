@@ -50,10 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
+
 #include "pyGlueDefinitions.h"
 
-class pyColor;
 class plStatusLog;
+class pyColor;
 namespace ST { class string; }
 
 class pyStatusLog

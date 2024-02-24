@@ -49,8 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyGUIControl.h"
 #include "pyGlueDefinitions.h"
+#include "pyGUIControl.h"
 
 #include <tuple>
 

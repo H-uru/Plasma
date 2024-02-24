@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGrassShader.h"
+
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pyGrassShader.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGrassShader, pyGrassShader);

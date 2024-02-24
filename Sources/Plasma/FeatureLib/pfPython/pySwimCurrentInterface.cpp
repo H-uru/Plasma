@@ -40,10 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
-
 #include "pySwimCurrentInterface.h"
+
 #include "plAvatar/plSwimRegion.h"
+
+#include "pyKey.h"
 
 pySwimCurrentInterface::pySwimCurrentInterface(plKey key)
 {

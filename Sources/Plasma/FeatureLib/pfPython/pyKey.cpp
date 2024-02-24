@@ -48,15 +48,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/string>
 
 #include "plgDispatch.h"
-#include "pyKey.h"
-#include "hsResMgr.h"
 
+#include "pnMessage/plEnableMsg.h"
 #include "pnModifier/plModifier.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "plPythonFileMod.h"
-#include "pnMessage/plEnableMsg.h"
+#include "pyKey.h"
 #include "pySceneObject.h"
-#include "pnSceneObject/plSceneObject.h"
 
 pyKey::pyKey()
 {

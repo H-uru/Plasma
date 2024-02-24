@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGUIControlDynamicText.h"
+
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pyGUIControlDynamicText.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlDynamicText, pyGUIControlDynamicText);

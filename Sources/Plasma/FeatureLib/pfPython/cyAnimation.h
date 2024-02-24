@@ -51,7 +51,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string_theory/string>
 
+#include "pnKeyedObject/plKey.h"
+
 #include "pyGlueDefinitions.h"
+
+class pyKey;
 
 class cyAnimation
 {

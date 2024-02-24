@@ -40,13 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "cyAccountManagement.h"
+
 #include <string_theory/string>
 
-#include "cyAccountManagement.h"
-#include "pyGlueHelpers.h"
-#include "pyEnum.h"
-
 #include "plMessage/plAccountUpdateMsg.h"
+
+#include "pyEnum.h"
+#include "pyGlueHelpers.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAccountPlayerList, "Returns list of players associated with the current account")
 {

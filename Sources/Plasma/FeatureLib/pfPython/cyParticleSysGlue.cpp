@@ -40,11 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
-
 #include "cyParticleSys.h"
 
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptParticle, cyParticleSys);

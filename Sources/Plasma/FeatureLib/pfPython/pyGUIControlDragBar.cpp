@@ -44,10 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 ///////////////////////////////////////////////
 
-#include "pyKey.h"
+#include "pyGUIControlDragBar.h"
 
 #include "pfGameGUIMgr/pfGUIDragBarCtrl.h"
-#include "pyGUIControlDragBar.h"
+
+#include "pyKey.h"
 
 pyGUIControlDragBar::pyGUIControlDragBar(pyKey& gckey) : pyGUIControl(gckey)
 {

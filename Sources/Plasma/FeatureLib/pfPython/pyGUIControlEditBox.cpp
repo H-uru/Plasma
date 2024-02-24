@@ -40,14 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <string_theory/string>
+#include "pyGUIControlEditBox.h"
 
-#include "pyKey.h"
+#include <string_theory/string>
 
 #include "pfGameGUIMgr/pfGUIEditBoxMod.h"
 
-#include "pyGUIControlEditBox.h"
 #include "pyColor.h"
+#include "pyKey.h"
 
 pyGUIControlEditBox::pyGUIControlEditBox(pyKey& gckey) : pyGUIControl(gckey)
 {

@@ -40,13 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGUIControlTextBox.h"
+
 #include <string_theory/string>
 
+#include "pyColor.h"
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pyGUIControlTextBox.h"
-#include "pyColor.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlTextBox, pyGUIControlTextBox);

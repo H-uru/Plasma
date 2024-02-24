@@ -40,11 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyDniInfoSource.h"
+
 #include <string_theory/string>
 
-#include "pyGlueHelpers.h"
-#include "pyDniInfoSource.h"
 #include "pnUUID/pnUUID.h"
+
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptDniInfoSource, pyDniInfoSource);

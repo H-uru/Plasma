@@ -40,11 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyGlueHelpers.h"
-
 #include "pyVaultNodeRef.h"
 
 #include "plVault/plVault.h"
+
+#include "pyGlueHelpers.h"
 
 // glue functions
 // glue functions

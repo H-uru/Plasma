@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/string>
 
 #include "plNetCommon/plSpawnPointInfo.h"
+
 #include "pyGlueDefinitions.h"
 
 //////////////////////////////////////////////////////////////////////

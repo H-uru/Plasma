@@ -40,13 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyVaultImageNode.h"
+
 #include <string_theory/string>
 
-#include "pyGlueHelpers.h"
-#include "pyVaultImageNode.h"
-#include "pyImage.h"
-
 #include "plVault/plVault.h"
+
+#include "pyGlueHelpers.h"
+#include "pyImage.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptVaultImageNode, pyVaultImageNode);

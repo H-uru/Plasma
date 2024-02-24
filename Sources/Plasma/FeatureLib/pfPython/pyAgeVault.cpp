@@ -45,23 +45,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pyAgeVault.h"
+
 #include <string_theory/string>
 
 #include "pnNetBase/pnNbError.h"
 
+#include "plSDL/plSDL.h"
+#include "plVault/plVault.h"
+
+#include "pyAgeInfoStruct.h"
 #include "pyGlueHelpers.h"
-#include "pyAgeVault.h"
-#include "pyVaultFolderNode.h"
+#include "pySDL.h"
 #include "pyVaultAgeInfoNode.h"
 #include "pyVaultAgeLinkNode.h"
 #include "pyVaultChronicleNode.h"
+#include "pyVaultFolderNode.h"
 #include "pyVaultTextNoteNode.h"
-#include "pyAgeInfoStruct.h"
-#include "pySDL.h"
-
-
-#include "plVault/plVault.h"
-#include "plSDL/plSDL.h"
 
 pyAgeVault::pyAgeVault() {
 }

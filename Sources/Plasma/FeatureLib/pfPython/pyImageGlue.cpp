@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyImage.h"
+
 #include <string_theory/string>
 
 #include "plFileSystem.h"
@@ -47,8 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyColor.h"
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pyImage.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptImage, pyImage);

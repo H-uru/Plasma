@@ -49,10 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <vector>
+
 #include "pnKeyedObject/plKey.h"
 
 #include "pyGlueDefinitions.h"
-#include <vector>
 
 class pyColor;
 class pyKey;

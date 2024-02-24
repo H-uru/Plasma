@@ -40,35 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGUIDialog.h"
+
 #include <string_theory/format>
-
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
-
-#include "pyColor.h"
 
 #include "pfGameGUIMgr/pfGameGUIMgr.h"
 #include "pfGameGUIMgr/pfGUIDialogMod.h"
-
-#include "pyGUIDialog.h"
-
-// the rest of the controls
-#include "pyGUIControlButton.h"
-#include "pyGUIControlCheckBox.h"
-#include "pyGUIControlEditBox.h"
-#include "pyGUIControlListBox.h"
-#include "pyGUIControlRadioGroup.h"
-#include "pyGUIControlTextBox.h"
-#include "pyGUIControlValue.h"
-#include "pyGUIControlDynamicText.h"
-#include "pyGUIControlMultiLineEdit.h"
-#include "pyGUIPopUpMenu.h"
-#include "pyGUIControlClickMap.h"
-
-// specific value controls
 #include "pfGameGUIMgr/pfGUIKnobCtrl.h"
 #include "pfGameGUIMgr/pfGUIProgressCtrl.h"
 #include "pfGameGUIMgr/pfGUIUpDownPairMod.h"
+
+#include "pyColor.h"
+#include "pyGlueHelpers.h"
+#include "pyGUIControlButton.h"
+#include "pyGUIControlCheckBox.h"
+#include "pyGUIControlClickMap.h"
+#include "pyGUIControlDynamicText.h"
+#include "pyGUIControlEditBox.h"
+#include "pyGUIControlListBox.h"
+#include "pyGUIControlMultiLineEdit.h"
+#include "pyGUIControlRadioGroup.h"
+#include "pyGUIControlTextBox.h"
+#include "pyGUIControlValue.h"
+#include "pyGUIPopUpMenu.h"
+#include "pyKey.h"
 
 pyGUIDialog::pyGUIDialog(pyKey& gckey)
 {

@@ -40,15 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
+#include "pyGUIControlClickMap.h"
 
 #include "pfGameGUIMgr/pfGUIClickMapCtrl.h"
 #include "pfGameGUIMgr/pfGUIDialogMod.h"
 
-#include "pyGUIControlClickMap.h"
-#include "pyGUIDialog.h"
 #include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 pyGUIControlClickMap::pyGUIControlClickMap(pyKey& gckey) : pyGUIControl(gckey)
 {

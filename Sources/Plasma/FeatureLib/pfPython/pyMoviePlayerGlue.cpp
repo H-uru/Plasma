@@ -40,14 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
-
 #include "pyMoviePlayer.h"
-#include "pyEnum.h"
-#include "pyColor.h"
 
 #include "pfMessage/pfMovieEventMsg.h"
+
+#include "pyColor.h"
+#include "pyEnum.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptMoviePlayer, pyMoviePlayer);

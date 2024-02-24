@@ -40,10 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
-
 #include "pyCluster.h"
+
 #include "plDrawable/plClusterGroup.h"
+
+#include "pyKey.h"
 
 pyCluster::pyCluster(plKey key)
 {

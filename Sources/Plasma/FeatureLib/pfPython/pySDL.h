@@ -48,14 +48,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include <vector>
+
+#include "HeadSpin.h"
 
 #include "pyGlueDefinitions.h"
 
-class plStateDataRecord;
-class plSimpleStateVariable;
 class plKey;
+class plSimpleStateVariable;
+class plStateDataRecord;
 namespace ST { class string; }
 
 // pySDL -- this thing really only exists for the constants

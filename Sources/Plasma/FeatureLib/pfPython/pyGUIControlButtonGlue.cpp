@@ -40,13 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
+#include "pyGUIControlButton.h"
 
 #include "pfGameGUIMgr/pfGUIButtonMod.h"
 
 #include "pyEnum.h"
-#include "pyGUIControlButton.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlButton, pyGUIControlButton);

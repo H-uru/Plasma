@@ -40,14 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <string_theory/string>
-
-#include "pyGlueHelpers.h"
 #include "pyGmMarker.h"
 
+#include <string_theory/string>
+
+#include "plPythonConvert.h"
 #include "pyEnum.h"
 #include "pyGameCli.h"
-#include "plPythonConvert.h"
+#include "pyGlueHelpers.h"
 
 // ===========================================================================
 

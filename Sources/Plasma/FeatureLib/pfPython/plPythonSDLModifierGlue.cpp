@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "plPythonSDLModifier.h"
+
 #include <string_theory/string>
 
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "plPythonSDLModifier.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptSDL, pySDLModifier);

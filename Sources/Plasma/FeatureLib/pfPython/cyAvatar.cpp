@@ -40,42 +40,39 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "cyAvatar.h"
+
 #include <string_theory/format>
 
 #include "plFileSystem.h"
 #include "plgDispatch.h"
-#include "pyGlueHelpers.h"
-#include "pyKey.h"
 #include "plPhysical.h"
 
-#include "cyAvatar.h"
-
-#include "plAvatar/plAvatarMgr.h"
-#include "plMessage/plAvatarMsg.h"
-#include "plMessage/plOneShotMsg.h"
-#include "plMessage/plMultistageMsg.h"
 #include "pnMessage/plNotifyMsg.h"
-#include "plGImage/plMipmap.h"
-#include "pySceneObject.h"
-#include "pyColor.h"
-#include "pyImage.h"
+#include "pnSceneObject/plSceneObject.h"
 
-#include "plAvatar/plOneShotMod.h"
-#include "plAvatar/plMultistageBehMod.h"
-#include "plAvatar/plAvatarClothing.h"
-#include "plAvatar/plClothingLayout.h"
+#include "plAnimation/plAGAnim.h" // to get the BodyUsage enum
 #include "plAvatar/plArmatureMod.h"
-#include "plAvatar/plAvBrainHuman.h"        // needed to call the emote
-#include "plAnimation/plAGAnim.h"          // to get the BodyUsage enum
+#include "plAvatar/plAvatarClothing.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plAvatar/plAvBrainHuman.h" // needed to call the emote
+#include "plAvatar/plClothingLayout.h"
+#include "plAvatar/plMultistageBehMod.h"
+#include "plAvatar/plOneShotMod.h"
+#include "plDrawable/plMorphSequence.h"
+#include "plDrawable/plSharedMesh.h"
 #include "plInputCore/plAvatarInputInterface.h"
+#include "plMessage/plAvatarMsg.h"
+#include "plMessage/plMultistageMsg.h"
+#include "plMessage/plOneShotMsg.h"
 #include "plMessage/plSimStateMsg.h"
-
 #include "plVault/plVault.h"
 
-#include "plDrawable/plSharedMesh.h"
-
-#include "pnSceneObject/plSceneObject.h"
-#include "plDrawable/plMorphSequence.h"
+#include "pyColor.h"
+#include "pyGlueHelpers.h"
+#include "pyImage.h"
+#include "pyKey.h"
+#include "pySceneObject.h"
 
 ///////////////////////////////////////////////////////////////////////////
 //

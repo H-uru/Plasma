@@ -40,12 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyStream.h"
+
 #include <string_theory/string>
 
-#include "pyGlueHelpers.h"
-#include "pyStream.h"
 #include "plFileSystem.h"
 
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptStream, pyStream);

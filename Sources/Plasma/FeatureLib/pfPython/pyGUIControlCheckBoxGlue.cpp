@@ -40,10 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGUIControlCheckBox.h"
+
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pyGUIControlCheckBox.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIControlCheckBox, pyGUIControlCheckBox);

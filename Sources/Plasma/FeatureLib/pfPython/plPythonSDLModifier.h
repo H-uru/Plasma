@@ -42,16 +42,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPythonSDLModifier_h_inc
 #define plPythonSDLModifier_h_inc
 
-class plPythonFileMod;
-class plStateDataRecord;
-class plSimpleStateVariable;
-class pyKey;
-
 #include <map>
+
 #include "plModifier/plSDLModifier.h"
 
 #include "pyGlueDefinitions.h"
 
+class plPythonFileMod;
+class plSimpleStateVariable;
+class plStateDataRecord;
+class pyKey;
 
 // hack for plNetClientVNodeMgr single-player mode SDLHook stuff.
 plStateDataRecord * GetAgeSDL();

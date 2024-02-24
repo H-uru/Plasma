@@ -42,11 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGmMarker.h"
 
-#include "pyGameHandler.h"
-#include "plPythonCallable.h"
-#include "pyObjectRef.h"
-
 #include "pfGameMgr/pfGmMarker.h"
+
+#include "plPythonCallable.h"
+#include "pyGameHandler.h"
+#include "pyObjectRef.h"
 
 // ===========================================================================
 
