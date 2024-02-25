@@ -877,11 +877,18 @@ void plResponderProc::IDrawComboItem(DRAWITEMSTRUCT *dis)
         return; 
 
     // The colors depend on whether the item is selected. 
-    COLORREF clrForeground = SetTextColor(dis->hDC, 
-        GetSysColor(dis->itemState & ODS_SELECTED ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT)); 
+    bool selected = hsCheckBits(dis->itemState, ODS_SELECTED);
+    COLORREF maxForeground = selected ? kHilightText : kWindowText;
+    COLORREF maxBackground = selected ? kItemHilight : kWindow;
 
-    COLORREF clrBackground = SetBkColor(dis->hDC, 
-        GetSysColor(dis->itemState & ODS_SELECTED ? COLOR_HIGHLIGHT : COLOR_WINDOW)); 
+    COLORREF clrForeground = SetTextColor(
+        dis->hDC,
+        GetColorManager()->GetColor(maxForeground)
+    );
+    COLORREF clrBackground = SetBkColor(
+        dis->hDC,
+        GetColorManager()->GetColor(maxBackground)
+    );
 
     // Calculate the vertical and horizontal position.
     TEXTMETRIC tm;
@@ -1072,7 +1079,6 @@ INT_PTR plResponderProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT ms
         }
         return TRUE;
 
-#ifdef CUSTOM_DRAW
     case WM_DRAWITEM:
         if (wParam == IDC_STATE_COMBO)
         {
@@ -1080,7 +1086,6 @@ INT_PTR plResponderProc::DlgProc(TimeValue t, IParamMap2 *pm, HWND hWnd, UINT ms
             return TRUE;
         }
         break;
-#endif
 
     case WM_SETCURSOR:
         {
