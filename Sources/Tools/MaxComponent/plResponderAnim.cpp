@@ -118,7 +118,7 @@ enum
     kRespondRewindSound,
     kRespondFastForwardAnim,
     
-    kNumTypes = 16
+    kNumTypes = 17
 };
 
 int plResponderCmdAnim::NumTypes()
