@@ -126,9 +126,9 @@ int plResponderCmdAnim::NumTypes()
     return kNumTypes;
 }
 
-static int IndexToOldType(int idx)
+static constexpr int IndexToOldType(int idx)
 {
-    static int oldTypes[] =
+    constexpr int oldTypes[] =
     {
         kRespondPlayAnim,
         kRespondStopAnim, 
@@ -152,6 +152,7 @@ static int IndexToOldType(int idx)
         kRespondFastForwardAnim,
     };
 
+    static_assert(std::size(oldTypes) == kNumTypes, "ResponderAnim enumerations have differing lengths!");
     hsAssert(idx < kNumTypes, "Bad index");
     return oldTypes[idx];
 }
