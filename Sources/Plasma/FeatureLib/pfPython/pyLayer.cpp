@@ -40,43 +40,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plImageLibMod_inc
-#define plImageLibMod_inc
+#include <Python.h>
+#include "pyKey.h"
+#include "hsResMgr.h"
 
-#include <vector>
+#include "pyLayer.h"
+#include "pyImage.h"
 
-#include "pnModifier/plSingleModifier.h"
+#include "plMessage/plLayRefMsg.h"
 
-class plBitmap;
-
-class plImageLibMod : public plSingleModifier
+void pyLayer::setKey(pyKey& layerKey) // only for python glue, do NOT call
 {
-protected:
+    if (fLayer && fLayerKey)
+        fLayerKey->UnRefObject();
 
-    std::vector<plBitmap *> fImages;
+    fLayer = nullptr;
+    fLayerKey = layerKey.getKey();
+}
 
-    bool IEval(double secs, float del, uint32_t dirty) override { return false; }
+plLayer* pyLayer::GetLayer() const
+{
+    if (fLayer)
+        return fLayer;
+    return plLayer::ConvertNoRef(fLayerKey->ObjectIsLoaded());
+}
 
-public:
-    plImageLibMod() {};
+void pyLayer::SetTexture(plBitmap* image)
+{
+    plLayer* layer = GetLayer();
 
-    CLASSNAME_REGISTER( plImageLibMod );
-    GETINTERFACE_ANY( plImageLibMod, plSingleModifier );
-
-    bool MsgReceive(plMessage* msg) override;
-    
-    void Read(hsStream* stream, hsResMgr* mgr) override;
-    void Write(hsStream* stream, hsResMgr* mgr) override;
-
-    enum Refs
+    if (image)
     {
-        kRefImage = 0
-    };
+        plLayRefMsg* refMsg = new plLayRefMsg(fLayerKey, plRefMsg::kOnReplace, 0, plLayRefMsg::kTexture);
+        hsgResMgr::ResMgr()->AddViaNotify(image->GetKey(), refMsg, plRefFlags::kActiveRef);
 
-    size_t  GetNumImages() const { return fImages.size(); }
-    plBitmap* GetImage(const ST::string&) const;
-    std::vector<plBitmap*> GetImages() const { return fImages; }
-    std::vector<ST::string> GetImageNames() const;
-};
+        layer->SetTexture(image);
+    }
+}
 
-#endif // plImageLibMod_inc
+PyObject* pyLayer::GetTexture() const
+{
+    plLayer* layer = GetLayer();
+
+    plMipmap* mm = plMipmap::ConvertNoRef(layer->GetTexture());
+    if (mm)
+        return pyImage::New(mm);
+    
+    PYTHON_RETURN_NONE;
+}

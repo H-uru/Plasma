@@ -5267,6 +5267,24 @@ class ptImage:
         """Saves this image to disk as a JPEG file"""
         pass
 
+class ptImageLibMod:
+    """Plasma ImageLibraryModifier class"""
+    def __init__(self,imlkey):
+        """None"""
+        pass
+
+    def getImage(imageName):
+        """Returns the named image, if present"""
+        pass
+
+    def getImages():
+        """Returns a tuple of ptImages"""
+        pass
+
+    def getNames():
+        """Returns a tuple of the image names"""
+        pass
+
 class ptInputInterface:
     """Plasma input interface class"""
     def __init__(self):
@@ -5387,6 +5405,12 @@ Returns key code for controlCode"""
         """Forces write of the keymap file"""
         pass
 
+class ptLayer:
+    """Plasma Layer class"""
+    def __init__(self,layerKey):
+        """None"""
+        pass
+    
 class ptMarkerMgr:
     """Marker manager accessor class"""
     def __init__(self):
@@ -6060,6 +6084,10 @@ If there are more then one attached, get the first one"""
 
     def getPythonMods(self):
         """Returns list of ptKeys of the python modifiers attached to this sceneobject"""
+        pass
+
+    def getImageLibMods(self):
+        """Returns list of ptKeys of the image library modifiers attached to this sceneobject"""
         pass
 
     def getResponderState(self):

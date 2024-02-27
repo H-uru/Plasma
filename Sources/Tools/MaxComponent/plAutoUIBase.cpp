@@ -375,6 +375,18 @@ void plAutoUIBase::AddPickGrassComponentButton(int16_t id, const ST::string& scr
     fParams.push_back(param);
 }
 
+void plAutoUIBase::AddPickLayerButton(int16_t id, const ST::string& scriptName, const ST::string& name, int vid, std::unordered_set<ST::string> vstates)
+{
+    ST::string scriptNameNew = !scriptName.empty() ? scriptName : IMakeScriptName(name);
+
+    fDesc->AddParam(id, ST2M(scriptNameNew), TYPE_REFTARG, 0, 0,
+        p_end,
+        p_end);
+    plAutoUIParam* param = new plPickMaterialButtonParam(id, name);
+    param->SetVisInfo(vid, std::move(vstates));
+    fParams.push_back(param);
+}
+
 INT_PTR CALLBACK plAutoUIBase::ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     plAutoUIBase *pthis = nullptr;
