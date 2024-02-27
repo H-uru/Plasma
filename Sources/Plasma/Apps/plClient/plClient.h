@@ -178,7 +178,9 @@ protected:
 
     int fNumPostLoadMsgs;
     float fPostLoadMsgInc;
-    
+
+    std::vector<hsLibraryHndl> fLoadedDLLs;
+
     void                    ICompleteInit ();
     void                    IOnAsyncInitComplete ();
     void                    IHandlePatcherMsg (plResPatcherMsg * msg);

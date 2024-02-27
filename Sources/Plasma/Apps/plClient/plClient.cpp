@@ -62,6 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnDispatch/plDispatch.h"
 #include "pnDispatch/plDispatchLogBase.h"
+#include "pnFactory/plFactory.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plAudioSysMsg.h"
@@ -158,6 +159,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfPython/cyMisc.h"
 #include "pfPython/cyPythonInterface.h"
 
+#ifdef HS_BUILD_FOR_UNIX
+#    include <dlfcn.h> // For ModDLL loading
+#endif
 
 #define MSG_LOADING_BAR
 
@@ -371,6 +375,58 @@ bool plClient::Shutdown()
     UnRegisterAs(kClient_KEY);
 
     return false;
+}
+
+void plClient::InitDLLs() {
+    hsStatusMessage("Init dlls client\n");
+
+    std::vector<plFileName> dlls = plFileSystem::ListDir("ModDLL",
+#if defined(HS_BUILD_FOR_WIN32)
+        "*.dll"
+#elif defined(HS_BUILD_FOR_APPLE)
+        "*.dylib"
+#else
+        "*.so"
+#endif
+    );
+
+    for (auto iter = dlls.begin(); iter != dlls.end(); ++iter)
+    {
+#ifdef HS_BUILD_FOR_WIN32
+        hsLibraryHndl mod = LoadLibraryW(iter->WideString().data());
+#else
+        hsLibraryHndl mod = dlopen(iter->AsString().c_str(), RTLD_LAZY | RTLD_LOCAL);
+#endif
+
+        if (mod)
+        {
+#ifdef HS_BUILD_FOR_WIN32
+            pInitGlobalsFunc initGlobals = (pInitGlobalsFunc)GetProcAddress(mod, "InitGlobals");
+#else
+            pInitGlobalsFunc initGlobals = (pInitGlobalsFunc)dlsym(mod, "InitGlobals");
+#endif
+
+            (*initGlobals)(hsgResMgr::ResMgr(), plFactory::GetTheFactory(), plgTimerCallbackMgr::Mgr(),
+                hsTimer::GetTheTimer(), plNetClientApp::GetInstance());
+            fLoadedDLLs.emplace_back(mod);
+        }
+    }
+}
+
+void plClient::ShutdownDLLs()
+{
+    for (hsLibraryHndl mod : fLoadedDLLs)
+    {
+#ifdef HS_BUILD_FOR_WIN32
+        BOOL ret = FreeLibrary(mod);
+        if (!ret)
+            hsStatusMessage("Failed to free lib\n");
+#else
+        dlclose(mod);
+#endif
+    }
+
+    fLoadedDLLs.clear();
 }
 
 void plClient::InitAuxInits()

@@ -690,7 +690,7 @@ void plKeyMap::ICheckAndBindDupe(plKeyDef origKey, plKeyDef dupeKey)
 }
 
 const std::map<uint32_t, ST::string> plKeyMap::fKeyConversionEnglish =
-{ 
+{
     { KEY_A,                ST_LITERAL("A")},
     { KEY_B,                ST_LITERAL("B")},
     { KEY_C,                ST_LITERAL("C")},
