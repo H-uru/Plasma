@@ -82,7 +82,7 @@ TrailerDlg              = ptAttribGUIDialog(9, "The Trailer dialog")
 AdvGameSettingDlg       = ptAttribGUIDialog(10, "The Adv Game Settings dialog")
 ResetWarnDlg            = ptAttribGUIDialog(11, "The Reset Warning dialog")
 ReleaseNotesDlg         = ptAttribGUIDialog(12, "Release Notes dialog")
-respDisableItems        = ptAttribResponder(13, "resp: Disable Items", ["enableRes", "disableRes", "enableWindow", "disableWindow", "enableEAX", "disableEAX", "enableGamma", "disableGamma"])
+respDisableItems        = ptAttribResponder(13, "resp: Disable Items", ["enableRes", "disableRes", "enableWindow", "disableWindow", "enableEAX", "disableEAX", "enableGamma", "disableGamma", "enableDynRefl", "disableDynRefl"])
 SupportDlg              = ptAttribGUIDialog(14, "Support dialog")
 
 
@@ -372,6 +372,8 @@ kVideoShadowQualitySliderTag = 459
 kVideoResSliderTag = 461
 kVideoResTextTag = 473
 kVideoVerticalSyncCheckTag = 453
+kVideoDynamicReflectionsCheckTag = 900
+kVideoDynamicReflectionsTextTag = 901
 
 kGSAudioMuteCheckbox = 456
 kGSMouseTurnSensSlider = 460
@@ -1450,6 +1452,19 @@ class xOptionsMenu(ptModifier):
         else:
             videoField.setChecked(0)
 
+        dynReflCB = GraphicsSettingsDlg.dialog.getControlModFromTag(kVideoDynamicReflectionsCheckTag)
+        dynReflTB = GraphicsSettingsDlg.dialog.getControlModFromTag(kVideoDynamicReflectionsTextTag)
+        if PtSupportsPlanarReflections():
+            respDisableItems.run(self.key, state="enableDynRefl")
+            dynReflCB.setChecked(bool(opts[xIniDisplay.kGraphicsDynamicReflections]))
+            dynReflCB.enable()
+            dynReflTB.setForeColor(ptColor().white())
+        else:
+            respDisableItems.run(self.key, state="disableDynRefl")
+            dynReflCB.setChecked(False)
+            dynReflCB.disable()
+            dynReflTB.setForeColor(ptColor(0.839, 0.785, 0.695, 1))
+
         # video res stuff
         vidRes = str(opts[xIniDisplay.kGraphicsWidth]) + "x" + str(opts[xIniDisplay.kGraphicsHeight])
         videoResField = ptGUIControlTextBox(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoResTextTag))
@@ -1567,7 +1582,9 @@ class xOptionsMenu(ptModifier):
         gammaField = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kGSDisplayGammaSlider))
         gamma = gammaField.getValue()
 
-        xIniDisplay.SetGraphicsOptions(width, height, colordepth, windowed, tex_quality, antialias, aniso, quality, shadowsstr, vsyncstr, shadow_quality)
+        dynRefl = int(GraphicsSettingsDlg.dialog.getControlModFromTag(kVideoDynamicReflectionsCheckTag).isChecked())
+
+        xIniDisplay.SetGraphicsOptions(width, height, colordepth, windowed, tex_quality, antialias, aniso, quality, shadowsstr, vsyncstr, shadow_quality, dynRefl)
         xIniDisplay.WriteIni()
         self.setNewChronicleVar("gamma", gamma)
 
@@ -1576,6 +1593,7 @@ class xOptionsMenu(ptModifier):
             PtDebugPrint("SETTING GAMMA")
             PtSetGamma2(gamma)
             PtSetShadowVisDistance(shadow_quality)
+            PtEnablePlanarReflections(dynRefl)
 
             if shadows:
                 PtEnableShadows()
