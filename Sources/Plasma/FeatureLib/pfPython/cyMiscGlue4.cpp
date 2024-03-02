@@ -610,6 +610,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtEnablePlanarReflections, args, "Params: on\nEn
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtSupportsPlanarReflections, "Returns if planar reflections are supported")
+{
+    return PyBool_FromLong(cyMisc::ArePlanarReflectionsSupported() ? 1 : 0);
+}
+
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetSupportedDisplayModes, "Returns a list of supported resolutions")
 {
     std::vector<plDisplayMode> res;
@@ -818,6 +823,7 @@ void cyMisc::AddPlasmaMethods4(PyObject* m)
         PYTHON_GLOBAL_METHOD_NOARGS(PtCheckVisLOSFromCursor)
 
         PYTHON_GLOBAL_METHOD(PtEnablePlanarReflections)
+        PYTHON_GLOBAL_METHOD_NOARGS(PtSupportsPlanarReflections)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetSupportedDisplayModes)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetDesktopWidth)
         PYTHON_GLOBAL_METHOD_NOARGS(PtGetDesktopHeight)

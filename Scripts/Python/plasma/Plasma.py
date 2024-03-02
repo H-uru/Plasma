@@ -827,6 +827,10 @@ def PtStartScreenCapture(selfKey,width=800,height=600):
     """Starts a capture of the screen"""
     pass
 
+def PtSupportsPlanarReflections() -> bool:
+    """Returns if planar reflections are supported"""
+    ...
+
 def PtToggleAvatarClickability(on):
     """Turns on and off our avatar's clickability"""
     pass
