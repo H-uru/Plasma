@@ -695,6 +695,9 @@ class xOptionsMenu(ptModifier):
         elif id == KeyMapDlg.id:
             if event == kDialogLoaded:
                 pass
+            elif event == kShowHide:
+                if control.isEnabled():
+                    self.IShowMappedKeys(control, gKM1ControlCodesRow1, gKM1ControlCodesRow2)
             elif event == kAction or event == kValueChanged:
                 kmID = control.getTagID()
                 if kmID == kKMOkBtn:
