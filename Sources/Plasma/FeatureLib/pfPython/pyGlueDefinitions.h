@@ -53,9 +53,6 @@ typedef struct _typeobject PyTypeObject;
 // This makes sure that our python new function can access our constructors
 #define PYTHON_CLASS_NEW_FRIEND(pythonClassName) friend PyObject *pythonClassName##_new(PyTypeObject *type, PyObject *args, PyObject *keywords)
 
-#define PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION \
-    static PyObject* New(hsRef<RelVaultNode> vaultNode=nullptr);
-
 // This defines the basic new function for a class
 #define PYTHON_CLASS_NEW_DEFINITION static PyObject *New()
 

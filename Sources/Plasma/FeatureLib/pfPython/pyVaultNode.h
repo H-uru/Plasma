@@ -60,6 +60,9 @@ struct RelVaultNode;
 class plUUID;
 namespace ST { class string; }
 
+#define PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION \
+    static PyObject* New(hsRef<RelVaultNode> vaultNode=nullptr);
+
 class pyVaultNode
 {
 public:
