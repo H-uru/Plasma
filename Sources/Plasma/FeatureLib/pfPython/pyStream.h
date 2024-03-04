@@ -48,13 +48,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <memory>
+#include <vector>
 
 #include "HeadSpin.h"
 #include "hsStream.h"
-#include "pyGlueHelpers.h"
 
-#include <memory>
-#include <vector>
+#include "pyGlueDefinitions.h"
 
 class plFileName;
 namespace ST { class string; }

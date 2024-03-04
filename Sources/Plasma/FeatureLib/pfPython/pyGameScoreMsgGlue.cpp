@@ -40,10 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pyGameScoreMsg.h"
+
 #include <string_theory/string>
 
-#include "pyGameScoreMsg.h"
+#include "pyGlueHelpers.h"
 
 // Maybe we need a better exception? Seems to be the best built in one though
 #define PFGS_PYERR PyExc_RuntimeError

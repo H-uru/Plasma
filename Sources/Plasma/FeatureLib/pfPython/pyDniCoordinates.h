@@ -48,10 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
-class plDniCoordinateInfo;
 struct hsPoint3;
+class plDniCoordinateInfo;
 
 class pyDniCoordinates
 {

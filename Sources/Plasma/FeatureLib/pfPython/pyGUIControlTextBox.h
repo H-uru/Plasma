@@ -49,14 +49,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pyGlueDefinitions.h"
 #include "pyGUIControl.h"
-#include "pyGlueHelpers.h"
 
+class pfGUIColorScheme;
 class plKey;
 class pyColor;
 class pyKey;
-class pfGUIColorScheme;
-
 namespace ST { class string; }
 
 class pyGUIControlTextBox : public pyGUIControl

@@ -49,9 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
+
 #include <string_theory/string>
 #include <vector>
+
+#include "pyGlueDefinitions.h"
 
 class pyAudioControl
 {

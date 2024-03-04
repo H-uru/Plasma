@@ -45,24 +45,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Python.h>
+#include "pyVaultImageNode.h"
+
 #include <string_theory/format>
 
-#include "plPipeline.h"
 #include "hsResMgr.h"
+#include "plPipeline.h"
 
-#include "pyVaultImageNode.h"
-#ifndef BUILDING_PYPLASMA
-#   include "pyVault.h"
-#endif
-#include "pyImage.h"
-#include "cyMisc.h"
+#include "pnMessage/plRefMsg.h"
 
 #include "plGImage/plMipmap.h"
-#include "plVault/plVault.h"
-#include "pnMessage/plRefMsg.h"
 #include "plNetClient/plNetClientMgr.h"
+#include "plVault/plVault.h"
 
+#include "cyMisc.h"
+#include "pyGlueHelpers.h"
+#include "pyImage.h"
 
 static unsigned s_keyseq;
 

@@ -40,16 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "cyMisc.h"
+
 #include <string_theory/string>
 #include <utility>
-#include "pyKey.h"
 
-#include "cyMisc.h"
-#include "pyGlueHelpers.h"
-#include "pySceneObject.h"
 #include "plFileSystem.h"
+
 #include "pnUUID/pnUUID.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
+#include "pySceneObject.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendPetitionToCCR, args, "Params: message,reason=0,title=\"\"\nSends a petition with a message to the CCR group")
 {

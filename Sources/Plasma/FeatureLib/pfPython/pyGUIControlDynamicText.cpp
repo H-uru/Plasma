@@ -40,14 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
+#include "pyGUIControlDynamicText.h"
+
+#include "plGImage/plDynamicTextMap.h"
 
 #include "pfGameGUIMgr/pfGUIDynDisplayCtrl.h"
-#include "plGImage/plDynamicTextMap.h"
-#include "pyDynamicText.h"
 
-#include "pyGUIControlDynamicText.h"
+#include "pyDynamicText.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 pyGUIControlDynamicText::pyGUIControlDynamicText(pyKey& gckey) : pyGUIControl(gckey)
 {

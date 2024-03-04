@@ -40,20 +40,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plgDispatch.h"
-#include "pyKey.h"
-#include "hsResMgr.h"
-
 #include "cyCamera.h"
 
-#include "pnMessage/plCameraMsg.h"
-#include "plMessage/plInputEventMsg.h"
+#include "hsResMgr.h"
+#include "plgDispatch.h"
+
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnKeyedObject/plUoid.h"
+#include "pnMessage/plCameraMsg.h"
 
-#include "pfCamera/plVirtualCamNeu.h"
-#include "pfCamera/plCameraModifier.h"
+#include "plMessage/plInputEventMsg.h"
+
 #include "pfCamera/plCameraBrain.h"
+#include "pfCamera/plCameraModifier.h"
+#include "pfCamera/plVirtualCamNeu.h"
+
+#include "pyKey.h"
 
 cyCamera::cyCamera()
 {

@@ -40,13 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
+#include "pyWaveSet.h"
+
+#include "plDrawable/plWaveSet7.h"
 
 #include "pyColor.h"
 #include "pyGeometry3.h"
-#include "pyWaveSet.h"
-#include "plDrawable/plWaveSet7.h"
+#include "pyGlueHelpers.h"
 
 pyWaveSet::pyWaveSet(plKey key)
 {

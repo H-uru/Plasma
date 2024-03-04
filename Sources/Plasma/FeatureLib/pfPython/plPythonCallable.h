@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <type_traits>
 #include <variant>
 
-#include <Python.h>
 #include <string_theory/format>
 
 #include "HeadSpin.h"

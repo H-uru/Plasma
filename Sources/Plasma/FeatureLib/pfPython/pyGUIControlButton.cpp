@@ -40,10 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
-
 #include "pyGUIControlButton.h"
+
 #include "pfGameGUIMgr/pfGUIButtonMod.h"
+
+#include "pyKey.h"
 
 pyGUIControlButton::pyGUIControlButton(pyKey& gckey) : pyGUIControl(gckey)
 {

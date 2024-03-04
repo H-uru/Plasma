@@ -40,16 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pyCritterBrain.h"
+
 #include <string_theory/string>
 
-#include "pyGeometry3.h"
-#include "pyKey.h"
-
-#include "pyCritterBrain.h"
-#include "pyEnum.h"
-
 #include "plMessage/plAIMsg.h"
+
+#include "pyEnum.h"
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //

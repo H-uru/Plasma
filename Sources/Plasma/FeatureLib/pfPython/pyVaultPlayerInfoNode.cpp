@@ -50,8 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string_theory/string>
 
-#include "plVault/plVault.h"
 #include "pnUUID/pnUUID.h"
+
+#include "plVault/plVault.h"
 
 //create from the Python side
 pyVaultPlayerInfoNode::pyVaultPlayerInfoNode()

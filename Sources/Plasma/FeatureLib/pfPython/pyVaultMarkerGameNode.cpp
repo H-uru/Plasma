@@ -45,13 +45,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Python.h>
+#include "pyVaultMarkerGameNode.h"
+
 #include <string_theory/string>
 
-#include "pyGeometry3.h"
-
-#include "pyVaultMarkerGameNode.h"
 #include "plVault/plVault.h"
+
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
 
 //create from the Python side
 pyVaultMarkerGameNode::pyVaultMarkerGameNode()

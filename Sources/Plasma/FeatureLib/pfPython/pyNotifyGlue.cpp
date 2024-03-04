@@ -40,14 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pyNotify.h"
+
 #include <string_theory/string>
 
-#include "pyGeometry3.h"
-#include "pyKey.h"
-
-#include "pyNotify.h"
 #include "pyEnum.h"
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptNotify, pyNotify);

@@ -40,10 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "cyParticleSys.h"
+
 #include "plgDispatch.h"
 
-#include "cyParticleSys.h"
 #include "pnMessage/plMessage.h"
+
 #include "plMessage/plParticleUpdateMsg.h"
 
 cyParticleSys::cyParticleSys(plKey sender, plKey recvr)

@@ -45,14 +45,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pyNotify.h"
+
 #include <string_theory/string>
 
 #include "plgDispatch.h"
+
 #include "pyGeometry3.h"
 #include "pyKey.h"
-
-#include "pyNotify.h"
-
 
 pyNotify::pyNotify()
     : fNetPropagate(true), fNetForce(false)

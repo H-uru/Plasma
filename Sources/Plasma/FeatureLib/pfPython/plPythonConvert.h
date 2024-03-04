@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plPythonConvert_h_
 #define _plPythonConvert_h_
 
-#include <Python.h>
 #include <string_theory/string>
 #include <type_traits>
 #include <tuple>

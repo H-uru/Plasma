@@ -42,10 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pyGlueHelpers_h_
 #define _pyGlueHelpers_h_
 
+#include "pyGlueDefinitions.h"
+
+#include <Python.h>
+
 namespace ST { class string; }
-typedef struct _object PyObject;
-typedef struct _typeobject PyTypeObject;
-typedef struct PyMethodDef PyMethodDef;
 
 // Useful string functions
 ST::string PyUnicode_AsSTString(PyObject* obj);
@@ -69,15 +70,7 @@ struct pythonClassName \
     glueClassName *fThis; \
 };
 
-// This makes sure that our python new function can access our constructors
-#define PYTHON_CLASS_NEW_FRIEND(pythonClassName) friend PyObject *pythonClassName##_new(PyTypeObject *type, PyObject *args, PyObject *keywords)
-
-#define PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION \
-    static PyObject* New(hsRef<RelVaultNode> vaultNode=nullptr);
-
 // This defines the basic new function for a class
-#define PYTHON_CLASS_NEW_DEFINITION static PyObject *New()
-
 #define PYTHON_CLASS_NEW_IMPL(pythonClassName, glueClassName) \
 PyObject *glueClassName::New() \
 { \
@@ -86,8 +79,6 @@ PyObject *glueClassName::New() \
 }
 
 // This defines the basic check function for a class
-#define PYTHON_CLASS_CHECK_DEFINITION static bool Check(PyObject *obj)
-
 #define PYTHON_CLASS_CHECK_IMPL(pythonClassName, glueClassName) \
 bool glueClassName::Check(PyObject *obj) \
 { \
@@ -95,8 +86,6 @@ bool glueClassName::Check(PyObject *obj) \
 }
 
 // This defines the basic convert from function for a class
-#define PYTHON_CLASS_CONVERT_FROM_DEFINITION(glueClassName) static glueClassName *ConvertFrom(PyObject *obj)
-
 #define PYTHON_CLASS_CONVERT_FROM_IMPL(pythonClassName, glueClassName) \
 glueClassName *glueClassName::ConvertFrom(PyObject *obj) \
 { \
@@ -375,7 +364,6 @@ PYTHON_TYPE_START(pythonClassName) \
 PYTHON_TYPE_END
 
 // small macros so that the type object can be accessed outside the glue file (for subclassing)
-#define PYTHON_EXPOSE_TYPE static PyTypeObject* type_ptr
 #define PYTHON_EXPOSE_TYPE_DEFINITION(pythonClass, glueClass) PyTypeObject* glueClass::type_ptr = &pythonClass##_type
 
 /////////////////////////////////////////////////////////////////////

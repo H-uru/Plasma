@@ -40,16 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include <string_theory/string>
-
-#include "pyKey.h"
-
 #include "pyJournalBook.h"
-#include "pyEnum.h"
-#include "pyImage.h"
 
 #include "pfJournalBook/pfJournalBook.h"
+
+#include "pyEnum.h"
+#include "pyGlueHelpers.h"
+#include "pyImage.h"
+#include "pyKey.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptBook, pyJournalBook);

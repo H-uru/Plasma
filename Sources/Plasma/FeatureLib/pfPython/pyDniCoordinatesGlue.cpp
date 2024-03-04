@@ -40,11 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyGeometry3.h"
-
 #include "pyDniCoordinates.h"
+
 #include "plVault/plDniCoordinateInfo.h"
+
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptDniCoordinates, pyDniCoordinates);

@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-
 #include "pyVaultSystemNode.h"
+
 #include "plVault/plVault.h"
 
 //create from the Python side

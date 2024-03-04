@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-
 #include "pyDrawControl.h"
+
+#include "pyGlueHelpers.h"
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetGamma2, args, "Params: gamma\nSet the gamma with gamma2 rules")
 {

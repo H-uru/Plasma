@@ -42,9 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyGrassShader_h
 #define pyGrassShader_h
 
-#include "pnKeyedObject/plKey.h"
-#include "pyGlueHelpers.h"
 #include <vector>
+
+#include "pnKeyedObject/plKey.h"
+
+#include "pyGlueDefinitions.h"
 
 //////////////////////////////////////////////////////////////////////
 //

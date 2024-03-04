@@ -42,23 +42,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "cyMisc.h"
 
-#include <Python.h>
 #include <string_theory/string>
 #include <string_view>
 #include <vector>
 
-#include "pyEnum.h"
+#include "plMessage/plConfirmationMsg.h"
+#include "plMessage/plLOSRequestMsg.h"
+#include "plNetCommon/plNetCommon.h"
+#include "plResMgr/plLocalization.h"
+
+#include "plPythonCallable.h"
+#include "plPythonConvert.h"
 #include "pyColor.h"
+#include "pyEnum.h"
 #include "pyGlueHelpers.h"
 #include "pyKey.h"
 #include "pyPlayer.h"
-#include "plPythonCallable.h"
-#include "plPythonConvert.h"
-
-#include "plMessage/plConfirmationMsg.h"
-#include "plNetCommon/plNetCommon.h"
-#include "plResMgr/plLocalization.h"
-#include "plMessage/plLOSRequestMsg.h"
 
 namespace plPython
 {

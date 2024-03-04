@@ -40,14 +40,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pyDniInfoSource.h"
+
 #include <string_theory/string>
 
-#include "pyDniInfoSource.h"
-#include "pnUUID/pnUUID.h"
 #include "plUnifiedTime/plUnifiedTime.h"
+#include "pnUUID/pnUUID.h"
 #include "plVault/plVault.h"
+
 #include "pyDniCoordinates.h"
+#include "pyGlueHelpers.h"
 
 PyObject* pyDniInfoSource::GetAgeCoords()
 {

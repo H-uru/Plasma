@@ -46,17 +46,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
+#include "pyDynamicText.h"
+
 #include <string_theory/string>
 #include <utility>
-#include "plgDispatch.h"
-#include "pyKey.h"
 
-#include "pyDynamicText.h"
+#include "plgDispatch.h"
+
+#include "plGImage/plDynamicTextMap.h"
 #include "plMessage/plDynamicTextMsg.h"
+
 #include "pyColor.h"
 #include "pyImage.h"
-#include "plGImage/plDynamicTextMap.h"
-
+#include "pyKey.h"
 
 pyDynamicText::pyDynamicText()
     : fClipLeft(), fClipTop(), fClipRight(), fClipBottom(), fWrapWidth(), fWrapHeight(),

@@ -40,27 +40,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "plgDispatch.h"
-#include "pyGeometry3.h"
-#include "pnKeyedObject/plKey.h"
-#include "pyKey.h"
-#include "hsQuat.h"
-#include "pyMatrix44.h"
-
 #include "cyPhysics.h"
 
+#include <Python.h>
 #include <string_theory/format>
+
+#include "plgDispatch.h"
+#include "hsQuat.h"
+
+#include "pnKeyedObject/plKey.h"
+#include "pnMessage/plEnableMsg.h"
+#include "pnMessage/plWarpMsg.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "pnSceneObject/plSceneObject.h"
 
 #include "plMessage/plAngularVelocityMsg.h"
 #include "plMessage/plDampMsg.h"
-#include "pnMessage/plEnableMsg.h"
 #include "plMessage/plImpulseMsg.h"
 #include "plMessage/plLinearVelocityMsg.h"
-#include "pnMessage/plWarpMsg.h"
 
-#include "pnSceneObject/plSceneObject.h"
-#include "pnSceneObject/plCoordinateInterface.h"
+#include "pyGeometry3.h"
+#include "pyKey.h"
+#include "pyMatrix44.h"
 
 cyPhysics::cyPhysics(plKey sender, plKey recvr)
 {

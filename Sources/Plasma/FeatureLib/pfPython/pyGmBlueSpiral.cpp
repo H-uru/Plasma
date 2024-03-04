@@ -42,12 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGmBlueSpiral.h"
 
-#include "pyGameHandler.h"
-#include "plPythonConvert.h"
-
 #include <array>
 
 #include "pfGameMgr/pfGmBlueSpiral.h"
+
+#include "plPythonConvert.h"
+#include "pyGameHandler.h"
 
 // ===========================================================================
 

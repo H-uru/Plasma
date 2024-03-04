@@ -40,12 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pyGUIDialog.h"
+
 #include <string_theory/string>
 
+#include "pyGlueHelpers.h"
 #include "pyKey.h"
-
-#include "pyGUIDialog.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptGUIDialog, pyGUIDialog);

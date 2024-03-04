@@ -40,14 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pyNetLinkingMgr.h"
+
 #include <string_theory/string>
 
-#include "pyNetLinkingMgr.h"
-#include "pyEnum.h"
-#include "pyAgeLinkStruct.h"
-
 #include "plNetCommon/plNetCommon.h"
+
+#include "pyAgeLinkStruct.h"
+#include "pyEnum.h"
+#include "pyGlueHelpers.h"
 
 #ifndef BUILDING_PYPLASMA
 

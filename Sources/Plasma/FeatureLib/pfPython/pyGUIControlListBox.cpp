@@ -40,18 +40,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pyGUIControlListBox.h"
+
 #include <string_theory/string_stream>
 
-#include "pyKey.h"
+#include "plGImage/plDynamicTextMap.h"
 
 #include "pfGameGUIMgr/pfGUIListBoxMod.h"
 #include "pfGameGUIMgr/pfGUIListElement.h"
-#include "plGImage/plDynamicTextMap.h"
 
-#include "pyGUIControlListBox.h"
 #include "pyColor.h"
+#include "pyGlueHelpers.h"
 #include "pyImage.h"
+#include "pyKey.h"
 
 // a special class for different coloured list items
 //

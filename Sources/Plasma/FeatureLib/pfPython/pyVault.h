@@ -49,14 +49,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
 
-class pyVaultNode;
-class pyVaultAgeInfoNode;
+#include "pyGlueDefinitions.h"
+
 class pyAgeInfoStruct;
 class pyAgeLinkStruct;
-
 class pySDLStateDataRecord;
+class pyVaultAgeInfoNode;
+class pyVaultNode;
 namespace ST { class string; }
 
 class pyVault

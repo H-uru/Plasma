@@ -42,12 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pySDL.h"
 
-#include <Python.h>
 #include <string_theory/string>
 
 #include "pnKeyedObject/plKey.h"
 
 #include "plSDL/plSDL.h"
+
+#include "pyGlueHelpers.h"
 
 ///////////////////////////////////////////////////////////////////////////
 

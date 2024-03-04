@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map InputInterface functions to plasma2 message
 //
 
-#include "pyGlueHelpers.h"
+#include "pyGlueDefinitions.h"
 
 class plInputInterface;
 

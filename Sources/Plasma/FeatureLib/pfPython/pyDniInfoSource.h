@@ -43,10 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pyDniInfoSource_h_inc
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
 
-class pyDniCoordinates;
+#include "pyGlueDefinitions.h"
+
 class plUUID;
+class pyDniCoordinates;
 namespace ST { class string; }
 
 class pyDniInfoSource

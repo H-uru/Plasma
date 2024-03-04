@@ -40,12 +40,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pyAgeLinkStruct.h"
+
 #include <string_theory/string>
 #include <utility>
 
-#include "pyAgeLinkStruct.h"
 #include "pyAgeInfoStruct.h"
+#include "pyGlueHelpers.h"
 #include "pySpawnPointInfo.h"
 
 // glue functions

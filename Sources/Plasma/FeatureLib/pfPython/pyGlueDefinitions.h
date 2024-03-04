@@ -39,49 +39,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plDniCoordinateInfo_h_inc
-#define plDniCoordinateInfo_h_inc
+#ifndef _pyGlueDefinitions_h_
+#define _pyGlueDefinitions_h_
 
-#include "HeadSpin.h"
-#include "pnFactory/plCreatable.h"
+// Macros for use in Python glue header files.
+// This header MUST NOT depend on any Python headers.
+// Any macros and functions that require Python headers
+// should go into pyGlueHelpers.h instead.
 
-///////////////////////////////////////////////////////////////////
+typedef struct _object PyObject;
+typedef struct _typeobject PyTypeObject;
 
-class hsStream;
-class hsResMgr;
-namespace ST { class string; }
+// This makes sure that our python new function can access our constructors
+#define PYTHON_CLASS_NEW_FRIEND(pythonClassName) friend PyObject *pythonClassName##_new(PyTypeObject *type, PyObject *args, PyObject *keywords)
 
-class plDniCoordinateInfo : public plCreatable
-{
-    static const uint8_t StreamVersion;
+// This defines the basic new function for a class
+#define PYTHON_CLASS_NEW_DEFINITION static PyObject *New()
 
-protected:
-    // spherical coords (rho,theta,phi)
-    int         fHSpans;        // horizontal distance in d'ni spans to point P from origin O
-    int         fVSpans;        // vertical distance in d'ni spans to point P from origin O
-    int         fTorans;        // angle in d'ni torans from the zero vector to line OP.
+// This defines the basic check function for a class
+#define PYTHON_CLASS_CHECK_DEFINITION static bool Check(PyObject *obj)
 
-public:
-    plDniCoordinateInfo();
+// This defines the basic convert from function for a class
+#define PYTHON_CLASS_CONVERT_FROM_DEFINITION(glueClassName) static glueClassName *ConvertFrom(PyObject *obj)
 
-    CLASSNAME_REGISTER( plDniCoordinateInfo );
-    GETINTERFACE_ANY( plDniCoordinateInfo, plCreatable );
+// small macros so that the type object can be accessed outside the glue file (for subclassing)
+#define PYTHON_EXPOSE_TYPE static PyTypeObject* type_ptr
 
-    int GetHSpans() const { return fHSpans;}
-    void    SetHSpans( int v ) { fHSpans = v; }
-    int GetVSpans() const { return fVSpans;}
-    void    SetVSpans( int v ) { fVSpans = v;}
-    int GetTorans() const { return fTorans; }
-    void    SetTorans( int v ) { fTorans = v; }
-
-    void    CopyFrom( const plDniCoordinateInfo * other );
-    void    Read(hsStream* s, hsResMgr* mgr) override;
-    void    Write(hsStream* s, hsResMgr* mgr) override;
-
-    // debug
-    ST::string AsString( int level=0 ) const;
-};
-
-
-
-#endif // plDniCoordinateInfo_h_inc
+#endif // _pyGlueDefinitions_h_

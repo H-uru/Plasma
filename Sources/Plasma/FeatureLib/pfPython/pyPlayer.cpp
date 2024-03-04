@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
-
 #include "pyPlayer.h"
+
+#include "pyKey.h"
 
 pyPlayer::pyPlayer() // only used by python glue, do NOT call
     : fPlayerID(), fDistSq(-1), fIsCCR(), fIsServer()

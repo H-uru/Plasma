@@ -41,8 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "cyInputInterface.h"
-#include "plMessage/plInputIfaceMgrMsg.h"
+
 #include "plInputCore/plTelescopeInputInterface.h"
+#include "plMessage/plInputIfaceMgrMsg.h"
 
 cyInputInterface::cyInputInterface() :
 fTelescopeInterface()

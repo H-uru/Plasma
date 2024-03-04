@@ -40,14 +40,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pyKey.h"
-
-#include "pfGameGUIMgr/pfGUIValueCtrl.h"
-#include "pfGameGUIMgr/pfGUIKnobCtrl.h"
-#include "pfGameGUIMgr/pfGUIUpDownPairMod.h"
-#include "pfGameGUIMgr/pfGUIProgressCtrl.h"
-
 #include "pyGUIControlValue.h"
+
+#include "pfGameGUIMgr/pfGUIKnobCtrl.h"
+#include "pfGameGUIMgr/pfGUIProgressCtrl.h"
+#include "pfGameGUIMgr/pfGUIUpDownPairMod.h"
+#include "pfGameGUIMgr/pfGUIValueCtrl.h"
+
+#include "pyKey.h"
 
 pyGUIControlValue::pyGUIControlValue(pyKey& gckey) : pyGUIControl(gckey)
 {

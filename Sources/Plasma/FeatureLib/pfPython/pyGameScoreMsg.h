@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pyGameScoreMsg_h_
 
 #include "pfMessage/pfGameScoreMsg.h"
-#include "pyGlueHelpers.h"
+
+#include "pyGlueDefinitions.h"
 
 namespace ST { class string; }
 

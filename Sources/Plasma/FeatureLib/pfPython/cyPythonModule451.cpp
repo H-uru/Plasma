@@ -40,16 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyGlueHelpers.h"
-#include "pyObjectRef.h"
 #include <string_theory/string>
 #include <string_theory/format>
 
+#include "plStatusLog/plStatusLog.h"
+
 #include "cyPythonInterface.h"
 #include "plPythonPack.h"
-
-#include "plStatusLog/plStatusLog.h"
+#include "pyGlueHelpers.h"
+#include "pyObjectRef.h"
 
 // ==========================================================================
 

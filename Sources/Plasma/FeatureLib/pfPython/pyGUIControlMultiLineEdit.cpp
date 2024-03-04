@@ -40,15 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
+#include "pyGUIControlMultiLineEdit.h"
 
 #include <string_theory/string>
 
 #include "pfGameGUIMgr/pfGUIMultiLineEditCtrl.h"
 
-#include "pyGUIControlMultiLineEdit.h"
 #include "pyColor.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 pyGUIControlMultiLineEdit::pyGUIControlMultiLineEdit(pyKey& gckey) : pyGUIControl(gckey)
 {

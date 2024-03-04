@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-
 #include "pyAudioControl.h"
+
+#include "pyGlueHelpers.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptAudioControl, pyAudioControl);

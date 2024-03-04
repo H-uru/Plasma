@@ -46,11 +46,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // PURPOSE: Class wrapper to map animation functions to plasma2 message
 //
 
-#include "plgDispatch.h"
-#include "pyKey.h"
-
 #include "cyAnimation.h"
+
+#include "plgDispatch.h"
+
 #include "plMessage/plAnimCmdMsg.h"
+
+#include "pyKey.h"
 
 cyAnimation::cyAnimation()
     : fAnimName(), fNetForce()

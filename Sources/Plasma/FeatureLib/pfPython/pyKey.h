@@ -48,12 +48,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pnKeyedObject/plKey.h"
-#include "pyGlueHelpers.h"
 #include <utility>
 
-class plPythonFileMod;
+#include "pnKeyedObject/plKey.h"
+
+#include "pyGlueDefinitions.h"
+
 class plPipeline;
+class plPythonFileMod;
 namespace ST { class string; }
 
 class pyKey

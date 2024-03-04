@@ -40,19 +40,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "cyAvatar.h"
+
 #include <string_theory/string>
 
 #include "plFileSystem.h"
 
-#include "pyKey.h"
+#include "plAvatar/plAvBrainHuman.h"
 
-#include "cyAvatar.h"
 #include "pyColor.h"
 #include "pyEnum.h"
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 #include "pySceneObject.h"
-
-#include "plAvatar/plAvBrainHuman.h"
 
 // glue functions
 PYTHON_CLASS_DEFINITION(ptAvatar, cyAvatar);

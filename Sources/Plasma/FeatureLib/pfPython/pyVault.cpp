@@ -45,32 +45,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "pyVault.h"
+
 #include <memory>
-#include <Python.h>
 #include <string_theory/format>
 
 #ifdef BUILDING_PYPLASMA
 # error "pyVault is not compatible with pyPlasma.pyd. Use BUILDING_PYPLASMA macro to ifdef out unwanted headers."
 #endif
 
-#include "pyVault.h"
-#include "pyVaultNode.h"
-#include "pyVaultAgeInfoNode.h"
-#include "pyVaultAgeInfoListNode.h"
-#include "pyVaultAgeLinkNode.h"
-#include "pyVaultFolderNode.h"
-#include "pyVaultPlayerInfoListNode.h"
-#include "pyVaultPlayerInfoNode.h"
-#include "pyVaultChronicleNode.h"
-#include "pyAgeInfoStruct.h"
-#include "pyAgeLinkStruct.h"
-#include "pySDL.h"
-
-#include "plVault/plVault.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetCommon/plNetCommon.h"
-
 #include "plSDL/plSDL.h"
+#include "plVault/plVault.h"
+
+#include "pyAgeInfoStruct.h"
+#include "pyAgeLinkStruct.h"
+#include "pyGlueHelpers.h"
+#include "pySDL.h"
+#include "pyVaultAgeInfoListNode.h"
+#include "pyVaultAgeInfoNode.h"
+#include "pyVaultAgeLinkNode.h"
+#include "pyVaultChronicleNode.h"
+#include "pyVaultFolderNode.h"
+#include "pyVaultNode.h"
+#include "pyVaultPlayerInfoListNode.h"
+#include "pyVaultPlayerInfoNode.h"
 
 //============================================================================
 static PyObject * GetFolder (unsigned folderType) {

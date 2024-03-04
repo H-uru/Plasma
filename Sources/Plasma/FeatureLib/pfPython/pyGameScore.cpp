@@ -40,13 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "pyGameScore.h"
+
 #include <string_theory/string>
 
-#include "pyKey.h"
-
-#include "pyGameScore.h"
-#include "pfGameScoreMgr/pfGameScoreMgr.h"
 #include "plVault/plVault.h"
+
+#include "pfGameScoreMgr/pfGameScoreMgr.h"
+
+#include "pyKey.h"
 
 pyGameScore::pyGameScore() 
     : fScore()

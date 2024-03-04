@@ -40,11 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
-#include "pyKey.h"
-
 #include "pyGrassShader.h"
+
 #include "plSurface/plGrassShaderMod.h"
+
+#include "pyGlueHelpers.h"
+#include "pyKey.h"
 
 pyGrassShader::pyGrassShader()
 {

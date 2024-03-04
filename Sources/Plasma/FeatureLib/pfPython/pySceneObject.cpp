@@ -40,34 +40,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pySceneObject.h"
+
 #include <string_theory/format>
 
 #include "plAudible.h"
 #include "plgDispatch.h"
-#include "pyGeometry3.h"
-#include "pyKey.h"
-#include "pyMatrix44.h"
 
-#include "pySceneObject.h"
+#include "pnMessage/plCameraMsg.h"
+#include "pnMessage/plNotifyMsg.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+
+#include "plAvatar/plArmatureMod.h"
+#include "plAvatar/plAvBrainHuman.h"
+#include "plMessage/plAnimCmdMsg.h"
+#include "plModifier/plLogicModifier.h"
+#include "plModifier/plResponderModifier.h"
+
+#include "pfCamera/plCameraModifier.h"
 
 #include "cyAvatar.h"
 #include "cyDraw.h"
 #include "cyParticleSys.h"
 #include "cyPhysics.h"
-
-#include "plMessage/plAnimCmdMsg.h"
-#include "pnMessage/plCameraMsg.h"
-#include "pnMessage/plNotifyMsg.h"
-
-#include "plAvatar/plArmatureMod.h"
-#include "pnSceneObject/plAudioInterface.h"
-#include "plAvatar/plAvBrainHuman.h"
-#include "pfCamera/plCameraModifier.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "plModifier/plLogicModifier.h"
 #include "plPythonFileMod.h"
-#include "plModifier/plResponderModifier.h"
+#include "pyGeometry3.h"
+#include "pyGlueHelpers.h"
+#include "pyMatrix44.h"
 
 void pySceneObject::IAddObjKeyToAll(const plKey& key)
 {

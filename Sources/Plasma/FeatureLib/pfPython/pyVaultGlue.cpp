@@ -40,19 +40,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <Python.h>
+#include "pyVault.h"
+
 #include <string_theory/string>
 
-#include "pyVault.h"
-#include "pyEnum.h"
-#include "pyAgeInfoStruct.h"
-#include "pyVaultNode.h"
-#include "pyVaultAgeInfoNode.h"
-#include "pySDL.h"
-#include "pyAgeLinkStruct.h"
-
-#include "plVault/plVault.h"
 #include "plMessage/plVaultNotifyMsg.h"
+#include "plVault/plVault.h"
+
+#include "pyAgeInfoStruct.h"
+#include "pyAgeLinkStruct.h"
+#include "pyEnum.h"
+#include "pyGlueHelpers.h"
+#include "pySDL.h"
+#include "pyVaultAgeInfoNode.h"
+#include "pyVaultNode.h"
 
 #ifndef BUILDING_PYPLASMA
 
