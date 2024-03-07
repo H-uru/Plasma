@@ -2539,6 +2539,11 @@ void cyMisc::EnablePlanarReflections(bool enable)
     plDynamicCamMap::SetEnabled(enable);
 }
 
+bool cyMisc::ArePlanarReflectionsSupported()
+{
+    return plDynamicCamMap::GetCapable();
+}
+
 void cyMisc::GetSupportedDisplayModes(std::vector<plDisplayMode> *res)
 {
     fPipeline->GetSupportedDisplayModes(res);
