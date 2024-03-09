@@ -301,7 +301,7 @@ gKM1ControlCodesRow2 = {
     kKMEditLine18Row2: _KeyLine(None, False, False),
 }
 
-defaultControlCodeBinds = {
+kDefaultControlCodeBinds = {
     PlasmaControlKeys.kKeyMoveForward: ("UpArrow", "(unmapped)"),
     PlasmaControlKeys.kKeyMoveBackward: ("DownArrow", "(unmapped)"),
     PlasmaControlKeys.kKeyRotateLeft: ("LeftArrow", "(unmapped)"),
@@ -322,26 +322,7 @@ defaultControlCodeBinds = {
     "Game.KICreateMarker": ("F7", "(unmapped)"),
 }
 
-defaultControlCodeBindsOrdered = [
-    PlasmaControlKeys.kKeyMoveForward,
-    PlasmaControlKeys.kKeyMoveBackward,
-    PlasmaControlKeys.kKeyRotateLeft,
-    PlasmaControlKeys.kKeyRotateRight,
-    PlasmaControlKeys.kKeyJump,
-    PlasmaControlKeys.kKeyStrafeLeft,
-    PlasmaControlKeys.kKeyStrafeRight,
-    PlasmaControlKeys.kKeyExitMode,
-    PlasmaControlKeys.kKeySetFirstPersonMode,
-    "Game.KIOpenYeeshaBook",
-    "Game.KIHelp",
-    "Game.KIOpenKI",
-    "Game.KITakePicture",
-    "Game.KICreateJournal",
-    PlasmaControlKeys.kKeyPushToTalk,
-    "Game.EnterChatMode",
-    "Game.KICreateMarkerFolder",
-    "Game.KICreateMarker",
-]
+kControlCodes = tuple(kDefaultControlCodeBinds.keys())
 
 kVideoQuality = ["Low", "Medium", "High", "Ultra"]
 kVideoTextureQuality = ["Low", "Medium", "High"]
@@ -538,12 +519,6 @@ class xOptionsMenu(ptModifier):
         if self.refreshBindings:
             self.refreshBindings = False
 
-            vault = ptVault()
-            entry = vault.findChronicleEntry("KeyMap")
-            if entry is None:
-                # not found... create defaults
-                self.ISetDefaultKeyMappings()
-
             self.LoadAdvSettings()
             self.LoadKeyMap()
             GammaVal = self.getChronicleVar("gamma")
@@ -723,80 +698,15 @@ class xOptionsMenu(ptModifier):
                 kmID = control.getTagID()
                 if kmID == kKMOkBtn:
                     KeyMapDlg.dialog.hide()
-                elif kmID in gKM1ControlCodesRow1.keys():
-                    NewKeyMapString = ""
-                    # get the new keys and bind
-                    km = ptKeyMap()
-                    cCode,spFlag,mpFlag = gKM1ControlCodesRow1[kmID]
-                    if isinstance(cCode, str):
-                        key1 = km.convertVKeyToChar(control.getLastKeyCaptured(),control.getLastModifiersCaptured())
-                        km.bindKeyToConsoleCommand(key1,cCode)
-                        KeyMapString = self.getChronicleVar("KeyMap")
-                        KeyMapArray = KeyMapString.split()
-                        KeyMapArray[(kmID-300)] = key1
-                        for key in KeyMapArray:
-                            NewKeyMapString += key + " "
-                        self.setNewChronicleVar("KeyMap", NewKeyMapString.rstrip())
-                    elif cCode is not None:
-                        otherID = kmID + 100
-                        otherField = ptGUIControlEditBox(KeyMapDlg.dialog.getControlFromTag(otherID))
-                        key1 = km.convertVKeyToChar(control.getLastKeyCaptured(),control.getLastModifiersCaptured())
-                        key2 = km.convertVKeyToChar(otherField.getLastKeyCaptured(),otherField.getLastModifiersCaptured())
-                        controlStr = km.convertControlCodeToString(cCode)
-                        km.bindKey(key1,key2,controlStr)
-                        KeyMapString = self.getChronicleVar("KeyMap")
-                        KeyMapArray = KeyMapString.split()
-                        KeyMapArray[(kmID-300)] = key1 + "$" + key2 + " "
-                        for key in KeyMapArray:
-                            NewKeyMapString += key + " "
-                        self.setNewChronicleVar("KeyMap", NewKeyMapString.rstrip())
-                    # lose the focus when done
+                elif kmID in gKM1ControlCodesRow1 or kmID in gKM1ControlCodesRow2:
+                    self.ISetKeyMapping(
+                        kmID - 300,
+                        control.getLastKeyCaptured(),
+                        control.getLastModifiersCaptured(),
+                        kmID in gKM1ControlCodesRow1
+                    )
                     KeyMapDlg.dialog.noFocus()
-                    # force writing the keymap
-                    km.writeKeyMap()
-                    # re-show the keymap because they may have been stupid and map the same key to multiple actions
-                    self.IShowMappedKeys(KeyMapDlg.dialog,gKM1ControlCodesRow1,gKM1ControlCodesRow2)
-                    # need to re-set the ini file, in case something got unmapped
-                    #self.IMatchIniToGame()
-                elif kmID in gKM1ControlCodesRow2.keys():
-                    NewKeyMapString = ""
-                    # get the new keys and bind
-                    km = ptKeyMap()
-                    cCode,spFlag,mpFlag = gKM1ControlCodesRow2[kmID]
-                    if isinstance(cCode, str):
-                        # console command  - this shouldn't really happen!
-                        key1 = km.convertVKeyToChar(control.getLastKeyCaptured(),control.getLastModifiersCaptured())
-                        km.bindKeyToConsoleCommand(key1,cCode)
-                        # console keys not in input.ini... yet
-                        KeyMapString = self.getChronicleVar("KeyMap")
-                        KeyMapArray = KeyMapString.split()
-                        KeyMapArray[(kmID-300)] = key1
-                        for key in KeyMapArray:
-                            NewKeyMapString += key + " "
-                        self.setNewChronicleVar("KeyMap", NewKeyMapString.rstrip())
-                        #xIniInput.SetConsoleKey('"'+cCode+'"',key1+',')
-                    elif cCode is not None:
-                        otherID = kmID - 100
-                        otherField = ptGUIControlEditBox(KeyMapDlg.dialog.getControlFromTag(otherID))
-                        key2 = km.convertVKeyToChar(control.getLastKeyCaptured(),control.getLastModifiersCaptured())
-                        key1 = km.convertVKeyToChar(otherField.getLastKeyCaptured(),otherField.getLastModifiersCaptured())
-                        controlStr = km.convertControlCodeToString(cCode)
-                        km.bindKey(key1,key2,controlStr)
-                        KeyMapString = self.getChronicleVar("KeyMap")
-                        KeyMapArray = KeyMapString.split()
-                        KeyMapArray[(otherID-300)] = key1 + "$" + key2 + " "
-                        for key in KeyMapArray:
-                            NewKeyMapString += key + " "
-                        self.setNewChronicleVar("KeyMap", NewKeyMapString.rstrip())
-                        #xIniInput.SetControlKey('"'+controlStr+'"',key1+',',key2+',')
-                    # lose the focus when done
-                    KeyMapDlg.dialog.noFocus()
-                    # force writing the keymap
-                    km.writeKeyMap()
-                    # re-show the keymap because they may have been stupid and map the same key to multiple actions
-                    self.IShowMappedKeys(KeyMapDlg.dialog,gKM1ControlCodesRow1,gKM1ControlCodesRow2)
-                    # need to re-set the ini file, in case something got unmapped
-                    #self.IMatchIniToGame()
+                    self.IShowMappedKeys(KeyMapDlg.dialog, gKM1ControlCodesRow1, gKM1ControlCodesRow2)
                 elif kmID == kKMDefaultsBtn:
                     self.ISetDefaultKeyMappings()
                     self.IShowMappedKeys(KeyMapDlg.dialog,gKM1ControlCodesRow1,gKM1ControlCodesRow2)
@@ -1855,23 +1765,20 @@ class xOptionsMenu(ptModifier):
         km = ptKeyMap()
         KeyMapString = self.getChronicleVar("KeyMap")
         if not KeyMapString:
-            PtDebugPrint("xOptionsMenu.LoadKeyMap():\tHmm... Empty chronicle...")
+            PtDebugPrint("xOptionsMenu.LoadKeyMap():\tHmm... Empty chronicle... Setting to default.")
+            self.ISetDefaultKeyMappings()
             return
 
-        KeyMapArray = KeyMapString.split()
         # set the key binds back to the saved
-        for counter, control_code in enumerate(defaultControlCodeBindsOrdered):
-            if isinstance(control_code, str):
-                key1 = KeyMapArray[counter]
-                PtDebugPrint("Binding " + key1 + " to " + control_code)
-                km.bindKeyToConsoleCommand(key1,control_code)
+        for controlCode, mappedKey in zip(kDefaultControlCodeBinds, KeyMapString.split(" ")):
+            if isinstance(controlCode, str):
+                PtDebugPrint(f"xOptionsMenu.LoadKeyMap(): Binding {mappedKey=} to {controlCode=}", level=kWarningLevel)
+                km.bindKeyToConsoleCommand(mappedKey, controlCode)
             else:
-                controlStr = km.convertControlCodeToString(control_code)
-                SubArray = KeyMapArray[counter].split("$")
-                key1 = SubArray[0]
-                key2 = SubArray[1]
-                PtDebugPrint("Binding " + key1 + " & " + key2 + " to " + controlStr)
-                km.bindKey(key1,key2,controlStr)
+                controlStr = km.convertControlCodeToString(controlCode)
+                keys = mappedKey.split("$")
+                PtDebugPrint(f"xOptionsMenu.LoadKeyMap(): Binding {keys=} to {controlStr=}", level=kWarningLevel)
+                km.bindKey(*keys, controlStr)
 
     def IsThereACover(self,bookHtml):
         # search the bookhtml string looking for a cover
@@ -1879,6 +1786,48 @@ class xOptionsMenu(ptModifier):
         if idx >= 0:
             return 1
         return 0
+
+    def IUpdateKeyMapChron(self) -> None:
+        keyMapStr = " ".join(
+            self.IGetBoundKey(controlCode) if isinstance(controlCode, str) else f"{self.IGetBoundKey(controlCode, 0)}${self.IGetBoundKey(controlCode, 1)}"
+            for controlCode in kDefaultControlCodeBinds
+        )
+        self.setNewChronicleVar("KeyMap", keyMapStr)
+
+    def IGetBoundKey(self, controlCode: Union[int, str], keyIdx: int = 0) -> str:
+        km = ptKeyMap()
+        if isinstance(controlCode, str):
+            assert keyIdx == 0
+            return km.convertVKeyToChar(km.getBindingKeyConsole(controlCode), km.getBindingFlagsConsole(controlCode))
+        elif keyIdx == 0:
+            return km.convertVKeyToChar(km.getBindingKey1(controlCode), km.getBindingFlags1(controlCode))
+        elif keyIdx == 1:
+            return km.convertVKeyToChar(km.getBindingKey2(controlCode), km.getBindingFlags2(controlCode))
+        else:
+            raise ValueError(f"{keyIdx=}")
+
+    def ISetKeyMapping(self, controlCodeId: int, vkey: int, modifiers: int, isPrimary: bool) -> None:
+        km = ptKeyMap()
+        newKeyStr = km.convertVKeyToChar(vkey, modifiers)
+
+        # This will cause any previous uses of the key to be unbound.
+        controlCode = kControlCodes[controlCodeId]
+        if isinstance(controlCode, str):
+            PtDebugPrint(f"xOptionsMenu.ISetKeyMapping(): Binding {newKeyStr=} to console command {controlCode=}")
+            km.bindKeyToConsoleCommand(newKeyStr, controlCode)
+        else:
+            if isPrimary:
+                primaryStr = newKeyStr
+                secondaryStr = km.convertVKeyToChar(km.getBindingKey2(controlCode), km.getBindingFlags2(controlCode))
+            else:
+                primaryStr = km.convertVKeyToChar(km.getBindingKey1(controlCode), km.getBindingFlags1(controlCode))
+                secondaryStr = newKeyStr
+
+            controlStr = km.convertControlCodeToString(controlCode)
+            PtDebugPrint(f"xOptionsMenu.ISetKeyMapping(): Binding {primaryStr=} {secondaryStr=} to {controlStr=}")
+            km.bindKey(primaryStr, secondaryStr, controlStr)
+
+        self.IUpdateKeyMapChron()
 
     def IShowMappedKeys(self,dlg,mapRow1,mapRow2):
         km = ptKeyMap()
@@ -1919,20 +1868,13 @@ class xOptionsMenu(ptModifier):
 
     def ISetDefaultKeyMappings(self):
         km = ptKeyMap()
-        KeyMapString = ""
-        # set the key binds back to the defaults
-        for control_code in defaultControlCodeBindsOrdered:
-            if isinstance(control_code, str):
-                key1 = defaultControlCodeBinds[control_code][0]
-                km.bindKeyToConsoleCommand(key1,control_code)
-                KeyMapString += key1 + " "
+        for controlCode, (key1, key2) in kDefaultControlCodeBinds.items():
+            if isinstance(controlCode, str):
+                km.bindKeyToConsoleCommand(key1, controlCode)
             else:
-                controlStr = km.convertControlCodeToString(control_code)
-                key1, key2 = defaultControlCodeBinds[control_code]
-                km.bindKey(key1,key2,controlStr)
-                KeyMapString += key1 + "$" + key2 + " "
-
-        self.setNewChronicleVar("KeyMap", KeyMapString.rstrip())
+                controlStr = km.convertControlCodeToString(controlCode)
+                km.bindKey(key1, key2, controlStr)
+        self.IUpdateKeyMapChron()
 
 def res_comp(elem1, elem2):
     elem1w = int(elem1[:elem1.find("x")])
