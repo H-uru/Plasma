@@ -1810,8 +1810,12 @@ class xOptionsMenu(ptModifier):
         km = ptKeyMap()
         newKeyStr = km.convertVKeyToChar(vkey, modifiers)
 
-        # This will cause any previous uses of the key to be unbound.
+        # If this is the same key as before, unmap the binding.
         controlCode = kControlCodes[controlCodeId]
+        if self.IGetBoundKey(controlCode, keyIdx=0 if isPrimary else 1) == newKeyStr:
+            newKeyStr = "(unmapped)"
+
+        # This will cause any previous uses of the key to be unbound.
         if isinstance(controlCode, str):
             PtDebugPrint(f"xOptionsMenu.ISetKeyMapping(): Binding {newKeyStr=} to console command {controlCode=}")
             km.bindKeyToConsoleCommand(newKeyStr, controlCode)
