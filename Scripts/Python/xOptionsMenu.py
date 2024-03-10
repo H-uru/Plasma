@@ -1776,9 +1776,9 @@ class xOptionsMenu(ptModifier):
                 km.bindKeyToConsoleCommand(mappedKey, controlCode)
             else:
                 controlStr = km.convertControlCodeToString(controlCode)
-                keys = mappedKey.split("$")
-                PtDebugPrint(f"xOptionsMenu.LoadKeyMap(): Binding {keys=} to {controlStr=}", level=kWarningLevel)
-                km.bindKey(*keys, controlStr)
+                key1, _, key2 = mappedKey.partition("$")
+                PtDebugPrint(f"xOptionsMenu.LoadKeyMap(): Binding {key1=} & {key2=} to {controlStr=}", level=kWarningLevel)
+                km.bindKey(key1, key2, controlStr)
 
     def IsThereACover(self,bookHtml):
         # search the bookhtml string looking for a cover
