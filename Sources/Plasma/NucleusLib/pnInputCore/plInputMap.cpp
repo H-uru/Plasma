@@ -659,7 +659,7 @@ ST::string plKeyMap::GetStringUnmapped()
         default:
             break;
     }
-    return ST_LITERAL("(Unmapped)");
+    return ST_LITERAL("(unmapped)");
 }
 
 // If the binding has one of these keys, but not the other, go and bind the other
