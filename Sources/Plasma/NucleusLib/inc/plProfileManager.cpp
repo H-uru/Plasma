@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfileManager.h"
 #include "plProfile.h"
 #include "hsTimer.h"
-#include <algorithm>
+
+#include <string_theory/format>
+#include <utility>
 
 plProfileManager::plProfileManager() : fLastAvgTime(0), fProcessorSpeed(0)
 {
@@ -70,7 +72,7 @@ void plProfileManager::SetAvgTime(uint32_t avgMS)
     kAvgMilliseconds = avgMS;
 }
 
-static plProfileVar gVarEFPS("EFPS", "General", plProfileVar::kDisplayTime | plProfileVar::kDisplayFPS);
+static plProfileVar gVarEFPS(ST_LITERAL("EFPS"), ST_LITERAL("General"), plProfileVar::kDisplayTime | plProfileVar::kDisplayFPS);
 
 void plProfileManager::BeginFrame()
 {
@@ -182,89 +184,65 @@ uint64_t plProfileBase::GetValue()
         return fValue;
 }
 
-// Stolen from plMemTracker.cpp
-static  const char  *insertCommas(unsigned long long value)
+static ST::string insertCommas(unsigned long long value)
 {
-    static char str[30];
-    memset(str, 0, sizeof(str));
-
-    snprintf(str, std::size(str), "%llu", value);
-    if (strlen(str) > 3)
-    {
-        memmove(&str[strlen(str)-3], &str[strlen(str)-4], 4);
-        str[strlen(str) - 4] = ',';
+    ST::string str;
+    while (value >= 1000) {
+        str = ST::format(",{>03}{}", value % 1000, str);
+        value /= 1000;
     }
-    if (strlen(str) > 7)
-    {
-        memmove(&str[strlen(str)-7], &str[strlen(str)-8], 8);
-        str[strlen(str) - 8] = ',';
-    }
-    if (strlen(str) > 11)
-    {
-        memmove(&str[strlen(str)-11], &str[strlen(str)-12], 12);
-        str[strlen(str) - 12] = ',';
-    }
-
-    return str;
+    return ST::format("{}{}", value, str);
 }
 
-void plProfileBase::IPrintValue(uint64_t value, char* buf, bool printType)
+ST::string plProfileBase::IPrintValue(uint64_t value, bool printType)
 {
-    if (hsCheckBits(fDisplayFlags, kDisplayCount))
-    {
-        if (printType)
-        {
-            const char* valueStr = insertCommas(value);
-            strcpy(buf, valueStr);
+    if (hsCheckBits(fDisplayFlags, kDisplayCount)) {
+        if (printType) {
+            return insertCommas(value);
+        } else {
+            return ST::string::from_uint(value);
         }
-        else
-            sprintf(buf, "%llu", static_cast<unsigned long long>(value));
-    }
-    else if (hsCheckBits(fDisplayFlags, kDisplayFPS))
-    {
-        sprintf(buf, "%.2f", 1000.0f / hsTimer::GetMilliSeconds<float>(value));
-    }
-    else if (hsCheckBits(fDisplayFlags, kDisplayTime))
-    {
-        sprintf(buf, "%.2f", hsTimer::GetMilliSeconds<float>(value));
-        if (printType)
-            strcat(buf, " ms");
-    }
-    else if (hsCheckBits(fDisplayFlags, kDisplayMem))
-    {
-        if (printType)
-        {
-            if (value > (1024*1000))
-                sprintf(buf, "%.2f MB", float(value) / (1024.f * 1024.f));
-            else if (value > 1024)
-                sprintf(buf, "%llu KB", static_cast<unsigned long long>(value / 1024));
-            else
-                sprintf(buf, "%llu b", static_cast<unsigned long long>(value));
+    } else if (hsCheckBits(fDisplayFlags, kDisplayFPS)) {
+        return ST::format("{.2f}", 1000.0f / hsTimer::GetMilliSeconds<float>(value));
+    } else if (hsCheckBits(fDisplayFlags, kDisplayTime)) {
+        return ST::format("{.2f}{}", hsTimer::GetMilliSeconds<float>(value), printType ? ST_LITERAL(" ms") : ST::string());
+    } else if (hsCheckBits(fDisplayFlags, kDisplayMem)) {
+        if (printType) {
+            if (value > (1024*1000)) {
+                return ST::format("{.2f} MB", value / (1024.f * 1024.f));
+            } else if (value > 1024) {
+                return ST::format("{} KB", value / 1024);
+            } else {
+                return ST::format("{} b", value);
+            }
+        } else {
+            return ST::string::from_uint(value);
         }
-        else
-            sprintf(buf, "%llu", static_cast<unsigned long long>(value));
+    } else {
+        FATAL("Unhandled stat value type");
+        return {};
     }
 }
 
-void plProfileBase::PrintValue(char* buf, bool printType)
+ST::string plProfileBase::PrintValue(bool printType)
 {
-    IPrintValue(fValue, buf, printType);
+    return IPrintValue(fValue, printType);
 }
 
-void plProfileBase::PrintAvg(char* buf, bool printType)
+ST::string plProfileBase::PrintAvg(bool printType)
 {
-    IPrintValue(fLastAvg, buf, printType);
+    return IPrintValue(fLastAvg, printType);
 }
 
-void plProfileBase::PrintMax(char* buf, bool printType)
+ST::string plProfileBase::PrintMax(bool printType)
 {
-    IPrintValue(fMax, buf, printType);
+    return IPrintValue(fMax, printType);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 
-plProfileLaps::LapInfo* plProfileLaps::IFindLap(const char* lapName)
+plProfileLaps::LapInfo* plProfileLaps::IFindLap(const ST::string& lapName)
 {
     static int lastSearch = 0;
 
@@ -290,13 +268,10 @@ plProfileLaps::LapInfo* plProfileLaps::IFindLap(const char* lapName)
     return nullptr;
 }
 
-void plProfileLaps::BeginLap(uint64_t curValue, const char* name)
+void plProfileLaps::BeginLap(uint64_t curValue, const ST::string& name)
 {
     LapInfo* lap = IFindLap(name);
-    if (!lap)
-    {
-        // Technically we shouldn't hold on to this pointer.  However, I think
-        // it will be ok in all cases, so I'll wait until this blows up
+    if (!lap) {
         LapInfo info(name);
         fLapTimes.push_back(info);
         lap = &(*(fLapTimes.end()-1));
@@ -306,7 +281,7 @@ void plProfileLaps::BeginLap(uint64_t curValue, const char* name)
     lap->BeginTiming(curValue);
 }
 
-void plProfileLaps::EndLap(uint64_t curValue, const char* name)
+void plProfileLaps::EndLap(uint64_t curValue, const ST::string& name)
 {
     LapInfo* lap = IFindLap(name);
 
@@ -333,9 +308,7 @@ void plProfileLaps::EndFrame()
         fLapTimes[i].EndFrame();
         if (!fLapTimes[i].fUsedThisFrame)
         {
-            char buf[200];
-            sprintf(buf, "Dropping unused lap %s", fLapTimes[i].GetName());
-            hsStatusMessage(buf);
+            hsStatusMessage(ST::format("Dropping unused lap {}", fLapTimes[i].GetName()).c_str());
             fLapTimes.erase(fLapTimes.begin()+i);
             i--;
         }
@@ -363,11 +336,11 @@ plProfileBase* plProfileLaps::GetLap(int i)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-plProfileVar::plProfileVar(const char *name, const char* group, uint8_t flags) :
-    fGroup(group),
+plProfileVar::plProfileVar(ST::string name, ST::string group, uint8_t flags) :
+    fGroup(std::move(group)),
     fLaps()
 {
-    fName = name;
+    fName = std::move(name);
     fDisplayFlags = flags;
     plProfileManager::Instance().AddTimer(this);
     fLapsActive = 0;
@@ -378,7 +351,7 @@ plProfileVar::~plProfileVar()
     delete fLaps;
 }
 
-void plProfileVar::IBeginLap(const char* lapName)
+void plProfileVar::IBeginLap(const ST::string& lapName)
 {
     if (!fLaps)
         fLaps = new plProfileLaps;
@@ -388,7 +361,7 @@ void plProfileVar::IBeginLap(const char* lapName)
     BeginTiming();
 }
 
-void plProfileVar::IEndLap(const char* lapName)
+void plProfileVar::IEndLap(const ST::string& lapName)
 {
     EndTiming();
     if(fLapsActive)

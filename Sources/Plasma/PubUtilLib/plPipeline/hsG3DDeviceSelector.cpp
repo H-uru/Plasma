@@ -156,12 +156,12 @@ hsG3DDeviceRecord& hsG3DDeviceRecord::operator=(const hsG3DDeviceRecord& src)
     return *this;
 }
 
-const char* hsG3DDeviceRecord::GetG3DDeviceTypeName() const
+ST::string hsG3DDeviceRecord::GetG3DDeviceTypeName() const
 {
-    static const char* deviceNames[hsG3DDeviceSelector::kNumDevTypes] = {
-        "Unknown",
-        "Direct3D",
-        "OpenGL"
+    static const ST::string deviceNames[hsG3DDeviceSelector::kNumDevTypes] = {
+        ST_LITERAL("Unknown"),
+        ST_LITERAL("Direct3D"),
+        ST_LITERAL("OpenGL"),
     };
 
     uint32_t devType = GetG3DDeviceType();
@@ -562,15 +562,13 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
                                                     D3DEnum_RendererInfo *deviceInfo )
 {
     uint32_t    vendorID, deviceID;
-    char        *szDriver, *szDesc;
-
+    ST::string driverString;
+    ST::string descString;
 
     /// Send it off to each D3D device, respectively
     if( record.GetG3DDeviceType() == kDevTypeDirect3D )
     {
-        if( !IGetD3DCardInfo( record, driverInfo, deviceInfo, &vendorID, &deviceID, &szDriver, &szDesc ) )
-        {
-            // {} to make VC6 happy in release build
+        if (!IGetD3DCardInfo(record, driverInfo, deviceInfo, &vendorID, &deviceID, driverString, descString)) {
             hsAssert( false, "Trying to fudge D3D device but D3D support isn't in this EXE!" );
         }
     }
@@ -580,20 +578,20 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     }
 
     /// So capitalization won't matter in our tests
-    ST::string desc = ST::string::from_latin_1(szDesc).to_lower();
+    descString = descString.to_lower();
 
     /// Detect ATI Radeon chipset
     // We will probably need to differentiate between different Radeons at some point in 
     // the future, but not now.
-    ST_ssize_t radeon = desc.find("radeon");
-    if (stricmp(szDriver, "ati2dvag.dll") == 0 || radeon >= 0)
-    {
+    ST_ssize_t radeon = descString.find("radeon");
+    if (driverString.compare_i("ati2dvag.dll") == 0 || radeon >= 0) {
         int series = 0;
         if (radeon >= 0)
         {
-            const char* str = desc.c_str() + radeon + strlen("radeon");
-            if( 1 == sscanf(str, "%d", &series) )
-            {
+            ST::string str = descString.substr(radeon + strlen("radeon")).trim_left();
+            ST::conversion_result res;
+            series = str.to_int(res, 10);
+            if (res.ok()) {
                 if( (series >= 8000) && (series < 9000) )
                 {
                     hsStatusMessage( "== Using fudge factors for ATI Radeon 8X00 chipset ==\n" );
@@ -620,15 +618,13 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     //// Other Cards //////////////////////////////////////////////////////////
     /// Detect Intel i810 chipset
     else if( deviceID == 0x00007125 &&
-                ( stricmp( szDriver, "i81xdd.dll" ) == 0 
-                  || ( desc.find("intel") >= 0 && desc.find("810") >= 0 ) ) )
-    {
+                (driverString.compare_i("i81xdd.dll") == 0
+                  || (descString.find("intel") >= 0 && descString.find("810") >= 0))) {
         hsStatusMessage( "== Using fudge factors for an Intel i810 chipset ==\n" );
         ISetFudgeFactors( kIntelI810Chipset, record );
     }
     /// Detect for a GeForc FX card. We only need to nerf the really low end one.
-    else if( desc.find("nvidia") >= 0 && desc.find("geforce fx 5200") >= 0 )
-    {
+    else if (descString.find("nvidia") >= 0 && descString.find("geforce fx 5200") >= 0) {
         hsStatusMessage( "== Using fudge factors for an NVidia GeForceFX-based chipset ==\n" );
         ISetFudgeFactors( kNVidiaGeForceFXChipset, record );
     }

@@ -495,19 +495,17 @@ bool plClient::InitPipeline(hsWindowHndl display, uint32_t devType)
     }
 
     plPipeline *pipe = ICreatePipeline(display, fWindowHndl, &dmr);
-    if (pipe->GetErrorString() != nullptr)
-    {
+    if (!pipe->GetErrorString().empty()) {
         ISetGraphicsDefaults();
 #ifdef PLASMA_EXTERNAL_RELEASE
         hsMessageBox(ST_LITERAL("There was an error initializing the video card.\nSetting defaults."), ST_LITERAL("Error"), hsMessageBoxNormal);
 #else
-        hsMessageBox(ST::string(pipe->GetErrorString()), ST_LITERAL("Error creating pipeline"), hsMessageBoxNormal);
+        hsMessageBox(pipe->GetErrorString(), ST_LITERAL("Error creating pipeline"), hsMessageBoxNormal);
 #endif
         delete pipe;
         devSel.GetDefault(&dmr);
         pipe = ICreatePipeline(display, fWindowHndl, &dmr);
-        if (pipe->GetErrorString() != nullptr)
-        {
+        if (!pipe->GetErrorString().empty()) {
             // not much else we can do
             return true;
         }
@@ -1617,7 +1615,7 @@ bool plClient::IUpdate()
     plgDispatch::MsgSend(eval);
     plProfile_EndTiming(EvalMsg);
 
-    const char *xFormLap1 = "Main";
+    const ST::string xFormLap1 = ST_LITERAL("Main");
     plProfile_BeginLap(TransformMsg, xFormLap1);
     plTransformMsg* xform = new plTransformMsg(nullptr, nullptr, nullptr, nullptr);
     plgDispatch::MsgSend(xform);
@@ -1635,7 +1633,7 @@ bool plClient::IUpdate()
     // At this point, we just register for a plDelayedTransformMsg when dirtied.
     if (!plCoordinateInterface::GetDelayedTransformsEnabled())
     {
-        const char *xFormLap2 = "Simulation";
+        const ST::string xFormLap2 = ST_LITERAL("Simulation");
         plProfile_BeginLap(TransformMsg, xFormLap2);
         xform = new plTransformMsg(nullptr, nullptr, nullptr, nullptr);
         plgDispatch::MsgSend(xform);
@@ -1643,7 +1641,7 @@ bool plClient::IUpdate()
     }
     else
     {
-        const char *xFormLap3 = "Delayed";
+        const ST::string xFormLap3 = ST_LITERAL("Delayed");
         plProfile_BeginLap(TransformMsg, xFormLap3);
         xform = new plDelayedTransformMsg(nullptr, nullptr, nullptr, nullptr);
         plgDispatch::MsgSend(xform);

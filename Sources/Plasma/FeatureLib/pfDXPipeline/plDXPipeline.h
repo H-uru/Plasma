@@ -417,11 +417,11 @@ protected:
     inline D3DCOLORVALUE    inlPlToD3DColor(const hsColorRGBA& c, float a) const;
 
     // Error handling
-    void    IAddErrorMessage(const char* errStr);
-    void    ISetErrorMessage(const char* errStr = nullptr);
-    void    IGetD3DError();
-    void    IShowErrorMessage(const char* errStr = nullptr);
-    bool    ICreateFail(const char* errStr);
+    void IAddErrorMessage(const ST::string& errStr);
+    void ISetErrorMessage(ST::string errStr);
+    void IGetD3DError();
+    void IShowErrorMessage(const ST::string& errStr = {});
+    bool ICreateFail(const ST::string& errStr);
 
     // Device initialization
     void    IInvalidateState();
@@ -476,7 +476,7 @@ protected:
     bool    IFindRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &surfFormat, D3DRESOURCETYPE &resType );
 
     // From a D3DFORMAT enumeration, return the string literal for it
-    static const char   *IGetDXFormatName( D3DFORMAT format );
+    static ST::string IGetDXFormatName(D3DFORMAT format);
 
     /////// Shadow internals
     // Generation
@@ -573,7 +573,7 @@ public:
     static void     AllocManagedVertex(uint32_t sz) { fVtxManaged += sz; }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    static void ProfilePoolMem(D3DPOOL poolType, uint32_t size, bool add, const char *id);
+    static void ProfilePoolMem(D3DPOOL poolType, uint32_t size, bool add, const ST::string& id);
 #endif // PLASMA_EXTERNAL_RELEASE
 
     //  From a D3DFORMAT enumeration, return the bit depth associated with it.
@@ -595,7 +595,7 @@ public:
     plMipmap*       ExtractMipMap(plRenderTarget* targ) override;
 
     /// Error handling
-    const char      *GetErrorString() override;
+    ST::string GetErrorString() override;
 
     bool            ManagedAlloced() const { return fManagedAlloced; }
 

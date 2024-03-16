@@ -337,7 +337,7 @@ public:
     virtual plMipmap*                   ExtractMipMap(plRenderTarget* targ) = 0;
 
     /// Error handling
-    virtual const char                  *GetErrorString() = 0;
+    virtual ST::string GetErrorString() = 0;
 
     // info about current rendering device
     virtual void GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32 ) = 0;

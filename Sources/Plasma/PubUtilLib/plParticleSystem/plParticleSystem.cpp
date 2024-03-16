@@ -485,9 +485,9 @@ bool plParticleSystem::MsgReceive(plMessage* msg)
 
     if ((rend = plRenderMsg::ConvertNoRef(msg)))
     {
-        plProfile_BeginLap(ParticleSys, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_BeginLap(ParticleSys, this->GetKey()->GetUoid().GetObjectName());
         IHandleRenderMsg(rend->Pipeline());
-        plProfile_EndLap(ParticleSys, this->GetKey()->GetUoid().GetObjectName().c_str());
+        plProfile_EndLap(ParticleSys, this->GetKey()->GetUoid().GetObjectName());
         return true;
     }
     else if ((refMsg = plGenRefMsg::ConvertNoRef(msg)))
