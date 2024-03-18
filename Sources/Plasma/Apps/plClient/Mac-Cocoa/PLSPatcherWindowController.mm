@@ -81,15 +81,16 @@ static void* StatusTextDidChangeContext = &StatusTextDidChangeContext;
         [NSString stringWithFormat:@"%@/%@", bytesString, totalBytesString];
 }
 
-- (void)patcherCompleted:(nonnull PLSPatcher*)patcher
-{
-    // intercepted by the application
-}
-
 - (void)patcherCompletedWithError:(nonnull PLSPatcher*)patcher error:(nonnull NSError*)error
 {
     // intercepted by the application
 }
+
+- (void)patcherCompleted:(nonnull PLSPatcher *)patcher didSelfPatch:(BOOL)selfPatched
+{
+    // intercepted by the application
+}
+
 
 - (void)observeValueForKeyPath:(NSString*)keyPath
                       ofObject:(id)object
