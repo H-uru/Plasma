@@ -243,7 +243,10 @@ hsG3DDeviceModeRecord& hsG3DDeviceModeRecord::operator=(const hsG3DDeviceModeRec
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
 
-std::list<hsG3DDeviceSelector::DeviceEnumerator> hsG3DDeviceSelector::sEnumerators;
+std::list<hsG3DDeviceSelector::DeviceEnumerator>& hsG3DDeviceSelector::Enumerators() {
+    static std::list<hsG3DDeviceSelector::DeviceEnumerator> sEnumerators;
+    return sEnumerators;
+}
 
 hsG3DDeviceSelector::~hsG3DDeviceSelector()
 {
@@ -354,7 +357,7 @@ void hsG3DDeviceSelector::Enumerate(hsWindowHndl winRef)
     ITryDirect3DTnL(winRef);
 #endif
 
-    for (const auto& enumerator : sEnumerators) {
+    for (const auto& enumerator : Enumerators()) {
         enumerator(fRecords);
     }
 }
