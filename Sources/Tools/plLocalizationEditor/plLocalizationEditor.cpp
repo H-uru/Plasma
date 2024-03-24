@@ -56,6 +56,7 @@ REGISTER_CREATABLE(plResMgrHelperMsg);
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    app.setOrganizationName("Cyan Worlds");
     app.setApplicationName("plLocalizationEditor");
     app.setWindowIcon(QIcon(":/icon1.ico"));
 
