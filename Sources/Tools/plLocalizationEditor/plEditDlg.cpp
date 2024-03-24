@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <QDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QSettings>
 
 static void IAboutDialog(QWidget *parent)
 {
@@ -204,9 +205,12 @@ void EditDialog::closeEvent(QCloseEvent *event)
 
 void EditDialog::OpenDataDirectory()
 {
-    QString path = QFileDialog::getExistingDirectory(this,
+    QSettings settings;
+    QString path = settings.value("dataDir", QDir::current().absolutePath()).toString();
+
+    path = QFileDialog::getExistingDirectory(this,
                 tr("Select a localization data directory:"),
-                QDir::current().absolutePath(),
+                path,
                 QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly);
 
     if (!path.isEmpty())
@@ -217,6 +221,7 @@ void EditDialog::OpenDataDirectory()
 
         fCurrentSavePath = path;
         pfLocalizationMgr::Initialize(fCurrentSavePath.toUtf8().constData());
+        settings.setValue("dataDir", path);
 
         fUI->fLocalizationTree->clear();
         fUI->fLocalizationTree->LoadData("");
@@ -261,6 +266,9 @@ void EditDialog::SaveToDirectory()
         plWaitCursor waitCursor(this);
 
         fCurrentSavePath = path;
+
+        QSettings settings;
+        settings.setValue("dataDir", path);
 
         SetTitle(path);
         pfLocalizationDataMgr::Instance().WriteDatabaseToDisk(fCurrentSavePath.toUtf8().constData());
