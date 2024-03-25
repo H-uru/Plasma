@@ -784,7 +784,6 @@ const std::map<uint32_t, ST::string> plKeyMap::fKeyConversionEnglish =
     { KEY_BACKSLASH,        ST_LITERAL("Backslash")},
     { KEY_RBRACKET,         ST_LITERAL("RightBracket")},
     { KEY_QUOTE,            ST_LITERAL("Quote")},
-    { 0xffffffff,           ST_LITERAL("Unused")},
 };
 
 const std::map<uint32_t, ST::string> plKeyMap::fKeyConversionFrench =

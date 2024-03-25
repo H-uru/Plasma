@@ -167,12 +167,12 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setSpecialCaptureKeyMode, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlEditBox, getLastKeyCaptured)
 {
-    return PyLong_FromLong(self->fThis->GetLastKeyCaptured());
+    return PyLong_FromUnsignedLong(self->fThis->GetLastKeyCaptured());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlEditBox, getLastModifiersCaptured)
 {
-    return PyLong_FromLong(self->fThis->GetLastModifiersCaptured());
+    return PyLong_FromUnsignedLong(self->fThis->GetLastModifiersCaptured());
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setLastKeyCapture, args)
